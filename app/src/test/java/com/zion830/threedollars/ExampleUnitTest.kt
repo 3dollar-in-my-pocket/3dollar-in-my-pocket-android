@@ -1,8 +1,7 @@
-package com.zion830.mydiary
+package com.zion830.threedollars
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
