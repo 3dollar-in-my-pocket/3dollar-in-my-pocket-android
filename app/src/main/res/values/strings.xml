@@ -1,3 +1,24 @@
 <resources>
   <string name="app_name">가슴속 3천원</string>
+  
+  <string name="score">%.1f점</string>
+  <string name="count">%d개</string>
+  
+  <string name="login_kakao">카카오 계정으로 로그인</string>
+  <string name="login_name1">저는 닉네임</string>
+  <string name="login_name2">로</string>
+  <string name="login_name3">시작할래요</string>
+  <string name="login_name_fail">시작못해요</string>
+  <string name="login_name_already_exist">중복된 닉네임</string>
+  
+  <string name="my_page_show_all">전체보기</string>
+  <string name="my_page_restaurants">등록한 음식점</string>
+  <string name="my_page_restaurants_empty">등록한 음식점이 없어요</string>
+  <string name="my_page_reviews">내가 쓴 리뷰 %d개</string>
+  <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
+  <string name="my_page_edit_name">닉네임 수정</string>
+  <string name="my_page_edit_name1">를</string>
+  <string name="my_page_edit_name2">로</string>
+  <string name="my_page_edit_name3">수정할래요</string>
+
 </resources>
