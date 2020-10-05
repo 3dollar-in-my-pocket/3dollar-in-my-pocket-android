@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
+            android:scaleType="center"
             android:src="@drawable/ic_login_back" />
     
         <Button
