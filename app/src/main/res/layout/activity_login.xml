@@ -5,22 +5,32 @@
     
     </data>
     
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/color_black">
-        
+        android:background="@color/color_black"
+        android:orientation="vertical">
+    
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_login_back" />
-        
+    
         <Button
-            android:id="@+id/btn"
+            android:id="@+id/btn_login_kakao"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="160dp"
+            android:background="@drawable/btn_kakao"
+            android:drawableStart="@drawable/ic_kakao"
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="76dp"
+            android:text="@string/login_kakao"
+            android:textColor="#381e1f"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </FrameLayout>
 </layout>
