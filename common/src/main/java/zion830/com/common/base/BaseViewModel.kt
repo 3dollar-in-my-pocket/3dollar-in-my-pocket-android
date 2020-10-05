@@ -11,11 +11,11 @@ open class BaseViewModel : ViewModel() {
     protected val _msgTextId = MutableLiveData<Int>()
     val msgTextId: LiveData<Int> get() = _msgTextId
 
-    fun showLoading() {
+    protected fun showLoading() {
         _isLoading.value = true
     }
 
-    fun hideLoading() {
+    protected fun hideLoading() {
         _isLoading.value = false
     }
 }
