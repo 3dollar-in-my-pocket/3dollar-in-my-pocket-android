@@ -63,6 +63,11 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$android_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 
+    // 도전 정신
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // 카카오 로그인
+    implementation "com.kakao.sdk:v2-user:$kakao_login"
 }

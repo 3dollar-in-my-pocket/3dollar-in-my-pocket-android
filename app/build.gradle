@@ -10,6 +10,7 @@ android {
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "base_url", properties.getProperty('base_url')
+        resValue "string", "kakao_key", properties.getProperty('kakao_key')
     }
 
 }

@@ -2,10 +2,8 @@ package com.zion830.threedollars
 
 import android.app.Application
 import android.content.Context
+import com.kakao.sdk.common.KakaoSdk
 
-/*
- * Created by yunji on 04/04/2020
- */
 class GlobalApplication : Application() {
 
     companion object {
@@ -20,5 +18,6 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         APPLICATION_CONTEXT = applicationContext
+        KakaoSdk.init(this, applicationContext.getString(R.string.kakao_key))
     }
 }
