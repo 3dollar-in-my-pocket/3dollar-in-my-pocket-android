@@ -9,9 +9,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/*
- * Created by yunji on 18/04/2020
- */
 @RunWith(AndroidJUnit4::class)
 class ApplicationTest {
 
