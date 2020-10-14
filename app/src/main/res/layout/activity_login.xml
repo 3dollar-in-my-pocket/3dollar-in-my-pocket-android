@@ -3,9 +3,13 @@
     
     <data>
     
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.login.LoginViewModel" />
     </data>
     
     <FrameLayout
+        android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_black"

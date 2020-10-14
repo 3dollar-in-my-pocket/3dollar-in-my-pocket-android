@@ -1,7 +1,5 @@
 apply plugin: 'com.android.application'
 apply from: '../common.gradle'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())

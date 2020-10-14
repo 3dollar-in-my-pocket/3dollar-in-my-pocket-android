@@ -1,5 +1,8 @@
 package com.zion830.threedollars.network
 
+import com.zion830.threedollars.repository.model.request.NewUser
+import com.zion830.threedollars.repository.model.response.LoginResponse
+import okhttp3.Response
 import retrofit2.http.*
 
 interface ServiceApi {
@@ -46,14 +49,14 @@ interface ServiceApi {
 
     // 사용자
     @GET("/api/v1/user/info")
-    fun getUser(@Query("userId") userId: Int)
+    suspend fun getUser(@Query("userId") userId: Int): Response
 
     @POST("/api/v1/user/login")
-    fun startLogin(@Query("userId") userId: Int)
+    suspend fun tryLogin(@Body newUser: NewUser): LoginResponse
 
     @POST("/api/v1/user/nickname")
-    fun setName(
+    suspend fun setName(
         @Query("nickName") name: String,
         @Query("userId") userId: Int
-    )
+    ): Response
 }

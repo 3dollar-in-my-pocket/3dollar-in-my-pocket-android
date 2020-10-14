@@ -1,23 +1,20 @@
 package com.zion830.threedollars
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.kakao.sdk.common.util.Utility
 
 class MainActivity : AppCompatActivity() {
-
-    override fun onStart() {
-        super.onStart()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d("keyhash", Utility.getKeyHash(applicationContext))
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    companion object {
+
+        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
 }

@@ -4,6 +4,11 @@
     
     <data>
     
+        <import type="android.view.View" />
+    
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.login.LoginViewModel" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -65,6 +70,7 @@
                 android:maxLength="10"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="12dp"
+                android:text="@={viewModel.userName}"
                 android:textColor="@color/color_sub_red"
                 android:textColorHint="@color/color_sub_red_hint"
                 android:textSize="32sp"
@@ -104,10 +110,12 @@
                 android:id="@+id/tv_already_exist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:drawablePadding="5dp"
+                android:onClick="@{() -> viewModel.tryLogin()}"
                 android:text="@string/login_name_already_exist"
                 android:textColor="@color/color_main_red"
+                android:visibility="@{viewModel.isAvailable ? View.INVISIBLE : View.VISIBLE}"
                 app:drawableStartCompat="@drawable/ic_warning"
                 app:layout_constraintBottom_toBottomOf="@id/btn_start"
                 app:layout_constraintStart_toEndOf="@id/btn_start"

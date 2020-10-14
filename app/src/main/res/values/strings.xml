@@ -4,6 +4,7 @@
   <string name="score">%.1f점</string>
   <string name="count">%d개</string>
   
+  <string name="kakao_url">https://kapi.kakao.com</string>
   <string name="login_kakao">카카오 계정으로 로그인</string>
   <string name="login_name">채워주세요!</string>
   <string name="login_name1">저는 닉네임</string>
