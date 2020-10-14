@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -23,7 +24,7 @@ fun RecyclerView.bindItems(items: List<Any>?) {
 @BindingAdapter("loadImage")
 fun ImageView.loadDrawableImg(drawableResId: Int) {
     Glide.with(context)
-        .load(context.getDrawable(drawableResId))
+        .load(ContextCompat.getDrawable(context, drawableResId))
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(this)
 }
