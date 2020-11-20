@@ -1,25 +1,56 @@
 <resources>
-  <string name="app_name">가슴속 3천원</string>
-  
-  <string name="score">%.1f점</string>
-  <string name="count">%d개</string>
-  
-  <string name="kakao_url">https://kapi.kakao.com</string>
-  <string name="login_kakao">카카오 계정으로 로그인</string>
-  <string name="login_name">채워주세요!</string>
-  <string name="login_name1">저는 닉네임</string>
-  <string name="login_name2">로</string>
-  <string name="login_name3">시작할래요</string>
-  <string name="login_name_fail">시작못해요</string>
-  <string name="login_name_already_exist">중복된 닉네임</string>
-  
-  <string name="my_page_show_all">전체보기</string>
-  <string name="my_page_restaurants">등록한 음식점</string>
-  <string name="my_page_restaurants_empty">등록한 음식점이 없어요</string>
-  <string name="my_page_reviews">내가 쓴 리뷰 %d개</string>
-  <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
-  <string name="my_page_edit_name">닉네임 수정</string>
-  <string name="my_page_edit_name1">를</string>
-  <string name="my_page_edit_name2">로</string>
-  <string name="my_page_edit_name3">수정할래요</string>
+    <string name="app_name">가슴속 3천원</string>
+    
+    <string name="score">%.1f점</string>
+    <string name="count">%d개</string>
+    
+    <string name="kakao_url">https://kauth.kakao.com</string>
+    <string name="login_kakao">카카오 계정으로 로그인</string>
+    <string name="login_name">닉네임 입력!</string>
+    <string name="login_name1">저는 닉네임</string>
+    <string name="login_name2">로</string>
+    <string name="login_name3">시작할래요</string>
+    <string name="login_name_fail">시작못해요</string>
+    <string name="login_name_already_exist">중복된 닉네임</string>
+    <string name="login_failed">로그인에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="set_name_success">닉네임이 변경되었습니다!</string>
+    <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
+    
+    <string name="my_page_show_all">전체보기</string>
+    <string name="my_page_stores">등록한 음식점</string>
+    <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
+    <string name="my_page_reviews">내가 쓴 리뷰</string>
+    <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
+    <string name="my_page_edit_name">닉네임 수정</string>
+    <string name="my_page_edit_name1">를</string>
+    <string name="my_page_edit_name2">로</string>
+    <string name="my_page_edit_name3">수정할래요</string>
+    <string name="my_page_edit_name_fail">수정못해요</string>
+    <string name="title_activity_home">MainActivity</string>
+    <string name="title_home">홈</string>
+    <string name="title_add_review">가게 제보</string>
+    <string name="title_mypage">마이페이지</string>
+    
+    <string name="menu1">붕어빵</string>
+    <string name="menu2">타코야끼</string>
+    <string name="menu3">계란빵</string>
+    <string name="menu4">호떡</string>
+    
+    <string name="nearest_store">가장 가까운 음식</string>
+    <string name="if_you_have_money">지금 당장\n3천원이 있으시다면</string>
+    <string name="second_ago">만나기 30초 전</string>
+    <string name="sort_by_score">별점순</string>
+    <string name="sort_by_distance">거리순</string>
+    
+    <string name="request_permission">권한이 필요해요 😮</string>
+    <string name="request_permission_ok">알았어요</string>
+    <string name="request_permission_cancel">싫어요</string>
+    <string name="request_location_permission_description">
+        이유 3줄 요약\n
+        1. 가게 검색에 현재 위치 정보가 필요해요.\n
+        2. 설치해주셔서 감사합니다.\n
+        3. 좋은 하루 되세요.
+    </string>
+    <string name="location_no_address">알 수 없는 위치</string>
 </resources>
