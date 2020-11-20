@@ -6,7 +6,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
-import zion830.com.common.R
 
 // control visibility
 fun View.setVisibility(visibility: Boolean) {
@@ -39,7 +38,7 @@ fun View.showSnack(
 ) {
     Snackbar.make(this, message, length).run {
         color?.let { setActionTextColor(ContextCompat.getColor(context, color)) }
-        setAction(context.getString(R.string.ok)) { dismiss() }
+        setAction(context.getString(android.R.string.ok)) { dismiss() }
         show()
     }
 }

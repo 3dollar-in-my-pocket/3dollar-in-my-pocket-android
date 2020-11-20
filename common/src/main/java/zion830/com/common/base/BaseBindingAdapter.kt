@@ -2,7 +2,6 @@ package zion830.com.common.base
 
 import android.net.Uri
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -18,7 +17,7 @@ import zion830.com.common.ext.toViewListener
 @BindingAdapter("bindItem")
 fun RecyclerView.bindItems(items: List<Any>?) {
     val defaultList = items?.filterNotNull() ?: listOf()
-    (adapter as BaseRecyclerView<*, Any>).setItems(defaultList)
+    (adapter as BaseRecyclerView<*, Any>).submitList(defaultList)
 }
 
 @BindingAdapter("loadImage")
@@ -46,7 +45,7 @@ fun ImageView.loadUriImg(uri: Uri?) {
 }
 
 @BindingAdapter("onSingleClick")
-fun Button.onSingleClick(listener: View.OnClickListener) {
+fun View.onSingleClick(listener: View.OnClickListener) {
     val onItemClickListener = listener.toItemListener()
         .disableDoubleClick()
         .toViewListener()
