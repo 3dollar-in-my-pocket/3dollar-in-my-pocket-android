@@ -1,15 +1,14 @@
 package com.zion830.threedollars.repository.model.request
 
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
+
 data class NewUser(
-    @SerialName("name")
+    @SerializedName("name")
     val name: String,
-    @SerialName("socialId")
-    val socialId: String?,
-    @SerialName("socialType")
+    @SerializedName("socialId")
+    val socialId: String,
+    @SerializedName("socialType")
     val socialType: String = "KAKAO"
 )

@@ -1,18 +1,32 @@
 apply plugin: 'com.android.application'
 apply from: '../common.gradle'
+apply plugin: 'kotlin-android'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def googleMapApiKey = properties.getProperty('google_map_key')
 
 android {
+
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "base_url", properties.getProperty('base_url')
         resValue "string", "kakao_key", properties.getProperty('kakao_key')
+        resValue "string", "kakao_rest_key", properties.getProperty('kakao_rest_key')
+        multiDexEnabled true
     }
 
 }
 
 dependencies {
     implementation project(':common')
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.google.android.material:material:1.2.1'
 }

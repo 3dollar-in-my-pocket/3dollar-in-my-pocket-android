@@ -1,15 +1,14 @@
 package com.zion830.threedollars.repository.model.response
 
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
+
 data class LoginResponse(
-    @SerialName("state")
+    @SerializedName("state")
     val state: Boolean,
-    @SerialName("token")
+    @SerializedName("token")
     val token: String,
-    @SerialName("userId")
+    @SerializedName("userId")
     val userId: Int
 )

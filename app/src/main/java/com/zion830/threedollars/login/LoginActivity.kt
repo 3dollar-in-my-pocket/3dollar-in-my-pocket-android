@@ -1,6 +1,5 @@
 package com.zion830.threedollars.login
 
-import android.content.Intent
 import android.util.Log
 import androidx.activity.viewModels
 import com.kakao.sdk.auth.LoginClient
@@ -14,29 +13,46 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.isNotNullOrBlank
+import zion830.com.common.ext.showSnack
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
 
     override val viewModel: LoginViewModel by viewModels()
 
     override fun initView() {
-        if (!hasUserName()) {
-            addInputNameFragment() // 카카오 로그인만 한 상태면 닉네임 필요함
-        }
-
-        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
-            if (tokenInfo != null) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+        UserApiClient.instance.me { user, _ ->
+            if (user != null && SharedPrefUtils.getUserName().isNotNullOrBlank()) {
+                SharedPrefUtils.saveKakaoId(user.id.toString())
+                startActivity(MainActivity.getIntent(this))
+                finish()
             }
         }
 
         binding.btnLoginKakao.onSingleClick {
             tryKakaoLogin()
         }
+        observeUiData()
     }
 
-    private fun hasUserName() = SharedPrefUtils.getKakaoId().isNotNullOrBlank() && SharedPrefUtils.getAccessToken().isNullOrBlank()
+    private fun observeUiData() {
+        viewModel.isFinishing.observe(this) {
+            if (it) {
+                addInputNameFragment()
+            } else {
+                binding.layoutContainer.showSnack(R.string.login_failed)
+            }
+        }
+        viewModel.loginResult.observe(this) {
+            if (it != null) {
+                SharedPrefUtils.saveUserName(viewModel.userName.value)
+                SharedPrefUtils.saveUserId(it.userId)
+                SharedPrefUtils.saveAccessToken(it.token)
+
+                startActivity(MainActivity.getIntent(this))
+                finish()
+            }
+        }
+    }
 
     private fun addInputNameFragment() {
         supportFragmentManager.addNewFragment(R.id.layout_container, InputNameFragment.getInstance(), InputNameFragment::class.java.name)
@@ -47,8 +63,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
             if (error != null) {
                 Log.e(localClassName, "로그인 실패", error)
             } else if (token != null) {
-                Log.i(localClassName, "로그인 성공 ${token.accessToken}")
-                SharedPrefUtils.saveKakaoId(token.accessToken)
                 addInputNameFragment()
             }
         }
