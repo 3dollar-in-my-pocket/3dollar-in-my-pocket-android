@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.response.Store" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="172dp"
+        android:layout_height="172dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rect_gray_corner"
+        android:foreground="?attr/selectableItemBackground"
+        tools:ignore="UnusedAttribute">
+        
+        <ImageView
+            android:id="@+id/iv_menu_icon"
+            bindMenuIcon="@{item.category}"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="21dp"
+            android:src="@drawable/ic_fish"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:singleLine="true"
+            android:text="@{item.storeName}"
+            android:textColor="@color/gmm_white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
+            tools:text="강남역 2출 앞" />
+        
+        <RatingBar
+            android:id="@+id/rating_score"
+            style="@style/PinkRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="10dp"
+            android:numStars="5"
+            android:progressTint="@color/color_sub_red"
+            android:rating="@{item.rating}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_location"
+            app:layout_constraintTop_toBottomOf="@id/tv_location"
+            tools:ignore="UnusedAttribute" />
+        
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{@string/score(item.rating)}"
+            android:textColor="@color/gmm_white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/rating_score"
+            app:layout_constraintStart_toEndOf="@id/rating_score"
+            app:layout_constraintTop_toTopOf="@id/rating_score"
+            tools:text="3.8점" />
+        
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rect_black2"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -9,33 +9,44 @@
     </data>
     
     <FrameLayout
-        android:id="@+id/layout_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/color_black"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
     
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_name"
-            android:scaleType="center"
-            android:src="@drawable/ic_login_back" />
+            android:layout_height="match_parent"
+            android:background="@color/color_black"
+            android:orientation="vertical">
+        
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                android:scaleType="center"
+                android:src="@drawable/ic_login_back" />
+        
+            <Button
+                android:id="@+id/btn_login_kakao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="160dp"
+                android:background="@drawable/btn_kakao"
+                android:drawableStart="@drawable/ic_kakao"
+                android:drawablePadding="8dp"
+                android:paddingHorizontal="76dp"
+                android:paddingVertical="12dp"
+                android:text="@string/login_kakao"
+                android:textColor="#381e1f"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </FrameLayout>
     
-        <Button
-            android:id="@+id/btn_login_kakao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="160dp"
-            android:background="@drawable/btn_kakao"
-            android:drawableStart="@drawable/ic_kakao"
-            android:drawablePadding="8dp"
-            android:paddingHorizontal="76dp"
-            android:text="@string/login_kakao"
-            android:textColor="#381e1f"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:id="@+id/layout_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
     </FrameLayout>
 </layout>

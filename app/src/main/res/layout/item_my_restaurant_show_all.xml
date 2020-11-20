@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.response.Store" />
+        
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
+    
+    <LinearLayout
+        onSingleClick="@{() -> listener.onClick(item)}"
+        android:layout_width="172dp"
+        android:layout_height="172dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rect_gray_corner"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:ignore="UnusedAttribute">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="-8dp"
+            android:text="@string/my_page_show_all"
+            android:textColor="@color/color_979797"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:drawableTopCompat="@drawable/ic_right_arrow_gray" />
+    </LinearLayout>
+
+</layout>
