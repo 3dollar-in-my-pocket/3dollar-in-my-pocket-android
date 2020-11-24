@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?><?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+    
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.libraries.maps.SupportMapFragment"
+            android:layout_width="0dp"
+            android:layout_height="264dp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="49dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_title"
+            android:layout_width="0dp"
+            android:layout_height="98dp"
+            android:background="@drawable/rect_white_bottom_corner"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
+            
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="8dp"
+                android:background="?attr/actionBarItemBackground"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_close"
+                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                app:layout_constraintStart_toStartOf="parent" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_add_store"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_back" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:background="@drawable/rect_red"
+            android:ellipsize="end"
+            android:maxEms="13"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="5dp"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_title"
+            tools:text="내 위치 내 위치" />
+        
+        <ImageButton
+            android:id="@+id/btn_find_location"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rect_white"
+            android:contentDescription="@string/maps_YOUR_LOCATION"
+            android:src="@drawable/ic_current_location"
+            app:layout_constraintBottom_toBottomOf="@id/tv_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_location" />
+        
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="40dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/map">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/category"
+                android:textColor="@color/color_black"
+                android:textSize="16sp" />
+            
+            <GridView
+                android:id="@+id/grid_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="3" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/store_name"
+                android:textColor="@color/color_black"
+                android:textSize="16sp" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/add_photo"
+                android:textColor="@color/color_black"
+                android:textSize="16sp" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_photo" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/store_detail_menu"
+                android:textColor="@color/color_black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

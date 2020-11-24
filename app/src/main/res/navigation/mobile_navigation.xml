@@ -15,14 +15,9 @@
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"
-        tools:layout="@layout/fragment_mypage">
-        <action
-            android:id="@+id/action_navigation_mypage_to_editNameFragment"
-            app:destination="@id/editNameFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_mypage"></fragment>
     
-    <fragment
-        android:id="@+id/editNameFragment"
-        android:name="com.zion830.threedollars.ui.mypage.EditNameFragment"
-        android:label="EditNameFragment" />
+    <activity
+        android:id="@+id/navigation_add_store"
+        android:name="" />
 </navigation>

@@ -26,7 +26,7 @@
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -36,14 +36,17 @@
         <activity
             android:name=".login.LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        
+        <activity
+            android:name=".ui.home.AddStoreActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+    
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-    
+            
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-    
+            
                 <data
                     android:host="oauth"
                     android:scheme="kakao3826b74e62cacacd6525130f6a2469e0" />

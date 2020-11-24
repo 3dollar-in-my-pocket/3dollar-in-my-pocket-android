@@ -19,25 +19,17 @@ class UserRepository(
         return service.tryLogin(newUser)
     }
 
-    suspend fun getUserInfo(userId: Int = SharedPrefUtils.getUserId()): UserInfoResponse? {
-        return service.getUser(userId)
-    }
+    suspend fun getUserInfo(userId: Int = SharedPrefUtils.getUserId()): UserInfoResponse? = service.getUser(userId)
 
     suspend fun getMyReviews(
         userId: Int = SharedPrefUtils.getUserId(),
         page: Int = 1
-    ): Call<MyReviewResponse> {
-        return service.getMyReview(userId, page)
-    }
+    ): Call<MyReviewResponse> = service.getMyReview(userId, page)
 
     suspend fun getMyStore(
         userId: Int = SharedPrefUtils.getUserId(),
         page: Int = 1
-    ): Call<MyStoreResponse> {
-        return service.getMyStore(userId, page)
-    }
+    ): Call<MyStoreResponse> = service.getMyStore(userId, page)
 
-    suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<okhttp3.Response> {
-        return service.setName(newName, userId)
-    }
+    suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<okhttp3.Response> = service.setName(newName, userId)
 }

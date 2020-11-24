@@ -5,8 +5,10 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 
+@AndroidEntryPoint
 abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes val layoutId: Int
 ) : AppCompatActivity() {

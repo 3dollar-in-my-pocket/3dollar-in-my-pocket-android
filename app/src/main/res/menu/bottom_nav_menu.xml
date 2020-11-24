@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_review"
         android:icon="@drawable/ic_write_off"
-        android:title="@string/title_add_review" />
+        android:title="@string/title_add_store" />
     
     <item
         android:id="@+id/navigation_mypage"

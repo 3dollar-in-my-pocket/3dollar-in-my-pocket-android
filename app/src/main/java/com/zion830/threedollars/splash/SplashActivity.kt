@@ -8,8 +8,10 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.login.LoginActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 
+@AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
 
     override val viewModel: SplashViewModel by viewModels()

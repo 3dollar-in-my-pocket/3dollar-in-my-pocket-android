@@ -1,9 +1,6 @@
 package com.zion830.threedollars
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.zion830.threedollars.repository.MyReviewDataSource
@@ -42,35 +39,25 @@ class UserInfoViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
-    private val _myStore: MutableLiveData<MyStoreResponse> = MutableLiveData()
-    val myStore: LiveData<MyStoreResponse>
-        get() = _myStore
+    val myStore: LiveData<MyStoreResponse> = liveData {
+        emit(userRepository.getMyStore().await())
+    }
 
-    private val _myReview: MutableLiveData<MyReviewResponse> = MutableLiveData()
-    val myReview: LiveData<MyReviewResponse>
-        get() = _myReview
+    val myReview: LiveData<MyReviewResponse> = liveData {
+        emit(userRepository.getMyReviews().await())
+    }
 
     val myAllStore: LiveData<PagedList<Store>> by lazy {
-        LivePagedListBuilder(
-            MyStoreDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyStoreDataSource.pageConfig
-        ).build()
+        LivePagedListBuilder(MyStoreDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyStoreDataSource.pageConfig).build()
     }
 
     val myAllReview: LiveData<PagedList<Review>> by lazy {
-        LivePagedListBuilder(
-            MyReviewDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyReviewDataSource.pageConfig
-        ).build()
+        LivePagedListBuilder(MyReviewDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyReviewDataSource.pageConfig).build()
     }
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            try {
-                _userInfo.postValue(userRepository.getUserInfo())
-                _myStore.postValue(userRepository.getMyStore().await())
-                _myReview.postValue(userRepository.getMyReviews().await())
-            } catch (e: Exception) {
-                _msgTextId.postValue(R.string.connection_failed)
-            }
+            _userInfo.postValue(userRepository.getUserInfo())
         }
     }
 
@@ -78,7 +65,7 @@ class UserInfoViewModel : BaseViewModel() {
         if (userName.value.isNullOrBlank()) {
             return
         }
-        val handler = CoroutineExceptionHandler { _, t ->
+        val updateNameHandler = CoroutineExceptionHandler { _, t ->
             when (t) {
                 is HttpException -> {
                     _isAlreadyUsed.postValue(true)
@@ -93,7 +80,8 @@ class UserInfoViewModel : BaseViewModel() {
                 }
             }
         }
-        viewModelScope.launch(Dispatchers.IO + handler) {
+
+        viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
             userRepository.updateName(userName.value!!).await()
         }
     }
