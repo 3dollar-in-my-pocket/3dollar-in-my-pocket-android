@@ -3,19 +3,27 @@ package com.zion830.threedollars.repository.model.response
 
 import com.google.gson.annotations.SerializedName
 
-data class StoreList4(
+data class StoreDetailResponse(
     @SerializedName("category")
     val category: String,
     @SerializedName("distance")
     val distance: Int,
     @SerializedName("id")
     val id: Int,
+    @SerializedName("image")
+    val image: List<Image>,
     @SerializedName("latitude")
     val latitude: Int,
     @SerializedName("longitude")
     val longitude: Int,
+    @SerializedName("menu")
+    val menu: List<Menu>,
     @SerializedName("rating")
     val rating: Int,
+    @SerializedName("review")
+    val review: List<Review>,
     @SerializedName("storeName")
-    val storeName: String
+    val storeName: String,
+    @SerializedName("user")
+    val user: UserInfoResponse
 )

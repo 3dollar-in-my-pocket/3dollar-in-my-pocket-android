@@ -3,7 +3,7 @@ package com.zion830.threedollars.repository.model.response
 
 import com.google.gson.annotations.SerializedName
 
-data class StoreList0(
+data class StoreList(
     @SerializedName("category")
     val category: String,
     @SerializedName("distance")
