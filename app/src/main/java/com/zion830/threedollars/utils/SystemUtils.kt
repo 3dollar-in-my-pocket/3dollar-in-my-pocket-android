@@ -1,7 +1,6 @@
 package com.zion830.threedollars.utils
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context.LOCATION_SERVICE
@@ -31,15 +30,15 @@ fun showToast(text: String) {
     Toast.makeText(GlobalApplication.getContext(), text, Toast.LENGTH_SHORT).show()
 }
 
-fun Activity.requestPermissionFirst(permission: String = ACCESS_FINE_LOCATION) {
-    if (SharedPrefUtils.isFirstPermissionCheck() && !isLocationAvailable()) {
+fun Activity.requestPermissionFirst(permission: String = ACCESS_COARSE_LOCATION) {
+    if (SharedPrefUtils.isFirstPermissionCheck()) {
         showPermissionRequestDialog {
             ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
         }
     }
 }
 
-fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION) {
+fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_COARSE_LOCATION) {
     when {
         isLocationAvailable() -> return
         ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {

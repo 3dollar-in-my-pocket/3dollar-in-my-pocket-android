@@ -1,151 +1,350 @@
-<?xml version="1.0" encoding="utf-8"?><?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-    
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
+        
+        <import type="com.zion830.threedollars.utils.StringUtils" />
+        
+        <import type="android.view.View" />
     </data>
     
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.libraries.maps.SupportMapFragment"
-            android:layout_width="0dp"
-            android:layout_height="264dp"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="49dp"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
         
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_title"
-            android:layout_width="0dp"
-            android:layout_height="98dp"
-            android:background="@drawable/rect_white_bottom_corner"
-            android:elevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white">
+            
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.libraries.maps.SupportMapFragment"
+                android:layout_width="0dp"
+                android:layout_height="264dp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="49dp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_title"
+                android:layout_width="0dp"
+                android:layout_height="98dp"
+                android:background="@drawable/rect_white_bottom_corner"
+                android:elevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute">
+                
+                <ImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="?attr/actionBarItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_back_black"
+                    app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                    app:layout_constraintStart_toStartOf="parent" />
+                
+                <TextView
+                    android:id="@+id/tv_store_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="200dp"
+                    android:singleLine="true"
+                    android:text="@{viewModel.storeInfo.storeName}"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/btn_back" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
             
             <ImageButton
-                android:id="@+id/btn_back"
+                android:id="@+id/btn_find_location"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rect_white_radius_8"
+                android:contentDescription="@string/maps_YOUR_LOCATION"
+                android:src="@drawable/ic_current_location"
+                app:layout_constraintBottom_toBottomOf="@id/map"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_title" />
+            
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layout_store_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:padding="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_find_location"
+                tools:ignore="UnusedAttribute">
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+                    
+                    <ImageView
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:background="@drawable/rect_light_gray_corner"
+                        android:padding="18dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_gray_fish"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <ImageView
+                        android:id="@+id/iv_store"
+                        loadFirstImage="@{viewModel.storeInfo.image}"
+                        android:layout_width="88dp"
+                        android:layout_height="88dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    
+                    <TextView
+                        android:id="@+id/tv_store_distance"
+                        setDistance="@{viewModel.storeInfo.distance}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:letterSpacing="-0.06"
+                        android:lineSpacingExtra="-3dp"
+                        android:textColor="@color/color_black"
+                        android:textSize="22sp"
+                        app:layout_constraintStart_toEndOf="@id/iv_store"
+                        app:layout_constraintTop_toTopOf="@id/iv_store"
+                        tools:text="50m 이내에 위치한\n음식점입니다." />
+                    
+                    <RatingBar
+                        android:id="@+id/rating_score"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:progressBackgroundTint="@color/color_gray1"
+                        android:progressTint="@color/color_sub_red"
+                        android:rating="@{viewModel.storeInfo.rating}"
+                        app:layout_constraintStart_toStartOf="@id/tv_store_distance"
+                        app:layout_constraintTop_toBottomOf="@id/tv_store_distance" />
+                    
+                    <TextView
+                        android:id="@+id/tv_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@{@string/score(viewModel.storeInfo.rating)}"
+                        android:textColor="@color/color_sub_red"
+                        app:layout_constraintBottom_toBottomOf="@id/rating_score"
+                        app:layout_constraintStart_toEndOf="@id/rating_score"
+                        app:layout_constraintTop_toTopOf="@id/rating_score"
+                        tools:text="3.8점" />
+                    
+                    <TextView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="75dp"
+                        android:layout_marginBottom="75dp"
+                        android:background="@drawable/circle_black"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="@{@string/img_count(viewModel.storeInfo.image.size())}"
+                        android:textColor="@color/gmm_white"
+                        android:textSize="11sp"
+                        android:visibility="@{viewModel.storeInfo.image.size() == 0 ? View.GONE : View.VISIBLE}"
+                        app:layout_constraintBottom_toBottomOf="@id/iv_store"
+                        app:layout_constraintStart_toStartOf="@id/iv_store"
+                        app:layout_constraintTop_toTopOf="@id/iv_store" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            </androidx.cardview.widget.CardView>
+            
+            <TextView
+                android:id="@+id/tv_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginBottom="4dp"
-                android:background="?attr/actionBarItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_back_black"
-                app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginTop="24dp"
+                android:text="@string/category"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/layout_store_info"
+                app:layout_constraintTop_toBottomOf="@id/layout_store_info" />
+            
+            <TextView
+                android:id="@+id/tv_menu_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/menu_detail"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/layout_store_info"
+                app:layout_constraintTop_toBottomOf="@id/tv_category" />
             
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_add_store"
+                android:layout_marginStart="16sp"
+                android:text="@{StringUtils.getReadableCategory(viewModel.storeInfo.category)}"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintBottom_toBottomOf="@id/tv_category"
+                app:layout_constraintStart_toEndOf="@id/tv_category"
+                app:layout_constraintTop_toTopOf="@id/tv_category" />
+            
+            <TextView
+                android:id="@+id/tv_no_menu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16sp"
+                android:text="@string/no_menu"
+                android:textColor="@color/color_gray1"
+                android:textSize="16sp"
+                android:visibility="@{viewModel.storeInfo.menu.size() == 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/tv_menu_detail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_menu_detail"
+                app:layout_constraintTop_toTopOf="@id/tv_menu_detail" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_menu"
+                bindItem="@{viewModel.storeInfo.menu}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16sp"
+                android:layout_marginEnd="24dp"
+                android:background="@android:color/white"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:textColor="@color/color_gray1"
+                android:textSize="16sp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_menu_detail"
+                app:layout_constraintTop_toTopOf="@id/tv_menu_detail"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_menu" />
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_back" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        
-        
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:background="@drawable/rect_red"
-            android:ellipsize="end"
-            android:maxEms="13"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="5dp"
-            android:singleLine="true"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_title"
-            tools:text="내 위치 내 위치" />
-        
-        <ImageButton
-            android:id="@+id/btn_find_location"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rect_white"
-            android:contentDescription="@string/maps_YOUR_LOCATION"
-            android:src="@drawable/ic_current_location"
-            app:layout_constraintBottom_toBottomOf="@id/tv_location"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_location" />
-        
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/layout_store_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/rect_white"
-            android:elevation="8dp"
-            android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_location"
-            tools:ignore="UnusedAttribute">
-            
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                app:layout_constraintTop_toBottomOf="@id/rv_menu">
                 
-                <ImageView
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
-                    android:background="@drawable/rect_light_gray_corner"
-                    android:padding="18dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_gray_fish"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+                    
+                    <Button
+                        android:id="@+id/btn_add_review"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rect_white_stroke"
+                        android:minHeight="48dp"
+                        android:text="@string/add_review"
+                        android:textColor="@color/color_999999"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    
+                    <Button
+                        android:id="@+id/btn_add_store_info"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rect_white_stroke"
+                        android:minHeight="48dp"
+                        android:text="@string/add_store_info"
+                        android:textColor="@color/color_999999"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
                 
-                <ImageView
-                    android:id="@+id/iv_store"
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="5dp"
+                    android:layout_marginVertical="24dp"
+                    android:background="@color/color_gray2" />
                 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:letterSpacing="-0.06"
-                    android:lineSpacingExtra="-6dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:text="@{@string/review_count(viewModel.storeInfo.review.size())}"
                     android:textColor="@color/color_black"
-                    android:textSize="22sp"
-                    app:layout_constraintStart_toEndOf="@id/iv_store"
-                    app:layout_constraintTop_toTopOf="@id/iv_store"
-                    tools:text="50m 이내에 위치한\n음식점입니다." />
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
                 
-                <RatingBar
-                    android:layout_width="wrap_content"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_review"
+                    bindItem="@{viewModel.storeInfo.review}"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:progressTint="@color/color_sub_red" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        
-        </com.google.android.material.card.MaterialCardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginVertical="16dp"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_review" />
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="50dp"
+                    android:text="@string/no_review"
+                    android:textColor="@color/color_gray1"
+                    android:textSize="16sp"
+                    android:visibility="@{viewModel.storeInfo.review.size() == 0 ? View.VISIBLE : View.GONE}" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

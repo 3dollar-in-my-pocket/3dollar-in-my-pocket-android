@@ -10,7 +10,6 @@ import com.zion830.threedollars.repository.model.response.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import retrofit2.HttpException
 import retrofit2.await
 import zion830.com.common.base.BaseViewModel
@@ -39,20 +38,26 @@ class UserInfoViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
-    val myStore: LiveData<MyStoreResponse> = liveData {
+    val myStore: LiveData<MyStoreResponse> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
         emit(userRepository.getMyStore().await())
     }
 
-    val myReview: LiveData<MyReviewResponse> = liveData {
+    val myReview: LiveData<MyReviewResponse> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
         emit(userRepository.getMyReviews().await())
     }
 
     val myAllStore: LiveData<PagedList<Store>> by lazy {
-        LivePagedListBuilder(MyStoreDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyStoreDataSource.pageConfig).build()
+        LivePagedListBuilder(
+            MyStoreDataSource.Factory(viewModelScope, Dispatchers.IO + coroutineExceptionHandler),
+            MyStoreDataSource.pageConfig
+        ).build()
     }
 
     val myAllReview: LiveData<PagedList<Review>> by lazy {
-        LivePagedListBuilder(MyReviewDataSource.Factory(viewModelScope + coroutineExceptionHandler), MyReviewDataSource.pageConfig).build()
+        LivePagedListBuilder(
+            MyReviewDataSource.Factory(viewModelScope, Dispatchers.IO + coroutineExceptionHandler),
+            MyReviewDataSource.pageConfig
+        ).build()
     }
 
     fun updateUserInfo() {

@@ -1,14 +1,26 @@
 package com.zion830.threedollars.ui.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.google.android.libraries.maps.model.LatLng
+import com.zion830.threedollars.repository.StoreRepository
+import com.zion830.threedollars.repository.model.response.AllStoreResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 
 class HomeViewModel : BaseViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
+    private val repository = StoreRepository()
 
-    val text: LiveData<String> = _text
+    val nearStoreInfo: MutableLiveData<AllStoreResponse> = MutableLiveData()
+
+    fun requestStoreInfo(location: LatLng) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.getAllStore(location.latitude, location.longitude).execute()
+            if (data.isSuccessful) {
+                nearStoreInfo.postValue(data.body())
+            }
+        }
+    }
 }

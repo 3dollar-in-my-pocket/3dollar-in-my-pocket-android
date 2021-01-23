@@ -4,7 +4,7 @@
     package="com.zion830.threedollars">
     
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     
     <queries>
         <package android:name="com.kakao.talk" />
@@ -13,7 +13,7 @@
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_app_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -37,9 +37,17 @@
             android:name=".login.LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".ui.home.AddStoreActivity"
+            android:name=".ui.addstore.AddStoreActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-    
+        <activity
+            android:name=".ui.store_detail.StoreDetailActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".ui.store_detail.StoreByMenuActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".ui.store_detail.EditStoreActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -49,7 +57,7 @@
             
                 <data
                     android:host="oauth"
-                    android:scheme="kakao3826b74e62cacacd6525130f6a2469e0" />
+                    android:scheme="kakao95f91f9656806e132796f0071ab99aaa" />
             </intent-filter>
         </activity>
         

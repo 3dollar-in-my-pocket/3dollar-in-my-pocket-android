@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.response.Menu" />
+    </data>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+        
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="104dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_edittext"
+            android:hint="@string/hint_menu_name"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp"
+            android:singleLine="true"
+            android:text="@{item.name}"
+            android:textColor="@color/color_black"
+            android:textColorHint="@color/color_gray1"
+            android:textSize="16sp" />
+        
+        <EditText
+            android:id="@+id/et_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/selector_edittext"
+            android:hint="@string/hint_menu_price"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp"
+            android:singleLine="true"
+            android:text="@{item.price}"
+            android:textColor="@color/color_black"
+            android:textColorHint="@color/color_gray1"
+            android:textSize="16sp" />
+    </LinearLayout>
+</layout>

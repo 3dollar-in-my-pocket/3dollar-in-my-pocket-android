@@ -2,10 +2,8 @@ package com.zion830.threedollars.network
 
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.request.NewUser
-import com.zion830.threedollars.repository.model.response.LoginResponse
-import com.zion830.threedollars.repository.model.response.MyReviewResponse
-import com.zion830.threedollars.repository.model.response.MyStoreResponse
-import com.zion830.threedollars.repository.model.response.UserInfoResponse
+import com.zion830.threedollars.repository.model.response.*
+import okhttp3.MultipartBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -19,27 +17,40 @@ interface ServiceApi {
         @Query("category") category: String,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
-    )
+    ): Call<SearchByDistanceResponse>
 
     @GET("/api/v1/category/review")
     fun getCategoryByReview(
         @Query("category") category: String,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
-    )
+    ): Call<SearchByReviewResponse>
 
     // 리뷰
-    @GET("/api/v1/review/save")
+    @GET("/api/v1/review/user")
     fun getReview(
         @Query("page") page: Int,
         @Query("userId") userId: Int
     )
 
-    @POST("/api/v1/review/review")
+    @POST("/api/v1/review/save")
     fun saveReview(
         @Query("storeId") storeId: Int,
+        @Query("userId") userId: Int,
+        @Body newReview: NewReview
+    ): Call<ResponseBody>
+
+    @PUT("/api/v1/review/{reviewId}")
+    fun addReview(
+        @Query("storeId") storeId: Int,
         @Query("userId") userId: Int
-    )
+    ): Call<ResponseBody>
+
+    @DELETE("/api/v1/review/{reviewId}")
+    fun deleteReview(
+        @Query("storeId") storeId: Int,
+        @Query("userId") userId: Int
+    ): Call<ResponseBody>
 
     // 가게
     @DELETE("/api/v1/store/delete")
@@ -47,26 +58,44 @@ interface ServiceApi {
         @Query("deleteReasonType") deleteReasonType: String, // TODO : enum으로 교체
         @Query("storeId") storeId: Int,
         @Query("userId") userId: Int
-    )
+    ): Call<ResponseBody>
 
     @GET("/api/v1/store/detail")
     fun getStoreDetail(
         @Query("storeId") storeId: Int,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
-    )
+    ): Call<StoreDetailResponse>
 
     @GET("/api/v1/store/get")
     fun getAllStore(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
-    )
+    ): Call<AllStoreResponse>
 
     @POST("/api/v1/store/save")
-    fun saveStore()
+    @Multipart
+    fun saveStore(
+        @QueryMap storeInfo: Map<String, String>,
+        @Part images: List<MultipartBody.Part>
+    ): Call<ResponseBody>
+
+    @POST("/api/v1/store/save")
+    fun saveStore(
+        @QueryMap storeInfo: Map<String, String>
+    ): Call<ResponseBody>
 
     @PUT("/api/v1/store/update")
-    fun updateStore()
+    @Multipart
+    fun updateStore(
+        @QueryMap storeInfo: Map<String, String>,
+        @Part images: List<MultipartBody.Part>
+    ): Call<ResponseBody>
+
+    @PUT("/api/v1/store/update")
+    fun updateStore(
+        @QueryMap storeInfo: Map<String, String>
+    ): Call<ResponseBody>
 
     @GET("/api/v1/store/user")
     fun getMyStore(

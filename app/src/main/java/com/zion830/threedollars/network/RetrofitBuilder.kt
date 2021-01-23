@@ -28,10 +28,22 @@ object RetrofitBuilder {
         .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
         .build()
 
+    private val okHttpClientNoHeader = OkHttpClient.Builder()
+        .addInterceptor(interceptor)
+        .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
+        .build()
+
     val service: ServiceApi = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
+        .build()
+        .create(ServiceApi::class.java)
+
+    val loginService: ServiceApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClientNoHeader)
         .build()
         .create(ServiceApi::class.java)
 }

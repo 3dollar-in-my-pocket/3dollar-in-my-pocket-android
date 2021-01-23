@@ -5,26 +5,30 @@ import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagedList
 import com.zion830.threedollars.repository.model.response.Store
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import retrofit2.await
+import kotlin.coroutines.CoroutineContext
 
-class MyStoreDataSource(private val scope: CoroutineScope) : PageKeyedDataSource<Int, Store>() {
+class MyStoreDataSource(
+    private val scope: CoroutineScope,
+    private val context: CoroutineContext
+) : PageKeyedDataSource<Int, Store>() {
 
     private val repository: UserRepository = UserRepository()
 
     private var totalPage = 0
 
     class Factory(
-        private val scope: CoroutineScope
+        private val scope: CoroutineScope,
+        private val context: CoroutineContext
     ) : DataSource.Factory<Int, Store>() {
 
-        override fun create(): DataSource<Int, Store> = MyStoreDataSource(scope)
+        override fun create(): DataSource<Int, Store> = MyStoreDataSource(scope, context)
     }
 
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Store>) {
-        scope.launch(Dispatchers.IO) {
+        scope.launch(context) {
             val data = repository.getMyStore().await()
             totalPage = data.totalPages
             callback.onResult(data.store ?: listOf(), null, 2)
@@ -40,7 +44,7 @@ class MyStoreDataSource(private val scope: CoroutineScope) : PageKeyedDataSource
             return
         }
 
-        scope.launch(Dispatchers.IO) {
+        scope.launch(context) {
             val data = repository.getMyStore(page = params.key).await()
             callback.onResult(data.store ?: listOf(), params.key + 1)
         }

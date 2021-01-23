@@ -1,151 +1,327 @@
-<?xml version="1.0" encoding="utf-8"?><?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-    
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.addstore.AddStoreViewModel" />
+        
+        <import type="android.view.View" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.libraries.maps.SupportMapFragment"
-            android:layout_width="0dp"
-            android:layout_height="264dp"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="49dp"
-            android:textSize="20sp"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+                    android:layout_width="0dp"
+                    android:layout_height="264dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="49dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_marker"
+                    app:layout_constraintBottom_toBottomOf="@id/map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/map" />
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_title"
+                    android:layout_width="0dp"
+                    android:layout_height="98dp"
+                    android:background="@drawable/rect_white_bottom_corner"
+                    android:elevation="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="UnusedAttribute">
+                    
+                    <ImageButton
+                        android:id="@+id/btn_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="?attr/actionBarItemBackground"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_close_black"
+                        app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                        app:layout_constraintStart_toStartOf="parent" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_add_store"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/btn_back" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                <TextView
+                    android:id="@+id/tv_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="160dp"
+                    android:background="@drawable/rect_red"
+                    android:ellipsize="end"
+                    android:maxEms="13"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="5dp"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_title"
+                    tools:text="내 위치 내 위치" />
+                
+                <ImageButton
+                    android:id="@+id/btn_find_location"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/rect_white_radius_8"
+                    android:contentDescription="@string/maps_YOUR_LOCATION"
+                    android:src="@drawable/ic_current_location"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_location"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_location" />
+                
+                <LinearLayout
+                    android:id="@+id/layout_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="40dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/map">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:paddingHorizontal="24dp"
+                        android:text="@string/category"
+                        android:textColor="@color/color_black"
+                        android:textSize="16sp" />
+                    
+                    <com.zion830.threedollars.customview.ToggleButtonGroupTableLayout
+                        android:id="@+id/grid_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="20dp">
+                        
+                        <TableRow>
+                            
+                            <RadioButton
+                                android:id="@+id/rad1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_menu"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:minHeight="40dp"
+                                android:text="@string/bung"
+                                android:textColor="@drawable/selector_menu_color" />
+                            
+                            <RadioButton
+                                android:id="@+id/rad2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_menu"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:minHeight="40dp"
+                                android:text="@string/tako"
+                                android:textColor="@drawable/selector_menu_color" />
+                            
+                            <RadioButton
+                                android:id="@+id/rad3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_menu"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:minHeight="40dp"
+                                android:text="@string/gye"
+                                android:textColor="@drawable/selector_menu_color" />
+                        </TableRow>
+                        
+                        <TableRow>
+                            
+                            <RadioButton
+                                android:id="@+id/rad4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_menu"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:minHeight="40dp"
+                                android:text="@string/hodduck"
+                                android:textColor="@drawable/selector_menu_color" />
+                            
+                            <RadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:minHeight="40dp"
+                                android:visibility="invisible" />
+                            
+                            <RadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:minHeight="40dp"
+                                android:visibility="invisible" />
+                        </TableRow>
+                    </com.zion830.threedollars.customview.ToggleButtonGroupTableLayout>
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:paddingHorizontal="24dp"
+                        android:text="@string/store_name"
+                        android:textColor="@color/color_black"
+                        android:textSize="16sp" />
+                    
+                    <EditText
+                        android:id="@+id/et_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/selector_edittext"
+                        android:hint="@string/hint_menu_location"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="10dp"
+                        android:singleLine="true"
+                        android:text="@={viewModel.storeName}"
+                        android:textColor="@color/color_black"
+                        android:textColorHint="@color/color_gray1"
+                        android:textSize="16sp" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/add_photo"
+                        android:textColor="@color/color_black"
+                        android:textSize="16sp" />
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="24dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:listitem="@layout/item_photo" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/store_detail_menu"
+                        android:textColor="@color/color_black"
+                        android:textSize="16sp" />
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_edit_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="8dp"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_menu_edit" />
+                    
+                    <ImageButton
+                        android:id="@+id/btn_add"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginHorizontal="24dp"
+                        android:background="@drawable/rect_pink_stroke_corner8"
+                        android:src="@drawable/ic_add" />
+                    
+                    <Button
+                        android:id="@+id/btn_submit"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginVertical="40dp"
+                        android:background="@drawable/selector_btn"
+                        android:enabled="@{viewModel.isFinished()}"
+                        android:padding="10dp"
+                        android:text="@string/add_store_finish"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+        
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_title"
-            android:layout_width="0dp"
-            android:layout_height="98dp"
-            android:background="@drawable/rect_white_bottom_corner"
-            android:elevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute">
-            
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginBottom="8dp"
-                android:background="?attr/actionBarItemBackground"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_close"
-                app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                app:layout_constraintStart_toStartOf="parent" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_add_store"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/btn_back"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_back" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        
-        
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
-            android:background="@drawable/rect_red"
-            android:ellipsize="end"
-            android:maxEms="13"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="5dp"
-            android:singleLine="true"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_title"
-            tools:text="내 위치 내 위치" />
-        
-        <ImageButton
-            android:id="@+id/btn_find_location"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/rect_white"
-            android:contentDescription="@string/maps_YOUR_LOCATION"
-            android:src="@drawable/ic_current_location"
-            app:layout_constraintBottom_toBottomOf="@id/tv_location"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_location" />
-        
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="40dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/map">
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/category"
-                android:textColor="@color/color_black"
-                android:textSize="16sp" />
-            
-            <GridView
-                android:id="@+id/grid_menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:numColumns="3" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/store_name"
-                android:textColor="@color/color_black"
-                android:textSize="16sp" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/add_photo"
-                android:textColor="@color/color_black"
-                android:textSize="16sp" />
-            
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_photo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_photo" />
-            
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/store_detail_menu"
-                android:textColor="@color/color_black"
-                android:textSize="16sp" />
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

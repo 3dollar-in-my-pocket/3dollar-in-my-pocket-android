@@ -5,6 +5,7 @@ import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
@@ -17,8 +18,8 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
 
     override fun initView() {
         binding.etName.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            val handler: Handler = Handler()
-            val runnable: Runnable = object : Runnable {
+            val handler = Handler()
+            val runnable = object : Runnable {
                 override fun run() {
                     binding.scrollView.smoothScrollTo(0, binding.btnFinish.bottom)
                     handler.postDelayed(this, 10)

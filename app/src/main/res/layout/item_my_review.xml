@@ -4,10 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-        
+    
         <variable
             name="item"
             type="com.zion830.threedollars.repository.model.response.Review" />
+    
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +20,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rect_light_gray"
+        android:onClick="@{()-> listener.onClick(item)}"
         android:paddingHorizontal="24dp"
         android:paddingVertical="12dp">
         

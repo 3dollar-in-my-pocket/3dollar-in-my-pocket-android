@@ -1,5 +1,7 @@
 package zion830.com.common.base
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
@@ -7,17 +9,19 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import zion830.com.common.ext.disableDoubleClick
+import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.internal.ViewUtils.dpToPx
 import zion830.com.common.ext.filterNotNull
-import zion830.com.common.ext.toItemListener
-import zion830.com.common.ext.toViewListener
+
 
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter("bindItem")
 fun RecyclerView.bindItems(items: List<Any>?) {
     val defaultList = items?.filterNotNull() ?: listOf()
-    (adapter as BaseRecyclerView<*, Any>).submitList(defaultList)
+    (adapter as? BaseRecyclerView<*, Any>)?.submitList(defaultList)
 }
 
 @BindingAdapter("loadImage")
@@ -44,13 +48,47 @@ fun ImageView.loadUriImg(uri: Uri?) {
         .into(this)
 }
 
-@BindingAdapter("onSingleClick")
-fun View.onSingleClick(listener: View.OnClickListener) {
-    val onItemClickListener = listener.toItemListener()
-        .disableDoubleClick()
-        .toViewListener()
+@SuppressLint("RestrictedApi")
+@BindingAdapter("loadRoundImage")
+fun ImageView.loadRoundUriImg(uri: Uri?) {
+    val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
+    setPadding(0, 0, 0, 0)
 
+    Glide.with(context)
+        .load(uri)
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .apply(requestOptions)
+        .into(this)
+}
+
+@SuppressLint("RestrictedApi")
+@BindingAdapter("loadRoundImage")
+fun ImageView.loadRoundUrlImg(url: String?) {
+    if (url.isNullOrBlank()) {
+        return
+    }
+
+    val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
+    setPadding(0, 0, 0, 0)
+
+    Glide.with(context)
+        .load(url)
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .apply(requestOptions)
+        .into(this)
+}
+
+@BindingAdapter("loadImage")
+fun ImageView.loadBitmap(bitmap: Bitmap?) {
+    Glide.with(context)
+        .load(bitmap)
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(this)
+}
+
+@BindingAdapter("onSingleClick")
+fun View.onSingleClick(listener: () -> Unit) {
     setOnClickListener {
-        onItemClickListener.onClick(it)
+        listener()
     }
 }

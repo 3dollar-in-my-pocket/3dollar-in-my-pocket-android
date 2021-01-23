@@ -8,15 +8,16 @@ import com.zion830.threedollars.repository.model.response.MyReviewResponse
 import com.zion830.threedollars.repository.model.response.MyStoreResponse
 import com.zion830.threedollars.repository.model.response.UserInfoResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
+import okhttp3.Response
 import retrofit2.Call
 
 class UserRepository(
-    private val service: ServiceApi = RetrofitBuilder.service,
+    private val service: ServiceApi = RetrofitBuilder.service
 ) {
 
     suspend fun tryLogin(nickName: String): LoginResponse? {
-        val newUser = NewUser(nickName, SharedPrefUtils.getKakaoId() ?: "")
-        return service.tryLogin(newUser)
+        val newUser = NewUser(nickName, SharedPrefUtils.getKakaoId() ?: "empty", "KAKAO")
+        return RetrofitBuilder.loginService.tryLogin(newUser)
     }
 
     suspend fun getUserInfo(userId: Int = SharedPrefUtils.getUserId()): UserInfoResponse? = service.getUser(userId)
@@ -31,5 +32,5 @@ class UserRepository(
         page: Int = 1
     ): Call<MyStoreResponse> = service.getMyStore(userId, page)
 
-    suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<okhttp3.Response> = service.setName(newName, userId)
+    suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<Response> = service.setName(newName, userId)
 }

@@ -25,6 +25,9 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
         }
+        binding.btnFinish.setOnClickListener {
+            viewModel.updateName()
+        }
     }
 
     companion object {

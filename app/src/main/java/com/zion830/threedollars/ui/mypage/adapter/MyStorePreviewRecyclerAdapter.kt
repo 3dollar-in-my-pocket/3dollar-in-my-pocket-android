@@ -5,12 +5,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ItemMyRestaurantPreviewBinding
 import com.zion830.threedollars.databinding.ItemMyRestaurantShowAllBinding
 import com.zion830.threedollars.repository.model.response.Store
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class MyStorePreviewRecyclerAdapter(
+    private val storeClickEvent: OnItemClickListener<Store>,
     private val showAllClickEvent: OnItemClickListener<Store>
 ) : ListAdapter<Store, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<Store?>() {
     override fun areItemsTheSame(oldItem: Store, newItem: Store): Boolean = oldItem.id == newItem.id
@@ -25,8 +27,12 @@ class MyStorePreviewRecyclerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MyStoreViewHolder -> holder.bind(getItem(position), null)
-            is MyStoreShowAllViewHolder -> holder.bind(getItem(position), showAllClickEvent)
+            is MyStoreViewHolder -> {
+                holder.bind(getItem(position), storeClickEvent)
+            }
+            is MyStoreShowAllViewHolder -> {
+                holder.bind(getItem(position), showAllClickEvent)
+            }
         }
     }
 
@@ -48,7 +54,7 @@ class MyStorePreviewRecyclerAdapter(
     }
 }
 
-class MyStoreViewHolder(parent: ViewGroup) : BaseViewHolder<ItemMyRestaurantShowAllBinding, Store>(R.layout.item_my_restaurant_preview, parent) {}
+class MyStoreViewHolder(parent: ViewGroup) : BaseViewHolder<ItemMyRestaurantPreviewBinding, Store>(R.layout.item_my_restaurant_preview, parent) {}
 
 class MyStoreShowAllViewHolder(parent: ViewGroup) :
     BaseViewHolder<ItemMyRestaurantShowAllBinding, Store>(R.layout.item_my_restaurant_show_all, parent) {}

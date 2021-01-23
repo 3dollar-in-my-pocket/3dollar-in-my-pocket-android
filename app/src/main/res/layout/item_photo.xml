@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
-        
+    
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.Image" />
+            type="com.zion830.threedollars.ui.addstore.StoreImage" />
+    
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,9 +29,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        
+    
         <ImageView
-            loadImage="@{item.url}"
+            loadRoundImage="@{item.uri}"
+            android:onClick="@{() -> listener.onClick(item)}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@null"

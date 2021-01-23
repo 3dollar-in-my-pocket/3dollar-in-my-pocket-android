@@ -101,7 +101,7 @@
                 
                 <Button
                     android:id="@+id/btn_finish"
-                    onSingleClick="@{() -> viewModel.tryLogin()}"
+                    onSingleClick="@{() -> viewModel.updateName()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:drawablePadding="5dp"
-                    android:onClick="@{() -> viewModel.tryLogin()}"
+                    android:onClick="@{() -> viewModel.updateName()}"
                     android:text="@string/login_name_already_exist"
                     android:textColor="@color/color_main_red"
                     android:visibility="@{viewModel.isAvailable ? View.INVISIBLE : View.VISIBLE}"

@@ -10,19 +10,13 @@ android {
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "base_url", properties.getProperty('base_url')
+        resValue "string", "develop_url", properties.getProperty('develop_url')
         resValue "string", "kakao_key", properties.getProperty('kakao_key')
         resValue "string", "kakao_rest_key", properties.getProperty('kakao_rest_key')
         multiDexEnabled true
     }
 
-    buildTypes {
-        release {
-            defaultConfig.resValue "string", "base_url", properties.getProperty('release.base_url')
-        }
-        debug {
-            defaultConfig.resValue "string", "base_url", properties.getProperty('debug.base_url')
-        }
-    }
 }
 
 dependencies {

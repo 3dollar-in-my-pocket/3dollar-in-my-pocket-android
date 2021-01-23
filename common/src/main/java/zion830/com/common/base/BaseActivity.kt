@@ -5,10 +5,10 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.observe
 import zion830.com.common.BR
+import zion830.com.common.ext.showSnack
 
-@AndroidEntryPoint
 abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes val layoutId: Int
 ) : AppCompatActivity() {
@@ -22,6 +22,10 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
         binding = DataBindingUtil.setContentView(this, layoutId)
         initBinding()
         initView()
+
+        viewModel.msgTextId.observe(this) {
+            binding.root.showSnack(it)
+        }
     }
 
     open fun initBinding() {

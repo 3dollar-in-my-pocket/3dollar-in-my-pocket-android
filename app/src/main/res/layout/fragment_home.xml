@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.home.HomeFragment">
     
+    <data>
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.home.HomeViewModel" />
+    </data>
+    
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,25 +23,28 @@
             android:layout_marginTop="56dp"
             android:src="@drawable/ic_back" />
         
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.libraries.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="349dp"
-            android:layout_gravity="bottom"
-            android:textSize="20sp" />
-        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="24dp">
+            android:layout_height="match_parent">
+            
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.libraries.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:minHeight="340dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_msg2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="20sp" />
             
             <LinearLayout
                 android:id="@+id/menu_buttons"
                 style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="56dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/rect_white_stroke_black"
                 android:orientation="horizontal"
                 android:paddingHorizontal="22dp"
@@ -53,7 +63,7 @@
                     android:background="@android:color/transparent"
                     android:drawableTop="@drawable/ic_menu1"
                     android:drawablePadding="-4dp"
-                    android:text="@string/menu1"
+                    android:text="@string/bung"
                     android:textColor="@color/color_4f4f4f"
                     android:textStyle="bold" />
                 
@@ -66,7 +76,7 @@
                     android:background="@android:color/transparent"
                     android:drawableTop="@drawable/ic_menu2"
                     android:drawablePadding="-4dp"
-                    android:text="@string/menu2"
+                    android:text="@string/tako"
                     android:textColor="@color/color_4f4f4f"
                     android:textStyle="bold" />
                 
@@ -79,7 +89,7 @@
                     android:background="@android:color/transparent"
                     android:drawableTop="@drawable/ic_menu3"
                     android:drawablePadding="-4dp"
-                    android:text="@string/menu3"
+                    android:text="@string/gye"
                     android:textColor="@color/color_4f4f4f"
                     android:textStyle="bold" />
                 
@@ -92,7 +102,7 @@
                     android:background="@android:color/transparent"
                     android:drawableTop="@drawable/ic_menu4"
                     android:drawablePadding="-4dp"
-                    android:text="@string/menu4"
+                    android:text="@string/hodduck"
                     android:textColor="@color/color_4f4f4f"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -101,7 +111,8 @@
                 android:id="@+id/tv_msg1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="63dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/nearest_store"
                 android:textColor="@color/color_sub_red"
                 android:textStyle="bold"
@@ -110,17 +121,35 @@
             
             <TextView
                 android:id="@+id/tv_msg2"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="4dp"
+                android:bufferType="spannable"
                 android:letterSpacing="-0.05"
                 android:lineSpacingExtra="0sp"
                 android:text="@string/if_you_have_money"
                 android:textColor="@android:color/black"
-                android:textSize="32sp"
+                android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_msg1"
                 tools:ignore="UnusedAttribute" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_store"
+                bindItem="@{viewModel.nearStoreInfo}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:paddingHorizontal="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_msg2"
+                tools:listitem="@layout/item_store_location" />
             
             <TextView
                 android:id="@+id/tv_my_location"
@@ -144,7 +173,8 @@
                 android:id="@+id/btn_find_location"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/rect_white"
+                android:layout_margin="24dp"
+                android:background="@drawable/rect_white_radius_8"
                 android:contentDescription="@string/maps_YOUR_LOCATION"
                 android:src="@drawable/ic_current_location"
                 app:layout_constraintBottom_toBottomOf="@id/tv_my_location"

@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName
 
 data class StoreList(
     @SerializedName("category")
-    val category: String,
+    val category: String = "BUNGEOPPANG",
     @SerializedName("distance")
-    val distance: Int,
+    val distance: Int = 50,
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("latitude")
-    val latitude: Int,
+    val latitude: Double = 0.0,
     @SerializedName("longitude")
-    val longitude: Int,
+    val longitude: Double = 0.0,
     @SerializedName("rating")
-    val rating: Int,
+    val rating: Float = 1f,
     @SerializedName("storeName")
-    val storeName: String
+    val storeName: String = ""
 )

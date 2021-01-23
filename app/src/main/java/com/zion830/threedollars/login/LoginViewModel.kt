@@ -1,15 +1,19 @@
 package com.zion830.threedollars.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.response.LoginResponse
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import retrofit2.await
 import zion830.com.common.base.BaseViewModel
+import java.net.ConnectException
 
 class LoginViewModel : BaseViewModel() {
 
@@ -29,19 +33,39 @@ class LoginViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
-    val isFinishing: LiveData<Boolean> = Transformations.map(_loginResult) {
-        it != null
-    }
+    private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
+    val isNameUpdated: LiveData<Boolean>
+        get() = _isNameUpdated
 
     fun tryLogin() {
-        if (userName.value.isNullOrBlank()) {
-            Log.w(javaClass.name, "userName이 없습니다.")
-            return
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val loginResult = userRepository.tryLogin(userName.value!!)
             _loginResult.postValue(loginResult)
+        }
+    }
+
+    fun updateName() {
+        if (userName.value.isNullOrBlank()) {
+            _msgTextId.value = R.string.name_empty
+            return
+        }
+        val updateNameHandler = CoroutineExceptionHandler { _, t ->
+            when (t) {
+                is HttpException -> {
+                    _isAvailable.postValue(false)
+                }
+                is ConnectException -> {
+                    _msgTextId.postValue(R.string.set_name_failed)
+                }
+                else -> {
+                    _msgTextId.postValue(R.string.set_name_success)
+                    _isNameUpdated.postValue(true)
+                }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
+            userRepository.updateName(userName.value!!).await()
         }
     }
 }

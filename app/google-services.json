@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "174359764387",
+    "firebase_url": "https://dollar-in-my-pocket.firebaseio.com",
+    "project_id": "dollar-in-my-pocket",
+    "storage_bucket": "dollar-in-my-pocket.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174359764387:android:832c692b4d702749e60e16",
+        "android_client_info": {
+          "package_name": "com.zion830.threedollars"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174359764387-05bd0vegctod79boru66gsdbfcjicg0o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "46914553852c3652701d631d00e1a80a493848a5"
+          }
+        },
+        {
+          "client_id": "174359764387-34sjr18nsc3k08tuvtjkcp0rbp2scdb9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG4TSUrMkX0OOAtQuhpQigyFe0iO9C-2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174359764387-34sjr18nsc3k08tuvtjkcp0rbp2scdb9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "174359764387-ofqktq0ngncki9fphjmueaqdpoos0gd4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.macgongmon.-dollar-in-my-pocket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

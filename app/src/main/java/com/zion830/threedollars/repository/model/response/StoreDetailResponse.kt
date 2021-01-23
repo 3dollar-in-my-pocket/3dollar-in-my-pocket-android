@@ -13,13 +13,13 @@ data class StoreDetailResponse(
     @SerializedName("image")
     val image: List<Image>,
     @SerializedName("latitude")
-    val latitude: Int,
+    val latitude: Double,
     @SerializedName("longitude")
-    val longitude: Int,
+    val longitude: Double,
     @SerializedName("menu")
     val menu: List<Menu>,
     @SerializedName("rating")
-    val rating: Int,
+    val rating: Float,
     @SerializedName("review")
     val review: List<Review>,
     @SerializedName("storeName")

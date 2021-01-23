@@ -15,9 +15,5 @@
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"
-        tools:layout="@layout/fragment_mypage"></fragment>
-    
-    <activity
-        android:id="@+id/navigation_add_store"
-        android:name="" />
+        tools:layout="@layout/fragment_mypage" />
 </navigation>
