@@ -1,9 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.paging:paging-runtime:2.1.2@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/dc656a3e4206a6ca4d8fa9554d68801b/paging-runtime-2.1.2/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/dc656a3e4206a6ca4d8fa9554d68801b/paging-runtime-2.1.2/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/dc656a3e4206a6ca4d8fa9554d68801b/paging-runtime-2.1.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3f640e14f1dbfbc23f783ec2769ad7fb/paging-runtime-2.1.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b83e29cff39d88b17b2e646b5fa103ad/paging-runtime-2.1.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/7dc7607ff7f7a06ae22345f4dfd14499/paging-runtime-2.1.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/84f0ab7c396a7f551126222190d879af/paging-runtime-2.1.2/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/dc656a3e4206a6ca4d8fa9554d68801b/paging-runtime-2.1.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/dc656a3e4206a6ca4d8fa9554d68801b/paging-runtime-2.1.2/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

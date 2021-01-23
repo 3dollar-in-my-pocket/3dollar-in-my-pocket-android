@@ -27,17 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             
-            <fragment
-                android:id="@+id/map"
-                android:name="com.google.android.libraries.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:minHeight="340dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_msg2"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:textSize="20sp" />
-            
             <LinearLayout
                 android:id="@+id/menu_buttons"
                 style="?android:attr/buttonBarStyle"
@@ -134,7 +123,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_msg1"
                 tools:ignore="UnusedAttribute" />
-            
+    
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.libraries.maps.SupportMapFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="40dp"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/rv_store" />
+    
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"
                 bindItem="@{viewModel.nearStoreInfo}"

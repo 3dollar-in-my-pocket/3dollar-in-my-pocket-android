@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyDiary.iml" filepath="$PROJECT_DIR$/.idea/modules/MyDiary.iml" group="MyDiary" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="MyDiary/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/common.iml" group="MyDiary/common" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyDiary.iml" filepath="$PROJECT_DIR$/.idea/modules/MyDiary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyDiary.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyDiary.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/MyDiary.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/MyDiary.common.iml" />
     </modules>
   </component>
 </project>
