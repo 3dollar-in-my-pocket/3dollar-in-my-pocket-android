@@ -12,11 +12,8 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
-import com.zion830.threedollars.utils.showToast
-
 
 class AddReviewDialog : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
@@ -35,10 +32,10 @@ class AddReviewDialog : DialogFragment() {
             viewModel.addReview(binding.rating.rating)
             dismiss()
         }
+
         viewModel.addReviewResult.observe(this) {
-            showToast(if (it) R.string.success_add_review else R.string.failed_add_review)
             if (it) {
-                dismiss()
+                viewModel.clearReview()
             }
         }
         return binding.root

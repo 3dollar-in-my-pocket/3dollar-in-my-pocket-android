@@ -19,7 +19,6 @@ import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
-import zion830.com.common.ext.addNewFragment
 
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
 
@@ -60,7 +59,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         binding.ivStore.setOnClickListener {
             if (viewModel.storeInfo.value?.image?.isNotEmpty() == true) {
-                supportFragmentManager.addNewFragment(R.id.container, StorePhotoFragment(), StorePhotoFragment::class.java.name)
+                StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         }
         binding.rvMenu.adapter = menuAdapter
