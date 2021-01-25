@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white">
-        
+    
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
                         setDistance="@{viewModel.storeInfo.distance}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
+                        android:layout_marginStart="20dp"
                         android:letterSpacing="-0.06"
                         android:lineSpacingExtra="-3dp"
                         android:textColor="@color/color_black"
@@ -174,10 +174,10 @@
                         android:background="@drawable/circle_black"
                         android:gravity="center"
                         android:padding="4dp"
-                        android:text="@{@string/img_count(viewModel.storeInfo.image.size())}"
+                        android:text="@{@string/img_count(viewModel.storeInfo.image.size() - 1)}"
                         android:textColor="@color/gmm_white"
                         android:textSize="11sp"
-                        android:visibility="@{viewModel.storeInfo.image.size() == 0 ? View.GONE : View.VISIBLE}"
+                        android:visibility="@{viewModel.storeInfo.image.size() &lt; 2 ? View.GONE : View.VISIBLE}"
                         app:layout_constraintBottom_toBottomOf="@id/iv_store"
                         app:layout_constraintStart_toStartOf="@id/iv_store"
                         app:layout_constraintTop_toTopOf="@id/iv_store" />
@@ -335,16 +335,7 @@
                     android:textSize="16sp"
                     android:visibility="@{viewModel.storeInfo.review.size() == 0 ? View.VISIBLE : View.GONE}" />
             </LinearLayout>
-            
-            <LinearLayout
-                android:id="@+id/container"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

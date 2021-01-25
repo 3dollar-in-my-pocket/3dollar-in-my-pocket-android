@@ -2,11 +2,10 @@ package com.zion830.threedollars.ui.home
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.Spanned
 import android.util.Log
 import android.view.View
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -16,7 +15,6 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.StyleSpan
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -88,11 +86,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 })
         )
 
-        // 3천원 글자 두껍게 바꾸기
-        val span = binding.tvMsg2.text as Spannable
-        span.setSpan(StyleSpan(Typeface.BOLD), 5, 9, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        binding.tvMsg2.text = span
-
         // 상단 버튼바
         binding.btnMenu1.setOnClickListener {
             startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.BUNGEOPPANG.key))
@@ -105,6 +98,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
         binding.btnMenu4.setOnClickListener {
             startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.HOTTEOK.key))
+        }
+
+        // 3천원 글자 두껍게 바꾸기
+        binding.tvMsg2.text = buildSpannedString {
+            append(getString(R.string.if_you_have_money1))
+            bold { append(getString(R.string.if_you_have_money2)) }
+            append(getString(R.string.if_you_have_money3))
         }
     }
 

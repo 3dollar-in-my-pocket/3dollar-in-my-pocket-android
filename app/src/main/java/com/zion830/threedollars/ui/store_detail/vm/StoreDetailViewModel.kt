@@ -49,9 +49,18 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
+    fun clearReview() {
+        reviewContent.value = ""
+    }
+
     fun addReview(rating: Float) {
+        if (reviewContent.value.isNullOrBlank()) {
+            _addReviewResult.postValue(false)
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val newReview = NewReview(reviewContent.value ?: "", rating)
+            val newReview = NewReview(reviewContent.value!!, rating)
             repository.addReview(_storeInfo.value?.id ?: -1, SharedPrefUtils.getUserId(), newReview).await()
             _msgTextId.postValue(R.string.success_add_review)
             _addReviewResult.postValue(true)
