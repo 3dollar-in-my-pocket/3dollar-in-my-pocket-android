@@ -181,7 +181,7 @@
                 android:layout_marginStart="6dp"
                 android:text="@{StringUtils.getMenuDescription(viewModel.category)}"
                 android:textColor="@android:color/black"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_category"
                 app:layout_constraintStart_toEndOf="@id/tv_category"
                 app:layout_constraintTop_toTopOf="@id/tv_category" />

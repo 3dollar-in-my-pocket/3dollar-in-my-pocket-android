@@ -55,7 +55,9 @@
     <string name="none">없음</string>
     
     <string name="nearest_store">가장 가까운 음식점</string>
-    <string name="if_you_have_money">지금 당장\n3천원이 있으시다면</string>
+    <string name="if_you_have_money1">지금 당장\n</string>
+    <string name="if_you_have_money2">3천원</string>
+    <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
     <string name="sort_by_distance">거리순</string>
     
