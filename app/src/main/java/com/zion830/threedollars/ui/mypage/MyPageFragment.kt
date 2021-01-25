@@ -5,7 +5,7 @@ import android.content.Intent
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -43,7 +43,7 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
 
         binding.rvStore.adapter = storeAdapter
         binding.rvReview.adapter = reviewAdapter
-        PagerSnapHelper().attachToRecyclerView(binding.rvStore)
+        LinearSnapHelper().attachToRecyclerView(binding.rvStore)
 
         binding.layoutNickname.onSingleClick {
             addEditNameFragment()
