@@ -71,7 +71,7 @@
             app:sliderIndicatorMargin="15dp"
             app:sliderIndicatorMarginBottom="50dp"
             app:sliderIndicatorOrientation="horizontal"
-            app:sliderIndicatorPadding="3dp"
+            app:sliderIndicatorPadding="4dp"
             app:sliderIndicatorRadius="2dp"
             app:sliderIndicatorSelectedColor="@color/color_sub_red"
             app:sliderIndicatorUnselectedColor="@color/color_gray2" />

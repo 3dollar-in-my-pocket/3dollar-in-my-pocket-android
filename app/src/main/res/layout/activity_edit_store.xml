@@ -130,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:bufferType="spannable"
-                        android:text="@{@string/writer(viewModel.storeInfo.user.name)}"
+                        app:setNameBold="@{viewModel.storeInfo.user.name}"
                         android:textColor="@color/color_black"
                         android:textSize="22sp"
                         app:layout_constraintStart_toStartOf="parent"

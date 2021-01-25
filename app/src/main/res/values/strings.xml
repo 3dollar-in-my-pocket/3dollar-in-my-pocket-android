@@ -91,7 +91,7 @@
     <string name="store_name">가게 이름</string>
     <string name="add_store_info">가게 정보 추가하기</string>
     <string name="add_photo">사진 등록 (선택)</string>
-    <string name="writer">%s님이\n제보한 음식점입니다.</string>
+    <string name="writer">님이\n제보한 음식점입니다.</string>
     <string name="edit_photo">총 %d개의 사진 제보!</string>
     <string name="edit_menu">총 %d개의 메뉴 제보!</string>
     <string name="option">(선택)</string>

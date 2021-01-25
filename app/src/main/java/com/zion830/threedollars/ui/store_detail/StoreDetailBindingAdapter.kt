@@ -1,8 +1,14 @@
 package com.zion830.threedollars.ui.store_detail
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.style.StyleSpan
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.toSpannable
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -13,16 +19,28 @@ import com.google.android.material.internal.ViewUtils
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.response.Image
 import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.utils.StringUtils.getString
 
+@BindingAdapter("setNameBold")
+fun TextView.setNameBold(name: String?) {
+    text = buildSpannedString {
+        bold { append(name ?: "?") }
+        append(getString(R.string.writer))
+    }
+}
 
 @BindingAdapter("setDistance")
 fun TextView.setDistance(distance: Int) {
-    text = when {
+    val spannableText = when {
         distance <= 50 -> "50${context.getString(R.string.store_distance)}"
         distance <= 500 -> "500${context.getString(R.string.store_distance)}"
         distance <= 1000 -> context.getString(R.string.store_distance_1km)
         else -> context.getString(R.string.store_distance_long)
-    }
+    }.toSpannable()
+
+    val endIndex = spannableText.indexOf("m") + 4
+    spannableText.setSpan(StyleSpan(Typeface.BOLD), 0, endIndex, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+    text = spannableText
 }
 
 @SuppressLint("RestrictedApi")

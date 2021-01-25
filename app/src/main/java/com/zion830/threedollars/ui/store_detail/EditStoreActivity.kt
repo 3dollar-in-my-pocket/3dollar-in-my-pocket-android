@@ -4,8 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface.BOLD
-import android.text.Spannable
 import android.util.Log
 import android.widget.EditText
 import androidx.activity.viewModels
@@ -16,7 +14,6 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.StyleSpan
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityEditStoreBinding
 import com.zion830.threedollars.repository.model.response.Menu
@@ -106,7 +103,6 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         binding.btnDelete.setOnClickListener {
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
-        setWriterTextStyle()
         viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
 
         viewModel.editStoreResult.observe(this) {
@@ -115,16 +111,6 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 finish()
             }
         }
-    }
-
-    private fun setWriterTextStyle() {
-        val spannableText = binding.tvStoreWriter.text as Spannable
-        spannableText.setSpan(
-            StyleSpan(BOLD),
-            0,
-            binding.tvStoreWriter.text.length,
-            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-        )
     }
 
     private fun initMap() {
