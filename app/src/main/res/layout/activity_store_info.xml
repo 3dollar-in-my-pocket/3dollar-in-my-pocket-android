@@ -39,25 +39,26 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_title"
                 android:layout_width="0dp"
-                android:layout_height="98dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/rect_white_bottom_corner"
                 android:elevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute">
-                
+    
                 <ImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="4dp"
                     android:layout_marginStart="24dp"
-                    android:layout_marginBottom="4dp"
                     android:background="?attr/actionBarItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_back_black"
                     app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
                 
                 <TextView
                     android:id="@+id/tv_store_name"

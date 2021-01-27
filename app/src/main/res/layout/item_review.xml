@@ -4,14 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-        
+    
         <variable
             name="item"
             type="com.zion830.threedollars.repository.model.response.Review" />
+    
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:onClick="@{() -> listener.onClick(item)}"
         android:layout_height="wrap_content"
         android:paddingVertical="12dp">
         

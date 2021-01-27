@@ -20,7 +20,7 @@
         
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:src="@drawable/ic_back3"
@@ -39,12 +39,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_back" />
-        
+    
         <ImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="36dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_back_wh"
             app:layout_constraintStart_toStartOf="parent"

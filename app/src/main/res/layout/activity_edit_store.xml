@@ -35,37 +35,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_marker"
-                app:layout_constraintBottom_toBottomOf="@id/map"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/map" />
-            
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_title"
                 android:layout_width="0dp"
-                android:layout_height="98dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/rect_white_bottom_corner"
                 android:elevation="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute">
-                
+    
                 <ImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="4dp"
                     android:layout_marginStart="24dp"
-                    android:layout_marginBottom="8dp"
                     android:background="?attr/actionBarItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_back_black"
                     app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
                 
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,11 +122,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:bufferType="spannable"
-                        app:setNameBold="@{viewModel.storeInfo.user.name}"
                         android:textColor="@color/color_black"
                         android:textSize="22sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:setNameBold="@{viewModel.storeInfo.user.name}"
                         tools:text="홍길님이\n제보한 음식점입니다." />
                     
                     <LinearLayout

@@ -44,7 +44,7 @@
             android:text="@{item.storeName}"
             android:textColor="@color/color_black"
             android:textSize="16sp"
-            android:maxWidth="140dp"
+            android:maxWidth="130dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
