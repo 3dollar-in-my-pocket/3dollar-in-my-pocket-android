@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home
 
-import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.View
@@ -15,7 +14,7 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.zion830.threedollars.MainActivity
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.MenuType
@@ -65,7 +64,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<AllStoreResponseItem> {
             override fun onClick(item: AllStoreResponseItem) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
-                startActivity(intent)
+                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         })
 
@@ -144,9 +143,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            MainActivity.ADD_STORE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    viewModel.requestStoreInfo(currentPosition)
+            Constants.SHOW_STORE_BY_CATEGORY, Constants.ADD_STORE -> {
+                viewModel.requestStoreInfo(currentPosition)
+            }
+            Constants.GET_LOCATION_PERMISSION -> {
+                googleMap?.let {
+                    initMap(it)
                 }
             }
         }

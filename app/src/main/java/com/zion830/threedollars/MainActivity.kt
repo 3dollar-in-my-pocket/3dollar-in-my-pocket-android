@@ -1,8 +1,11 @@
 package com.zion830.threedollars
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -12,7 +15,8 @@ import com.zion830.threedollars.utils.requestPermissionFirst
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
 
-class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home) {
+
+class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home), ActivityCompat.OnRequestPermissionsResultCallback {
 
     override val viewModel: UserInfoViewModel by viewModels()
 
@@ -25,7 +29,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         binding.navView.setupWithNavController(navController)
 
         binding.ibEdit.setOnClickListener {
-            startActivityForResult(Intent(this, AddStoreActivity::class.java), ADD_STORE)
+            startActivityForResult(Intent(this, AddStoreActivity::class.java), Constants.ADD_STORE)
         }
 
         requestPermissionFirst()
@@ -42,8 +46,16 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         }
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            navHostFragment.childFragmentManager.fragments.forEach { fragment ->
+                fragment.onActivityResult(Constants.GET_LOCATION_PERMISSION, Activity.RESULT_OK, null)
+            }
+        }
+    }
+
     companion object {
-        const val ADD_STORE: Int = 10
 
         fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }

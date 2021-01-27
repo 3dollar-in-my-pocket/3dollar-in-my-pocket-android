@@ -4,7 +4,7 @@
     package="com.zion830.threedollars">
     
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
     <queries>
         <package android:name="com.kakao.talk" />

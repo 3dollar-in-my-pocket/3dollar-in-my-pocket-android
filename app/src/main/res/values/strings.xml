@@ -23,7 +23,7 @@
     <string name="plz">마무리 중입니다 조금만 기다려주세요 선생님</string>
     
     <string name="my_page_show_all">전체보기</string>
-    <string name="my_page_stores">등록한 음식점</string>
+    <string name="my_page_stores">내가 등록한 음식점</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
     <string name="my_page_reviews">내가 쓴 리뷰</string>
     <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
@@ -104,6 +104,8 @@
     <string name="hint_menu_location">ex) 강남역 2번 출구 </string>
     <string name="failed_add_review">리뷰 등록에 실패했습니다. 다시 시도해주세요.</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
+    <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="failed_edit_store">가게 정보 추가에 실패했습니다. 다시 시도해주세요.</string>
     <string name="error_no_kakao_login">카카오톡에서 로그인이 되어있는지 확인해주세요.</string>
     
     <string name="under_50m">50m 이내</string>

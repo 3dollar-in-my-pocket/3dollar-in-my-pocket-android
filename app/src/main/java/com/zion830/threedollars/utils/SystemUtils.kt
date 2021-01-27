@@ -1,8 +1,7 @@
 package com.zion830.threedollars.utils
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -30,36 +29,30 @@ fun showToast(text: String) {
     Toast.makeText(GlobalApplication.getContext(), text, Toast.LENGTH_SHORT).show()
 }
 
-fun Activity.requestPermissionFirst(permission: String = ACCESS_COARSE_LOCATION) {
+fun Activity.requestPermissionFirst(permission: String = ACCESS_FINE_LOCATION) {
     if (SharedPrefUtils.isFirstPermissionCheck()) {
-        showPermissionRequestDialog {
-            ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
-        }
+        ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
     }
 }
 
-fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_COARSE_LOCATION) {
+fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION) {
     when {
         isLocationAvailable() -> return
         ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
-            showPermissionRequestDialog {
-                ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
-            }
+            ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
         }
         else -> {
-            showPermissionRequestDialog {
-                if (SharedPrefUtils.isFirstPermissionCheck()) {
-                    ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
-                } else {
-                    openPermissionSettingPage()
-                }
+            if (SharedPrefUtils.isFirstPermissionCheck()) {
+                ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
+            } else {
+                openPermissionSettingPage()
             }
         }
     }
 }
 
 fun isLocationAvailable(): Boolean =
-    ContextCompat.checkSelfPermission(GlobalApplication.getContext(), ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    ContextCompat.checkSelfPermission(GlobalApplication.getContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
 fun isGpsAvailable(): Boolean {
     val locationManager = GlobalApplication.getContext().getSystemService(LOCATION_SERVICE) as LocationManager
@@ -88,13 +81,4 @@ private fun Activity.openPermissionSettingPage() {
     intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
     intent.data = Uri.fromParts("package", packageName, null)
     startActivity(intent)
-}
-
-private fun Activity.showPermissionRequestDialog(action: () -> Unit) {
-    AlertDialog.Builder(this)
-        .setTitle(R.string.request_permission)
-        .setMessage(R.string.request_location_permission_description)
-        .setPositiveButton(getString(R.string.request_permission_ok)) { _, _ -> action() }
-        .create()
-        .show()
 }
