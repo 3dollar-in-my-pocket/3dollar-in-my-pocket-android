@@ -78,6 +78,8 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
             if (it) {
                 setResult(Activity.RESULT_OK)
                 finish()
+            } else {
+                showToast(R.string.failed_add_store)
             }
         }
         getMenuList()

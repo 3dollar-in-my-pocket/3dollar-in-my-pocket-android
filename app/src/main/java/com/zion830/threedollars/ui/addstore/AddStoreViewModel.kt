@@ -66,10 +66,4 @@ class AddStoreViewModel : BaseViewModel() {
             }
         }
     }
-
-    fun changeCategory(menuType: MenuType) {
-        if (_category.value != menuType) {
-            _category.value = menuType
-        }
-    }
 }
