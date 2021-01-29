@@ -19,7 +19,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityAddStoreBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.Menu
-import com.zion830.threedollars.ui.addstore.adapter.AddMenuRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.utils.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -39,7 +39,7 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
 
     private lateinit var photoAdapter: PhotoRecyclerAdapter
 
-    private val menuAdapter: AddMenuRecyclerAdapter = AddMenuRecyclerAdapter()
+    private val menuAdapter: EditMenuRecyclerAdapter = EditMenuRecyclerAdapter()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {

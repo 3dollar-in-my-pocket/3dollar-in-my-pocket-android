@@ -7,6 +7,7 @@ import com.zion830.threedollars.repository.model.response.AllStoreResponse
 import com.zion830.threedollars.repository.model.response.SearchByDistanceResponse
 import com.zion830.threedollars.repository.model.response.SearchByReviewResponse
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
+import com.zion830.threedollars.ui.store_detail.DeleteType
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -49,6 +50,12 @@ class StoreRepository(
     suspend fun updateStore(
         storeInfo: Map<String, String>
     ): Call<ResponseBody> = service.updateStore(storeInfo)
+
+    suspend fun deleteStore(
+        deleteReasonType: DeleteType,
+        storeId: Int,
+        userId: Int
+    ): Call<ResponseBody> = service.deleteStore(deleteReasonType.key, storeId, userId)
 
     suspend fun getCategoryByDistance(
         category: String,

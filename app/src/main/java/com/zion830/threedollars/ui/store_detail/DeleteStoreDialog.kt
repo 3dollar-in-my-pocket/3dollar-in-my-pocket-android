@@ -14,7 +14,7 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel
-import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.SharedPrefUtils
 
 
 class DeleteStoreDialog : DialogFragment() {
@@ -23,7 +23,6 @@ class DeleteStoreDialog : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DialogDeleteBinding.inflate(inflater)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -31,10 +30,9 @@ class DeleteStoreDialog : DialogFragment() {
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
-            showToast("삭제 요청을 보냈습니다. 5건 이상의 삭제 요청이 들어오면 가게 정보가 삭제됩니다.")
+            viewModel.deleteStore(SharedPrefUtils.getUserId())
             dismiss()
         }
-
         binding.rgReason.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.btn_reason1 -> viewModel.changeDeleteType(DeleteType.NOSTORE)

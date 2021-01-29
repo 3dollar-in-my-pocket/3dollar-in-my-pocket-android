@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.maps.model.LatLng
+import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
@@ -31,6 +32,10 @@ class StoreEditViewModel : BaseViewModel() {
     private val _editStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val editStoreResult: LiveData<Boolean>
         get() = _editStoreResult
+
+    private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    val deleteStoreResult: LiveData<Boolean>
+        get() = _deleteStoreResult
 
     val storeLocation: LiveData<LatLng?> = Transformations.map(_storeInfo) {
         if (it != null) {
@@ -81,8 +86,19 @@ class StoreEditViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteStore(storeId: Int) {
+    fun deleteStore(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val result = repository.deleteStore(deleteType.value!!, storeInfo.value?.id ?: 0, userId).execute()
 
+            _deleteStoreResult.postValue(result.isSuccessful)
+            _msgTextId.postValue(
+                when (result.code()) {
+                    in 200..299 -> R.string.success_delete_store
+                    in 400..499 -> R.string.already_request_delete
+                    else -> R.string.failed_delete_store
+                }
+            )
+        }
     }
 
     fun changeDeleteType(type: DeleteType) {

@@ -52,7 +52,7 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
                 initMap(map, googleMap?.cameraPosition?.zoom ?: DEFAULT_ZOOM)
             }
             viewModel.nearStoreInfo.observe(this@StoreByMenuActivity) { storeInRange ->
-                map.setMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
+                map.setDefaultMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
             }
             viewModel.changeCategory(menuType, currentPosition)
         }
@@ -78,14 +78,14 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             viewModel.changeSortType(SortType.RATING, currentPosition)
         }
         viewModel.storeByRating.observe(this) {
-            googleMap?.setMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
+            googleMap?.setDefaultMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
             storeByRatingAdapters[0].submitList(it.getStoresOver3())
             storeByRatingAdapters[1].submitList(it.storeList2)
             storeByRatingAdapters[2].submitList(it.storeList1)
             storeByRatingAdapters[3].submitList(it.storeList0)
         }
         viewModel.storeByDistance.observe(this) {
-            googleMap?.setMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
+            googleMap?.setDefaultMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
             storeByDistanceAdapters[0].submitList(it.storeList50)
             storeByDistanceAdapters[1].submitList(it.storeList100)
             storeByDistanceAdapters[2].submitList(it.storeList500)
@@ -121,14 +121,17 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
         }
-        binding.rvDistance1.adapter = storeByDistanceAdapters[0]
-        binding.rvDistance2.adapter = storeByDistanceAdapters[1]
-        binding.rvDistance3.adapter = storeByDistanceAdapters[2]
-        binding.rvDistance4.adapter = storeByDistanceAdapters[3]
-        binding.rvRating1.adapter = storeByRatingAdapters[0]
-        binding.rvRating2.adapter = storeByRatingAdapters[1]
-        binding.rvRating3.adapter = storeByRatingAdapters[2]
-        binding.rvRating4.adapter = storeByRatingAdapters[3]
+
+        val rvDistances = arrayOf(binding.rvDistance1, binding.rvDistance2, binding.rvDistance3, binding.rvDistance4)
+        val rvRatings = arrayOf(binding.rvRating1, binding.rvRating2, binding.rvRating3, binding.rvRating4)
+        rvDistances.forEachIndexed { index, recyclerView ->
+            recyclerView.adapter = storeByDistanceAdapters[index]
+            recyclerView.itemAnimator = null
+        }
+        rvRatings.forEachIndexed { index, recyclerView ->
+            recyclerView.adapter = storeByRatingAdapters[index]
+            recyclerView.itemAnimator = null
+        }
     }
 
     private fun initMap(googleMap: GoogleMap, zoomLevel: Float = DEFAULT_ZOOM) {

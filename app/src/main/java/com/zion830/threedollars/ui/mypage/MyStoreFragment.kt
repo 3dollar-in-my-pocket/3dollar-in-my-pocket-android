@@ -27,6 +27,7 @@ class MyStoreFragment : BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>(
         binding.rvStore.adapter = adapter
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
+            viewModel.updateUserInfo()
         }
         observeUiData()
     }

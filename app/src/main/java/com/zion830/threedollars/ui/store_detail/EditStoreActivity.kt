@@ -18,7 +18,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityEditStoreBinding
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.ui.addstore.StoreImage
-import com.zion830.threedollars.ui.addstore.adapter.AddMenuRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditPhotoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel
 import com.zion830.threedollars.utils.*
@@ -36,7 +36,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
 
     private lateinit var mapFragment: SupportMapFragment
 
-    private val menuAdapter = AddMenuRecyclerAdapter()
+    private val menuAdapter = EditMenuRecyclerAdapter()
 
     private lateinit var photoAdapter: EditPhotoRecyclerAdapter
 
@@ -53,7 +53,9 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 override fun onClick(item: StoreImage) {
                     if (item.url.isNullOrBlank() && item.uri == null) {
                         pickImage()
-                    } // 현재는 사진 개별 삭제 기능은 지원하지 않음
+                    } else {
+                        showRemoveImageDialog(item.index)
+                    }
                 }
             }
         )
@@ -63,6 +65,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             val newList = it?.image?.mapIndexed { index, image -> StoreImage(index, null, image.url) }
                 ?.plus(listOf(StoreImage(it.image.size ?: 0, null, null)))
             photoAdapter.submitList(newList?.toMutableList())
+            menuAdapter.submitList(it?.menu?.toMutableList())
         }
         binding.btnBack.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
@@ -101,8 +104,12 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         binding.btnDelete.setOnClickListener {
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
-        viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
 
+        observeUiData()
+        viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+    }
+
+    private fun observeUiData() {
         viewModel.editStoreResult.observe(this) {
             if (it) {
                 setResult(Activity.RESULT_OK)

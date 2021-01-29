@@ -66,6 +66,10 @@ class UserInfoViewModel : BaseViewModel() {
         }
     }
 
+    fun updatePreviewData() {
+
+    }
+
     fun updateName() {
         if (userName.value.isNullOrBlank()) {
             return
@@ -89,6 +93,10 @@ class UserInfoViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
             userRepository.updateName(userName.value!!).await()
         }
+    }
+
+    fun initNameUpdateInfo() {
+        _isNameUpdated.value = false
     }
 
     override fun handleError(t: Throwable) {

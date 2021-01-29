@@ -63,6 +63,7 @@
                 android:background="@drawable/selector_radio"
                 android:button="@null"
                 android:checked="true"
+                android:drawableStart="@drawable/selector_checked_icon"
                 android:layoutDirection="rtl"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="12dp"
@@ -79,6 +80,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/selector_radio"
                 android:button="@null"
+                android:drawableStart="@drawable/selector_checked_icon"
                 android:layoutDirection="rtl"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="12dp"
@@ -95,6 +97,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/selector_radio"
                 android:button="@null"
+                android:drawableStart="@drawable/selector_checked_icon"
                 android:layoutDirection="rtl"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="12dp"
@@ -103,8 +106,6 @@
                 android:textColor="@color/color_black"
                 android:textStyle="bold" />
         </RadioGroup>
-        
-        <!--        android:drawableStart="@drawable/ic_check"-->
         
         <Button
             android:id="@+id/btn_finish"

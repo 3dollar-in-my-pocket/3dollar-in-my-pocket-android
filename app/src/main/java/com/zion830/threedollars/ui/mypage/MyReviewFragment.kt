@@ -27,6 +27,7 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
         binding.rvReview.adapter = adapter
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
+            viewModel.updateUserInfo()
         }
         observeUiData()
     }

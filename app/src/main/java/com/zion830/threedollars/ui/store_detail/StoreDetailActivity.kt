@@ -12,13 +12,16 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
+import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.ui.addstore.adapter.MenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.listener.OnItemClickListener
 
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
 
@@ -30,7 +33,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val menuAdapter = MenuRecyclerAdapter()
 
-    private val reviewAdapter = ReviewRecyclerAdapter()
+    private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
     private var googleMap: GoogleMap? = null
 
@@ -40,6 +43,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     override fun initView() {
         storeId = intent.getIntExtra(KEY_STORE_ID, 0)
+        reviewAdapter = ReviewRecyclerAdapter(object : OnItemClickListener<Review> {
+            override fun onClick(item: Review) {
+                val intent = StoreDetailActivity.getIntent(this@StoreDetailActivity, item.id)
+                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+            }
+        })
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -50,7 +59,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 moveToCurrentPosition()
             }
             viewModel.storeLocation.observe(this) {
-                map.setMarker(it)
+                map.setDefaultMarker(it)
                 moveCameraTo(it, DEFAULT_ZOOM)
             }
         }

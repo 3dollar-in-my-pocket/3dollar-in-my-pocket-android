@@ -33,6 +33,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         viewModel.isNameUpdated.observe(this) {
             if (it) {
                 hideKeyboard(binding.scrollView)
+                viewModel.initNameUpdateInfo()
                 activity?.supportFragmentManager?.popBackStack()
             }
         }

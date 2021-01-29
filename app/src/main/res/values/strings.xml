@@ -46,6 +46,7 @@
     <string name="request_delete_reason1">없어진 가게예요</string>
     <string name="request_delete_reason2">위치가 잘못됐어요</string>
     <string name="request_delete_reason3">중복 제보된 가게예요</string>
+    <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
     <string name="title_mypage">마이페이지</string>
     
     <string name="bung">붕어빵</string>
@@ -84,7 +85,7 @@
     <string name="location_no_address">알 수 없는 위치</string>
     <string name="find_location_error">위치를 인식할 수 없습니다. 다시 시도해주세요!</string>
     <string name="error_pick_image">이미지를 불러오는데 실패했습니다.</string>
-    <string name="remove_image">이미지를 삭제하시겠습니까?</string>
+    <string name="remove_image">이미지 첨부를 취소하시겠습니까?</string>
     <string name="category">카테고리</string>
     <string name="menu_detail">상세메뉴</string>
     <string name="no_menu">등록된 정보가 없습니다</string>
@@ -106,6 +107,8 @@
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
     <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
     <string name="failed_edit_store">가게 정보 추가에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="failed_delete_store">가게 정보 삭제 요청이 실패했습니다. 다시 시도해주세요.</string>
+    <string name="success_delete_store">가게 삭제 요청을 보냈습니다. 5건 이상의 삭제 요청이 들어오면 자동 삭제됩니다.</string>
     <string name="error_no_kakao_login">카카오톡에서 로그인이 되어있는지 확인해주세요.</string>
     
     <string name="under_50m">50m 이내</string>

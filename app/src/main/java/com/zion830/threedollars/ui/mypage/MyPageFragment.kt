@@ -1,15 +1,15 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.app.Activity
 import android.content.Intent
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
-import com.zion830.threedollars.MainActivity
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageBinding
+import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.repository.model.response.Store
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewPreviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.adapter.MyStorePreviewRecyclerAdapter
@@ -26,20 +26,28 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
 
     private lateinit var storeAdapter: MyStorePreviewRecyclerAdapter
 
-    private val reviewAdapter = MyReviewPreviewRecyclerAdapter()
+    private lateinit var reviewAdapter: MyReviewPreviewRecyclerAdapter
 
     override fun initView() {
         storeAdapter = MyStorePreviewRecyclerAdapter(
             object : OnItemClickListener<Store> {
                 override fun onClick(item: Store) {
                     val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
-                    startActivity(intent)
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
             }, object : OnItemClickListener<Store> {
                 override fun onClick(item: Store) {
                     addShowAllStoreFragment()
                 }
             })
+        reviewAdapter = MyReviewPreviewRecyclerAdapter(
+            object : OnItemClickListener<Review> {
+                override fun onClick(item: Review) {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                }
+            }
+        )
 
         binding.rvStore.adapter = storeAdapter
         binding.rvReview.adapter = reviewAdapter
@@ -99,10 +107,8 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            MainActivity.ADD_STORE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    viewModel.updateUserInfo()
-                }
+            Constants.ADD_STORE, Constants.SHOW_STORE_DETAIL -> {
+                viewModel.updateUserInfo()
             }
         }
     }
