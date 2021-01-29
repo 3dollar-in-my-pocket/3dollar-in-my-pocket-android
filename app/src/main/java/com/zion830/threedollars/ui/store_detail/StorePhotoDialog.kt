@@ -39,7 +39,7 @@ class StorePhotoDialog : DialogFragment() {
             }
         }
         binding.btnBack.setOnClickListener {
-            activity?.supportFragmentManager?.popBackStack()
+            dismiss()
         }
 
         return binding.root
