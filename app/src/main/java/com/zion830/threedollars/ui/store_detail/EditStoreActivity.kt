@@ -53,9 +53,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 override fun onClick(item: StoreImage) {
                     if (item.url.isNullOrBlank() && item.uri == null) {
                         pickImage()
-                    } else {
-                        showRemoveImageDialog(item.index)
-                    }
+                    } // 현재는 사진 개별 삭제 기능은 지원하지 않음
                 }
             }
         )
@@ -95,7 +93,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 moveToCurrentPosition()
             }
             viewModel.storeLocation.observe(this) {
-                map.setMarker(it)
+                map.setMarker(it, R.drawable.ic_marker, 24f, 32f)
                 moveCameraTo(it, DEFAULT_ZOOM)
             }
             initSubmitButtonEvent(map)
@@ -109,6 +107,8 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             if (it) {
                 setResult(Activity.RESULT_OK)
                 finish()
+            } else {
+                showToast(R.string.failed_edit_store)
             }
         }
     }
@@ -227,7 +227,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             }
         }
 
-        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+        return menuList.filter { it.name.isNotBlank() || it.price.isNotBlank() }
     }
 
     companion object {

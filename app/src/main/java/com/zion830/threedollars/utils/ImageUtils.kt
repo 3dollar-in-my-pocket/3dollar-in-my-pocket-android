@@ -35,11 +35,10 @@ fun ImageView.loadRoundUriImg(list: List<Image>?) {
         .into(this)
 }
 
-fun getBitmapDescriptor(@DrawableRes resId: Int): BitmapDescriptor? {
+fun getBitmapDescriptor(@DrawableRes resId: Int, width: Int, height: Int): BitmapDescriptor? {
     val vectorDrawable = ContextCompat.getDrawable(GlobalApplication.getContext(), resId)
-    val size = SizeUtils.dpToPx(19f)
-    vectorDrawable?.setBounds(0, 0, size, size)
-    val bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    vectorDrawable?.setBounds(0, 0, width, height)
+    val bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bm)
     vectorDrawable?.draw(canvas)
     return BitmapDescriptorFactory.fromBitmap(bm)

@@ -55,7 +55,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
             viewModel.nearStoreInfo.observe(this@HomeFragment) { store ->
                 val storeInRange = store.filter { it.distance <= 2000 }
-                map.setMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
+                map.setDefaultMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
                 adapter.submitList(storeInRange)
             }
         }
