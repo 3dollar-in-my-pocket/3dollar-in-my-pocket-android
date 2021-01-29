@@ -111,7 +111,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/selector_btn"
+            android:background="@drawable/selector_btn_radius14"
             android:elevation="@null"
             android:text="@string/request_delete"
             android:textColor="@color/gmm_white"

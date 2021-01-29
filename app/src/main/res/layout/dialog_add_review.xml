@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/selector_btn"
+            android:background="@drawable/selector_btn_radius14"
             android:elevation="@null"
             android:enabled="@{viewModel.isAvailableReview()}"
             android:text="@string/recommend_store_finish"

@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="190dp"
-                android:background="@drawable/rect_red"
+                android:background="@drawable/rect_red_radius48_opacity"
                 android:ellipsize="end"
                 android:maxEms="13"
                 android:paddingHorizontal="24dp"
