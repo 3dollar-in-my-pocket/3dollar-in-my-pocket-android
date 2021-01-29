@@ -1,8 +1,9 @@
 package com.zion830.threedollars.ui.store_detail.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByDistanceBinding
 import com.zion830.threedollars.repository.model.response.StoreList
@@ -11,11 +12,10 @@ import zion830.com.common.listener.OnItemClickListener
 
 class SearchByDistanceRecyclerAdapter(
     private val listener: OnItemClickListener<StoreList>
-) : ListAdapter<StoreList, SearchByDistanceViewHolder>(object : DiffUtil.ItemCallback<StoreList?>() {
-    override fun areItemsTheSame(oldItem: StoreList, newItem: StoreList): Boolean = oldItem.id == newItem.id
+) : RecyclerView.Adapter<SearchByDistanceViewHolder>() {
+    private val items = arrayListOf<StoreList>()
 
-    override fun areContentsTheSame(oldItem: StoreList, newItem: StoreList): Boolean = oldItem == newItem
-}) {
+    override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchByDistanceViewHolder {
         return SearchByDistanceViewHolder(parent)
@@ -23,7 +23,13 @@ class SearchByDistanceRecyclerAdapter(
 
     override fun onBindViewHolder(holder: SearchByDistanceViewHolder, position: Int) {
         holder.setBackgroundByPosition(position, position == itemCount - 1)
-        holder.bind(getItem(position), listener)
+        holder.bind(items[position], listener)
+    }
+
+    fun submitList(newItems: List<StoreList>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
     }
 }
 
@@ -35,10 +41,10 @@ class SearchByDistanceViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreBy
     }
 
     fun setBackgroundByPosition(position: Int, isLastIndex: Boolean) {
-//        if (position % 2 == 1 && !isLastIndex) {
-//            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_gray2))
-//        } else if (position % 2 == 1 && isLastIndex) {
-//            binding.layoutItem.setBackgroundResource(R.drawable.rect_gray_corner_bottom)
-//        }
+        if (position % 2 == 1 && !isLastIndex) {
+            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_gray3))
+        } else if (position % 2 == 1 && isLastIndex) {
+            binding.layoutItem.setBackgroundResource(R.drawable.rect_gray_corner_bottom)
+        }
     }
 }
