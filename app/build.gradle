@@ -1,20 +1,27 @@
 apply plugin: 'com.android.application'
 apply from: '../common.gradle'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def googleMapApiKey = properties.getProperty('google_map_key')
 
 android {
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resValue "string", "base_url", properties.getProperty('base_url')
-        resValue "string", "develop_url", properties.getProperty('develop_url')
         resValue "string", "kakao_key", properties.getProperty('kakao_key')
         resValue "string", "kakao_rest_key", properties.getProperty('kakao_rest_key')
+        manifestPlaceholders = [google_map_key: properties.getProperty('google_map_key')]
         multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
+        }
+        debug {
+            buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
+        }
     }
 
 }
