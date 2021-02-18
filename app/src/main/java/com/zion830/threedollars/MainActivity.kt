@@ -14,6 +14,7 @@ import com.zion830.threedollars.ui.addstore.AddStoreActivity
 import com.zion830.threedollars.utils.requestPermissionFirst
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
+import zion830.com.common.listener.OnBackPressedListener
 
 
 class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -53,6 +54,17 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                 fragment.onActivityResult(Constants.GET_LOCATION_PERMISSION, Activity.RESULT_OK, null)
             }
         }
+    }
+
+    override fun onBackPressed() {
+        val fragmentList = supportFragmentManager.fragments
+        for (fragment in fragmentList) {
+            if (fragment is OnBackPressedListener) {
+                (fragment as OnBackPressedListener).onBackPressed()
+            }
+        }
+
+        super.onBackPressed()
     }
 
     companion object {
