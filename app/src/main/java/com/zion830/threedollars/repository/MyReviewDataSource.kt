@@ -56,7 +56,7 @@ class MyReviewDataSource(
     }
 
     companion object {
-        private const val PAGE_SIZE = 3
+        private const val PAGE_SIZE = 10
 
         val pageConfig = PagedList.Config.Builder()
             .setPageSize(PAGE_SIZE)

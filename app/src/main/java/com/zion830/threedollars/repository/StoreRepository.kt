@@ -3,10 +3,7 @@ package com.zion830.threedollars.repository
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.network.ServiceApi
 import com.zion830.threedollars.repository.model.request.NewReview
-import com.zion830.threedollars.repository.model.response.AllStoreResponse
-import com.zion830.threedollars.repository.model.response.SearchByDistanceResponse
-import com.zion830.threedollars.repository.model.response.SearchByReviewResponse
-import com.zion830.threedollars.repository.model.response.StoreDetailResponse
+import com.zion830.threedollars.repository.model.response.*
 import com.zion830.threedollars.ui.store_detail.DeleteType
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
@@ -36,11 +33,16 @@ class StoreRepository(
     suspend fun saveStore(
         storeInfo: Map<String, String>,
         images: List<MultipartBody.Part>
-    ): Call<ResponseBody> = service.saveStore(storeInfo, images)
+    ): Call<AddStoreResponse> = service.saveStore(storeInfo, images)
+
+    suspend fun saveImage(
+        storeId: Int,
+        images: MultipartBody.Part
+    ): Call<AddImageResponse> = service.saveImage(storeId, images)
 
     suspend fun saveStore(
         storeInfo: Map<String, String>
-    ): Call<ResponseBody> = service.saveStore(storeInfo)
+    ): Call<AddStoreResponse> = service.saveStore(storeInfo)
 
     suspend fun updateStore(
         storeInfo: Map<String, String>,
