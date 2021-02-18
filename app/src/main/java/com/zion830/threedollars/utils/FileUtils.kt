@@ -7,6 +7,8 @@ import java.io.File
 import java.io.FileOutputStream
 
 object FileUtils {
+    const val IMAGE_MAX_SIZE = 10_000
+
     fun uriToFile(uri: Uri?): File? {
         if (uri == null) {
             return null
@@ -20,5 +22,15 @@ object FileUtils {
             outputStream.close()
         }
         return tempFile
+    }
+
+    fun getFileSize(uri: Uri?) = uriToFile(uri)?.length()?.div(1024) ?: 0
+
+    fun isAvailable(uri: Uri?): Boolean {
+        if (uri == null) {
+            return false
+        }
+
+        return getFileSize(uri) < IMAGE_MAX_SIZE
     }
 }
