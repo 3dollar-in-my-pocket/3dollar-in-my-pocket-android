@@ -10,8 +10,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
+import com.zion830.threedollars.ui.addstore.StoreImage
 import com.zion830.threedollars.ui.store_detail.adapter.StoreImageSliderAdapter
+import com.zion830.threedollars.ui.store_detail.adapter.StorePreviewImageAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import zion830.com.common.listener.OnItemClickListener
 
 class StorePhotoDialog : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
@@ -32,15 +35,22 @@ class StorePhotoDialog : DialogFragment() {
         binding.lifecycleOwner = this
 
         val adapter = StoreImageSliderAdapter()
+        val indicatorAdapter = StorePreviewImageAdapter(object : OnItemClickListener<StoreImage> {
+            override fun onClick(item: StoreImage) {
+                binding.slider.currentPagePosition = item.index
+            }
+        })
+
         binding.slider.setSliderAdapter(adapter, false)
+        binding.rvIndicator.adapter = indicatorAdapter
+
         viewModel.storeInfo.observe(this) {
             it?.let {
                 adapter.submitItems(it.image)
+                indicatorAdapter.submitList(it.image.mapIndexed { index, value -> StoreImage(index, null, value.url) })
             }
         }
-        binding.btnBack.setOnClickListener {
-            dismiss()
-        }
+        binding.btnBack.setOnClickListener { dismiss() }
 
         return binding.root
     }
