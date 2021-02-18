@@ -8,9 +8,7 @@ import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.utils.SharedPrefUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
@@ -22,10 +20,6 @@ class AddStoreViewModel : BaseViewModel() {
 
     val storeName: MutableLiveData<String> = MutableLiveData<String>()
 
-    private val _addStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val addStoreResult: LiveData<Boolean>
-        get() = _addStoreResult
-
     val isFinished: LiveData<Boolean> = Transformations.map(storeName) {
         it.isNotNullOrBlank()
     }
@@ -34,6 +28,30 @@ class AddStoreViewModel : BaseViewModel() {
     val category: LiveData<MenuType>
         get() = _category
 
+    private val _newStoreId: MutableLiveData<Int> = MutableLiveData()
+    val newStoreId: LiveData<Int>
+        get() = _newStoreId
+
+    private fun saveImages(storeId: Int?, images: List<MultipartBody.Part>) {
+        if (images.isEmpty()) {
+            return
+        }
+
+        if (storeId == null) {
+            _newStoreId.postValue(-1)
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val responses = images.map { image ->
+                async(Dispatchers.IO + coroutineExceptionHandler) {
+                    repository.saveImage(storeId, image)
+                }
+            }
+            responses.awaitAll()
+        }
+    }
+
     fun addNewStore(
         images: List<MultipartBody.Part>,
         category: String,
@@ -41,6 +59,8 @@ class AddStoreViewModel : BaseViewModel() {
         longitude: Double,
         menus: List<Menu>
     ) {
+        showLoading()
+
         val params = hashMapOf<String, String>(
             Pair("userId", SharedPrefUtils.getUserId().toString()),
             Pair("latitude", latitude.toString()),
@@ -54,13 +74,17 @@ class AddStoreViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = if (images.isEmpty()) {
-                repository.saveStore(params).execute()
+            val result = repository.saveStore(params).execute()
+
+            if (result.isSuccessful && images.isEmpty()) {
+                _newStoreId.postValue(result.body()?.storeId ?: -1)
+            } else if (result.isSuccessful && images.isNotEmpty()) {
+                val storeId = result.body()?.storeId
+                saveImages(storeId, images)
             } else {
-                repository.saveStore(params, images).execute()
+                _newStoreId.postValue(-1)
             }
 
-            _addStoreResult.postValue(result.isSuccessful)
             withContext(Dispatchers.Main) {
                 hideLoading()
             }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Rect
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -15,12 +17,14 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityAddStoreBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -41,8 +45,11 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
 
     private val menuAdapter: EditMenuRecyclerAdapter = EditMenuRecyclerAdapter()
 
+    private var isFirstOpen = true
+
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        initKeyboard()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync { map ->
@@ -74,15 +81,46 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
         binding.rvPhoto.adapter = photoAdapter
         binding.rvEditMenu.adapter = menuAdapter
 
-        viewModel.addStoreResult.observe(this) {
-            if (it) {
+        viewModel.newStoreId.observe(this) {
+            if (it >= 0) {
                 setResult(Activity.RESULT_OK)
+                startActivityForResult(StoreDetailActivity.getIntent(this@AddStoreActivity, it), Constants.SHOW_STORE_DETAIL)
                 finish()
             } else {
                 showToast(R.string.failed_add_store)
             }
         }
         getMenuList()
+    }
+
+    private fun initKeyboard() {
+        var keypadBaseHeight = 0
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect(); // 키보드 위로 보여지는 공간
+            binding.root.getWindowVisibleDisplayFrame(r)
+            val screenHeight = binding.root.rootView.height
+
+            val keypadHeight = screenHeight - r.bottom
+
+            if (keypadBaseHeight == 0) {
+                keypadBaseHeight = keypadHeight
+            }
+
+            if (keypadHeight > screenHeight * 0.15) {
+                binding.btnSubmit.visibility = View.GONE
+                binding.viewSubmitBack.visibility = View.GONE
+            } else {
+                Handler().postDelayed({
+                    if (!isFirstOpen) {
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        binding.viewSubmitBack.visibility = View.VISIBLE
+                    }
+                }, 50)
+            }
+        }
+
+        isFirstOpen = false
     }
 
     private fun getMenuList(): List<Menu> {
@@ -148,7 +186,6 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
             Log.e(this::class.java.name, e.message ?: "")
         }
         setLocation(googleMap)
-        setLocationText(DEFAULT_LOCATION)
     }
 
     private fun setLocationText(location: LatLng?) {
@@ -178,7 +215,11 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
                 return
             }
 
-            photoAdapter.addPhoto(data.data)
+            if (FileUtils.isAvailable(data.data)) {
+                showToast(R.string.error_file_size)
+            } else {
+                photoAdapter.addPhoto(data.data)
+            }
         }
     }
 

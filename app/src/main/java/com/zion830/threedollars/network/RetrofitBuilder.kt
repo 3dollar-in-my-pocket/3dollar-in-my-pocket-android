@@ -1,8 +1,7 @@
 package com.zion830.threedollars.network
 
-import com.zion830.threedollars.R
+import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.utils.SharedPrefUtils
-import com.zion830.threedollars.utils.StringUtils
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -10,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    private val BASE_URL = StringUtils.getString(R.string.base_url)
+    private val BASE_URL = BuildConfig.BASE_URL
     private const val TIME_OUT_SEC = 5L
 
     private val interceptor = HttpLoggingInterceptor().apply {

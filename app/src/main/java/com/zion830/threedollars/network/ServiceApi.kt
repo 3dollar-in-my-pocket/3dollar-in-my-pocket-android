@@ -78,12 +78,12 @@ interface ServiceApi {
     fun saveStore(
         @QueryMap storeInfo: Map<String, String>,
         @Part images: List<MultipartBody.Part>
-    ): Call<ResponseBody>
+    ): Call<AddStoreResponse>
 
     @POST("/api/v1/store/save")
     fun saveStore(
         @QueryMap storeInfo: Map<String, String>
-    ): Call<ResponseBody>
+    ): Call<AddStoreResponse>
 
     @PUT("/api/v1/store/update")
     @Multipart
@@ -103,13 +103,11 @@ interface ServiceApi {
         @Query("page") page: Int = 1
     ): Call<MyStoreResponse>
 
-    // 리뷰
-    @POST("/api/v1/review/save")
-    fun saveNewReview(
+    @POST("/api/v1/store/{storeId}/images")
+    fun saveImage(
         @Query("storeId") storeId: Int,
-        @Query("userId") userId: Int,
-        @Body newReview: NewReview
-    ): ResponseBody
+        @Part images: MultipartBody.Part
+    ): Call<AddImageResponse>
 
     @GET("/api/v1/review/user")
     fun getMyReview(

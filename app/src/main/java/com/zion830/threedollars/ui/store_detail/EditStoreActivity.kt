@@ -4,7 +4,10 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
+import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
@@ -28,6 +31,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 
+
 class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewModel>(R.layout.activity_edit_store) {
 
     override val viewModel: StoreEditViewModel by viewModels()
@@ -46,15 +50,21 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
 
     private var storeId = 0
 
+    private var isFirstOpen = true
+
     override fun initView() {
+        initKeyboard()
         storeId = intent.getIntExtra(KEY_STORE_ID, 0)
         photoAdapter = EditPhotoRecyclerAdapter(
             object : OnItemClickListener<StoreImage> {
                 override fun onClick(item: StoreImage) {
                     if (item.url.isNullOrBlank() && item.uri == null) {
                         pickImage()
-                    } else {
+                    } else if (item.uri != null) {
                         showRemoveImageDialog(item.index)
+                    } else {
+                        // showRemoveImageDialog(item.index)
+                        // TODO : 추후 업데이트
                     }
                 }
             }
@@ -140,6 +150,36 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         }
     }
 
+    private fun initKeyboard() {
+        var keypadBaseHeight = 0
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect(); // 키보드 위로 보여지는 공간
+            binding.root.getWindowVisibleDisplayFrame(r)
+            val screenHeight = binding.root.rootView.height
+
+            val keypadHeight = screenHeight - r.bottom
+
+            if (keypadBaseHeight == 0) {
+                keypadBaseHeight = keypadHeight
+            }
+
+            if (keypadHeight > screenHeight * 0.15) {
+                binding.btnSubmit.visibility = View.GONE
+                binding.viewSubmitBack.visibility = View.GONE
+            } else {
+                Handler().postDelayed({
+                    if (!isFirstOpen) {
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        binding.viewSubmitBack.visibility = View.VISIBLE
+                    }
+                }, 50)
+            }
+        }
+
+        isFirstOpen = false
+    }
+
     private fun moveToCurrentPosition() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
@@ -167,7 +207,12 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 return
             }
 
-            photoAdapter.addPhoto(data.data)
+            if (FileUtils.isAvailable(data.data)) {
+                showToast(R.string.error_file_size)
+            } else {
+                photoAdapter.addPhoto(data.data)
+                binding.tvImageCount.text = getString(R.string.edit_photo).format(photoAdapter.itemCount)
+            }
         }
     }
 
