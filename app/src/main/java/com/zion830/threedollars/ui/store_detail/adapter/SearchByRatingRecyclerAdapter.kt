@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.store_detail.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,7 @@ class SearchByRatingRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchByRatingViewHolder, position: Int) {
+        Log.d("??", items[position].toString() + " " + position)
         holder.setBackgroundByPosition(position, position == itemCount - 1)
         holder.bind(items[position], listener)
     }
@@ -40,6 +42,8 @@ class SearchByRatingViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreByRa
             binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_gray3))
         } else if (position % 2 == 1 && isLastIndex) {
             binding.layoutItem.setBackgroundResource(R.drawable.rect_gray_corner_bottom)
+        } else if (position % 2 == 0 && !isLastIndex) {
+            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
         }
     }
 }
