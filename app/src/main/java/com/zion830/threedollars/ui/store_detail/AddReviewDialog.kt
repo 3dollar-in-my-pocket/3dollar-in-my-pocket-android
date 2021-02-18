@@ -26,6 +26,7 @@ class AddReviewDialog : DialogFragment() {
         binding.lifecycleOwner = this
 
         binding.ibClose.setOnClickListener {
+            viewModel.clearReview()
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
