@@ -143,7 +143,6 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
                 locationResult.addOnSuccessListener {
                     currentPosition = it.toLatLng()
                     moveCameraToCurrentPosition(it.toLatLng(), zoomLevel)
-                    setLocationText()
                     viewModel.requestStoreInfo(currentPosition)
                 }
                 googleMap.isMyLocationEnabled = true

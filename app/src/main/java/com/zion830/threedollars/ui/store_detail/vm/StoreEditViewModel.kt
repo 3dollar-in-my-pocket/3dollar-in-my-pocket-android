@@ -45,7 +45,7 @@ class StoreEditViewModel : BaseViewModel() {
         }
     }
 
-    private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NOSTORE)
+    private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NONE)
     val deleteType: LiveData<DeleteType>
         get() = _deleteType
 
@@ -63,6 +63,8 @@ class StoreEditViewModel : BaseViewModel() {
         longitude: Double,
         menus: List<Menu>
     ) {
+        showLoading()
+
         val params = hashMapOf<String, String>(
             Pair("userId", SharedPrefUtils.getUserId().toString()),
             Pair("latitude", latitude.toString()),
@@ -81,7 +83,7 @@ class StoreEditViewModel : BaseViewModel() {
             } else {
                 repository.updateStore(params, images).execute()
             }
-            _isLoading.postValue(false)
+            hideLoading()
             _editStoreResult.postValue(result.isSuccessful)
         }
     }

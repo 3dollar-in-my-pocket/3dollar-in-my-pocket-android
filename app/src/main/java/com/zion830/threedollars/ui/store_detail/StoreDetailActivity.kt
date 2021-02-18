@@ -12,7 +12,6 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
-import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.response.Review
@@ -45,8 +44,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         storeId = intent.getIntExtra(KEY_STORE_ID, 0)
         reviewAdapter = ReviewRecyclerAdapter(object : OnItemClickListener<Review> {
             override fun onClick(item: Review) {
-                val intent = StoreDetailActivity.getIntent(this@StoreDetailActivity, item.id)
-                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                // do nothing
             }
         })
 
