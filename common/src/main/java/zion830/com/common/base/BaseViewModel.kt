@@ -20,11 +20,11 @@ open class BaseViewModel : ViewModel() {
     val msgTextId: LiveData<Int> get() = _msgTextId
 
     fun showLoading() {
-        _isLoading.value = true
+        _isLoading.postValue(true)
     }
 
     fun hideLoading() {
-        _isLoading.value = false
+        _isLoading.postValue(false)
     }
 
     open fun handleError(t: Throwable) {

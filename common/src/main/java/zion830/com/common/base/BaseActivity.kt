@@ -1,6 +1,9 @@
 package zion830.com.common.base
 
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -34,4 +37,30 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     }
 
     abstract fun initView()
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        val v = currentFocus
+        val ret = super.dispatchTouchEvent(event)
+
+        if (v is EditText) {
+            val location = IntArray(2)
+
+            currentFocus?.let { w ->
+                w.getLocationOnScreen(location)
+                val x = event.rawX + w.left - location[0]
+                val y = event.rawY + w.top - location[1]
+
+                if (event.action == MotionEvent.ACTION_UP && (x < w.left || x >= w.right || y < w.top || y > w.bottom)) {
+                    hideKeyboard()
+                }
+            }
+        }
+
+        return ret
+    }
+
+    private fun hideKeyboard() {
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(window.currentFocus!!.windowToken, 0)
+    }
 }
