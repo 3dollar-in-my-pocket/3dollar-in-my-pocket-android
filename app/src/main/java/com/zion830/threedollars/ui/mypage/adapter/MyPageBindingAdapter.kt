@@ -4,6 +4,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.MenuType
+import java.util.*
 
 
 @BindingAdapter("bindMenuIcon")
@@ -13,11 +14,36 @@ fun ImageView.bindMenuIcon(category: String?) {
     }
 
     setImageResource(
-        when (category.toUpperCase()) {
+        when (category.toUpperCase(Locale.ROOT)) {
             "BUNGEOPPANG" -> R.drawable.ic_fish
             "TAKOYAKI" -> R.drawable.ic_takoyaki
             "HOTTEOK" -> R.drawable.ic_hodduck
             else -> R.drawable.ic_egg
+        }
+    )
+}
+
+@BindingAdapter("bindMenuIcon", "isSelected")
+fun ImageView.bindMenuIcon(category: String?, isSelected: Boolean) {
+    if (category == null) {
+        return
+    }
+
+    setImageResource(
+        if (isSelected) {
+            when (category.toUpperCase(Locale.ROOT)) {
+                "BUNGEOPPANG" -> R.drawable.ic_fish
+                "TAKOYAKI" -> R.drawable.ic_takoyaki
+                "HOTTEOK" -> R.drawable.ic_hodduck
+                else -> R.drawable.ic_egg
+            }
+        } else {
+            when (category.toUpperCase(Locale.ROOT)) {
+                "BUNGEOPPANG" -> R.drawable.img_fish_card_off
+                "TAKOYAKI" -> R.drawable.img_takoyaki_card_off
+                "HOTTEOK" -> R.drawable.ic_hodduck_card_off
+                else -> R.drawable.ic_egg_card_off
+            }
         }
     )
 }

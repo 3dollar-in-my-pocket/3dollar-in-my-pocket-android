@@ -106,6 +106,7 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         when (requestCode) {
             Constants.ADD_STORE, Constants.SHOW_STORE_DETAIL -> {
                 viewModel.updateUserInfo()

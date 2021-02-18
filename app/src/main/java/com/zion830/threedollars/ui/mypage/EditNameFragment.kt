@@ -10,9 +10,10 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.listener.OnBackPressedListener
 
 
-class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel>(R.layout.fragment_edit_name) {
+class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel>(R.layout.fragment_edit_name), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -28,15 +29,21 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
             handler.postDelayed(runnable, 10)
         }
         binding.btnBack.setOnClickListener {
+            viewModel.clearName()
             activity?.supportFragmentManager?.popBackStack()
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
                 hideKeyboard(binding.scrollView)
                 viewModel.initNameUpdateInfo()
+                viewModel.clearName()
                 activity?.supportFragmentManager?.popBackStack()
             }
         }
+    }
+
+    override fun onBackPressed() {
+        viewModel.clearName()
     }
 
     private fun hideKeyboard(view: View) {

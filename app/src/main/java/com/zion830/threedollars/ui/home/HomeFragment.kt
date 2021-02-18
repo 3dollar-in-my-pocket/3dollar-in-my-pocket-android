@@ -143,7 +143,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            Constants.SHOW_STORE_BY_CATEGORY, Constants.ADD_STORE -> {
+            Constants.SHOW_STORE_BY_CATEGORY -> {
+                viewModel.requestStoreInfo(currentPosition)
+            }
+            Constants.ADD_STORE -> {
                 viewModel.requestStoreInfo(currentPosition)
             }
             Constants.GET_LOCATION_PERMISSION -> {
