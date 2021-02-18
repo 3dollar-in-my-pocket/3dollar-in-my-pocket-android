@@ -28,6 +28,7 @@ buildscript {
         kakao_login = '2.0.3'
         firebase_crashlytics_version = '2.4.1'
         google_service_version = '4.3.5'
+        ratingbar_version = '1.5.1'
     }
     repositories {
         google()
@@ -53,6 +54,7 @@ allprojects {
         jcenter()
 
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
