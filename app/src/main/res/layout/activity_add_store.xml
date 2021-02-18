@@ -16,7 +16,45 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_white_bottom_corner"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
         
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="24dp"
+                android:foreground="?actionBarItemBackground"
+                android:background="@android:color/transparent"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_close_black"
+                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_add_store"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_back" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,7 +63,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            
+        
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -36,7 +74,6 @@
                     android:layout_width="0dp"
                     android:layout_height="264dp"
                     android:layout_gravity="bottom"
-                    android:layout_marginTop="49dp"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -51,47 +88,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/map" />
                 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layout_title"
-                    android:layout_width="0dp"
-                    android:layout_height="98dp"
-                    android:background="@drawable/rect_white_bottom_corner"
-                    android:elevation="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="UnusedAttribute">
-                    
-                    <ImageButton
-                        android:id="@+id/btn_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="?attr/actionBarItemBackground"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_close_black"
-                        app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                        app:layout_constraintStart_toStartOf="parent" />
-                    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/title_add_store"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/btn_back"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/btn_back" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-                
                 <TextView
                     android:id="@+id/tv_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="160dp"
+                    android:layout_marginBottom="22dp"
                     android:background="@drawable/rect_red_radius48_opacity"
                     android:ellipsize="end"
                     android:maxEms="13"
@@ -100,9 +102,10 @@
                     android:singleLine="true"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/map"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layout_title"
                     tools:text="내 위치 내 위치" />
                 
                 <ImageButton
@@ -112,10 +115,12 @@
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/rect_white_radius_8"
                     android:contentDescription="@string/maps_YOUR_LOCATION"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_current_location"
                     app:layout_constraintBottom_toBottomOf="@id/tv_location"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_location" />
+                    app:layout_constraintTop_toTopOf="@id/tv_location"
+                    tools:ignore="UnusedAttribute" />
                 
                 <LinearLayout
                     android:id="@+id/layout_info"
@@ -155,7 +160,8 @@
                                 android:gravity="center"
                                 android:minHeight="40dp"
                                 android:text="@string/bung"
-                                android:textColor="@drawable/selector_menu_color" />
+                                android:textColor="@drawable/selector_menu_color"
+                                android:textStyle="bold" />
                             
                             <RadioButton
                                 android:id="@+id/rad2"
@@ -168,7 +174,8 @@
                                 android:gravity="center"
                                 android:minHeight="40dp"
                                 android:text="@string/tako"
-                                android:textColor="@drawable/selector_menu_color" />
+                                android:textColor="@drawable/selector_menu_color"
+                                android:textStyle="bold" />
                             
                             <RadioButton
                                 android:id="@+id/rad3"
@@ -181,7 +188,8 @@
                                 android:gravity="center"
                                 android:minHeight="40dp"
                                 android:text="@string/gye"
-                                android:textColor="@drawable/selector_menu_color" />
+                                android:textColor="@drawable/selector_menu_color"
+                                android:textStyle="bold" />
                         </TableRow>
                         
                         <TableRow>
@@ -198,7 +206,8 @@
                                 android:gravity="center"
                                 android:minHeight="40dp"
                                 android:text="@string/hodduck"
-                                android:textColor="@drawable/selector_menu_color" />
+                                android:textColor="@drawable/selector_menu_color"
+                                android:textStyle="bold" />
                             
                             <RadioButton
                                 android:layout_width="wrap_content"
@@ -246,17 +255,33 @@
                         android:text="@={viewModel.storeName}"
                         android:textColor="@color/color_black"
                         android:textColorHint="@color/color_gray1"
-                        android:textSize="16sp" />
-                    
-                    <TextView
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+    
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/add_photo"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp" />
-                    
+                        android:orientation="horizontal">
+        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/add_photo"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp" />
+        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/option"
+                            android:textColor="@color/color_gray1"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+    
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_photo"
                         android:layout_width="match_parent"
@@ -269,16 +294,31 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         tools:listitem="@layout/item_photo" />
-                    
-                    <TextView
+    
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/store_detail_menu"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp" />
-                    
+                        android:orientation="horizontal">
+        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/store_detail_menu"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp" />
+        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/option"
+                            android:textColor="@color/color_gray1"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+    
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_edit_menu"
                         android:layout_width="match_parent"
@@ -289,32 +329,54 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:itemCount="3"
                         tools:listitem="@layout/item_menu_edit" />
-                    
+    
                     <ImageButton
                         android:id="@+id/btn_add"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="120dp"
                         android:background="@drawable/rect_pink_stroke_corner8"
-                        android:src="@drawable/ic_add" />
-                    
-                    <Button
-                        android:id="@+id/btn_submit"
-                        android:layout_width="250dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginVertical="40dp"
-                        android:background="@drawable/selector_btn_radius48"
-                        android:enabled="@{viewModel.isFinished()}"
-                        android:padding="10dp"
-                        android:text="@string/add_store_finish"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_add"
+                        tools:ignore="UnusedAttribute" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-        
+    
+        <View
+            android:id="@+id/view_submit_back"
+            android:layout_width="232dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/selector_btn_radius48"
+            android:elevation="4dp"
+            android:enabled="@{viewModel.isFinished()}"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="@string/add_store_finish"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
+            app:layout_constraintEnd_toEndOf="@id/view_submit_back"
+            app:layout_constraintStart_toStartOf="@id/view_submit_back"
+            app:layout_constraintTop_toTopOf="@id/view_submit_back"
+            tools:ignore="UnusedAttribute" />
+    
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"

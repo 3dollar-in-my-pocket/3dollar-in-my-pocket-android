@@ -18,7 +18,7 @@
         android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> listener.onClick(item)}"
         android:paddingStart="24dp"
         tools:ignore="UnusedAttribute">

@@ -29,7 +29,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foreground="?attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:minWidth="172dp"
             android:minHeight="172dp"
             android:onClick="@{() -> listener.onClick(item)}"
@@ -42,7 +42,7 @@
                 android:layout_margin="12dp"
                 android:background="@drawable/rect_stroke_pink"
                 android:paddingHorizontal="8dp"
-                android:paddingVertical="3dp"
+                android:paddingVertical="2dp"
                 android:text="@{@string/distance(item.distance)}"
                 android:textColor="@color/color_sub_red"
                 android:textSize="14sp"
@@ -59,38 +59,54 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_fish"
                 app:bindMenuIcon="@{item.category}"
+                app:isSelected="@{isSelectedItem}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_distance" />
-            
-            <RatingBar
-                android:id="@+id/rating_score"
-                style="@style/PinkRatingBar"
-                android:layout_width="wrap_content"
+    
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:numStars="5"
-                android:progressBackgroundTint="@color/color_gray1"
-                android:progressTint="@color/color_sub_red"
-                android:rating="@{item.rating}"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
-                tools:ignore="UnusedAttribute" />
-            
-            <TextView
-                android:id="@+id/tv_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@{@string/score(item.rating)}"
-                android:textColor="@{isSelectedItem ? @color/color_sub_red : @color/color_gray1}"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/rating_score"
-                app:layout_constraintStart_toEndOf="@id/rating_score"
-                app:layout_constraintTop_toTopOf="@id/rating_score"
-                tools:text="3.8점" />
-            
+                app:layout_constraintTop_toBottomOf="@id/iv_menu_icon">
+        
+                <com.willy.ratingbar.ScaleRatingBar
+                    android:id="@+id/rating_score"
+                    style="@style/PinkRatingBar"
+                    bindRating="@{item.rating}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
+                    app:srb_clickable="true"
+                    app:srb_isIndicator="true"
+                    app:srb_drawableEmpty="@drawable/ic_star_off"
+                    app:srb_drawableFilled="@drawable/ic_star"
+                    app:srb_numStars="5"
+                    app:srb_starHeight="15dp"
+                    app:srb_starPadding="2dp"
+                    app:srb_starWidth="15dp"
+                    tools:ignore="UnusedAttribute" />
+        
+                <TextView
+                    android:id="@+id/tv_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@{@string/score(item.rating)}"
+                    android:textColor="@{isSelectedItem ? @color/color_white : @color/color_gray1}"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/rating_score"
+                    app:layout_constraintStart_toEndOf="@id/rating_score"
+                    app:layout_constraintTop_toTopOf="@id/rating_score"
+                    tools:text="3.8점" />
+            </LinearLayout>
+    
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel" />
+        
+        <import type="com.zion830.threedollars.utils.StringUtils" />
+        
+        <import type="android.view.View" />
+        
+        <import type="com.zion830.threedollars.repository.model.MenuType" />
+        
+        <import type="com.zion830.threedollars.ui.store_detail.SortType" />
+    </data>
+    
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_category">
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/ic_no_store"
+            android:visibility="@{viewModel.hasData ? View.GONE : View.VISIBLE}" />
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_white"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.firstSectionVisibility ? View.VISIBLE : View.GONE}">
+            
+            <TextView
+                android:id="@+id/tv_group1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                android:drawablePadding="4dp"
+                android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_50m : @string/over_3}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_distance1"
+                bindItem="@{viewModel.storeByDistance.storeList50}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_distance" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rating1"
+                bindItem="@{viewModel.storeByRating.storesOver3}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.RATING ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_rating" />
+        </LinearLayout>
+        
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_white"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.secondSectionVisibility ? View.VISIBLE : View.GONE}">
+            
+            <TextView
+                android:id="@+id/tv_group2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                android:drawablePadding="4dp"
+                android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_100m : @string/over_2}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_distance2"
+                bindItem="@{viewModel.storeByDistance.storeList100}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_distance" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rating2"
+                bindItem="@{viewModel.storeByRating.storeList2}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.RATING ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_rating" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_white"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.thirdSectionVisibility ? View.VISIBLE : View.GONE}">
+            
+            <TextView
+                android:id="@+id/tv_group3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                android:drawablePadding="4dp"
+                android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_500m : @string/over_1}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_distance3"
+                bindItem="@{viewModel.storeByDistance.storeList500}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_distance" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rating3"
+                bindItem="@{viewModel.storeByRating.storeList1}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.RATING ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_rating" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/rect_white"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.fourthSectionVisibility ? View.VISIBLE : View.GONE}">
+            
+            <TextView
+                android:id="@+id/tv_group4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                android:drawablePadding="4dp"
+                android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_1km : @string/over_0}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_distance4"
+                bindItem="@{viewModel.storeByDistance.storeList1000}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_distance" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rating4"
+                bindItem="@{viewModel.storeByRating.storeList0}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:visibility="@{viewModel.sortType == SortType.RATING ? View.VISIBLE : View.GONE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_store_by_rating" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

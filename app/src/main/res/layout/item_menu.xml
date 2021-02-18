@@ -11,9 +11,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:orientation="horizontal">
-        
+        android:orientation="horizontal"
+        android:paddingBottom="3dp">
+    
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:text="@{item.name}"
             android:textColor="@color/color_black"
             android:textSize="16sp" />
-        
+    
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

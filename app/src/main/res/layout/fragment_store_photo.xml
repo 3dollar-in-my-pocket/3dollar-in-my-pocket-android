@@ -58,24 +58,39 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+    
         <com.smarteist.autoimageslider.SliderView
             android:id="@+id/slider"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/rv_indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_title"
-            app:sliderIndicatorEnabled="true"
-            app:sliderIndicatorGravity="center_horizontal|bottom"
-            app:sliderIndicatorMargin="15dp"
-            app:sliderIndicatorMarginBottom="50dp"
-            app:sliderIndicatorOrientation="horizontal"
-            app:sliderIndicatorPadding="4dp"
-            app:sliderIndicatorRadius="2dp"
-            app:sliderIndicatorSelectedColor="@color/color_sub_red"
-            app:sliderIndicatorUnselectedColor="@color/color_gray2" />
+            app:sliderIndicatorEnabled="false" />
+    
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_indicator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="13dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/view"
+            tools:listitem="@layout/item_photo_preview" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

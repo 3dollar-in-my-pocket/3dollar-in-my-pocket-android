@@ -30,7 +30,8 @@
             android:text="@{item.name}"
             android:textColor="@color/color_black"
             android:textColorHint="@color/color_gray1"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
         
         <EditText
             android:id="@+id/et_price"
@@ -48,6 +49,7 @@
             android:text="@{item.price}"
             android:textColor="@color/color_black"
             android:textColorHint="@color/color_gray1"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </layout>

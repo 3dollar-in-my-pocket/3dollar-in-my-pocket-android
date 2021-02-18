@@ -28,10 +28,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="36dp"
+                android:foreground="?actionBarItemBackground"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_back_wh"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute" />
             
             <ImageView
                 android:layout_width="match_parent"
@@ -109,7 +111,7 @@
                     android:clickable="@{viewModel.isAvailable()}"
                     android:drawableEnd="@{viewModel.isNameEmpty() ? @drawable/ic_start_off : @drawable/ic_start}"
                     android:drawablePadding="8dp"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:text="@{viewModel.isAvailable() ? @string/login_name3 : @string/login_name_fail}"
                     android:textColor="@{viewModel.isNameEmpty() ? @color/color_gray2 : @color/color_main_red}"
                     android:textSize="32sp"

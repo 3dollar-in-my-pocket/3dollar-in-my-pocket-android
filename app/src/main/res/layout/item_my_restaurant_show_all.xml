@@ -20,7 +20,7 @@
         android:layout_height="172dp"
         android:layout_margin="8dp"
         android:background="@drawable/rect_gray_corner"
-        android:foreground="?attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:gravity="center"
         android:orientation="vertical"
         tools:ignore="UnusedAttribute">

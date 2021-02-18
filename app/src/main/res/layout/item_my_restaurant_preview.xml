@@ -20,7 +20,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/rect_gray_corner"
-        android:foreground="?attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> listener.onClick(item)}"
         tools:ignore="UnusedAttribute">
         
@@ -50,27 +50,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
             tools:text="강남역 2출 앞" />
-        
-        <RatingBar
+    
+        <com.willy.ratingbar.ScaleRatingBar
             android:id="@+id/rating_score"
             style="@style/PinkRatingBar"
+            bindRating="@{item.rating}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="10dp"
-            android:numStars="5"
-            android:progressTint="@color/color_sub_red"
-            android:rating="@{item.rating}"
+            android:clickable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_location"
             app:layout_constraintTop_toBottomOf="@id/tv_location"
+            app:srb_clickable="true"
+            app:srb_isIndicator="true"
+            app:srb_drawableEmpty="@drawable/ic_star_off"
+            app:srb_drawableFilled="@drawable/ic_star"
+            app:srb_numStars="5"
+            app:srb_starHeight="16dp"
+            app:srb_starPadding="2dp"
+            app:srb_starWidth="16dp"
             tools:ignore="UnusedAttribute" />
         
         <TextView
             android:id="@+id/tv_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="6dp"
             android:text="@{@string/score(item.rating)}"
             android:textColor="@color/gmm_white"
             android:textSize="16sp"

@@ -53,6 +53,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="?actionBarItemBackground"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_modify"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +90,7 @@
                 android:text="@{@string/count(viewModel.myStore.totalElements)}"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
-                android:textStyle="bold"
+                android:textStyle="italic"
                 android:visibility="@{viewModel.myStore.store.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@id/tv_store"
                 app:layout_constraintStart_toEndOf="@id/tv_store"
@@ -102,13 +103,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
+                android:foreground="?attr/actionBarItemBackground"
                 android:padding="8dp"
                 android:text="@string/my_page_show_all"
                 android:textColor="@color/color_main_red"
                 android:visibility="@{viewModel.myStore.store.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@id/tv_store"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_store" />
+                app:layout_constraintTop_toTopOf="@id/tv_store"
+                tools:ignore="UnusedAttribute" />
             
             <ImageView
                 android:id="@+id/iv_no_store"
@@ -150,15 +153,17 @@
                 android:textSize="22sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_no_store" />
-            
+    
             <TextView
                 android:id="@+id/tv_review_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
+                android:text="@{@string/count(viewModel.myReview.review.size())}"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
-                android:textStyle="bold"
+                android:textStyle="italic"
+                android:visibility="@{viewModel.myReview.review.size() > 0 ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/tv_review"
                 app:layout_constraintStart_toEndOf="@id/tv_review"
                 app:layout_constraintTop_toTopOf="@id/tv_review"
@@ -170,13 +175,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
+                android:foreground="?attr/actionBarItemBackground"
                 android:padding="8dp"
                 android:text="@string/my_page_show_all"
                 android:textColor="@color/color_main_red"
                 android:visibility="@{viewModel.myReview.review.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@id/tv_review"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_review" />
+                app:layout_constraintTop_toTopOf="@id/tv_review"
+                tools:ignore="UnusedAttribute" />
             
             <LinearLayout
                 android:layout_width="0dp"

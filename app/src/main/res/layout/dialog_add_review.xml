@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     
     <data>
         
@@ -43,19 +44,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title">
             
-            <RatingBar
+            <com.willy.ratingbar.ScaleRatingBar
                 android:id="@+id/rating"
                 style="@style/Widget.AppCompat.RatingBar.Indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
                 android:layout_marginStart="12dp"
-                android:isIndicator="false"
-                android:max="5"
-                android:progressBackgroundTint="@color/color_gray1"
-                android:progressTint="@color/color_sub_red"
-                android:rating="5"
-                android:stepSize="1" />
+                app:srb_drawableEmpty="@drawable/ic_star_off"
+                app:srb_drawableFilled="@drawable/ic_star"
+                app:srb_numStars="5"
+                app:srb_scrollable="true"
+                app:srb_starHeight="30dp"
+                app:srb_starPadding="8dp"
+                app:srb_starWidth="30dp"
+                app:srb_stepSize="1" />
         </LinearLayout>
         
         <EditText
@@ -68,7 +71,7 @@
             android:hint="@string/recommend_store_hint"
             android:imeOptions="actionDone"
             android:inputType="text"
-            android:paddingHorizontal="12dp"
+            android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
             android:text="@={viewModel.reviewContent}"
             android:textColor="@color/color_black"
@@ -86,12 +89,14 @@
             android:background="@drawable/selector_btn_radius14"
             android:elevation="@null"
             android:enabled="@{viewModel.isAvailableReview()}"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@string/recommend_store_finish"
             android:textColor="@color/gmm_white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_content" />
+            app:layout_constraintTop_toBottomOf="@+id/et_content"
+            tools:ignore="UnusedAttribute" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

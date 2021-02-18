@@ -45,19 +45,25 @@
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="음~냠냠긋" />
-        
-        <RatingBar
+    
+        <com.willy.ratingbar.ScaleRatingBar
             android:id="@+id/rating_score"
             style="@style/PinkRatingBar"
+            bindRating="@{item.rating}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="10dp"
-            android:numStars="5"
-            android:progressTint="@color/color_sub_red"
-            android:rating="@{item.rating}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:srb_clickable="true"
+            app:srb_isIndicator="true"
+            app:srb_drawableEmpty="@drawable/ic_star_off"
+            app:srb_drawableFilled="@drawable/ic_star"
+            app:srb_numStars="5"
+            app:srb_starHeight="12dp"
+            app:srb_starPadding="2dp"
+            app:srb_starWidth="12dp"
             tools:ignore="UnusedAttribute" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
