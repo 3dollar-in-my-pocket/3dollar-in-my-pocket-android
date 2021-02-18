@@ -18,6 +18,6 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         APPLICATION_CONTEXT = applicationContext
-        KakaoSdk.init(this, applicationContext.getString(R.string.kakao_key))
+        KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
     }
 }
