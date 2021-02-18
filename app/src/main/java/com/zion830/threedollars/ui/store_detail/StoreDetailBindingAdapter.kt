@@ -16,10 +16,16 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils
+import com.willy.ratingbar.ScaleRatingBar
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.response.Image
 import com.zion830.threedollars.ui.addstore.StoreImage
 import com.zion830.threedollars.utils.StringUtils.getString
+
+@BindingAdapter("bindRating")
+fun ScaleRatingBar.bindRating(value: Float) {
+    rating = value
+}
 
 @BindingAdapter("setNameBold")
 fun TextView.setNameBold(name: String?) {
@@ -32,13 +38,13 @@ fun TextView.setNameBold(name: String?) {
 @BindingAdapter("setDistance")
 fun TextView.setDistance(distance: Int) {
     val spannableText = when {
-        distance <= 50 -> "50${context.getString(R.string.store_distance)}"
-        distance <= 500 -> "500${context.getString(R.string.store_distance)}"
-        distance <= 1000 -> context.getString(R.string.store_distance_1km)
+        distance <= 50 -> "50m${context.getString(R.string.store_distance)}"
+        distance <= 500 -> "500m${context.getString(R.string.store_distance)}"
+        distance <= 1000 -> "1km${context.getString(R.string.store_distance)}"
         else -> context.getString(R.string.store_distance_long)
     }.toSpannable()
 
-    val endIndex = spannableText.indexOf("m") + 4
+    val endIndex = spannableText.indexOfFirst { it == '에' }
     spannableText.setSpan(StyleSpan(Typeface.BOLD), 0, endIndex, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
     text = spannableText
 }
