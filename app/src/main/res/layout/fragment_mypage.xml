@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <import type="android.view.View" />
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.UserInfoViewModel" />
+    </data>
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_black">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_nickname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rect_stroke_pink"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{viewModel.userInfo.name}"
+                    android:textColor="@color/color_sub_red"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="마포구 몽키스패너" />
+                
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?actionBarItemBackground"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_modify"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_back2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_nickname" />
+            
+            <TextView
+                android:id="@+id/tv_store"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="@{viewModel.myStore.store.size() > 0 ? @string/my_page_stores : @string/my_page_stores_empty}"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_back"
+                app:layout_constraintStart_toStartOf="parent" />
+            
+            <TextView
+                android:id="@+id/tv_store_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@{@string/count(viewModel.myStore.totalElements)}"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="italic"
+                android:visibility="@{viewModel.myStore.store.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@id/tv_store"
+                app:layout_constraintStart_toEndOf="@id/tv_store"
+                app:layout_constraintTop_toTopOf="@id/tv_store"
+                tools:text="3개" />
+            
+            <TextView
+                android:id="@+id/tv_show_all_store"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:text="@string/my_page_show_all"
+                android:textColor="@color/color_main_red"
+                android:visibility="@{viewModel.myStore.store.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@id/tv_store"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_store"
+                tools:ignore="UnusedAttribute" />
+            
+            <ImageView
+                android:id="@+id/iv_no_store"
+                android:layout_width="172dp"
+                android:layout_height="172dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rect_gray_corner"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:src="@drawable/ic_no_store"
+                app:layout_constraintStart_toStartOf="@id/tv_store"
+                app:layout_constraintTop_toBottomOf="@id/tv_store" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_store"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                android:paddingHorizontal="24dp"
+                android:scrollbars="none"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_store"
+                tools:listitem="@layout/item_my_restaurant_preview" />
+            
+            <TextView
+                android:id="@+id/tv_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="40dp"
+                android:text="@{viewModel.myReview.review.size() > 0 ? @string/my_page_reviews : @string/my_page_reviews_empty}"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_no_store" />
+    
+            <TextView
+                android:id="@+id/tv_review_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="@{@string/count(viewModel.myReview.review.size())}"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="italic"
+                android:visibility="@{viewModel.myReview.review.size() > 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/tv_review"
+                app:layout_constraintStart_toEndOf="@id/tv_review"
+                app:layout_constraintTop_toTopOf="@id/tv_review"
+                tools:text="3개" />
+            
+            <TextView
+                android:id="@+id/tv_show_all_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:foreground="?attr/actionBarItemBackground"
+                android:padding="8dp"
+                android:text="@string/my_page_show_all"
+                android:textColor="@color/color_main_red"
+                android:visibility="@{viewModel.myReview.review.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@id/tv_review"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_review"
+                tools:ignore="UnusedAttribute" />
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:paddingBottom="140dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_review">
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/rect_light_gray_corner_top" />
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/rect_gray" />
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/rect_light_gray_corner_bottom" />
+            </LinearLayout>
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_review"
+                style="@style/PinkRatingBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="true"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_review"
+                tools:listitem="@layout/item_my_review_preview" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

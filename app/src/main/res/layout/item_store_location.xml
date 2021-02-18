@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.response.AllStoreResponseItem" />
+        
+        <variable
+            name="isSelectedItem"
+            type="java.lang.Boolean" />
+        
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
+    
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/gmm_white}"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:minWidth="172dp"
+            android:minHeight="172dp"
+            android:onClick="@{() -> listener.onClick(item)}"
+            tools:ignore="UnusedAttribute">
+            
+            <TextView
+                android:id="@+id/tv_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:background="@drawable/rect_stroke_pink"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="@{@string/distance(item.distance)}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="150m" />
+            
+            <ImageView
+                android:id="@+id/iv_menu_icon"
+                android:layout_width="110dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_fish"
+                app:bindMenuIcon="@{item.category}"
+                app:isSelected="@{isSelectedItem}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_distance" />
+    
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_menu_icon">
+        
+                <com.willy.ratingbar.ScaleRatingBar
+                    android:id="@+id/rating_score"
+                    style="@style/PinkRatingBar"
+                    bindRating="@{item.rating}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
+                    app:srb_clickable="true"
+                    app:srb_isIndicator="true"
+                    app:srb_drawableEmpty="@drawable/ic_star_off"
+                    app:srb_drawableFilled="@drawable/ic_star"
+                    app:srb_numStars="5"
+                    app:srb_starHeight="15dp"
+                    app:srb_starPadding="2dp"
+                    app:srb_starWidth="15dp"
+                    tools:ignore="UnusedAttribute" />
+        
+                <TextView
+                    android:id="@+id/tv_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@{@string/score(item.rating)}"
+                    android:textColor="@{isSelectedItem ? @color/color_white : @color/color_gray1}"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/rating_score"
+                    app:layout_constraintStart_toEndOf="@id/rating_score"
+                    app:layout_constraintTop_toTopOf="@id/rating_score"
+                    tools:text="3.8점" />
+            </LinearLayout>
+    
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/rect_black_radius16"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

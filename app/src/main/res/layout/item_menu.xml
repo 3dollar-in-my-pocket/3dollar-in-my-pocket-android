@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.response.Menu" />
+    </data>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="3dp">
+    
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="@{item.name}"
+            android:textColor="@color/color_black"
+            android:textSize="16sp" />
+    
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:singleLine="true"
+            android:text="@{item.price}"
+            android:textColor="@color/color_4f4f4f"
+            android:textSize="16sp" />
+    </LinearLayout>
+</layout>

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.maps.android:android-maps-utils:1.3.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b5c6c43f924e4a9be0aa3dea17d585df/jetified-android-maps-utils-1.3.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b5c6c43f924e4a9be0aa3dea17d585df/jetified-android-maps-utils-1.3.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b5c6c43f924e4a9be0aa3dea17d585df/jetified-android-maps-utils-1.3.1/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.maps.android/android-maps-utils/1.3.1/1c1dc494fa15fcc10380648e02700d1d46e43c42/android-maps-utils-1.3.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.maps.android/android-maps-utils/1.3.1/7eb9f217b3fe891ccee08798623314cc2f7bfa5d/android-maps-utils-1.3.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

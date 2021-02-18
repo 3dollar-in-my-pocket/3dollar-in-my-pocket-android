@@ -1,0 +1,17 @@
+package com.zion830.threedollars.ui.store_detail.adapter
+
+import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ItemPhotoPreviewBinding
+import com.zion830.threedollars.ui.addstore.StoreImage
+import zion830.com.common.base.BaseRecyclerView
+import zion830.com.common.listener.OnItemClickListener
+
+
+class StorePreviewImageAdapter(
+    clickListener: OnItemClickListener<StoreImage>
+) : BaseRecyclerView<ItemPhotoPreviewBinding, StoreImage>(R.layout.item_photo_preview) {
+
+    init {
+        this.clickListener = clickListener
+    }
+}

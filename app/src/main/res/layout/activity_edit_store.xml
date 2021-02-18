@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+    
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel" />
+    
+        <import type="com.zion830.threedollars.ui.store_detail.DeleteType" />
+    
+        <import type="com.zion830.threedollars.utils.StringUtils" />
+    
+        <import type="android.view.View" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_white_bottom_corner"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
+            
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="24dp"
+                android:background="@android:color/white"
+                android:contentDescription="@null"
+                android:foreground="?attr/actionBarItemBackground"
+                android:src="@drawable/ic_back_black"
+                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_store_info"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_back" />
+            
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:background="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:text="@string/request_delete"
+                android:textColor="@color/color_sub_red"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_back"
+                tools:ignore="UnusedAttribute" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white">
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+                    android:layout_width="0dp"
+                    android:layout_height="264dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="49dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <ImageButton
+                    android:id="@+id/btn_find_location"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="80dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/rect_white_radius_8"
+                    android:contentDescription="@string/maps_YOUR_LOCATION"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_current_location"
+                    app:layout_constraintBottom_toBottomOf="@id/map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="UnusedAttribute" />
+                
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/layout_store_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="24dp"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_find_location"
+                    tools:ignore="UnusedAttribute">
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+                        
+                        <TextView
+                            android:id="@+id/tv_store_writer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:bufferType="spannable"
+                            android:textColor="@color/color_black"
+                            android:textSize="22sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:setNameBold="@{viewModel.storeInfo.user.name}"
+                            tools:text="홍길님이\n제보한 음식점입니다." />
+                        
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/tv_store_writer"
+                            app:layout_constraintTop_toBottomOf="@id/tv_store_writer">
+                            
+                            <TextView
+                                android:layout_width="104dp"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/rect_black_radius10"
+                                android:gravity="center"
+                                android:hint="@string/hint_menu_name"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="10dp"
+                                android:singleLine="true"
+                                android:text="@{StringUtils.getReadableCategory(viewModel.storeInfo.category)}"
+                                android:textColor="@color/color_sub_red"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="붕어빵" />
+                            
+                            <EditText
+                                android:id="@+id/et_location"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/selector_edittext"
+                                android:hint="@string/hint_menu_price"
+                                android:imeOptions="actionDone"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="10dp"
+                                android:singleLine="true"
+                                android:text="@{viewModel.storeInfo.storeName}"
+                                android:textColor="@color/color_black"
+                                android:textColorHint="@color/color_gray1"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                </androidx.cardview.widget.CardView>
+                
+                
+                <LinearLayout
+                    android:id="@+id/layout_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="40dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_store_info">
+                    
+                    <TextView
+                        android:id="@+id/tvImageCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:text="@{@string/edit_photo(viewModel.storeInfo.image.size())}"
+                        android:textColor="#4f4f4f"
+                        android:textSize="16sp" />
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="24dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:listitem="@layout/item_photo" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@{@string/edit_menu(viewModel.storeInfo.menu.size())}"
+                        android:textColor="#4f4f4f"
+                        android:textSize="16sp" />
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_edit_menu"
+                        bindItem="@{viewModel.storeInfo.menu}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="8dp"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_menu_edit" />
+                    
+                    <ImageButton
+                        android:id="@+id/btn_add"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="120dp"
+                        android:background="@drawable/rect_pink_stroke_corner8"
+                        android:src="@drawable/ic_add" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+        
+        <View
+            android:id="@+id/view_submit_back"
+            android:layout_width="232dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/selector_btn_radius48"
+            android:elevation="4dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="@string/save"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
+            app:layout_constraintEnd_toEndOf="@id/view_submit_back"
+            app:layout_constraintStart_toStartOf="@id/view_submit_back"
+            app:layout_constraintTop_toTopOf="@id/view_submit_back"
+            tools:ignore="UnusedAttribute" />
+        
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
