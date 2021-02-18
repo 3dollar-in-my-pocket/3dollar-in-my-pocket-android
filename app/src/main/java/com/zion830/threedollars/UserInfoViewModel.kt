@@ -38,12 +38,18 @@ class UserInfoViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
-    val myStore: LiveData<MyStoreResponse> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
-        emit(userRepository.getMyStore().await())
+    private val refresh: MutableLiveData<Boolean> = MutableLiveData(true)
+
+    val myStore: LiveData<MyStoreResponse> = refresh.switchMap {
+        liveData(Dispatchers.IO + coroutineExceptionHandler) {
+            emit(userRepository.getMyStore().await())
+        }
     }
 
-    val myReview: LiveData<MyReviewResponse> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
-        emit(userRepository.getMyReviews().await())
+    val myReview: LiveData<MyReviewResponse> = refresh.switchMap {
+        liveData(Dispatchers.IO + coroutineExceptionHandler) {
+            emit(userRepository.getMyReviews().await())
+        }
     }
 
     val myAllStore: LiveData<PagedList<Store>> by lazy {
@@ -63,11 +69,8 @@ class UserInfoViewModel : BaseViewModel() {
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             _userInfo.postValue(userRepository.getUserInfo())
+            refresh.postValue(true)
         }
-    }
-
-    fun updatePreviewData() {
-
     }
 
     fun updateName() {
@@ -97,6 +100,10 @@ class UserInfoViewModel : BaseViewModel() {
 
     fun initNameUpdateInfo() {
         _isNameUpdated.value = false
+    }
+
+    fun clearName() {
+        userName.value = ""
     }
 
     override fun handleError(t: Throwable) {
