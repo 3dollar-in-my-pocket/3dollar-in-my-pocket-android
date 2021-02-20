@@ -21,26 +21,40 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
     
-        <activity android:name=".splash.SplashActivity">
+        <activity
+            android:name=".splash.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-    
+            
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".login.LoginActivity" />
-        <activity android:name=".ui.addstore.AddStoreActivity" />
-        <activity android:name=".ui.store_detail.StoreDetailActivity" />
-        <activity android:name=".ui.store_detail.StoreByMenuActivity" />
-        <activity android:name=".ui.store_detail.EditStoreActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.addstore.AddStoreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.store_detail.StoreDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.store_detail.StoreByMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.store_detail.EditStoreActivity"
+            android:screenOrientation="portrait" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-    
+            
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-    
+            
                 <data
                     android:host="oauth"
                     android:scheme="kakao${kakao_key}" />
