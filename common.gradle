@@ -90,7 +90,10 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:1.3.1'
     implementation platform('com.google.firebase:firebase-bom:26.4.0')
 
-    // image slider
+    // naver
+    implementation "com.naver.maps:map-sdk:$naver_map_version"
+
+        // image slider
     implementation 'com.github.smarteist:autoimageslider:1.4.0'
     implementation "com.github.ome450901:SimpleRatingBar:$ratingbar_version"
 }

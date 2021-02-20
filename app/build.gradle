@@ -10,17 +10,18 @@ android {
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [google_map_key: properties.getProperty('google_map_key')]
+        buildConfigField "String", "NMF_CLIENT_ID", "\"${properties.getProperty('nmf_client_id')}\""
+        manifestPlaceholders = [google_map_key: properties.getProperty('google_map_key'), nmf_client_id: properties.getProperty('nmf_client_id')]
         multiDexEnabled true
     }
     buildTypes {
         release {
-            manifestPlaceholders = [kakao_key: "kakao" + properties.getProperty('kakao_key_release')]
+            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_release')]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
         }
         debug {
-            manifestPlaceholders = [kakao_key: "kakao" + properties.getProperty('kakao_key_dev')]
+            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
         }

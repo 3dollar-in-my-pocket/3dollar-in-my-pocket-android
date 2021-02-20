@@ -24,7 +24,7 @@
         <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,18 +37,21 @@
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-            
+    
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-            
+    
                 <data
                     android:host="oauth"
-                    android:scheme="${kakao_key}" />
+                    android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>
     
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="${nmf_client_id}" />
     </application>
 </manifest>
