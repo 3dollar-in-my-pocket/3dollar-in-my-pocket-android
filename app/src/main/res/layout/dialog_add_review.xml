@@ -91,7 +91,7 @@
             android:enabled="@{viewModel.isAvailableReview()}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@string/recommend_store_finish"
-            android:textColor="@color/gmm_white"
+            android:textColor="@color/color_white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

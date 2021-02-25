@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/gmm_white}"
+        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/color_white}"
         app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true">
         

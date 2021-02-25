@@ -1,4 +1,3 @@
-include ':testmodule'
 include ':app'
 rootProject.name='MyDiary'
 include ':common'

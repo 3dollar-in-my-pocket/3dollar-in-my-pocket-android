@@ -20,8 +20,9 @@
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+    
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
             android:layout_width="0dp"
@@ -124,62 +125,41 @@
                     tools:ignore="UnusedAttribute" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+    
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="0dp"
+            android:layout_height="264dp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="100dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/admob"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:adSize="BANNER"
+            app:adUnitId="@string/admob_id"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/color_gray2">
-            
+            android:layout_height="0dp"
+            android:background="@color/color_gray2"
+            app:layout_constraintBottom_toTopOf="@+id/admob"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/container">
+        
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.libraries.maps.SupportMapFragment"
-                    android:layout_width="0dp"
-                    android:layout_height="264dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="100dp"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                
-                <TextView
-                    android:id="@+id/tv_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="190dp"
-                    android:layout_marginBottom="38dp"
-                    android:background="@drawable/rect_red_radius48_opacity"
-                    android:ellipsize="end"
-                    android:maxEms="13"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="5dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:text="내 위치 내 위치" />
-                
-                <ImageButton
-                    android:id="@+id/btn_find_location"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/rect_white_radius_8"
-                    android:contentDescription="@string/maps_YOUR_LOCATION"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_current_location"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_location"
-                    tools:ignore="UnusedAttribute" />
-                
+            
                 <TextView
                     android:id="@+id/tv_category"
                     android:layout_width="wrap_content"
@@ -191,7 +171,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/map"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="붕어빵" />
                 
                 <TextView
@@ -244,7 +224,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="10dp"
+                    android:paddingVertical="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

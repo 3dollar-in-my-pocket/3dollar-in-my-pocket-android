@@ -60,54 +60,39 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         
         <ScrollView
+            android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white">
-            
+    
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white">
-                
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+        
+                <LinearLayout
+                    android:id="@+id/container"
                     android:layout_width="0dp"
                     android:layout_height="264dp"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="49dp"
-                    android:textSize="20sp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-                
-                <ImageButton
-                    android:id="@+id/btn_find_location"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="80dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/rect_white_radius_8"
-                    android:contentDescription="@string/maps_YOUR_LOCATION"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_current_location"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="UnusedAttribute" />
-                
+        
                 <androidx.cardview.widget.CardView
                     android:id="@+id/layout_store_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="200dp"
                     android:padding="8dp"
                     app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_find_location"
+                    app:layout_constraintTop_toTopOf="@+id/container"
                     tools:ignore="UnusedAttribute">
                     
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -193,7 +178,7 @@
                             android:gravity="center"
                             android:padding="4dp"
                             android:text="@{@string/img_count(viewModel.storeInfo.image.size() - 1)}"
-                            android:textColor="@color/gmm_white"
+                            android:textColor="@color/color_white"
                             android:textSize="11sp"
                             android:visibility="@{viewModel.storeInfo.image.size() &lt; 2 ? View.GONE : View.VISIBLE}"
                             app:layout_constraintBottom_toBottomOf="@id/iv_store"
@@ -325,7 +310,7 @@
                         android:layout_height="5dp"
                         android:layout_marginVertical="24dp"
                         android:background="@color/color_gray2" />
-                    
+    
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -334,7 +319,20 @@
                         android:textColor="@color/color_black"
                         android:textSize="24sp"
                         android:textStyle="bold" />
-                    
+    
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/admob"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/rect_gray"
+                        app:adSize="BANNER"
+                        app:adUnitId="@string/admob_id"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+    
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_review"
                         bindItem="@{viewModel.storeInfo.review}"

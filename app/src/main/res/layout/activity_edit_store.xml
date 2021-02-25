@@ -7,9 +7,9 @@
     
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel" />
+            type="com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel" />
     
-        <import type="com.zion830.threedollars.ui.store_detail.DeleteType" />
+        <import type="com.zion830.threedollars.ui.report_store.DeleteType" />
     
         <import type="com.zion830.threedollars.utils.StringUtils" />
     
@@ -77,57 +77,42 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white">
-            
+    
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+        
+                <LinearLayout
+                    android:id="@+id/container"
                     android:layout_width="0dp"
                     android:layout_height="264dp"
                     android:layout_gravity="bottom"
                     android:layout_marginTop="49dp"
-                    android:textSize="20sp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-                
-                <ImageButton
-                    android:id="@+id/btn_find_location"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="80dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/rect_white_radius_8"
-                    android:contentDescription="@string/maps_YOUR_LOCATION"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_current_location"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="UnusedAttribute" />
-                
+        
                 <androidx.cardview.widget.CardView
                     android:id="@+id/layout_store_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="24dp"
                     android:padding="8dp"
                     app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="16dp"
+                    app:layout_constraintBottom_toBottomOf="@id/container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_find_location"
-                    tools:ignore="UnusedAttribute">
-                    
+                    app:layout_constraintTop_toBottomOf="@id/container"
+                    tools:ignore="UnusedAttribute"
+                    tools:layout_editor_absoluteY="241dp">
+            
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp">
-                        
+                
                         <TextView
                             android:id="@+id/tv_store_writer"
                             android:layout_width="wrap_content"

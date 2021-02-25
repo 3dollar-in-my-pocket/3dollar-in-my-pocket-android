@@ -7,9 +7,9 @@
         
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel" />
-        
-        <import type="com.zion830.threedollars.ui.store_detail.DeleteType" />
+            type="com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel" />
+    
+        <import type="com.zion830.threedollars.ui.report_store.DeleteType" />
     </data>
     
     <LinearLayout
@@ -126,7 +126,7 @@
                 android:enabled="@{viewModel.deleteType != DeleteType.NONE}"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:text="@string/request_delete"
-                android:textColor="@color/gmm_white"
+                android:textColor="@color/color_white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"

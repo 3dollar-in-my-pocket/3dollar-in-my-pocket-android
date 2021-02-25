@@ -129,12 +129,12 @@
                 tools:ignore="UnusedAttribute"
                 tools:text="지금 바로\n3천원이 있으시다" />
     
-            <fragment
-                android:id="@+id/map"
-                android:name="com.google.android.libraries.maps.SupportMapFragment"
+            <LinearLayout
+                android:id="@+id/container"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="80dp"
+                android:orientation="horizontal"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -156,38 +156,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_msg2"
                 tools:listitem="@layout/item_store_location" />
-    
-            <TextView
-                android:id="@+id/tv_my_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="130dp"
-                android:background="@drawable/rect_red_radius48_opacity"
-                android:ellipsize="end"
-                android:maxLength="16"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="5dp"
-                android:singleLine="true"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:text="서울시 강남구 어쩌구동 어쩌구로" />
-            
-            <ImageButton
-                android:id="@+id/btn_find_location"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_margin="24dp"
-                android:background="@drawable/rect_white_radius_8"
-                android:contentDescription="@string/maps_YOUR_LOCATION"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_current_location"
-                app:layout_constraintBottom_toBottomOf="@id/tv_my_location"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_my_location"
-                tools:ignore="UnusedAttribute" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

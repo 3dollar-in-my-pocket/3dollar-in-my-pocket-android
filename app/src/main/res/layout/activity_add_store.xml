@@ -67,61 +67,27 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.libraries.maps.SupportMapFragment"
+    
+                <LinearLayout
+                    android:id="@+id/container"
                     android:layout_width="0dp"
                     android:layout_height="264dp"
                     android:layout_gravity="bottom"
-                    android:textSize="20sp"
+                    android:layout_marginTop="49dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-                
+    
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_marker"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
+                    app:layout_constraintBottom_toBottomOf="@id/container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/map" />
-                
-                <TextView
-                    android:id="@+id/tv_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="160dp"
-                    android:layout_marginBottom="22dp"
-                    android:background="@drawable/rect_red_radius48_opacity"
-                    android:ellipsize="end"
-                    android:maxEms="13"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="5dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:text="내 위치 내 위치" />
-                
-                <ImageButton
-                    android:id="@+id/btn_find_location"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/rect_white_radius_8"
-                    android:contentDescription="@string/maps_YOUR_LOCATION"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_current_location"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_location"
-                    tools:ignore="UnusedAttribute" />
-                
+                    app:layout_constraintTop_toTopOf="@id/container" />
+    
                 <LinearLayout
                     android:id="@+id/layout_info"
                     android:layout_width="0dp"
@@ -130,8 +96,8 @@
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/map">
-                    
+                    app:layout_constraintTop_toBottomOf="@id/container">
+        
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -140,7 +106,7 @@
                         android:text="@string/category"
                         android:textColor="@color/color_black"
                         android:textSize="16sp" />
-                    
+        
                     <com.zion830.threedollars.customview.ToggleButtonGroupTableLayout
                         android:id="@+id/grid_menu"
                         android:layout_width="match_parent"
