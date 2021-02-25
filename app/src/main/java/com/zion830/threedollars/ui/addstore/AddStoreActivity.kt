@@ -1,22 +1,16 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityAddStoreBinding
@@ -24,6 +18,7 @@ import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
+import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -39,26 +34,20 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var mapFragment: SupportMapFragment
-
     private lateinit var photoAdapter: PhotoRecyclerAdapter
 
     private val menuAdapter: EditMenuRecyclerAdapter = EditMenuRecyclerAdapter()
 
     private var isFirstOpen = true
 
-    @SuppressLint("ClickableViewAccessibility")
+    private lateinit var naverMapFragment: StoreAddNaverMapFragment
+
     override fun initView() {
         initKeyboard()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { map ->
-            initMap(map)
-            binding.btnFindLocation.setOnClickListener {
-                initMap(map)
-            }
-            initSubmitButtonEvent(map)
-        }
+        naverMapFragment = StoreAddNaverMapFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+
         binding.btnBack.setOnClickListener {
             setResult(Activity.RESULT_CANCELED)
             finish()
@@ -91,6 +80,7 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
             }
         }
         getMenuList()
+        initSubmitButtonEvent()
     }
 
     private fun initKeyboard() {
@@ -136,13 +126,13 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
         return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
     }
 
-    private fun initSubmitButtonEvent(map: GoogleMap) {
+    private fun initSubmitButtonEvent() {
         binding.btnSubmit.setOnClickListener {
             viewModel.showLoading()
             viewModel.addNewStore(
                 category = MenuType.getKey(binding.gridMenu.value),
-                latitude = map.cameraPosition.target.latitude,
-                longitude = map.cameraPosition.target.longitude,
+                latitude = naverMapFragment.currentTarget?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                longitude = naverMapFragment.currentTarget?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
                 menus = getMenuList(),
                 images = getImageFiles()
             )
@@ -167,38 +157,6 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
             .setPositiveButton(R.string.ok) { _, _ -> photoAdapter.removePhoto(position) }
             .create()
             .show()
-    }
-
-    private fun initMap(googleMap: GoogleMap) {
-        googleMap.uiSettings.isMyLocationButtonEnabled = false
-
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    setLocation(googleMap, it.toLatLng())
-                    binding.tvLocation.text = getCurrentLocationName(it.toLatLng())
-                }
-                googleMap.isMyLocationEnabled = true
-                return
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
-        }
-        setLocation(googleMap)
-    }
-
-    private fun setLocationText(location: LatLng?) {
-        if (location == null) {
-            binding.tvLocation.visibility = View.INVISIBLE
-        } else {
-            binding.tvLocation.visibility = View.VISIBLE
-            binding.tvLocation.text = getCurrentLocationName(location)
-        }
-    }
-
-    private fun setLocation(googleMap: GoogleMap, position: LatLng = DEFAULT_LOCATION) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM))
     }
 
     fun pickImage() {

@@ -2,22 +2,17 @@ package com.zion830.threedollars.ui.store_detail
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.LatLng
+import com.google.android.gms.ads.AdRequest
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.StoreList
 import com.zion830.threedollars.ui.store_detail.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.SearchByRatingRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
@@ -27,13 +22,7 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
 
     override val viewModel: StoreByMenuViewModel by viewModels()
 
-    private var currentPosition: LatLng = DEFAULT_LOCATION
-
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    private lateinit var mapFragment: SupportMapFragment
-
-    private var googleMap: GoogleMap? = null
+    private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     private var menuType: MenuType = MenuType.BUNGEOPPANG
 
@@ -42,22 +31,16 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
     private val storeByRatingAdapters = arrayListOf<SearchByRatingRecyclerAdapter>()
 
     override fun initView() {
+        val adRequest: AdRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+
         initAdapter()
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { map ->
-            googleMap = map
-            initMap(map)
-            binding.btnFindLocation.setOnClickListener {
-                initMap(map, googleMap?.cameraPosition?.zoom ?: DEFAULT_ZOOM)
-            }
-            viewModel.nearStoreInfo.observe(this@StoreByMenuActivity) { storeInRange ->
-                map.setDefaultMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
-            }
-            viewModel.changeCategory(menuType, currentPosition)
-        }
+
+        val naverMapFragment = StoreByMenuNaverMapFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         menuType = MenuType.of(intent.getStringExtra(KEY_MENU))
+        viewModel.changeCategory(menuType)
 
         binding.btnMenu1.setOnClickListener {
             viewModel.changeCategory(MenuType.BUNGEOPPANG, currentPosition)
@@ -78,14 +61,12 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             viewModel.changeSortType(SortType.RATING, currentPosition)
         }
         viewModel.storeByRating.observe(this) {
-            googleMap?.setDefaultMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
             storeByRatingAdapters[0].submitList(it.getStoresOver3())
             storeByRatingAdapters[1].submitList(it.storeList2)
             storeByRatingAdapters[2].submitList(it.storeList1)
             storeByRatingAdapters[3].submitList(it.storeList0)
         }
         viewModel.storeByDistance.observe(this) {
-            googleMap?.setDefaultMarkers(it.getAllStores().map { store -> LatLng(store.latitude, store.longitude) })
             storeByDistanceAdapters[0].submitList(it.storeList50)
             storeByDistanceAdapters[1].submitList(it.storeList100)
             storeByDistanceAdapters[2].submitList(it.storeList500)
@@ -132,36 +113,6 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             recyclerView.adapter = storeByRatingAdapters[index]
             recyclerView.itemAnimator = null
         }
-    }
-
-    private fun initMap(googleMap: GoogleMap, zoomLevel: Float = DEFAULT_ZOOM) {
-        googleMap.uiSettings.isMyLocationButtonEnabled = false
-
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    currentPosition = it.toLatLng()
-                    moveCameraToCurrentPosition(it.toLatLng(), zoomLevel)
-                    viewModel.requestStoreInfo(currentPosition)
-                }
-                googleMap.isMyLocationEnabled = true
-            } else {
-                viewModel.requestStoreInfo(currentPosition)
-                showToast(R.string.find_location_error)
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
-        }
-    }
-
-    private fun setLocationText() {
-        binding.tvLocation.text = getCurrentLocationName(currentPosition)
-        binding.tvLocation.visibility = if (binding.tvLocation.text.isNullOrBlank()) View.GONE else View.VISIBLE
-    }
-
-    private fun moveCameraToCurrentPosition(position: LatLng, zoomLevel: Float?) {
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel ?: DEFAULT_ZOOM))
     }
 
     companion object {

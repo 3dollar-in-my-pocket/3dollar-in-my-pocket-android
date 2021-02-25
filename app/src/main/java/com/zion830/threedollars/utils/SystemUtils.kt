@@ -15,7 +15,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import java.util.*

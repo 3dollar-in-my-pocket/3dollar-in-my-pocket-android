@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.AllStoreResponse
@@ -68,6 +68,10 @@ class StoreByMenuViewModel : BaseViewModel() {
         addSource(storeByRating) {
             value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
         }
+    }
+
+    fun changeCategory(menuType: MenuType) {
+        _category.value = menuType
     }
 
     fun changeCategory(menuType: MenuType, location: LatLng) {

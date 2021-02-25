@@ -1,24 +1,29 @@
 package com.zion830.threedollars.ui.store_detail
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.ui.addstore.adapter.MenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
+import com.zion830.threedollars.ui.report_store.AddReviewDialog
+import com.zion830.threedollars.ui.report_store.EditStoreActivity
+import com.zion830.threedollars.ui.report_store.StorePhotoDialog
+import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 
@@ -28,19 +33,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var mapFragment: SupportMapFragment
-
     private val menuAdapter = MenuRecyclerAdapter()
 
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
-    private var googleMap: GoogleMap? = null
-
-    private var currentPosition: LatLng = DEFAULT_LOCATION
+    private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     private var storeId = 0
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        val adRequest: AdRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getIntExtra(KEY_STORE_ID, 0)
         reviewAdapter = ReviewRecyclerAdapter(object : OnItemClickListener<Review> {
             override fun onClick(item: Review) {
@@ -48,19 +54,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         })
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { map ->
-            googleMap = map
-            initMap()
-            binding.btnFindLocation.setOnClickListener {
-                moveToCurrentPosition()
-            }
-            viewModel.storeLocation.observe(this) {
-                map.setDefaultMarker(it)
-                moveCameraTo(it, DEFAULT_ZOOM)
-            }
-        }
+        val naverMapFragment = StoreDetailNaverMapFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+
         binding.btnBack.setOnClickListener {
             finish()
         }
@@ -86,34 +82,15 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initMap() {
         val storeId = intent.getIntExtra(KEY_STORE_ID, 0)
-        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
 
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        moveCameraTo(it.toLatLng(), DEFAULT_ZOOM)
                         viewModel.requestStoreInfo(storeId, it.latitude, it.longitude)
                     }
                 }
-                googleMap?.isMyLocationEnabled = true
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
-        }
-    }
-
-    private fun moveToCurrentPosition() {
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    currentPosition = it.toLatLng()
-                    moveCameraTo(it.toLatLng(), googleMap?.cameraPosition?.zoom)
-                }
-            } else {
-                showToast(R.string.find_location_error)
             }
         } catch (e: SecurityException) {
             Log.e(this::class.java.name, e.message ?: "")
@@ -126,10 +103,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
             initMap()
         }
-    }
-
-    private fun moveCameraTo(position: LatLng?, zoomLevel: Float?) {
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel ?: DEFAULT_ZOOM))
     }
 
     companion object {

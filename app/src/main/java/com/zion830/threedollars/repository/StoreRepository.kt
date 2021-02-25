@@ -4,7 +4,7 @@ import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.network.ServiceApi
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.response.*
-import com.zion830.threedollars.ui.store_detail.DeleteType
+import com.zion830.threedollars.ui.report_store.DeleteType
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call

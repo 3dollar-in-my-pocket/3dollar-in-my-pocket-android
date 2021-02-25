@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail
+package com.zion830.threedollars.ui.report_store
 
 import android.content.Context
 import android.graphics.Point
@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
-import com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel
+import com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 
 

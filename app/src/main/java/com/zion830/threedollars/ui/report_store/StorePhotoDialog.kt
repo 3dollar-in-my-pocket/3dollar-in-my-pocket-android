@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail
+package com.zion830.threedollars.ui.report_store
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -11,8 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.StoreImageSliderAdapter
-import com.zion830.threedollars.ui.store_detail.adapter.StorePreviewImageAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import zion830.com.common.listener.OnItemClickListener
 

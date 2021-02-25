@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail.adapter
+package com.zion830.threedollars.ui.report_store.adapter
 
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemPhotoPreviewBinding

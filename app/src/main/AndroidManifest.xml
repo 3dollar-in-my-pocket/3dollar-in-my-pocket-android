@@ -47,7 +47,7 @@
             android:name=".ui.store_detail.StoreByMenuActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.store_detail.EditStoreActivity"
+            android:name=".ui.report_store.EditStoreActivity"
             android:screenOrientation="portrait" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
             <intent-filter>

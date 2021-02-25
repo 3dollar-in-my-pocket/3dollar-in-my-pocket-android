@@ -1,15 +1,15 @@
-package com.zion830.threedollars.ui.store_detail.vm
+package com.zion830.threedollars.ui.report_store.vm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
-import com.zion830.threedollars.ui.store_detail.DeleteType
+import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

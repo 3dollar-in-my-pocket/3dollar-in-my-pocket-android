@@ -2,7 +2,7 @@ package com.zion830.threedollars.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.response.AllStoreResponse
 import kotlinx.coroutines.Dispatchers

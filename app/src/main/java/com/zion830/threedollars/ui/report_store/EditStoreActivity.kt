@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail
+package com.zion830.threedollars.ui.report_store
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -12,19 +12,17 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityEditStoreBinding
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.ui.addstore.StoreImage
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditPhotoRecyclerAdapter
-import com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel
+import com.zion830.threedollars.ui.report_store.map.StoreEditNaverMapFragment
+import com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel
 import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_LOCATION
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -38,15 +36,11 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var mapFragment: SupportMapFragment
-
     private val menuAdapter = EditMenuRecyclerAdapter()
 
     private lateinit var photoAdapter: EditPhotoRecyclerAdapter
 
-    private var googleMap: GoogleMap? = null
-
-    private var currentPosition: LatLng = DEFAULT_LOCATION
+    private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     private var storeId = 0
 
@@ -91,31 +85,23 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             viewModel.editStore(
                 storeName = binding.etLocation.text.toString(),
                 storeId = storeId,
-                latitude = googleMap!!.cameraPosition.target.latitude,
-                longitude = googleMap!!.cameraPosition.target.longitude,
+                latitude = viewModel.storeInfo.value?.latitude ?: DEFAULT_LOCATION.latitude,
+                longitude = viewModel.storeInfo.value?.longitude ?: DEFAULT_LOCATION.longitude,
                 menus = getMenuList(),
                 images = getImageFiles()
             )
         }
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { map ->
-            googleMap = map
-            initMap()
-            binding.btnFindLocation.setOnClickListener {
-                moveToCurrentPosition()
-            }
-            viewModel.storeLocation.observe(this) {
-                map.setMarker(it, R.drawable.ic_marker, 24f, 32f)
-                moveCameraTo(it, DEFAULT_ZOOM)
-            }
-            initSubmitButtonEvent(map)
-        }
+
+        val naverMapFragment = StoreEditNaverMapFragment()
+
+        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+
         binding.btnDelete.setOnClickListener {
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
 
         observeUiData()
+        initSubmitButtonEvent()
         viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
     }
 
@@ -132,18 +118,15 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
 
     private fun initMap() {
         val storeId = intent.getIntExtra(KEY_STORE_ID, 0)
-        googleMap?.uiSettings?.isMyLocationButtonEnabled = false
 
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        moveCameraTo(it.toLatLng(), DEFAULT_ZOOM)
                         viewModel.requestStoreInfo(storeId, it.latitude, it.longitude)
                     }
                 }
-                googleMap?.isMyLocationEnabled = true
             }
         } catch (e: SecurityException) {
             Log.e(this::class.java.name, e.message ?: "")
@@ -178,22 +161,6 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         }
 
         isFirstOpen = false
-    }
-
-    private fun moveToCurrentPosition() {
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    currentPosition = it.toLatLng()
-                    moveCameraTo(it.toLatLng(), googleMap?.cameraPosition?.zoom)
-                }
-            } else {
-                showToast(R.string.find_location_error)
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -231,11 +198,7 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             .show()
     }
 
-    private fun moveCameraTo(position: LatLng?, zoomLevel: Float?) {
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel ?: DEFAULT_ZOOM))
-    }
-
-    private fun initSubmitButtonEvent(map: GoogleMap) {
+    private fun initSubmitButtonEvent() {
         binding.btnSubmit.setOnClickListener {
             if (binding.etLocation.text.isNullOrBlank()) {
                 showToast("가게 이름을 입력해주세요!")
@@ -243,8 +206,8 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
                 viewModel.editStore(
                     storeName = binding.etLocation.text.toString(),
                     storeId = storeId,
-                    latitude = map.cameraPosition.target.latitude,
-                    longitude = map.cameraPosition.target.longitude,
+                    latitude = viewModel.storeInfo.value?.latitude ?: DEFAULT_LOCATION.latitude,
+                    longitude = viewModel.storeInfo.value?.longitude ?: DEFAULT_LOCATION.longitude,
                     menus = getMenuList(),
                     images = getImageFiles()
                 )

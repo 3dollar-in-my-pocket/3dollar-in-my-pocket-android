@@ -45,6 +45,10 @@ class SearchByDistanceViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreBy
             binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_gray3))
         } else if (position % 2 == 1 && isLastIndex) {
             binding.layoutItem.setBackgroundResource(R.drawable.rect_gray_corner_bottom)
+        } else if (position % 2 == 0 && !isLastIndex) {
+            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
+        } else {
+            binding.layoutItem.setBackgroundResource(R.drawable.rect_white_bottom_corner)
         }
     }
 }

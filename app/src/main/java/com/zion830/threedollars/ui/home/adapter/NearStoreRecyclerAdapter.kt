@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.home.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.repository.model.response.AllStoreResponseItem

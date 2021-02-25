@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail.map
+package com.zion830.threedollars.customview
 
 import android.os.Bundle
 import android.util.Log

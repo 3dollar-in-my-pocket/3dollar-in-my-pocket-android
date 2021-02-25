@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail
+package com.zion830.threedollars.ui.report_store
 
 import android.content.Context
 import android.graphics.Color
