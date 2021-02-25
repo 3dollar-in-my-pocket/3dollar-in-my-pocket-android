@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyDiary.iml" filepath="$PROJECT_DIR$/.idea/modules/MyDiary.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyDiary.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyDiary.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/mylibrary/MyDiary.app.mylibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/app/mylibrary/MyDiary.app.mylibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/MyDiary.common.iml" filepath="$PROJECT_DIR$/.idea/modules/common/MyDiary.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/testmodule/MyDiary.testmodule.iml" filepath="$PROJECT_DIR$/.idea/modules/testmodule/MyDiary.testmodule.iml" />
     </modules>
   </component>
 </project>
