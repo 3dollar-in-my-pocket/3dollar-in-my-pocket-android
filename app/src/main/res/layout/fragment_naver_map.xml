@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+    
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <fragment
+            android:id="@+id/fragment_map"
+            android:name="com.naver.maps.map.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:navermap_zoomControlEnabled="false" />
+        
+        <ImageButton
+            android:id="@+id/btn_find_location"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="75dp"
+            android:background="@drawable/rect_white_radius_8"
+            android:elevation="8dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_current_location"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+        
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_red_radius48_opacity"
+            android:ellipsize="end"
+            android:maxEms="13"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="5dp"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/btn_find_location"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_find_location" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
