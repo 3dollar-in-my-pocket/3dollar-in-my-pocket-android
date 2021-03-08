@@ -10,6 +10,7 @@ import com.zion830.threedollars.repository.model.response.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.await
 import zion830.com.common.base.BaseViewModel
@@ -104,6 +105,23 @@ class UserInfoViewModel : BaseViewModel() {
 
     fun clearName() {
         userName.value = ""
+    }
+
+    fun deleteUser(onSuccess: () -> Unit) {
+        showLoading()
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val result = userRepository.deleteUser().execute()
+
+            withContext(Dispatchers.Main) {
+                hideLoading()
+
+                if (result.isSuccessful) {
+                    onSuccess()
+                } else {
+                    _msgTextId.postValue(R.string.failed_delete_account)
+                }
+            }
+        }
     }
 
     override fun handleError(t: Throwable) {

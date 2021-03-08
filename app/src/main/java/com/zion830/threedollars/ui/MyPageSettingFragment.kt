@@ -7,6 +7,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.splash.SplashActivity
+import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -19,7 +20,6 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
     override val viewModel: UserInfoViewModel by activityViewModels()
 
     override fun initView() {
-        observeUiData()
         binding.btnEditName.setOnClickListener {
             addEditNameFragment()
         }
@@ -31,13 +31,17 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
-            // faq 화면으로 이동
+            addAskFragment()
         }
         binding.buttonLogout.setOnClickListener {
             tryLogout()
         }
         binding.btnDeleteAccount.setOnClickListener {
-
+            viewModel.deleteUser {
+                showToast(R.string.delete_account_success)
+                SharedPrefUtils.clearUserInfo()
+                requireActivity().finish()
+            }
         }
     }
 
@@ -48,15 +52,19 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         startActivity(Intent(requireContext(), SplashActivity::class.java))
     }
 
-    private fun observeUiData() {
-
-    }
-
     private fun addEditNameFragment() {
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.setting_container,
             EditNameFragment(),
             EditNameFragment::class.java.name
+        )
+    }
+
+    private fun addAskFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.setting_container,
+            AskFragment(),
+            AskFragment::class.java.name
         )
     }
 }
