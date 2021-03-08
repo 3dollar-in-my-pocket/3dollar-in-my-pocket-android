@@ -43,21 +43,27 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
         viewModel.changeCategory(menuType)
 
         binding.btnMenu1.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeCategory(MenuType.BUNGEOPPANG, currentPosition)
         }
         binding.btnMenu2.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeCategory(MenuType.TAKOYAKI, currentPosition)
         }
         binding.btnMenu3.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeCategory(MenuType.GYERANPPANG, currentPosition)
         }
         binding.btnMenu4.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeCategory(MenuType.HOTTEOK, currentPosition)
         }
         binding.btnSortByDistance.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeSortType(SortType.DISTANCE, currentPosition)
         }
         binding.btnSortByScore.setOnClickListener {
+            naverMapFragment.moveToCurrentLocation()
             viewModel.changeSortType(SortType.RATING, currentPosition)
         }
         viewModel.storeByRating.observe(this) {

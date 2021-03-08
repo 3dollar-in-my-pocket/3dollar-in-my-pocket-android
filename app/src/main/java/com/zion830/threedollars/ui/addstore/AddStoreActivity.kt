@@ -45,7 +45,11 @@ class AddStoreActivity : BaseActivity<ActivityAddStoreBinding, AddStoreViewModel
     override fun initView() {
         initKeyboard()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        naverMapFragment = StoreAddNaverMapFragment()
+        naverMapFragment = StoreAddNaverMapFragment(object : OnMapTouchListener {
+            override fun onTouch() {
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
         supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.btnBack.setOnClickListener {

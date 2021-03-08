@@ -58,18 +58,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+    
         <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white">
-    
+            android:background="@android:color/white"
+            android:descendantFocusability="beforeDescendants"
+            android:fillViewport="true">
+        
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white">
-        
+            
                 <LinearLayout
                     android:id="@+id/container"
                     android:layout_width="0dp"
@@ -80,7 +82,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-        
+            
                 <androidx.cardview.widget.CardView
                     android:id="@+id/layout_store_info"
                     android:layout_width="match_parent"
@@ -328,7 +330,7 @@
                         android:layout_marginTop="8dp"
                         android:background="@drawable/rect_gray"
                         app:adSize="BANNER"
-                        app:adUnitId="@string/admob_id"
+                        app:adUnitId="@string/admob_unit_id"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />

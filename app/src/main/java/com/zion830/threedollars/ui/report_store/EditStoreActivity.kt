@@ -92,7 +92,13 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             )
         }
 
-        val naverMapFragment = StoreEditNaverMapFragment()
+        val naverMapFragment = StoreEditNaverMapFragment(
+            object : OnMapTouchListener {
+                override fun onTouch() {
+                    binding.scroll.requestDisallowInterceptTouchEvent(true)
+                }
+            }
+        )
 
         supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 

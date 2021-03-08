@@ -22,12 +22,13 @@ import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 
-class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
+class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info), OnMapTouchListener {
 
     override val viewModel: StoreDetailViewModel by viewModels()
 
@@ -40,6 +41,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     private var storeId = 0
+
+    override fun onTouch() {
+        binding.scroll.requestDisallowInterceptTouchEvent(true)
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {

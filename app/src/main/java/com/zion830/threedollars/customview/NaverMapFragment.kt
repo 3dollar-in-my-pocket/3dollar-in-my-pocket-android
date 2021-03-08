@@ -32,12 +32,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     protected var currentPosition: LatLng? = null
 
-    lateinit var frameLayout: TouchableWrapper
-
-    open fun setListener(listener: OnMapTouchListener) {
-        frameLayout.onTouchListener = listener
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_naver_map, container, false)
@@ -96,7 +90,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.addAll(newMarkers)
     }
 
-    protected fun moveToCurrentLocation() {
+    fun moveToCurrentLocation() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation

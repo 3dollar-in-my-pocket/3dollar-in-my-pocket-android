@@ -1,11 +1,13 @@
 package com.zion830.threedollars.ui.addstore
 
+import android.content.Intent
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
@@ -37,5 +39,12 @@ class NearStoreNaverMapFragment : NaverMapFragment() {
     private fun updateLocationText(position: LatLng) {
         binding.tvLocation.text = getCurrentLocationName(position)
         binding.tvLocation.visibility = if (binding.tvLocation.text.isNullOrBlank()) View.GONE else View.VISIBLE
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.GET_LOCATION_PERMISSION) {
+            moveToCurrentLocation()
+        }
     }
 }
