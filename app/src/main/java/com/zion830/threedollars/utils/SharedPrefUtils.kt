@@ -39,7 +39,7 @@ object SharedPrefUtils {
         commit()
     }
 
-    fun saveKakaoId(id: String) = sharedPreferences.edit {
+    fun saveKakaoId(id: String?) = sharedPreferences.edit {
         putString(KAKAO_ID_KEY, id)
         commit()
     }
@@ -50,4 +50,10 @@ object SharedPrefUtils {
 
     fun getKakaoId() = sharedPreferences.getString(KAKAO_ID_KEY, null)
 
+    fun clearUserInfo() {
+        saveUserName(null)
+        saveAccessToken(null)
+        saveKakaoId(null)
+        saveUserId(-1)
+    }
 }
