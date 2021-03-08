@@ -127,4 +127,15 @@ interface ServiceApi {
         @Query("nickName") name: String,
         @Query("userId") userId: Int
     ): Call<Response>
+
+    // 회원 탈퇴
+    @POST("/api/v1/user/signout")
+    fun deleteUser(): Call<ResponseBody?>
+
+    // faq
+    @GET("/api/v1/fqa-tags")
+    suspend fun getFaqTags(): FaqTagResponse?
+
+    @GET("/api/v1/fqas")
+    suspend fun getFaqByTag(@Query("tagIds") tagIds: IntArray): FaqByTagResponse?
 }

@@ -9,6 +9,7 @@ import com.zion830.threedollars.repository.model.response.MyStoreResponse
 import com.zion830.threedollars.repository.model.response.UserInfoResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import okhttp3.Response
+import okhttp3.ResponseBody
 import retrofit2.Call
 
 class UserRepository(
@@ -33,4 +34,6 @@ class UserRepository(
     ): Call<MyStoreResponse> = service.getMyStore(userId, page)
 
     suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<Response> = service.setName(newName, userId)
+
+    suspend fun deleteUser(): Call<ResponseBody?> = service.deleteUser()
 }
