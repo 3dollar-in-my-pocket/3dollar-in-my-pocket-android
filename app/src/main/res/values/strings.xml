@@ -125,4 +125,13 @@
     <string name="recommend_store">이 가게를\n추천하시나요?</string>
     <string name="recommend_store_hint">리뷰를 남겨주세요!</string>
     <string name="recommend_store_finish">리뷰 등록하기</string>
+    
+    <string name="title_setting">설정</string>
+    <string name="ask">문의사항</string>
+    <string name="term_of_service">이용약관</string>
+    <string name="kakao_user">카카오 계정 회원</string>
+    <string name="logout">로그아웃</string>
+    <string name="delete_account">회원탈퇴</string>
+    
+    <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
 </resources>

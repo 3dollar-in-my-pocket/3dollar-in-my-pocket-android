@@ -11,6 +11,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageBinding
 import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.repository.model.response.Store
+import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewPreviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.adapter.MyStorePreviewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
@@ -54,7 +55,7 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
         LinearSnapHelper().attachToRecyclerView(binding.rvStore)
 
         binding.layoutNickname.onSingleClick {
-            addEditNameFragment()
+            addSettingPageFragment()
         }
         binding.tvShowAllStore.onSingleClick {
             addShowAllStoreFragment()
@@ -80,11 +81,11 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
         }
     }
 
-    private fun addEditNameFragment() {
+    private fun addSettingPageFragment() {
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
-            EditNameFragment(),
-            EditNameFragment::class.java.name
+            MyPageSettingFragment(),
+            MyPageSettingFragment::class.java.name
         )
     }
 

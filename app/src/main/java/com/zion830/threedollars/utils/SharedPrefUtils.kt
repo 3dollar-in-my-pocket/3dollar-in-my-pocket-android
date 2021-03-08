@@ -46,9 +46,8 @@ object SharedPrefUtils {
 
     fun getAccessToken() = sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
 
-    fun getUserName() = sharedPreferences.getString(USER_NAME_KEY, null)
-
     fun getUserId() = sharedPreferences.getInt(USER_ID_KEY, -1)
 
     fun getKakaoId() = sharedPreferences.getString(KAKAO_ID_KEY, null)
+
 }
