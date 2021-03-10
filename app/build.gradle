@@ -15,8 +15,8 @@ android {
         buildConfigField "String", "NMF_CLIENT_ID", "\"${properties.getProperty('nmf_client_id')}\""
         manifestPlaceholders = [
                 google_map_key: properties.getProperty('google_map_key'),
-                nmf_client_id: properties.getProperty('nmf_client_id'),
-                admob_id: properties.getProperty('admob_id')
+                nmf_client_id : properties.getProperty('nmf_client_id'),
+                admob_id      : properties.getProperty('admob_id')
         ]
         multiDexEnabled true
     }
@@ -28,10 +28,8 @@ android {
         }
         debug {
             manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
-            buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
-            buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
-//            buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
-//            buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
+            buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
+            buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
         }
     }
 }

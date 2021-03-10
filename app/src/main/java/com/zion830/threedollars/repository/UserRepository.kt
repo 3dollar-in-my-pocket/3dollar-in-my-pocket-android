@@ -3,10 +3,7 @@ package com.zion830.threedollars.repository
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.network.ServiceApi
 import com.zion830.threedollars.repository.model.request.NewUser
-import com.zion830.threedollars.repository.model.response.LoginResponse
-import com.zion830.threedollars.repository.model.response.MyReviewResponse
-import com.zion830.threedollars.repository.model.response.MyStoreResponse
-import com.zion830.threedollars.repository.model.response.UserInfoResponse
+import com.zion830.threedollars.repository.model.response.*
 import com.zion830.threedollars.utils.SharedPrefUtils
 import okhttp3.Response
 import okhttp3.ResponseBody
@@ -36,4 +33,8 @@ class UserRepository(
     suspend fun updateName(newName: String, userId: Int = SharedPrefUtils.getUserId()): Call<Response> = service.setName(newName, userId)
 
     suspend fun deleteUser(): Call<ResponseBody?> = service.deleteUser()
+
+    suspend fun loadFaqTags(): FaqTagResponse = service.getFaqTags()
+
+    suspend fun loadFaqs(tagIds: IntArray): FaqByTagResponse = service.getFaqByTag(tagIds)
 }

@@ -133,9 +133,9 @@ interface ServiceApi {
     fun deleteUser(): Call<ResponseBody?>
 
     // faq
-    @GET("/api/v1/fqa-tags")
-    suspend fun getFaqTags(): FaqTagResponse?
+    @GET("/api/v1/faq-tags")
+    suspend fun getFaqTags(): FaqTagResponse
 
-    @GET("/api/v1/fqas")
-    suspend fun getFaqByTag(@Query("tagIds") tagIds: IntArray): FaqByTagResponse?
+    @GET("/api/v1/faqs")
+    suspend fun getFaqByTag(@Query("tagIds") tagIds: IntArray): FaqByTagResponse
 }

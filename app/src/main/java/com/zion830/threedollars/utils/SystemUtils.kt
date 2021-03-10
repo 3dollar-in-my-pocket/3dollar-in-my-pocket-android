@@ -2,6 +2,7 @@ package com.zion830.threedollars.utils
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
+import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,6 +10,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -16,6 +18,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import java.util.*
@@ -82,3 +85,11 @@ private fun Activity.openPermissionSettingPage() {
     intent.data = Uri.fromParts("package", packageName, null)
     startActivity(intent)
 }
+
+fun Context.getInstalledInfo() =
+    """
+        -------------------------------------------------------
+        ${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}
+        ${getString(R.string.android_version)}: ${Build.VERSION.SDK_INT}
+        ------------------------------------------------------- 
+    """.trimIndent()

@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
@@ -37,11 +38,25 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             tryLogout()
         }
         binding.btnDeleteAccount.setOnClickListener {
-            viewModel.deleteUser {
-                showToast(R.string.delete_account_success)
-                SharedPrefUtils.clearUserInfo()
-                requireActivity().finish()
-            }
+            showDeleteAccountDialog()
+        }
+    }
+
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(requireContext())
+            .setMessage(R.string.delete_account_confirm)
+            .setCancelable(true)
+            .setNegativeButton(android.R.string.cancel) { _, _ -> }
+            .setPositiveButton(R.string.ok) { _, _ -> tryDeleteAccount() }
+            .create()
+            .show()
+    }
+
+    private fun tryDeleteAccount() {
+        viewModel.deleteUser {
+            showToast(R.string.delete_account_success)
+            SharedPrefUtils.clearUserInfo()
+            requireActivity().finish()
         }
     }
 

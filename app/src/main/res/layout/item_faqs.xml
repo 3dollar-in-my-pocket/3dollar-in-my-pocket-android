@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.ui.mypage.adapter.Faq" />
+        
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="28dp">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            
+            <View
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:layout_gravity="bottom"
+                android:background="@color/color_main_red_opa50"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/tv_title"
+                app:layout_constraintStart_toStartOf="@+id/tv_title" />
+            
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="4dp"
+                android:singleLine="true"
+                android:text="@{item.tag.name}"
+                android:textColor="@color/color_white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="가게" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_faqs"
+            bindItem="@{item.content}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true"
+            android:paddingBottom="8dp"
+            android:textColor="@color/color_white"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_faq_detail" />
+    </LinearLayout>
+</layout>

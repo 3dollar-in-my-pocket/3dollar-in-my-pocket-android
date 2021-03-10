@@ -138,8 +138,10 @@
     <string name="logout_message">로그아웃이 완료되었습니다.</string>
     <string name="delete_account_success">탈퇴가 완료되었습니다. 이용해주셔서 감사합니다!</string>
     <string name="delete_account">회원탈퇴</string>
+    <string name="delete_account_btn">회원탈퇴하기 →</string>
     <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
+    <string name="question">Q. %s</string>
     
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="official_email">3dollarinmypocket@gmail.com</string>

@@ -7,11 +7,14 @@
     <color name="color_white">#FFFFFF</color>
     <color name="color_kakao">#F7E317</color>
     <color name="color_main_red">#EE624C</color>
+    <color name="color_main_red_opa50">#50EE624C</color>
     <color name="color_sub_red">#F3A2A9</color>
     <color name="color_sub_red_hint">#66F3A2A9</color>
     <color name="color_gray1">#C8C8C8</color>
     <color name="color_gray2">#F5F5F5</color>
     <color name="color_gray3">#fafafa</color>
+    <color name="color_828282">#828282</color>
+    <color name="color_202020">#202020</color>
     <color name="color_black">#1C1C1C</color>
     <color name="color_4f4f4f">#4f4f4f</color>
     <color name="color_979797">#979797</color>
