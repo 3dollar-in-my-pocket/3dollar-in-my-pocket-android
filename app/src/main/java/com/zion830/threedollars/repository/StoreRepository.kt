@@ -28,7 +28,16 @@ class StoreRepository(
         storeId: Int,
         userId: Int,
         newReview: NewReview
-    ): Call<ResponseBody> = service.saveReview(storeId, userId, newReview)
+    ): Call<ResponseBody?> = service.saveReview(storeId, userId, newReview)
+
+    suspend fun editReview(
+        reviewId: Int,
+        newReview: NewReview
+    ): Call<ResponseBody?> = service.editReview(reviewId, newReview)
+
+    suspend fun deleteReview(
+        reviewId: Int
+    ): Call<ResponseBody?> = service.deleteReview(reviewId)
 
     suspend fun saveStore(
         storeInfo: Map<String, String>,
@@ -57,7 +66,7 @@ class StoreRepository(
         deleteReasonType: DeleteType,
         storeId: Int,
         userId: Int
-    ): Call<ResponseBody> = service.deleteStore(deleteReasonType.key, storeId, userId)
+    ): Call<ResponseBody?> = service.deleteStore(deleteReasonType.key, storeId, userId)
 
     suspend fun getCategoryByDistance(
         category: String,

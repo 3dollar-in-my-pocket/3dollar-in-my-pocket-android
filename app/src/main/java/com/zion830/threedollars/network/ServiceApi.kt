@@ -27,30 +27,23 @@ interface ServiceApi {
     ): Call<SearchByReviewResponse>
 
     // 리뷰
-    @GET("/api/v1/review/user")
-    fun getReview(
-        @Query("page") page: Int,
-        @Query("userId") userId: Int
-    )
-
     @POST("/api/v1/review/save")
     fun saveReview(
         @Query("storeId") storeId: Int,
         @Query("userId") userId: Int,
         @Body newReview: NewReview
-    ): Call<ResponseBody>
+    ): Call<ResponseBody?>
 
     @PUT("/api/v1/review/{reviewId}")
-    fun addReview(
-        @Query("storeId") storeId: Int,
-        @Query("userId") userId: Int
-    ): Call<ResponseBody>
+    fun editReview(
+        @Path("reviewId") reviewId: Int,
+        @Body newReview: NewReview
+    ): Call<ResponseBody?>
 
     @DELETE("/api/v1/review/{reviewId}")
     fun deleteReview(
-        @Query("storeId") storeId: Int,
-        @Query("userId") userId: Int
-    ): Call<ResponseBody>
+        @Path("reviewId") reviewId: Int,
+    ): Call<ResponseBody?>
 
     // 가게
     @DELETE("/api/v1/store/delete")
@@ -58,7 +51,7 @@ interface ServiceApi {
         @Query("deleteReasonType") deleteReasonType: String, // TODO : enum으로 교체
         @Query("storeId") storeId: Int,
         @Query("userId") userId: Int
-    ): Call<ResponseBody>
+    ): Call<ResponseBody?>
 
     @GET("/api/v1/store/detail")
     fun getStoreDetail(
