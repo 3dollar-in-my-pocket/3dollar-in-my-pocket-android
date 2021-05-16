@@ -1,5 +1,6 @@
 package com.zion830.threedollars.customview
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -90,21 +91,28 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.addAll(newMarkers)
     }
 
+    @SuppressLint("MissingPermission")
     fun moveToCurrentLocation() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
-                    currentPosition = LatLng(it.latitude, it.longitude)
-                    moveCameraWithAnim(currentPosition!!)
-                    onMyLocationLoaded(currentPosition!!)
+                    if (it != null) {
+                        currentPosition = LatLng(it.latitude, it.longitude)
+                        currentPosition?.let { position ->
+                            moveCameraWithAnim(position)
+                            onMyLocationLoaded(position)
+                        }
+                    }
                 }
             } else {
                 showToast(R.string.find_location_error)
                 moveCameraWithAnim(NaverMapUtils.DEFAULT_LOCATION)
             }
-        } catch (e: SecurityException) {
+        } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
+            showToast(R.string.find_location_error)
+            moveCameraWithAnim(NaverMapUtils.DEFAULT_LOCATION)
         }
     }
 
@@ -114,7 +122,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
 
         val cameraUpdate = CameraUpdate.scrollTo(position)
-        naverMap!!.moveCamera(cameraUpdate)
+        naverMap?.moveCamera(cameraUpdate)
     }
 
     fun moveCameraWithAnim(position: LatLng) {
@@ -123,7 +131,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
 
         val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
-        naverMap!!.moveCamera(cameraUpdate)
+        naverMap?.moveCamera(cameraUpdate)
     }
 
     open fun onMyLocationLoaded(position: LatLng) {
