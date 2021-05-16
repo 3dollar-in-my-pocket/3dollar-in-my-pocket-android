@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,6 +21,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils.dpToPx
 import zion830.com.common.ext.filterNotNull
 
+
+@BindingAdapter("visibleIf")
+fun View.visibleIf(value: Boolean) {
+    isVisible = value
+}
 
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter("bindItem")

@@ -26,7 +26,7 @@ fun View.isVisible(): Boolean = visibility == View.VISIBLE
 fun View.showSnack(
     @StringRes resId: Int,
     length: Int = Snackbar.LENGTH_LONG,
-    @ColorRes color: Int? = null
+    @ColorRes color: Int = android.R.color.white
 ) {
     showSnack(context.getString(resId), length, color)
 }
@@ -34,7 +34,7 @@ fun View.showSnack(
 fun View.showSnack(
     message: String,
     length: Int = Snackbar.LENGTH_LONG,
-    @ColorRes color: Int? = null
+    @ColorRes color: Int = android.R.color.white
 ) {
     Snackbar.make(this, message, length).run {
         color?.let { setActionTextColor(ContextCompat.getColor(context, color)) }

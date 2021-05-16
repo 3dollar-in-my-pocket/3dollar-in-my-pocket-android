@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import zion830.com.common.R
 
-fun FragmentManager.addNewFragment(containerId: Int, fragment: Fragment, tag: String? = null) =
+fun FragmentManager.addNewFragment(containerId: Int, fragment: Fragment, tag: String = "") =
     commit {
         setCustomAnimations(
             R.anim.start_from_right,
@@ -17,7 +17,7 @@ fun FragmentManager.addNewFragment(containerId: Int, fragment: Fragment, tag: St
         addToBackStack(null)
     }
 
-fun FragmentManager.replaceFragment(containerId: Int, fragment: Fragment, tag: String? = null) =
+fun FragmentManager.replaceFragment(containerId: Int, fragment: Fragment, tag: String = "") =
     commit {
         setCustomAnimations(
             R.anim.start_from_right,
