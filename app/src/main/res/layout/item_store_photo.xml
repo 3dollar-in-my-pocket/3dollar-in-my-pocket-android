@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.ui.addstore.StoreImage" />
+        
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            android:layout_margin="2dp"
+            android:background="@drawable/rect_light_gray_stroke">
+            
+            <ImageView
+                loadRoundImage="@{item}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:onClick="@{() -> listener.onClick(item)}"
+                android:padding="23dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_gray_fish"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <LinearLayout
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            android:background="#30111111"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+            
+            <TextView
+                android:id="@+id/tv_img_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_sub_red" />
+            
+            <TextView
+                android:id="@+id/tv_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_more"
+                android:textColor="@color/color_white" />
+        </LinearLayout>
+    </FrameLayout>
+</layout>

@@ -31,7 +31,9 @@
             android:layout_height="wrap_content"
             android:text="@string/recommend_store"
             android:textColor="@color/color_black"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         
         <LinearLayout
             android:id="@+id/layout_rating"

@@ -16,7 +16,8 @@
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/color_gray3">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
@@ -33,45 +34,54 @@
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="4dp"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginBottom="19dp"
                 android:background="@android:color/white"
                 android:contentDescription="@null"
-                android:foreground="?attr/actionBarItemBackground"
-                android:src="@drawable/ic_back_black"
+                android:paddingHorizontal="12dp"
+                android:src="@drawable/ic_arrow_left"
                 app:layout_constraintBottom_toBottomOf="@id/layout_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
-            <TextView
-                android:id="@+id/tv_store_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="200dp"
-                android:singleLine="true"
-                android:text="@{viewModel.storeInfo.storeName}"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
+            <ImageView
+                android:id="@+id/iv_store_type"
+                bindWhiteMenuIcon="@{viewModel.storeInfo.category}"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_fish_white"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
+            
+            <TextView
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:paddingVertical="10dp"
+                android:text="@string/request_delete"
+                android:textColor="@color/color_main_red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    
+        
         <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
+            android:background="@color/color_gray3"
             android:descendantFocusability="beforeDescendants"
             android:fillViewport="true">
-        
+            
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white">
-            
+                android:layout_height="wrap_content">
+                
                 <LinearLayout
                     android:id="@+id/container"
                     android:layout_width="0dp"
@@ -82,13 +92,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            
+                
                 <androidx.cardview.widget.CardView
                     android:id="@+id/layout_store_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="200dp"
+                    android:layout_marginTop="230dp"
                     android:padding="8dp"
                     app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="16dp"
@@ -97,166 +107,114 @@
                     app:layout_constraintTop_toTopOf="@+id/container"
                     tools:ignore="UnusedAttribute">
                     
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
                         android:padding="16dp">
                         
-                        <ImageView
-                            android:layout_width="88dp"
-                            android:layout_height="88dp"
-                            android:background="@drawable/rect_light_gray_corner"
-                            android:padding="18dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_gray_fish"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                        
-                        <ImageView
-                            android:id="@+id/iv_store"
-                            loadFirstImage="@{viewModel.storeInfo.image}"
-                            android:layout_width="88dp"
-                            android:layout_height="88dp"
-                            android:scaleType="centerCrop"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{viewModel.storeInfo.user.name}"
+                                android:textColor="@color/color_sub_red"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/editor"
+                                android:textColor="@color/color_sub_red" />
+                        </LinearLayout>
                         
                         <TextView
                             android:id="@+id/tv_store_distance"
-                            style="@style/LightTextViewStyle"
-                            setDistance="@{viewModel.storeInfo.distance}"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
-                            android:letterSpacing="-0.06"
-                            android:textColor="@color/color_black"
-                            android:textSize="22sp"
-                            app:layout_constraintStart_toEndOf="@id/iv_store"
-                            app:layout_constraintTop_toTopOf="@id/iv_store"
-                            tools:text="50m 이내에 위치한\n음식점입니다." />
-                        
-                        <com.willy.ratingbar.ScaleRatingBar
-                            android:id="@+id/rating_score"
-                            style="@style/RatingBar22"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:clickable="false"
-                            android:progressBackgroundTint="@color/color_gray1"
-                            android:progressTint="@color/color_sub_red"
-                            app:bindRating="@{viewModel.storeInfo.rating}"
-                            app:layout_constraintStart_toStartOf="@id/tv_store_distance"
-                            app:layout_constraintTop_toBottomOf="@id/tv_store_distance"
-                            app:srb_clickable="true"
-                            app:srb_drawableEmpty="@drawable/ic_star_off"
-                            app:srb_drawableFilled="@drawable/ic_star"
-                            app:srb_isIndicator="true"
-                            app:srb_numStars="5"
-                            app:srb_starHeight="20dp"
-                            app:srb_starPadding="2dp"
-                            app:srb_starWidth="20dp" />
+                            android:layout_marginBottom="14dp"
+                            android:singleLine="true"
+                            android:text="@{viewModel.storeInfo.storeName}"
+                            android:textColor="@color/color_black"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="50m 이내에" />
                         
-                        <TextView
-                            android:id="@+id/tv_score"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@{@string/score(viewModel.storeInfo.rating)}"
-                            android:textColor="@color/color_sub_red"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="@id/rating_score"
-                            app:layout_constraintStart_toEndOf="@id/rating_score"
-                            app:layout_constraintTop_toTopOf="@id/rating_score"
-                            tools:text="3.8점" />
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:drawableStart="@drawable/ic_near"
+                                android:drawablePadding="4dp"
+                                android:text="@{@string/distance(viewModel.storeInfo.distance)}"
+                                android:textColor="@color/color_black"
+                                android:textSize="14sp"
+                                tools:text="121m" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:drawableStart="@drawable/ic_star_pink"
+                                android:drawablePadding="4dp"
+                                android:text="@{@string/score(viewModel.storeInfo.rating)}"
+                                android:textColor="@color/color_black"
+                                android:textSize="14sp"
+                                tools:text="3.4점" />
+                        </LinearLayout>
                         
-                        <TextView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="75dp"
-                            android:layout_marginBottom="75dp"
-                            android:background="@drawable/circle_black"
-                            android:gravity="center"
-                            android:padding="4dp"
-                            android:text="@{@string/img_count(viewModel.storeInfo.image.size() - 1)}"
-                            android:textColor="@color/color_white"
-                            android:textSize="11sp"
-                            android:visibility="@{viewModel.storeInfo.image.size() &lt; 2 ? View.GONE : View.VISIBLE}"
-                            app:layout_constraintBottom_toBottomOf="@id/iv_store"
-                            app:layout_constraintStart_toStartOf="@id/iv_store"
-                            app:layout_constraintTop_toTopOf="@id/iv_store" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="32dp"
+                            android:layout_marginTop="24dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            
+                            <Button
+                                android:id="@+id/btn_share"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@android:color/transparent"
+                                android:drawableStart="@drawable/ic_share"
+                                android:drawablePadding="-24dp"
+                                android:paddingStart="24dp"
+                                android:text="@string/share"
+                                android:textColor="@color/color_black"
+                                android:textSize="16sp" />
+                            
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="32dp"
+                                android:background="@color/color_d0d0d0" />
+                            
+                            <Button
+                                android:id="@+id/btn_send_money"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@android:color/transparent"
+                                android:drawableStart="@drawable/ic_toss_small"
+                                android:drawablePadding="-24dp"
+                                android:paddingStart="24dp"
+                                android:text="@string/send_money"
+                                android:textColor="@color/color_toss"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
-                
-                <TextView
-                    android:id="@+id/tv_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/category"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@id/layout_store_info"
-                    app:layout_constraintTop_toBottomOf="@id/layout_store_info" />
-                
-                <TextView
-                    android:id="@+id/tv_menu_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/menu_detail"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@id/layout_store_info"
-                    app:layout_constraintTop_toBottomOf="@id/tv_category" />
-                
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16sp"
-                    android:text="@{StringUtils.getReadableCategory(viewModel.storeInfo.category)}"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_category"
-                    app:layout_constraintStart_toEndOf="@id/tv_category"
-                    app:layout_constraintTop_toTopOf="@id/tv_category" />
-                
-                <TextView
-                    android:id="@+id/tv_no_menu"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16sp"
-                    android:text="@string/no_menu"
-                    android:textColor="@color/color_gray1"
-                    android:textSize="16sp"
-                    android:visibility="@{viewModel.storeInfo.menu.size() == 0 ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_menu_detail"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_menu_detail"
-                    app:layout_constraintTop_toTopOf="@id/tv_menu_detail" />
-                
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_menu"
-                    bindItem="@{viewModel.storeInfo.menu}"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16sp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@android:color/white"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    android:textColor="@color/color_gray1"
-                    android:textSize="16sp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_menu_detail"
-                    app:layout_constraintTop_toTopOf="@id/tv_menu_detail"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/item_menu" />
                 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -265,63 +223,294 @@
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rv_menu">
+                    app:layout_constraintTop_toBottomOf="@id/layout_store_info">
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginTop="48dp"
+                        android:layout_marginBottom="20dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/store_info"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                        
+                        <Button
+                            android:id="@+id/btn_add_store_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rect_red_radius48"
+                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:text="@string/edit_info"
+                            android:textColor="@color/color_white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/rect_white_radius_12"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="20dp">
+                        
+                        <TableRow>
+                            
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/store_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:id="@+id/tv_empty_store_type"
+                                visibleIf="@{viewModel.storeInfo.storeType == null}"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:gravity="end"
+                                android:text="@string/empty_data"
+                                android:textColor="@color/color_gray1" />
+                            
+                            <TextView
+                                android:id="@+id/tv_store_type"
+                                storeType="@{viewModel.storeInfo.storeType}"
+                                visibleIf="@{viewModel.storeInfo.storeType != null}"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:gravity="end"
+                                android:textColor="@color/color_sub_red" />
+                        </TableRow>
+                        
+                        <TableRow
+                            android:layout_marginTop="19dp"
+                            android:gravity="center_vertical">
+                            
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/show_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:id="@+id/tv_empty_show_type"
+                                visibleIf="@{viewModel.storeInfo.appearanceDays.size() == 0}"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:gravity="end"
+                                android:text="@string/empty_data"
+                                android:textColor="@color/color_gray1" />
+                            
+                            <include
+                                android:id="@+id/layout_btn_day_of_week"
+                                clickable="@{false}"
+                                layout="@layout/btns_day_of_week"
+                                visibleIf="@{viewModel.storeInfo.appearanceDays.size() > 0}" />
+                        </TableRow>
+                        
+                        <TableRow
+                            android:layout_marginTop="19dp"
+                            android:gravity="center_vertical">
+                            
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/payment_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:id="@+id/tv_empty_payment_type"
+                                visibleIf="@{viewModel.storeInfo.paymentMethods.size == 0}"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:gravity="end"
+                                android:text="@string/empty_data"
+                                android:textColor="@color/color_gray1" />
+                            
+                            <LinearLayout
+                                android:id="@+id/layout_payments"
+                                visibleIf="@{viewModel.storeInfo.paymentMethods.size > 0}"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="end|center_vertical"
+                                android:orientation="horizontal">
+                                
+                                <TextView
+                                    android:id="@+id/tv_cash"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`CASH`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"
+                                    android:drawablePadding="6dp"
+                                    android:text="@string/cash"
+                                    android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`CASH`) ? @color/color_sub_red : @color/color_gray1}"
+                                    tools:ignore="UseCompatTextViewDrawableXml" />
+                                
+                                <TextView
+                                    android:id="@+id/tv_banking"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`ACCOUNT_TRANSFER`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"
+                                    android:drawablePadding="6dp"
+                                    android:text="@string/banking"
+                                    android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`ACCOUNT_TRANSFER`) ? @color/color_sub_red : @color/color_gray1}"
+                                    tools:ignore="UseCompatTextViewDrawableXml" />
+                                
+                                <TextView
+                                    android:id="@+id/tv_card"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`CARD`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"
+                                    android:drawablePadding="6dp"
+                                    android:text="@string/card"
+                                    android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`CARD`) ? @color/color_sub_red : @color/color_gray1}"
+                                    tools:ignore="UseCompatTextViewDrawableXml" />
+                            </LinearLayout>
+                        </TableRow>
+                    </TableLayout>
+                    
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginBottom="40dp"
+                        android:background="@drawable/rect_white_radius_12"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="24dp"
+                        android:paddingBottom="10dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{@string/category_menu(viewModel.categoryCount)}"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="가게사진 20개" />
+                        
+                        <ImageView
+                            android:id="@+id/iv_no_data"
+                            visibleIf="@{viewModel.categoryInfo.size() == 0}"
+                            android:layout_width="66dp"
+                            android:layout_height="86dp"
+                            android:layout_marginTop="8dp"
+                            android:src="@drawable/ic_no_store" />
+                        
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_category"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_category" />
+                    </TableLayout>
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="20dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{@string/photo_count(viewModel.storeInfo.image.size())}"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="가게사진 20개" />
+                        
+                        <Button
+                            android:id="@+id/btn_add_photo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rect_red_radius48"
+                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:text="@string/add_photo"
+                            android:textColor="@color/color_white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                     
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="40dp"
                         android:orientation="horizontal">
+                        
+                        <include layout="@layout/item_store_photo" />
+                        
+                        <include layout="@layout/item_store_photo" />
+                        
+                        <include layout="@layout/item_store_photo" />
+                        
+                        <include layout="@layout/item_store_photo" />
+                    </LinearLayout>
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="20dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{@string/review_count(viewModel.storeInfo.review.size())}"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="리뷰 20개" />
                         
                         <Button
                             android:id="@+id/btn_add_review"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/rect_white_stroke"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:background="@drawable/rect_red_radius48"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:minHeight="48dp"
                             android:text="@string/add_review"
-                            android:textColor="@color/color_999999"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            tools:ignore="UnusedAttribute" />
-                        
-                        <Button
-                            android:id="@+id/btn_add_store_info"
-                            style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/rect_white_stroke"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:minHeight="48dp"
-                            android:text="@string/add_store_info"
-                            android:textColor="@color/color_999999"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            tools:ignore="UnusedAttribute" />
-                    </LinearLayout>
+                            android:textColor="@color/color_white"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                     
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="5dp"
-                        android:layout_marginVertical="24dp"
-                        android:background="@color/color_gray2" />
-    
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:text="@{@string/review_count(viewModel.storeInfo.review.size())}"
-                        android:textColor="@color/color_black"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-    
                     <com.google.android.gms.ads.AdView
                         android:id="@+id/admob"
                         android:layout_width="match_parent"
@@ -334,10 +523,9 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
-    
+                    
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_review"
-                        bindItem="@{viewModel.storeInfo.review}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"

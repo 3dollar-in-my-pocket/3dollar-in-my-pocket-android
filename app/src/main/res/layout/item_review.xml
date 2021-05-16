@@ -9,16 +9,15 @@
             name="item"
             type="com.zion830.threedollars.repository.model.response.Review" />
     
-        <variable
-            name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+        <import type="com.zion830.threedollars.utils.StringUtils" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> listener.onClick(item)}"
-        android:paddingVertical="12dp">
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rect_white_radius_12"
+        android:padding="16dp">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -28,18 +27,48 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
             
+            <com.willy.ratingbar.ScaleRatingBar
+                android:id="@+id/rating_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:bindRating="@{item.rating}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srb_clickable="true"
+                app:srb_drawableEmpty="@drawable/ic_star_off"
+                app:srb_drawableFilled="@drawable/ic_star"
+                app:srb_isIndicator="true"
+                app:srb_numStars="5"
+                app:srb_starHeight="16dp"
+                app:srb_starPadding="2dp"
+                app:srb_starWidth="16dp"
+                tools:ignore="UnusedAttribute" />
+            
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:singleLine="true"
                 android:text="@{item.user.name}"
                 android:textColor="@color/color_black"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rating_score"
                 tools:text="강남역 2출 앞" />
+            
+            <ImageButton
+                android:id="@+id/ib_sidemenu"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?actionBarItemBackground"
+                android:paddingStart="6dp"
+                android:paddingBottom="6dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/ic_sidemenu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
             
             <TextView
                 android:id="@+id/tv_description"
@@ -48,41 +77,22 @@
                 android:layout_marginTop="8dp"
                 android:text="@{item.contents}"
                 android:textColor="@android:color/black"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_name"
                 tools:text="음~ 냠냠긋 음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~" />
-    
-            <com.willy.ratingbar.ScaleRatingBar
-                android:id="@+id/rating_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:bindRating="@{item.rating}"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srb_clickable="true"
-                app:srb_isIndicator="true"
-                app:srb_drawableEmpty="@drawable/ic_star_off"
-                app:srb_drawableFilled="@drawable/ic_star"
-                app:srb_numStars="5"
-                app:srb_starHeight="16dp"
-                app:srb_starPadding="2dp"
-                app:srb_starWidth="16dp"
-                tools:ignore="UnusedAttribute" />
             
             <TextView
-                android:id="@+id/tv_score"
+                android:id="@+id/tv_created_at"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="@{@string/score(item.rating)}"
-                android:textColor="@color/color_white"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/rating_score"
-                app:layout_constraintStart_toEndOf="@id/rating_score"
-                app:layout_constraintTop_toTopOf="@id/rating_score"
-                tools:text="3.8점" />
+                android:textColor="@color/color_gray1"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_name"
+                app:layout_constraintStart_toEndOf="@id/tv_name"
+                app:layout_constraintTop_toTopOf="@id/tv_name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

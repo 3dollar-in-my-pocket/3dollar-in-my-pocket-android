@@ -94,7 +94,7 @@
                     tools:ignore="UnusedAttribute" />
         
                 <TextView
-                    android:id="@+id/tv_score"
+                    android:id="@+id/tv_created_at"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
