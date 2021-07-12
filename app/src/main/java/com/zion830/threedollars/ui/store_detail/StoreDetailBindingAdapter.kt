@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -81,4 +82,17 @@ fun ImageView.loadRoundStoreImage(storeImage: StoreImage?) {
         .transition(DrawableTransitionOptions.withCrossFade())
         .apply(requestOptions)
         .into(this)
+}
+
+@BindingAdapter("storeType")
+fun TextView.storeType(storeType: String?) {
+    text = when (storeType) {
+        "STORE" -> getString(R.string.store)
+        "CONVENIENCE_STORE" -> getString(R.string.convenience_store)
+        "ROAD" -> getString(R.string.road)
+        else -> {
+            isVisible = false
+            ""
+        }
+    }
 }

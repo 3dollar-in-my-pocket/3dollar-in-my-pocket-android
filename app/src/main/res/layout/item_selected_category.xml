@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.MenuType" />
+    </data>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout
+            android:id="@+id/btn_add_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+            
+            <ImageView
+                bindWhiteMenuIcon="@{item.key}"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_margin="8dp"
+                android:layout_marginStart="7dp"
+                android:background="@drawable/circle_sub_red"
+                android:padding="12dp"
+                android:scaleType="fitCenter" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{item.name}"
+                android:textColor="@color/color_black"
+                android:textSize="12sp"
+                tools:text="붕어빵" />
+        </LinearLayout>
+        
+        <ImageButton
+            android:id="@+id/ib_delete_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:layout_margin="4dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_delete_small" />
+    </FrameLayout>
+</layout>

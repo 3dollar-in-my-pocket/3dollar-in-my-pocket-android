@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.Menu
@@ -23,6 +24,10 @@ class AddStoreViewModel : BaseViewModel() {
     val isFinished: LiveData<Boolean> = Transformations.map(storeName) {
         it.isNotNullOrBlank()
     }
+
+    private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
+    val selectedLocation: LiveData<LatLng?>
+        get() = _selectedLocation
 
     private val _category: MutableLiveData<MenuType> = MutableLiveData(MenuType.BUNGEOPPANG)
     val category: LiveData<MenuType>
@@ -70,7 +75,7 @@ class AddStoreViewModel : BaseViewModel() {
         )
         menus.forEachIndexed { index, menu ->
             params["menu[$index].name"] = menu.name
-            params["menu[$index].price"] = menu.price
+            params["menu[$index].price"] = menu.price.toString()
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -89,5 +94,9 @@ class AddStoreViewModel : BaseViewModel() {
                 hideLoading()
             }
         }
+    }
+
+    fun updateLocation(latLng: LatLng?) {
+        _selectedLocation.value = latLng
     }
 }

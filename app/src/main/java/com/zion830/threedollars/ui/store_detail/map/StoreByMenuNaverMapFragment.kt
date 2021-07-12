@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.store_detail.map
 
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
@@ -15,7 +14,6 @@ import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
-import com.zion830.threedollars.utils.getCurrentLocationName
 
 
 class StoreByMenuNaverMapFragment : NaverMapFragment() {
@@ -42,14 +40,8 @@ class StoreByMenuNaverMapFragment : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        updateLocationText(position)
         viewModel.changeCategory(viewModel.category.value ?: MenuType.BUNGEOPPANG, position)
         viewModel.requestStoreInfo(position)
-    }
-
-    private fun updateLocationText(position: LatLng) {
-        binding.tvLocation.text = getCurrentLocationName(position)
-        binding.tvLocation.visibility = if (binding.tvLocation.text.isNullOrBlank()) View.GONE else View.VISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -11,11 +11,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
+import com.zion830.threedollars.repository.model.request.NewReview
+import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 
-class AddReviewDialog : DialogFragment() {
+class AddReviewDialog(
+    private val content: Review?
+) : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -29,16 +32,25 @@ class AddReviewDialog : DialogFragment() {
             viewModel.clearReview()
             dismiss()
         }
+
+        if (content != null) {
+            viewModel.reviewContent.value = content.contents
+            binding.rating.rating = content.rating
+        } else {
+            viewModel.reviewContent.value = ""
+            binding.rating.rating = 0f
+        }
+
         binding.btnFinish.setOnClickListener {
-            viewModel.addReview(binding.rating.rating)
+            if (content == null) {
+                viewModel.addReview(binding.rating.rating)
+            } else {
+                val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
+                viewModel.editReview(content.id, newReview)
+            }
             dismiss()
         }
 
-        viewModel.addReviewResult.observe(this) {
-            if (it) {
-                viewModel.clearReview()
-            }
-        }
         return binding.root
     }
 
@@ -57,6 +69,6 @@ class AddReviewDialog : DialogFragment() {
 
     companion object {
 
-        fun getInstance() = AddReviewDialog()
+        fun getInstance(content: Review? = null) = AddReviewDialog(content)
     }
 }

@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.MenuType
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 object StringUtils {
@@ -64,5 +67,11 @@ object StringUtils {
         }
 
         return stringDescArray[index]
+    }
+
+    fun getTimeString(zuluString: String?): String {
+        return Instant.parse("${zuluString}Z")
+            .atZone(ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern("yyyy.MM.dd E").withLocale(Locale.KOREA))
     }
 }

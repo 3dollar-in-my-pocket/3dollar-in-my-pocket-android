@@ -43,12 +43,16 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
+        val params = binding.btnFindLocation.layoutParams as ViewGroup.MarginLayoutParams
+        params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(55f))
+        binding.btnFindLocation.layoutParams = params
+
         viewModel.storeLocation.observe(this) {
             it?.let {
                 moveCamera(LatLng(it.latitude, it.longitude))
                 addMarker(R.drawable.ic_store_selected, LatLng(it.latitude, it.longitude))
             }
         }
-        map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, SizeUtils.dpToPx(50f)) // 로고 가려지도록
+        map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, 0) // 로고 가려지도록
     }
 }

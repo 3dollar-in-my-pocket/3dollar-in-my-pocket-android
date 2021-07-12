@@ -78,9 +78,6 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         binding.btnAdd.setOnClickListener {
             menuAdapter.addNewRow()
         }
-        binding.btnDelete.setOnClickListener {
-            DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-        }
         binding.btnSubmit.setOnClickListener {
             viewModel.editStore(
                 storeName = binding.etLocation.text.toString(),
@@ -101,10 +98,6 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
         )
 
         supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
-
-        binding.btnDelete.setOnClickListener {
-            DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-        }
 
         observeUiData()
         initSubmitButtonEvent()
@@ -244,7 +237,11 @@ class EditStoreActivity : BaseActivity<ActivityEditStoreBinding, StoreEditViewMo
             binding.rvEditMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
                 val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(Menu(name.text.toString(), price.text.toString()))
+                menuList.add(
+                    Menu(
+                        "", 0, name.text.toString(), price.text.toString()
+                    )
+                )
             }
         }
 

@@ -13,12 +13,10 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
-import com.zion830.threedollars.utils.SizeUtils
 import com.zion830.threedollars.utils.TouchableWrapper
-import com.zion830.threedollars.utils.getCurrentLocationName
 
 open class StoreEditNaverMapFragment(
-    val listener: OnMapTouchListener
+    val listener: OnMapTouchListener? = null
 ) : NaverMapFragment() {
 
     private var map: NaverMap? = null
@@ -54,15 +52,9 @@ open class StoreEditNaverMapFragment(
                 addMarker(R.drawable.ic_marker, LatLng(it.latitude, it.longitude))
             }
         }
-        map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, SizeUtils.dpToPx(50f))
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        updateLocationText(position)
-    }
 
-    private fun updateLocationText(position: LatLng) {
-        binding.tvLocation.text = getCurrentLocationName(position)
-        binding.tvLocation.visibility = if (binding.tvLocation.text.isNullOrBlank()) View.GONE else View.VISIBLE
     }
 }

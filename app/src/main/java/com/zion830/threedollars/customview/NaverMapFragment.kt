@@ -25,7 +25,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     protected lateinit var binding: FragmentNaverMapBinding
 
-    private var naverMap: NaverMap? = null
+    protected var naverMap: NaverMap? = null
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 

@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
-import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,10 +31,6 @@ class StoreEditViewModel : BaseViewModel() {
     val editStoreResult: LiveData<Boolean>
         get() = _editStoreResult
 
-    private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val deleteStoreResult: LiveData<Boolean>
-        get() = _deleteStoreResult
-
     val storeLocation: LiveData<LatLng?> = Transformations.map(_storeInfo) {
         if (it != null) {
             LatLng(it.latitude, it.longitude)
@@ -44,10 +38,6 @@ class StoreEditViewModel : BaseViewModel() {
             null
         }
     }
-
-    private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NONE)
-    val deleteType: LiveData<DeleteType>
-        get() = _deleteType
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -86,24 +76,5 @@ class StoreEditViewModel : BaseViewModel() {
             hideLoading()
             _editStoreResult.postValue(result.isSuccessful)
         }
-    }
-
-    fun deleteStore(userId: Int) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.deleteStore(deleteType.value!!, storeInfo.value?.id ?: 0, userId).execute()
-
-            _deleteStoreResult.postValue(result.isSuccessful)
-            _msgTextId.postValue(
-                when (result.code()) {
-                    in 200..299 -> R.string.success_delete_store
-                    in 400..499 -> R.string.already_request_delete
-                    else -> R.string.failed_delete_store
-                }
-            )
-        }
-    }
-
-    fun changeDeleteType(type: DeleteType) {
-        _deleteType.value = type
     }
 }

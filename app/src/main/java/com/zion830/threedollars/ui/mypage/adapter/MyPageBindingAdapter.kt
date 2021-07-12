@@ -23,6 +23,22 @@ fun ImageView.bindMenuIcon(category: String?) {
     )
 }
 
+@BindingAdapter("bindWhiteMenuIcon")
+fun ImageView.bindWhiteMenuIcon(category: String?) {
+    if (category == null) {
+        return
+    }
+
+    setImageResource(
+        when (category.toUpperCase(Locale.ROOT)) {
+            "BUNGEOPPANG" -> R.drawable.ic_fish_white
+            "TAKOYAKI" -> R.drawable.ic_tako_white
+            "HOTTEOK" -> R.drawable.ic_hodduck_white
+            else -> R.drawable.ic_egg_white
+        }
+    )
+}
+
 @BindingAdapter("bindMenuIcon", "isSelected")
 fun ImageView.bindMenuIcon(category: String?, isSelected: Boolean) {
     if (category == null) {

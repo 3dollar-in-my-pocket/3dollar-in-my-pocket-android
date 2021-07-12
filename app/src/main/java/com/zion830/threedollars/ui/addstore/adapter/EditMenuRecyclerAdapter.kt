@@ -31,7 +31,7 @@ class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEdit
 
     fun submitList(newItems: MutableList<Menu>?) {
         items.clear()
-        items.addAll(if (newItems.isNullOrEmpty()) listOf(Menu("", "")) else newItems)
+        items.addAll(if (newItems.isNullOrEmpty()) listOf(Menu("", 0)) else newItems)
         notifyDataSetChanged()
     }
 }

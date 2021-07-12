@@ -11,19 +11,19 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
-import com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 
 
 class DeleteStoreDialog : BottomSheetDialogFragment() {
-    private val viewModel: StoreEditViewModel by activityViewModels()
+    private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DialogDeleteBinding.inflate(inflater)
 
         binding.viewModel = viewModel

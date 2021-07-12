@@ -28,7 +28,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,6 +46,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.store_detail.StoreByMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.addstore.NewStoreActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.report_store.EditStoreActivity"

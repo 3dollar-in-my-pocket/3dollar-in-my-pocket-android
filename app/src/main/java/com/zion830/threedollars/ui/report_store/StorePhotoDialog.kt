@@ -11,8 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
-import com.zion830.threedollars.ui.store_detail.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import zion830.com.common.listener.OnItemClickListener
 
@@ -46,8 +46,8 @@ class StorePhotoDialog : DialogFragment() {
 
         viewModel.storeInfo.observe(this) {
             it?.let {
-                adapter.submitItems(it.image)
-                indicatorAdapter.submitList(it.image.mapIndexed { index, value -> StoreImage(index, null, value.url) })
+                adapter.submitItems(it.image ?: emptyList())
+                indicatorAdapter.submitList(it.image?.mapIndexed { index, value -> StoreImage(index, null, value.url) })
             }
         }
         binding.btnBack.setOnClickListener { dismiss() }

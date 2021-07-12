@@ -62,12 +62,17 @@ fun isGpsAvailable(): Boolean {
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 }
 
-fun getCurrentLocationName(location: LatLng): String? {
+fun getCurrentLocationName(location: LatLng?): String? {
+    val notFindMsg = GlobalApplication.getContext().getString(R.string.location_no_address)
+    if (location == null) {
+        return notFindMsg
+    }
+
     val geoCoder = Geocoder(GlobalApplication.getContext(), Locale.KOREA)
     return try {
         val addresses: List<Address> = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
         if (addresses.isEmpty()) {
-            GlobalApplication.getContext().getString(R.string.location_no_address)
+            notFindMsg + " (위도: ${location.latitude}, 경도: ${location.longitude})"
         } else {
             with(addresses[0]) {
                 (0..maxAddressLineIndex).map { getAddressLine(it) }
@@ -75,7 +80,7 @@ fun getCurrentLocationName(location: LatLng): String? {
         }
     } catch (e: Exception) {
         Log.e("getCurrentLocationName", e.message ?: "")
-        GlobalApplication.getContext().getString(R.string.location_no_address)
+        notFindMsg
     }
 }
 
