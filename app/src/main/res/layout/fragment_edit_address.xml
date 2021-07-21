@@ -7,7 +7,7 @@
         
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.addstore.AddStoreViewModel" />
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
         
         <import type="android.view.View" />
     </data>
@@ -15,7 +15,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:focusable="true">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
@@ -69,6 +72,7 @@
                 android:layout_height="0dp"
                 android:layout_gravity="bottom"
                 android:layout_marginTop="49dp"
+                android:background="@color/color_gray3"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

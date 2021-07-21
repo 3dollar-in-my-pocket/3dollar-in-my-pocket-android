@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.addstore
+package com.zion830.threedollars.ui.addstore.ui_model
 
 import android.net.Uri
 

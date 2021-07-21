@@ -1,14 +1,474 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-    
+        
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
+        
+        <import type="android.view.View" />
     </data>
     
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-    
-    </LinearLayout>
+        android:background="@color/color_gray3"
+        android:clickable="true"
+        android:focusable="true">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_white_bottom_corner"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute">
+            
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:layout_marginStart="24dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@null"
+                android:foreground="?actionBarItemBackground"
+                android:src="@drawable/ic_arrow_left"
+                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_store"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/btn_back" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_title">
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                
+                <LinearLayout
+                    android:id="@+id/map"
+                    android:layout_width="0dp"
+                    android:layout_height="264dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="49dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="24dp"
+                    android:padding="4dp"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="16dp"
+                    app:cardBackgroundColor="@color/color_white"
+                    app:cardCornerRadius="16dp"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintBottom_toBottomOf="@id/map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="16dp">
+                        
+                        <TextView
+                            android:id="@+id/tv_address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/color_black"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@id/ib_write"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="서울시\n관악구" />
+                        
+                        <ImageButton
+                            android:id="@+id/ib_write"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_write"
+                            android:tint="@color/color_sub_red"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+                
+                <LinearLayout
+                    android:id="@+id/layout_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="24dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/map">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:paddingHorizontal="24dp"
+                        android:text="@string/store_info"
+                        android:textColor="@color/color_black"
+                        android:textSize="16sp" />
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/color_white"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="32dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:text="@string/store_name"
+                            android:textColor="@color/color_black"
+                            android:textStyle="bold" />
+                        
+                        <EditText
+                            android:id="@+id/et_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/selector_edittext"
+                            android:hint="@string/hint_menu_location"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:padding="16dp"
+                            android:singleLine="true"
+                            android:textColor="@color/color_black"
+                            android:textColorHint="@color/color_gray1"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                        
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/store_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="@string/option"
+                                android:textColor="@color/color_gray1" />
+                        </LinearLayout>
+                        
+                        <RadioGroup
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            
+                            <RadioButton
+                                android:id="@+id/rb_type1"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_radio"
+                                android:drawablePadding="8dp"
+                                android:text="@string/road" />
+                            
+                            <RadioButton
+                                android:id="@+id/rb_type2"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_radio"
+                                android:drawablePadding="8dp"
+                                android:text="@string/store" />
+                            
+                            <RadioButton
+                                android:id="@+id/rb_type3"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_radio"
+                                android:drawablePadding="8dp"
+                                android:text="@string/convenience_store" />
+                        </RadioGroup>
+                        
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/payment_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="@string/option"
+                                android:textColor="@color/color_gray1" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:text="@string/enable_multi_select"
+                                android:textColor="@color/color_sub_red"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            
+                            <CheckBox
+                                android:id="@+id/cb_type1"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_checkbox"
+                                android:drawablePadding="8dp"
+                                android:text="@string/cash" />
+                            
+                            <CheckBox
+                                android:id="@+id/cb_type2"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_checkbox"
+                                android:drawablePadding="8dp"
+                                android:text="@string/card" />
+                            
+                            <CheckBox
+                                android:id="@+id/cb_type3"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:button="@null"
+                                android:drawableStart="@drawable/selector_type_checkbox"
+                                android:drawablePadding="8dp"
+                                android:text="@string/banking" />
+                        
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:layout_marginBottom="16dp"
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/show_type"
+                                android:textColor="@color/color_black"
+                                android:textStyle="bold" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="@string/option"
+                                android:textColor="@color/color_gray1" />
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:text="@string/enable_multi_select"
+                                android:textColor="@color/color_sub_red"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        
+                        <include
+                            android:id="@+id/layout_btn_day_of_week"
+                            clickable="@{true}"
+                            layout="@layout/btns_day_of_week_big" />
+                    
+                    </LinearLayout>
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="16dp">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:paddingVertical="16dp"
+                            android:text="@string/category"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                        
+                        <TextView
+                            android:id="@+id/btn_clear_category"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="16dp"
+                            android:text="@string/category_delete_all"
+                            android:textColor="@color/color_main_red"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/white"
+                        android:overScrollMode="never"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="24dp"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="5"
+                        tools:listitem="@layout/item_selected_category" />
+                    
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="horizontal">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/menu_detail"
+                            android:textColor="@color/color_black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/option"
+                            android:textColor="@color/color_gray1" />
+                    </LinearLayout>
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="120dp"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_edit_category_menu" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        </ScrollView>
+        
+        <View
+            android:id="@+id/view_submit_back"
+            android:layout_width="232dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/selector_btn_radius48"
+            android:elevation="4dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="@string/edit_store_finish"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
+            app:layout_constraintEnd_toEndOf="@id/view_submit_back"
+            app:layout_constraintStart_toStartOf="@id/view_submit_back"
+            app:layout_constraintTop_toTopOf="@id/view_submit_back"
+            tools:ignore="UnusedAttribute" />
+        
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

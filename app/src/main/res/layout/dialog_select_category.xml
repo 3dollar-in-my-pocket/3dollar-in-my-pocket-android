@@ -43,10 +43,12 @@
         
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_category"
+            bindItem="@{viewModel.selectedCategory}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginBottom="20dp"
+            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="5"
             tools:listitem="@layout/item_selected_category" />
@@ -57,11 +59,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="32dp"
             android:background="@drawable/selector_btn_radius48"
-            android:enabled="@{true}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:text="@string/select"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"

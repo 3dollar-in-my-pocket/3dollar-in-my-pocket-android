@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.addstore
+package com.zion830.threedollars.ui.addstore.view
 
 import android.content.Intent
 import android.view.ViewGroup.MarginLayoutParams

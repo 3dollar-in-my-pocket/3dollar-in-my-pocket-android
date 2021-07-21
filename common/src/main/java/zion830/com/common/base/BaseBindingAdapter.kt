@@ -27,6 +27,11 @@ fun View.visibleIf(value: Boolean) {
     isVisible = value
 }
 
+@BindingAdapter("invisibleIf")
+fun View.invisibleIf(value: Boolean) {
+    visibility = if (value) View.INVISIBLE else View.VISIBLE
+}
+
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter("bindItem")
 fun RecyclerView.bindItems(items: List<Any>?) {

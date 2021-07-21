@@ -62,6 +62,7 @@
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_title">
@@ -366,7 +367,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
+                        android:overScrollMode="never"
                         android:paddingHorizontal="24dp"
+                        android:paddingVertical="24dp"
                         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                         app:spanCount="5"
                         tools:listitem="@layout/item_selected_category" />
@@ -397,6 +400,7 @@
                 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_menu"
+                        bindItem="@{viewModel.selectedCategory}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="120dp"

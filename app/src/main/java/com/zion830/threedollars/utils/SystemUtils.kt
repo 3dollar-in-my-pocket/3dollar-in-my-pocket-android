@@ -98,3 +98,12 @@ fun Context.getInstalledInfo() =
         ${getString(R.string.android_version)}: ${Build.VERSION.SDK_INT}
         ------------------------------------------------------- 
     """.trimIndent()
+
+fun Context.shareUrl(url: String) {
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, url)
+        type = "text/plain"
+    }
+    startActivity(Intent.createChooser(sendIntent, url))
+}

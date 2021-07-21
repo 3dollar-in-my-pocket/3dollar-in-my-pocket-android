@@ -7,8 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.request.NewStore
 import com.zion830.threedollars.repository.model.response.Menu
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
@@ -37,6 +38,14 @@ class AddStoreViewModel : BaseViewModel() {
     val newStoreId: LiveData<Int>
         get() = _newStoreId
 
+    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(MenuType.values().map { SelectedCategory(false, it) })
+    val selectedCategory: LiveData<List<SelectedCategory>>
+        get() = _selectedCategory
+
+    val selectedCount: LiveData<Int> = Transformations.map(selectedCategory) {
+        it.count { item -> item.isSelected }
+    }
+
     private fun saveImages(storeId: Int?, images: List<MultipartBody.Part>) {
         if (images.isEmpty()) {
             return
@@ -58,7 +67,6 @@ class AddStoreViewModel : BaseViewModel() {
     }
 
     fun addNewStore(
-        images: List<MultipartBody.Part>,
         category: String,
         latitude: Double,
         longitude: Double,
@@ -66,26 +74,11 @@ class AddStoreViewModel : BaseViewModel() {
     ) {
         showLoading()
 
-        val params = hashMapOf<String, String>(
-            Pair("userId", SharedPrefUtils.getUserId().toString()),
-            Pair("latitude", latitude.toString()),
-            Pair("longitude", longitude.toString()),
-            Pair("category", category),
-            Pair("storeName", storeName.value ?: "")
-        )
-        menus.forEachIndexed { index, menu ->
-            params["menu[$index].name"] = menu.name
-            params["menu[$index].price"] = menu.price.toString()
-        }
-
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.saveStore(params).execute()
+            val result = repository.saveStore(NewStore()).execute()
 
-            if (result.isSuccessful && images.isEmpty()) {
-                _newStoreId.postValue(result.body()?.storeId ?: -1)
-            } else if (result.isSuccessful && images.isNotEmpty()) {
-                val storeId = result.body()?.storeId
-                saveImages(storeId, images)
+            if (result.isSuccessful) {
+                val storeId = result.body()?.data?.storeId
             } else {
                 _newStoreId.postValue(-1)
             }
@@ -98,5 +91,23 @@ class AddStoreViewModel : BaseViewModel() {
 
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
+    }
+
+    fun updateCategory(list: List<SelectedCategory>) {
+        _selectedCategory.value = list.toList()
+    }
+
+    fun removeCategory(item: SelectedCategory) {
+        val newList = _selectedCategory.value?.map {
+            SelectedCategory(if (item.menuType == it.menuType) false else it.isSelected, it.menuType)
+        }
+        _selectedCategory.value = newList
+    }
+
+    fun removeAllCategory() {
+        val newList = _selectedCategory.value?.map {
+            SelectedCategory(false, it.menuType)
+        }
+        _selectedCategory.value = newList
     }
 }

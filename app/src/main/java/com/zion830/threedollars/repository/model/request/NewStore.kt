@@ -1,17 +1,21 @@
 package com.zion830.threedollars.repository.model.request
 
-import okhttp3.MultipartBody
+
+import com.google.gson.annotations.SerializedName
 
 data class NewStore(
-    val appearanceDays: List<String> = listOf(),
-    val categories: String = "",
-    val category: String = "",
-    val images: List<MultipartBody.Part> = listOf(),
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
-    val menus: List<Menu> = listOf(),
-    val storeName: String = "",
-    val paymentMethods: List<String> = listOf(),
-    val storeType: String = "",
-    val userId: Int // 필수
+    @SerializedName("appearanceDays")
+    val appearanceDays: List<String>? = null,
+    @SerializedName("latitude")
+    val latitude: Int? = null,
+    @SerializedName("longitude")
+    val longitude: Int? = null,
+    @SerializedName("menu")
+    val menus: List<Menu>? = null,
+    @SerializedName("paymentMethods")
+    val paymentMethods: List<String>? = null,
+    @SerializedName("storeName")
+    val storeName: String? = null,
+    @SerializedName("storeType")
+    val storeType: String? = null
 )

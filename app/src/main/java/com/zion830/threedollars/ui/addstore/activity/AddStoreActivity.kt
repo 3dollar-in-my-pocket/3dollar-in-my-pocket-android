@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.addstore
+package com.zion830.threedollars.ui.addstore.activity
 //
 //import android.app.Activity
 //import android.app.AlertDialog

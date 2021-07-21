@@ -20,7 +20,7 @@ import com.google.android.material.internal.ViewUtils
 import com.willy.ratingbar.ScaleRatingBar
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.response.Image
-import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.utils.StringUtils.getString
 
 @BindingAdapter("bindRating")
@@ -94,5 +94,14 @@ fun TextView.storeType(storeType: String?) {
             isVisible = false
             ""
         }
+    }
+}
+
+fun findStoreType(storeType: String?): Int {
+    return when (storeType) {
+        "ROAD" -> 0
+        "STORE" -> 1
+        "CONVENIENCE_STORE" -> 2
+        else -> 0
     }
 }

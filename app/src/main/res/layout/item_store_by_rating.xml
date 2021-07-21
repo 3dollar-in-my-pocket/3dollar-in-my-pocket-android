@@ -53,8 +53,8 @@
                 tools:text="강남역 1출강남역 1출강남역 1출강남역 1출" />
         
             <TextView
-                android:id="@+id/tv_store_distance"
                 android:layout_width="wrap_content"
+                android:id="@+id/tv_store_distance"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@{@string/distance(item.distance)}"

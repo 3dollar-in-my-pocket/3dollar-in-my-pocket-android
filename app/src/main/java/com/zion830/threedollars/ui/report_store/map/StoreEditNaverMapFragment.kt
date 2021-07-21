@@ -11,17 +11,18 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
-import com.zion830.threedollars.ui.report_store.vm.StoreEditViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.TouchableWrapper
 
 open class StoreEditNaverMapFragment(
-    val listener: OnMapTouchListener? = null
+    private val onMapUpdated: (LatLng?) -> Unit,
+    val listener: OnMapTouchListener? = null,
 ) : NaverMapFragment() {
 
     private var map: NaverMap? = null
 
-    val viewModel: StoreEditViewModel by activityViewModels()
+    val viewModel: StoreDetailViewModel by activityViewModels()
 
     var currentTarget: LatLng? = null
         private set
@@ -46,15 +47,16 @@ open class StoreEditNaverMapFragment(
         super.onMapReady(map)
         this.map = map
 
+        naverMap?.addOnCameraIdleListener {
+            val selectedPosition = naverMap?.cameraPosition?.target
+            onMapUpdated(selectedPosition)
+        }
+
         viewModel.storeLocation.observe(this) {
             it?.let {
                 moveCamera(LatLng(it.latitude, it.longitude))
-                addMarker(R.drawable.ic_marker, LatLng(it.latitude, it.longitude))
+                addMarker(R.drawable.ic_store_selected, LatLng(it.latitude, it.longitude))
             }
         }
-    }
-
-    override fun onMyLocationLoaded(position: LatLng) {
-
     }
 }

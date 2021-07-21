@@ -13,8 +13,8 @@ import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import okhttp3.MultipartBody
 import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
@@ -131,6 +131,31 @@ class StoreDetailViewModel : BaseViewModel() {
             repository.deleteReview(reviewId).await()
             _msgTextId.postValue(R.string.success_delete_review)
             _addReviewResult.postValue(true)
+        }
+    }
+
+    fun saveImages(storeId: Int?, images: List<MultipartBody.Part>) {
+        showLoading()
+
+        if (images.isEmpty()) {
+            return
+        }
+
+        if (storeId == null) {
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val responses = images.map { image ->
+                async(Dispatchers.IO + coroutineExceptionHandler) {
+                    repository.saveImage(storeId, image)
+                }
+            }
+            responses.awaitAll()
+
+            withContext(Dispatchers.Main) {
+                hideLoading()
+            }
         }
     }
 }

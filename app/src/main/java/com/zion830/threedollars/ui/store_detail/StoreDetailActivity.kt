@@ -21,17 +21,25 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.response.Review
+import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
+import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
-import com.zion830.threedollars.ui.report_store.EditStoreActivity
+import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import io.hackle.android.HackleApp
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
+
 
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info), OnMapTouchListener {
 
@@ -41,11 +49,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val categoryAdapter = CategoryInfoRecyclerAdapter()
 
-    private lateinit var reviewAdapter: ReviewRecyclerAdapter
-
     private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     private var storeId = 0
+
+    private lateinit var photoAdapter: PhotoRecyclerAdapter
+
+    private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
     override fun onTouch() {
         // 지도 스크롤 이벤트 구분용
@@ -72,9 +82,14 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
             },
         )
+        photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
+            override fun onClick(item: StoreImage) {
+                StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
+            }
+        })
 
         val naverMapFragment = StoreDetailNaverMapFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -84,19 +99,24 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
             }
         }
+        binding.btnAddPhoto.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(intent, PICK_IMAGE_MULTIPLE)
+        }
         binding.btnSendMoney.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
             startActivity(browserIntent)
             hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
+
         binding.btnShare.setOnClickListener {
-            showToast("{message: 카카오톡을 실행할 수 없습니다.}")
+            val queryString = "${binding.tvStoreName.text},${viewModel.storeInfo.value?.latitude},${viewModel.storeInfo.value?.longitude}"
+            shareUrl(getString(R.string.kakao_map_format).format(queryString))
         }
-//        binding.ivStore.setOnClickListener {
-//            if (viewModel.storeInfo.value?.image?.isNotEmpty() == true) {
-//                StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
-//            }
-//        }
+        binding.rvPhoto.adapter = photoAdapter
 
         binding.rvCategory.adapter = categoryAdapter
         binding.rvReview.adapter = reviewAdapter
@@ -104,7 +124,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.btnAddStoreInfo.setOnClickListener {
-            startActivityForResult(EditStoreActivity.getIntent(this, storeId), EDIT_STORE_INFO)
+            supportFragmentManager.addNewFragment(R.id.container, EditStoreDetailFragment(), EditStoreDetailFragment::class.java.name, false)
         }
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
@@ -116,6 +136,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             binding.tvStoreType.isVisible = it?.storeType == null
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
             reviewAdapter.submitList(it?.review)
+            photoAdapter.submitList(it?.image?.mapIndexed { index, image -> StoreImage(index, null, image.url) })
 
             // TODO : 이게 최선이야??
             when {
@@ -169,6 +190,24 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
             initMap()
+        } else if (requestCode == PICK_IMAGE_MULTIPLE) {
+            if (data?.data == null) {
+                showToast(R.string.error_pick_image)
+                return
+            }
+
+            val clipData = data.clipData
+            val uriData = arrayListOf<Uri?>()
+            for (i in 0 until (clipData?.itemCount ?: 0)) {
+                if (!FileUtils.isAvailable(clipData?.getItemAt(i)?.uri)) {
+                    showToast(R.string.error_file_size)
+                    return
+                } else {
+                    uriData.add(clipData?.getItemAt(i)?.uri)
+                }
+            }
+
+            viewModel.saveImages(viewModel.storeInfo.value?.id, getImageFiles(uriData))
         }
     }
 
@@ -188,9 +227,21 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part> {
+        val imageList = ArrayList<MultipartBody.Part>()
+        data.forEach {
+            FileUtils.uriToFile(it)?.run {
+                val requestFile = asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                imageList.add(MultipartBody.Part.createFormData("image", name, requestFile))
+            }
+        }
+        return imageList.toList()
+    }
+
     companion object {
         private const val KEY_STORE_ID = "KEY_STORE_ID"
         private const val EDIT_STORE_INFO = 234
+        private const val PICK_IMAGE_MULTIPLE = 235
 
         fun getIntent(context: Context, storeId: Int) = Intent(context, StoreDetailActivity::class.java).apply {
             putExtra(KEY_STORE_ID, storeId)

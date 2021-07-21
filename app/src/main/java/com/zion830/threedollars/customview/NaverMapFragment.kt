@@ -61,7 +61,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.uiSettings.isZoomControlEnabled = false
     }
 
-    protected fun addMarker(@DrawableRes drawableRes: Int, position: LatLng) {
+    fun addMarker(@DrawableRes drawableRes: Int, position: LatLng) {
         if (naverMap == null) {
             return
         }
@@ -116,7 +116,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
     }
 
-    protected fun moveCamera(position: LatLng) {
+    fun moveCamera(position: LatLng) {
         if (naverMap == null) {
             return
         }

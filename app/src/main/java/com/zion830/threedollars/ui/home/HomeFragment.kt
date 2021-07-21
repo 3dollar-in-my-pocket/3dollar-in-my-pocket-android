@@ -11,7 +11,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.AllStoreResponseItem
-import com.zion830.threedollars.ui.addstore.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreByMenuActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity

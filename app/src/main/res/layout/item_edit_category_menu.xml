@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.Category" />
+            type="com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory" />
         
         <variable
             name="listener"
@@ -21,7 +21,7 @@
         
         <ImageView
             android:id="@+id/iv_menu_icon"
-            bindWhiteMenuIcon="@{item.name}"
+            bindWhiteMenuIcon="@{item.menuType.key}"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{item.readableName}"
+            android:text="@{item.menuType.displayNameId}"
             android:textColor="@color/color_black"
             app:layout_constraintBottom_toBottomOf="@id/iv_menu_icon"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
@@ -52,16 +52,18 @@
             android:src="@drawable/ic_delete_small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        
+    
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_menu"
+            android:id="@+id/rv_menu_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/tv_menu"
             tools:listitem="@layout/item_menu_edit" />
-        
+    
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"
@@ -70,6 +72,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_menu" />
+            app:layout_constraintTop_toBottomOf="@id/rv_menu_edit" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
-import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel

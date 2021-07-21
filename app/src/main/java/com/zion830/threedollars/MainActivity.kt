@@ -10,7 +10,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.addstore.NewStoreActivity
+import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.utils.requestPermissionFirst
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
@@ -38,8 +38,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
-
-        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

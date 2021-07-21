@@ -58,6 +58,16 @@
     <string name="tako">문어빵</string>
     <string name="gye">계란빵</string>
     <string name="hodduck">호떡</string>
+    <string name="eomuk">어묵</string>
+    <string name="gungoguma">군고구마</string>
+    <string name="tteokbokki">떡볶이</string>
+    <string name="ttangkongppang">땅콩빵</string>
+    <string name="gunoksusu">군옥수수</string>
+    <string name="toast">토스트</string>
+    <string name="waffle">와플</string>
+    <string name="gukwappang">국화빵</string>
+    <string name="sundae">순대</string>
+    <string name="kkochi">꼬치</string>
     <string name="none">없음</string>
     
     <string name="nearest_store">가장 가까운 음식점</string>
@@ -112,16 +122,19 @@
     <string name="edit">수정하기</string>
     <string name="add_store_info">가게 정보 추가하기</string>
     <string name="add_photo">사진제보</string>
+    <string name="add_photo_finish">사진 등록</string>
     <string name="writer">님이\n제보한 음식점입니다.</string>
     <string name="edit_photo">총 %d개의 사진 제보!</string>
     <string name="edit_menu">총 %d개의 메뉴 제보!</string>
     <string name="select">총 %d개 선택하기</string>
     <string name="store_info">가게 정보</string>
     <string name="edit_info">수정하기</string>
+    <string name="edit_store">가게 정보 수정</string>
     <string name="option">(선택)</string>
     <string name="enable_multi_select">다중선택 가능</string>
     <string name="store_detail_menu">상세 메뉴 입력 </string>
     <string name="add_store_finish">가게 등록하기</string>
+    <string name="edit_store_finish">가게 정보 수정하기</string>
     <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
     <string name="photo_count">가게사진 %d개</string>
     <string name="review_count">리뷰 %d개</string>
@@ -182,6 +195,7 @@
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
     
+    <string name="kakao_map_format">https://map.kakao.com/link/map/%s</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
     <string name="official_email">3dollarinmypocket@gmail.com</string>

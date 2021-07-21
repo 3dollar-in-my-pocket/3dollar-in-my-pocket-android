@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.store_detail.map
 
 import android.content.Intent
-import android.util.Log
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
@@ -27,11 +26,9 @@ class StoreByMenuNaverMapFragment : NaverMapFragment() {
         binding.btnFindLocation.layoutParams = params
 
         viewModel.storeByRating.observe(this) { res ->
-            Log.d("??", res.getAllStores().size.toString())
             addMarkers(R.drawable.ic_store_selected, res.getAllStores().map { LatLng(it.latitude, it.longitude) })
         }
         viewModel.storeByDistance.observe(this) { res ->
-            Log.d("??", res.getAllStores().size.toString())
             addMarkers(R.drawable.ic_store_selected, res.getAllStores().map { LatLng(it.latitude, it.longitude) })
         }
 

@@ -17,7 +17,7 @@ class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEdit
 
     fun addNewRow() {
         items.add(Menu())
-        notifyItemRemoved(items.size - 1)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemMenuEditBinding, Menu> =

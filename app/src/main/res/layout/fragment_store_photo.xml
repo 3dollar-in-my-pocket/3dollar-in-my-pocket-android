@@ -17,19 +17,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80FFFFFF">
-        
+        android:background="@android:color/black">
+    
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rect_white_bottom_corner"
+            android:backgroundTint="@color/color_black"
             android:elevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute">
-    
+        
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -39,24 +40,36 @@
                 android:background="?attr/actionBarItemBackground"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_close_black"
+                android:tint="@color/color_white"
                 app:layout_constraintBottom_toBottomOf="@id/layout_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+        
             <TextView
                 android:id="@+id/tv_store_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="200dp"
                 android:singleLine="true"
-                android:text="@{viewModel.storeInfo.storeName}"
-                android:textColor="@android:color/black"
+                android:text="@string/add_photo"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
+        
+            <ImageButton
+                android:id="@+id/ib_trash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="22dp"
+                android:background="?attr/actionBarItemBackground"
+                android:src="@drawable/ic_trash"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     
         <com.smarteist.autoimageslider.SliderView
@@ -73,7 +86,7 @@
             android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="120dp"
-            android:background="@android:color/white"
+            android:background="@color/color_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

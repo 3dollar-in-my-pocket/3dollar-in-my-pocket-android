@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content">
                 
                 <LinearLayout
-                    android:id="@+id/container"
+                    android:id="@+id/map"
                     android:layout_width="0dp"
                     android:layout_height="264dp"
                     android:layout_gravity="bottom"
@@ -104,7 +104,7 @@
                     app:cardCornerRadius="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/container"
+                    app:layout_constraintTop_toTopOf="@+id/map"
                     tools:ignore="UnusedAttribute">
                     
                     <LinearLayout
@@ -135,7 +135,7 @@
                         </LinearLayout>
                         
                         <TextView
-                            android:id="@+id/tv_store_distance"
+                            android:id="@+id/tv_store_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -462,23 +462,19 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                    
-                    <LinearLayout
+    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_photo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginBottom="40dp"
-                        android:orientation="horizontal">
-                        
-                        <include layout="@layout/item_store_photo" />
-                        
-                        <include layout="@layout/item_store_photo" />
-                        
-                        <include layout="@layout/item_store_photo" />
-                        
-                        <include layout="@layout/item_store_photo" />
-                    </LinearLayout>
-                    
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_photo">
+    
+                    </androidx.recyclerview.widget.RecyclerView>
+    
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -545,8 +541,29 @@
                         android:textSize="16sp"
                         android:visibility="@{viewModel.storeInfo.review.size() == 0 ? View.VISIBLE : View.GONE}" />
                 </LinearLayout>
-            
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+    
+        <ProgressBar
+            android:id="@id/progress"
+            visibleIf="@{viewModel.isLoading()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="9dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

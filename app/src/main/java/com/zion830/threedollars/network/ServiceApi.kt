@@ -1,6 +1,7 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.repository.model.request.NewReview
+import com.zion830.threedollars.repository.model.request.NewStore
 import com.zion830.threedollars.repository.model.request.NewUser
 import com.zion830.threedollars.repository.model.response.*
 import okhttp3.MultipartBody
@@ -73,6 +74,9 @@ interface ServiceApi {
         @Part images: List<MultipartBody.Part>
     ): Call<AddStoreResponse>
 
+    @POST("/api/v2/store")
+    fun saveStore(@Body newStore: NewStore): Call<AddStoreResponse>
+
     @POST("/api/v1/store/save")
     fun saveStore(
         @QueryMap storeInfo: Map<String, String>
@@ -101,6 +105,11 @@ interface ServiceApi {
         @Query("storeId") storeId: Int,
         @Part images: MultipartBody.Part
     ): Call<AddImageResponse>
+
+    @DELETE("/api/v2/store/image/{imageId}")
+    fun deleteImage(
+        @Query("image") imageId: Int,
+    ): Call<CallResponse>
 
     @GET("/api/v1/review/user")
     fun getMyReview(

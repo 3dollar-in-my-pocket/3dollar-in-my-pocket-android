@@ -1,5 +1,6 @@
-package com.zion830.threedollars.ui.report_store.vm
+package com.zion830.threedollars.ui.addstore
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -15,7 +16,7 @@ import okhttp3.MultipartBody
 import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 
-class StoreEditViewModel : BaseViewModel() {
+class EditStoreViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
 
@@ -31,8 +32,9 @@ class StoreEditViewModel : BaseViewModel() {
     val editStoreResult: LiveData<Boolean>
         get() = _editStoreResult
 
-    val storeLocation: LiveData<LatLng?> = Transformations.map(_storeInfo) {
+    val storeLocation: LiveData<LatLng> = Transformations.map(_storeInfo) {
         if (it != null) {
+            Log.d("ADDRESS vm", it.longitude.toString())
             LatLng(it.latitude, it.longitude)
         } else {
             null

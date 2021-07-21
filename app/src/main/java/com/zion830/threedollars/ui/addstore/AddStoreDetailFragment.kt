@@ -7,26 +7,21 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
-import com.zion830.threedollars.repository.model.response.Category
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.utils.getCurrentLocationName
 import zion830.com.common.base.BaseFragment
-import zion830.com.common.listener.OnItemClickListener
 
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
+
     override val viewModel: AddStoreViewModel by activityViewModels()
 
     private var isFirstOpen = true
 
-    private val addCategoryRecyclerAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        AddCategoryRecyclerAdapter {
-            CategoryBottomSheetDialog().show(
-                parentFragmentManager,
-                CategoryBottomSheetDialog::class.java.name
-            )
-        }
-    }
+    private lateinit var addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter
+
+    private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter
 
     override fun initView() {
         binding.btnBack.setOnClickListener {
@@ -38,16 +33,36 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         viewModel.selectedLocation.observe(viewLifecycleOwner) {
             binding.tvAddress.text = getCurrentLocationName(it)
         }
+        viewModel.selectedCategory.observe(viewLifecycleOwner) {
+            addCategoryRecyclerAdapter.submitList(it.filter { category -> category.isSelected })
+            editCategoryMenuRecyclerAdapter.setItems(it.filter { category -> category.isSelected })
+        }
 
-        val editCategoryMenuRecyclerAdapter = EditCategoryMenuRecyclerAdapter(object : OnItemClickListener<Category> {
-            override fun onClick(item: Category) {
+        addCategoryRecyclerAdapter = AddCategoryRecyclerAdapter({
+            CategoryBottomSheetDialog().show(
+                parentFragmentManager,
+                CategoryBottomSheetDialog::class.java.name
+            )
+        }, {
+            viewModel.removeCategory(it)
+        }
+        )
+        editCategoryMenuRecyclerAdapter = EditCategoryMenuRecyclerAdapter {
+            viewModel.removeCategory(it)
+        }
 
-            }
-        })
+        binding.btnClearCategory.setOnClickListener {
+            editCategoryMenuRecyclerAdapter.clear()
+            addCategoryRecyclerAdapter.clear()
+            viewModel.removeAllCategory()
+        }
         binding.rvCategory.adapter = addCategoryRecyclerAdapter
         binding.rvCategory.itemAnimator = null
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
         binding.rvMenu.itemAnimator = null
+        binding.btnSubmit.setOnClickListener {
+            // viewModel.addNewStore()
+        }
 
         initKeyboard()
     }

@@ -6,16 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
+import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class AddCategoryRecyclerAdapter(
-    private val showDialog: () -> Unit
-) : ListAdapter<String?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
+    private val showDialog: () -> Unit,
+    private val onDeleted: (SelectedCategory) -> Unit
+) : ListAdapter<SelectedCategory?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
     init {
-        submitList(null)
+        submitList(listOf())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
@@ -26,16 +28,18 @@ class AddCategoryRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is AddCategoryViewHolder -> {
-                holder.bind(getItem(position), object : OnItemClickListener<String?> {
-                    override fun onClick(item: String?) {
+                holder.bind("", object : OnItemClickListener<String> {
+                    override fun onClick(item: String) {
                         showDialog()
                     }
                 })
             }
             is DeleteCategoryViewHolder -> {
-                holder.bind(getItem(position), object : OnItemClickListener<String?> {
-                    override fun onClick(item: String?) {
-                        submitList(currentList - listOf(item))
+                holder.bind(getItem(position) ?: SelectedCategory(), object : OnItemClickListener<SelectedCategory> {
+                    override fun onClick(item: SelectedCategory) {
+                        if (item.isSelected) {
+                            onDeleted(item)
+                        }
                     }
                 })
             }
@@ -46,12 +50,16 @@ class AddCategoryRecyclerAdapter(
         return if (position == 0) VIEW_TYPE_ADD else VIEW_TYPE_DELETE
     }
 
-    override fun submitList(items: List<String?>?) {
-        if (items == null) {
+    override fun submitList(list: List<SelectedCategory?>?) {
+        if (list.isNullOrEmpty()) {
             super.submitList(listOf(null))
         } else {
-            super.submitList(items)
+            super.submitList(listOf(null) + list)
         }
+    }
+
+    fun clear() {
+        submitList(listOf())
     }
 
     companion object {
@@ -60,10 +68,11 @@ class AddCategoryRecyclerAdapter(
     }
 }
 
-class AddCategoryViewHolder(parent: ViewGroup) : BaseViewHolder<ItemCategoryAddBinding, String?>(R.layout.item_category_add, parent) {
+class AddCategoryViewHolder(parent: ViewGroup) : BaseViewHolder<ItemCategoryAddBinding, String>(R.layout.item_category_add, parent) {
 
 }
 
-class DeleteCategoryViewHolder(parent: ViewGroup) : BaseViewHolder<ItemSelectedCategoryBinding, String?>(R.layout.item_selected_category, parent) {
+class DeleteCategoryViewHolder(parent: ViewGroup) :
+    BaseViewHolder<ItemSelectedCategoryBinding, SelectedCategory>(R.layout.item_selected_category, parent) {
 
 }
