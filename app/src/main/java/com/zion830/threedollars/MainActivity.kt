@@ -16,6 +16,7 @@ import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.SearchAddressViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
+import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnBackPressedListener
@@ -78,8 +79,15 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        navHostFragment.childFragmentManager.fragments.forEach { fragment ->
-            fragment.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 5000) {
+            if (resultCode != Activity.RESULT_OK) {
+                showToast("앱 업데이트가 필요합니다!")
+                finish()
+            }
+        } else {
+            navHostFragment.childFragmentManager.fragments.forEach { fragment ->
+                fragment.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 

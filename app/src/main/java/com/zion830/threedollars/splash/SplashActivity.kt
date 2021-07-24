@@ -4,12 +4,13 @@ import android.animation.Animator
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.observe
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.login.LoginActivity
+import com.zion830.threedollars.ui.VersionUpdateDialog
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
@@ -26,12 +27,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                    finish()
-                } else {
-                    tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
-                }
+                VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
+                    { minimum, current ->
+                        VersionUpdateDialog.getInstance(minimum, current).show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                    }, {
+                        if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
+                            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                            finish()
+                        } else {
+                            tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
+                        }
+                    })
             }
 
             override fun onAnimationCancel(animation: Animator?) {
