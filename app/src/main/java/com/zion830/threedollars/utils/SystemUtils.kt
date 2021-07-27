@@ -144,7 +144,6 @@ fun Context.shareWithKakao(shareFormat: ShareFormat) {
             if (error != null) {
                 shareUrl(shareFormat.url)
             } else if (linkResult != null) {
-                Log.d("ㅠㅠ", linkResult.toString())
                 showToast(R.string.share_kakao_success)
             }
         }
