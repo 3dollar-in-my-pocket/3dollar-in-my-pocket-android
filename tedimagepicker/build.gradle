@@ -1,0 +1,11 @@
+apply plugin: 'com.android.library'
+apply from: '../common.gradle'
+
+dependencies {
+    implementation 'gun0912.ted:tedpermission-rx2:2.2.2'
+    implementation 'gun0912.ted:tedonactivityresult-rx2:1.0.6'
+
+    implementation 'com.alexvasilkov:gesture-views:2.5.2'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.8"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+}

@@ -10,6 +10,7 @@ import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.response.Category
+import com.zion830.threedollars.repository.model.response.Image
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
@@ -18,6 +19,7 @@ import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import retrofit2.await
+import retrofit2.awaitResponse
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
 
@@ -82,6 +84,10 @@ class StoreDetailViewModel : BaseViewModel() {
     val isAvailableReview = Transformations.map(reviewContent) {
         it.isNotNullOrBlank()
     }
+
+    private val _needRefresh: MutableLiveData<Boolean> = MutableLiveData()
+    val needRefresh: LiveData<Boolean>
+        get() = _needRefresh
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -178,7 +184,8 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun initSelectedCategory() {
         _selectedCategory.value = MenuType.values().map { menu ->
-            val selectedCategory = categoryInfo.value?.find { category -> category.name == menu.key }
+            val selectedCategory =
+                categoryInfo.value?.find { category -> category.name == menu.key }
             SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu)
         }
     }
@@ -207,5 +214,12 @@ class StoreDetailViewModel : BaseViewModel() {
             SelectedCategory(false, it.menuType)
         }
         _selectedCategory.value = newList
+    }
+
+    fun deletePhoto(selectedImage: Image) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.deleteImage(storeInfo.value?.id ?: -1, selectedImage.id).awaitResponse()
+            _needRefresh.value = data.isSuccessful
+        }
     }
 }

@@ -12,8 +12,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/378bf92460fd00d0ae76392c021b0bf7/paging-runtime-2.1.2/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/00a4c1c5593dbbd2266a2cf0dfa4464b/paging-runtime-2.1.2/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5ab5fcf2f49501967aad7a5fdc09f9a0/paging-runtime-2.1.2/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5ab5fcf2f49501967aad7a5fdc09f9a0/paging-runtime-2.1.2/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5ab5fcf2f49501967aad7a5fdc09f9a0/paging-runtime-2.1.2/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/53828b3b2dfbc3b2acd7eb8084f6c229/paging-runtime-2.1.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/53828b3b2dfbc3b2acd7eb8084f6c229/paging-runtime-2.1.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/53828b3b2dfbc3b2acd7eb8084f6c229/paging-runtime-2.1.2/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

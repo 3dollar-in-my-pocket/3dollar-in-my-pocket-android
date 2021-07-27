@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.report_store
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
@@ -28,7 +30,11 @@ class StorePhotoDialog : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val binding = FragmentStorePhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
@@ -47,8 +53,27 @@ class StorePhotoDialog : DialogFragment() {
         viewModel.storeInfo.observe(this) {
             it?.let {
                 adapter.submitItems(it.image ?: emptyList())
-                indicatorAdapter.submitList(it.image?.mapIndexed { index, value -> StoreImage(index, null, value.url) })
+                indicatorAdapter.submitList(it.image?.mapIndexed { index, value ->
+                    StoreImage(
+                        index,
+                        null,
+                        value.url
+                    )
+                })
             }
+        }
+        binding.ibTrash.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    viewModel.deletePhoto(adapter.getItem(binding.slider.currentPagePosition))
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    dismiss()
+                }
+                .setTitle(R.string.delete_photo_title)
+                .setMessage(R.string.delete_photo_msg)
+                .create()
+                .show()
         }
         binding.btnBack.setOnClickListener { dismiss() }
 

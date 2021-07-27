@@ -27,6 +27,8 @@ class StoreImageSliderAdapter : SliderViewAdapter<SliderAdapterHolder>() {
     }
 
     override fun getCount(): Int = items.size
+
+    fun getItem(position: Int) = items[position]
 }
 
 class SliderAdapterHolder(private val binding: ItemImageSliderBinding) : SliderViewAdapter.ViewHolder(binding.root) {

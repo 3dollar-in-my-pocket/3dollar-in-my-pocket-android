@@ -32,6 +32,7 @@ import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdap
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
+import gun0912.tedimagepicker.builder.TedImagePicker
 import io.hackle.android.HackleApp
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -104,11 +105,9 @@ class StoreDetailActivity :
             }
         }
         binding.btnAddPhoto.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(intent, PICK_IMAGE_MULTIPLE)
+            TedImagePicker.with(this).zoomIndicator(false).startMultiImage {
+
+            }
         }
         binding.btnSendMoney.setOnClickListener {
             val browserIntent =
@@ -142,8 +141,9 @@ class StoreDetailActivity :
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
         }
-        viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
-
+        viewModel.needRefresh.observe(this) {
+            viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+        }
         viewModel.storeInfo.observe(this) {
             binding.tvStoreType.isVisible = it?.storeType == null
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
@@ -184,6 +184,7 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
+        viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
     }
 
     private fun initMap() {

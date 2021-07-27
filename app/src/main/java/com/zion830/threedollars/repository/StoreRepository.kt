@@ -50,6 +50,11 @@ class StoreRepository(
         images: MultipartBody.Part
     ): Call<AddImageResponse> = service.saveImage(storeId, images)
 
+    suspend fun deleteImage(
+        storeId: Int,
+        imageId: Int
+    ) = service.deleteImage(storeId, imageId)
+
     suspend fun saveStore(
         storeInfo: NewStore
     ): Call<AddStoreResponse> = service.saveStore(storeInfo)

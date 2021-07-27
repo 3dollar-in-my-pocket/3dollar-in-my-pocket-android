@@ -106,10 +106,11 @@ interface ServiceApi {
         @Part images: MultipartBody.Part
     ): Call<AddImageResponse>
 
-    @DELETE("/api/v2/store/image/{imageId}")
+    @DELETE("/api/v1/store/{storeId}/images/{imageId}")
     fun deleteImage(
-        @Query("image") imageId: Int,
-    ): Call<CallResponse>
+        @Query("storeId") storeId: Int,
+        @Query("imageId") imageId: Int,
+    ): Call<ResponseBody?>
 
     @GET("/api/v1/review/user")
     fun getMyReview(
