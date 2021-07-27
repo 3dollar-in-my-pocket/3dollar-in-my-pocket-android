@@ -2,23 +2,23 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-    
+
         <variable
             name="viewModel"
             type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
-    
+
         <import type="com.zion830.threedollars.utils.StringUtils" />
-    
+
         <import type="android.view.View" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_gray3">
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
             android:layout_width="0dp"
@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute">
-            
+
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/layout_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
             <ImageView
                 android:id="@+id/iv_store_type"
                 bindWhiteMenuIcon="@{viewModel.storeInfo.category}"
@@ -56,7 +56,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
-            
+
             <TextView
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+
         <ScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
@@ -77,11 +77,11 @@
             android:background="@color/color_gray3"
             android:descendantFocusability="beforeDescendants"
             android:fillViewport="true">
-            
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
+
                 <LinearLayout
                     android:id="@+id/map"
                     android:layout_width="0dp"
@@ -92,7 +92,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-                
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/layout_store_info"
                     android:layout_width="match_parent"
@@ -106,34 +106,34 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/map"
                     tools:ignore="UnusedAttribute">
-                    
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:orientation="horizontal">
-                            
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@{viewModel.storeInfo.user.name}"
                                 android:textColor="@color/color_sub_red"
                                 android:textStyle="bold" />
-                            
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/editor"
                                 android:textColor="@color/color_sub_red" />
                         </LinearLayout>
-                        
+
                         <TextView
                             android:id="@+id/tv_store_name"
                             android:layout_width="wrap_content"
@@ -146,12 +146,12 @@
                             android:textSize="20sp"
                             android:textStyle="bold"
                             tools:text="50m 이내에" />
-                        
+
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-                            
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
                                 android:textColor="@color/color_black"
                                 android:textSize="14sp"
                                 tools:text="121m" />
-                            
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -174,14 +174,14 @@
                                 android:textSize="14sp"
                                 tools:text="3.4점" />
                         </LinearLayout>
-                        
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:layout_marginTop="24dp"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
-                            
+
                             <Button
                                 android:id="@+id/btn_share"
                                 android:layout_width="match_parent"
@@ -194,12 +194,12 @@
                                 android:text="@string/share"
                                 android:textColor="@color/color_black"
                                 android:textSize="16sp" />
-                            
+
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="32dp"
                                 android:background="@color/color_d0d0d0" />
-                            
+
                             <Button
                                 android:id="@+id/btn_send_money"
                                 android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-                
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -224,14 +224,14 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_store_info">
-                    
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginTop="48dp"
                         android:layout_marginBottom="20dp">
-                        
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -242,7 +242,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-                        
+
                         <Button
                             android:id="@+id/btn_add_store_info"
                             android:layout_width="wrap_content"
@@ -256,7 +256,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                    
+
                     <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -266,9 +266,9 @@
                         android:gravity="center_vertical"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="20dp">
-                        
+
                         <TableRow>
-                            
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -276,7 +276,7 @@
                                 android:text="@string/store_type"
                                 android:textColor="@color/color_black"
                                 android:textStyle="bold" />
-                            
+
                             <TextView
                                 android:id="@+id/tv_empty_store_type"
                                 visibleIf="@{viewModel.storeInfo.storeType == null}"
@@ -286,7 +286,7 @@
                                 android:gravity="end"
                                 android:text="@string/empty_data"
                                 android:textColor="@color/color_gray1" />
-                            
+
                             <TextView
                                 android:id="@+id/tv_store_type"
                                 storeType="@{viewModel.storeInfo.storeType}"
@@ -297,11 +297,11 @@
                                 android:gravity="end"
                                 android:textColor="@color/color_sub_red" />
                         </TableRow>
-                        
+
                         <TableRow
                             android:layout_marginTop="19dp"
                             android:gravity="center_vertical">
-                            
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -309,7 +309,7 @@
                                 android:text="@string/show_type"
                                 android:textColor="@color/color_black"
                                 android:textStyle="bold" />
-                            
+
                             <TextView
                                 android:id="@+id/tv_empty_show_type"
                                 visibleIf="@{viewModel.storeInfo.appearanceDays.size() == 0}"
@@ -319,18 +319,18 @@
                                 android:gravity="end"
                                 android:text="@string/empty_data"
                                 android:textColor="@color/color_gray1" />
-                            
+
                             <include
                                 android:id="@+id/layout_btn_day_of_week"
                                 clickable="@{false}"
                                 layout="@layout/btns_day_of_week"
                                 visibleIf="@{viewModel.storeInfo.appearanceDays.size() > 0}" />
                         </TableRow>
-                        
+
                         <TableRow
                             android:layout_marginTop="19dp"
                             android:gravity="center_vertical">
-                            
+
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -338,7 +338,7 @@
                                 android:text="@string/payment_type"
                                 android:textColor="@color/color_black"
                                 android:textStyle="bold" />
-                            
+
                             <TextView
                                 android:id="@+id/tv_empty_payment_type"
                                 visibleIf="@{viewModel.storeInfo.paymentMethods.size == 0}"
@@ -348,7 +348,7 @@
                                 android:gravity="end"
                                 android:text="@string/empty_data"
                                 android:textColor="@color/color_gray1" />
-                            
+
                             <LinearLayout
                                 android:id="@+id/layout_payments"
                                 visibleIf="@{viewModel.storeInfo.paymentMethods.size > 0}"
@@ -356,7 +356,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="end|center_vertical"
                                 android:orientation="horizontal">
-                                
+
                                 <TextView
                                     android:id="@+id/tv_cash"
                                     android:layout_width="wrap_content"
@@ -367,7 +367,7 @@
                                     android:text="@string/cash"
                                     android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`CASH`) ? @color/color_sub_red : @color/color_gray1}"
                                     tools:ignore="UseCompatTextViewDrawableXml" />
-                                
+
                                 <TextView
                                     android:id="@+id/tv_banking"
                                     android:layout_width="wrap_content"
@@ -378,7 +378,7 @@
                                     android:text="@string/banking"
                                     android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`ACCOUNT_TRANSFER`) ? @color/color_sub_red : @color/color_gray1}"
                                     tools:ignore="UseCompatTextViewDrawableXml" />
-                                
+
                                 <TextView
                                     android:id="@+id/tv_card"
                                     android:layout_width="wrap_content"
@@ -391,7 +391,7 @@
                             </LinearLayout>
                         </TableRow>
                     </TableLayout>
-                    
+
                     <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -401,7 +401,7 @@
                         android:paddingHorizontal="16dp"
                         android:paddingTop="24dp"
                         android:paddingBottom="10dp">
-                        
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -413,7 +413,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="가게사진 20개" />
-                        
+
                         <ImageView
                             android:id="@+id/iv_no_data"
                             visibleIf="@{viewModel.categoryInfo.size() == 0}"
@@ -421,7 +421,7 @@
                             android:layout_height="86dp"
                             android:layout_marginTop="8dp"
                             android:src="@drawable/ic_no_store" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_category"
                             android:layout_width="match_parent"
@@ -430,13 +430,13 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_category" />
                     </TableLayout>
-                    
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginBottom="20dp">
-                        
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -448,7 +448,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="가게사진 20개" />
-                        
+
                         <Button
                             android:id="@+id/btn_add_photo"
                             android:layout_width="wrap_content"
@@ -462,7 +462,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-    
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_photo"
                         android:layout_width="match_parent"
@@ -470,17 +470,18 @@
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginBottom="40dp"
                         android:orientation="horizontal"
+                        android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_photo">
-    
+
                     </androidx.recyclerview.widget.RecyclerView>
-    
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginBottom="20dp">
-                        
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -492,7 +493,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="리뷰 20개" />
-                        
+
                         <Button
                             android:id="@+id/btn_add_review"
                             android:layout_width="wrap_content"
@@ -506,7 +507,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                    
+
                     <com.google.android.gms.ads.AdView
                         android:id="@+id/admob"
                         android:layout_width="match_parent"
@@ -519,7 +520,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
-                    
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_review"
                         android:layout_width="match_parent"
@@ -530,7 +531,7 @@
                         android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_review" />
-                    
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -544,7 +545,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-    
+
         <ProgressBar
             android:id="@id/progress"
             visibleIf="@{viewModel.isLoading()}"
@@ -554,7 +555,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    
+
         <LinearLayout
             android:id="@+id/container"
             android:layout_width="match_parent"

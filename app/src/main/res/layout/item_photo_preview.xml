@@ -18,7 +18,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="3dp"
-        android:background="@color/color_828282"
+        android:background="@drawable/rect_gray_radius8"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         tools:ignore="UnusedAttribute">
         

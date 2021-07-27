@@ -1,12 +1,14 @@
 package com.zion830.threedollars.customview
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,6 +35,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     protected var currentPosition: LatLng? = null
 
+    private var listener: OnMapTouchListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = requireActivity() as? OnMapTouchListener
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_naver_map, container, false)
@@ -41,6 +50,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragment_map) as? MapFragment?
             ?: MapFragment.newInstance().also { childFragmentManager.beginTransaction().add(R.id.fragment_map, it).commit() }
         mapFragment.getMapAsync(this)
+
+        val frameLayout = TouchableWrapper(requireActivity(), null, 0, listener)
+        frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+        (binding.root as? ViewGroup)?.addView(
+            frameLayout,
+            ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        )
 
         return binding.root
     }
@@ -59,6 +75,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.locationSource = FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE)
         map.locationTrackingMode = LocationTrackingMode.Follow
         map.uiSettings.isZoomControlEnabled = false
+        map.uiSettings.isScaleBarEnabled = false
     }
 
     fun addMarker(@DrawableRes drawableRes: Int, position: LatLng) {
@@ -71,6 +88,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             this.icon = OverlayImage.fromResource(drawableRes)
             this.map = naverMap
         })
+    }
+
+    fun removeAllMarker() {
+        markers.forEach {
+            it.map = null
+        }
+        markers.clear()
     }
 
     protected fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {

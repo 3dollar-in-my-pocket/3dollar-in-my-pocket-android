@@ -41,7 +41,9 @@ import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
 
 
-class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info), OnMapTouchListener {
+class StoreDetailActivity :
+    BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info),
+    OnMapTouchListener {
 
     override val viewModel: StoreDetailViewModel by viewModels()
 
@@ -73,7 +75,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
-                    AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                    AddReviewDialog.getInstance(item)
+                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
                 }
             },
             object : OnItemClickListener<Review> {
@@ -96,7 +99,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         binding.btnDelete.setOnClickListener {
             binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+                DeleteStoreDialog.getInstance()
+                    .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
             }
         }
         binding.btnAddPhoto.setOnClickListener {
@@ -107,36 +111,50 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             startActivityForResult(intent, PICK_IMAGE_MULTIPLE)
         }
         binding.btnSendMoney.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
             startActivity(browserIntent)
             hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
-
         binding.btnShare.setOnClickListener {
-            val queryString = "${binding.tvStoreName.text},${viewModel.storeInfo.value?.latitude},${viewModel.storeInfo.value?.longitude}"
-            shareUrl(getString(R.string.kakao_map_format).format(queryString))
+            val shareFormat = ShareFormat(
+                getString(R.string.kakao_map_format),
+                binding.tvStoreName.text.toString(),
+                viewModel.selectedLocation.value ?: viewModel.storeLocation.value
+            )
+            shareWithKakao(shareFormat)
         }
         binding.rvPhoto.adapter = photoAdapter
-
         binding.rvCategory.adapter = categoryAdapter
         binding.rvReview.adapter = reviewAdapter
         binding.btnAddReview.setOnClickListener {
-            AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
+            AddReviewDialog.getInstance()
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.btnAddStoreInfo.setOnClickListener {
-            supportFragmentManager.addNewFragment(R.id.container, EditStoreDetailFragment(), EditStoreDetailFragment::class.java.name, false)
+            supportFragmentManager.addNewFragment(
+                R.id.container,
+                EditStoreDetailFragment(),
+                EditStoreDetailFragment::class.java.name,
+                false
+            )
         }
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
         }
-
         viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
 
         viewModel.storeInfo.observe(this) {
             binding.tvStoreType.isVisible = it?.storeType == null
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
             reviewAdapter.submitList(it?.review)
-            photoAdapter.submitList(it?.image?.mapIndexed { index, image -> StoreImage(index, null, image.url) })
+            photoAdapter.submitList(it?.image?.mapIndexed { index, image ->
+                StoreImage(
+                    index,
+                    null,
+                    image.url
+                )
+            }?.toMutableList())
 
             // TODO : 이게 최선이야??
             when {
@@ -217,7 +235,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (editReviewItem?.itemId == R.id.menu_edit_review) {
             val spannableString = SpannableString(getString(R.string.edit_review))
             spannableString.setSpan(
-                ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.color_main_red)),
+                ForegroundColorSpan(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.color_main_red
+                    )
+                ),
                 0,
                 spannableString.length,
                 0
@@ -243,8 +266,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         private const val EDIT_STORE_INFO = 234
         private const val PICK_IMAGE_MULTIPLE = 235
 
-        fun getIntent(context: Context, storeId: Int) = Intent(context, StoreDetailActivity::class.java).apply {
-            putExtra(KEY_STORE_ID, storeId)
-        }
+        fun getIntent(context: Context, storeId: Int) =
+            Intent(context, StoreDetailActivity::class.java).apply {
+                putExtra(KEY_STORE_ID, storeId)
+            }
     }
 }

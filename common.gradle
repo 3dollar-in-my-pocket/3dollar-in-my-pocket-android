@@ -87,6 +87,7 @@ dependencies {
 
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-user:$kakao_login"
+    implementation "com.kakao.sdk:v2-link:$kakao_login"
 
     // google
     implementation 'com.android.support:multidex:1.0.3'

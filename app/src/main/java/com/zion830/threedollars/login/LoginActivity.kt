@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R

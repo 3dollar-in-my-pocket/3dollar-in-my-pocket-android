@@ -17,6 +17,12 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.kakao.sdk.auth.LoginClient
+import com.kakao.sdk.link.LinkClient
+import com.kakao.sdk.template.model.Button
+import com.kakao.sdk.template.model.Content
+import com.kakao.sdk.template.model.FeedTemplate
+import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
@@ -25,7 +31,11 @@ import java.util.*
 
 
 fun showToast(@StringRes resId: Int) {
-    Toast.makeText(GlobalApplication.getContext(), GlobalApplication.getContext().getString(resId), Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+        GlobalApplication.getContext(),
+        GlobalApplication.getContext().getString(resId),
+        Toast.LENGTH_SHORT
+    ).show()
 }
 
 fun showToast(text: String) {
@@ -55,10 +65,14 @@ fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION)
 }
 
 fun isLocationAvailable(): Boolean =
-    ContextCompat.checkSelfPermission(GlobalApplication.getContext(), ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    ContextCompat.checkSelfPermission(
+        GlobalApplication.getContext(),
+        ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
 
 fun isGpsAvailable(): Boolean {
-    val locationManager = GlobalApplication.getContext().getSystemService(LOCATION_SERVICE) as LocationManager
+    val locationManager =
+        GlobalApplication.getContext().getSystemService(LOCATION_SERVICE) as LocationManager
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 }
 
@@ -70,7 +84,8 @@ fun getCurrentLocationName(location: LatLng?): String? {
 
     val geoCoder = Geocoder(GlobalApplication.getContext(), Locale.KOREA)
     return try {
-        val addresses: List<Address> = geoCoder.getFromLocation(location.latitude, location.longitude, 1)
+        val addresses: List<Address> =
+            geoCoder.getFromLocation(location.latitude, location.longitude, 1)
         if (addresses.isEmpty()) {
             notFindMsg + " (위도: ${location.latitude}, 경도: ${location.longitude})"
         } else {
@@ -106,4 +121,34 @@ fun Context.shareUrl(url: String) {
         type = "text/plain"
     }
     startActivity(Intent.createChooser(sendIntent, url))
+}
+
+fun Context.shareWithKakao(shareFormat: ShareFormat) {
+    if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
+        val feed = FeedTemplate(
+            content = Content(
+                title = shareFormat.storeName,
+                description = getString(R.string.share_kakao),
+                imageUrl = BuildConfig.BASE_URL + "/images/share-with-kakao.png",
+                link = Link(getString(R.string.download_url), getString(R.string.download_url))
+            ),
+            buttons = listOf(
+                Button(
+                    title = getString(R.string.find_location),
+                    link = Link(shareFormat.shareUrl, shareFormat.shareUrl)
+                )
+            )
+        )
+
+        LinkClient.instance.defaultTemplate(this, feed) { linkResult, error ->
+            if (error != null) {
+                shareUrl(shareFormat.url)
+            } else if (linkResult != null) {
+                Log.d("ㅠㅠ", linkResult.toString())
+                showToast(R.string.share_kakao_success)
+            }
+        }
+    } else {
+        shareUrl(shareFormat.shareUrl)
+    }
 }

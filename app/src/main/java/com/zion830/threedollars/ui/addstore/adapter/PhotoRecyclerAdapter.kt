@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemPhotoBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
@@ -11,8 +12,9 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
+
 class PhotoRecyclerAdapter(
-    private val clickListener: OnItemClickListener<StoreImage>
+    private val clickListener: OnItemClickListener<StoreImage>,
 ) : ListAdapter<StoreImage, PhotoRecyclerAdapter.PhotoViewHolder>(BaseDiffUtilCallback()) {
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -20,7 +22,7 @@ class PhotoRecyclerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        return PhotoViewHolder(parent, currentList.size)
+        return PhotoViewHolder(parent, itemCount)
     }
 
     class PhotoViewHolder(
@@ -30,17 +32,22 @@ class PhotoRecyclerAdapter(
 
         override fun bind(item: StoreImage, listener: OnItemClickListener<StoreImage>?) {
             super.bind(item, listener)
-            if (item.index < MAX - 1) {
-                binding.layoutMore.isVisible = false
-            } else if (item.index == MAX - 1) {
-                binding.tvMoreCount.text = "+${size - MAX}"
-            } else {
-                binding.layoutItem.visibility = View.GONE
+            when {
+                item.index < MAX_COUNT - 1 -> {
+                    binding.layoutMore.isVisible = false
+                }
+                item.index == MAX_COUNT - 1 -> {
+                    binding.tvMoreCount.text = "+${size - MAX_COUNT}"
+                }
+                else -> {
+                    itemView.visibility = View.GONE
+                    itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+                }
             }
         }
     }
 
     companion object {
-        private const val MAX = 4
+        private const val MAX_COUNT = 4
     }
 }

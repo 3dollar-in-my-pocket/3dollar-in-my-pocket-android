@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
+import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.response.Category
 import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
+import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.*
@@ -19,6 +21,7 @@ import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
 
+// TODO : Edit 로직 분리 필요
 class StoreDetailViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
@@ -39,8 +42,15 @@ class StoreDetailViewModel : BaseViewModel() {
         allMenu.map { Category(it.key, it.value) }
     }
 
+    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
+        MenuType.values().map { SelectedCategory(false, it) })
+    val selectedCategory: LiveData<List<SelectedCategory>>
+        get() = _selectedCategory
+
     val categoryCount: LiveData<Int> = Transformations.map(categoryInfo) {
-        it.sumOf { category -> category.menu?.count() ?: 0 } + it.count { category -> category.menu?.isEmpty() == true }
+        it.sumOf { category ->
+            category.menu?.count() ?: 0
+        } + it.count { category -> category.menu?.isEmpty() == true }
     }
 
     val storeLocation: LiveData<LatLng?> = Transformations.map(_storeInfo) {
@@ -50,6 +60,10 @@ class StoreDetailViewModel : BaseViewModel() {
             null
         }
     }
+
+    private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
+    val selectedLocation: LiveData<LatLng?>
+        get() = _selectedLocation
 
     private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val deleteStoreResult: LiveData<Boolean>
@@ -88,7 +102,8 @@ class StoreDetailViewModel : BaseViewModel() {
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val newReview = NewReview(reviewContent.value!!, rating)
-            repository.addReview(_storeInfo.value?.id ?: -1, SharedPrefUtils.getUserId(), newReview).await()
+            repository.addReview(_storeInfo.value?.id ?: -1, SharedPrefUtils.getUserId(), newReview)
+                .await()
             _msgTextId.postValue(R.string.success_add_review)
             _addReviewResult.postValue(true)
         }
@@ -96,7 +111,9 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun deleteStore(userId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.deleteStore(deleteType.value!!, storeInfo.value?.id ?: 0, userId).execute()
+            val result =
+                repository.deleteStore(deleteType.value!!, storeInfo.value?.id ?: 0, userId)
+                    .execute()
 
             _deleteStoreResult.postValue(result.isSuccessful)
             _msgTextId.postValue(
@@ -157,5 +174,38 @@ class StoreDetailViewModel : BaseViewModel() {
                 hideLoading()
             }
         }
+    }
+
+    fun initSelectedCategory() {
+        _selectedCategory.value = MenuType.values().map { menu ->
+            val selectedCategory = categoryInfo.value?.find { category -> category.name == menu.key }
+            SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu)
+        }
+    }
+
+    fun updateLocation(latLng: LatLng?) {
+        _selectedLocation.value = latLng
+    }
+
+    fun updateCategory(list: List<SelectedCategory>) {
+        _selectedCategory.value = list.toList()
+    }
+
+    fun removeCategory(item: SelectedCategory) {
+        val newList = _selectedCategory.value?.map {
+            SelectedCategory(
+                if (item.menuType == it.menuType) false else it.isSelected,
+                it.menuType,
+                it.menuDetail
+            )
+        }
+        _selectedCategory.value = newList
+    }
+
+    fun removeAllCategory() {
+        val newList = _selectedCategory.value?.map {
+            SelectedCategory(false, it.menuType)
+        }
+        _selectedCategory.value = newList
     }
 }

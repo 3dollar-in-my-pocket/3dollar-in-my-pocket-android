@@ -5,39 +5,47 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
+import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
+import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
+import com.zion830.threedollars.ui.addstore.view.EditCategoryBottomSheetDialog
+import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.replaceFragment
 
-class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
+class EditStoreDetailFragment :
+    BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
 
     override val viewModel: StoreDetailViewModel by activityViewModels()
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter
-
-    private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter
+    private lateinit var addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter // 카테고리
+    private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter // 상세 메뉴
 
     private var isFirstOpen = true
 
-    private lateinit var naverMapFragment: StoreDetailNaverMapFragment
+    private lateinit var naverMapFragment: NaverMapFragment
 
     override fun initView() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
         initMap()
 
         initKeyboard()
@@ -57,21 +65,23 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         childFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
 
         addCategoryRecyclerAdapter = AddCategoryRecyclerAdapter({
-            CategoryBottomSheetDialog().show(
+            EditCategoryBottomSheetDialog().show(
                 parentFragmentManager,
                 CategoryBottomSheetDialog::class.java.name
             )
         }, {
-            // viewModel.removeCategory(it)
-        }
-        )
+            viewModel.removeCategory(it)
+        })
         editCategoryMenuRecyclerAdapter = EditCategoryMenuRecyclerAdapter {
-            // viewModel.removeCategory(it)
+            viewModel.removeCategory(it)
         }
+        binding.rvCategory.adapter = addCategoryRecyclerAdapter
+        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
 
         viewModel.storeInfo.observe(viewLifecycleOwner) {
             // 가게 정보 초기화
-            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+            binding.tvAddress.text =
+                getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
             binding.etName.setText(it?.storeName)
 
             if (!it?.storeType.isNullOrBlank()) {
@@ -114,7 +124,23 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                     binding.layoutBtnDayOfWeek.tbSun.performClick()
                 }
             }
-            it?.categories
+
+            viewModel.categoryInfo.observe(viewLifecycleOwner) {
+                viewModel.initSelectedCategory()
+            }
+            viewModel.selectedCategory.observe(viewLifecycleOwner) { allCategoryInfo ->
+                addCategoryRecyclerAdapter.submitList(allCategoryInfo.filter { menu -> menu.isSelected })
+                editCategoryMenuRecyclerAdapter.setItems(allCategoryInfo.filter { category -> category.isSelected })
+            }
+            viewModel.selectedLocation.observe(viewLifecycleOwner) { latlng ->
+                binding.tvAddress.text = getCurrentLocationName(latlng)
+
+            }
+            binding.btnClearCategory.setOnClickListener {
+                editCategoryMenuRecyclerAdapter.clear()
+                addCategoryRecyclerAdapter.clear()
+                viewModel.removeAllCategory()
+            }
         }
     }
 
@@ -124,7 +150,11 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        viewModel.requestStoreInfo(viewModel.storeInfo.value?.id ?: 0, it.latitude, it.longitude)
+                        viewModel.requestStoreInfo(
+                            viewModel.storeInfo.value?.id ?: 0,
+                            it.latitude,
+                            it.longitude
+                        )
                     }
                 }
             }

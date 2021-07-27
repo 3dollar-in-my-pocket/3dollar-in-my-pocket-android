@@ -195,7 +195,7 @@
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
     
-    <string name="kakao_map_format">https://map.kakao.com/link/map/%s</string>
+    <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
     <string name="official_email">3dollarinmypocket@gmail.com</string>
@@ -208,4 +208,9 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
+
+    <string name="find_location">위치 확인하기</string>
+    <string name="share_kakao">가슴속 3천원에서 따끈따끈한 길거리 음식 정보를 확인해보세요!</string>
+    <string name="share_kakao_success">카카오톡 공유 완료!</string>
+    <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
 </resources>

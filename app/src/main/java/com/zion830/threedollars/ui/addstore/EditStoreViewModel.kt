@@ -34,7 +34,6 @@ class EditStoreViewModel : BaseViewModel() {
 
     val storeLocation: LiveData<LatLng> = Transformations.map(_storeInfo) {
         if (it != null) {
-            Log.d("ADDRESS vm", it.longitude.toString())
             LatLng(it.latitude, it.longitude)
         } else {
             null

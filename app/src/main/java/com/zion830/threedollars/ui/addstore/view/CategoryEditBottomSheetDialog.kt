@@ -10,10 +10,14 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import zion830.com.common.base.bindItems
 
+// 가게 수정 화면에서 띄울 다이얼로그
 class CategoryEditBottomSheetDialog : BottomSheetDialogFragment() {
 
-    private val viewModel: AddStoreViewModel by activityViewModels()
+    // TODO : CategoryBottomSheet 두개 통일해야함
+    private val viewModel: StoreDetailViewModel by activityViewModels()
 
     private lateinit var adapter: CategoryDialogRecyclerAdapter
 
@@ -25,7 +29,6 @@ class CategoryEditBottomSheetDialog : BottomSheetDialogFragment() {
             binding.btnSubmit.isEnabled = it > 0
         }
 
-        binding.viewModel = viewModel
         binding.lifecycleOwner = this
         binding.rvCategory.adapter = adapter
         binding.btnSubmit.text = getString(R.string.select).format(0)
@@ -38,6 +41,7 @@ class CategoryEditBottomSheetDialog : BottomSheetDialogFragment() {
             val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
             binding.btnSubmit.text = getString(R.string.select).format(count)
             binding.btnSubmit.isEnabled = count > 0
+            binding.rvCategory.bindItems(it)
         }
         return binding.root
     }

@@ -4,10 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-        
-        <variable
-            name="viewModel"
-            type="com.zion830.threedollars.ui.addstore.AddStoreViewModel" />
+
     </data>
     
     <LinearLayout
@@ -43,7 +40,6 @@
         
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_category"
-            bindItem="@{viewModel.selectedCategory}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
