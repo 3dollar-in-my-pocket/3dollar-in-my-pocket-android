@@ -39,6 +39,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.addNewFragment
+import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnItemClickListener
 
 
@@ -141,8 +142,12 @@ class StoreDetailActivity :
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
         }
-        viewModel.needRefresh.observe(this) {
-            viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+        viewModel.photoDeleted.observe(this) {
+            if (it) {
+                viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+            } else {
+                binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
+            }
         }
         viewModel.storeInfo.observe(this) {
             binding.tvStoreType.isVisible = it?.storeType == null

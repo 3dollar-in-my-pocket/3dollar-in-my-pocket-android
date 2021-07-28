@@ -66,6 +66,7 @@ class StorePhotoDialog : DialogFragment() {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->
                     viewModel.deletePhoto(adapter.getItem(binding.slider.currentPagePosition))
+                    dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ ->
                     dismiss()

@@ -85,9 +85,9 @@ class StoreDetailViewModel : BaseViewModel() {
         it.isNotNullOrBlank()
     }
 
-    private val _needRefresh: MutableLiveData<Boolean> = MutableLiveData()
-    val needRefresh: LiveData<Boolean>
-        get() = _needRefresh
+    private val _photoDeleted: MutableLiveData<Boolean> = MutableLiveData()
+    val photoDeleted: LiveData<Boolean>
+        get() = _photoDeleted
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -219,7 +219,7 @@ class StoreDetailViewModel : BaseViewModel() {
     fun deletePhoto(selectedImage: Image) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.deleteImage(storeInfo.value?.id ?: -1, selectedImage.id).awaitResponse()
-            _needRefresh.value = data.isSuccessful
+            _photoDeleted.postValue(data.isSuccessful)
         }
     }
 }

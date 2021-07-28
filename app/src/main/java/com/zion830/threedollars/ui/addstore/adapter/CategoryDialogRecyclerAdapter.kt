@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
@@ -23,7 +24,10 @@ class CategoryDialogRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemSelectedCategoryBinding, SelectedCategory> {
         return object : BaseViewHolder<ItemSelectedCategoryBinding, SelectedCategory>(R.layout.item_selected_category, parent) {
-
+            override fun bind(item: SelectedCategory, listener: OnItemClickListener<SelectedCategory>?) {
+                super.bind(item, listener)
+                binding.ibDeleteCategory.isVisible = false
+            }
         }
     }
 

@@ -211,6 +211,7 @@
 
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
+    <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
 
     <string name="find_location">위치 확인하기</string>
     <string name="share_kakao">가슴속 3천원에서 따끈따끈한 길거리 음식 정보를 확인해보세요!</string>

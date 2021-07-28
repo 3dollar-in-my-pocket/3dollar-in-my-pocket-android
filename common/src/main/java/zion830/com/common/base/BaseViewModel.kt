@@ -28,7 +28,6 @@ open class BaseViewModel : ViewModel() {
     }
 
     open fun handleError(t: Throwable) {
-        t.printStackTrace()
         _msgTextId.postValue(R.string.connection_failed)
     }
 }

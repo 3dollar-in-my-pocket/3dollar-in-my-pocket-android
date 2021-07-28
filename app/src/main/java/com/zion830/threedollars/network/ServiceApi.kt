@@ -102,14 +102,14 @@ interface ServiceApi {
 
     @POST("/api/v1/store/{storeId}/images")
     fun saveImage(
-        @Query("storeId") storeId: Int,
+        @Path("storeId") storeId: Int,
         @Part images: MultipartBody.Part
     ): Call<AddImageResponse>
 
     @DELETE("/api/v1/store/{storeId}/images/{imageId}")
     fun deleteImage(
-        @Query("storeId") storeId: Int,
-        @Query("imageId") imageId: Int,
+        @Path("storeId") storeId: Int,
+        @Path("imageId") imageId: Int,
     ): Call<ResponseBody?>
 
     @GET("/api/v1/review/user")
