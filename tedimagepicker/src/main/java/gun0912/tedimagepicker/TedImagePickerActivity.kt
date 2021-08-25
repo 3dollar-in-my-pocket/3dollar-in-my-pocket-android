@@ -9,7 +9,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -33,7 +32,6 @@ import gun0912.tedimagepicker.databinding.ActivityTedImagePickerBinding
 import gun0912.tedimagepicker.extenstion.close
 import gun0912.tedimagepicker.extenstion.isOpen
 import gun0912.tedimagepicker.extenstion.setLock
-import gun0912.tedimagepicker.extenstion.toggle
 import gun0912.tedimagepicker.model.Album
 import gun0912.tedimagepicker.model.Media
 import gun0912.tedimagepicker.util.GalleryUtil
@@ -364,14 +362,11 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     }
 
     private fun onMultiMediaDone() {
-
-
         val selectedUriList = mediaAdapter.selectedUriList
         if (selectedUriList.size < builder.minCount) {
             val message = builder.minCountMessage ?: getString(builder.minCountMessageResId)
             ToastUtil.showToast(message)
         } else {
-
             val data = Intent().apply {
                 putParcelableArrayListExtra(
                     EXTRA_SELECTED_URI_LIST,
