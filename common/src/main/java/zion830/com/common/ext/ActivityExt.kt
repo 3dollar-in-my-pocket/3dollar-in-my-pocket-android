@@ -8,8 +8,8 @@ fun AppCompatActivity.startNewFragment(containerId: Int, fragment: Fragment, tag
     supportFragmentManager.addNewFragment(containerId, fragment, tag, showAnimation)
 }
 
-fun AppCompatActivity.replaceFragment(containerId: Int, fragment: Fragment, tag: String = "") {
-    supportFragmentManager.replaceFragment(containerId, fragment, tag)
+fun AppCompatActivity.replaceFragment(containerId: Int, fragment: Fragment, tag: String = "", showAnimation: Boolean = false) {
+    supportFragmentManager.replaceFragment(containerId, fragment, tag, showAnimation)
 }
 
 fun AppCompatActivity.removeCurrentFragment() {

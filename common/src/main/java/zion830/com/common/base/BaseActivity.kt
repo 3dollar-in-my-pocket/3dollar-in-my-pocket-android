@@ -9,12 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.observe
+import io.hackle.android.HackleApp
 import zion830.com.common.BR
 import zion830.com.common.ext.showSnack
 
 abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes val layoutId: Int
 ) : AppCompatActivity() {
+    protected val hackleApp = HackleApp.getInstance()
+
     protected lateinit var binding: B
 
     protected abstract val viewModel: VM
