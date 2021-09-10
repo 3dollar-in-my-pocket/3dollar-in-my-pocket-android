@@ -55,14 +55,6 @@ fun ImageView.loadUrlImg(url: String?) {
         .into(this)
 }
 
-@BindingAdapter("loadImage")
-fun ImageView.loadUriImg(uri: Uri?) {
-    Glide.with(context)
-        .load(uri)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(this)
-}
-
 @SuppressLint("RestrictedApi")
 @BindingAdapter("loadRoundImage")
 fun ImageView.loadRoundUriImg(uri: Uri?) {

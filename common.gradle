@@ -5,8 +5,7 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 31
     signingConfigs {
         release {
             keyAlias '3dollor'
@@ -17,13 +16,10 @@ android {
     }
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 30
-        versionCode 9
-        versionName "1.2.1"
+        targetSdkVersion 31
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
         archivesBaseName = "3dollor_${versionName}(${versionCode})"
     }
 
@@ -53,6 +49,10 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -95,7 +95,7 @@ dependencies {
 
     // google
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.android.gms:play-services-ads:19.7.0'
+    implementation 'com.google.android.gms:play-services-ads:20.3.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
 
@@ -103,7 +103,6 @@ dependencies {
     implementation "com.naver.maps:map-sdk:$naver_map_version"
 
     // image slider
-    implementation 'com.github.smarteist:autoimageslider:1.4.0'
     implementation "com.github.ome450901:SimpleRatingBar:$ratingbar_version"
 
     implementation "com.github.greenfrvr:hashtag-view:1.3.1"

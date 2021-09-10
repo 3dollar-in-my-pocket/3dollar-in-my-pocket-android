@@ -12,8 +12,8 @@ import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.tedpark.tedonactivityresult.rx2.TedRxOnActivityResult
-import com.tedpark.tedpermission.rx2.TedRx2Permission
+import com.gun0912.tedpermission.TedPermissionResult
+import com.gun0912.tedpermission.coroutine.TedPermission
 import gun0912.tedimagepicker.R
 import gun0912.tedimagepicker.TedImagePickerActivity
 import gun0912.tedimagepicker.builder.listener.OnErrorListener
@@ -23,9 +23,14 @@ import gun0912.tedimagepicker.builder.type.AlbumType
 import gun0912.tedimagepicker.builder.type.ButtonGravity
 import gun0912.tedimagepicker.builder.type.MediaType
 import gun0912.tedimagepicker.builder.type.SelectType
+import gun0912.tedimagepicker.tedonactivityresult.TedOnActivityResult
+import gun0912.tedimagepicker.tedonactivityresult.listener.OnActivityResultListener
 import gun0912.tedimagepicker.util.ToastUtil
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Suppress("UNCHECKED_CAST")
 @Parcelize
@@ -89,28 +94,30 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
 
     @SuppressLint("CheckResult")
     protected fun startInternal(context: Context) {
-        checkPermission(context)
-            .subscribe({ permissionResult ->
-                if (permissionResult.isGranted) {
-                    startActivity(context)
-                }
-            }, { throwable -> onErrorListener?.onError(throwable) })
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = checkPermission(context)
+            if (result.isGranted) {
+                startActivity(context)
+            } else {
+                onErrorListener?.onError(Throwable(result.deniedPermissions.joinToString()))
+            }
+        }
     }
 
-    private fun checkPermission(context: Context) = TedRx2Permission.with(context)
+    private suspend fun checkPermission(context: Context): TedPermissionResult = TedPermission.create()
         .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        .request()
+        .check()
 
     private fun startActivity(context: Context) {
         TedImagePickerActivity.getIntent(context, this)
             .run {
-                TedRxOnActivityResult.with(context).startActivityForResult(this)
-            }.run {
-                subscribe({ activityResult ->
-                    if (activityResult.resultCode == Activity.RESULT_OK) {
-                        onComplete(activityResult.data)
+                TedOnActivityResult.with(context).setIntent(this).setListener(OnActivityResultListener { resultCode, data ->
+                    if (resultCode == Activity.RESULT_OK) {
+                        onComplete(data)
+                    } else {
+                        onErrorListener?.onError(Throwable())
                     }
-                }, { throwable -> onErrorListener?.onError(throwable) })
+                })
             }
     }
 

@@ -18,8 +18,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.gun0912.tedonactivityresult.model.ActivityResult
-import com.tedpark.tedonactivityresult.rx2.TedRxOnActivityResult
 import gun0912.tedimagepicker.adapter.AlbumAdapter
 import gun0912.tedimagepicker.adapter.GridSpacingItemDecoration
 import gun0912.tedimagepicker.adapter.MediaAdapter
@@ -263,6 +261,8 @@ internal class TedImagePickerActivity : AppCompatActivity() {
 
     }
 
+    var onActivityResult: (() -> Unit) = {}
+
     @SuppressLint("CheckResult")
     private fun onCameraTileClick() {
         val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
@@ -270,21 +270,25 @@ internal class TedImagePickerActivity : AppCompatActivity() {
             builder.mediaType,
             builder.savedDirectoryName
         )
-        TedRxOnActivityResult.with(this@TedImagePickerActivity)
-            .startActivityForResult(cameraIntent)
-            .subscribe { activityResult: ActivityResult ->
-                if (activityResult.resultCode == Activity.RESULT_OK) {
-                    MediaUtil.scanMedia(this, uri)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            loadMedia(true)
-                            onMediaClick(uri)
-                        }
+
+        startActivityForResult(cameraIntent, 1234)
+        onActivityResult = {
+            MediaUtil.scanMedia(this, uri)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    loadMedia(true)
+                    onMediaClick(uri)
                 }
-            }
+        }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 1234) {
+            onActivityResult()
+        }
+    }
 
     private fun onMediaClick(uri: Uri) {
         when (builder.selectType) {
