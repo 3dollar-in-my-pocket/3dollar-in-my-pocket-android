@@ -277,6 +277,18 @@
                     app:drawableStartCompat="@drawable/ic_info_gray"
                     app:layout_constraintStart_toStartOf="@id/layout_account"
                     app:layout_constraintTop_toBottomOf="@id/layout_account" />
+    
+                <Button
+                    android:id="@+id/btn_test"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/rect_red_radius14"
+                    android:textColor="@color/color_white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_delete_account" />
             </androidx.constraintlayout.widget.ConstraintLayout>
     
             <ProgressBar
@@ -287,10 +299,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-    
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-        
+    
         <variable
             name="viewModel"
             type="com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel" />
@@ -15,7 +15,7 @@
     
         <import type="com.zion830.threedollars.repository.model.MenuType" />
     
-        <import type="com.zion830.threedollars.ui.store_detail.SortType" />
+        <import type="com.zion830.threedollars.ui.category.SortType" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,104 +34,65 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute">
-            
+    
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="19dp"
                 android:layout_marginStart="24dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@null"
                 android:foreground="?attr/actionBarItemBackground"
-                android:src="@drawable/ic_back_black"
-                app:layout_constraintBottom_toTopOf="@+id/layout_menu_btn"
-                app:layout_constraintStart_toStartOf="parent" />
-            
-            <ImageView
-                bindSmallMenuIcon="@{viewModel.category}"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_menu1"
+                android:src="@drawable/ic_arrow_left"
+                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/layout_title" />
+    
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_back" />
-            
-            <LinearLayout
-                android:id="@+id/layout_menu_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="60dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-                
-                <Button
+                app:layout_constraintTop_toTopOf="@id/btn_back">
+        
+                <ImageView
+                    android:id="@+id/iv_menu_icon"
+                    bindMenuIcon="@{viewModel.category.key}"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_menu_gungoguma_selected" />
+        
+                <TextView
                     android:id="@+id/btn_menu1"
-                    style="?attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="@string/bung"
-                    android:textColor="@{viewModel.category == MenuType.BUNGEOPPANG ? @color/color_black : @color/color_gray1}"
+                    android:text="@{viewModel.category.displayNameId}"
+                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    tools:ignore="UnusedAttribute" />
-                
-                <Button
-                    android:id="@+id/btn_menu2"
-                    style="?attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="@string/tako"
-                    android:textColor="@{viewModel.category == MenuType.TAKOYAKI ? @color/color_black : @color/color_gray1}"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="UnusedAttribute" />
-                
-                <Button
-                    android:id="@+id/btn_menu3"
-                    style="?attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="@string/gye"
-                    android:textColor="@{viewModel.category == MenuType.GYERANPPANG ? @color/color_black : @color/color_gray1}"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="UnusedAttribute" />
-                
-                <Button
-                    android:id="@+id/btn_menu4"
-                    style="?attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="@string/hodduck"
-                    android:textColor="@{viewModel.category == MenuType.HOTTEOK ? @color/color_black : @color/color_gray1}"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="UnusedAttribute" />
+                    app:layout_constraintBottom_toBottomOf="@id/iv_menu_icon"
+                    app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
+                    app:layout_constraintTop_toTopOf="@id/iv_menu_icon"
+                    tools:ignore="UnusedAttribute"
+                    tools:text="군고구마" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     
         <LinearLayout
             android:id="@+id/container"
             android:layout_width="0dp"
-            android:layout_height="264dp"
+            android:layout_height="300dp"
             android:layout_gravity="bottom"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="45dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -151,6 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/color_gray2"
+            android:overScrollMode="never"
             app:layout_constraintBottom_toTopOf="@+id/admob"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -166,26 +128,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="40dp"
-                    android:text="@{StringUtils.getMenuTitle(viewModel.category)}"
+                    android:bufferType="spannable"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
-                    android:textStyle="bold"
+                    app:bindMenuIntroTitle="@{viewModel.category}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="붕어빵" />
-                
-                <TextView
-                    style="@style/LightTextViewStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="@{StringUtils.getMenuDescription(viewModel.category)}"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_category"
-                    app:layout_constraintStart_toEndOf="@id/tv_category"
-                    app:layout_constraintTop_toTopOf="@id/tv_category"
-                    tools:text="만나기 30초 전" />
                 
                 <TextView
                     android:id="@+id/btn_sort_by_distance"
@@ -229,7 +178,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_category">
-                    
+    
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -237,22 +186,30 @@
                         android:layout_marginTop="30dp"
                         android:src="@drawable/ic_no_store"
                         android:visibility="@{viewModel.hasData ? View.GONE : View.VISIBLE}" />
-                    
+    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/no_store"
+                        android:textColor="@color/color_gray1"
+                        android:visibility="@{viewModel.hasData ? View.GONE : View.VISIBLE}" />
+    
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/rect_white"
+                        android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.firstSectionVisibility ? View.VISIBLE : View.GONE}">
-                        
+        
                         <TextView
                             android:id="@+id/tv_group1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
                             android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_50m : @string/over_3}"
                             android:textColor="@color/color_sub_red"
@@ -287,8 +244,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/rect_white"
+                        android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.secondSectionVisibility ? View.VISIBLE : View.GONE}">
                         
@@ -297,7 +253,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
                             android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_100m : @string/over_2}"
                             android:textColor="@color/color_sub_red"
@@ -331,8 +287,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/rect_white"
+                        android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.thirdSectionVisibility ? View.VISIBLE : View.GONE}">
                         
@@ -341,7 +296,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
                             android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_500m : @string/over_1}"
                             android:textColor="@color/color_sub_red"
@@ -375,9 +330,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:layout_marginBottom="40dp"
-                        android:background="@drawable/rect_white"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.fourthSectionVisibility ? View.VISIBLE : View.GONE}">
                         
@@ -386,7 +340,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near : @drawable/ic_star_outline}"
+                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
                             android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_1km : @string/over_0}"
                             android:textColor="@color/color_sub_red"

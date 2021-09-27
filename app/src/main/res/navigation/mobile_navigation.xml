@@ -12,8 +12,18 @@
         tools:layout="@layout/fragment_home" />
     
     <fragment
+        android:id="@+id/navigation_category"
+        android:name="com.zion830.threedollars.ui.category.SelectCategoryFragment"
+        android:label="@string/category"
+        tools:layout="@layout/fragment_category" />
+    
+    <fragment
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"
         tools:layout="@layout/fragment_mypage" />
+    
+    <fragment
+        android:id="@+id/navigation_review"
+        android:label="@string/title_add_store" />
 </navigation>

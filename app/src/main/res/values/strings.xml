@@ -38,6 +38,8 @@
     <string name="title_activity_home">MainActivity</string>
     <string name="title_home">홈</string>
     <string name="title_add_store">가게 제보</string>
+    <string name="search_by_address">위치 검색</string>
+    <string name="search_by_address_hint">구, 동, 건물명, 역 등으로 검색</string>
     <string name="no_review">아직 리뷰가 없어요!</string>
     <string name="no_menu_info">상세 메뉴 없음</string>
     <string name="store_distance"> 이내에 위치한\n음식점입니다.</string>
@@ -114,6 +116,9 @@
     <string name="error_pick_image">이미지를 불러오는데 실패했습니다.</string>
     <string name="remove_image">이미지 첨부를 취소하시겠습니까?</string>
     <string name="category">카테고리</string>
+    <string name="category_title1">이 안에 </string>
+    <string name="category_title2">네 최애 </string>
+    <string name="category_title3">하나쯤은 있겠지!</string>
     <string name="category_delete_all">전체삭제</string>
     <string name="menu_detail">상세메뉴</string>
     <string name="no_menu">등록된 정보가 없습니다</string>
@@ -208,13 +213,16 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
-
+    
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
-
-    <string name="find_location">위치 확인하기</string>
-    <string name="share_kakao">가슴속 3천원에서 따끈따끈한 길거리 음식 정보를 확인해보세요!</string>
+    
+    <string name="find_location">놀러가기</string>
+    <string name="share_kakao_title">올 때 붕어빵, 잊지마!!!</string>
+    <string name="share_kakao">당신은 붕어빵 셔틀에 당첨되셨습니다. 지금 바로 가슴속 3천원을 설치하고 위치를 파악하여 미션을 수행하세요!</string>
     <string name="share_kakao_success">카카오톡 공유 완료!</string>
     <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
+    
+    <string name="retry_search">현재 지도에서 가게 재검색</string>
 </resources>

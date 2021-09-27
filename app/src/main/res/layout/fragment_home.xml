@@ -16,146 +16,95 @@
         android:layout_height="match_parent"
         android:background="@color/color_gray2">
         
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginTop="56dp"
-            android:src="@drawable/ic_back" />
-        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             
             <LinearLayout
-                android:id="@+id/menu_buttons"
-                style="?android:attr/buttonBarStyle"
+                android:id="@+id/layout_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="22dp"
-                android:background="@drawable/rect_white_stroke_black"
+                android:layout_margin="20dp"
+                android:background="@drawable/rect_white_radius_12"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:minHeight="48dp"
                 android:orientation="horizontal"
-                android:paddingHorizontal="22dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="14dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-                
-                <Button
-                    android:id="@+id/btn_menu1"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
+    
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:drawableTop="@drawable/ic_menu1"
-                    android:drawablePadding="-4dp"
-                    android:fontFamily="@font/spoqa_medium"
-                    android:text="@string/bung"
-                    android:textColor="@color/color_4f4f4f"
-                    android:textStyle="bold" />
-                
-                <Button
-                    android:id="@+id/btn_menu2"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:maxWidth="280dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    tools:text="강남" />
+    
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:drawableTop="@drawable/ic_menu2"
-                    android:drawablePadding="-4dp"
-                    android:fontFamily="@font/spoqa_medium"
-                    android:text="@string/tako"
-                    android:textColor="@color/color_4f4f4f"
-                    android:textStyle="bold" />
-                
-                <Button
-                    android:id="@+id/btn_menu3"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:drawableTop="@drawable/ic_menu3"
-                    android:drawablePadding="-4dp"
-                    android:fontFamily="@font/spoqa_medium"
-                    android:text="@string/gye"
-                    android:textColor="@color/color_4f4f4f"
-                    android:textStyle="bold" />
-                
-                <Button
-                    android:id="@+id/btn_menu4"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:drawableTop="@drawable/ic_menu4"
-                    android:drawablePadding="-4dp"
-                    android:text="@string/hodduck"
-                    android:textColor="@color/color_4f4f4f"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/ic_arrow_down" />
             </LinearLayout>
-            
-            <TextView
-                android:id="@+id/tv_msg1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/nearest_store"
-                android:textColor="@color/color_main_red"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/menu_buttons" />
     
             <TextView
-                android:id="@+id/tv_msg2"
-                style="@style/LightTextViewStyle"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_retry_search"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="6dp"
-                android:bufferType="spannable"
-                android:letterSpacing="-0.05"
-                android:textColor="@android:color/black"
-                android:textSize="32sp"
-                android:textStyle="normal"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rect_red_radius48"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp"
+                android:text="@string/retry_search"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_msg1"
-                tools:ignore="UnusedAttribute"
-                tools:text="지금 바로\n3천원이 있으시다" />
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
     
             <LinearLayout
                 android:id="@+id/container"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="80dp"
                 android:orientation="horizontal"
-                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/rv_store" />
+                app:layout_constraintTop_toTopOf="parent" />
     
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"
                 bindItem="@{viewModel.nearStoreInfo}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="72dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 android:overScrollMode="never"
                 android:paddingHorizontal="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_msg2"
                 tools:listitem="@layout/item_store_location" />
+    
+            <ImageButton
+                android:id="@+id/ib_toss"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="226dp"
+                android:background="@drawable/circle_white"
+                android:backgroundTint="@color/color_toss"
+                android:elevation="8dp"
+                android:foreground="?android:attr/actionBarItemBackground"
+                android:src="@drawable/ic_toss_big"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

@@ -3,6 +3,7 @@
     <color name="colorPrimary">#F3A2A9</color>
     <color name="colorPrimaryDark">#EE624C</color>
     <color name="colorAccent">#EE624C</color>
+    <color name="colorOnPrimary">#E5E5E5</color>
     
     <color name="color_white">#FFFFFF</color>
     <color name="color_kakao">#F7E317</color>
@@ -16,6 +17,7 @@
     <color name="color_d0d0d0">#d0d0d0</color>
     <color name="color_gray3">#fafafa</color>
     <color name="color_828282">#828282</color>
+    <color name="color_E2E2E2">#E2E2E2</color>
     <color name="color_202020">#202020</color>
     <color name="color_black">#1C1C1C</color>
     <color name="color_4f4f4f">#4f4f4f</color>

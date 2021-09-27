@@ -18,68 +18,68 @@
         android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rect_black_radius16"
+        android:backgroundTint="@android:color/white"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> listener.onClick(item)}"
-        android:paddingStart="24dp"
-        tools:ignore="RtlSymmetry,UnusedAttribute">
-    
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toStartOf="@id/tv_rating"
-            app:layout_constraintStart_toStartOf="parent">
-        
-            <ImageView
-                android:id="@+id/iv_menu_icon"
-                bindSmallMenuIcon="@{item.category}"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginVertical="8dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_fish" />
-        
-            <TextView
-                android:id="@+id/tv_store_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLength="10"
-                android:singleLine="true"
-                android:text="@{item.storeName}"
-                android:textColor="@color/color_black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="강남역 1출강남역 1출강남역 1출강남역 1출" />
-        
-            <TextView
-                android:layout_width="wrap_content"
-                android:id="@+id/tv_store_distance"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@{@string/distance(item.distance)}"
-                android:textColor="@color/color_gray1"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tv_store_name"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="10m" />
-    
-        </LinearLayout>
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        tools:ignore="UnusedAttribute">
     
         <TextView
-            android:id="@+id/tv_rating"
+            android:id="@+id/tv_store_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:drawablePadding="4dp"
-            android:text="@{@string/score_only(item.rating)}"
+            android:layout_marginHorizontal="16dp"
+            android:maxLength="12"
+            android:singleLine="true"
+            android:text="@{item.storeName}"
             android:textColor="@color/color_black"
             android:textSize="16sp"
-            app:drawableStartCompat="@drawable/ic_star"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="10m" />
+            tools:text="강남역 1출" />
+    
+        <TextView
+            android:id="@+id/tv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/color_828282"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tv_store_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_store_name" />
+    
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+        
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawableStart="@drawable/ic_near"
+                android:drawablePadding="4dp"
+                android:text="@{@string/distance(item.distance)}"
+                android:textColor="@color/color_black"
+                android:textSize="14sp"
+                tools:text="121m" />
+        
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:drawableStart="@drawable/ic_star_pink"
+                android:drawablePadding="4dp"
+                android:text="@{@string/score(item.rating)}"
+                android:textColor="@color/color_black"
+                android:textSize="14sp"
+                tools:text="3.4점" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
