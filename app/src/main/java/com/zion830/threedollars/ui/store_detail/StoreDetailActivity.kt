@@ -12,6 +12,7 @@ import android.view.Menu
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,15 +26,15 @@ import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
-import io.hackle.android.HackleApp
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -68,7 +69,6 @@ class StoreDetailActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
-        val hackleApp = HackleApp.getInstance()
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
 
@@ -101,18 +101,19 @@ class StoreDetailActivity :
         }
         binding.btnDelete.setOnClickListener {
             binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance()
-                    .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+                DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
             }
         }
         binding.btnAddPhoto.setOnClickListener {
-            TedImagePicker.with(this).zoomIndicator(false).startMultiImage {
-
+            TedImagePicker.with(this).zoomIndicator(false).startMultiImage { uriData ->
+                lifecycleScope.launch {
+                    viewModel.saveImages(getImageFiles(uriData))
+                    viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+                }
             }
         }
         binding.btnSendMoney.setOnClickListener {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
             startActivity(browserIntent)
             hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
@@ -128,8 +129,7 @@ class StoreDetailActivity :
         binding.rvCategory.adapter = categoryAdapter
         binding.rvReview.adapter = reviewAdapter
         binding.btnAddReview.setOnClickListener {
-            AddReviewDialog.getInstance()
-                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+            AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.btnAddStoreInfo.setOnClickListener {
             supportFragmentManager.addNewFragment(
@@ -214,24 +214,6 @@ class StoreDetailActivity :
         if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
             viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
             initMap()
-        } else if (requestCode == PICK_IMAGE_MULTIPLE) {
-            if (data?.data == null) {
-                showToast(R.string.error_pick_image)
-                return
-            }
-
-            val clipData = data.clipData
-            val uriData = arrayListOf<Uri?>()
-            for (i in 0 until (clipData?.itemCount ?: 0)) {
-                if (!FileUtils.isAvailable(clipData?.getItemAt(i)?.uri)) {
-                    showToast(R.string.error_file_size)
-                    return
-                } else {
-                    uriData.add(clipData?.getItemAt(i)?.uri)
-                }
-            }
-
-            viewModel.saveImages(viewModel.storeInfo.value?.id, getImageFiles(uriData))
         }
     }
 
@@ -259,6 +241,11 @@ class StoreDetailActivity :
     private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part> {
         val imageList = ArrayList<MultipartBody.Part>()
         data.forEach {
+            if (!FileUtils.isAvailable(it)) {
+                binding.tvStoreName.showSnack(R.string.error_file_size)
+                return listOf()
+            }
+
             FileUtils.uriToFile(it)?.run {
                 val requestFile = asRequestBody("multipart/form-data".toMediaTypeOrNull())
                 imageList.add(MultipartBody.Part.createFormData("image", name, requestFile))

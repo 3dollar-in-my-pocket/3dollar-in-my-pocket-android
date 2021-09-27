@@ -22,7 +22,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
         initMap()
 
         binding.btnBack.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            requireActivity().onBackPressed()
         }
         binding.btnFinish.setOnClickListener {
             requireActivity().supportFragmentManager.addNewFragment(

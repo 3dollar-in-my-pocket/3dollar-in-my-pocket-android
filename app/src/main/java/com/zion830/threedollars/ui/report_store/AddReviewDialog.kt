@@ -14,7 +14,7 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.response.Review
-import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 
 class AddReviewDialog(
     private val content: Review?

@@ -12,20 +12,16 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.ui.addstore.view.EditCategoryBottomSheetDialog
-import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
-import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.replaceFragment
 
@@ -54,8 +50,7 @@ class EditStoreDetailFragment :
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
                 EditAddressFragment(),
-                EditAddressFragment::class.java.name,
-                false
+                EditAddressFragment::class.java.name
             )
         }
         binding.btnBack.setOnClickListener {

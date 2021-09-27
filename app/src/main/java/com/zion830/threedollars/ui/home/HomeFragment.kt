@@ -1,21 +1,21 @@
 package com.zion830.threedollars.ui.home
 
 import android.content.Intent
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
+import android.net.Uri
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.AllStoreResponseItem
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.store_detail.StoreByMenuActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.utils.getCurrentLocationName
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
 import zion830.com.common.listener.OnSnapPositionChangeListener
 import zion830.com.common.listener.SnapOnScrollListener
@@ -30,14 +30,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
     override fun initView() {
-        naverMapFragment = NearStoreNaverMapFragment()
+        naverMapFragment = NearStoreNaverMapFragment({
+            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+        }, {
+            binding.tvRetrySearch.isVisible = true
+        })
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
             adapter.submitList(store)
         }
+        binding.layoutAddress.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                SearchAddressFragment(),
+                SearchAddressFragment::class.java.name
+            )
+        }
 
-        // 주변 음식점 리스트
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<AllStoreResponseItem> {
             override fun onClick(item: AllStoreResponseItem) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
@@ -61,26 +71,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                     }
                 })
         )
-
-        // 상단 버튼바
-        binding.btnMenu1.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.BUNGEOPPANG.key))
+        binding.tvRetrySearch.setOnClickListener {
+            naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(latLng) }
         }
-        binding.btnMenu2.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.TAKOYAKI.key))
-        }
-        binding.btnMenu3.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.GYERANPPANG.key))
-        }
-        binding.btnMenu4.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.HOTTEOK.key))
-        }
-
-        // 3천원 글자 두껍게 바꾸기
-        binding.tvMsg2.text = buildSpannedString {
-            append(getString(R.string.if_you_have_money1))
-            bold { append(getString(R.string.if_you_have_money2)) }
-            append(getString(R.string.if_you_have_money3))
+        binding.ibToss.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
+            startActivity(browserIntent)
+            hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
     }
 

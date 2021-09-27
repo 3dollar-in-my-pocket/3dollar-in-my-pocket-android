@@ -5,7 +5,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
@@ -39,8 +38,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     private fun tryLogin() {
         UserApiClient.instance.me { user, _ ->
             user?.let {
-                SharedPrefUtils.saveKakaoId(it.id.toString())
-                viewModel.tryLogin()
+                showToast(R.string.error_no_kakao_login)
+                // SharedPrefUtils.saveKakaoId(it.id.toString())
+                // viewModel.tryLogin()
             }
         }
     }

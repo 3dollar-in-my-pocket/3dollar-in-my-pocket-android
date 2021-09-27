@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail
+package com.zion830.threedollars.ui.category
 
 import android.content.Context
 import android.content.Intent
@@ -10,8 +10,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.StoreList
-import com.zion830.threedollars.ui.store_detail.adapter.SearchByDistanceRecyclerAdapter
-import com.zion830.threedollars.ui.store_detail.adapter.SearchByRatingRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
@@ -45,18 +46,6 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
         binding.btnMenu1.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
             viewModel.changeCategory(MenuType.BUNGEOPPANG, currentPosition)
-        }
-        binding.btnMenu2.setOnClickListener {
-            naverMapFragment.moveToCurrentLocation()
-            viewModel.changeCategory(MenuType.TAKOYAKI, currentPosition)
-        }
-        binding.btnMenu3.setOnClickListener {
-            naverMapFragment.moveToCurrentLocation()
-            viewModel.changeCategory(MenuType.GYERANPPANG, currentPosition)
-        }
-        binding.btnMenu4.setOnClickListener {
-            naverMapFragment.moveToCurrentLocation()
-            viewModel.changeCategory(MenuType.HOTTEOK, currentPosition)
         }
         binding.btnSortByDistance.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()

@@ -1,11 +1,10 @@
-package com.zion830.threedollars.ui.store_detail.adapter
+package com.zion830.threedollars.ui.category.adapter
 
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
+import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.StoreList
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
@@ -22,7 +21,6 @@ class SearchByRatingRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchByRatingViewHolder, position: Int) {
-        holder.setBackgroundByPosition(position, position == itemCount - 1)
         holder.bind(items[position], listener)
     }
 
@@ -35,15 +33,9 @@ class SearchByRatingRecyclerAdapter(
 
 class SearchByRatingViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreByRatingBinding, StoreList>(R.layout.item_store_by_rating, parent) {
 
-    fun setBackgroundByPosition(position: Int, isLastIndex: Boolean) {
-        if (position % 2 == 1 && !isLastIndex) {
-            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_gray3))
-        } else if (position % 2 == 1 && isLastIndex) {
-            binding.layoutItem.setBackgroundResource(R.drawable.rect_gray_corner_bottom)
-        } else if (position % 2 == 0 && !isLastIndex) {
-            binding.layoutItem.setBackgroundColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
-        } else if (position % 2 == 0 && isLastIndex) {
-            binding.layoutItem.setBackgroundResource(R.drawable.rect_white_bottom_corner)
-        }
+    override fun bind(item: StoreList, listener: OnItemClickListener<StoreList>?) {
+        super.bind(item, listener)
+        val categoryInfo = "#${binding.tvCategory.context.getString(MenuType.of(item.category).displayNameId)}"
+        binding.tvCategory.text = categoryInfo
     }
 }

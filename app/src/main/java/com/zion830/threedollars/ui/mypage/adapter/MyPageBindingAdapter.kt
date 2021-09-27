@@ -1,6 +1,11 @@
 package com.zion830.threedollars.ui.mypage.adapter
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.repository.model.MenuType
 
@@ -12,6 +17,25 @@ fun ImageView.bindMenuIcon(category: String?) {
     }
 
     setImageResource(MenuType.of(category).colorIcon)
+}
+
+@BindingAdapter("bindMenuIntroTitle")
+fun TextView.bindMenuIntroTitle(menuType: MenuType?) {
+    if (menuType == null) {
+        return
+    }
+
+    val menuName = if (context.getString(menuType.displayNameId) == "꼬치") "꼬치꼬치" else context.getString(menuType.displayNameId)
+    val index = menuType.introTitle.indexOf(menuName)
+    val spannableString = SpannableStringBuilder(menuType.introTitle).apply {
+        setSpan(
+            StyleSpan(Typeface.BOLD),
+            index,
+            index + menuName.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
+    text = spannableString
 }
 
 @BindingAdapter("bindWhiteMenuIcon")

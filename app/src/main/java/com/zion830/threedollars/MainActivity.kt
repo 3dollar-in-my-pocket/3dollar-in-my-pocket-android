@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.observe
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
@@ -31,12 +32,36 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         binding.navView.itemIconTintList = null
         binding.navView.setupWithNavController(navController)
 
-        binding.ibEdit.setOnClickListener {
-            startActivityForResult(Intent(this, NewStoreActivity::class.java), Constants.ADD_STORE)
-        }
-
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
+        }
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
+                android.R.color.black
+            } else {
+                android.R.color.white
+            }
+        }
+
+        binding.navView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.navigation_home -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
+                    binding.navView.itemBackgroundResource = android.R.color.white
+                }
+                R.id.navigation_category -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_category)
+                    binding.navView.itemBackgroundResource = android.R.color.white
+                }
+                R.id.navigation_review -> {
+                    startActivity(Intent(this, NewStoreActivity::class.java))
+                }
+                R.id.navigation_mypage -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
+                    binding.navView.itemBackgroundResource = android.R.color.black
+                }
+            }
+            true
         }
     }
 

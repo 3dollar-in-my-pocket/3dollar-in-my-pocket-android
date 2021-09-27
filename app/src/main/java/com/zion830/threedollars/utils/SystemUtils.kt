@@ -109,7 +109,7 @@ private fun Activity.openPermissionSettingPage() {
 fun Context.getInstalledInfo() =
     """
         -------------------------------------------------------
-        ${getString(R.string.app_name)} ${BuildConfig.VERSION_NAME}
+        ${getString(R.string.app_name)}
         ${getString(R.string.android_version)}: ${Build.VERSION.SDK_INT}
         ------------------------------------------------------- 
     """.trimIndent()
@@ -127,7 +127,7 @@ fun Context.shareWithKakao(shareFormat: ShareFormat) {
     if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
         val feed = FeedTemplate(
             content = Content(
-                title = shareFormat.storeName,
+                title = getString(R.string.share_kakao_title),
                 description = getString(R.string.share_kakao),
                 imageUrl = BuildConfig.BASE_URL + "/images/share-with-kakao.png",
                 link = Link(getString(R.string.download_url), getString(R.string.download_url))
@@ -144,7 +144,7 @@ fun Context.shareWithKakao(shareFormat: ShareFormat) {
             if (error != null) {
                 shareUrl(shareFormat.url)
             } else if (linkResult != null) {
-                showToast(R.string.share_kakao_success)
+                this.startActivity(linkResult.intent)
             }
         }
     } else {

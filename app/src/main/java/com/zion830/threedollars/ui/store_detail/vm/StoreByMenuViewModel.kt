@@ -10,7 +10,7 @@ import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.AllStoreResponse
 import com.zion830.threedollars.repository.model.response.SearchByDistanceResponse
 import com.zion830.threedollars.repository.model.response.SearchByReviewResponse
-import com.zion830.threedollars.ui.store_detail.SortType
+import com.zion830.threedollars.ui.category.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.await

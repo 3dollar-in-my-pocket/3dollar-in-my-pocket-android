@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
-import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import zion830.com.common.listener.OnItemClickListener
 
 class StorePhotoDialog : DialogFragment() {
@@ -43,11 +45,12 @@ class StorePhotoDialog : DialogFragment() {
         val adapter = StoreImageSliderAdapter()
         val indicatorAdapter = StorePreviewImageAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
-                binding.slider.currentPagePosition = item.index
+                binding.slider.smoothScrollToPosition(item.index)
             }
         })
 
-        binding.slider.setSliderAdapter(adapter, false)
+        binding.slider.adapter = adapter
+        PagerSnapHelper().attachToRecyclerView(binding.slider)
         binding.rvIndicator.adapter = indicatorAdapter
 
         viewModel.storeInfo.observe(this) {
@@ -65,7 +68,8 @@ class StorePhotoDialog : DialogFragment() {
         binding.ibTrash.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->
-                    viewModel.deletePhoto(adapter.getItem(binding.slider.currentPagePosition))
+                    val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
+                    viewModel.deletePhoto(adapter.items[selectedPosition])
                     dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ ->

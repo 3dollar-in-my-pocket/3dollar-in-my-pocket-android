@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
+import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.response.AllStoreResponseItem
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
@@ -35,5 +36,11 @@ class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocation
 
     fun bindPosition(isSelected: Boolean) {
         binding.isSelectedItem = isSelected
+    }
+
+    override fun bind(item: AllStoreResponseItem, listener: OnItemClickListener<AllStoreResponseItem>?) {
+        super.bind(item, listener)
+        val categoryInfo = "#${binding.tvCategory.context.getString(MenuType.of(item.category).displayNameId)}"
+        binding.tvCategory.text = categoryInfo
     }
 }

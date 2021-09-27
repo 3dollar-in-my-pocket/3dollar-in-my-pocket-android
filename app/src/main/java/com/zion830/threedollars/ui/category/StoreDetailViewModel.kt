@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.store_detail.vm
+package com.zion830.threedollars.ui.category
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -157,25 +157,24 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun saveImages(storeId: Int?, images: List<MultipartBody.Part>) {
+    fun saveImages(images: List<MultipartBody.Part>) {
         showLoading()
 
         if (images.isEmpty()) {
             return
         }
 
-        if (storeId == null) {
+        if (storeInfo.value?.id == null) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val responses = images.map { image ->
                 async(Dispatchers.IO + coroutineExceptionHandler) {
-                    repository.saveImage(storeId, image)
+                    repository.saveImage(storeInfo.value?.id ?: -1, image)
                 }
             }
             responses.awaitAll()
-
             withContext(Dispatchers.Main) {
                 hideLoading()
             }

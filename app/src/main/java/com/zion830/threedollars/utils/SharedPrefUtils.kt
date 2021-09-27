@@ -11,6 +11,7 @@ object SharedPrefUtils {
     private const val USER_ID_KEY = "user_id_key"
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
+
     private val sharedPreferences = GlobalApplication.getContext().getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
     fun saveAccessToken(accessToken: String?) = sharedPreferences.edit {
@@ -22,6 +23,13 @@ object SharedPrefUtils {
         putString(USER_NAME_KEY, name)
         commit()
     }
+
+    fun changeServerStatus() = sharedPreferences.edit {
+        putBoolean("test", !getServerStatus())
+        commit()
+    }
+
+    fun getServerStatus() = sharedPreferences.getBoolean("test", false)
 
     fun isFirstPermissionCheck(): Boolean {
         val isFirst = sharedPreferences.getBoolean(FIRST_PERMISSION_CHECK, true)

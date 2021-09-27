@@ -40,6 +40,30 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         binding.btnDeleteAccount.setOnClickListener {
             showDeleteAccountDialog()
         }
+        binding.btnTest.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    SharedPrefUtils.changeServerStatus()
+                    SharedPrefUtils.clearUserInfo()
+                    initTestBtn()
+                    requireActivity().finish()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                }
+                .setTitle("진짜 바꾸시겠습니까?")
+                .setMessage("확인을 누르면 앱이 종료되고 다시 로그인 해야돼요.")
+                .create()
+                .show()
+        }
+        initTestBtn()
+    }
+
+    private fun initTestBtn() {
+        if (SharedPrefUtils.getServerStatus()) {
+            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 개발 서버)"
+        } else {
+            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 운영 서버)"
+        }
     }
 
     private fun showDeleteAccountDialog() {

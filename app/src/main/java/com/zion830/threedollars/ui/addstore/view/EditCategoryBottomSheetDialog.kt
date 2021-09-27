@@ -8,11 +8,8 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
-import com.zion830.threedollars.ui.addstore.AddStoreViewModel
-import com.zion830.threedollars.ui.addstore.EditStoreViewModel
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 
 class EditCategoryBottomSheetDialog() : BottomSheetDialogFragment() {
 

@@ -33,7 +33,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private val markers = arrayListOf<Marker>()
 
-    protected var currentPosition: LatLng? = null
+    var currentPosition: LatLng? = null
+        protected set
 
     private var listener: OnMapTouchListener? = null
 
