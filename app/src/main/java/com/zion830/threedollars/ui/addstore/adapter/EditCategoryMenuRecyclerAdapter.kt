@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 

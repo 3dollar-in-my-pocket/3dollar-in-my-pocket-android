@@ -9,6 +9,8 @@ import com.zion830.threedollars.ui.report_store.DeleteType
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 class StoreRepository(
     private val service: ServiceApi = RetrofitBuilder.service
@@ -40,15 +42,10 @@ class StoreRepository(
         reviewId: Int
     ): Call<ResponseBody?> = service.deleteReview(reviewId)
 
-    suspend fun saveStore(
-        storeInfo: Map<String, String>,
-        images: List<MultipartBody.Part>
-    ): Call<AddStoreResponse> = service.saveStore(storeInfo, images)
-
     suspend fun saveImage(
         storeId: Int,
-        images: MultipartBody.Part
-    ): Call<AddImageResponse> = service.saveImage(storeId, images)
+        image: MultipartBody.Part
+    ): Call<AddImageResponse> = service.saveImage(storeId, image)
 
     suspend fun deleteImage(
         storeId: Int,
@@ -56,17 +53,22 @@ class StoreRepository(
     ) = service.deleteImage(storeId, imageId)
 
     suspend fun saveStore(
-        storeInfo: NewStore
-    ): Call<AddStoreResponse> = service.saveStore(storeInfo)
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
+        @QueryMap queryMap: Map<String, String>,
+    ): Call<AddStoreResponse> = service.saveStore(categories, appearanceDays, paymentMethods, queryMap)
+
+    suspend fun saveStore(
+        newStore: NewStore
+    ): Call<AddStoreResponse> = service.saveStore(newStore)
 
     suspend fun updateStore(
-        storeInfo: Map<String, String>,
-        images: List<MultipartBody.Part>
-    ): Call<ResponseBody> = service.updateStore(storeInfo, images)
-
-    suspend fun updateStore(
-        storeInfo: Map<String, String>
-    ): Call<ResponseBody> = service.updateStore(storeInfo)
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
+        @QueryMap storeInfo: Map<String, String>
+    ): Call<ResponseBody> = service.updateStore(categories, appearanceDays, paymentMethods, storeInfo)
 
     suspend fun deleteStore(
         deleteReasonType: DeleteType,

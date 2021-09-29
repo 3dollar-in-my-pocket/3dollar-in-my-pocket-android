@@ -18,6 +18,10 @@
             android:theme="@style/TedImagePickerTheme" />
 
         <activity
+            android:name=".tedonactivityresult.ProxyActivity"
+            android:theme="@style/TedImagePickerTheme" />
+
+        <activity
             android:name=".zoom.TedImageZoomActivity"
             android:theme="@style/TedImagePickerTheme.Zoom" />
 

@@ -105,12 +105,9 @@ class StoreDetailActivity :
             }
         }
         binding.btnAddPhoto.setOnClickListener {
-            Log.d("btn", "click")
             TedImagePicker.with(this).zoomIndicator(false).startMultiImage { uriData ->
-                Log.d("btn", "click2")
                 lifecycleScope.launch {
                     viewModel.saveImages(getImageFiles(uriData))
-                    viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
                 }
             }
         }
@@ -152,7 +149,7 @@ class StoreDetailActivity :
             }
         }
         viewModel.storeInfo.observe(this) {
-            binding.tvStoreType.isVisible = it?.storeType == null
+            binding.tvStoreType.isVisible = it?.storeType != null
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
             reviewAdapter.submitList(it?.review)
             photoAdapter.submitList(it?.image?.mapIndexed { index, image ->
@@ -163,30 +160,13 @@ class StoreDetailActivity :
                 )
             }?.toMutableList())
 
-            // TODO : 이게 최선이야??
-            when {
-                it?.appearanceDays?.contains("MONDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbMon.toggle()
-                }
-                it?.appearanceDays?.contains("TUESDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbTue.toggle()
-                }
-                it?.appearanceDays?.contains("WEDNESDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbWen.toggle()
-                }
-                it?.appearanceDays?.contains("THURSDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbThur.toggle()
-                }
-                it?.appearanceDays?.contains("FRIDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbFri.toggle()
-                }
-                it?.appearanceDays?.contains("SATURDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbSat.toggle()
-                }
-                it?.appearanceDays?.contains("SUNDAY") == true -> {
-                    binding.layoutBtnDayOfWeek.tbSun.toggle()
-                }
-            }
+            binding.layoutBtnDayOfWeek.tbMon.isChecked = it?.appearanceDays?.contains("MONDAY") == true
+            binding.layoutBtnDayOfWeek.tbTue.isChecked = it?.appearanceDays?.contains("TUESDAY") == true
+            binding.layoutBtnDayOfWeek.tbWen.isChecked = it?.appearanceDays?.contains("WEDNESDAY") == true
+            binding.layoutBtnDayOfWeek.tbThur.isChecked = it?.appearanceDays?.contains("THURSDAY") == true
+            binding.layoutBtnDayOfWeek.tbFri.isChecked = it?.appearanceDays?.contains("FRIDAY") == true
+            binding.layoutBtnDayOfWeek.tbSat.isChecked = it?.appearanceDays?.contains("SATURDAY") == true
+            binding.layoutBtnDayOfWeek.tbSun.isChecked = it?.appearanceDays?.contains("SUNDAY") == true
         }
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)

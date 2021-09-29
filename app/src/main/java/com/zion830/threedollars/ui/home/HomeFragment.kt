@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -32,13 +31,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
     override fun initView() {
-        naverMapFragment = NearStoreNaverMapFragment({
-            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-        }, {
-            binding.tvRetrySearch.isVisible = true
-        })
+        naverMapFragment = NearStoreNaverMapFragment()
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
+        viewModel.addressText.observe(viewLifecycleOwner) {
+            binding.tvAddress.text = it ?: getString(R.string.location_no_address)
+        }
         searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
             naverMapFragment.moveCameraWithAnim(it)
             binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
@@ -90,5 +88,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         naverMapFragment.onActivityResult(requestCode, resultCode, data)
+        naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(latLng) }
     }
 }

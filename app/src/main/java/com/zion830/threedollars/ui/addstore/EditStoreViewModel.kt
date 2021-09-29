@@ -1,18 +1,16 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.response.Menu
+import com.zion830.threedollars.repository.model.request.NewStore
 import com.zion830.threedollars.repository.model.response.StoreDetailResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 
@@ -47,33 +45,27 @@ class EditStoreViewModel : BaseViewModel() {
     }
 
     fun editStore(
-        storeName: String,
-        images: List<MultipartBody.Part>,
         storeId: Int,
-        latitude: Double,
-        longitude: Double,
-        menus: List<Menu>
+        storeName: String?,
+        newStore: NewStore
     ) {
         showLoading()
 
         val params = hashMapOf<String, String>(
             Pair("userId", SharedPrefUtils.getUserId().toString()),
-            Pair("latitude", latitude.toString()),
-            Pair("longitude", longitude.toString()),
             Pair("storeId", storeId.toString()),
-            Pair("storeName", storeName ?: "")
+            Pair("latitude", newStore.latitude.toString()),
+            Pair("longitude", newStore.longitude.toString()),
+            Pair("storeType", newStore.storeType),
+            Pair("storeName", storeName ?: "이름 없는 가게"),
         )
-        menus.forEachIndexed { index, menu ->
+        newStore.menus.forEachIndexed { index, menu ->
             params["menu[$index].name"] = menu.name
             params["menu[$index].price"] = menu.price
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = if (images.isEmpty()) {
-                repository.updateStore(params).execute()
-            } else {
-                repository.updateStore(params, images).execute()
-            }
+            val result = repository.updateStore(newStore.categories, newStore.appearanceDays, newStore.paymentMethods, params).execute()
             hideLoading()
             _editStoreResult.postValue(result.isSuccessful)
         }

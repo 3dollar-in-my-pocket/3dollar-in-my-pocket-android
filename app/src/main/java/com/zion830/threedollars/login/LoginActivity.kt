@@ -38,6 +38,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     private fun tryLogin() {
         UserApiClient.instance.me { user, _ ->
             user?.let {
+                Log.d(localClassName, it.groupUserToken.toString())
                 SharedPrefUtils.saveKakaoId(it.id.toString())
                 viewModel.tryLogin()
             }

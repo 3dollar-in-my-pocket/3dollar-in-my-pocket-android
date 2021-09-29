@@ -4,7 +4,9 @@ import android.graphics.Rect
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -12,6 +14,8 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
+import com.zion830.threedollars.repository.model.request.Menu
+import com.zion830.threedollars.repository.model.request.NewStore
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
@@ -19,9 +23,7 @@ import com.zion830.threedollars.ui.addstore.view.EditCategoryBottomSheetDialog
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.utils.getCurrentLocationName
-import com.zion830.threedollars.utils.isGpsAvailable
-import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.replaceFragment
 
@@ -29,6 +31,8 @@ class EditStoreDetailFragment :
     BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
 
     override val viewModel: StoreDetailViewModel by activityViewModels()
+
+    val editStoreViewModel: EditStoreViewModel by viewModels()
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -50,7 +54,8 @@ class EditStoreDetailFragment :
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
                 EditAddressFragment(),
-                EditAddressFragment::class.java.name
+                EditAddressFragment::class.java.name,
+                false
             )
         }
         binding.btnBack.setOnClickListener {
@@ -73,6 +78,14 @@ class EditStoreDetailFragment :
         binding.rvCategory.adapter = addCategoryRecyclerAdapter
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
 
+        editStoreViewModel.editStoreResult.observe(viewLifecycleOwner) {
+            if (it) {
+                viewModel.refresh()
+                requireActivity().onBackPressed()
+            } else {
+                showToast(R.string.failed_edit_store)
+            }
+        }
         viewModel.storeInfo.observe(viewLifecycleOwner) {
             // 가게 정보 초기화
             binding.tvAddress.text =
@@ -96,27 +109,33 @@ class EditStoreDetailFragment :
                 }
             }
 
+            when (it?.storeType) {
+                "ROAD" -> binding.rbType1.isChecked = true
+                "STORE" -> binding.rbType2.isChecked = true
+                "CONVENIENCE_STORE" -> binding.rbType3.isChecked = true
+            }
+
             it?.appearanceDays?.forEach { day ->
                 if (day == "MONDAY") {
-                    binding.layoutBtnDayOfWeek.tbMon.performClick()
+                    binding.layoutBtnDayOfWeek.tbMon.isChecked = true
                 }
                 if (day == "TUESDAY") {
-                    binding.layoutBtnDayOfWeek.tbTue.performClick()
+                    binding.layoutBtnDayOfWeek.tbTue.isChecked = true
                 }
                 if (day == "WEDNESDAY") {
-                    binding.layoutBtnDayOfWeek.tbWen.performClick()
+                    binding.layoutBtnDayOfWeek.tbWen.isChecked = true
                 }
                 if (day == "THURSDAY") {
-                    binding.layoutBtnDayOfWeek.tbThur.performClick()
+                    binding.layoutBtnDayOfWeek.tbThur.isChecked = true
                 }
                 if (day == "FRIDAY") {
-                    binding.layoutBtnDayOfWeek.tbFri.performClick()
+                    binding.layoutBtnDayOfWeek.tbFri.isChecked = true
                 }
                 if (day == "SATURDAY") {
-                    binding.layoutBtnDayOfWeek.tbSat.performClick()
+                    binding.layoutBtnDayOfWeek.tbSat.isChecked = true
                 }
                 if (day == "SUNDAY") {
-                    binding.layoutBtnDayOfWeek.tbSun.performClick()
+                    binding.layoutBtnDayOfWeek.tbSun.isChecked = true
                 }
             }
 
@@ -136,7 +155,96 @@ class EditStoreDetailFragment :
                 addCategoryRecyclerAdapter.clear()
                 viewModel.removeAllCategory()
             }
+            binding.btnSubmit.setOnClickListener {
+                if (binding.etName.text.isNullOrBlank()) {
+                    showToast(R.string.store_name_empty)
+                    return@setOnClickListener
+                }
+
+                editStoreViewModel.editStore(
+                    viewModel.storeInfo.value?.id ?: 0,
+                    binding.etName.text.toString(),
+                    NewStore(
+                        addCategoryRecyclerAdapter.getSelectedItems(),
+                        getAppearanceDays(),
+                        viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                        viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                        getMenuList(),
+                        getPaymentMethod(),
+                        binding.etName.text.toString(),
+                        getStoreType()
+                    )
+                )
+            }
         }
+    }
+
+    private fun getPaymentMethod(): List<String> {
+        val result = arrayListOf<String>()
+        if (binding.cbType1.isChecked) {
+            result.add("CASH")
+        }
+        if (binding.cbType2.isChecked) {
+            result.add("CARD")
+        }
+        if (binding.cbType3.isChecked) {
+            result.add("ACCOUNT_TRANSFER")
+        }
+        return result
+    }
+
+    private fun getStoreType(): String {
+        val result = arrayListOf<String>()
+        if (binding.rbType1.isChecked) {
+            result.add("ROAD")
+        }
+        if (binding.rbType2.isChecked) {
+            result.add("STORE")
+        }
+        if (binding.rbType3.isChecked) {
+            result.add("CONVENIENCE_STORE")
+        }
+        return result.firstOrNull() ?: ""
+    }
+
+    private fun getMenuList(): List<Menu> {
+        val menuList = arrayListOf<Menu>()
+        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
+            binding.rvMenu.getChildAt(i)?.let {
+                val name = it.findViewById(R.id.et_name) as EditText
+                val price = it.findViewById(R.id.et_price) as EditText
+                menuList.add(Menu(name = name.text.toString(), price = price.text.toString()))
+            }
+        }
+
+        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+    }
+
+    private fun getAppearanceDays(): List<String> {
+        val result = arrayListOf<String>()
+        val const = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
+        if (binding.layoutBtnDayOfWeek.tbMon.isChecked) {
+            result.add(const[0])
+        }
+        if (binding.layoutBtnDayOfWeek.tbTue.isChecked) {
+            result.add(const[1])
+        }
+        if (binding.layoutBtnDayOfWeek.tbWen.isChecked) {
+            result.add(const[2])
+        }
+        if (binding.layoutBtnDayOfWeek.tbThur.isChecked) {
+            result.add(const[3])
+        }
+        if (binding.layoutBtnDayOfWeek.tbFri.isChecked) {
+            result.add(const[4])
+        }
+        if (binding.layoutBtnDayOfWeek.tbSat.isChecked) {
+            result.add(const[5])
+        }
+        if (binding.layoutBtnDayOfWeek.tbSun.isChecked) {
+            result.add(const[6])
+        }
+        return result
     }
 
     private fun initMap() {

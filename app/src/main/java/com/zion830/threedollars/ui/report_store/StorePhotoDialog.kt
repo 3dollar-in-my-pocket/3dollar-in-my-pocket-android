@@ -54,7 +54,7 @@ class StorePhotoDialog : DialogFragment() {
 
         viewModel.storeInfo.observe(this) {
             it?.let {
-                adapter.submitItems(it.image ?: emptyList())
+                adapter.submitList(it.image ?: emptyList())
                 indicatorAdapter.submitList(it.image?.mapIndexed { index, value ->
                     StoreImage(
                         index,
@@ -68,7 +68,7 @@ class StorePhotoDialog : DialogFragment() {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->
                     val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
-                    viewModel.deletePhoto(adapter.items[selectedPosition])
+                    viewModel.deletePhoto(adapter.getItems()[selectedPosition])
                     dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ ->

@@ -32,7 +32,9 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
         })
         binding.rvSearchResult.adapter = adapter
-
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
         binding.btnSearch.setOnClickListener {
             if (binding.etSearch.text.isNullOrBlank()) {
                 showToast("검색어가 없습니다.")

@@ -25,14 +25,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="50dp">
+        android:layout_height="wrap_content">
 
         <View
             android:id="@+id/view_submit_back"
             android:layout_width="wrap_content"
             android:layout_height="72dp"
-            android:layout_marginBottom="24dp"
             android:background="@drawable/back_navigation"
             android:elevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"

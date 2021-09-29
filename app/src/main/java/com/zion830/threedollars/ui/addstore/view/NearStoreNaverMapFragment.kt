@@ -13,10 +13,7 @@ import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
 
-class NearStoreNaverMapFragment(
-    private val locationLoaded: (LatLng) -> Unit,
-    private val cameraMoved: () -> Unit,
-) : NaverMapFragment() {
+class NearStoreNaverMapFragment() : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
     override fun onMapReady(map: NaverMap) {
@@ -31,7 +28,7 @@ class NearStoreNaverMapFragment(
         }
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {
-                cameraMoved()
+                // 재검색 버튼 띄우기
             }
         }
         moveToCurrentLocation()
@@ -39,7 +36,7 @@ class NearStoreNaverMapFragment(
 
     override fun onMyLocationLoaded(position: LatLng) {
         viewModel.requestStoreInfo(position)
-        locationLoaded(position)
+        viewModel.updateSearchLocation(position)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

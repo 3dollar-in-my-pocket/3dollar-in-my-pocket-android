@@ -8,10 +8,11 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.request.NewStore
-import com.zion830.threedollars.repository.model.response.Menu
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import kotlinx.coroutines.*
-import okhttp3.MultipartBody
+import com.zion830.threedollars.utils.SharedPrefUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
 
@@ -46,39 +47,15 @@ class AddStoreViewModel : BaseViewModel() {
         it.count { item -> item.isSelected }
     }
 
-    private fun saveImages(storeId: Int?, images: List<MultipartBody.Part>) {
-        if (images.isEmpty()) {
-            return
-        }
-
-        if (storeId == null) {
-            _newStoreId.postValue(-1)
-            return
-        }
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val responses = images.map { image ->
-                async(Dispatchers.IO + coroutineExceptionHandler) {
-                    repository.saveImage(storeId, image)
-                }
-            }
-            responses.awaitAll()
-        }
-    }
-
-    fun addNewStore(
-        category: String,
-        latitude: Double,
-        longitude: Double,
-        menus: List<Menu>
-    ) {
+    fun addNewStore(newStore: NewStore) {
         showLoading()
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.saveStore(NewStore()).execute()
+            val result = repository.saveStore(newStore).execute()
 
             if (result.isSuccessful) {
-                val storeId = result.body()?.data?.storeId
+                val storeId = result.body()?.storeId
+                _newStoreId.postValue(storeId)
             } else {
                 _newStoreId.postValue(-1)
             }
@@ -86,6 +63,27 @@ class AddStoreViewModel : BaseViewModel() {
             withContext(Dispatchers.Main) {
                 hideLoading()
             }
+        }
+    }
+
+    fun addNewStoreByQuery(newStore: NewStore) {
+        showLoading()
+
+        val params = hashMapOf<String, String>(
+            Pair("userId", SharedPrefUtils.getUserId().toString()),
+            Pair("latitude", newStore.latitude.toString()),
+            Pair("longitude", newStore.longitude.toString()),
+            Pair("storeName", storeName.value ?: ""),
+        )
+        newStore.menus.forEachIndexed { index, menu ->
+            params["menu[$index].name"] = menu.name
+            params["menu[$index].price"] = menu.price
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val result = repository.saveStore(newStore.categories, newStore.appearanceDays, newStore.paymentMethods, params).execute()
+            hideLoading()
+            _newStoreId.postValue(if (result.isSuccessful) 1 else -1)
         }
     }
 

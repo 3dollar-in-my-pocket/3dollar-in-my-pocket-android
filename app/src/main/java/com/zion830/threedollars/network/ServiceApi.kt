@@ -79,6 +79,9 @@ interface ServiceApi {
 
     @POST("/api/v1/store/save")
     fun saveStore(
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
         @QueryMap storeInfo: Map<String, String>
     ): Call<AddStoreResponse>
 
@@ -91,6 +94,9 @@ interface ServiceApi {
 
     @PUT("/api/v1/store/update")
     fun updateStore(
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
         @QueryMap storeInfo: Map<String, String>
     ): Call<ResponseBody>
 
@@ -101,9 +107,10 @@ interface ServiceApi {
     ): Call<MyStoreResponse>
 
     @POST("/api/v1/store/{storeId}/images")
+    @Multipart
     fun saveImage(
         @Path("storeId") storeId: Int,
-        @Part images: MultipartBody.Part
+        @Part image: MultipartBody.Part
     ): Call<AddImageResponse>
 
     @DELETE("/api/v1/store/{storeId}/images/{imageId}")

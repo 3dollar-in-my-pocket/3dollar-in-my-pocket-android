@@ -4,18 +4,20 @@ package com.zion830.threedollars.repository.model.request
 import com.google.gson.annotations.SerializedName
 
 data class NewStore(
+    @SerializedName("categories")
+    val categories: List<String>,
     @SerializedName("appearanceDays")
-    val appearanceDays: List<String>? = null,
+    val appearanceDays: List<String>,
     @SerializedName("latitude")
-    val latitude: Int? = null,
+    val latitude: Double,
     @SerializedName("longitude")
-    val longitude: Int? = null,
+    val longitude: Double,
     @SerializedName("menu")
-    val menus: List<Menu>? = null,
+    val menus: List<Menu>,
     @SerializedName("paymentMethods")
-    val paymentMethods: List<String>? = null,
+    val paymentMethods: List<String>,
     @SerializedName("storeName")
-    val storeName: String? = null,
+    val storeName: String,
     @SerializedName("storeType")
-    val storeType: String? = null
+    val storeType: String
 )

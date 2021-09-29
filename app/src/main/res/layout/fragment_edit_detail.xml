@@ -109,6 +109,7 @@
                             android:textColor="@color/color_black"
                             android:textSize="18sp"
                             android:textStyle="bold"
+                            android:gravity="center_vertical"
                             app:layout_constraintEnd_toStartOf="@id/ib_write"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -450,16 +451,6 @@
             app:layout_constraintStart_toStartOf="@id/view_submit_back"
             app:layout_constraintTop_toTopOf="@id/view_submit_back"
             tools:ignore="UnusedAttribute" />
-
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/container"

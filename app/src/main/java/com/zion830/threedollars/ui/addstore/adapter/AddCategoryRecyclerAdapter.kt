@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
+import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
@@ -64,6 +64,10 @@ class AddCategoryRecyclerAdapter(
 
     fun clear() {
         submitList(listOf())
+    }
+
+    fun getSelectedItems(): List<String> {
+        return currentList.filter { it?.isSelected == true }.map { it?.menuType?.key ?: MenuType.BUNGEOPPANG.key }
     }
 
     companion object {

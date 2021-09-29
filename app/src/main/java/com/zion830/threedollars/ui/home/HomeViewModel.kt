@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.response.AllStoreResponse
+import com.zion830.threedollars.utils.getCurrentLocationName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
@@ -17,6 +18,8 @@ class HomeViewModel : BaseViewModel() {
 
     val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
 
+    val addressText: MutableLiveData<String> = MutableLiveData()
+
     fun requestStoreInfo(location: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.getAllStore(location.latitude, location.longitude).execute()
@@ -28,5 +31,6 @@ class HomeViewModel : BaseViewModel() {
 
     fun updateSearchLocation(latlng: LatLng) {
         searchResultLocation.value = latlng
+        addressText.value = getCurrentLocationName(latlng)
     }
 }

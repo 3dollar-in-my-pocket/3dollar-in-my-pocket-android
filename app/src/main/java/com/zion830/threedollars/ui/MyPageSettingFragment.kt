@@ -50,7 +50,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ ->
                 }
-                .setTitle("진짜 바꾸시겠습니까?")
+                .setTitle("잠깐!!!!!!")
                 .setMessage("확인을 누르면 앱이 종료되고 다시 로그인 해야돼요.")
                 .create()
                 .show()
@@ -59,10 +59,10 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
     }
 
     private fun initTestBtn() {
-        if (SharedPrefUtils.getServerStatus()) {
-            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 개발 서버)"
+        if (SharedPrefUtils.isTestServer()) {
+            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 dev)"
         } else {
-            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 운영 서버)"
+            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 prod)"
         }
     }
 

@@ -10,16 +10,16 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
     private val GEOCODING_URL = "https://naveropenapi.apigw.ntruss.com/"
-    private val BASE_URL: String = if (BuildConfig.BUILD_TYPE == "debug") {
-        if (SharedPrefUtils.getServerStatus()) {
-            "https://server.3dollars-in-my-pocket.com/"
-            // "http://3.34.255.158:8080/"
+    private val BASE_URL: String =
+        if (BuildConfig.BUILD_TYPE == "debug") {
+            if (SharedPrefUtils.isTestServer()) {
+                "http://3.34.255.158:8080/"
+            } else {
+                "https://server.3dollars-in-my-pocket.com/"
+            }
         } else {
-            "https://server.3dollars-in-my-pocket.com/"
+            BuildConfig.BASE_URL
         }
-    } else {
-        BuildConfig.BASE_URL
-    }
     private const val TIME_OUT_SEC = 5L
 
     private val interceptor = HttpLoggingInterceptor().apply {

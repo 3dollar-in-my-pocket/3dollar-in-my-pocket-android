@@ -25,11 +25,11 @@ object SharedPrefUtils {
     }
 
     fun changeServerStatus() = sharedPreferences.edit {
-        putBoolean("test", !getServerStatus())
+        putBoolean("test", !isTestServer())
         commit()
     }
 
-    fun getServerStatus() = sharedPreferences.getBoolean("test", false)
+    fun isTestServer() = sharedPreferences.getBoolean("test", true) // true일때 개발서버
 
     fun isFirstPermissionCheck(): Boolean {
         val isFirst = sharedPreferences.getBoolean(FIRST_PERMISSION_CHECK, true)

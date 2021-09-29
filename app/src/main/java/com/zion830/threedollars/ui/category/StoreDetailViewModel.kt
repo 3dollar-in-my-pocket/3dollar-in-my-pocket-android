@@ -16,7 +16,10 @@ import com.zion830.threedollars.repository.model.response.StoreDetailResponse
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import retrofit2.await
 import retrofit2.awaitResponse
@@ -90,10 +93,24 @@ class StoreDetailViewModel : BaseViewModel() {
         get() = _photoDeleted
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
+        showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.getStoreDetail(storeId, latitude, longitude).await()
             _storeInfo.postValue(data)
+            hideLoading()
         }
+    }
+
+    fun refresh() {
+        if (storeInfo.value == null) {
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.getStoreDetail(storeInfo.value!!.id, storeInfo.value!!.latitude, storeInfo.value!!.longitude).await()
+            _storeInfo.postValue(data)
+        }
+        hideLoading()
     }
 
     fun clearReview() {
@@ -171,13 +188,11 @@ class StoreDetailViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val responses = images.map { image ->
                 async(Dispatchers.IO + coroutineExceptionHandler) {
-                    repository.saveImage(storeInfo.value?.id ?: -1, image)
+                    val result = repository.saveImage(storeInfo.value?.id ?: -1, image).execute()
                 }
             }
             responses.awaitAll()
-            withContext(Dispatchers.Main) {
-                hideLoading()
-            }
+            refresh()
         }
     }
 
