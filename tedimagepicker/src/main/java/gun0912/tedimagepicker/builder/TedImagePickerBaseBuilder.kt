@@ -117,7 +117,7 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
                     } else {
                         onErrorListener?.onError(Throwable())
                     }
-                })
+                }).startActivityForResult()
             }
     }
 

@@ -129,21 +129,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
 
-                    <include
-                        android:id="@+id/view_done_bottom"
-                        layout="@layout/layout_done_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/default_padding_small"
-                        android:visibility="@{showButton &amp;&amp; buttonGravity == ButtonGravity.BOTTOM ? View.VISIBLE : View.GONE}"
-                        app:background="@{buttonBackground}"
-                        app:buttonDrawableOnly="@{buttonDrawableOnly}"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:text="@{buttonText}"
-                        app:textColor="@{buttonTextColor}" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.drawerlayout.widget.DrawerLayout
@@ -178,8 +163,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginEnd="@dimen/default_padding_small"
-                android:layout_marginBottom="34dp"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginBottom="44dp"
                 android:visibility="@{showButton &amp;&amp; buttonGravity == ButtonGravity.TOP ? View.VISIBLE : View.GONE}"
                 app:background="@{buttonBackground}"
                 app:buttonDrawableOnly="@{buttonDrawableOnly}"

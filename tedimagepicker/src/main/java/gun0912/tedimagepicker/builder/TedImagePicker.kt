@@ -3,7 +3,6 @@ package gun0912.tedimagepicker.builder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import gun0912.tedimagepicker.builder.listener.OnErrorListener
 import gun0912.tedimagepicker.builder.listener.OnMultiSelectedListener
 import gun0912.tedimagepicker.builder.listener.OnSelectedListener
@@ -55,7 +54,6 @@ class TedImagePicker {
         }
 
         fun startMultiImage(action: (List<Uri>) -> Unit) {
-            Log.d("btn", "click3")
             startMultiImage(object : OnMultiSelectedListener {
                 override fun onSelected(uriList: List<Uri>) {
                     action(uriList)

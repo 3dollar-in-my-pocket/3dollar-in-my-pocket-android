@@ -38,6 +38,7 @@ import gun0912.tedimagepicker.util.ToastUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.layout_done_button.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -74,7 +75,6 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         setupButton()
         setupAlbumType()
         loadMedia()
-
     }
 
     private fun startAnimation() {
@@ -125,7 +125,6 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         }
 
         val selectedItemCount = mediaAdapter.selectedUriList.size
-        binding.viewDoneBottom.text = getString(R.string.ted_image_picker_done).format(selectedItemCount)
         binding.viewDoneTop.text = getString(R.string.ted_image_picker_done).format(selectedItemCount)
     }
 
@@ -398,14 +397,7 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     }
 
     private fun setupListener() {
-//        binding.viewSelectedAlbum.setOnClickListener {
-//            binding.drawerLayout.toggle()
-//        }
-
-        binding.viewDoneTop.root.setOnClickListener {
-            onMultiMediaDone()
-        }
-        binding.viewDoneBottom.root.setOnClickListener {
+        binding.viewDoneTop.root.btn_submit.setOnClickListener {
             onMultiMediaDone()
         }
 
