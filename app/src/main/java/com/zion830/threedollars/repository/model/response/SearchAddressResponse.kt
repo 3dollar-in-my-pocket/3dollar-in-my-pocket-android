@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SearchAddressResponse(
     @SerializedName("addresses")
-    val addresses: List<Addresse> = listOf(),
+    val addresses: List<Addresse>? = listOf(),
     @SerializedName("errorMessage")
     val errorMessage: String = "",
     @SerializedName("meta")

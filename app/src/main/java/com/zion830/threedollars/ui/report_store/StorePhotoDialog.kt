@@ -40,7 +40,6 @@ class StorePhotoDialog : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val binding = FragmentStorePhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
 
         val adapter = StoreImageSliderAdapter()
         val indicatorAdapter = StorePreviewImageAdapter(object : OnItemClickListener<StoreImage> {

@@ -105,7 +105,9 @@ class StoreDetailActivity :
             }
         }
         binding.btnAddPhoto.setOnClickListener {
+            Log.d("btn", "click")
             TedImagePicker.with(this).zoomIndicator(false).startMultiImage { uriData ->
+                Log.d("btn", "click2")
                 lifecycleScope.launch {
                     viewModel.saveImages(getImageFiles(uriData))
                     viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)

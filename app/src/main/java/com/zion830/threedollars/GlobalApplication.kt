@@ -24,10 +24,10 @@ class GlobalApplication : Application() {
         super.onCreate()
         APPLICATION_CONTEXT = applicationContext
 
-        KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
         NaverMapSdk.getInstance(this).client = NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
         RequestConfiguration.Builder().setTestDeviceIds(listOf("07A9ED1165A5E6773B9B8F7BF369CA80")).build()
         MobileAds.initialize(this)
         HackleApp.initializeApp(this, BuildConfig.HACKLE_KEY)
+        KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
     }
 }

@@ -25,6 +25,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override val viewModel: HomeViewModel by activityViewModels()
 
+    private val searchViewModel: SearchAddressViewModel by activityViewModels()
+
     private lateinit var adapter: NearStoreRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
@@ -37,6 +39,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         })
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
+        searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
+            naverMapFragment.moveCameraWithAnim(it)
+            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+        }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
             adapter.submitList(store)
         }

@@ -9,15 +9,17 @@
             type="com.zion830.threedollars.repository.model.response.Addresse" />
         
         <variable
-            name="onClick"
+            name="listener"
             type="zion830.com.common.listener.OnItemClickListener" />
     </data>
-    
+
     <LinearLayout
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> listener.onClick(item)}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        
+
         <TextView
             android:id="@+id/tv_address"
             android:layout_width="wrap_content"

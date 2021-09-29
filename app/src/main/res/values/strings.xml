@@ -173,6 +173,7 @@
     
     <string name="store_type">가게형태</string>
     <string name="empty_data">아직 등록된 정보가 없어요.</string>
+    <string name="empty_result">검색 결과가 없어요.</string>
     <string name="show_type">출몰시기</string>
     <string name="payment_type">결제방식</string>
     <string name="show_all">모두보기</string>

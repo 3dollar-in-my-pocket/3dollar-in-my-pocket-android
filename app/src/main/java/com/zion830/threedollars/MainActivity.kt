@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
+import com.zion830.threedollars.ui.home.SearchAddressViewModel
 import com.zion830.threedollars.utils.requestPermissionFirst
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
@@ -21,6 +22,8 @@ import zion830.com.common.listener.OnBackPressedListener
 class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home), ActivityCompat.OnRequestPermissionsResultCallback {
 
     override val viewModel: UserInfoViewModel by viewModels()
+
+    private val searchViewModel: SearchAddressViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 

@@ -1,5 +1,8 @@
 package com.zion830.threedollars.ui.home
 
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
@@ -21,8 +24,11 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     override fun initView() {
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Addresse> {
             override fun onClick(item: Addresse) {
-                viewModel.requestStoreInfo(LatLng(item.x.toDouble(), item.y.toDouble()))
+                val location = LatLng(item.y.toDouble(), item.x.toDouble())
+                viewModel.requestStoreInfo(location)
+                searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
+                searchViewModel.clear()
             }
         })
         binding.rvSearchResult.adapter = adapter
@@ -35,7 +41,17 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
         }
         searchViewModel.searchResult.observe(viewLifecycleOwner) {
-            adapter.submitList(it.addresses)
+            adapter.submitList(it?.addresses ?: emptyList())
+            binding.tvEmpty.isVisible = it?.addresses.isNullOrEmpty()
+        }
+
+        binding.etSearch.setOnEditorActionListener { _, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (keyEvent != null && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER)
+            ) {
+                binding.btnSearch.performClick()
+            }
+            false
         }
     }
 }

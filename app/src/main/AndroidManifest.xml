@@ -4,6 +4,7 @@
     package="com.zion830.threedollars">
     
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     
     <queries>
@@ -21,7 +22,7 @@
         tools:targetApi="m">
     
         <activity
-            android:exported="false"
+            android:exported="true"
             android:name=".splash.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>

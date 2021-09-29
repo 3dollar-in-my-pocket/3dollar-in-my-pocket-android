@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.MapRepository
 import com.zion830.threedollars.repository.model.response.SearchAddressResponse
@@ -14,8 +15,11 @@ class SearchAddressViewModel : BaseViewModel() {
 
     private val repository: MapRepository = MapRepository(RetrofitBuilder.mapService)
 
-    private val _searchResult: MutableLiveData<SearchAddressResponse> = MutableLiveData()
-    val searchResult: LiveData<SearchAddressResponse> = _searchResult
+    private val _searchResult: MutableLiveData<SearchAddressResponse?> = MutableLiveData()
+    val searchResult: LiveData<SearchAddressResponse?> = _searchResult
+
+    private val _searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
+    val searchResultLocation: LiveData<LatLng> = _searchResultLocation
 
     fun search(query: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -23,8 +27,16 @@ class SearchAddressViewModel : BaseViewModel() {
         }
     }
 
+    fun updateLatLng(latlng: LatLng) {
+        _searchResultLocation.value = latlng
+    }
+
+    fun clear() {
+        _searchResult.postValue(null)
+    }
+
     override fun handleError(t: Throwable) {
         super.handleError(t)
-        _searchResult.value = null
+        _searchResult.postValue(null)
     }
 }
