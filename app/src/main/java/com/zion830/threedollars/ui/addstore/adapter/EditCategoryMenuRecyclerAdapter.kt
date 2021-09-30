@@ -11,11 +11,12 @@ import zion830.com.common.listener.OnItemClickListener
 class EditCategoryMenuRecyclerAdapter(
     private val delete: (SelectedCategory) -> Unit
 ) : RecyclerView.Adapter<BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>>() {
-    private val items = arrayListOf<SelectedCategory>()
+    private val _items = arrayListOf<SelectedCategory>()
+    val items = _items.toList()
 
     fun setItems(items: List<SelectedCategory>?) {
-        this.items.clear()
-        this.items.addAll(items ?: listOf())
+        this._items.clear()
+        this._items.addAll(items ?: listOf())
         notifyDataSetChanged()
     }
 
@@ -35,17 +36,17 @@ class EditCategoryMenuRecyclerAdapter(
             }
         }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = _items.size
 
     override fun onBindViewHolder(
         holder: BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>,
         position: Int
     ) {
         holder.bind(
-            items[position],
+            _items[position],
             object : OnItemClickListener<SelectedCategory> {
                 override fun onClick(item: SelectedCategory) {
-                    items.removeAt(items.indexOf(item))
+                    _items.removeAt(_items.indexOf(item))
                     delete(item)
                     notifyDataSetChanged()
                 }
@@ -53,7 +54,7 @@ class EditCategoryMenuRecyclerAdapter(
     }
 
     fun clear() {
-        items.clear()
+        _items.clear()
         notifyDataSetChanged()
     }
 }

@@ -1,12 +1,13 @@
 package com.zion830.threedollars.repository
 
-import com.zion830.threedollars.network.NaverMapApi
+import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.network.KakaoMapApi
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.model.response.SearchAddressResponse
 
 class MapRepository(
-    private val service: NaverMapApi = RetrofitBuilder.mapService
+    private val service: KakaoMapApi = RetrofitBuilder.mapService
 ) {
 
-    suspend fun searchAddress(query: String): SearchAddressResponse = service.searchAddress(query = query)
+    suspend fun searchAddress(query: String, latLng: LatLng): SearchAddressResponse = service.searchAddress(query, latLng.longitude, latLng.latitude)
 }

@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    private val GEOCODING_URL = "https://naveropenapi.apigw.ntruss.com/"
+    private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
     private val BASE_URL: String =
         if (BuildConfig.BUILD_TYPE == "debug") {
             if (SharedPrefUtils.isTestServer()) {
@@ -49,12 +49,12 @@ object RetrofitBuilder {
         .build()
         .create(ServiceApi::class.java)
 
-    val mapService: NaverMapApi = Retrofit.Builder()
-        .baseUrl(GEOCODING_URL)
+    val mapService: KakaoMapApi = Retrofit.Builder()
+        .baseUrl(KAKAO_SEARCH_URL)
         .addConverterFactory(GsonConverterFactory.create())
-        .client(okHttpClient)
+        .client(okHttpClientNoHeader)
         .build()
-        .create(NaverMapApi::class.java)
+        .create(KakaoMapApi::class.java)
 
     val loginService: ServiceApi = Retrofit.Builder()
         .baseUrl(BASE_URL)

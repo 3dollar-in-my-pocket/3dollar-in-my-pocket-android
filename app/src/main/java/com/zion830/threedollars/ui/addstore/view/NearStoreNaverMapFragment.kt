@@ -36,7 +36,7 @@ class NearStoreNaverMapFragment() : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         viewModel.requestStoreInfo(position)
-        viewModel.updateSearchLocation(position)
+        viewModel.updateCurrentLocation(position)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

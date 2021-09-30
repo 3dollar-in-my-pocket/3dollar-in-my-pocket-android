@@ -5,12 +5,13 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-interface NaverMapApi {
+interface KakaoMapApi {
 
-    @GET("map-geocode/v2/geocode")
+    @GET("/v2/local/search/keyword.json")
     suspend fun searchAddress(
-        @Header("X-NCP-APIGW-API-KEY-ID") clientId: String = "g3xhgeea6p",
-        @Header("X-NCP-APIGW-API-KEY") clientSecret: String = "iU9znhSI0u35yAgEktAmbhYwk7xozIjyWlHstvTX",
         @Query("query") query: String,
+        @Query("x") longitude: Double,
+        @Query("y") latitude: Double,
+        @Header("Authorization") authorization: String = "KakaoAK 5bbbafb84c73c6be5b181b6f3d514129"
     ): SearchAddressResponse
 }

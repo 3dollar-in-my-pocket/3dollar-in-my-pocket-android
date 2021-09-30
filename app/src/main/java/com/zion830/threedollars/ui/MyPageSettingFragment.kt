@@ -51,7 +51,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
                 .setNegativeButton(android.R.string.cancel) { _, _ ->
                 }
                 .setTitle("잠깐!!!!!!")
-                .setMessage("확인을 누르면 앱이 종료되고 다시 로그인 해야돼요.")
+                .setMessage("확인을 누르면 앱이 종료됩니다. 로그인부터 다시 해야돼요.")
                 .create()
                 .show()
         }

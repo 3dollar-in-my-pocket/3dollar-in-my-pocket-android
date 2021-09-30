@@ -20,6 +20,14 @@ class HomeViewModel : BaseViewModel() {
 
     val addressText: MutableLiveData<String> = MutableLiveData()
 
+    val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
+
+    fun updateCurrentLocation(latlng: LatLng) {
+        searchResultLocation.value = latlng
+        currentLocation.value = latlng
+        addressText.value = getCurrentLocationName(latlng)
+    }
+
     fun requestStoreInfo(location: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.getAllStore(location.latitude, location.longitude).execute()
@@ -27,10 +35,5 @@ class HomeViewModel : BaseViewModel() {
                 nearStoreInfo.postValue(data.body())
             }
         }
-    }
-
-    fun updateSearchLocation(latlng: LatLng) {
-        searchResultLocation.value = latlng
-        addressText.value = getCurrentLocationName(latlng)
     }
 }

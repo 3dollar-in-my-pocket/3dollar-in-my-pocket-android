@@ -21,9 +21,9 @@ class SearchAddressViewModel : BaseViewModel() {
     private val _searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
     val searchResultLocation: LiveData<LatLng> = _searchResultLocation
 
-    fun search(query: String) {
+    fun search(query: String, latlng: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _searchResult.postValue(repository.searchAddress(query))
+            _searchResult.postValue(repository.searchAddress(query, latlng))
         }
     }
 

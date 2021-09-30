@@ -33,10 +33,10 @@ class PhotoRecyclerAdapter(
         override fun bind(item: StoreImage, listener: OnItemClickListener<StoreImage>?) {
             super.bind(item, listener)
             when {
-                item.index < MAX_COUNT - 1 -> {
+                item.index < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
                     binding.layoutMore.isVisible = false
                 }
-                item.index == MAX_COUNT - 1 -> {
+                (item.index == MAX_COUNT - 1) -> {
                     binding.tvMoreCount.text = "+${size - MAX_COUNT}"
                 }
                 else -> {

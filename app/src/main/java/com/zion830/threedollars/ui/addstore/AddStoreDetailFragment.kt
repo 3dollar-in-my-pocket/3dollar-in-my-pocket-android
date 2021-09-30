@@ -123,8 +123,9 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
+                val category = editCategoryMenuRecyclerAdapter.items[i].menuType.key
                 val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(Menu(name = name.text.toString(), price = price.text.toString()))
+                menuList.add(Menu(category, name.text.toString(), price.text.toString()))
             }
         }
 
