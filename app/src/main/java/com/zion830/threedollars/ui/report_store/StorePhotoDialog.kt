@@ -71,9 +71,7 @@ class StorePhotoDialog : DialogFragment() {
                     viewModel.deletePhoto(adapter.getItems()[selectedPosition])
                     dismiss()
                 }
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                    dismiss()
-                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .setTitle(R.string.delete_photo_title)
                 .setMessage(R.string.delete_photo_msg)
                 .create()
