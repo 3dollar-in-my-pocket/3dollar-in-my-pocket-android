@@ -134,7 +134,7 @@
     <string name="edit_menu">총 %d개의 메뉴 제보!</string>
     <string name="select">총 %d개 선택하기</string>
     <string name="store_info">가게 정보</string>
-    <string name="edit_info">수정하기</string>
+    <string name="edit_info">정보수정</string>
     <string name="edit_store">가게 정보 수정</string>
     <string name="option">(선택)</string>
     <string name="enable_multi_select">다중선택 가능</string>
