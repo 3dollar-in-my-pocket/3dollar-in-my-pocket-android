@@ -1,0 +1,151 @@
+package com.zion830.threedollars.network
+
+import com.zion830.threedollars.repository.model.request.NewReview
+import com.zion830.threedollars.repository.model.request.NewStore
+import com.zion830.threedollars.repository.model.request.NewUser
+import com.zion830.threedollars.repository.model.response.*
+import okhttp3.MultipartBody
+import okhttp3.Response
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.http.*
+
+interface NewServiceApi {
+
+    // 카테고리
+    @GET("/api/v1/category/distance")
+    fun getCategoryByDistance(
+        @Query("category") category: String,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double
+    ): Call<SearchByDistanceResponse>
+
+    @GET("/api/v1/category/review")
+    fun getCategoryByReview(
+        @Query("category") category: String,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double
+    ): Call<SearchByReviewResponse>
+
+    // 리뷰
+    @POST("/api/v1/review/save")
+    fun saveReview(
+        @Query("storeId") storeId: Int,
+        @Query("userId") userId: Int,
+        @Body newReview: NewReview
+    ): Call<ResponseBody?>
+
+    @PUT("/api/v1/review/{reviewId}")
+    fun editReview(
+        @Path("reviewId") reviewId: Int,
+        @Body newReview: NewReview
+    ): Call<ResponseBody?>
+
+    @DELETE("/api/v1/review/{reviewId}")
+    fun deleteReview(
+        @Path("reviewId") reviewId: Int,
+    ): Call<ResponseBody?>
+
+    // 가게
+    @DELETE("/api/v1/store/delete")
+    fun deleteStore(
+        @Query("deleteReasonType") deleteReasonType: String, // TODO : enum으로 교체
+        @Query("storeId") storeId: Int,
+        @Query("userId") userId: Int
+    ): Call<ResponseBody?>
+
+    @GET("/api/v1/store/detail")
+    fun getStoreDetail(
+        @Query("storeId") storeId: Int,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double
+    ): Call<StoreDetailResponse>
+
+    @GET("/api/v1/store/get")
+    fun getAllStore(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double
+    ): Call<AllStoreResponse>
+
+    @POST("/api/v1/store/save")
+    @Multipart
+    fun saveStore(
+        @QueryMap storeInfo: Map<String, String>,
+        @Part images: List<MultipartBody.Part>
+    ): Call<AddStoreResponse>
+
+    @POST("/api/v2/store")
+    fun saveStore(@Body newStore: NewStore): Call<AddStoreResponse>
+
+    @POST("/api/v1/store/save")
+    fun saveStore(
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
+        @QueryMap storeInfo: Map<String, String>
+    ): Call<AddStoreResponse>
+
+    @PUT("/api/v1/store/update")
+    @Multipart
+    fun updateStore(
+        @QueryMap storeInfo: Map<String, String>,
+        @Part images: List<MultipartBody.Part>
+    ): Call<ResponseBody>
+
+    @PUT("/api/v1/store/update")
+    fun updateStore(
+        @Query("categories") categories: List<String>,
+        @Query("appearanceDays") appearanceDays: List<String>,
+        @Query("paymentMethods") paymentMethods: List<String>,
+        @QueryMap storeInfo: Map<String, String>
+    ): Call<ResponseBody>
+
+    @GET("/api/v1/store/user")
+    fun getMyStore(
+        @Query("userId") userId: Int,
+        @Query("page") page: Int = 1
+    ): Call<MyStoreResponse>
+
+    @POST("/api/v1/store/{storeId}/images")
+    @Multipart
+    fun saveImage(
+        @Path("storeId") storeId: Int,
+        @Part image: MultipartBody.Part
+    ): Call<AddImageResponse>
+
+    @DELETE("/api/v1/store/{storeId}/images/{imageId}")
+    fun deleteImage(
+        @Path("storeId") storeId: Int,
+        @Path("imageId") imageId: Int,
+    ): Call<ResponseBody?>
+
+    @GET("/api/v1/review/user")
+    fun getMyReview(
+        @Query("userId") userId: Int,
+        @Query("page") page: Int = 1
+    ): Call<MyReviewResponse>
+
+    // 사용자
+    @GET("/api/v1/user/info")
+    suspend fun getUser(@Query("userId") userId: Int): UserInfoResponse?
+
+    @POST("/api/v1/user/login")
+    suspend fun tryLogin(@Body newUser: NewUser): LoginResponse?
+
+    @PUT("/api/v1/user/nickname")
+    suspend fun setName(
+        @Query("nickName") name: String,
+        @Query("userId") userId: Int
+    ): Call<Response>
+
+    // 회원 탈퇴
+    @POST("/api/v1/user/signout")
+    fun deleteUser(): Call<ResponseBody?>
+
+    // faq
+    @GET("/api/v1/faq-tags")
+    suspend fun getFaqTags(): FaqTagResponse
+
+    @GET("/api/v1/faqs")
+    suspend fun getFaqByTag(@Query("tagIds") tagIds: IntArray): FaqByTagResponse
+}

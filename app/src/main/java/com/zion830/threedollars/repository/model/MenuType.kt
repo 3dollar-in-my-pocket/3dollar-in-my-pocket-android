@@ -33,7 +33,7 @@ enum class MenuType(
         "땅콩빵, 오늘 널 갖겠어"
     ),
     GUNOKSUSU("GUNOKSUSU", R.string.gunoksusu, R.drawable.icon_menu_oaksusu_selected, R.drawable.icon_menu_oaksusu_nomal, "버터까지 발라서 굽겠어\n군옥수수"),
-    KKOCHI("KKOCHI", R.string.kkochi, R.drawable.icon_menu_dalgkkochi_selected, R.drawable.icon_menu_dalgkkochi_nomal, "꼬치꼬치 캐묻지마 ♥︎"),
+    KKOCHI("KKOCHI", R.string.kkochi, R.drawable.icon_menu_dalgkkochi_selected, R.drawable.icon_menu_dalgkkochi_nomal, "꼬치꼬치 캐묻지마 ♥"),
     TOAST("TOAST", R.string.toast, R.drawable.icon_menu_toast_selected, R.drawable.icon_menu_toast_nomal, "너네 사이에 나도 껴주라,\n토스트"),
     WAFFLE("WAFFLE", R.string.waffle, R.drawable.icon_menu_waffle_selected, R.drawable.icon_menu_waffle_nomal, "넌 어쩜 이름도\n와플일까?"),
     GUKWAPPANG(
@@ -43,7 +43,8 @@ enum class MenuType(
         R.drawable.icon_menu_gughwappang_nomal,
         "사계절 너가 생각나\n국화빵"
     ),
-    SUNDAE("SUNDAE", R.string.sundae, R.drawable.icon_menu_sundae_selected, R.drawable.icon_menu_sundae_nomal, "제발 순대\n간 허파 많이 주세요");
+    SUNDAE("SUNDAE", R.string.sundae, R.drawable.icon_menu_sundae_selected, R.drawable.icon_menu_sundae_nomal, "제발 순대\n간 허파 많이 주세요"),
+    DALGONA("DALGONA", R.string.dalgona, R.drawable.ic_dalgona, R.drawable.ic_dalgona, "선생님, 저랑 달고나\n한번 드시겠습니까?");
 
     fun getName() = StringUtils.getString(displayNameId)
 
