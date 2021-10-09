@@ -8,21 +8,14 @@ import com.zion830.threedollars.repository.MyStoreDataSource
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.response.*
 import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.repository.model.v2.response.my.MyReviewResponse
 import com.zion830.threedollars.repository.model.v2.response.my.MyReviews
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
-import com.zion830.threedollars.repository.model.v2.response.store.AddImageResponse
-import com.zion830.threedollars.repository.model.v2.response.store.ImageInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.NaverMapUtils
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import retrofit2.await
 import zion830.com.common.base.BaseViewModel
-import java.net.ConnectException
 
 class UserInfoViewModel : BaseViewModel() {
 
@@ -51,7 +44,9 @@ class UserInfoViewModel : BaseViewModel() {
 
     val myStore: LiveData<List<StoreInfo>?> = refresh.switchMap {
         liveData(Dispatchers.IO + coroutineExceptionHandler) {
-            emit(userRepository.getMyStore(0.0, 0.0, 0).body()?.data?.contents)
+            emit(
+                userRepository.getMyStore(NaverMapUtils.DEFAULT_LOCATION.latitude, NaverMapUtils.DEFAULT_LOCATION.longitude, 0).body()?.data?.contents
+            )
         }
     }
 
@@ -86,24 +81,22 @@ class UserInfoViewModel : BaseViewModel() {
         if (userName.value.isNullOrBlank()) {
             return
         }
-        val updateNameHandler = CoroutineExceptionHandler { _, t ->
-            when (t) {
-                is HttpException -> {
-                    _isAlreadyUsed.postValue(true)
-                }
-                is ConnectException -> {
-                    _msgTextId.postValue(R.string.set_name_failed)
-                }
-                else -> {
-                    _msgTextId.postValue(R.string.set_name_success)
-                    _isNameUpdated.postValue(true)
-                    updateUserInfo()
-                }
-            }
-        }
 
-        viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
-            userRepository.updateName(userName.value!!)
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val checkName = userRepository.checkName(userName.value!!)
+            if (checkName.body()?.resultCode?.isNotBlank() == true) {
+                _isAlreadyUsed.postValue(true)
+                return@launch
+            }
+
+            val result = userRepository.updateName(userName.value!!)
+            if (result.isSuccessful) {
+                _msgTextId.postValue(R.string.set_name_success)
+                _isNameUpdated.postValue(true)
+                updateUserInfo()
+            } else {
+                _isAlreadyUsed.postValue(true)
+            }
         }
     }
 
@@ -129,6 +122,12 @@ class UserInfoViewModel : BaseViewModel() {
                     _msgTextId.postValue(R.string.failed_delete_account)
                 }
             }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            userRepository.logout()
         }
     }
 

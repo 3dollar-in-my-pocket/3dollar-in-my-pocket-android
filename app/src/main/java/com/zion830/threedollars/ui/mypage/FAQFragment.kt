@@ -8,8 +8,6 @@ import androidx.fragment.app.viewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
-import com.zion830.threedollars.repository.model.response.FaqTag
-import com.zion830.threedollars.repository.model.v2.response.FAQ
 import com.zion830.threedollars.repository.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -38,7 +36,9 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.frag
                 it,
                 { tag -> buildSpannedString { bold { append(tag.description) } } },
                 { tag -> tag == it.first() })
+
             viewModel.loadFaqs(it.first().category)
+            binding.tvSelectedCategory.text = it.first().description
         }
 
         binding.hashViewTags.addOnTagSelectListener { item, _ ->
@@ -52,6 +52,10 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.frag
             binding.tvSelectedCategory.text = selectedCategory?.description
         }
         binding.rvFaqs.adapter = adapter
+
+        viewModel.faqsByTag.observe(viewLifecycleOwner) {
+            adapter.submitList(it.data)
+        }
     }
 
     private fun showDeleteAccountDialog() {
