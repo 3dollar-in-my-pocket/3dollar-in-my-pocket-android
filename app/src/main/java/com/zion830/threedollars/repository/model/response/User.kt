@@ -14,7 +14,7 @@ data class User(
     @SerializedName("socialId")
     val socialId: String = "",
     @SerializedName("socialType")
-    val socialType: String = "",
+    val socialType: String = "KAKAO",
     @SerializedName("state")
     val state: Boolean? = null,
     @SerializedName("status")

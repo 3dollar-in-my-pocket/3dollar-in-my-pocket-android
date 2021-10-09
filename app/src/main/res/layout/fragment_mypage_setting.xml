@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="45dp"
-                    android:text="@{viewModel.userInfo.name}"
+                    android:text="@{viewModel.userInfo.data.name}"
                     android:textColor="@color/color_white"
                     android:textSize="24sp"
                     android:textStyle="bold"

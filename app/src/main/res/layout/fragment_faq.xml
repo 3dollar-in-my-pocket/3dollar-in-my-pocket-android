@@ -2,16 +2,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <import type="android.view.View" />
-        
+
         <variable
             name="viewModel"
             type="com.zion830.threedollars.ui.mypage.FAQViewModel" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical">
-        
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_back" />
-        
+
         <View
             android:id="@+id/view"
             android:layout_width="0dp"
@@ -41,7 +41,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
-        
+
         <ImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute" />
-        
+
         <TextView
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
@@ -66,7 +66,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/view" />
-        
+
         <com.greenfrvr.hashtagview.HashtagView
             android:id="@+id/hash_view_tags"
             android:layout_width="match_parent"
@@ -74,7 +74,6 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            app:composeMode="linear"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_message"
@@ -89,21 +88,53 @@
             app:tagTextColor="@drawable/selector_faq_tag_color"
             app:tagTextGravity="center"
             app:tagTextSize="14sp" />
-        
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/hash_view_tags">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:layout_gravity="bottom"
+                android:background="@color/color_main_red_opa50"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/tv_selected_category"
+                app:layout_constraintStart_toStartOf="@+id/tv_selected_category" />
+
+            <TextView
+                android:id="@+id/tv_selected_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="4dp"
+                android:singleLine="true"
+                android:textColor="@color/color_white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="가게" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_faq"
+            android:id="@+id/rv_faqs"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="24dp"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
+            android:clipToPadding="true"
             android:paddingBottom="8dp"
-            app:bindFaqs="@{viewModel.faqsByTag}"
+            android:textColor="@color/color_white"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hash_view_tags"
-            tools:listitem="@layout/item_faqs" />
+            app:layout_constraintTop_toBottomOf="@id/layout_category"
+            tools:listitem="@layout/item_faq_detail" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

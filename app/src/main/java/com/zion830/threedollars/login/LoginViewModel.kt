@@ -7,13 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.response.LoginResponse
+import com.zion830.threedollars.repository.model.v2.request.LoginRequest
+import com.zion830.threedollars.repository.model.v2.response.my.SignUser
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import retrofit2.await
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.ResultWrapper
 import java.net.ConnectException
+import kotlin.math.log
 
 class LoginViewModel : BaseViewModel() {
 
@@ -21,8 +24,8 @@ class LoginViewModel : BaseViewModel() {
 
     private val userRepository = UserRepository()
 
-    private val _loginResult: MutableLiveData<LoginResponse?> = MutableLiveData()
-    val loginResult: LiveData<LoginResponse?>
+    private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
+    val loginResult: MutableLiveData<ResultWrapper<SignUser?>>
         get() = _loginResult
 
     private val _isAvailable: MutableLiveData<Boolean> = MutableLiveData(true)
@@ -37,10 +40,10 @@ class LoginViewModel : BaseViewModel() {
     val isNameUpdated: LiveData<Boolean>
         get() = _isNameUpdated
 
-    fun tryLogin() {
+    fun tryLogin(accessToken: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userRepository.tryLogin(userName.value!!)
-            _loginResult.postValue(loginResult)
+            val loginResult = userRepository.login(LoginRequest(accessToken))
+            _loginResult.postValue(safeApiCall(loginResult))
         }
     }
 
@@ -49,6 +52,7 @@ class LoginViewModel : BaseViewModel() {
             _msgTextId.value = R.string.name_empty
             return
         }
+
         val updateNameHandler = CoroutineExceptionHandler { _, t ->
             when (t) {
                 is HttpException -> {
@@ -65,7 +69,7 @@ class LoginViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
-            userRepository.updateName(userName.value!!).await()
+            userRepository.updateName(userName.value!!)
         }
     }
 }

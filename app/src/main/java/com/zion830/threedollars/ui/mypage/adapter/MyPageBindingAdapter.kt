@@ -19,6 +19,15 @@ fun ImageView.bindMenuIcon(category: String?) {
     setImageResource(MenuType.of(category).colorIcon)
 }
 
+@BindingAdapter("bindMenuIcons")
+fun ImageView.bindMenuIcons(category: List<MenuType>?) {
+    if (category.isNullOrEmpty()) {
+        return
+    }
+
+    setImageResource(category.first().colorIcon)
+}
+
 @BindingAdapter("bindMenuIntroTitle")
 fun TextView.bindMenuIntroTitle(menuType: MenuType?) {
     if (menuType == null) {

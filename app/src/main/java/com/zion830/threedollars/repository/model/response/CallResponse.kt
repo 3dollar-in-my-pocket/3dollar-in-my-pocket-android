@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CallResponse(
     @SerializedName("data")
-    val `data`: String = "",
+    val data: String = "",
     @SerializedName("message")
     val message: String = "",
     @SerializedName("resultCode")

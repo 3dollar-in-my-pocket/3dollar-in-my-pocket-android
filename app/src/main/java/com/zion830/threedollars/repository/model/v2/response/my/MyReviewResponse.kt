@@ -2,6 +2,7 @@ package com.zion830.threedollars.repository.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.repository.model.MenuType
 
 data class MyReviewResponse(
     @SerializedName("data")
@@ -14,7 +15,7 @@ data class MyReviewResponse(
 
 data class ReviewDetail(
     @SerializedName("categories")
-    val categories: List<String> = listOf(),
+    val categories: List<MenuType> = listOf(),
     @SerializedName("contents")
     val contents: String = "",
     @SerializedName("createdAt")

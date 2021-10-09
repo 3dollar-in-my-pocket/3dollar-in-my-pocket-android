@@ -1,4 +1,4 @@
-package com.zion830.threedollars.repository.model.v2.response
+package com.zion830.threedollars.repository.model.v2.response.store
 
 
 import com.google.gson.annotations.SerializedName

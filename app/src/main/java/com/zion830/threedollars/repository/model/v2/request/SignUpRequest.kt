@@ -7,7 +7,7 @@ data class SignUpRequest(
     @SerializedName("name")
     val name: String = "",
     @SerializedName("socialType")
-    val socialType: String = "",
+    val socialType: String = "KAKAO",
     @SerializedName("token")
     val token: String = ""
 )

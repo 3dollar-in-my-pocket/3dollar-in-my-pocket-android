@@ -1,151 +1,144 @@
 package com.zion830.threedollars.network
 
-import com.zion830.threedollars.repository.model.request.NewReview
-import com.zion830.threedollars.repository.model.request.NewStore
-import com.zion830.threedollars.repository.model.request.NewUser
-import com.zion830.threedollars.repository.model.response.*
+import com.zion830.threedollars.repository.model.v2.request.*
+import com.zion830.threedollars.repository.model.v2.response.*
+import com.zion830.threedollars.repository.model.v2.response.my.*
+import com.zion830.threedollars.repository.model.v2.response.store.*
 import okhttp3.MultipartBody
-import okhttp3.Response
-import okhttp3.ResponseBody
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
+import zion830.com.common.base.BaseResponse
 
 interface NewServiceApi {
 
-    // 카테고리
-    @GET("/api/v1/category/distance")
-    fun getCategoryByDistance(
-        @Query("category") category: String,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
-    ): Call<SearchByDistanceResponse>
-
-    @GET("/api/v1/category/review")
-    fun getCategoryByReview(
-        @Query("category") category: String,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
-    ): Call<SearchByReviewResponse>
-
     // 리뷰
-    @POST("/api/v1/review/save")
+    @POST("/api/v2/store/review")
     fun saveReview(
-        @Query("storeId") storeId: Int,
-        @Query("userId") userId: Int,
-        @Body newReview: NewReview
-    ): Call<ResponseBody?>
+        @Body newReviewRequest: NewReviewRequest
+    ): Response<NewReviewResponse>
 
-    @PUT("/api/v1/review/{reviewId}")
+    @GET("/api/v2/store/reviews/me")
+    fun getMyReviews(
+        @Query("cachingTotalElements") cachingTotalElements: Int = 100,
+        @Query("cursor") cursor: Int = 0,
+        @Query("size") size: Int = 100,
+    ): Response<MyReviewResponse>
+
+    @PUT("/api/v2/store/review/{reviewId}")
     fun editReview(
         @Path("reviewId") reviewId: Int,
-        @Body newReview: NewReview
-    ): Call<ResponseBody?>
+        @Body editReviewRequest: EditReviewRequest
+    ): Response<NewReviewResponse>
 
-    @DELETE("/api/v1/review/{reviewId}")
+    @DELETE("/api/v2/store/review/{reviewId}")
     fun deleteReview(
         @Path("reviewId") reviewId: Int,
-    ): Call<ResponseBody?>
+    ): Response<BaseResponse<String>>
 
     // 가게
-    @DELETE("/api/v1/store/delete")
-    fun deleteStore(
-        @Query("deleteReasonType") deleteReasonType: String, // TODO : enum으로 교체
-        @Query("storeId") storeId: Int,
-        @Query("userId") userId: Int
-    ): Call<ResponseBody?>
-
-    @GET("/api/v1/store/detail")
-    fun getStoreDetail(
-        @Query("storeId") storeId: Int,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
-    ): Call<StoreDetailResponse>
-
-    @GET("/api/v1/store/get")
-    fun getAllStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
-    ): Call<AllStoreResponse>
-
-    @POST("/api/v1/store/save")
-    @Multipart
-    fun saveStore(
-        @QueryMap storeInfo: Map<String, String>,
-        @Part images: List<MultipartBody.Part>
-    ): Call<AddStoreResponse>
-
     @POST("/api/v2/store")
-    fun saveStore(@Body newStore: NewStore): Call<AddStoreResponse>
-
-    @POST("/api/v1/store/save")
     fun saveStore(
-        @Query("categories") categories: List<String>,
-        @Query("appearanceDays") appearanceDays: List<String>,
-        @Query("paymentMethods") paymentMethods: List<String>,
-        @QueryMap storeInfo: Map<String, String>
-    ): Call<AddStoreResponse>
+        @Path("storeId") storeId: Int,
+        @Body newStoreRequest: NewStoreRequest
+    ): Response<NewStoreResponse>
 
-    @PUT("/api/v1/store/update")
+    @PUT("/api/v2/store/{storeId}")
+    fun editStore(
+        @Path("storeId") storeId: Int,
+        @Body editStoreRequest: NewStoreRequest
+    ): Response<NewStoreResponse>
+
+    @DELETE("/api/v2/store/{storeId}")
+    fun deleteStore(
+        @Path("storeId") storeId: Int,
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
+    ): Response<DeleteStoreResponse>
+
+    @DELETE("/api/v2/store/image/{imageId}")
+    fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
+
+    @POST("/api/v2/store/images")
     @Multipart
-    fun updateStore(
-        @QueryMap storeInfo: Map<String, String>,
-        @Part images: List<MultipartBody.Part>
-    ): Call<ResponseBody>
+    fun saveImages(
+        @Part images: List<MultipartBody.Part>,
+        @Query("storeId") storeId: Int
+    ): Response<AddImageResponse>
 
-    @PUT("/api/v1/store/update")
-    fun updateStore(
-        @Query("categories") categories: List<String>,
-        @Query("appearanceDays") appearanceDays: List<String>,
-        @Query("paymentMethods") paymentMethods: List<String>,
-        @QueryMap storeInfo: Map<String, String>
-    ): Call<ResponseBody>
+    // 가게 검색
+    @GET("/api/v2/store")
+    fun getStoreInfo(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("storeId") storeId: Int,
+    ): Response<StoreDetailResponse>
 
-    @GET("/api/v1/store/user")
+    @GET("/api/v2/stores/distance")
+    fun getStoreByDistance(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("category") category: String,
+    ): Response<StoreByDistanceResponse>
+
+    @GET("/api/v2/stores/review")
+    fun getStoreByRating(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("category") category: String,
+    ): Response<StoreByRatingResponse>
+
+    @GET("/api/v2/stores/near")
+    fun getNearStore(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("distance") distance: Double = 10000.0,
+    ): Response<NearStoreResponse>
+
+    @GET("/api/v2/store/{storeId}/images")
+    fun getStoreImages(
+        @Query("storeId") storeId: Int,
+    ): Response<AddImageResponse>
+
+    @GET("/api/v2/stores/me")
     fun getMyStore(
-        @Query("userId") userId: Int,
-        @Query("page") page: Int = 1
-    ): Call<MyStoreResponse>
-
-    @POST("/api/v1/store/{storeId}/images")
-    @Multipart
-    fun saveImage(
-        @Path("storeId") storeId: Int,
-        @Part image: MultipartBody.Part
-    ): Call<AddImageResponse>
-
-    @DELETE("/api/v1/store/{storeId}/images/{imageId}")
-    fun deleteImage(
-        @Path("storeId") storeId: Int,
-        @Path("imageId") imageId: Int,
-    ): Call<ResponseBody?>
-
-    @GET("/api/v1/review/user")
-    fun getMyReview(
-        @Query("userId") userId: Int,
-        @Query("page") page: Int = 1
-    ): Call<MyReviewResponse>
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("cachingTotalElements") cachingTotalElements: Int = 100,
+        @Query("cursor") cursor: Int = 0,
+        @Query("size") size: Int = 100,
+    ): Response<MyStoreResponse>
 
     // 사용자
-    @GET("/api/v1/user/info")
-    suspend fun getUser(@Query("userId") userId: Int): UserInfoResponse?
+    @DELETE("/api/v2/signout")
+    suspend fun signOut(): Response<BaseResponse<String>>
 
-    @POST("/api/v1/user/login")
-    suspend fun tryLogin(@Body newUser: NewUser): LoginResponse?
+    @POST("/api/v2/signup")
+    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
 
-    @PUT("/api/v1/user/nickname")
-    suspend fun setName(
-        @Query("nickName") name: String,
-        @Query("userId") userId: Int
-    ): Call<Response>
+    @POST("/api/v2/login")
+    suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
 
-    // 회원 탈퇴
-    @POST("/api/v1/user/signout")
-    fun deleteUser(): Call<ResponseBody?>
+    @POST("/api/v2/logout")
+    suspend fun logout(): Response<BaseResponse<String>>
+
+    @GET("/api/v2/user/me")
+    suspend fun getMyInfo(): Response<MyInfoResponse>
+
+    @PUT("/api/v2/user/me")
+    suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
+
+    @GET("/api/v2/user/name/check")
+    suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
 
     // faq
-    @GET("/api/v1/faq-tags")
-    suspend fun getFaqTags(): FaqTagResponse
+    @GET("/api/v2/faq/categories")
+    suspend fun getFAQCategory(): Response<FAQCategoryResponse>
 
-    @GET("/api/v1/faqs")
-    suspend fun getFaqByTag(@Query("tagIds") tagIds: IntArray): FaqByTagResponse
+    @GET("/api/v2/faqs")
+    suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 }

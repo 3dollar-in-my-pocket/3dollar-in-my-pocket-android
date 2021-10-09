@@ -8,6 +8,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
 import com.zion830.threedollars.repository.model.response.Store
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
@@ -20,9 +21,9 @@ class MyStoreFragment : BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>(
     private lateinit var adapter: MyStoreRecyclerAdapter
 
     override fun initView() {
-        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<Store> {
-            override fun onClick(item: Store) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
+        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
+            override fun onClick(item: StoreInfo) {
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })

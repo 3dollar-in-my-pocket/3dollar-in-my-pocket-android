@@ -11,6 +11,8 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageBinding
 import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.repository.model.response.Store
+import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewPreviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.adapter.MyStorePreviewRecyclerAdapter
@@ -31,19 +33,19 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
 
     override fun initView() {
         storeAdapter = MyStorePreviewRecyclerAdapter(
-            object : OnItemClickListener<Store> {
-                override fun onClick(item: Store) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
+            object : OnItemClickListener<StoreInfo> {
+                override fun onClick(item: StoreInfo) {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
-            }, object : OnItemClickListener<Store> {
-                override fun onClick(item: Store) {
+            }, object : OnItemClickListener<StoreInfo> {
+                override fun onClick(item: StoreInfo) {
                     addShowAllStoreFragment()
                 }
             })
         reviewAdapter = MyReviewPreviewRecyclerAdapter(
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
+            object : OnItemClickListener<ReviewDetail> {
+                override fun onClick(item: ReviewDetail) {
                     val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
@@ -69,14 +71,14 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
 
     private fun observeUiData() {
         viewModel.myStore.observe(this) {
-            it.store?.let { items ->
-                storeAdapter.submitList(items.toMutableList())
+            it?.let { items ->
+                storeAdapter.submitList(items)
                 binding.ivNoStore.visibility = if (items.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             }
         }
         viewModel.myReview.observe(this) {
-            it.review?.let { items ->
-                reviewAdapter.submitList(items.toMutableList())
+            it.let { items ->
+                reviewAdapter.submitList(items?.contents)
             }
         }
     }

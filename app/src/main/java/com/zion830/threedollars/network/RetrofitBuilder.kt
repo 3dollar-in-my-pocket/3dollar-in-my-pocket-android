@@ -12,11 +12,7 @@ object RetrofitBuilder {
     private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
     private val BASE_URL: String =
         if (BuildConfig.BUILD_TYPE == "debug") {
-            if (SharedPrefUtils.isTestServer()) {
-                "http://3.34.255.158:8080/"
-            } else {
-                "https://server.3dollars-in-my-pocket.com/"
-            }
+            "https://dev.threedollars.co.kr/"
         } else {
             BuildConfig.BASE_URL
         }
@@ -62,4 +58,11 @@ object RetrofitBuilder {
         .client(okHttpClientNoHeader)
         .build()
         .create(ServiceApi::class.java)
+
+    val newServiceApi: NewServiceApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClient)
+        .build()
+        .create(NewServiceApi::class.java)
 }

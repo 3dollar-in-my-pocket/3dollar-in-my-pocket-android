@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class EditNameRequest(
     @SerializedName("name")
-    val name: Int = 0
+    val name: String = ""
 )

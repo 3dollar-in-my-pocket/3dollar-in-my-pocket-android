@@ -18,7 +18,7 @@
     <string name="login_name3">시작할래요</string>
     <string name="login_name_fail">시작못해요</string>
     <string name="login_name_already_exist">중복된 닉네임</string>
-    <string name="login_failed">로그인에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="login_failed">로그인에 실패했습니다. 네크워크 연결 상태를 확인해주세요!</string>
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>

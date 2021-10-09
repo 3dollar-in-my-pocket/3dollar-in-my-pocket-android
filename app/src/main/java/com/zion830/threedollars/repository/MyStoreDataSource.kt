@@ -3,7 +3,8 @@ package com.zion830.threedollars.repository
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagedList
-import com.zion830.threedollars.repository.model.response.Store
+import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -12,41 +13,36 @@ import kotlin.coroutines.CoroutineContext
 
 class MyStoreDataSource(
     private val scope: CoroutineScope,
-    private val context: CoroutineContext
-) : PageKeyedDataSource<Int, Store>() {
+    private val context: CoroutineContext,
+    private val latLng: LatLng
+) : PageKeyedDataSource<Int, StoreInfo>() {
 
     private val repository: UserRepository = UserRepository()
 
-    private var totalPage = 0
-
     class Factory(
         private val scope: CoroutineScope,
-        private val context: CoroutineContext
-    ) : DataSource.Factory<Int, Store>() {
+        private val context: CoroutineContext,
+        private val latLng: LatLng
+    ) : DataSource.Factory<Int, StoreInfo>() {
 
-        override fun create(): DataSource<Int, Store> = MyStoreDataSource(scope, context)
+        override fun create(): DataSource<Int, StoreInfo> = MyStoreDataSource(scope, context, latLng)
     }
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Store>) {
+    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, StoreInfo>) {
         scope.launch(context) {
-            val data = repository.getMyStore().await()
-            totalPage = data.totalPages
-            callback.onResult(data.store ?: listOf(), null, 2)
+            val data = repository.getMyStore(latLng.latitude, latLng.longitude, 0)
+            callback.onResult((data.body()?.data?.contents) as MutableList<StoreInfo>, null, 100)
         }
     }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Store>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, StoreInfo>) {
 
     }
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Store>) {
-        if (params.key > totalPage) {
-            return
-        }
-
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, StoreInfo>) {
         scope.launch(context) {
-            val data = repository.getMyStore(page = params.key).await()
-            callback.onResult(data.store ?: listOf(), params.key + 1)
+            val data = repository.getMyStore(latLng.latitude, latLng.longitude, params.key)
+            callback.onResult((data.body()?.data?.contents as MutableList<StoreInfo>), params.key + PAGE_SIZE)
         }
     }
 
@@ -56,7 +52,7 @@ class MyStoreDataSource(
     }
 
     companion object {
-        private const val PAGE_SIZE = 5
+        private const val PAGE_SIZE = 100
 
         val pageConfig = PagedList.Config.Builder()
             .setPageSize(PAGE_SIZE)

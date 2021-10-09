@@ -1,11 +1,11 @@
-package com.zion830.threedollars.repository.model.v2.response
+package zion830.com.common.base
 
 
 import com.google.gson.annotations.SerializedName
 
-data class BasicResponse(
+data class BaseResponse<T>(
     @SerializedName("data")
-    val `data`: String = "",
+    val data: T? = null,
     @SerializedName("message")
     val message: String = "",
     @SerializedName("resultCode")
