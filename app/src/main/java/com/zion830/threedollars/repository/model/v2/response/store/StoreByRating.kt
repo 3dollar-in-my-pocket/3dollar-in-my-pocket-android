@@ -5,13 +5,19 @@ import com.google.gson.annotations.SerializedName
 
 data class StoreByRating(
     @SerializedName("storeList0")
-    val storeList100: List<StoreList> = listOf(),
+    val storeList0: List<StoreList> = listOf(),
     @SerializedName("storeList1")
-    val storeList1000: List<StoreList> = listOf(),
+    val storeList1: List<StoreList> = listOf(),
     @SerializedName("storeList2")
-    val storeList50: List<StoreList> = listOf(),
+    val storeList2: List<StoreList> = listOf(),
     @SerializedName("storeList3")
-    val storeList500: List<StoreList> = listOf(),
+    val storeList3: List<StoreList> = listOf(),
     @SerializedName("storeList4")
-    val storeListOver1000: List<StoreList> = listOf()
-)
+    val storeList4: List<StoreList> = listOf()
+) {
+    fun isNotEmpty() = !(storeList0.isEmpty() && storeList1.isEmpty() && storeList2.isEmpty() && storeList3.isEmpty() && storeList4.isEmpty())
+
+    fun getStoresOver3(): List<StoreList> = storeList3 + storeList4
+
+    fun getAllStores() = storeList0 + storeList1 + storeList2 + storeList3 + storeList4
+}

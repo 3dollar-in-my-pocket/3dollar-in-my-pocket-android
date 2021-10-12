@@ -14,8 +14,8 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.repository.model.request.Menu
-import com.zion830.threedollars.repository.model.request.NewStore
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
@@ -161,11 +161,11 @@ class EditStoreDetailFragment :
                     return@setOnClickListener
                 }
 
+                getMenuList()
+
                 editStoreViewModel.editStore(
-                    viewModel.storeInfo.value?.id ?: 0,
-                    binding.etName.text.toString(),
-                    NewStore(
-                        addCategoryRecyclerAdapter.getSelectedItems(),
+                    viewModel.storeInfo.value?.storeId ?: 0,
+                    NewStoreRequest(
                         getAppearanceDays(),
                         viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                         viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
@@ -207,8 +207,9 @@ class EditStoreDetailFragment :
         return result.firstOrNull() ?: ""
     }
 
-    private fun getMenuList(): List<Menu> {
-        val menuList = arrayListOf<Menu>()
+    private fun getMenuList(): List<MyMenu> {
+        val menuList = arrayListOf<MyMenu>()
+
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
@@ -218,7 +219,7 @@ class EditStoreDetailFragment :
                     ""
                 }
                 val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(Menu(category, name.text.toString(), price.text.toString()))
+                menuList.add(MyMenu(category, name.text.toString(), price.text.toString()))
             }
         }
 
@@ -259,7 +260,7 @@ class EditStoreDetailFragment :
                 locationResult.addOnSuccessListener {
                     if (it != null) {
                         viewModel.requestStoreInfo(
-                            viewModel.storeInfo.value?.id ?: 0,
+                            viewModel.storeInfo.value?.storeId ?: 0,
                             it.latitude,
                             it.longitude
                         )

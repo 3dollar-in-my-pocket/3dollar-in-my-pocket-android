@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.StoreList" />
+            type="com.zion830.threedollars.repository.model.v2.response.store.StoreList" />
         
         <variable
             name="listener"

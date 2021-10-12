@@ -1,8 +1,9 @@
 package com.zion830.threedollars.network
 
-import com.zion830.threedollars.repository.model.response.SearchAddressResponse
+import com.zion830.threedollars.repository.model.v2.response.kakao.SearchAddressResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface KakaoMapApi {

@@ -9,8 +9,6 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageBinding
-import com.zion830.threedollars.repository.model.response.Review
-import com.zion830.threedollars.repository.model.response.Store
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MyPageSettingFragment

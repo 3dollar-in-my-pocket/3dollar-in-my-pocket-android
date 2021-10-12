@@ -20,12 +20,12 @@ fun ImageView.bindMenuIcon(category: String?) {
 }
 
 @BindingAdapter("bindMenuIcons")
-fun ImageView.bindMenuIcons(category: List<MenuType>?) {
+fun ImageView.bindMenuIcons(category: List<String>?) {
     if (category.isNullOrEmpty()) {
         return
     }
 
-    setImageResource(category.first().colorIcon)
+    setImageResource(MenuType.of(category.first()).colorIcon)
 }
 
 @BindingAdapter("bindMenuIntroTitle")
@@ -54,6 +54,15 @@ fun ImageView.bindWhiteMenuIcon(category: String?) {
     }
 
     setImageResource(MenuType.of(category).colorIcon)
+}
+
+@BindingAdapter("bindWhiteMenuIcon")
+fun ImageView.bindWhiteMenuIcon(categories: List<String>?) {
+    if (categories.isNullOrEmpty()) {
+        return
+    }
+
+    setImageResource(MenuType.of(categories.firstOrNull()).colorIcon)
 }
 
 @BindingAdapter("bindMenuIcon", "isSelected")

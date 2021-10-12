@@ -14,7 +14,7 @@ package com.zion830.threedollars.ui.addstore.activity
 //import com.zion830.threedollars.Constants
 //import com.zion830.threedollars.R
 //import com.zion830.threedollars.repository.model.MenuType
-//import com.zion830.threedollars.repository.model.response.Menu
+//import com.zion830.threedollars.repository.model.v2.request.Menu
 //import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 //import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 //import com.zion830.threedollars.ui.store_detail.StoreDetailActivity

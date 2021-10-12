@@ -16,6 +16,8 @@ import com.zion830.threedollars.utils.SizeUtils
 class NearStoreNaverMapFragment() : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
+    private var isFirstLoad = true
+
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
@@ -24,14 +26,18 @@ class NearStoreNaverMapFragment() : NaverMapFragment() {
         binding.btnFindLocation.layoutParams = params
 
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            addMarkers(R.drawable.ic_store_selected, res.map { LatLng(it.latitude, it.longitude) })
+            addMarkers(R.drawable.ic_store_selected, (res ?: listOf()).map { LatLng(it.latitude, it.longitude) })
         }
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {
                 // 재검색 버튼 띄우기
             }
         }
-        moveToCurrentLocation()
+
+        if (isFirstLoad) {
+            moveToCurrentLocation()
+            isFirstLoad = false
+        }
     }
 
     override fun onMyLocationLoaded(position: LatLng) {

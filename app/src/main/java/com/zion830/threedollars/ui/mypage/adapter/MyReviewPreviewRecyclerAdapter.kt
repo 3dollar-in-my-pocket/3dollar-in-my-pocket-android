@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.mypage.adapter
 
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyReviewPreviewBinding
-import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.listener.OnItemClickListener

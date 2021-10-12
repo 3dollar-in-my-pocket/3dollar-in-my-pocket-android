@@ -13,67 +13,71 @@ interface NewServiceApi {
 
     // 리뷰
     @POST("/api/v2/store/review")
-    fun saveReview(
+    suspend fun saveReview(
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
 
     @GET("/api/v2/store/reviews/me")
-    fun getMyReviews(
-        @Query("cachingTotalElements") cachingTotalElements: Int = 100,
-        @Query("cursor") cursor: Int = 0,
+    suspend fun getMyReviews(
+        @Query("cachingTotalElements") cachingTotalElements: Int,
+        @Query("cursor") cursor: Int,
+        @Query("size") size: Int = 100,
+    ): Response<MyReviewResponse>
+
+    @GET("/api/v2/store/reviews/me")
+    suspend fun getMyReviews(
         @Query("size") size: Int = 100,
     ): Response<MyReviewResponse>
 
     @PUT("/api/v2/store/review/{reviewId}")
-    fun editReview(
+    suspend fun editReview(
         @Path("reviewId") reviewId: Int,
         @Body editReviewRequest: EditReviewRequest
     ): Response<NewReviewResponse>
 
     @DELETE("/api/v2/store/review/{reviewId}")
-    fun deleteReview(
+    suspend fun deleteReview(
         @Path("reviewId") reviewId: Int,
     ): Response<BaseResponse<String>>
 
     // 가게
     @POST("/api/v2/store")
-    fun saveStore(
-        @Path("storeId") storeId: Int,
+    suspend fun saveStore(
         @Body newStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
 
     @PUT("/api/v2/store/{storeId}")
-    fun editStore(
+    suspend fun editStore(
         @Path("storeId") storeId: Int,
         @Body editStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
 
     @DELETE("/api/v2/store/{storeId}")
-    fun deleteStore(
+    suspend fun deleteStore(
         @Path("storeId") storeId: Int,
         @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
     ): Response<DeleteStoreResponse>
 
     @DELETE("/api/v2/store/image/{imageId}")
-    fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
+    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
 
     @POST("/api/v2/store/images")
     @Multipart
-    fun saveImages(
+    suspend fun saveImages(
         @Part images: List<MultipartBody.Part>,
         @Query("storeId") storeId: Int
     ): Response<AddImageResponse>
 
     // 가게 검색
     @GET("/api/v2/store")
-    fun getStoreInfo(
+    suspend fun getStoreInfo(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("storeId") storeId: Int,
     ): Response<StoreDetailResponse>
 
     @GET("/api/v2/stores/distance")
-    fun getStoreByDistance(
+    suspend fun getStoreByDistance(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
@@ -82,7 +86,7 @@ interface NewServiceApi {
     ): Response<StoreByDistanceResponse>
 
     @GET("/api/v2/stores/review")
-    fun getStoreByRating(
+    suspend fun getStoreByRating(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
@@ -91,7 +95,7 @@ interface NewServiceApi {
     ): Response<StoreByRatingResponse>
 
     @GET("/api/v2/stores/near")
-    fun getNearStore(
+    suspend fun getNearStore(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
@@ -100,16 +104,23 @@ interface NewServiceApi {
     ): Response<NearStoreResponse>
 
     @GET("/api/v2/store/{storeId}/images")
-    fun getStoreImages(
+    suspend fun getStoreImages(
         @Query("storeId") storeId: Int,
     ): Response<AddImageResponse>
 
     @GET("/api/v2/stores/me")
-    fun getMyStore(
+    suspend fun getMyStore(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("cachingTotalElements") cachingTotalElements: Int = 100,
-        @Query("cursor") cursor: Int = 0,
+        @Query("cachingTotalElements") cachingTotalElements: Int,
+        @Query("cursor") cursor: Int,
+        @Query("size") size: Int = 100,
+    ): Response<MyStoreResponse>
+
+    @GET("/api/v2/stores/me")
+    suspend fun getMyStore(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
         @Query("size") size: Int = 100,
     ): Response<MyStoreResponse>
 

@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.request.NewStore
+import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,14 +47,19 @@ class AddStoreViewModel : BaseViewModel() {
         it.count { item -> item.isSelected }
     }
 
-    fun addNewStore(newStore: NewStore) {
+    fun addNewStore(newStore: NewStoreRequest) {
+        if (newStore.menus.isEmpty()) {
+            showToast("한개 이상의 메뉴가 필요합니다.") // TODO : 삭제
+            return
+        }
+
         showLoading()
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.saveStore(newStore).execute()
+            val result = repository.saveStore(newStore)
 
             if (result.isSuccessful) {
-                val storeId = result.body()?.storeId
+                val storeId = result.body()?.data?.storeId
                 _newStoreId.postValue(storeId)
             } else {
                 _newStoreId.postValue(-1)
@@ -63,27 +68,6 @@ class AddStoreViewModel : BaseViewModel() {
             withContext(Dispatchers.Main) {
                 hideLoading()
             }
-        }
-    }
-
-    fun addNewStoreByQuery(newStore: NewStore) {
-        showLoading()
-
-        val params = hashMapOf<String, String>(
-            Pair("userId", SharedPrefUtils.getUserId().toString()),
-            Pair("latitude", newStore.latitude.toString()),
-            Pair("longitude", newStore.longitude.toString()),
-            Pair("storeName", storeName.value ?: ""),
-        )
-        newStore.menus.forEachIndexed { index, menu ->
-            params["menu[$index].name"] = menu.name
-            params["menu[$index].price"] = menu.price
-        }
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.saveStore(newStore.categories, newStore.appearanceDays, newStore.paymentMethods, params).execute()
-            hideLoading()
-            _newStoreId.postValue(if (result.isSuccessful) 1 else -1)
         }
     }
 

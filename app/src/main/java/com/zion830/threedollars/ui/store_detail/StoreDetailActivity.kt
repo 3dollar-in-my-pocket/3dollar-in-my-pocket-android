@@ -21,7 +21,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
-import com.zion830.threedollars.repository.model.response.Review
+import com.zion830.threedollars.repository.model.v2.response.Review
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
@@ -77,13 +77,12 @@ class StoreDetailActivity :
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
-                    AddReviewDialog.getInstance(item)
-                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
+                    AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                 }
             },
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
-                    viewModel.deleteReview(item.id)
+                    viewModel.deleteReview(item.reviewId)
                 }
             },
         )
@@ -139,7 +138,7 @@ class StoreDetailActivity :
             )
         }
         viewModel.addReviewResult.observe(this) {
-            viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+            naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(storeId, latLng.latitude, latLng.longitude) }
         }
         viewModel.photoDeleted.observe(this) {
             if (it) {
@@ -149,10 +148,12 @@ class StoreDetailActivity :
             }
         }
         viewModel.storeInfo.observe(this) {
+            val distance = it?.distance ?: 1000
+            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
             binding.tvStoreType.isVisible = it?.storeType != null
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
-            reviewAdapter.submitList(it?.review)
-            photoAdapter.submitList(it?.image?.mapIndexed { index, image ->
+            reviewAdapter.submitList(it?.reviews)
+            photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(
                     index,
                     null,

@@ -5,7 +5,6 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyRestaurantBinding
-import com.zion830.threedollars.repository.model.response.Store
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener

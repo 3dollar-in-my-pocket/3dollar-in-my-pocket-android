@@ -54,23 +54,25 @@ open class BaseViewModel : ViewModel() {
                 }
 
                 if (result.isSuccessful) {
-                    when {
-                        result.body()?.resultCode.isNullOrEmpty() -> {
-                            ResultWrapper.Success(result.body()?.data)
-                        }
-                        result.body()?.resultCode?.isDigitsOnly() == true -> {
-                            ResultWrapper.GenericError(result.body()?.resultCode?.toInt(), result.body()?.message)
-                        }
-                        else -> {
-                            ResultWrapper.GenericError(null, result.body()?.message)
-                        }
-                    }
+                    handleSuccessEvent(result)
                 } else {
                     ResultWrapper.GenericError(result.code(), result.message())
                 }
             } catch (throwable: Throwable) {
                 ResultWrapper.NetworkError
             }
+        }
+    }
+
+    private fun <T> handleSuccessEvent(result: Response<BaseResponse<T>>) = when {
+        result.body()?.resultCode.isNullOrEmpty() -> {
+            ResultWrapper.Success(result.body()?.data)
+        }
+        result.body()?.resultCode?.isDigitsOnly() == true -> {
+            ResultWrapper.GenericError(result.body()?.resultCode?.toInt(), result.body()?.message)
+        }
+        else -> {
+            ResultWrapper.GenericError(null, result.body()?.message)
         }
     }
 }

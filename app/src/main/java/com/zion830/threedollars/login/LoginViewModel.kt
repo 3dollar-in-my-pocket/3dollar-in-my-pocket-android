@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.response.LoginResponse
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.response.my.SignUser
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -42,7 +41,7 @@ class LoginViewModel : BaseViewModel() {
 
     fun tryLogin(accessToken: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userRepository.login(LoginRequest(accessToken))
+            val loginResult = userRepository.login(LoginRequest(token = accessToken))
             _loginResult.postValue(safeApiCall(loginResult))
         }
     }

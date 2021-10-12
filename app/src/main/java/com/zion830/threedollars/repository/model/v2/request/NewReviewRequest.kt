@@ -7,7 +7,7 @@ data class NewReviewRequest(
     @SerializedName("contents")
     val contents: String = "",
     @SerializedName("rating")
-    val rating: Int = 0,
+    val rating: Float = 0f,
     @SerializedName("storeId")
     val storeId: Int = 0
 )

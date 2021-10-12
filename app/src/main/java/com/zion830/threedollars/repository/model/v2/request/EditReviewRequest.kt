@@ -7,5 +7,5 @@ data class EditReviewRequest(
     @SerializedName("contents")
     val contents: String = "",
     @SerializedName("rating")
-    val rating: Int = 0
+    val rating: Float = 0f
 )

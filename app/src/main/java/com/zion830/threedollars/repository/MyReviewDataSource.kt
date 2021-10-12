@@ -3,7 +3,6 @@ package com.zion830.threedollars.repository
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagedList
-import com.zion830.threedollars.repository.model.response.Review
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -18,7 +17,8 @@ class MyReviewDataSource(
 
     private val repository: UserRepository = UserRepository()
 
-    private var totalPage = 0
+    private var cursor = -1
+    private var totalElements = 0
 
     class Factory(
         private val scope: CoroutineScope,
@@ -31,7 +31,9 @@ class MyReviewDataSource(
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, ReviewDetail>) {
         scope.launch(context) {
             val data = repository.getMyReviews(0)
-            callback.onResult((data.body()?.data?.contents) as MutableList<ReviewDetail>, null, 100)
+            cursor = data?.body()?.data?.nextCursor ?: -1
+
+            callback.onResult((data.body()?.data?.contents) as MutableList<ReviewDetail>, null, cursor)
         }
     }
 
@@ -40,13 +42,14 @@ class MyReviewDataSource(
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, ReviewDetail>) {
-        if (params.key > totalPage) {
+        if (params.key == -1) {
             return
         }
 
         scope.launch(context) {
             val data = repository.getMyReviews(params.key)
-            callback.onResult((data.body()?.data?.contents) as MutableList<ReviewDetail>, params.key + PAGE_SIZE)
+            cursor = data?.body()?.data?.nextCursor ?: -1
+            callback.onResult((data.body()?.data?.contents) as MutableList<ReviewDetail>, cursor)
         }
     }
 

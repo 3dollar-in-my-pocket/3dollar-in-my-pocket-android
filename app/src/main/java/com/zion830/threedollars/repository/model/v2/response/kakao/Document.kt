@@ -1,5 +1,4 @@
-package com.zion830.threedollars.repository.model.response
-
+package com.zion830.threedollars.repository.model.v2.response.kakao
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,6 +1,6 @@
-package com.zion830.threedollars.repository.model.response
+package com.zion830.threedollars.repository.model
 
-import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.Menu
 
 data class Category(
     val name: String? = "",

@@ -6,7 +6,8 @@ import com.zion830.threedollars.GlobalApplication
 
 object SharedPrefUtils {
     private const val PREFERENCE_FILE_KEY = "preference_file_key"
-    private const val KAKAO_ID_KEY = "kakao_id_key"
+    private const val KAKAO_ACCESS_TOKEN = "kakao_access_token"
+    private const val KAKAO_REFRESH_TOKEN = "kakao_refresh_token"
     private const val USER_NAME_KEY = "user_name_key"
     private const val USER_ID_KEY = "user_id_key"
     private const val ACCESS_TOKEN_KEY = "access_token_key"
@@ -47,8 +48,9 @@ object SharedPrefUtils {
         commit()
     }
 
-    fun saveKakaoToken(token: String?) = sharedPreferences.edit {
-        putString(KAKAO_ID_KEY, token)
+    fun saveKakaoToken(accessToken: String?, refreshToken: String) = sharedPreferences.edit {
+        putString(KAKAO_ACCESS_TOKEN, accessToken)
+        putString(KAKAO_REFRESH_TOKEN, refreshToken)
         commit()
     }
 
@@ -56,12 +58,14 @@ object SharedPrefUtils {
 
     fun getUserId() = sharedPreferences.getInt(USER_ID_KEY, -1)
 
-    fun getKakaoToken() = sharedPreferences.getString(KAKAO_ID_KEY, null)
+    fun getKakaoToken() = sharedPreferences.getString(KAKAO_ACCESS_TOKEN, null)
+
+    fun getKakaoRefreshToken() = sharedPreferences.getString(KAKAO_REFRESH_TOKEN, null)
 
     fun clearUserInfo() {
         saveUserName(null)
-        saveAccessToken(null)
-        saveKakaoToken(null)
+        saveAccessToken("")
+        saveKakaoToken("", "")
         saveUserId(-1)
     }
 }

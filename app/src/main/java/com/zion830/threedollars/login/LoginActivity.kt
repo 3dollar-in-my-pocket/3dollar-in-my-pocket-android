@@ -21,18 +21,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     override val viewModel: LoginViewModel by viewModels()
 
     override fun initView() {
-        startMainActivityIfUserExist()
         observeUiData()
 
         binding.btnLoginKakao.onSingleClick {
             tryKakaoLogin()
-        }
-    }
-
-    private fun startMainActivityIfUserExist() {
-        if (SharedPrefUtils.getKakaoToken() != null && SharedPrefUtils.getUserId() >= 0) {
-            startActivity(MainActivity.getIntent(this))
-            finish()
         }
     }
 
@@ -79,7 +71,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 Log.e(localClassName, "로그인 실패", error)
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
-                SharedPrefUtils.saveKakaoToken(token.accessToken)
+                SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
                 tryLogin(token)
             }

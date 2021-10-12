@@ -7,16 +7,16 @@ import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
+import android.util.Log
 
 class EditCategoryMenuRecyclerAdapter(
     private val delete: (SelectedCategory) -> Unit
 ) : RecyclerView.Adapter<BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>>() {
-    private val _items = arrayListOf<SelectedCategory>()
-    val items = _items.toList()
+    val items = arrayListOf<SelectedCategory>()
 
     fun setItems(items: List<SelectedCategory>?) {
-        this._items.clear()
-        this._items.addAll(items ?: listOf())
+        this.items.clear()
+        this.items.addAll(items ?: listOf())
         notifyDataSetChanged()
     }
 
@@ -31,22 +31,22 @@ class EditCategoryMenuRecyclerAdapter(
             ) {
                 super.bind(item, listener)
                 binding.rvMenuEdit.adapter = EditMenuRecyclerAdapter().apply {
-                    submitList(item.menuDetail?.toMutableList())
+                    submitList(item.menuDetail)
                 }
             }
         }
 
-    override fun getItemCount(): Int = _items.size
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(
         holder: BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>,
         position: Int
     ) {
         holder.bind(
-            _items[position],
+            items[position],
             object : OnItemClickListener<SelectedCategory> {
                 override fun onClick(item: SelectedCategory) {
-                    _items.removeAt(_items.indexOf(item))
+                    items.removeAt(items.indexOf(item))
                     delete(item)
                     notifyDataSetChanged()
                 }
@@ -54,7 +54,7 @@ class EditCategoryMenuRecyclerAdapter(
     }
 
     fun clear() {
-        _items.clear()
+        items.clear()
         notifyDataSetChanged()
     }
 }

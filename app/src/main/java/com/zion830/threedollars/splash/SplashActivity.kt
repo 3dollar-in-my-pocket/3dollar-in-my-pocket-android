@@ -6,9 +6,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.observe
-import com.kakao.sdk.auth.LoginClient
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
@@ -30,7 +27,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                tryKakaoLogin()
+                if (SharedPrefUtils.getKakaoToken().isNullOrEmpty()) {
+                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    finish()
+                } else {
+                    tryServiceLogin(SharedPrefUtils.getKakaoToken()!!)
+                }
             }
 
             override fun onAnimationCancel(animation: Animator?) {
@@ -41,31 +43,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                 // do nothing
             }
         })
-
-        tryKakaoLogin()
-    }
-
-    fun tryKakaoLogin() {
-        val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-            if (error != null) {
-                showToast(R.string.error_no_kakao_login)
-            } else if (token != null) {
-                SharedPrefUtils.saveKakaoToken(token.accessToken)
-                tryServiceLogin(token.accessToken)
-            }
-        }
-
-        if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
-            LoginClient.instance.loginWithKakaoTalk(this, callback = loginResCallback)
-        } else {
-            LoginClient.instance.loginWithKakaoAccount(this, callback = loginResCallback)
-        }
     }
 
     private fun tryServiceLogin(token: String) {
         viewModel.tryLogin(token)
 
         viewModel.loginResult.observe(this) {
+            Log.d("login", it.toString())
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
@@ -73,7 +57,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
-                    if (it.code in 400..499) {
+                    if (it.code == 400) {
+                        viewModel.refreshToken()
+                    }
+                    if (it.code in 401..499) {
                         startActivity(Intent(this, LoginActivity::class.java))
                     }
                     if (it.code == 503) {

@@ -7,11 +7,11 @@ data class NewStoreRequest(
     @SerializedName("appearanceDays")
     val appearanceDays: List<String> = listOf(),
     @SerializedName("latitude")
-    val latitude: Int = 0,
+    val latitude: Double = 0.0,
     @SerializedName("longitude")
-    val longitude: Int = 0,
+    val longitude: Double = 0.0,
     @SerializedName("menus")
-    val menus: List<Menu> = listOf(),
+    val menus: List<MyMenu> = listOf(),
     @SerializedName("paymentMethods")
     val paymentMethods: List<String> = listOf(),
     @SerializedName("storeName")

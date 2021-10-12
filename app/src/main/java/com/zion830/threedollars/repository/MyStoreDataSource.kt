@@ -19,6 +19,9 @@ class MyStoreDataSource(
 
     private val repository: UserRepository = UserRepository()
 
+    private var cursor = -1
+    private var totalElements = 0
+
     class Factory(
         private val scope: CoroutineScope,
         private val context: CoroutineContext,
@@ -31,7 +34,8 @@ class MyStoreDataSource(
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, StoreInfo>) {
         scope.launch(context) {
             val data = repository.getMyStore(latLng.latitude, latLng.longitude, 0)
-            callback.onResult((data.body()?.data?.contents) as MutableList<StoreInfo>, null, 100)
+            cursor = data?.body()?.data?.nextCursor ?: -1
+            callback.onResult((data.body()?.data?.contents) as MutableList<StoreInfo>, null, cursor)
         }
     }
 
@@ -40,9 +44,14 @@ class MyStoreDataSource(
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, StoreInfo>) {
+        if (params.key == -1) {
+            return
+        }
+
         scope.launch(context) {
             val data = repository.getMyStore(latLng.latitude, latLng.longitude, params.key)
-            callback.onResult((data.body()?.data?.contents as MutableList<StoreInfo>), params.key + PAGE_SIZE)
+            cursor = data?.body()?.data?.nextCursor ?: -1
+            callback.onResult((data.body()?.data?.contents as MutableList<StoreInfo>), cursor)
         }
     }
 

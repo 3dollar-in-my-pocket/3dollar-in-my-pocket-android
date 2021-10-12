@@ -4,10 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.zion830.threedollars.repository.model.response.FaqByTag
-import com.zion830.threedollars.repository.model.response.FaqByTagResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQ
-import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 
 
 @BindingAdapter("setDeleteAccountBtnVisibility")

@@ -349,7 +349,7 @@
                         
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_distance4"
-                            bindItem="@{viewModel.storeByDistance.storeList1000}"
+                            bindItem="@{viewModel.storeByDistance.longestStore}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:nestedScrollingEnabled="false"

@@ -3,7 +3,8 @@ package com.zion830.threedollars.ui.store_detail.adapter
 import android.view.ViewGroup
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryBinding
-import com.zion830.threedollars.repository.model.response.Category
+import com.zion830.threedollars.repository.model.Category
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import com.zion830.threedollars.ui.addstore.adapter.MenuRecyclerAdapter
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
@@ -16,7 +17,7 @@ class CategoryInfoRecyclerAdapter : BaseRecyclerView<ItemCategoryBinding, Catego
             override fun bind(item: Category, listener: OnItemClickListener<Category>?) {
                 super.bind(item, listener)
                 binding.rvMenu.adapter = MenuRecyclerAdapter().apply {
-                    submitList(item.menu)
+                    submitList(item.menu?.map { MyMenu(it.category, it.name, it.price) })
                 }
             }
         }

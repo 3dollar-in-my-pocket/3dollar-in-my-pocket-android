@@ -3,7 +3,7 @@ package com.zion830.threedollars.repository
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.network.KakaoMapApi
 import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.repository.model.response.SearchAddressResponse
+import com.zion830.threedollars.repository.model.v2.response.kakao.SearchAddressResponse
 
 class MapRepository(
     private val service: KakaoMapApi = RetrofitBuilder.mapService

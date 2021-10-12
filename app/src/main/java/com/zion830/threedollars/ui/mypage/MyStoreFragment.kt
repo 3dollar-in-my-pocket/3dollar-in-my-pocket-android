@@ -7,7 +7,6 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
-import com.zion830.threedollars.repository.model.response.Store
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity

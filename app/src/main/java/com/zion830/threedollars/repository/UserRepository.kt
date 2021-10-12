@@ -2,9 +2,6 @@ package com.zion830.threedollars.repository
 
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.network.ServiceApi
-import com.zion830.threedollars.repository.model.request.NewUser
-import com.zion830.threedollars.repository.model.response.*
 import com.zion830.threedollars.repository.model.v2.request.EditNameRequest
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
@@ -54,11 +51,11 @@ class UserRepository(
     }
 
     suspend fun getMyReviews(cursor: Int): Response<MyReviewResponse> {
-        return service.getMyReviews(cursor = cursor)
+        return service.getMyReviews()
     }
 
     suspend fun getMyStore(latitude: Double, longitude: Double, cursor: Int): Response<MyStoreResponse> {
-        return service.getMyStore(latitude, longitude, cursor = cursor)
+        return service.getMyStore(latitude, longitude)
     }
 
     suspend fun getFAQCategory(): Response<FAQCategoryResponse> = service.getFAQCategory()

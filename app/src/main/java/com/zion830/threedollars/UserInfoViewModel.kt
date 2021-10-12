@@ -6,7 +6,6 @@ import androidx.paging.PagedList
 import com.zion830.threedollars.repository.MyReviewDataSource
 import com.zion830.threedollars.repository.MyStoreDataSource
 import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.response.*
 import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.repository.model.v2.response.my.MyReviews
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail

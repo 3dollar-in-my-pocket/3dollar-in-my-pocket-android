@@ -17,15 +17,15 @@ data class StoreDetail(
     @SerializedName("images")
     val images: List<Image> = listOf(),
     @SerializedName("latitude")
-    val latitude: Int = 0,
+    val latitude: Double = 0.0,
     @SerializedName("longitude")
-    val longitude: Int = 0,
+    val longitude: Double = 0.0,
     @SerializedName("menus")
     val menus: List<Menu> = listOf(),
     @SerializedName("paymentMethods")
     val paymentMethods: List<String> = listOf(),
     @SerializedName("rating")
-    val rating: Int = 0,
+    val rating: Float = 0f,
     @SerializedName("reviews")
     val reviews: List<Review> = listOf(),
     @SerializedName("storeId")

@@ -79,7 +79,7 @@
             
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_rating1"
-                bindItem="@{viewModel.storeByRating.storesOver3}"
+                bindItem="@{viewModel.storeByRating.storeList4}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
@@ -124,7 +124,7 @@
             
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_rating2"
-                bindItem="@{viewModel.storeByRating.storeList2}"
+                bindItem="@{viewModel.storeByRating.storeList3}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
@@ -168,7 +168,7 @@
             
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_rating3"
-                bindItem="@{viewModel.storeByRating.storeList1}"
+                bindItem="@{viewModel.storeByRating.storeList2}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
@@ -213,7 +213,7 @@
             
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_rating4"
-                bindItem="@{viewModel.storeByRating.storeList0}"
+                bindItem="@{viewModel.storeByRating.storeList1}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"

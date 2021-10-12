@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.Menu" />
+            type="com.zion830.threedollars.repository.model.v2.request.MyMenu" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

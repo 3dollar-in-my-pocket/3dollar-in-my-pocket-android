@@ -54,8 +54,8 @@ class StorePhotoDialog : DialogFragment() {
 
         viewModel.storeInfo.observe(this) {
             it?.let {
-                adapter.submitList(it.image ?: emptyList())
-                indicatorAdapter.submitList(it.image?.mapIndexed { index, value ->
+                adapter.submitList(it.images)
+                indicatorAdapter.submitList(it.images.mapIndexed { index, value ->
                     StoreImage(
                         index,
                         null,

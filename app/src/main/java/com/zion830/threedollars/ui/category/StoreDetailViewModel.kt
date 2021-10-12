@@ -7,12 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
+import com.zion830.threedollars.repository.model.Category
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.request.NewReview
-import com.zion830.threedollars.repository.model.response.Category
-import com.zion830.threedollars.repository.model.response.Image
-import com.zion830.threedollars.repository.model.response.Menu
-import com.zion830.threedollars.repository.model.response.StoreDetailResponse
+import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.repository.model.v2.response.store.Image
+import com.zion830.threedollars.repository.model.v2.response.store.Menu
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -31,12 +34,12 @@ class StoreDetailViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
 
-    private val _storeInfo: MutableLiveData<StoreDetailResponse?> = MutableLiveData()
-    val storeInfo: LiveData<StoreDetailResponse?>
+    private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
+    val storeInfo: LiveData<StoreDetail?>
         get() = _storeInfo
 
     val categoryInfo: LiveData<List<Category>> = Transformations.map(_storeInfo) { store ->
-        val categoryHasMenu = store?.menu?.groupBy { it.category }
+        val categoryHasMenu = store?.menus?.groupBy { it.category }
         val allMenu: HashMap<String, List<Menu>> = hashMapOf()
         store?.categories?.forEach {
             allMenu[it] = emptyList()
@@ -44,7 +47,9 @@ class StoreDetailViewModel : BaseViewModel() {
         categoryHasMenu?.forEach { category ->
             allMenu[category.key] = category.value
         }
-        allMenu.map { Category(it.key, it.value) }
+        allMenu.map {
+            Category(it.key, it.value)
+        }
     }
 
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
@@ -95,8 +100,8 @@ class StoreDetailViewModel : BaseViewModel() {
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(storeId, latitude, longitude).await()
-            _storeInfo.postValue(data)
+            val data = repository.getStoreDetail(storeId, latitude, longitude)
+            _storeInfo.postValue(data.body()?.data)
             hideLoading()
         }
     }
@@ -107,8 +112,8 @@ class StoreDetailViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(storeInfo.value!!.id, storeInfo.value!!.latitude, storeInfo.value!!.longitude).await()
-            _storeInfo.postValue(data)
+            val data = repository.getStoreDetail(storeInfo.value!!.storeId, storeInfo.value!!.latitude, storeInfo.value!!.longitude)
+            _storeInfo.postValue(data.body()?.data)
         }
         hideLoading()
     }
@@ -124,9 +129,8 @@ class StoreDetailViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val newReview = NewReview(reviewContent.value!!, rating)
-            repository.addReview(_storeInfo.value?.id ?: -1, SharedPrefUtils.getUserId(), newReview)
-                .await()
+            val request = NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
+            repository.addReview(request)
             _msgTextId.postValue(R.string.success_add_review)
             _addReviewResult.postValue(true)
         }
@@ -135,8 +139,7 @@ class StoreDetailViewModel : BaseViewModel() {
     fun deleteStore(userId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val result =
-                repository.deleteStore(deleteType.value!!, storeInfo.value?.id ?: 0, userId)
-                    .execute()
+                repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
 
             _deleteStoreResult.postValue(result.isSuccessful)
             _msgTextId.postValue(
@@ -160,7 +163,8 @@ class StoreDetailViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            repository.editReview(reviewId, newReview).await()
+            val request = EditReviewRequest(newReview.contents, newReview.rating)
+            repository.editReview(reviewId, request)
             _msgTextId.postValue(R.string.success_edit_review)
             _addReviewResult.postValue(true)
         }
@@ -168,7 +172,7 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun deleteReview(reviewId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            repository.deleteReview(reviewId).await()
+            repository.deleteReview(reviewId)
             _msgTextId.postValue(R.string.success_delete_review)
             _addReviewResult.postValue(true)
         }
@@ -181,17 +185,16 @@ class StoreDetailViewModel : BaseViewModel() {
             return
         }
 
-        if (storeInfo.value?.id == null) {
+        if (storeInfo.value?.storeId == null) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val responses = images.map { image ->
-                async(Dispatchers.IO + coroutineExceptionHandler) {
-                    val result = repository.saveImage(storeInfo.value?.id ?: -1, image).execute()
-                }
+            val responses = async(Dispatchers.IO + coroutineExceptionHandler) {
+                repository.saveImage(storeInfo.value?.storeId ?: -1, images)
             }
-            responses.awaitAll()
+
+            responses.await()
             refresh()
         }
     }
@@ -200,7 +203,7 @@ class StoreDetailViewModel : BaseViewModel() {
         _selectedCategory.value = MenuType.values().map { menu ->
             val selectedCategory =
                 categoryInfo.value?.find { category -> category.name == menu.key }
-            SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu)
+            SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu?.map { MyMenu(it.category, it.name, it.price) })
         }
     }
 
@@ -232,7 +235,7 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun deletePhoto(selectedImage: Image) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.deleteImage(storeInfo.value?.id ?: -1, selectedImage.id).awaitResponse()
+            val data = repository.deleteImage(selectedImage.imageId)
             _photoDeleted.postValue(data.isSuccessful)
         }
     }

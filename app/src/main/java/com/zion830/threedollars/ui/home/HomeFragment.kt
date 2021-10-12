@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.repository.model.response.AllStoreResponseItem
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
@@ -52,9 +52,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             )
         }
 
-        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<AllStoreResponseItem> {
-            override fun onClick(item: AllStoreResponseItem) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
+        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
+            override fun onClick(item: StoreInfo) {
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         })

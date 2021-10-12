@@ -40,19 +40,6 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             showDeleteAccountDialog()
         }
         binding.btnTest.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    SharedPrefUtils.changeServerStatus()
-                    SharedPrefUtils.clearUserInfo()
-                    initTestBtn()
-                    requireActivity().finish()
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                }
-                .setTitle("잠깐!!!!!!")
-                .setMessage("확인을 누르면 앱이 종료됩니다. 로그인부터 다시 해야돼요.")
-                .create()
-                .show()
         }
         initTestBtn()
     }

@@ -285,6 +285,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="20dp"
+                    android:backgroundTint="@color/color_gray1"
                     android:background="@drawable/rect_red_radius14"
                     android:textColor="@color/color_white"
                     app:layout_constraintStart_toStartOf="parent"
