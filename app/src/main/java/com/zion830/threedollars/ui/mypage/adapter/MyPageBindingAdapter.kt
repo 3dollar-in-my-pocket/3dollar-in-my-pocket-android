@@ -34,7 +34,7 @@ fun TextView.bindMenuIntroTitle(menuType: MenuType?) {
         return
     }
 
-    val menuName = if (context.getString(menuType.displayNameId) == "꼬치") "꼬치꼬치" else context.getString(menuType.displayNameId)
+    val menuName = if (context.getString(menuType.displayNameId) == "닭꼬치") "꼬치꼬치" else context.getString(menuType.displayNameId)
     val index = menuType.introTitle.indexOf(menuName)
     val spannableString = SpannableStringBuilder(menuType.introTitle).apply {
         setSpan(
