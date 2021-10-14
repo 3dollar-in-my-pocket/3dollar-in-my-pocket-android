@@ -9,8 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.request.NewReview
@@ -19,7 +19,7 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 
 class AddReviewDialog(
     private val content: Review?
-) : BottomSheetDialogFragment() {
+) : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
