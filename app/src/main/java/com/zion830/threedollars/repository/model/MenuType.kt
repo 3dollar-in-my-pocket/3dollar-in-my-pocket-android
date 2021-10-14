@@ -13,6 +13,9 @@ enum class MenuType(
     @DrawableRes val grayIcon: Int,
     val introTitle: String
 ) {
+    @SerializedName("")
+    DALGONA("DALGONA", R.string.dalgona, R.drawable.icon_menu_dalgona_selected, R.drawable.icon_menu_dalgona_normal, "선생님, 저랑 달고나\n한번 드시겠습니까?"),
+
     @SerializedName("BUNGEOPPANG")
     BUNGEOPPANG("BUNGEOPPANG", R.string.bung, R.drawable.icon_menu_bungeoppang_selected, R.drawable.icon_menu_bungeoppang_nomal, "붕어빵 만나기 30초 전"),
 
@@ -74,10 +77,7 @@ enum class MenuType(
     ),
 
     @SerializedName("")
-    SUNDAE("SUNDAE", R.string.sundae, R.drawable.icon_menu_sundae_selected, R.drawable.icon_menu_sundae_nomal, "제발 순대\n간 허파 많이 주세요"),
-
-    @SerializedName("")
-    DALGONA("DALGONA", R.string.dalgona, R.drawable.ic_dalgona, R.drawable.ic_dalgona, "선생님, 저랑 달고나\n한번 드시겠습니까?");
+    SUNDAE("SUNDAE", R.string.sundae, R.drawable.icon_menu_sundae_selected, R.drawable.icon_menu_sundae_nomal, "제발 순대\n간 허파 많이 주세요");
 
     fun getName() = StringUtils.getString(displayNameId)
 
