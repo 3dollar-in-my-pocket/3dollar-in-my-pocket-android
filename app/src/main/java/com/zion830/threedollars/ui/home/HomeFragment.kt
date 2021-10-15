@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -38,7 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text = it ?: getString(R.string.location_no_address)
         }
         searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
-            naverMapFragment.moveCameraWithAnim(it)
+            naverMapFragment.moveCamera(it)
             binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
@@ -59,6 +60,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         })
 
+        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_selected, res ?: listOf()) {
+                onStoreClicked(it)
+            }
+        }
+
         binding.rvStore.adapter = adapter
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.rvStore)
@@ -68,7 +75,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (position >= 0) {
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
                             adapter.focusedIndex = position
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
                             adapter.notifyDataSetChanged()
                             naverMapFragment.moveCameraWithAnim(adapter.getItemLocation(position))
                         }
@@ -85,9 +94,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        naverMapFragment.onActivityResult(requestCode, resultCode, data)
-        naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(latLng) }
+    private fun onStoreClicked(storeInfo: StoreInfo) {
+        val position = adapter.getItemPosition(storeInfo)
+        if (position >= 0) {
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
+            adapter.focusedIndex = position
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
+            naverMapFragment.moveCameraWithAnim(LatLng(storeInfo.latitude, storeInfo.longitude))
+
+            adapter.notifyDataSetChanged()
+            binding.rvStore.scrollToPosition(position)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        naverMapFragment.getMapCenterLatLng()?.let { viewModel.requestStoreInfo(it) }
     }
 }

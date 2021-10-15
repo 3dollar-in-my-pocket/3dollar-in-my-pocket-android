@@ -23,6 +23,8 @@ class NearStoreRecyclerAdapter(
 
     fun getItemLocation(position: Int) = LatLng(getItem(position).latitude, getItem(position).longitude)
 
+    fun getItemPosition(item: StoreInfo) = currentList.indexOfFirst { it.storeId == item.storeId }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NearStoreViewHolder {
         return NearStoreViewHolder(parent)
     }
@@ -43,7 +45,7 @@ class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocation
         super.bind(item, listener)
         binding.item = item
 
-        val catgories = item.categories.joinToString { "#${binding.tvCategory.context.getString(MenuType.of(it).displayNameId)} " }
+        val catgories = item.categories.joinToString(" ") { "#${binding.tvCategory.context.getString(MenuType.of(it).displayNameId)}" }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
         binding.tvStoreName.text = item.storeName
         binding.ivMenuIcon.bindMenuIcons(item.categories)
