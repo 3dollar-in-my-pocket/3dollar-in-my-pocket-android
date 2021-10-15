@@ -17,7 +17,8 @@ class CategoryInfoRecyclerAdapter : BaseRecyclerView<ItemCategoryBinding, Catego
             override fun bind(item: Category, listener: OnItemClickListener<Category>?) {
                 super.bind(item, listener)
                 binding.rvMenu.adapter = MenuRecyclerAdapter().apply {
-                    submitList(item.menu?.map { MyMenu(it.category, it.name, it.price) })
+                    submitList(item.menu?.map { MyMenu(it.category, it.name, it.price) }
+                        ?.filterNot { it.name.isNullOrEmpty() && it.price.isNullOrEmpty() })
                 }
             }
         }
