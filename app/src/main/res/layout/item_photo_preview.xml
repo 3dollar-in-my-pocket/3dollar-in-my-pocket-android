@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.response.store.Image" />
+            type="com.zion830.threedollars.ui.addstore.ui_model.StoreImage" />
         
         <variable
             name="listener"
