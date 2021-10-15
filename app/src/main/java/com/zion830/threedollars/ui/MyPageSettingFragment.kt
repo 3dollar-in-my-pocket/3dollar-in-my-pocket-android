@@ -7,6 +7,7 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
+import com.zion830.threedollars.splash.SplashActivity
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -40,6 +41,19 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             showDeleteAccountDialog()
         }
         binding.btnTest.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    SharedPrefUtils.changeServerStatus()
+                    SharedPrefUtils.clearUserInfo()
+                    initTestBtn()
+                    requireActivity().finish()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                }
+                .setTitle("잠깐!!!!!!")
+                .setMessage("확인을 누르면 앱이 종료됩니다.")
+                .create()
+                .show()
         }
         initTestBtn()
     }
@@ -74,7 +88,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         viewModel.logout()
         SharedPrefUtils.clearUserInfo()
         showToast(R.string.logout_message)
-        requireActivity().finish()
+        startActivity(Intent(requireContext(), SplashActivity::class.java))
     }
 
     private fun addEditNameFragment() {
