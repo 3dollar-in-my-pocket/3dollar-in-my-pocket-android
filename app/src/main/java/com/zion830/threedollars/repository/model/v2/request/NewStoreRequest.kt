@@ -17,5 +17,5 @@ data class NewStoreRequest(
     @SerializedName("storeName")
     val storeName: String = "",
     @SerializedName("storeType")
-    val storeType: String = ""
+    val storeType: String? = ""
 )

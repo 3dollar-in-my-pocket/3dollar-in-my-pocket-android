@@ -9,7 +9,6 @@ import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.utils.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,11 +47,6 @@ class AddStoreViewModel : BaseViewModel() {
     }
 
     fun addNewStore(newStore: NewStoreRequest) {
-        if (newStore.menus.isEmpty()) {
-            showToast("한개 이상의 메뉴가 필요합니다.") // TODO : 삭제
-            return
-        }
-
         showLoading()
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

@@ -88,8 +88,7 @@ class EditStoreDetailFragment :
         }
         viewModel.storeInfo.observe(viewLifecycleOwner) {
             // 가게 정보 초기화
-            binding.tvAddress.text =
-                getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
             binding.etName.setText(it?.storeName)
 
             if (!it?.storeType.isNullOrBlank()) {
@@ -147,8 +146,11 @@ class EditStoreDetailFragment :
                 editCategoryMenuRecyclerAdapter.setItems(allCategoryInfo.filter { category -> category.isSelected })
             }
             viewModel.selectedLocation.observe(viewLifecycleOwner) { latlng ->
-                binding.tvAddress.text = getCurrentLocationName(latlng)
-
+                if (latlng != null) {
+                    binding.tvAddress.text = getCurrentLocationName(latlng)
+                    naverMapFragment.moveCamera(latlng)
+                    naverMapFragment.addMarker(R.drawable.ic_marker, latlng)
+                }
             }
             binding.btnClearCategory.setOnClickListener {
                 editCategoryMenuRecyclerAdapter.clear()
@@ -193,7 +195,7 @@ class EditStoreDetailFragment :
         return result
     }
 
-    private fun getStoreType(): String {
+    private fun getStoreType(): String? {
         val result = arrayListOf<String>()
         if (binding.rbType1.isChecked) {
             result.add("ROAD")
@@ -204,7 +206,7 @@ class EditStoreDetailFragment :
         if (binding.rbType3.isChecked) {
             result.add("CONVENIENCE_STORE")
         }
-        return result.firstOrNull() ?: ""
+        return result.firstOrNull()
     }
 
     private fun getMenuList(): List<MyMenu> {
@@ -223,7 +225,7 @@ class EditStoreDetailFragment :
             }
         }
 
-        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+        return menuList
     }
 
     private fun getAppearanceDays(): List<String> {

@@ -29,8 +29,7 @@ class EditAddressFragment :
             requireActivity().supportFragmentManager.popBackStack()
         }
         viewModel.storeInfo.observe(viewLifecycleOwner) {
-            binding.tvAddress.text =
-                getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             viewModel.updateLocation(viewModel.storeLocation.value)
@@ -40,12 +39,10 @@ class EditAddressFragment :
 
     private fun initMap() {
         naverMapFragment = StoreEditNaverMapFragment({
-            binding.tvAddress.text =
-                getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }, null)
 
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.map_container, naverMapFragment)?.commit()
+        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
 
         if (isFirstOpen) {
             viewModel.updateLocation(viewModel.storeLocation.value) // 최초 맵 위치

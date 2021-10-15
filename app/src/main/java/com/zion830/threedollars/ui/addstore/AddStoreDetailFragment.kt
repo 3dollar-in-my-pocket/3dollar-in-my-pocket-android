@@ -66,17 +66,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
         binding.rvMenu.itemAnimator = null
         binding.btnSubmit.setOnClickListener {
-            viewModel.addNewStore(
-                NewStoreRequest(
-                    getAppearanceDays(),
-                    viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    getMenuList(),
-                    getPaymentMethod(),
-                    viewModel.storeName.value ?: "이름 없음",
-                    getStoreType()
-                )
-            )
+            saveStore()
         }
         viewModel.newStoreId.observe(this) {
             if (it >= 0) {
@@ -87,6 +77,29 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             }
         }
         initKeyboard()
+    }
+
+    private fun saveStore() {
+        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
+            showToast(R.string.no_category_msg)
+            return
+        }
+        if (getMenuList().isEmpty()) {
+            showToast(R.string.no_menu_msg)
+            return
+        }
+
+        viewModel.addNewStore(
+            NewStoreRequest(
+                getAppearanceDays(),
+                viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                getMenuList(),
+                getPaymentMethod(),
+                viewModel.storeName.value ?: "이름 없음",
+                storeType = getStoreType()
+            )
+        )
     }
 
     private fun getPaymentMethod(): List<String> {
@@ -103,7 +116,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         return result
     }
 
-    private fun getStoreType(): String {
+    private fun getStoreType(): String? {
         val result = arrayListOf<String>()
         if (binding.rbType1.isChecked) {
             result.add("ROAD")
@@ -114,7 +127,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         if (binding.rbType3.isChecked) {
             result.add("CONVENIENCE_STORE")
         }
-        return result.firstOrNull() ?: ""
+        return result.firstOrNull()
     }
 
     private fun getMenuList(): List<MyMenu> {
@@ -132,7 +145,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             }
         }
 
-        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+        return menuList
     }
 
     private fun getAppearanceDays(): List<String> {
