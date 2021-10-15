@@ -2,7 +2,6 @@ package com.zion830.threedollars.splash
 
 import android.animation.Animator
 import android.content.Intent
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.observe
@@ -27,11 +26,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                if (SharedPrefUtils.getKakaoToken().isNullOrEmpty()) {
+                if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                     finish()
                 } else {
-                    tryServiceLogin(SharedPrefUtils.getKakaoToken()!!)
+                    tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
                 }
             }
 
@@ -49,7 +48,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
         viewModel.tryLogin(token)
 
         viewModel.loginResult.observe(this) {
-            Log.d("login", it.toString())
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
