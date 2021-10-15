@@ -1,7 +1,9 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.repository.model.v2.request.*
-import com.zion830.threedollars.repository.model.v2.response.*
+import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
+import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
+import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
 import com.zion830.threedollars.repository.model.v2.response.store.*
 import okhttp3.MultipartBody
@@ -100,7 +102,7 @@ interface NewServiceApi {
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
-        @Query("distance") distance: Double = 10000.0,
+        @Query("distance") distance: Double = 100000.0,
     ): Response<NearStoreResponse>
 
     @GET("/api/v2/store/{storeId}/images")
