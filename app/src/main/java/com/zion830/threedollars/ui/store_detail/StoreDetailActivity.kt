@@ -17,7 +17,6 @@ import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
@@ -35,7 +34,7 @@ import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
@@ -54,13 +53,13 @@ class StoreDetailActivity :
 
     private val categoryAdapter = CategoryInfoRecyclerAdapter()
 
-    private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
-
     private var storeId = 0
 
     private lateinit var photoAdapter: PhotoRecyclerAdapter
 
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
+
+    private val naverMapFragment = StoreDetailNaverMapFragment()
 
     override fun onTouch() {
         // 지도 스크롤 이벤트 구분용
@@ -69,6 +68,7 @@ class StoreDetailActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
 
@@ -91,9 +91,6 @@ class StoreDetailActivity :
                 StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
-
-        val naverMapFragment = StoreDetailNaverMapFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -138,11 +135,16 @@ class StoreDetailActivity :
             )
         }
         viewModel.addReviewResult.observe(this) {
-            naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(storeId, latLng.latitude, latLng.longitude) }
+            viewModel.requestStoreInfo(storeId, viewModel.storeInfo.value?.latitude, viewModel.storeInfo.value?.longitude)
+        }
+        viewModel.closeActivity.observe(this) {
+            if (it) {
+                finish()
+            }
         }
         viewModel.photoDeleted.observe(this) {
             if (it) {
-                viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+                viewModel.requestStoreInfo(storeId, viewModel.storeLocation.value?.latitude, viewModel.storeLocation.value?.latitude)
             } else {
                 binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
             }
@@ -154,11 +156,7 @@ class StoreDetailActivity :
             binding.tvEmptyStoreType.isVisible = it?.storeType == null
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
-                StoreImage(
-                    index,
-                    null,
-                    image.url
-                )
+                StoreImage(index, null, image.url)
             }?.toMutableList())
 
             binding.layoutBtnDayOfWeek.tbMon.isChecked = it?.appearanceDays?.contains("MONDAY") == true
@@ -172,7 +170,7 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
-        viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
+        initMap()
     }
 
     private fun initMap() {
@@ -195,7 +193,6 @@ class StoreDetailActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
-            viewModel.requestStoreInfo(storeId, currentPosition.latitude, currentPosition.longitude)
             initMap()
         }
     }
@@ -230,8 +227,8 @@ class StoreDetailActivity :
             }
 
             FileUtils.uriToFile(it)?.run {
-                val requestFile = asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                imageList.add(MultipartBody.Part.createFormData("image", name, requestFile))
+                val requestFile = asRequestBody("image/*".toMediaType())
+                imageList.add(MultipartBody.Part.createFormData("images", name, requestFile))
             }
         }
         return imageList.toList()
