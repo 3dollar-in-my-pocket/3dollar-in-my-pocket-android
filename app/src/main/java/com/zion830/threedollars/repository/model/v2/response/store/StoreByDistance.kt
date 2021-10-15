@@ -19,7 +19,5 @@ data class StoreByDistance(
     fun isNotEmpty() =
         !(storeList100.isEmpty() && storeList1000.isEmpty() && storeList50.isEmpty() && storeList500.isEmpty() && storeListOver1000.isEmpty())
 
-    fun getLongestStore() = storeList1000 + storeListOver1000
-
     fun getAllStores() = storeList100 + storeList50 + storeList500 + storeList1000 + storeListOver1000
 }

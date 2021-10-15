@@ -18,14 +18,11 @@ import com.zion830.threedollars.repository.model.v2.response.store.Menu
 import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import retrofit2.await
-import retrofit2.awaitResponse
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
 
@@ -79,6 +76,10 @@ class StoreDetailViewModel : BaseViewModel() {
     val deleteStoreResult: LiveData<Boolean>
         get() = _deleteStoreResult
 
+    private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    val closeActivity: LiveData<Boolean>
+        get() = _closeActivity
+
     private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NONE)
     val deleteType: LiveData<DeleteType>
         get() = _deleteType
@@ -97,10 +98,14 @@ class StoreDetailViewModel : BaseViewModel() {
     val photoDeleted: LiveData<Boolean>
         get() = _photoDeleted
 
-    fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
+    fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(storeId, latitude, longitude)
+            val data = repository.getStoreDetail(
+                storeId,
+                latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude
+            )
             _storeInfo.postValue(data.body()?.data)
             hideLoading()
         }
@@ -138,10 +143,12 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun deleteStore(userId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result =
-                repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
+            val result = repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
 
             _deleteStoreResult.postValue(result.isSuccessful)
+            if (result.body()?.data?.isDeleted == true) {
+                _closeActivity.postValue(result.body()?.data?.isDeleted)
+            }
             _msgTextId.postValue(
                 when (result.code()) {
                     in 200..299 -> R.string.success_delete_store

@@ -17,7 +17,5 @@ data class StoreByRating(
 ) {
     fun isNotEmpty() = !(storeList0.isEmpty() && storeList1.isEmpty() && storeList2.isEmpty() && storeList3.isEmpty() && storeList4.isEmpty())
 
-    fun getStoresOver3(): List<StoreList> = storeList3 + storeList4
-
     fun getAllStores() = storeList0 + storeList1 + storeList2 + storeList3 + storeList4
 }

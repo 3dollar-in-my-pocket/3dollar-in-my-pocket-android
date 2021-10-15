@@ -56,16 +56,18 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             viewModel.changeSortType(SortType.RATING, currentPosition)
         }
         viewModel.storeByRating.observe(this) {
-            storeByRatingAdapters[0].submitList(it.getStoresOver3())
-            storeByRatingAdapters[1].submitList(it.storeList2)
-            storeByRatingAdapters[2].submitList(it.storeList1)
-            storeByRatingAdapters[3].submitList(it.storeList0)
+            storeByRatingAdapters[0].submitList(it.storeList4)
+            storeByRatingAdapters[1].submitList(it.storeList3)
+            storeByRatingAdapters[2].submitList(it.storeList2)
+            storeByRatingAdapters[3].submitList(it.storeList1)
+            storeByRatingAdapters[4].submitList(it.storeList0)
         }
         viewModel.storeByDistance.observe(this) {
             storeByDistanceAdapters[0].submitList(it.storeList50)
             storeByDistanceAdapters[1].submitList(it.storeList100)
             storeByDistanceAdapters[2].submitList(it.storeList500)
-            storeByDistanceAdapters[3].submitList(it.getLongestStore())
+            storeByDistanceAdapters[3].submitList(it.storeList1000)
+            storeByDistanceAdapters[4].submitList(it.storeListOver1000)
         }
         binding.btnBack.setOnClickListener {
             finish()
@@ -90,16 +92,18 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
             add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
             add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
             add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
+            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
         }
         storeByRatingAdapters.apply {
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
             add(SearchByRatingRecyclerAdapter(searchByRatingListener))
+            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
         }
 
-        val rvDistances = arrayOf(binding.rvDistance1, binding.rvDistance2, binding.rvDistance3, binding.rvDistance4)
-        val rvRatings = arrayOf(binding.rvRating1, binding.rvRating2, binding.rvRating3, binding.rvRating4)
+        val rvDistances = arrayOf(binding.rvDistance1, binding.rvDistance2, binding.rvDistance3, binding.rvDistance4, binding.rvDistance5)
+        val rvRatings = arrayOf(binding.rvRating1, binding.rvRating2, binding.rvRating3, binding.rvRating4, binding.rvRating5)
         rvDistances.forEachIndexed { index, recyclerView ->
             recyclerView.adapter = storeByDistanceAdapters[index]
             recyclerView.itemAnimator = null
