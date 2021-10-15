@@ -3,12 +3,10 @@ package com.zion830.threedollars.ui.addstore.view
 import android.content.Intent
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
-import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
@@ -25,9 +23,6 @@ class NearStoreNaverMapFragment() : NaverMapFragment() {
         params.setMargins(0, 0, 0, SizeUtils.dpToPx(286f))
         binding.btnFindLocation.layoutParams = params
 
-        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            addMarkers(R.drawable.ic_store_selected, (res ?: listOf()).map { LatLng(it.latitude, it.longitude) })
-        }
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {
                 // 재검색 버튼 띄우기

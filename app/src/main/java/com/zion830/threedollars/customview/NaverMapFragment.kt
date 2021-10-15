@@ -20,6 +20,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 
 
@@ -34,7 +35,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private val markers = arrayListOf<Marker>()
 
     var currentPosition: LatLng? = null
-        protected set
 
     private var listener: OnMapTouchListener? = null
 
@@ -70,7 +70,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
             requireActivity().requestPermissionIfNeeds()
-            moveToCurrentLocation()
+            moveToCurrentLocation(true)
         }
 
         map.locationSource = FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE)
@@ -98,7 +98,36 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.clear()
     }
 
-    protected fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {
+    fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int) {
+        if (markers.size > position) {
+            markers[position].icon = OverlayImage.fromResource(drawableRes)
+            markers[position].map = naverMap
+        }
+    }
+
+    fun addStoreMarkers(@DrawableRes drawableRes: Int, storeInfoList: List<StoreInfo>, onClick: (marker: StoreInfo) -> Unit = {}) {
+        if (naverMap == null) {
+            return
+        }
+
+        markers.forEach { it.map = null }
+        markers.clear()
+
+        val newMarkers = storeInfoList.map { storeInfo ->
+            Marker().apply {
+                this.position = LatLng(storeInfo.latitude, storeInfo.longitude)
+                this.icon = OverlayImage.fromResource(drawableRes)
+                this.map = naverMap
+                setOnClickListener {
+                    onClick(storeInfo)
+                    true
+                }
+            }
+        }
+        markers.addAll(newMarkers)
+    }
+
+    fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {
         if (naverMap == null) {
             return
         }
@@ -117,7 +146,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     }
 
     @SuppressLint("MissingPermission")
-    fun moveToCurrentLocation() {
+    fun moveToCurrentLocation(showAnim: Boolean = false) {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
@@ -125,19 +154,23 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     if (it != null) {
                         currentPosition = LatLng(it.latitude, it.longitude)
                         currentPosition?.let { position ->
-                            moveCameraWithAnim(position)
+                            if (showAnim) {
+                                moveCameraWithAnim(position)
+                            } else {
+                                moveCamera(position)
+                            }
                             onMyLocationLoaded(position)
                         }
                     }
                 }
             } else {
                 showToast(R.string.find_location_error)
-                moveCameraWithAnim(NaverMapUtils.DEFAULT_LOCATION)
+                moveCamera(NaverMapUtils.DEFAULT_LOCATION)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
             showToast(R.string.find_location_error)
-            moveCameraWithAnim(NaverMapUtils.DEFAULT_LOCATION)
+            moveCamera(NaverMapUtils.DEFAULT_LOCATION)
         }
     }
 
@@ -162,4 +195,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     open fun onMyLocationLoaded(position: LatLng) {
         // do nothing
     }
+
+    fun getMapCenterLatLng() = naverMap?.cameraPosition?.target
 }
