@@ -14,8 +14,8 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.repository.model.request.Menu
-import com.zion830.threedollars.repository.model.request.NewStore
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
@@ -88,8 +88,7 @@ class EditStoreDetailFragment :
         }
         viewModel.storeInfo.observe(viewLifecycleOwner) {
             // 가게 정보 초기화
-            binding.tvAddress.text =
-                getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
             binding.etName.setText(it?.storeName)
 
             if (!it?.storeType.isNullOrBlank()) {
@@ -147,8 +146,11 @@ class EditStoreDetailFragment :
                 editCategoryMenuRecyclerAdapter.setItems(allCategoryInfo.filter { category -> category.isSelected })
             }
             viewModel.selectedLocation.observe(viewLifecycleOwner) { latlng ->
-                binding.tvAddress.text = getCurrentLocationName(latlng)
-
+                if (latlng != null) {
+                    binding.tvAddress.text = getCurrentLocationName(latlng)
+                    naverMapFragment.moveCamera(latlng)
+                    naverMapFragment.addMarker(R.drawable.ic_marker, latlng)
+                }
             }
             binding.btnClearCategory.setOnClickListener {
                 editCategoryMenuRecyclerAdapter.clear()
@@ -161,11 +163,11 @@ class EditStoreDetailFragment :
                     return@setOnClickListener
                 }
 
+                getMenuList()
+
                 editStoreViewModel.editStore(
-                    viewModel.storeInfo.value?.id ?: 0,
-                    binding.etName.text.toString(),
-                    NewStore(
-                        addCategoryRecyclerAdapter.getSelectedItems(),
+                    viewModel.storeInfo.value?.storeId ?: 0,
+                    NewStoreRequest(
                         getAppearanceDays(),
                         viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                         viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
@@ -193,7 +195,7 @@ class EditStoreDetailFragment :
         return result
     }
 
-    private fun getStoreType(): String {
+    private fun getStoreType(): String? {
         val result = arrayListOf<String>()
         if (binding.rbType1.isChecked) {
             result.add("ROAD")
@@ -204,11 +206,12 @@ class EditStoreDetailFragment :
         if (binding.rbType3.isChecked) {
             result.add("CONVENIENCE_STORE")
         }
-        return result.firstOrNull() ?: ""
+        return result.firstOrNull()
     }
 
-    private fun getMenuList(): List<Menu> {
-        val menuList = arrayListOf<Menu>()
+    private fun getMenuList(): List<MyMenu> {
+        val menuList = arrayListOf<MyMenu>()
+
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
@@ -218,11 +221,11 @@ class EditStoreDetailFragment :
                     ""
                 }
                 val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(Menu(category, name.text.toString(), price.text.toString()))
+                menuList.add(MyMenu(category, name.text.toString(), price.text.toString()))
             }
         }
 
-        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+        return menuList
     }
 
     private fun getAppearanceDays(): List<String> {
@@ -259,7 +262,7 @@ class EditStoreDetailFragment :
                 locationResult.addOnSuccessListener {
                     if (it != null) {
                         viewModel.requestStoreInfo(
-                            viewModel.storeInfo.value?.id ?: 0,
+                            viewModel.storeInfo.value?.storeId ?: 0,
                             it.latitude,
                             it.longitude
                         )

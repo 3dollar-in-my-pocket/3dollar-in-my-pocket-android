@@ -2,22 +2,22 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.AllStoreResponseItem" />
-        
+            type="com.zion830.threedollars.repository.model.v2.response.store.StoreInfo" />
+
         <variable
             name="isSelectedItem"
             type="java.lang.Boolean" />
-        
+
         <variable
             name="listener"
             type="zion830.com.common.listener.OnItemClickListener" />
     </data>
-    
+
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/color_white}"
         app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true">
-    
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_item"
             android:layout_width="match_parent"
@@ -36,10 +36,10 @@
             android:paddingTop="20dp"
             android:paddingBottom="10dp"
             tools:ignore="UnusedAttribute">
-        
+
             <ImageView
                 android:id="@+id/iv_menu_icon"
-                bindMenuIcon="@{item.category}"
+                bindMenuIcons="@{item.categories}"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="20dp"
@@ -47,10 +47,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        
+
             <TextView
                 android:id="@+id/tv_store_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:maxLength="12"
@@ -59,22 +59,26 @@
                 android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="강남역 1출" />
-        
+
             <TextView
                 android:id="@+id/tv_category"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@{item.category}"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
                 android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
                 android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_store_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_store_name"
+                tools:ignore="RtlSymmetry"
                 tools:text="#붕어 #호떡" />
-        
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,25 +87,25 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_store_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_category">
-            
+
                 <TextView
+                    android:id="@+id/tv_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:drawableStart="@drawable/ic_near"
                     android:drawablePadding="4dp"
-                    android:text="@{@string/distance(item.distance)}"
                     android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
                     android:textSize="14sp"
                     tools:text="121m" />
-            
+
                 <TextView
+                    android:id="@+id/tv_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:drawableStart="@drawable/ic_star_pink"
                     android:drawablePadding="4dp"
-                    android:text="@{@string/score(item.rating)}"
                     android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
                     android:textSize="14sp"
                     tools:text="3.4점" />

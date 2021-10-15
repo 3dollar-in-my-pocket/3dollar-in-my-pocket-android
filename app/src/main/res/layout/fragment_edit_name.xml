@@ -71,7 +71,7 @@
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.userInfo.name}"
+                    android:text="@{viewModel.userInfo.data.name}"
                     android:textColor="@color/color_sub_red"
                     android:textSize="32sp"
                     android:textStyle="bold"

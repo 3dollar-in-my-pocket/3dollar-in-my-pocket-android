@@ -11,15 +11,21 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.request.NewReview
-import com.zion830.threedollars.repository.model.response.Review
+import com.zion830.threedollars.repository.model.v2.response.Review
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 
 class AddReviewDialog(
     private val content: Review?
 ) : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DialogAddReviewBinding.inflate(inflater)
@@ -35,7 +41,7 @@ class AddReviewDialog(
 
         if (content != null) {
             viewModel.reviewContent.value = content.contents
-            binding.rating.rating = content.rating
+            binding.rating.rating = content.rating.toFloat()
         } else {
             viewModel.reviewContent.value = ""
             binding.rating.rating = 0f
@@ -46,7 +52,7 @@ class AddReviewDialog(
                 viewModel.addReview(binding.rating.rating)
             } else {
                 val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
-                viewModel.editReview(content.id, newReview)
+                viewModel.editReview(content.reviewId, newReview)
             }
             dismiss()
         }

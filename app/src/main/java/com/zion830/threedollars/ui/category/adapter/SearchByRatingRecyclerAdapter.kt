@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
 import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.response.StoreList
+import com.zion830.threedollars.repository.model.v2.response.store.StoreList
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -35,7 +35,7 @@ class SearchByRatingViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreByRa
 
     override fun bind(item: StoreList, listener: OnItemClickListener<StoreList>?) {
         super.bind(item, listener)
-        val categoryInfo = "#${binding.tvCategory.context.getString(MenuType.of(item.category).displayNameId)}"
+        val categoryInfo = "#${binding.tvCategory.context.getString(MenuType.of(item.categories.firstOrNull()).displayNameId)}"
         binding.tvCategory.text = categoryInfo
     }
 }

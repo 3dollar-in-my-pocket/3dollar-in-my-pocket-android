@@ -8,8 +8,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
-import com.zion830.threedollars.repository.model.request.Menu
-import com.zion830.threedollars.repository.model.request.NewStore
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
@@ -66,18 +66,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
         binding.rvMenu.itemAnimator = null
         binding.btnSubmit.setOnClickListener {
-            viewModel.addNewStoreByQuery(
-                NewStore(
-                    addCategoryRecyclerAdapter.getSelectedItems(),
-                    getAppearanceDays(),
-                    viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    getMenuList(),
-                    getPaymentMethod(),
-                    viewModel.storeName.value ?: "이름 없음",
-                    getStoreType()
-                )
-            )
+            saveStore()
         }
         viewModel.newStoreId.observe(this) {
             if (it >= 0) {
@@ -88,6 +77,29 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             }
         }
         initKeyboard()
+    }
+
+    private fun saveStore() {
+        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
+            showToast(R.string.no_category_msg)
+            return
+        }
+        if (getMenuList().isEmpty()) {
+            showToast(R.string.no_menu_msg)
+            return
+        }
+
+        viewModel.addNewStore(
+            NewStoreRequest(
+                getAppearanceDays(),
+                viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                getMenuList(),
+                getPaymentMethod(),
+                viewModel.storeName.value ?: "이름 없음",
+                storeType = getStoreType()
+            )
+        )
     }
 
     private fun getPaymentMethod(): List<String> {
@@ -104,7 +116,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         return result
     }
 
-    private fun getStoreType(): String {
+    private fun getStoreType(): String? {
         val result = arrayListOf<String>()
         if (binding.rbType1.isChecked) {
             result.add("ROAD")
@@ -115,21 +127,25 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         if (binding.rbType3.isChecked) {
             result.add("CONVENIENCE_STORE")
         }
-        return result.firstOrNull() ?: ""
+        return result.firstOrNull()
     }
 
-    private fun getMenuList(): List<Menu> {
-        val menuList = arrayListOf<Menu>()
+    private fun getMenuList(): List<MyMenu> {
+        val menuList = arrayListOf<MyMenu>()
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
-                val category = editCategoryMenuRecyclerAdapter.items[i].menuType.key
+                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
+                    editCategoryMenuRecyclerAdapter.items[i].menuType.key
+                } else {
+                    "BUNGEOPPANG"
+                }
                 val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(Menu(category, name.text.toString(), price.text.toString()))
+                menuList.add(MyMenu(category, name.text.toString(), price.text.toString()))
             }
         }
 
-        return menuList.filter { it.name.isNotBlank() && it.price.isNotBlank() }
+        return menuList
     }
 
     private fun getAppearanceDays(): List<String> {

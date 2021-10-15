@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.request.NewStore
-import com.zion830.threedollars.repository.model.response.StoreDetailResponse
+import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetailResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,8 +20,8 @@ class EditStoreViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
 
-    private val _storeInfo: MutableLiveData<StoreDetailResponse?> = MutableLiveData()
-    val storeInfo: LiveData<StoreDetailResponse?>
+    private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
+    val storeInfo: LiveData<StoreDetail?>
         get() = _storeInfo
 
     val storeName = Transformations.map(_storeInfo) {
@@ -40,32 +42,18 @@ class EditStoreViewModel : BaseViewModel() {
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _storeInfo.postValue(repository.getStoreDetail(storeId, latitude, longitude).await())
+            _storeInfo.postValue(repository.getStoreDetail(storeId, latitude, longitude).body()?.data)
         }
     }
 
     fun editStore(
         storeId: Int,
-        storeName: String?,
-        newStore: NewStore
+        newStore: NewStoreRequest
     ) {
         showLoading()
 
-        val params = hashMapOf<String, String>(
-            Pair("userId", SharedPrefUtils.getUserId().toString()),
-            Pair("storeId", storeId.toString()),
-            Pair("latitude", newStore.latitude.toString()),
-            Pair("longitude", newStore.longitude.toString()),
-            Pair("storeType", newStore.storeType),
-            Pair("storeName", storeName ?: "이름 없는 가게"),
-        )
-        newStore.menus.forEachIndexed { index, menu ->
-            params["menu[$index].name"] = menu.name
-            params["menu[$index].price"] = menu.price
-        }
-
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.updateStore(newStore.categories, newStore.appearanceDays, newStore.paymentMethods, params).execute()
+            val result = repository.updateStore(storeId, newStore)
             hideLoading()
             _editStoreResult.postValue(result.isSuccessful)
         }

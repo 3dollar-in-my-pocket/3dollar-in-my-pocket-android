@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.response.AllStoreResponse
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.getCurrentLocationName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ class HomeViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
 
-    val nearStoreInfo: MutableLiveData<AllStoreResponse> = MutableLiveData()
+    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
 
     val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
 
@@ -30,9 +30,9 @@ class HomeViewModel : BaseViewModel() {
 
     fun requestStoreInfo(location: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getAllStore(location.latitude, location.longitude).execute()
+            val data = repository.getAllStore(location.latitude, location.longitude)
             if (data.isSuccessful) {
-                nearStoreInfo.postValue(data.body())
+                nearStoreInfo.postValue(data.body()?.data)
             }
         }
     }

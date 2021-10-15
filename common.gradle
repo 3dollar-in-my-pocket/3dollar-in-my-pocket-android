@@ -10,15 +10,15 @@ android {
         release {
             keyAlias '3dollor'
             keyPassword '3dollor'
-            storeFile file('/Users/yunji/Downloads/3dollor-android-key')
+            storeFile file('C:\\Users\\USER\\Downloads\\3dollor-android-key.jks')
             storePassword '3dollor'
         }
     }
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 10
-        versionName "2.0.0 (2)"
+        versionCode 20
+        versionName "2.0.2"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

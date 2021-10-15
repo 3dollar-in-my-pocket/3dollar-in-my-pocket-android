@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemReviewBinding
-import com.zion830.threedollars.repository.model.response.Review
+import com.zion830.threedollars.repository.model.v2.response.Review
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -61,7 +61,7 @@ class ReviewViewHolder(
         }
 
         binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
-        binding.ibSidemenu.isVisible = item.user?.id == SharedPrefUtils.getUserId()
+        binding.ibSidemenu.isVisible = item.user.userId == SharedPrefUtils.getUserId()
         binding.ibSidemenu.setOnClickListener {
             popupMenu.show()
         }

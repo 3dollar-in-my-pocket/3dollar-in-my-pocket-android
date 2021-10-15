@@ -19,13 +19,22 @@ fun ImageView.bindMenuIcon(category: String?) {
     setImageResource(MenuType.of(category).colorIcon)
 }
 
+@BindingAdapter("bindMenuIcons")
+fun ImageView.bindMenuIcons(category: List<String>?) {
+    if (category.isNullOrEmpty()) {
+        return
+    }
+
+    setImageResource(MenuType.of(category.first()).colorIcon)
+}
+
 @BindingAdapter("bindMenuIntroTitle")
 fun TextView.bindMenuIntroTitle(menuType: MenuType?) {
     if (menuType == null) {
         return
     }
 
-    val menuName = if (context.getString(menuType.displayNameId) == "꼬치") "꼬치꼬치" else context.getString(menuType.displayNameId)
+    val menuName = if (context.getString(menuType.displayNameId) == "닭꼬치") "꼬치꼬치" else context.getString(menuType.displayNameId)
     val index = menuType.introTitle.indexOf(menuName)
     val spannableString = SpannableStringBuilder(menuType.introTitle).apply {
         setSpan(
@@ -45,6 +54,15 @@ fun ImageView.bindWhiteMenuIcon(category: String?) {
     }
 
     setImageResource(MenuType.of(category).colorIcon)
+}
+
+@BindingAdapter("bindWhiteMenuIcon")
+fun ImageView.bindWhiteMenuIcon(categories: List<String>?) {
+    if (categories.isNullOrEmpty()) {
+        return
+    }
+
+    setImageResource(MenuType.of(categories.firstOrNull()).colorIcon)
 }
 
 @BindingAdapter("bindMenuIcon", "isSelected")

@@ -12,6 +12,7 @@ import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 
@@ -20,7 +21,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     override val viewModel: LoginViewModel by viewModels()
 
     override fun initView() {
-        startMainActivityIfUserExist()
         observeUiData()
 
         binding.btnLoginKakao.onSingleClick {
@@ -28,35 +28,28 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
     }
 
-    private fun startMainActivityIfUserExist() {
-        if (SharedPrefUtils.getKakaoId() != null && SharedPrefUtils.getUserId() >= 0) {
-            startActivity(MainActivity.getIntent(this))
-            finish()
-        }
-    }
-
-    private fun tryLogin() {
+    private fun tryLogin(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
                 Log.d(localClassName, it.groupUserToken.toString())
-                SharedPrefUtils.saveKakaoId(it.id.toString())
-                viewModel.tryLogin()
+                viewModel.tryLogin(token.accessToken)
             }
         }
     }
 
     private fun observeUiData() {
         viewModel.loginResult.observe(this) {
-            if (it != null) {
-                SharedPrefUtils.saveUserName(viewModel.userName.value)
-                SharedPrefUtils.saveUserId(it.userId)
-                SharedPrefUtils.saveAccessToken(it.token)
+            when {
+                it is ResultWrapper.Success -> {
+                    SharedPrefUtils.saveUserName(viewModel.userName.value)
+                    SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
+                    SharedPrefUtils.saveAccessToken(it.value?.token)
 
-                if (!it.state) {
-                    addInputNameFragment()
-                } else {
                     startActivity(MainActivity.getIntent(this))
                     finish()
+                }
+                it is ResultWrapper.GenericError -> {
+                    addInputNameFragment()
                 }
             }
         }
@@ -78,8 +71,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 Log.e(localClassName, "로그인 실패", error)
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
+                SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
-                tryLogin()
+                tryLogin(token)
             }
         }
 

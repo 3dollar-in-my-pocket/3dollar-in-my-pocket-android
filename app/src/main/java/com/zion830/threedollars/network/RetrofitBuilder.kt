@@ -10,13 +10,10 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
     private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
+    private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
     private val BASE_URL: String =
         if (BuildConfig.BUILD_TYPE == "debug") {
-            if (SharedPrefUtils.isTestServer()) {
-                "http://3.34.255.158:8080/"
-            } else {
-                "https://server.3dollars-in-my-pocket.com/"
-            }
+            "https://dev.threedollars.co.kr/"
         } else {
             BuildConfig.BASE_URL
         }
@@ -42,13 +39,6 @@ object RetrofitBuilder {
         .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
         .build()
 
-    val service: ServiceApi = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(okHttpClient)
-        .build()
-        .create(ServiceApi::class.java)
-
     val mapService: KakaoMapApi = Retrofit.Builder()
         .baseUrl(KAKAO_SEARCH_URL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -56,10 +46,16 @@ object RetrofitBuilder {
         .build()
         .create(KakaoMapApi::class.java)
 
-    val loginService: ServiceApi = Retrofit.Builder()
+    val newServiceApi: NewServiceApi = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
-        .client(okHttpClientNoHeader)
+        .client(okHttpClient)
         .build()
-        .create(ServiceApi::class.java)
+        .create(NewServiceApi::class.java)
+
+    val kakaoLoginApi: KakaoLoginApi = Retrofit.Builder()
+        .baseUrl(KAKAO_LOGIN_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(KakaoLoginApi::class.java)
 }

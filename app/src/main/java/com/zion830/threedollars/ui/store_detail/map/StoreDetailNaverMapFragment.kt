@@ -31,4 +31,8 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
         binding.btnFindLocation.isVisible = false
         map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, 0) // 로고 가려지도록
     }
+
+    override fun onMyLocationLoaded(position: LatLng) {
+        viewModel.requestStoreInfo(viewModel.storeInfo.value?.storeId ?: 0 - 1, position.latitude, position.longitude)
+    }
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
-import com.zion830.threedollars.repository.model.response.FaqTag
+import com.zion830.threedollars.repository.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -33,21 +33,29 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.frag
 
         viewModel.faqTags.observe(viewLifecycleOwner) {
             binding.hashViewTags.setData(
-                it.getAllTag(),
-                { tag -> buildSpannedString { bold { append(tag.name) } } },
-                { tag -> tag.id == -1 })
-            viewModel.loadFaqs(it)
+                it,
+                { tag -> buildSpannedString { bold { append(tag.description) } } },
+                { tag -> tag == it.first() })
+
+            viewModel.loadFaqs(it.first().category)
+            binding.tvSelectedCategory.text = it.first().description
         }
 
-        binding.hashViewTags.addOnTagSelectListener { item, selected ->
-            viewModel.loadFaqs(if ((item as FaqTag).id == -1) viewModel.faqTags.value as ArrayList<FaqTag> else arrayListOf(item))
+        binding.hashViewTags.addOnTagSelectListener { item, _ ->
+            val selectedCategory = (item as? FAQCategory)
+            viewModel.loadFaqs(selectedCategory?.category ?: "")
             binding.hashViewTags.setData(
-                viewModel.faqTags.value?.getAllTag() ?: listOf(),
-                { tag -> buildSpannedString { bold { append(tag.name) } } },
-                { tag -> tag.id == item.id }
+                viewModel.faqTags.value ?: emptyList(),
+                { tag -> buildSpannedString { bold { append(tag.description) } } },
+                { tag -> tag.category == selectedCategory?.category }
             )
+            binding.tvSelectedCategory.text = selectedCategory?.description
         }
-        binding.rvFaq.adapter = adapter
+        binding.rvFaqs.adapter = adapter
+
+        viewModel.faqsByTag.observe(viewLifecycleOwner) {
+            adapter.submitList(it.data)
+        }
     }
 
     private fun showDeleteAccountDialog() {

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.MapRepository
-import com.zion830.threedollars.repository.model.response.SearchAddressResponse
+import com.zion830.threedollars.repository.model.v2.response.kakao.SearchAddressResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel

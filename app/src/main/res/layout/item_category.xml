@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.Category" />
+            type="com.zion830.threedollars.repository.model.Category" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
+            bindItem="@{item.menu}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

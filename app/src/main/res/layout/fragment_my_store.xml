@@ -59,11 +59,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="47dp"
-            android:text="@{@string/count(viewModel.myStore.totalElements)}"
+            android:text="@{@string/count(viewModel.myStore.size)}"
             android:textColor="@android:color/white"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:visibility="@{viewModel.myStore.store.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
+            android:visibility="@{viewModel.myStore.size() == 0 ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/iv_back"
             tools:text="3개" />

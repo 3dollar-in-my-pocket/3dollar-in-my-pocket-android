@@ -21,6 +21,8 @@ class AddCategoryRecyclerAdapter(
         submitList(listOf())
     }
 
+    fun getCategory(position: Int) = currentList[position]
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
             VIEW_TYPE_ADD -> AddCategoryViewHolder(parent)

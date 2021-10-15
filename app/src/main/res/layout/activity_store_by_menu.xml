@@ -2,27 +2,27 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-    
+
         <variable
             name="viewModel"
             type="com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel" />
-    
+
         <import type="com.zion830.threedollars.utils.StringUtils" />
-    
+
         <import type="android.view.View" />
-    
+
         <import type="com.zion830.threedollars.repository.model.MenuType" />
-    
+
         <import type="com.zion830.threedollars.ui.category.SortType" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white">
-    
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
             android:layout_width="0dp"
@@ -34,7 +34,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute">
-    
+
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/layout_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/layout_title" />
-    
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back">
-        
+
                 <ImageView
                     android:id="@+id/iv_menu_icon"
                     bindMenuIcon="@{viewModel.category.key}"
@@ -66,7 +66,7 @@
                     android:layout_height="32dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/icon_menu_gungoguma_selected" />
-        
+
                 <TextView
                     android:id="@+id/btn_menu1"
                     android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
                     tools:text="군고구마" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    
+
         <LinearLayout
             android:id="@+id/container"
             android:layout_width="0dp"
@@ -97,7 +97,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/admob"
             android:layout_width="0dp"
@@ -107,21 +107,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-    
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="#f4f4f4"
+            android:background="@color/color_gray3"
             android:overScrollMode="never"
             app:layout_constraintBottom_toTopOf="@+id/admob"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/container">
-        
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            
+
                 <TextView
                     android:id="@+id/tv_category"
                     android:layout_width="wrap_content"
@@ -135,7 +135,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="붕어빵" />
-                
+
                 <TextView
                     android:id="@+id/btn_sort_by_distance"
                     android:layout_width="0dp"
@@ -151,7 +151,7 @@
                     app:layout_constraintEnd_toStartOf="@id/btn_sort_by_score"
                     app:layout_constraintTop_toTopOf="@id/tv_category"
                     tools:ignore="UnusedAttribute" />
-                
+
                 <TextView
                     android:id="@+id/btn_sort_by_score"
                     android:layout_width="0dp"
@@ -168,7 +168,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_category"
                     tools:ignore="UnusedAttribute" />
-                
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -178,7 +178,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_category">
-    
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                         android:layout_marginTop="30dp"
                         android:src="@drawable/ic_no_store"
                         android:visibility="@{viewModel.hasData ? View.GONE : View.VISIBLE}" />
-    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
                         android:text="@string/no_store"
                         android:textColor="@color/color_gray1"
                         android:visibility="@{viewModel.hasData ? View.GONE : View.VISIBLE}" />
-    
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                         android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.firstSectionVisibility ? View.VISIBLE : View.GONE}">
-        
+
                         <TextView
                             android:id="@+id/tv_group1"
                             android:layout_width="wrap_content"
@@ -211,11 +211,11 @@
                             android:layout_margin="16dp"
                             android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
-                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_50m : @string/over_3}"
+                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_50m : @string/over_4}"
                             android:textColor="@color/color_sub_red"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_distance1"
                             bindItem="@{viewModel.storeByDistance.storeList50}"
@@ -226,10 +226,10 @@
                             android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_distance" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_rating1"
-                            bindItem="@{viewModel.storeByRating.storesOver3}"
+                            bindItem="@{viewModel.storeByRating.storeList4}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:nestedScrollingEnabled="false"
@@ -238,8 +238,8 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_rating" />
                     </LinearLayout>
-                    
-                    
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -247,7 +247,7 @@
                         android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.secondSectionVisibility ? View.VISIBLE : View.GONE}">
-                        
+
                         <TextView
                             android:id="@+id/tv_group2"
                             android:layout_width="wrap_content"
@@ -255,11 +255,11 @@
                             android:layout_margin="16dp"
                             android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
-                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_100m : @string/over_2}"
+                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_100m : @string/over_3}"
                             android:textColor="@color/color_sub_red"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_distance2"
                             bindItem="@{viewModel.storeByDistance.storeList100}"
@@ -270,7 +270,7 @@
                             android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_distance" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_rating2"
                             bindItem="@{viewModel.storeByRating.storeList2}"
@@ -282,7 +282,7 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_rating" />
                     </LinearLayout>
-                    
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -290,7 +290,7 @@
                         android:layout_marginTop="6dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.thirdSectionVisibility ? View.VISIBLE : View.GONE}">
-                        
+
                         <TextView
                             android:id="@+id/tv_group3"
                             android:layout_width="wrap_content"
@@ -298,11 +298,11 @@
                             android:layout_margin="16dp"
                             android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
-                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_500m : @string/over_1}"
+                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_500m : @string/over_2}"
                             android:textColor="@color/color_sub_red"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_distance3"
                             bindItem="@{viewModel.storeByDistance.storeList500}"
@@ -313,7 +313,7 @@
                             android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_distance" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_rating3"
                             bindItem="@{viewModel.storeByRating.storeList1}"
@@ -325,16 +325,15 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_rating" />
                     </LinearLayout>
-                    
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
                         android:layout_marginTop="6dp"
-                        android:layout_marginBottom="40dp"
                         android:orientation="vertical"
                         android:visibility="@{viewModel.fourthSectionVisibility ? View.VISIBLE : View.GONE}">
-                        
+
                         <TextView
                             android:id="@+id/tv_group4"
                             android:layout_width="wrap_content"
@@ -342,14 +341,14 @@
                             android:layout_margin="16dp"
                             android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
                             android:drawablePadding="4dp"
-                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_1km : @string/over_0}"
+                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/under_1km : @string/over_1}"
                             android:textColor="@color/color_sub_red"
                             android:textSize="12sp"
                             android:textStyle="bold" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_distance4"
-                            bindItem="@{viewModel.storeByDistance.storeList1000}"
+                            bindItem="@{viewModel.storeByDistance.storeListOver1000}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:nestedScrollingEnabled="false"
@@ -357,9 +356,53 @@
                             android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_store_by_distance" />
-                        
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_rating4"
+                            bindItem="@{viewModel.storeByRating.storeList0}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:visibility="@{viewModel.sortType == SortType.RATING ? View.VISIBLE : View.GONE}"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_store_by_rating" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="40dp"
+                        android:orientation="vertical"
+                        android:visibility="@{viewModel.fifthSectionVisibility ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/tv_group5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:drawableStart="@{viewModel.sortType == SortType.DISTANCE ? @drawable/ic_near_empty : @drawable/ic_star_empty}"
+                            android:drawablePadding="4dp"
+                            android:text="@{viewModel.sortType == SortType.DISTANCE ? @string/over_1km : @string/over_0}"
+                            android:textColor="@color/color_sub_red"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_distance5"
+                            bindItem="@{viewModel.storeByDistance.storeListOver1000}"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:visibility="@{viewModel.sortType == SortType.DISTANCE ? View.VISIBLE : View.GONE}"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_store_by_distance" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_rating5"
                             bindItem="@{viewModel.storeByRating.storeList0}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

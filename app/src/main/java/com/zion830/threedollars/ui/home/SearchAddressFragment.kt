@@ -7,7 +7,7 @@ import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
-import com.zion830.threedollars.repository.model.response.Document
+import com.zion830.threedollars.repository.model.v2.response.kakao.Document
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast

@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.StoreList" />
+            type="com.zion830.threedollars.repository.model.v2.response.store.StoreList" />
         
         <variable
             name="listener"
@@ -19,8 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/rect_black_radius16"
-        android:backgroundTint="@android:color/white"
+        android:background="@drawable/rect_white_radius16"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> listener.onClick(item)}"
         android:paddingHorizontal="16dp"
