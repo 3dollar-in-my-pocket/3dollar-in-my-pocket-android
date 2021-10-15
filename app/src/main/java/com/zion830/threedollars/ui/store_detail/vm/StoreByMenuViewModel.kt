@@ -7,11 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.repository.model.v2.response.store.StoreByDistance
+import com.zion830.threedollars.repository.model.v2.response.store.StoreByRating
 import com.zion830.threedollars.ui.category.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 
 class StoreByMenuViewModel : BaseViewModel() {
@@ -34,37 +35,46 @@ class StoreByMenuViewModel : BaseViewModel() {
 
     val firstSectionVisibility = MediatorLiveData<Boolean>().apply {
         addSource(storeByDistance) {
-            value = storeByRating.value?.getStoresOver3()?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
+            value = storeByRating.value?.storeList4?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
         }
         addSource(storeByRating) {
-            value = storeByRating.value?.getStoresOver3()?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
+            value = storeByRating.value?.storeList4?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
         }
     }
 
     val secondSectionVisibility = MediatorLiveData<Boolean>().apply {
         addSource(storeByDistance) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
+            value = storeByRating.value?.storeList3?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
         }
         addSource(storeByRating) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
+            value = storeByRating.value?.storeList3?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
         }
     }
 
     val thirdSectionVisibility = MediatorLiveData<Boolean>().apply {
         addSource(storeByDistance) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
+            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
         }
         addSource(storeByRating) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
+            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
         }
     }
 
     val fourthSectionVisibility = MediatorLiveData<Boolean>().apply {
         addSource(storeByDistance) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.getLongestStore()?.isNotEmpty() == true
+            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
         }
         addSource(storeByRating) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.getLongestStore()?.isNotEmpty() == true
+            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
+        }
+    }
+
+    val fifthSectionVisibility = MediatorLiveData<Boolean>().apply {
+        addSource(storeByDistance) {
+            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeListOver1000?.isNotEmpty() == true
+        }
+        addSource(storeByRating) {
+            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeListOver1000?.isNotEmpty() == true
         }
     }
 
