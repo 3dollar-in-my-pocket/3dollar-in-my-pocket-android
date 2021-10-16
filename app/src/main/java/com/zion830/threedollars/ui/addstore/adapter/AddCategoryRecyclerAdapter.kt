@@ -69,7 +69,7 @@ class AddCategoryRecyclerAdapter(
     }
 
     fun getSelectedItems(): List<String> {
-        return currentList.filter { it?.isSelected == true }.map { it?.menuType?.key ?: MenuType.BUNGEOPPANG.key }
+        return currentList.filter { it?.isSelected == true }.map { it?.menuType?.category ?: "BUNGEOPPANG" }
     }
 
     companion object {

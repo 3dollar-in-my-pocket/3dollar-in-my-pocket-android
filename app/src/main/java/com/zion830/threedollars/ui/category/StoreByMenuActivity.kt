@@ -9,6 +9,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreList
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
@@ -25,7 +26,7 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
 
     private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
-    private var menuType: MenuType = MenuType.BUNGEOPPANG
+    private lateinit var menuType: CategoryInfo
 
     private val storeByDistanceAdapters = arrayListOf<SearchByDistanceRecyclerAdapter>()
 
@@ -40,12 +41,12 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
         val naverMapFragment = StoreByMenuNaverMapFragment()
         supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
-        menuType = MenuType.of(intent.getStringExtra(KEY_MENU))
+        menuType = intent.getSerializableExtra(KEY_MENU) as? CategoryInfo ?: CategoryInfo()
         viewModel.changeCategory(menuType)
 
-        binding.btnMenu1.setOnClickListener {
+        binding.btnMenu.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
-            viewModel.changeCategory(MenuType.BUNGEOPPANG, currentPosition)
+            viewModel.changeCategory(menuType, currentPosition)
         }
         binding.btnSortByDistance.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
@@ -117,8 +118,8 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
     companion object {
         private const val KEY_MENU = "KEY_MENU"
 
-        fun getIntent(context: Context, menuType: String) = Intent(context, StoreByMenuActivity::class.java).apply {
-            putExtra(KEY_MENU, menuType)
+        fun getIntent(context: Context, category: CategoryInfo) = Intent(context, StoreByMenuActivity::class.java).apply {
+            putExtra(KEY_MENU, category)
         }
     }
 }

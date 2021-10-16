@@ -56,22 +56,7 @@
     <string name="title_mypage">마이페이지</string>
     <string name="show_more">더보기</string>
     <string name="plus">+%d</string>
-    
-    <string name="bung">붕어빵</string>
-    <string name="tako">문어빵</string>
-    <string name="gye">계란빵</string>
-    <string name="hodduck">호떡</string>
-    <string name="eomuk">어묵</string>
-    <string name="gungoguma">군고구마</string>
-    <string name="tteokbokki">떡볶이</string>
-    <string name="ttangkongppang">땅콩빵</string>
-    <string name="gunoksusu">군옥수수</string>
-    <string name="toast">토스트</string>
-    <string name="waffle">와플</string>
-    <string name="gukwappang">국화빵</string>
-    <string name="sundae">순대</string>
-    <string name="dalgona">달고나</string>
-    <string name="kkochi">닭꼬치</string>
+
     <string name="none">없음</string>
     
     <string name="nearest_store">가장 가까운 음식점</string>

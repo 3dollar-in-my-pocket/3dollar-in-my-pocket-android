@@ -15,7 +15,7 @@
         android:id="@+id/navigation_category"
         android:name="com.zion830.threedollars.ui.category.SelectCategoryFragment"
         android:label="@string/category"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_select_category" />
     
     <fragment
         android:id="@+id/navigation_mypage"

@@ -10,6 +10,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
@@ -37,7 +38,7 @@ class StoreByMenuNaverMapFragment : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        viewModel.changeCategory(viewModel.category.value ?: MenuType.BUNGEOPPANG, position)
+        viewModel.changeCategory(viewModel.category.value ?: CategoryInfo(), position)
         viewModel.requestStoreInfo(position)
     }
 

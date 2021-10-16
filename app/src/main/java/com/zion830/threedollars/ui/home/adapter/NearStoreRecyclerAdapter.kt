@@ -9,6 +9,8 @@ import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
+import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -45,11 +47,12 @@ class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocation
         super.bind(item, listener)
         binding.item = item
 
-        val catgories = item.categories.joinToString(" ") { "#${binding.tvCategory.context.getString(MenuType.of(it).displayNameId)}" }
+        val categoryInfo = SharedPrefUtils.getCategories()
+        val categories = item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
         binding.tvStoreName.text = item.storeName
         binding.ivMenuIcon.bindMenuIcons(item.categories)
         binding.tvRating.text = "${item.rating}점"
-        binding.tvCategory.text = catgories
+        binding.tvCategory.text = categories
     }
 }

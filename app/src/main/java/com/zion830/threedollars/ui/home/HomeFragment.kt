@@ -107,6 +107,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Constants.GET_LOCATION_PERMISSION) {
+            naverMapFragment.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         naverMapFragment.getMapCenterLatLng()?.let { viewModel.requestStoreInfo(it) }

@@ -9,6 +9,7 @@ import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
+import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,7 +39,9 @@ class AddStoreViewModel : BaseViewModel() {
     val newStoreId: LiveData<Int>
         get() = _newStoreId
 
-    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(MenuType.values().map { SelectedCategory(false, it) })
+    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
+        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
+    )
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 

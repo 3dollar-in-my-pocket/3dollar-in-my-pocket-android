@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.StoreByDistance
 import com.zion830.threedollars.repository.model.v2.response.store.StoreByRating
@@ -25,8 +26,8 @@ class StoreByMenuViewModel : BaseViewModel() {
     val sortType: LiveData<SortType>
         get() = _sortType
 
-    private val _category: MutableLiveData<MenuType> = MutableLiveData(MenuType.BUNGEOPPANG)
-    val category: LiveData<MenuType>
+    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData()
+    val category: LiveData<CategoryInfo>
         get() = _category
 
     val storeByDistance = MutableLiveData<StoreByDistance>()
@@ -78,11 +79,11 @@ class StoreByMenuViewModel : BaseViewModel() {
         }
     }
 
-    fun changeCategory(menuType: MenuType) {
+    fun changeCategory(menuType: CategoryInfo) {
         _category.value = menuType
     }
 
-    fun changeCategory(menuType: MenuType, location: LatLng) {
+    fun changeCategory(menuType: CategoryInfo, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -106,12 +107,12 @@ class StoreByMenuViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (sortType.value) {
                 SortType.DISTANCE -> {
-                    val data = repository.getCategoryByDistance(_category.value?.key ?: "", location.latitude, location.longitude)
+                    val data = repository.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
                     storeByDistance.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 SortType.RATING -> {
-                    val data = repository.getCategoryByReview(_category.value?.key ?: "", location.latitude, location.longitude)
+                    val data = repository.getCategoryByReview(_category.value?.category?: "", location.latitude, location.longitude)
                     storeByRating.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }

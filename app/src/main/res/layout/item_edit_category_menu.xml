@@ -21,7 +21,7 @@
         
         <ImageView
             android:id="@+id/iv_menu_icon"
-            bindWhiteMenuIcon="@{item.menuType.key}"
+            bindWhiteMenuIcon="@{item.menuType.category}"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{item.menuType.displayNameId}"
+            android:text="@{item.menuType.name}"
             android:textColor="@color/color_black"
             app:layout_constraintBottom_toBottomOf="@id/iv_menu_icon"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"

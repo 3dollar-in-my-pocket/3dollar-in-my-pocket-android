@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.MenuType" />
+            type="com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo" />
 
         <variable
             name="listener"
@@ -31,7 +31,7 @@
             android:paddingVertical="10dp">
 
             <ImageView
-                bindMenuIcon="@{item.key}"
+                bindMenuIcon="@{item.category}"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:scaleType="fitCenter"
@@ -49,7 +49,7 @@
 
         <TextView
             android:id="@+id/tv_new_label"
-            visibleIf="@{item.key.equals(`DALGONA`)}"
+            visibleIf="@{item.new}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
