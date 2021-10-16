@@ -100,6 +100,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.3.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // naver
     implementation "com.naver.maps:map-sdk:$naver_map_version"
