@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ open class BaseViewModel : ViewModel() {
     protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         t.printStackTrace()
         handleError(t)
+        // FirebaseCrashlytics.getInstance().recordException(t)
     }
 
     protected val _isLoading = MutableLiveData<Boolean>()
