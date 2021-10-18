@@ -28,6 +28,7 @@ object RetrofitBuilder {
         .addInterceptor {
             val request = it.request().newBuilder()
                 .addHeader("Authorization", SharedPrefUtils.getAccessToken() ?: "")
+                .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_" + BuildConfig.VERSION_NAME)
                 .build()
             it.proceed(request)
         }
