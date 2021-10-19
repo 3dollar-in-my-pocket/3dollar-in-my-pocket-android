@@ -9,7 +9,6 @@ import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -21,6 +20,10 @@ class StoreByMenuNaverMapFragment : NaverMapFragment() {
 
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
+
+        map.addOnCameraIdleListener {
+            viewModel.requestStoreInfo(getMapCenterLatLng())
+        }
 
         val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(24f))
