@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -43,6 +44,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
+            binding.layoutEmpty.isVisible = store.isNullOrEmpty()
             adapter.submitList(store)
         }
         binding.layoutAddress.setOnClickListener {
@@ -53,8 +55,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             )
         }
 
-        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
-            override fun onClick(item: StoreInfo) {
+        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
+            override fun onClick(item: StoreInfo?) {
+                if (item == null) {
+                    return
+                }
+
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
