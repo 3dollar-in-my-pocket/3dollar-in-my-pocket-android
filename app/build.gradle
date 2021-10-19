@@ -27,12 +27,14 @@ android {
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_release')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         }
         debug {
             manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_develop')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         }
     }
 }
