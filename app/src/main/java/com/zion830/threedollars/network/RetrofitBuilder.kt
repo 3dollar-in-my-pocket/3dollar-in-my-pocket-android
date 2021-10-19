@@ -13,7 +13,7 @@ object RetrofitBuilder {
     private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
     private val BASE_URL: String =
         if (BuildConfig.BUILD_TYPE == "debug") {
-            "https://dev.threedollars.co.kr/"
+            "https://threedollars.co.kr/"
         } else {
             BuildConfig.BASE_URL
         }

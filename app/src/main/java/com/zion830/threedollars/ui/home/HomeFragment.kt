@@ -33,7 +33,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
     override fun initView() {
-        naverMapFragment = NearStoreNaverMapFragment()
+        naverMapFragment = NearStoreNaverMapFragment {
+            binding.tvRetrySearch.isVisible = true
+        }
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
@@ -91,7 +93,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 })
         )
         binding.tvRetrySearch.setOnClickListener {
-            naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(latLng) }
+            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
+            binding.tvRetrySearch.isVisible = false
         }
         binding.ibToss.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
