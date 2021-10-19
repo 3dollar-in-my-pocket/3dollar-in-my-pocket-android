@@ -66,8 +66,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                 finish()
                             }
-                            .setTitle("서버 점검 중!")
-                            .setMessage("이용에 불편을 드려 죄송합니다. 나중에 다시 만나요..ㅎㅎ!")
+                            .setTitle(getString(R.string.server_500))
+                            .setMessage(getString(R.string.server_500_msg))
                             .setCancelable(false)
                             .create()
                             .show()
