@@ -47,6 +47,8 @@ class EditStoreDetailFragment :
 
     private lateinit var naverMapFragment: NaverMapFragment
 
+    private var storeTarget: LatLng = NaverMapUtils.DEFAULT_LOCATION
+
     override fun initView() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -91,8 +93,8 @@ class EditStoreDetailFragment :
             }
         }
         viewModel.storeInfo.observe(viewLifecycleOwner) {
-            // 가게 정보 초기화
-            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+            storeTarget = LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
+            binding.tvAddress.text = getCurrentLocationName(storeTarget)
             binding.etName.setText(it?.storeName)
 
             if (!it?.storeType.isNullOrBlank()) {
@@ -151,6 +153,7 @@ class EditStoreDetailFragment :
             }
             viewModel.selectedLocation.observe(viewLifecycleOwner) { latlng ->
                 if (latlng != null) {
+                    storeTarget = latlng
                     binding.tvAddress.text = getCurrentLocationName(latlng)
                     naverMapFragment.moveCamera(latlng)
                     naverMapFragment.addMarker(R.drawable.ic_marker, latlng)
@@ -171,8 +174,8 @@ class EditStoreDetailFragment :
                     viewModel.storeInfo.value?.storeId ?: 0,
                     NewStoreRequest(
                         getAppearanceDays(),
-                        viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                        viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                        storeTarget.latitude,
+                        storeTarget.longitude,
                         getMenuList(),
                         getPaymentMethod(),
                         binding.etName.text.toString(),

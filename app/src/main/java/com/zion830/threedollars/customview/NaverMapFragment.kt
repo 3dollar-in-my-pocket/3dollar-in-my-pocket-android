@@ -196,5 +196,5 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         // do nothing
     }
 
-    fun getMapCenterLatLng() = naverMap?.cameraPosition?.target
+    fun getMapCenterLatLng() = naverMap?.cameraPosition?.target ?: NaverMapUtils.DEFAULT_LOCATION
 }

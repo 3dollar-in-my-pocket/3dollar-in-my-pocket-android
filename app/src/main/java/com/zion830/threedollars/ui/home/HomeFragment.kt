@@ -123,6 +123,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override fun onResume() {
         super.onResume()
-        naverMapFragment.getMapCenterLatLng()?.let { viewModel.requestStoreInfo(it) }
+        naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
     }
 }
