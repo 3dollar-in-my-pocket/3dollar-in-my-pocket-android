@@ -1,17 +1,27 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
-import android.util.Log
 
 class EditCategoryMenuRecyclerAdapter(
     private val delete: (SelectedCategory) -> Unit
-) : RecyclerView.Adapter<BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>>() {
+) : ListAdapter<SelectedCategory, BaseViewHolder<ItemEditCategoryMenuBinding, SelectedCategory>>(
+    object : DiffUtil.ItemCallback<SelectedCategory>() {
+        override fun areItemsTheSame(oldItem: SelectedCategory, newItem: SelectedCategory): Boolean {
+            return oldItem.menuType == newItem.menuType
+        }
+
+        override fun areContentsTheSame(oldItem: SelectedCategory, newItem: SelectedCategory): Boolean {
+            return oldItem.menuType == newItem.menuType
+        }
+    }
+) {
     val items = arrayListOf<SelectedCategory>()
 
     fun setItems(items: List<SelectedCategory>?) {
