@@ -2,7 +2,7 @@
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 buildscript {
-    ext.kotlin_version = '1.5.31'
+    ext.kotlin_version = '1.6.0-RC'
     ext {
         gradle_version = '7.0.2'
         appcompat_version = '1.2.0'
@@ -13,7 +13,7 @@ buildscript {
         constraintlayout_version = '2.0.1'
         lifecycle_version = '2.2.0'
         retrofit_version = '2.9.0'
-        okhttp_version = '4.3.0'
+        okhttp_version = '4.9.1'
         glide_version = '4.11.0'
         serialization_version = '1.0.0-RC'
         paging_version = '2.1.2'
