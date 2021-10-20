@@ -21,6 +21,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.v2.response.Review
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
@@ -150,10 +151,8 @@ class StoreDetailActivity :
             }
         }
         viewModel.storeInfo.observe(this) {
-            val distance = it?.distance ?: 1000
-            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
-            binding.tvStoreType.isVisible = it?.storeType != null
-            binding.tvEmptyStoreType.isVisible = it?.storeType == null
+            initStoreInfo(it)
+
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
@@ -171,6 +170,17 @@ class StoreDetailActivity :
             categoryAdapter.submitList(it)
         }
         initMap()
+    }
+
+    private fun initStoreInfo(it: StoreDetail?) {
+        val distance = it?.distance ?: 1000
+        val updatedAt = "${StringUtils.getTimeString(it?.updatedAt, "yy.MM.dd")} ${getString(R.string.updated_at)}"
+
+        binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
+        binding.tvStoreType.isVisible = it?.storeType != null
+        binding.tvEmptyStoreType.isVisible = it?.storeType == null
+        binding.tvUpdatedAt.isVisible = !it?.updatedAt.isNullOrBlank()
+        binding.tvUpdatedAt.text = updatedAt
     }
 
     private fun initMap() {

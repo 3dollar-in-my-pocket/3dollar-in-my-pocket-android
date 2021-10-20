@@ -2,14 +2,16 @@
     <string name="app_name">가슴속3천원</string>
     <string name="android_version">Android Version</string>
     <string name="help_feedback_title">[Android] 가슴속 3천원 1:1 문의</string>
-    
+
     <string name="score">%.1f점</string>
     <string name="score_only">%.1f</string>
     <string name="count">%d개</string>
     <string name="img_count">+%d</string>
     <string name="distance">%dm</string>
     <string name="save">저장하기</string>
-    
+    <string name="more">더보기</string>
+    <string name="updated_at">업데이트</string>
+
     <string name="kakao_url">https://kauth.kakao.com</string>
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_name">닉네임 입력!</string>
