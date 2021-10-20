@@ -69,7 +69,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         })
 
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            naverMapFragment.addStoreMarkers(R.drawable.ic_store_selected, res ?: listOf()) {
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf()) {
                 onStoreClicked(it)
             }
         }
@@ -83,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (position >= 0) {
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
                             adapter.focusedIndex = position
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
                             adapter.notifyDataSetChanged()
@@ -106,7 +106,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private fun onStoreClicked(storeInfo: StoreInfo) {
         val position = adapter.getItemPosition(storeInfo)
         if (position >= 0) {
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
             adapter.focusedIndex = position
             naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(LatLng(storeInfo.latitude, storeInfo.longitude))
