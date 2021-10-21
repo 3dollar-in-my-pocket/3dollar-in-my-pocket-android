@@ -87,15 +87,17 @@
     <string name="road">길거리</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
-    
+
     <string name="cash">현금</string>
     <string name="card">카드</string>
     <string name="banking">계좌이체</string>
-    
+
     <string name="editor">님의 제보</string>
     <string name="share">공유하기</string>
     <string name="send_money">송금하기</string>
-    
+    <string name="update_available">업데이트가 필요합니다!</string>
+    <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
+
     <string name="request_permission">권한이 필요해요 😮</string>
     <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
     <string name="request_permission_ok">알았어요</string>

@@ -33,10 +33,16 @@ object VersionChecker {
             val packageName = activity.applicationContext.packageName
             val currentVersion = activity.applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
 
-            if (compareVersion(currentVersion, minimumVersion) == minimumVersion) {
-                needUpdate(minimumVersion, currentVersion)
-            } else {
-                alreadyUpdate()
+            when {
+                currentVersion == minimumVersion -> {
+                    alreadyUpdate()
+                }
+                compareVersion(currentVersion, minimumVersion) == minimumVersion -> {
+                    needUpdate(minimumVersion, currentVersion)
+                }
+                else -> {
+                    alreadyUpdate()
+                }
             }
         }
     }
@@ -45,6 +51,7 @@ object VersionChecker {
     private fun compareVersion(v1: String, v2: String, index: Int = 0): String = try {
         val code1 = v1.split(".")[index]
         val code2 = v2.split(".")[index]
+
         val nextIndex = index + 1
         when {
             code1 < code2 -> v2
