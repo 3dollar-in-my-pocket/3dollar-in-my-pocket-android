@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.store_detail
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -102,7 +103,19 @@ class StoreDetailActivity :
             }
         }
         binding.btnAddPhoto.setOnClickListener {
-            TedImagePicker.with(this).zoomIndicator(false).startMultiImage { uriData ->
+            TedImagePicker.with(this).zoomIndicator(false).errorListener {
+                if (it.message?.startsWith("permission") == true) {
+                    AlertDialog.Builder(this)
+                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+                            goToPermissionSetting()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                        .setTitle(getString(R.string.request_permission))
+                        .setMessage(getString(R.string.request_permission_msg))
+                        .create()
+                        .show()
+                }
+            }.startMultiImage { uriData ->
                 lifecycleScope.launch {
                     viewModel.saveImages(getImageFiles(uriData))
                 }

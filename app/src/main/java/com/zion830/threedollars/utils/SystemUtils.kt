@@ -151,3 +151,11 @@ fun Context.shareWithKakao(shareFormat: ShareFormat) {
         shareUrl(shareFormat.shareUrl)
     }
 }
+
+fun Context.goToPermissionSetting() {
+    startActivity(
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", applicationContext.packageName, null)
+        }
+    )
+}
