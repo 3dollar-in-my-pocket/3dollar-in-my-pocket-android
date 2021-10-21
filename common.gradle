@@ -18,7 +18,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 31
         versionCode 21
-        versionName "2.0.2"
+        versionName "2.1.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -100,8 +100,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.3.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
+     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // naver
     implementation "com.naver.maps:map-sdk:$naver_map_version"

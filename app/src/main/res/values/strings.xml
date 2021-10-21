@@ -20,6 +20,7 @@
     <string name="login_name3">시작할래요</string>
     <string name="login_name_fail">시작못해요</string>
     <string name="login_name_already_exist">중복된 닉네임</string>
+    <string name="invalidate_name">잘못된 형식의 닉네임</string>
     <string name="login_failed">로그인에 실패했습니다. 네크워크 연결 상태를 확인해주세요!</string>
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
@@ -96,6 +97,7 @@
     <string name="send_money">송금하기</string>
     
     <string name="request_permission">권한이 필요해요 😮</string>
+    <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
     <string name="request_permission_ok">알았어요</string>
     <string name="request_permission_cancel">싫어요</string>
     <string name="request_location_permission_description">주변 가게를 검색하기 위해 현재 위치 정보가 필요해요.</string>

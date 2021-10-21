@@ -4,6 +4,7 @@ import android.os.Handler
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
 import zion830.com.common.base.BaseFragment
@@ -29,8 +30,11 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
         binding.btnFinish.setOnClickListener {
             viewModel.updateName()
         }
-        viewModel.isAlreadyUsed.observe(viewLifecycleOwner) {
-            binding.tvAlreadyExist.isVisible = it
+        viewModel.isAlreadyUsed.observe(this) {
+            binding.tvAlreadyExist.isVisible = it > 0
+            if (it != -1) {
+                binding.tvAlreadyExist.text = getString(it)
+            }
         }
     }
 
