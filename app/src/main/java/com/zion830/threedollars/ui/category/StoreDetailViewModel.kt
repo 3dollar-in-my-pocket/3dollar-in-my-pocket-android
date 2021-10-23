@@ -143,7 +143,7 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteStore(userId: Int) {
+    fun deleteStore() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val result = repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
 

@@ -101,6 +101,7 @@
     <string name="request_permission">권한이 필요해요 😮</string>
     <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
     <string name="request_permission_ok">알았어요</string>
+    <string name="go_to_update">업데이트 하기</string>
     <string name="request_permission_cancel">싫어요</string>
     <string name="request_location_permission_description">주변 가게를 검색하기 위해 현재 위치 정보가 필요해요.</string>
     <string name="no_store">주변에 가게가 없어요</string>

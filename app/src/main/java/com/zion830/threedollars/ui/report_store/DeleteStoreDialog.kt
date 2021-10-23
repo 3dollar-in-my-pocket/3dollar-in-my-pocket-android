@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
 
 
 class DeleteStoreDialog : DialogFragment() {
@@ -33,7 +32,7 @@ class DeleteStoreDialog : DialogFragment() {
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
-            viewModel.deleteStore(SharedPrefUtils.getUserId())
+            viewModel.deleteStore()
             dismiss()
         }
         binding.rgReason.setOnCheckedChangeListener { _, checkedId ->

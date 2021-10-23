@@ -87,10 +87,12 @@ fun getCurrentLocationName(location: LatLng?): String? {
         val addresses: List<Address> =
             geoCoder.getFromLocation(location.latitude, location.longitude, 1)
         if (addresses.isEmpty()) {
-            notFindMsg + " (위도: ${location.latitude}, 경도: ${location.longitude})"
+            notFindMsg
         } else {
             with(addresses[0]) {
-                (0..maxAddressLineIndex).map { getAddressLine(it) }
+                (0..maxAddressLineIndex).map {
+                    getAddressLine(it)
+                }
             }.joinToString().substringAfter(" ")
         }
     } catch (e: Exception) {
