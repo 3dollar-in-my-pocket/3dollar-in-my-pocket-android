@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply from: '../common.gradle'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -26,12 +27,14 @@ android {
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_release')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         }
         debug {
             manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_develop')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         }
     }
 }
@@ -39,6 +42,8 @@ android {
 dependencies {
     implementation project(':common')
     implementation project(':tedimagepicker')
+    implementation 'com.google.firebase:firebase-config:19.1.1'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
@@ -51,4 +56,5 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.firebase:firebase-config-ktx:21.0.1'
 }

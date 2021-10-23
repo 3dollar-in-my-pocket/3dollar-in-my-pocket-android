@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
@@ -32,7 +33,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
     override fun initView() {
-        naverMapFragment = NearStoreNaverMapFragment()
+        naverMapFragment = NearStoreNaverMapFragment {
+            binding.tvRetrySearch.isVisible = true
+        }
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
@@ -43,6 +46,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
+            binding.layoutEmpty.isVisible = store.isNullOrEmpty()
             adapter.submitList(store)
         }
         binding.layoutAddress.setOnClickListener {
@@ -53,15 +57,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             )
         }
 
-        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
-            override fun onClick(item: StoreInfo) {
+        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
+            override fun onClick(item: StoreInfo?) {
+                if (item == null) {
+                    return
+                }
+
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         })
 
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            naverMapFragment.addStoreMarkers(R.drawable.ic_store_selected, res ?: listOf()) {
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf()) {
                 onStoreClicked(it)
             }
         }
@@ -75,7 +83,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (position >= 0) {
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
                             adapter.focusedIndex = position
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
                             adapter.notifyDataSetChanged()
@@ -85,7 +93,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 })
         )
         binding.tvRetrySearch.setOnClickListener {
-            naverMapFragment.currentPosition?.let { latLng -> viewModel.requestStoreInfo(latLng) }
+            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
+            binding.tvRetrySearch.isVisible = false
         }
         binding.ibToss.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
@@ -97,7 +106,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private fun onStoreClicked(storeInfo: StoreInfo) {
         val position = adapter.getItemPosition(storeInfo)
         if (position >= 0) {
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_selected, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
             adapter.focusedIndex = position
             naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(LatLng(storeInfo.latitude, storeInfo.longitude))
@@ -107,8 +116,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Constants.GET_LOCATION_PERMISSION) {
+            naverMapFragment.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        naverMapFragment.getMapCenterLatLng()?.let { viewModel.requestStoreInfo(it) }
+        naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
     }
 }

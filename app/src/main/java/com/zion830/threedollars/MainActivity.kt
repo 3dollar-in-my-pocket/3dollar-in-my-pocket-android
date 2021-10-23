@@ -12,8 +12,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
+import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.SearchAddressViewModel
+import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
+import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnBackPressedListener
@@ -25,10 +28,16 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     private val searchViewModel: SearchAddressViewModel by viewModels()
 
+    private val categoryViewModel: CategoryViewModel by viewModels()
+
     private lateinit var navHostFragment: NavHostFragment
 
     override fun initView() {
         requestPermissionFirst()
+
+        if (SharedPrefUtils.getCategories().isEmpty()) {
+            categoryViewModel.loadCategories()
+        }
 
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -38,7 +47,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
                 android.R.color.black
             } else {
@@ -70,8 +79,15 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        navHostFragment.childFragmentManager.fragments.forEach { fragment ->
-            fragment.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 5000) {
+            if (resultCode != Activity.RESULT_OK) {
+                showToast("앱 업데이트가 필요합니다!")
+                finish()
+            }
+        } else {
+            navHostFragment.childFragmentManager.fragments.forEach { fragment ->
+                fragment.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 

@@ -70,7 +70,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -233,6 +233,7 @@
                         android:layout_marginBottom="20dp">
 
                         <TextView
+                            android:id="@+id/tv_store_info"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/store_info"
@@ -242,6 +243,18 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_updated_at"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginBottom="2dp"
+                            android:textColor="@color/color_999999"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_store_info"
+                            app:layout_constraintStart_toEndOf="@+id/tv_store_info"
+                            tools:text="12.22.22 업데이트" />
 
                         <Button
                             android:id="@+id/btn_add_store_info"
@@ -295,8 +308,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="3"
                                 android:gravity="end"
-                                tools:text="길거리"
-                                android:textColor="@color/color_sub_red" />
+                                android:textColor="@color/color_sub_red"
+                                tools:text="길거리" />
                         </TableRow>
 
                         <TableRow
@@ -427,6 +440,7 @@
                             android:id="@+id/rv_category"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_category" />
@@ -545,7 +559,7 @@
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
             android:id="@id/progress"

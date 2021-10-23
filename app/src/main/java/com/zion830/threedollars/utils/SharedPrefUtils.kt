@@ -2,7 +2,12 @@ package com.zion830.threedollars.utils
 
 import android.content.Context
 import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import java.lang.Exception
+import java.lang.reflect.Type
 
 object SharedPrefUtils {
     private const val PREFERENCE_FILE_KEY = "preference_file_key"
@@ -12,6 +17,7 @@ object SharedPrefUtils {
     private const val USER_ID_KEY = "user_id_key"
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
+    private const val CATEGORY_LIST = "category_list"
 
     private val sharedPreferences = GlobalApplication.getContext().getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
@@ -61,6 +67,34 @@ object SharedPrefUtils {
     fun getKakaoAccessToken() = sharedPreferences.getString(KAKAO_ACCESS_TOKEN, null)
 
     fun getKakaoRefreshToken() = sharedPreferences.getString(KAKAO_REFRESH_TOKEN, null)
+
+    fun saveCategories(categoryInfo: List<CategoryInfo>) {
+        saveList(categoryInfo, CATEGORY_LIST)
+    }
+
+    fun getCategories(): List<CategoryInfo> {
+        return try {
+            val gson = Gson()
+            val json = sharedPreferences.getString(CATEGORY_LIST, null)
+            val type: Type = object : TypeToken<List<CategoryInfo>?>() {}.type
+            gson.fromJson(json, type)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    fun <T> saveList(list: List<T?>?, key: String?) {
+        if (list.isNullOrEmpty()) {
+            return
+        }
+
+        sharedPreferences.edit {
+            val gson = Gson()
+            val json: String = gson.toJson(list)
+            putString(key, json)
+            apply()
+        }
+    }
 
     fun clearUserInfo() {
         saveUserName(null)

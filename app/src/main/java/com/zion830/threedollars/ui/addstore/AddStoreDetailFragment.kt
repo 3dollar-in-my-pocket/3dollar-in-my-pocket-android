@@ -136,7 +136,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             binding.rvMenu.getChildAt(i)?.let {
                 val name = it.findViewById(R.id.et_name) as EditText
                 val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-                    editCategoryMenuRecyclerAdapter.items[i].menuType.key
+                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
                 } else {
                     "BUNGEOPPANG"
                 }

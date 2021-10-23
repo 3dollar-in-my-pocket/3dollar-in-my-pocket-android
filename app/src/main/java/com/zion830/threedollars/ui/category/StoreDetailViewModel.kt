@@ -8,17 +8,18 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.Category
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.Image
 import com.zion830.threedollars.repository.model.v2.response.store.Menu
 import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -45,12 +46,13 @@ class StoreDetailViewModel : BaseViewModel() {
             allMenu[category.key] = category.value
         }
         allMenu.map {
-            Category(it.key, it.value)
+            val key = SharedPrefUtils.getCategories().find { categoryInfo -> categoryInfo.category == it.key } ?: CategoryInfo()
+            Category(key, it.value)
         }
     }
 
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        MenuType.values().map { SelectedCategory(false, it) })
+        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) })
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
@@ -207,9 +209,8 @@ class StoreDetailViewModel : BaseViewModel() {
     }
 
     fun initSelectedCategory() {
-        _selectedCategory.value = MenuType.values().map { menu ->
-            val selectedCategory =
-                categoryInfo.value?.find { category -> category.name == menu.key }
+        _selectedCategory.value = SharedPrefUtils.getCategories().map { menu ->
+            val selectedCategory = categoryInfo.value?.find { categoryInfo -> categoryInfo.category.category == menu.category }
             SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu?.map { MyMenu(it.category, it.name, it.price) })
         }
     }

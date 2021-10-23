@@ -4,12 +4,13 @@ import android.animation.Animator
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.observe
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.login.LoginActivity
+import com.zion830.threedollars.ui.VersionUpdateDialog
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
@@ -26,12 +27,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             }
 
             override fun onAnimationEnd(animation: Animator?) {
-                if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                    finish()
-                } else {
-                    tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
-                }
+                VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
+                    { minimum, current ->
+                        VersionUpdateDialog.getInstance(minimum, current).show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                    }, {
+                        if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
+                            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                            finish()
+                        } else {
+                            tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
+                        }
+                    })
             }
 
             override fun onAnimationCancel(animation: Animator?) {
@@ -66,8 +72,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                             .setPositiveButton(android.R.string.ok) { _, _ ->
                                 finish()
                             }
-                            .setTitle("서버 점검 중!")
-                            .setMessage("이용에 불편을 드려 죄송합니다. 나중에 다시 만나요..ㅎㅎ!")
+                            .setTitle(getString(R.string.server_500))
+                            .setMessage(getString(R.string.server_500_msg))
                             .setCancelable(false)
                             .create()
                             .show()

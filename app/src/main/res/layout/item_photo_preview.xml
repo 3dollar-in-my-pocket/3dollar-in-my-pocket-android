@@ -2,18 +2,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable
             name="item"
             type="com.zion830.threedollars.ui.addstore.ui_model.StoreImage" />
-        
+
         <variable
             name="listener"
             type="zion830.com.common.listener.OnItemClickListener" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -21,7 +21,7 @@
         android:background="@drawable/rect_gray_radius8"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         tools:ignore="UnusedAttribute">
-        
+
         <ImageView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -32,7 +32,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        
+
         <ImageView
             loadRoundImage="@{item.url}"
             android:layout_width="0dp"
@@ -42,6 +42,17 @@
             android:padding="26dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_camera"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_focus"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rect_stroke_red_radius8"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

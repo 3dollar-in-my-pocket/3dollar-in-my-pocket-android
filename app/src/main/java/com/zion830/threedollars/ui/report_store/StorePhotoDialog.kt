@@ -19,6 +19,8 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import zion830.com.common.listener.OnItemClickListener
+import zion830.com.common.listener.OnSnapPositionChangeListener
+import zion830.com.common.listener.SnapOnScrollListener
 
 class StorePhotoDialog : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
@@ -36,7 +38,7 @@ class StorePhotoDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val binding = FragmentStorePhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
@@ -49,8 +51,18 @@ class StorePhotoDialog : DialogFragment() {
         })
 
         binding.slider.adapter = adapter
-        PagerSnapHelper().attachToRecyclerView(binding.slider)
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.slider)
         binding.rvIndicator.adapter = indicatorAdapter
+        binding.slider.addOnScrollListener(
+            SnapOnScrollListener(
+                snapHelper,
+                onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
+                    override fun onSnapPositionChange(position: Int) {
+                        indicatorAdapter.updateFocusedIndex(position)
+                    }
+                })
+        )
 
         viewModel.storeInfo.observe(this) {
             it?.let {

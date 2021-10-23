@@ -11,7 +11,7 @@ data class StoreDetail(
     @SerializedName("categories")
     val categories: List<String> = listOf(),
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("distance")
     val distance: Int = 0,
     @SerializedName("images")
@@ -35,7 +35,7 @@ data class StoreDetail(
     @SerializedName("storeType")
     val storeType: String = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = "",
+    val updatedAt: String? = "",
     @SerializedName("user")
     val user: User = User()
 )

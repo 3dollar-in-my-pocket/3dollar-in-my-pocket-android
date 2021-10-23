@@ -76,7 +76,7 @@
                     android:hint="@string/login_name"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:maxLength="10"
+                    android:maxLength="8"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="12dp"
                     android:singleLine="true"

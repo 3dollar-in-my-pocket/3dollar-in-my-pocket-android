@@ -6,6 +6,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByDistanceBinding
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.StoreList
+import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -35,7 +36,9 @@ class SearchByDistanceViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreBy
 
     override fun bind(item: StoreList, listener: OnItemClickListener<StoreList>?) {
         super.bind(item, listener)
-        val categoryInfo = "#${binding.tvCategory.context.getString(MenuType.of(item.categories.firstOrNull()).displayNameId)}"
-        binding.tvCategory.text = categoryInfo
+
+        val categoryInfo = SharedPrefUtils.getCategories()
+        val categories = item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
+        binding.tvCategory.text = categories
     }
 }

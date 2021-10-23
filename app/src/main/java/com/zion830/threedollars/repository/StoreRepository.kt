@@ -73,4 +73,6 @@ class StoreRepository(
         storeId: Int,
         deleteReasonType: String
     ): Response<DeleteStoreResponse> = newService.deleteStore(storeId, deleteReasonType)
+
+    suspend fun getCategories() = newService.getCategories()
 }

@@ -25,8 +25,8 @@ class UserInfoViewModel : BaseViewModel() {
     val userInfo: LiveData<MyInfoResponse>
         get() = _userInfo
 
-    private val _isAlreadyUsed: MutableLiveData<Boolean> = MutableLiveData()
-    val isAlreadyUsed: LiveData<Boolean>
+    private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
+    val isAlreadyUsed: LiveData<Int>
         get() = _isAlreadyUsed
 
     private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
@@ -84,7 +84,7 @@ class UserInfoViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val checkName = userRepository.checkName(userName.value!!)
             if (checkName.body()?.resultCode?.isNotBlank() == true) {
-                _isAlreadyUsed.postValue(true)
+                _isAlreadyUsed.postValue(R.string.name_empty)
                 return@launch
             }
 
@@ -93,9 +93,15 @@ class UserInfoViewModel : BaseViewModel() {
                 _msgTextId.postValue(R.string.set_name_success)
                 _isNameUpdated.postValue(true)
                 updateUserInfo()
-            } else {
-                _isAlreadyUsed.postValue(true)
             }
+
+            _isAlreadyUsed.postValue(
+                when (result.code()) {
+                    200 -> -1
+                    400 -> R.string.invalidate_name
+                    else -> R.string.login_name_already_exist
+                }
+            )
         }
     }
 

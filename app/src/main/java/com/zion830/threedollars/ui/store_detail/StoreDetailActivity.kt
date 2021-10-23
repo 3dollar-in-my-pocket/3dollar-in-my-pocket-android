@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.store_detail
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -21,6 +22,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.v2.response.Review
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
@@ -101,7 +103,19 @@ class StoreDetailActivity :
             }
         }
         binding.btnAddPhoto.setOnClickListener {
-            TedImagePicker.with(this).zoomIndicator(false).startMultiImage { uriData ->
+            TedImagePicker.with(this).zoomIndicator(false).errorListener {
+                if (it.message?.startsWith("permission") == true) {
+                    AlertDialog.Builder(this)
+                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+                            goToPermissionSetting()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                        .setTitle(getString(R.string.request_permission))
+                        .setMessage(getString(R.string.request_permission_msg))
+                        .create()
+                        .show()
+                }
+            }.startMultiImage { uriData ->
                 lifecycleScope.launch {
                     viewModel.saveImages(getImageFiles(uriData))
                 }
@@ -150,10 +164,8 @@ class StoreDetailActivity :
             }
         }
         viewModel.storeInfo.observe(this) {
-            val distance = it?.distance ?: 1000
-            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
-            binding.tvStoreType.isVisible = it?.storeType != null
-            binding.tvEmptyStoreType.isVisible = it?.storeType == null
+            initStoreInfo(it)
+
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
@@ -171,6 +183,17 @@ class StoreDetailActivity :
             categoryAdapter.submitList(it)
         }
         initMap()
+    }
+
+    private fun initStoreInfo(it: StoreDetail?) {
+        val distance = it?.distance ?: 1000
+        val updatedAt = "${StringUtils.getTimeString(it?.updatedAt, "yy.MM.dd")} ${getString(R.string.updated_at)}"
+
+        binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
+        binding.tvStoreType.isVisible = it?.storeType != null
+        binding.tvEmptyStoreType.isVisible = it?.storeType == null
+        binding.tvUpdatedAt.isVisible = !it?.updatedAt.isNullOrBlank()
+        binding.tvUpdatedAt.text = updatedAt
     }
 
     private fun initMap() {

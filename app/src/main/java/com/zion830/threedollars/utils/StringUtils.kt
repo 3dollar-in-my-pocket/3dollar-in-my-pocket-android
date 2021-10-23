@@ -33,14 +33,8 @@ object StringUtils {
             return getString(R.string.none)
         }
 
-        return getString(
-            when (category.toUpperCase(Locale.ROOT)) {
-                "BUNGEOPPANG" -> R.string.bung
-                "TAKOYAKI" -> R.string.tako
-                "HOTTEOK" -> R.string.hodduck
-                else -> R.string.gye
-            }
-        )
+        val categories = SharedPrefUtils.getCategories()
+        return categories.find { categoryInfo -> categoryInfo.category == category }?.category ?: ""
     }
 
     @JvmStatic
@@ -69,9 +63,9 @@ object StringUtils {
         return stringDescArray[index]
     }
 
-    fun getTimeString(zuluString: String?): String {
+    fun getTimeString(zuluString: String?, pattern: String = "yyyy.MM.dd E"): String {
         return Instant.parse("${zuluString}Z")
             .atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern("yyyy.MM.dd E").withLocale(Locale.KOREA))
+            .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
     }
 }

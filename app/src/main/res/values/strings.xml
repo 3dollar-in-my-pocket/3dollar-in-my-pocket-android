@@ -2,14 +2,16 @@
     <string name="app_name">가슴속3천원</string>
     <string name="android_version">Android Version</string>
     <string name="help_feedback_title">[Android] 가슴속 3천원 1:1 문의</string>
-    
+
     <string name="score">%.1f점</string>
     <string name="score_only">%.1f</string>
     <string name="count">%d개</string>
     <string name="img_count">+%d</string>
     <string name="distance">%dm</string>
     <string name="save">저장하기</string>
-    
+    <string name="more">더보기</string>
+    <string name="updated_at">업데이트</string>
+
     <string name="kakao_url">https://kauth.kakao.com</string>
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_name">닉네임 입력!</string>
@@ -18,14 +20,16 @@
     <string name="login_name3">시작할래요</string>
     <string name="login_name_fail">시작못해요</string>
     <string name="login_name_already_exist">중복된 닉네임</string>
+    <string name="invalidate_name">잘못된 형식의 닉네임</string>
     <string name="login_failed">로그인에 실패했습니다. 네크워크 연결 상태를 확인해주세요!</string>
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>
     <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
     <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
-    <string name="plz">마무리 중입니다 조금만 기다려주세요 선생님</string>
-    
+    <string name="server_500">서버 점검 중!</string>
+    <string name="server_500_msg">서버 점검 중!</string>
+
     <string name="my_page_show_all">전체보기</string>
     <string name="my_page_stores">내가 등록한 음식점</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
@@ -56,22 +60,7 @@
     <string name="title_mypage">마이페이지</string>
     <string name="show_more">더보기</string>
     <string name="plus">+%d</string>
-    
-    <string name="bung">붕어빵</string>
-    <string name="tako">문어빵</string>
-    <string name="gye">계란빵</string>
-    <string name="hodduck">호떡</string>
-    <string name="eomuk">어묵</string>
-    <string name="gungoguma">군고구마</string>
-    <string name="tteokbokki">떡볶이</string>
-    <string name="ttangkongppang">땅콩빵</string>
-    <string name="gunoksusu">군옥수수</string>
-    <string name="toast">토스트</string>
-    <string name="waffle">와플</string>
-    <string name="gukwappang">국화빵</string>
-    <string name="sundae">순대</string>
-    <string name="dalgona">달고나</string>
-    <string name="kkochi">닭꼬치</string>
+
     <string name="none">없음</string>
     
     <string name="nearest_store">가장 가까운 음식점</string>
@@ -98,16 +87,19 @@
     <string name="road">길거리</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
-    
+
     <string name="cash">현금</string>
     <string name="card">카드</string>
     <string name="banking">계좌이체</string>
-    
+
     <string name="editor">님의 제보</string>
     <string name="share">공유하기</string>
     <string name="send_money">송금하기</string>
-    
+    <string name="update_available">업데이트가 필요합니다!</string>
+    <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
+
     <string name="request_permission">권한이 필요해요 😮</string>
+    <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
     <string name="request_permission_ok">알았어요</string>
     <string name="request_permission_cancel">싫어요</string>
     <string name="request_location_permission_description">주변 가게를 검색하기 위해 현재 위치 정보가 필요해요.</string>
@@ -177,6 +169,8 @@
     <string name="over_4">4점 이상</string>
 
     <string name="store_type">가게형태</string>
+    <string name="empty_store">주변 2km 이내에 가게가 없어요</string>
+    <string name="empty_store_msg">다른 주소로 검색하거나 직접 제보해보세요!</string>
     <string name="empty_data">아직 등록된 정보가 없어요.</string>
     <string name="empty_result">검색 결과가 없어요.</string>
     <string name="show_type">출몰시기</string>

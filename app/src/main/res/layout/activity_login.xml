@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
     
@@ -18,12 +19,17 @@
             android:background="@color/color_black"
             android:orientation="vertical">
         
-            <ImageView
-                android:layout_width="match_parent"
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/view_lottie"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="@string/app_name"
                 android:scaleType="center"
+                android:layout_marginBottom="40dp"
+                app:lottie_fileName="signin.json"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
                 android:src="@drawable/ic_login_back" />
         
             <Button
@@ -31,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="160dp"
+                android:layout_marginTop="200dp"
                 android:background="@drawable/btn_kakao"
                 android:drawableStart="@drawable/ic_kakao"
                 android:drawablePadding="8dp"

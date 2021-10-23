@@ -18,7 +18,7 @@
         
         <ImageView
             android:id="@+id/iv_category"
-            bindWhiteMenuIcon="@{item.name}"
+            bindWhiteMenuIcon="@{item.category.category}"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_fish_white"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@{item.readableName}"
+            android:text="@{item.category.name}"
             android:textColor="@color/color_black"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/iv_category"

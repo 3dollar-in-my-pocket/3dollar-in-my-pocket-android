@@ -15,10 +15,10 @@ android {
         }
     }
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 31
-        versionCode 20
-        versionName "2.0.2"
+        versionCode 22
+        versionName "2.1.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -43,8 +43,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
     androidExtensions {
         experimental = true
@@ -100,6 +100,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.3.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
+     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // naver
     implementation "com.naver.maps:map-sdk:$naver_map_version"
@@ -111,4 +116,9 @@ dependencies {
 
     // AB Test
     implementation 'io.hackle:hackle-android-sdk:1.1.2'
+
+    implementation 'com.google.android.play:core:1.10.0'
+
+    // For Kotlin users also add the Kotlin extensions library for Play Core:
+    implementation 'com.google.android.play:core-ktx:1.8.1'
 }

@@ -11,7 +11,7 @@ import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
 
-class NearStoreNaverMapFragment() : NaverMapFragment() {
+class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
     private var isFirstLoad = true
@@ -25,7 +25,7 @@ class NearStoreNaverMapFragment() : NaverMapFragment() {
 
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {
-                // 재검색 버튼 띄우기
+                cameraMoved()
             }
         }
 

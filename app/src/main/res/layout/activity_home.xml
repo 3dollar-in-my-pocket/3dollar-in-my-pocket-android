@@ -39,7 +39,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:navGraph="@navigation/mobile_navigation" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    
+
         <LinearLayout
             android:id="@+id/layout_container"
             android:layout_width="match_parent"

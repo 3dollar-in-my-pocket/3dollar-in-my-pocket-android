@@ -22,7 +22,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
 
     override fun initView() {
         observeUiData()
-
         binding.btnLoginKakao.onSingleClick {
             tryKakaoLogin()
         }

@@ -26,15 +26,15 @@ import com.zion830.threedollars.utils.*
 
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
 
-    protected lateinit var binding: FragmentNaverMapBinding
+    var naverMap: NaverMap? = null
 
-    protected var naverMap: NaverMap? = null
+    var currentPosition: LatLng? = null
+
+    protected lateinit var binding: FragmentNaverMapBinding
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val markers = arrayListOf<Marker>()
-
-    var currentPosition: LatLng? = null
 
     private var listener: OnMapTouchListener? = null
 
@@ -196,5 +196,5 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         // do nothing
     }
 
-    fun getMapCenterLatLng() = naverMap?.cameraPosition?.target
+    fun getMapCenterLatLng() = naverMap?.cameraPosition?.target ?: NaverMapUtils.DEFAULT_LOCATION
 }

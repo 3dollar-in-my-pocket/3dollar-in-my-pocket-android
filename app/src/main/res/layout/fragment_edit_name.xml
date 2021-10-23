@@ -2,27 +2,27 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <import type="android.view.View" />
-        
+
         <variable
             name="viewModel"
             type="com.zion830.threedollars.UserInfoViewModel" />
     </data>
-    
+
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_black">
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,19 +34,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
-            
+
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="36dp"
-                android:foreground="?attr/actionBarItemBackground"
                 android:background="@android:color/transparent"
+                android:foreground="?attr/actionBarItemBackground"
                 android:src="@drawable/ic_back_wh"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute" />
-            
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_back" />
-            
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_back">
-                
+
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="무슨이윤지" />
-                
+
                 <TextView
                     android:id="@+id/tv_input_name1"
                     android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@id/tv_name"
                     app:layout_constraintTop_toTopOf="parent" />
-                
+
                 <EditText
                     android:id="@+id/et_name"
                     android:layout_width="0dp"
@@ -100,7 +100,7 @@
                     android:hint="@string/login_name"
                     android:imeOptions="actionDone"
                     android:inputType="text"
-                    android:maxLength="10"
+                    android:maxLength="8"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="12dp"
                     android:singleLine="true"
@@ -112,7 +112,7 @@
                     app:layout_constraintEnd_toStartOf="@id/tv_input_name2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_input_name1" />
-                
+
                 <TextView
                     android:id="@+id/tv_input_name2"
                     android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/et_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/et_name" />
-                
+
                 <Button
                     android:id="@+id/btn_finish"
                     onSingleClick="@{() -> viewModel.updateName()}"
@@ -143,7 +143,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/et_name"
                     tools:ignore="UnusedAttribute" />
-                
+
                 <TextView
                     android:id="@+id/tv_already_exist"
                     android:layout_width="wrap_content"
@@ -153,13 +153,13 @@
                     android:onClick="@{() -> viewModel.updateName()}"
                     android:text="@string/login_name_already_exist"
                     android:textColor="@color/color_main_red"
-                    android:visibility="@{viewModel.isAlreadyUsed() ? View.VISIBLE : View.GONE}"
+                    android:visibility="invisible"
                     app:drawableStartCompat="@drawable/ic_warning"
                     app:layout_constraintBottom_toBottomOf="@id/btn_finish"
                     app:layout_constraintStart_toEndOf="@id/btn_finish"
                     app:layout_constraintTop_toTopOf="@id/btn_finish" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-            
+
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

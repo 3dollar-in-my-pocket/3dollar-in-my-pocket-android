@@ -17,7 +17,7 @@ class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEdit
 
     fun addNewRow() {
         items.add(MyMenu())
-        notifyDataSetChanged()
+        notifyItemInserted(items.size - 1)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemMenuEditBinding, MyMenu> =
@@ -27,6 +27,11 @@ class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEdit
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemMenuEditBinding, MyMenu>, position: Int) {
         holder.bind(items[position], null)
+        holder.binding.etPrice.setOnFocusChangeListener { view, focused ->
+            if (focused && position == items.size - 1) {
+                addNewRow()
+            }
+        }
     }
 
     fun submitList(newItems: List<MyMenu>?) {

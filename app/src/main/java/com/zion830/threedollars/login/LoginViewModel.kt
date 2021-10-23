@@ -40,8 +40,8 @@ class LoginViewModel : BaseViewModel() {
     val isNameUpdated: LiveData<Boolean>
         get() = _isNameUpdated
 
-    private val _isAlreadyUsed: MutableLiveData<Boolean> = MutableLiveData()
-    val isAlreadyUsed: LiveData<Boolean>
+    private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
+    val isAlreadyUsed: LiveData<Int>
         get() = _isAlreadyUsed
 
     fun tryLogin(accessToken: String) {
@@ -78,12 +78,12 @@ class LoginViewModel : BaseViewModel() {
                 SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
                 _isNameUpdated.postValue(true)
                 _msgTextId.postValue(R.string.success_signup)
+                _isAlreadyUsed.postValue(-1)
             } else {
-                if (signUpResult.code() == 409) {
-                    _isAlreadyUsed.postValue(true)
-                } else {
-                    _isAlreadyUsed.postValue(false)
-                    _msgTextId.postValue(R.string.connection_failed)
+                when (signUpResult.code()) {
+                    409 -> _isAlreadyUsed.postValue(R.string.login_name_already_exist)
+                    400 -> _isAlreadyUsed.postValue(R.string.invalidate_name)
+                    else -> _msgTextId.postValue(R.string.connection_failed)
                 }
             }
         }
