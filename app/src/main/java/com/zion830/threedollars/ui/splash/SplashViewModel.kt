@@ -1,11 +1,11 @@
-package com.zion830.threedollars.splash
+package com.zion830.threedollars.ui.splash
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.request.KakaoRefreshTokenRequest
+import com.zion830.threedollars.repository.model.v2.request.KakaoRefreshTokenRequest
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils

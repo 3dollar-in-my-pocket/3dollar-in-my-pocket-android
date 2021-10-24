@@ -1,4 +1,4 @@
-package com.zion830.threedollars.login
+package com.zion830.threedollars.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

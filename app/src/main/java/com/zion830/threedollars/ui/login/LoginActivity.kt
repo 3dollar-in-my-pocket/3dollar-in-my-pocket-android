@@ -1,4 +1,4 @@
-package com.zion830.threedollars.login
+package com.zion830.threedollars.ui.login
 
 import android.util.Log
 import androidx.activity.viewModels
@@ -25,6 +25,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         binding.btnLoginKakao.onSingleClick {
             tryKakaoLogin()
         }
+        binding.btnLoginGoogle.onSingleClick {
+            tryGoogleLogin()
+        }
+    }
+
+    private fun tryGoogleLogin() {
+
     }
 
     private fun tryLogin(token: OAuthToken) {

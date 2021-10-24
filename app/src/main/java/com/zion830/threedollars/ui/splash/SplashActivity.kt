@@ -1,4 +1,4 @@
-package com.zion830.threedollars.splash
+package com.zion830.threedollars.ui.splash
 
 import android.animation.Animator
 import android.content.Intent
@@ -7,8 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
-import com.zion830.threedollars.login.LoginActivity
 import com.zion830.threedollars.ui.VersionUpdateDialog
+import com.zion830.threedollars.ui.login.LoginActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast

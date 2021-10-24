@@ -7,9 +7,9 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
-import com.zion830.threedollars.splash.SplashActivity
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
+import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment

@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
-import com.zion830.threedollars.repository.model.request.NewReview
+import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.response.Review
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 

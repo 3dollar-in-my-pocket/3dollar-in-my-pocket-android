@@ -1,4 +1,4 @@
-package com.zion830.threedollars.login
+package com.zion830.threedollars.ui.login
 
 import android.os.Handler
 import android.view.View

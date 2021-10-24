@@ -8,9 +8,9 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.Category
-import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.Image

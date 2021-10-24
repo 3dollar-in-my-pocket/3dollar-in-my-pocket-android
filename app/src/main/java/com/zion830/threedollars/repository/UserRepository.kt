@@ -7,16 +7,9 @@ import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
 import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
-import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.repository.model.v2.response.my.MyReviewResponse
-import com.zion830.threedollars.repository.model.v2.response.my.MyStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.my.SignResponse
-import com.zion830.threedollars.repository.model.v2.response.my.SignUser
-import com.zion830.threedollars.repository.model.v2.response.store.AddImageResponse
-import com.zion830.threedollars.utils.SharedPrefUtils
-import zion830.com.common.base.BaseResponse
+import com.zion830.threedollars.repository.model.v2.response.my.*
 import retrofit2.Response
-import retrofit2.http.Query
+import zion830.com.common.base.BaseResponse
 
 class UserRepository(
     private val service: NewServiceApi = RetrofitBuilder.newServiceApi
