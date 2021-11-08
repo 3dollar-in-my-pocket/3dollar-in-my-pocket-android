@@ -226,9 +226,12 @@
                     
                     <ImageView
                         android:id="@+id/iv_kakao_logo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_logo_kakao"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/rect_white_radius_4"
+                        android:backgroundTint="@{viewModel.userInfo.data.kakaoUser ? @color/color_kakao : @color/white}"
+                        android:padding="2dp"
+                        android:src="@{viewModel.userInfo.data.kakaoUser ? @drawable/ic_logo_kakao : @drawable/ic_logo_google}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -237,7 +240,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="@string/kakao_user"
+                        android:text="@{viewModel.userInfo.data.kakaoUser ? @string/kakao_user : @string/google_user}"
                         android:textColor="@color/color_white"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
