@@ -26,133 +26,137 @@
         app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:minWidth="264dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="10dp">
+            android:minWidth="272dp"
+            android:onClick="@{() -> listener.onClick(item)}"
+            android:paddingVertical="16dp"
+            tools:ignore="UnusedAttribute">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_item"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/iv_menu_icon"
+                bindMenuIcons="@{item.categories}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_store_name"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:onClick="@{() -> listener.onClick(item)}"
-                tools:ignore="UnusedAttribute">
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="4dp"
+                android:maxLength="12"
+                android:singleLine="true"
+                android:text="@{item.storeName}"
+                android:textColor="@{isSelectedItem ? @android:color/white : @color/color_232323}"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="강남역 1출" />
 
-                <ImageView
-                    android:id="@+id/iv_menu_icon"
-                    bindMenuIcons="@{item.categories}"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="20dp"
-                    android:scaleType="fitCenter"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_store_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:maxLength="12"
-                    android:singleLine="true"
-                    android:text="@{item.storeName}"
-                    android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="강남역 1출" />
-
-                <TextView
-                    android:id="@+id/tv_category"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:paddingEnd="8dp"
-                    android:singleLine="true"
-                    android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/tv_store_name"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_store_name"
-                    tools:ignore="RtlSymmetry"
-                    tools:text="#붕어 #호떡" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/tv_store_name"
-                    app:layout_constraintTop_toBottomOf="@id/tv_category">
-
-                    <TextView
-                        android:id="@+id/tv_distance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:drawableStart="@drawable/ic_near"
-                        android:drawablePadding="4dp"
-                        android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
-                        android:textSize="14sp"
-                        tools:text="121m" />
-
-                    <TextView
-                        android:id="@+id/tv_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:drawableStart="@drawable/ic_star_pink"
-                        android:drawablePadding="4dp"
-                        android:textColor="@{isSelectedItem ? @android:color/white : @android:color/black}"
-                        android:textSize="14sp"
-                        tools:text="3.4점" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
+                android:textColor="@{isSelectedItem ? @color/color_FFA1AA : @color/color_969696}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_store_name"
+                tools:ignore="RtlSymmetry"
+                tools:text="#붕어 #호떡" />
 
             <LinearLayout
-                android:id="@+id/layout_empty"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="23dp"
+                android:layout_marginTop="32dp"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_category">
 
-                <ImageView
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_no_store" />
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="vertical">
+                    android:layout_marginEnd="8dp"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/color_323232}"
+                    android:textSize="14sp"
+                    tools:drawableStart="@drawable/ic_near"
+                    tools:text="121m" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/empty_store"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/empty_store_msg"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/tv_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/color_323232}"
+                    android:textSize="14sp"
+                    tools:drawableStart="@drawable/ic_star_pink"
+                    tools:text="3.4점" />
             </LinearLayout>
-        </FrameLayout>
+
+            <ImageView
+                android:id="@+id/iv_bedge"
+                visibleIf="@{item.visitHistory.isCertified}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:src="@drawable/ic_bedge"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="23dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_no_store" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_store"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/empty_store_msg"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

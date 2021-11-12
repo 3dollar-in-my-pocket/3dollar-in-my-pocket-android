@@ -43,6 +43,8 @@ class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocation
 
     fun bindPosition(isSelected: Boolean) {
         binding.isSelectedItem = isSelected
+        binding.tvDistance.setCompoundDrawablesRelativeWithIntrinsicBounds(if(isSelected)R.drawable.ic_near_line else R.drawable.ic_near,0,0,0)
+        binding.tvRating.setCompoundDrawablesRelativeWithIntrinsicBounds(if(isSelected)R.drawable.ic_star_line else R.drawable.ic_star_pink, 0, 0, 0)
     }
 
     override fun bind(item: StoreInfo?, listener: OnItemClickListener<StoreInfo?>?) {
