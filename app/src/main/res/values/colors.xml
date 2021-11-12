@@ -23,6 +23,10 @@
     <color name="color_black">#1C1C1C</color>
     <color name="color_4f4f4f">#4f4f4f</color>
     <color name="color_979797">#979797</color>
+    <color name="color_969696">#969696</color>
     <color name="color_999999">#999999</color>
     <color name="color_99FFFFFF">#99FFFFFF</color>
+    <color name="color_323232">#323232</color>
+    <color name="color_232323">#232323</color>
+    <color name="color_FFA1AA">#FFA1AA</color>
 </resources>
