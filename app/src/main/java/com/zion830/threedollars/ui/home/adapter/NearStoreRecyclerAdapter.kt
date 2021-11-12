@@ -25,7 +25,8 @@ class NearStoreRecyclerAdapter(
 }) {
     var focusedIndex = 0
 
-    fun getItemLocation(position: Int) = LatLng(getItem(position)?.latitude ?: 0.0, getItem(position)?.longitude ?: 0.0)
+    fun getItemLocation(position: Int) =
+        LatLng(getItem(position)?.latitude ?: 0.0, getItem(position)?.longitude ?: 0.0)
 
     fun getItemPosition(item: StoreInfo) = currentList.indexOfFirst { it?.storeId == item.storeId }
 
@@ -39,12 +40,23 @@ class NearStoreRecyclerAdapter(
     }
 }
 
-class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocationBinding, StoreInfo?>(R.layout.item_store_location, parent) {
+class NearStoreViewHolder(parent: ViewGroup?) :
+    BaseViewHolder<ItemStoreLocationBinding, StoreInfo?>(R.layout.item_store_location, parent) {
 
     fun bindPosition(isSelected: Boolean) {
         binding.isSelectedItem = isSelected
-        binding.tvDistance.setCompoundDrawablesRelativeWithIntrinsicBounds(if(isSelected)R.drawable.ic_near_line else R.drawable.ic_near,0,0,0)
-        binding.tvRating.setCompoundDrawablesRelativeWithIntrinsicBounds(if(isSelected)R.drawable.ic_star_line else R.drawable.ic_star_pink, 0, 0, 0)
+        binding.tvDistance.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (isSelected) R.drawable.ic_near_line else R.drawable.ic_near,
+            0,
+            0,
+            0
+        )
+        binding.tvRating.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (isSelected) R.drawable.ic_star_line else R.drawable.ic_star_pink,
+            0,
+            0,
+            0
+        )
     }
 
     override fun bind(item: StoreInfo?, listener: OnItemClickListener<StoreInfo?>?) {
@@ -57,7 +69,8 @@ class NearStoreViewHolder(parent: ViewGroup?) : BaseViewHolder<ItemStoreLocation
         binding.item = item
 
         val categoryInfo = SharedPrefUtils.getCategories()
-        val categories = item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
+        val categories =
+            item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
         binding.tvStoreName.text = item.storeName
         binding.ivMenuIcon.bindMenuIcons(item.categories)
