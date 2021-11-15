@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.response.store.StoreList" />
+            type="com.zion830.threedollars.repository.model.v2.response.store.StoreInfo" />
 
         <variable
             name="listener"
@@ -18,7 +18,7 @@
         android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/rect_white_radius16"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{() -> listener.onClick(item)}"
@@ -26,18 +26,29 @@
         android:paddingVertical="20dp"
         tools:ignore="UnusedAttribute">
 
+        <ImageView
+            android:id="@+id/iv_bedge"
+            visibleIf="@{item.visitHistory.isCertified}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bedge_16"
+            app:layout_constraintBottom_toBottomOf="@id/tv_store_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_store_name" />
+
         <TextView
             android:id="@+id/tv_store_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:maxLength="12"
             android:singleLine="true"
             android:text="@{item.storeName}"
             android:textColor="@color/color_black"
             android:textSize="16sp"
+            android:layout_marginStart="8dp"
+            app:layout_goneMarginStart="0dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_bedge"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="강남역 1출" />
 
@@ -52,7 +63,7 @@
             android:textColor="@color/color_828282"
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@id/layout_info"
-            app:layout_constraintStart_toStartOf="@id/tv_store_name"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_store_name" />
 
         <LinearLayout
@@ -67,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:drawableStart="@drawable/ic_near"
+                android:drawableStart="@drawable/ic_near_gray"
                 android:drawablePadding="4dp"
                 android:text="@{@string/distance(item.distance)}"
                 android:textColor="@color/color_black"
