@@ -222,12 +222,14 @@
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
-    
+
     <string name="find_location">놀러가기</string>
     <string name="share_kakao_title">올 때 붕어빵, 잊지마!!!</string>
     <string name="share_kakao">당신은 붕어빵 셔틀에 당첨되셨습니다. 지금 바로 가슴속 3천원을 설치하고 위치를 파악하여 미션을 수행하세요!</string>
     <string name="share_kakao_success">카카오톡 공유 완료!</string>
     <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
-    
+
     <string name="retry_search">현재 지도에서 가게 재검색</string>
+
+    <string name="test_device">07A9ED1165A5E6773B9B8F7BF369CA80</string>
 </resources>

@@ -99,7 +99,7 @@ class StoreDetailActivity :
         }
         binding.btnDelete.setOnClickListener {
             binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+                DeleteStoreDialog.getInstance(storeId).show(supportFragmentManager, DeleteStoreDialog::class.java.name)
             }
         }
         binding.btnAddPhoto.setOnClickListener {

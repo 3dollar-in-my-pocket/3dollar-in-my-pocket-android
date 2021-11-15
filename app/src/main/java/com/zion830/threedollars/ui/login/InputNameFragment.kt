@@ -28,7 +28,7 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
             activity?.supportFragmentManager?.popBackStack()
         }
         binding.btnFinish.setOnClickListener {
-            viewModel.updateName()
+            viewModel.trySignUp()
         }
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0

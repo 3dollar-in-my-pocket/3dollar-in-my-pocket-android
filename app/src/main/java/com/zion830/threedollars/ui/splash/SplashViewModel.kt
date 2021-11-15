@@ -3,8 +3,12 @@ package com.zion830.threedollars.ui.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.StoreRepository
+import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.repository.model.v2.request.KakaoRefreshTokenRequest
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.response.my.SignUser
@@ -24,7 +28,7 @@ class SplashViewModel : BaseViewModel() {
     val loginResult: LiveData<ResultWrapper<SignUser?>> = _loginResult
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val result = storeRepository.getCategories()
             if (result.isSuccessful) {
                 withContext(Dispatchers.Main) {
@@ -34,21 +38,36 @@ class SplashViewModel : BaseViewModel() {
         }
     }
 
-    fun tryLogin(token: String) {
-        viewModelScope.launch {
-            val call = newServiceApi.login(LoginRequest(token = token))
+    fun tryLogin() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val loginType = SharedPrefUtils.getLoginType() ?: ""
+            val token = if (loginType == LoginType.KAKAO.socialName) SharedPrefUtils.getKakaoAccessToken() else SharedPrefUtils.getGoogleToken()
+
+            if (token.isNullOrBlank()) {
+                _loginResult.postValue(ResultWrapper.GenericError(400))
+                return@launch
+            }
+
+            val call = newServiceApi.login(LoginRequest(loginType, token))
             val result = safeApiCall(call)
             _loginResult.postValue(result)
         }
     }
 
-    fun refreshToken() {
-        viewModelScope.launch {
+    fun refreshGoogleToken(account: GoogleSignInAccount) {
+        val token = GoogleAuthUtil.getToken(GlobalApplication.getContext(), account.account, "oauth2:https://www.googleapis.com/auth/plus.me")
+        SharedPrefUtils.saveGoogleToken(token)
+        SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+        tryLogin()
+    }
+
+    fun refreshKakaoToken() {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val request = kakaoLoginApi.refreshToken(KakaoRefreshTokenRequest(refreshToken = SharedPrefUtils.getKakaoRefreshToken().toString()))
 
             if (request.isSuccessful && request.body() != null) {
                 SharedPrefUtils.saveKakaoToken(request.body()!!.accessToken, request.body()!!.refreshToken)
-                tryLogin(request.body()!!.accessToken)
+                tryLogin()
             } else {
                 _loginResult.postValue(ResultWrapper.GenericError(401))
             }

@@ -7,6 +7,7 @@ object Constants {
     const val SHOW_STORE_BY_CATEGORY: Int = 11
     const val SHOW_STORE_DETAIL: Int = 12
     const val GET_LOCATION_PERMISSION: Int = 13
+    const val GOOGLE_SIGN_IN: Int = 14
 
     /* GA event key */
     // common
@@ -42,7 +43,7 @@ object Constants {
     const val IMAGE_ATTACH_BTN_CLICKED = "image_attach_button_clicked"
     const val REVIEW_WRITE_BTN_CLICKED = "review_write_button_clicked"
 
-    // review write
+    // review writrequestStoreInfo e
     const val REVIEW_WRITE_CLOSE_BTN_CLICKED = "review_write_close_button_clicked"
     const val STAR_BTN_CLICKED = "review_write_close_button_clicked"
     const val REVIEW_REGISTER_BTN_CLICKED = "review_write_close_button_clicked"

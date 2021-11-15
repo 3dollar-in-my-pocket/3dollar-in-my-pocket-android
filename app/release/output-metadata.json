@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 22,
-      "versionName": "2.1.0",
-      "outputFile": "3dollor_2.1.0(22)-release.apk"
+      "versionCode": 24,
+      "versionName": "2.2.1",
+      "outputFile": "3dollor_2.2.1(24)-release.apk"
     }
   ],
   "elementType": "File"

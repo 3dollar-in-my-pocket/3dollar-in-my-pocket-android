@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "174359764387-j6f2gog8sudeme8tp3r7dioco9tc1or9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "b3392d08342e69c9ea490dd0c0d10a9a1421944b"
+          }
+        },
+        {
+          "client_id": "174359764387-mdr9gmnhpqh5cuekdf7nmuun9hu9fbpu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "76190a9a290814cd03e80691cacb12e0f8b3ffbc"
+          }
+        },
+        {
           "client_id": "174359764387-34sjr18nsc3k08tuvtjkcp0rbp2scdb9.apps.googleusercontent.com",
           "client_type": 3
         }

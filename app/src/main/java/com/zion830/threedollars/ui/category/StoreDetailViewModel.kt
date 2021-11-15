@@ -143,9 +143,10 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteStore() {
+    fun deleteStore(storeId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
+            val requestStoreId = if (storeInfo.value == null) storeId else storeInfo.value!!.storeId
+            val result = repository.deleteStore(requestStoreId, deleteType.value!!.key)
 
             _deleteStoreResult.postValue(result.isSuccessful)
             if (result.body()?.data?.isDeleted == true) {
