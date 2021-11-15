@@ -229,4 +229,5 @@
     
     <string name="retry_search">현재 지도에서 가게 재검색</string>
     <string name="is_certification_store">인증된 가게만</string>
+    <string name="dest">방문하기</string>
 </resources>

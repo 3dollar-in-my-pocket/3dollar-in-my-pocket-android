@@ -96,7 +96,7 @@ class StoreByMenuActivity :
         binding.btnBack.setOnClickListener {
             finish()
         }
-        binding.cbCertification.setOnCheckedChangeListener { _, b ->
+        binding.cbCertification.setOnCheckedChangeListener { _, _ ->
             naverMapFragment.currentPosition?.let {
                 viewModel.requestStoreInfo(it)
             }
