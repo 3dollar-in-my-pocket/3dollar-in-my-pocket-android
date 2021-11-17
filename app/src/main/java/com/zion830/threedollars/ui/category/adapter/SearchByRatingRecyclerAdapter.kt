@@ -5,15 +5,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreList
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class SearchByRatingRecyclerAdapter(
-    private val listener: OnItemClickListener<StoreList>
+    private val listener: OnItemClickListener<StoreInfo>
 ) : RecyclerView.Adapter<SearchByRatingViewHolder>() {
-    private val items = arrayListOf<StoreList>()
+    private val items = arrayListOf<StoreInfo>()
 
     override fun getItemCount(): Int = items.size
 
@@ -25,16 +26,16 @@ class SearchByRatingRecyclerAdapter(
         holder.bind(items[position], listener)
     }
 
-    fun submitList(newItems: List<StoreList>) {
+    fun submitList(newItems: List<StoreInfo>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
     }
 }
 
-class SearchByRatingViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreByRatingBinding, StoreList>(R.layout.item_store_by_rating, parent) {
+class SearchByRatingViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreByRatingBinding, StoreInfo>(R.layout.item_store_by_rating, parent) {
 
-    override fun bind(item: StoreList, listener: OnItemClickListener<StoreList>?) {
+    override fun bind(item: StoreInfo, listener: OnItemClickListener<StoreInfo>?) {
         super.bind(item, listener)
 
         val categoryInfo = SharedPrefUtils.getCategories()
