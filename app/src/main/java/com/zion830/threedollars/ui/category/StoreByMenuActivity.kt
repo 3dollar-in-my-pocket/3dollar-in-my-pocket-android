@@ -71,22 +71,18 @@ class StoreByMenuActivity :
             }
         }
         viewModel.storeByRating.observe(this) {
-            val storeInfoList = it.filter { storeInfo ->
-                if (binding.cbCertification.isChecked) {
-                    storeInfo.visitHistory.isCertified
-                } else {
-                    true
-                }
+            val storeInfoList = if (binding.cbCertification.isChecked) {
+                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
+            } else {
+                it
             }
             storeByRatingAdapters.submitList(storeInfoList)
         }
         viewModel.storeByDistance.observe(this) {
-            val storeInfoList = it.filter { storeInfo ->
-                if (binding.cbCertification.isChecked) {
-                    storeInfo.visitHistory.isCertified
-                } else {
-                    true
-                }
+            val storeInfoList = if (binding.cbCertification.isChecked) {
+                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
+            } else {
+                it
             }
             storeByDistanceAdapters.submitList(storeInfoList)
         }
