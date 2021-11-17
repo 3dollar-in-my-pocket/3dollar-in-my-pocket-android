@@ -5,13 +5,10 @@ import android.content.Intent
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
-import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreList
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
@@ -29,7 +26,7 @@ class StoreByMenuActivity :
 
     private lateinit var menuType: CategoryInfo
 
-    private val listener = object : OnItemClickListener<StoreInfo>{
+    private val listener = object : OnItemClickListener<StoreInfo> {
         override fun onClick(item: StoreInfo) {
             val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
             startActivity(intent)
@@ -81,7 +78,7 @@ class StoreByMenuActivity :
                     true
                 }
             }
-                storeByRatingAdapters.submitList(storeInfoList)
+            storeByRatingAdapters.submitList(storeInfoList)
         }
         viewModel.storeByDistance.observe(this) {
             val storeInfoList = it.filter { storeInfo ->
