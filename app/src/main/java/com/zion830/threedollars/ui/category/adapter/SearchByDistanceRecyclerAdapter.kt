@@ -7,6 +7,7 @@ import com.zion830.threedollars.databinding.ItemStoreByDistanceBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 class SearchByDistanceRecyclerAdapter(
@@ -38,6 +39,8 @@ class SearchByDistanceViewHolder(parent: ViewGroup) : BaseViewHolder<ItemStoreBy
 
         val categoryInfo = SharedPrefUtils.getCategories()
         val categories = item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
+        val distanceString = "${item.distance.toString().toFormattedNumber()}m"
         binding.tvCategory.text = categories
+        binding.tvDistance.text = distanceString
     }
 }

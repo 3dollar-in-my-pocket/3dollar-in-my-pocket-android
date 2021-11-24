@@ -231,6 +231,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="30dp"
+                        android:bufferType="spannable"
                         android:text="@string/visit_count"
                         android:textColor="@color/black"
                         android:textSize="18sp" />

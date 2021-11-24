@@ -12,6 +12,8 @@ import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -43,6 +45,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
+import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 
@@ -211,7 +214,15 @@ class StoreDetailActivity :
     }
 
     private fun updateVisitHistory(it: StoreDetail?) {
-        binding.tvVisitHistory.text = getString(R.string.visit_count).format(it?.visitHistory?.existsCounts ?: 0)
+        binding.tvVisitHistory.text = buildSpannedString {
+            append("이번 주 ")
+            bold {
+                append((it?.visitHistory?.existsCounts ?: 0).toString())
+                append("명")
+            }
+            append("이 다녀간 가게에요!")
+            getString(R.string.visit_count).format(it?.visitHistory?.existsCounts ?: 0)
+        }
         val good = it?.visitHistories?.count { history -> history.isExist() } ?: 0
         val bad = it?.visitHistories?.size?.minus(good) ?: 0
         binding.tvGood.text = "${good}명"
@@ -221,6 +232,8 @@ class StoreDetailActivity :
         binding.ibPlus.setOnClickListener {
             if (visitHistoryAdapter.itemCount > 0) {
                 binding.rvVisitHistory.isVisible = true
+            } else {
+                binding.root.showSnack("아직 인증 내역이 없어요!")
             }
         }
     }
@@ -235,8 +248,7 @@ class StoreDetailActivity :
                 )
             } ${getString(R.string.updated_at)}"
 
-
-            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
+            binding.tvDistance.text = "${distance.toString().toFormattedNumber()}m"
             binding.tvStoreType.isVisible = true
             binding.tvEmptyStoreType.isVisible = false
             binding.tvUpdatedAt.isVisible = !it.updatedAt.isNullOrBlank()
