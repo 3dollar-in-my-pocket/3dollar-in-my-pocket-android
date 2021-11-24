@@ -1,5 +1,7 @@
 package com.zion830.threedollars.repository
 
+import com.zion830.threedollars.Constants.DISTANCE_ASC
+import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
@@ -18,7 +20,8 @@ class StoreRepository(
     suspend fun getAllStore(
         latitude: Double,
         longitude: Double
-    ): Response<NearStoreResponse> = newService.getNearStore(latitude, longitude, latitude, longitude)
+    ): Response<NearStoreResponse> =
+        newService.getNearStore(latitude, longitude, latitude, longitude)
 
     suspend fun getStoreDetail(
         storeId: Int,
@@ -30,13 +33,28 @@ class StoreRepository(
         category: String,
         latitude: Double,
         longitude: Double
-    ): Response<StoreByDistanceResponse> = newService.getStoreByDistance(latitude, longitude, latitude, longitude, category)
+    ): Response<NearStoreResponse> = newService.getNearStore(
+        latitude = latitude,
+        longitude = longitude,
+        mapLatitude = latitude,
+        mapLongitude = longitude,
+        orderType = DISTANCE_ASC,
+        category = category
+    )
 
     suspend fun getCategoryByReview(
         category: String,
         latitude: Double,
         longitude: Double
-    ): Response<StoreByRatingResponse> = newService.getStoreByRating(latitude, longitude, latitude, longitude, category)
+    ): Response<NearStoreResponse> =
+        newService.getNearStore(
+            latitude = latitude,
+            longitude = longitude,
+            mapLatitude = latitude,
+            mapLongitude = longitude,
+            orderType = REVIEW_DESC,
+            category = category
+        )
 
     suspend fun addReview(
         newReviewRequest: NewReviewRequest
