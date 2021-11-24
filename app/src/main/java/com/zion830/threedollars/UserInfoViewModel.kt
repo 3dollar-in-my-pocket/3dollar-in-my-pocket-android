@@ -5,6 +5,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.zion830.threedollars.repository.MyReviewDataSource
 import com.zion830.threedollars.repository.MyStoreDataSource
+import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.repository.model.v2.response.my.MyReviews
@@ -44,7 +45,11 @@ class UserInfoViewModel : BaseViewModel() {
     val myStore: LiveData<List<StoreInfo>?> = isUpdated.switchMap {
         liveData(Dispatchers.IO + coroutineExceptionHandler) {
             emit(
-                userRepository.getMyStore(NaverMapUtils.DEFAULT_LOCATION.latitude, NaverMapUtils.DEFAULT_LOCATION.longitude, 0).body()?.data?.contents
+                userRepository.getMyStore(
+                    NaverMapUtils.DEFAULT_LOCATION.latitude,
+                    NaverMapUtils.DEFAULT_LOCATION.longitude,
+                    0
+                ).body()?.data?.contents
             )
         }
     }
@@ -57,7 +62,11 @@ class UserInfoViewModel : BaseViewModel() {
 
     val myAllStore: LiveData<PagedList<StoreInfo>> by lazy {
         LivePagedListBuilder(
-            MyStoreDataSource.Factory(viewModelScope, Dispatchers.IO + coroutineExceptionHandler, NaverMapUtils.DEFAULT_LOCATION),
+            MyStoreDataSource.Factory(
+                viewModelScope,
+                Dispatchers.IO + coroutineExceptionHandler,
+                NaverMapUtils.DEFAULT_LOCATION
+            ),
             MyStoreDataSource.pageConfig
         ).build()
     }
@@ -68,6 +77,9 @@ class UserInfoViewModel : BaseViewModel() {
             MyReviewDataSource.pageConfig
         ).build()
     }
+
+    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
+    val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

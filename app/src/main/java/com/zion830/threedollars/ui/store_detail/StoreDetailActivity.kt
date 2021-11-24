@@ -79,7 +79,8 @@ class StoreDetailActivity :
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
-                    AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                    AddReviewDialog.getInstance(item)
+                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
                 }
             },
             object : OnItemClickListener<Review> {
@@ -99,7 +100,8 @@ class StoreDetailActivity :
         }
         binding.btnDelete.setOnClickListener {
             binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance(storeId).show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+                DeleteStoreDialog.getInstance(storeId)
+                    .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
             }
         }
         binding.btnAddPhoto.setOnClickListener {
@@ -122,7 +124,8 @@ class StoreDetailActivity :
             }
         }
         binding.btnSendMoney.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
             startActivity(browserIntent)
             hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
@@ -138,7 +141,8 @@ class StoreDetailActivity :
         binding.rvCategory.adapter = categoryAdapter
         binding.rvReview.adapter = reviewAdapter
         binding.btnAddReview.setOnClickListener {
-            AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
+            AddReviewDialog.getInstance()
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.btnAddStoreInfo.setOnClickListener {
             supportFragmentManager.addNewFragment(
@@ -149,7 +153,11 @@ class StoreDetailActivity :
             )
         }
         viewModel.addReviewResult.observe(this) {
-            viewModel.requestStoreInfo(storeId, viewModel.storeInfo.value?.latitude, viewModel.storeInfo.value?.longitude)
+            viewModel.requestStoreInfo(
+                storeId,
+                viewModel.storeInfo.value?.latitude,
+                viewModel.storeInfo.value?.longitude
+            )
         }
         viewModel.closeActivity.observe(this) {
             if (it) {
@@ -158,7 +166,11 @@ class StoreDetailActivity :
         }
         viewModel.photoDeleted.observe(this) {
             if (it) {
-                viewModel.requestStoreInfo(storeId, viewModel.storeLocation.value?.latitude, viewModel.storeLocation.value?.latitude)
+                viewModel.requestStoreInfo(
+                    storeId,
+                    viewModel.storeLocation.value?.latitude,
+                    viewModel.storeLocation.value?.latitude
+                )
             } else {
                 binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
             }
@@ -171,13 +183,20 @@ class StoreDetailActivity :
                 StoreImage(index, null, image.url)
             }?.toMutableList())
 
-            binding.layoutBtnDayOfWeek.tbMon.isChecked = it?.appearanceDays?.contains("MONDAY") == true
-            binding.layoutBtnDayOfWeek.tbTue.isChecked = it?.appearanceDays?.contains("TUESDAY") == true
-            binding.layoutBtnDayOfWeek.tbWen.isChecked = it?.appearanceDays?.contains("WEDNESDAY") == true
-            binding.layoutBtnDayOfWeek.tbThur.isChecked = it?.appearanceDays?.contains("THURSDAY") == true
-            binding.layoutBtnDayOfWeek.tbFri.isChecked = it?.appearanceDays?.contains("FRIDAY") == true
-            binding.layoutBtnDayOfWeek.tbSat.isChecked = it?.appearanceDays?.contains("SATURDAY") == true
-            binding.layoutBtnDayOfWeek.tbSun.isChecked = it?.appearanceDays?.contains("SUNDAY") == true
+            binding.layoutBtnDayOfWeek.tbMon.isChecked =
+                it?.appearanceDays?.contains("MONDAY") == true
+            binding.layoutBtnDayOfWeek.tbTue.isChecked =
+                it?.appearanceDays?.contains("TUESDAY") == true
+            binding.layoutBtnDayOfWeek.tbWen.isChecked =
+                it?.appearanceDays?.contains("WEDNESDAY") == true
+            binding.layoutBtnDayOfWeek.tbThur.isChecked =
+                it?.appearanceDays?.contains("THURSDAY") == true
+            binding.layoutBtnDayOfWeek.tbFri.isChecked =
+                it?.appearanceDays?.contains("FRIDAY") == true
+            binding.layoutBtnDayOfWeek.tbSat.isChecked =
+                it?.appearanceDays?.contains("SATURDAY") == true
+            binding.layoutBtnDayOfWeek.tbSun.isChecked =
+                it?.appearanceDays?.contains("SUNDAY") == true
         }
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
@@ -186,14 +205,22 @@ class StoreDetailActivity :
     }
 
     private fun initStoreInfo(it: StoreDetail?) {
-        val distance = it?.distance ?: 1000
-        val updatedAt = "${StringUtils.getTimeString(it?.updatedAt, "yy.MM.dd")} ${getString(R.string.updated_at)}"
+        if (it != null) {
+            val distance = it.distance
+            val updatedAt = "${
+                StringUtils.getTimeString(
+                    it.updatedAt,
+                    "yy.MM.dd"
+                )
+            } ${getString(R.string.updated_at)}"
 
-        binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
-        binding.tvStoreType.isVisible = it?.storeType != null
-        binding.tvEmptyStoreType.isVisible = it?.storeType == null
-        binding.tvUpdatedAt.isVisible = !it?.updatedAt.isNullOrBlank()
-        binding.tvUpdatedAt.text = updatedAt
+
+            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
+            binding.tvStoreType.isVisible = true
+            binding.tvEmptyStoreType.isVisible = false
+            binding.tvUpdatedAt.isVisible = !it.updatedAt.isNullOrBlank()
+            binding.tvUpdatedAt.text = updatedAt
+        }
     }
 
     private fun initMap() {

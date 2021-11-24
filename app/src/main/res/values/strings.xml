@@ -233,4 +233,6 @@
     <string name="retry_search">현재 지도에서 가게 재검색</string>
     <string name="is_certification_store">인증된 가게만</string>
     <string name="dest">방문하기</string>
+
+    <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
 </resources>
