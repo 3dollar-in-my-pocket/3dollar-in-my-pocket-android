@@ -2,6 +2,7 @@ package com.zion830.threedollars
 
 import android.app.Application
 import android.content.Context
+import com.google.android.gms.ads.AdRequest.DEVICE_ID_EMULATOR
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -47,7 +48,7 @@ class GlobalApplication : Application() {
         super.onCreate()
         APPLICATION_CONTEXT = applicationContext
 
-        RequestConfiguration.Builder().setTestDeviceIds(listOf(applicationContext.getString(R.string.test_device))).build()
+        RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)
         HackleApp.initializeApp(this, BuildConfig.HACKLE_KEY)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
