@@ -1,16 +1,13 @@
 package com.zion830.threedollars.ui.store_detail.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreByDistance
-import com.zion830.threedollars.repository.model.v2.response.store.StoreByRating
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,54 +27,9 @@ class StoreByMenuViewModel : BaseViewModel() {
     val category: LiveData<CategoryInfo>
         get() = _category
 
-    val storeByDistance = MutableLiveData<StoreByDistance>()
-    val storeByRating = MutableLiveData<StoreByRating>()
+    val storeByDistance = MutableLiveData<List<StoreInfo>>()
+    val storeByRating = MutableLiveData<List<StoreInfo>>()
     val hasData = MutableLiveData<Boolean>()
-
-    val firstSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList4?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList4?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
-        }
-    }
-
-    val secondSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList3?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList3?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
-        }
-    }
-
-    val thirdSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
-        }
-    }
-
-    val fourthSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
-        }
-    }
-
-    val fifthSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeListOver1000?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeListOver1000?.isNotEmpty() == true
-        }
-    }
 
     fun changeCategory(menuType: CategoryInfo) {
         _category.value = menuType
@@ -96,9 +48,9 @@ class StoreByMenuViewModel : BaseViewModel() {
             requestStoreInfo(location)
 
             if (sortType == SortType.DISTANCE) {
-                storeByRating.value = StoreByRating()
+                storeByRating.value = listOf()
             } else {
-                storeByDistance.value = StoreByDistance()
+                storeByDistance.value = listOf()
             }
         }
     }

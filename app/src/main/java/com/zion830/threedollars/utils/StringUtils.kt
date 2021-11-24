@@ -63,9 +63,10 @@ object StringUtils {
         return stringDescArray[index]
     }
 
-    fun getTimeString(zuluString: String?, pattern: String = "yyyy.MM.dd E"): String {
+    @JvmStatic
+    fun getTimeString(zuluString: String?, pattern: String = "MM월 dd일 hh:mm:ss"): String {
         return Instant.parse("${zuluString}Z")
             .atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
+            .format(DateTimeFormatter.ofPattern(pattern, Locale.KOREA))
     }
 }
