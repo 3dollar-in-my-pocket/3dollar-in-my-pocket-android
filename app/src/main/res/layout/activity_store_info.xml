@@ -226,6 +226,7 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_store_info">
 
                     <TextView
+                        android:id="@+id/tv_visit_history"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
@@ -234,9 +235,93 @@
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="16dp">
+
+                        <ImageView
+                            android:id="@+id/iv_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_bedge"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:background="@drawable/rect_white_radius16"
+                            android:paddingVertical="12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/iv_badge"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="10dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/ib_plus"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <TextView
+                                    android:id="@+id/tv_good"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawablePadding="10dp"
+                                    android:gravity="start|center_vertical"
+                                    android:textColor="@color/color_green"
+                                    android:textStyle="bold"
+                                    app:drawableStartCompat="@drawable/ic_good" />
+
+                                <TextView
+                                    android:id="@+id/tv_bad"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawablePadding="10dp"
+                                    android:gravity="start|center_vertical"
+                                    android:textColor="@color/color_main_red"
+                                    android:textStyle="bold"
+                                    app:drawableStartCompat="@drawable/ic_bad" />
+                            </LinearLayout>
+
+                            <ImageButton
+                                android:id="@+id/ib_plus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:background="@android:color/transparent"
+                                android:src="@drawable/ic_plus"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/black" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_visit_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/rect_gray_radius12"
+                        android:backgroundTint="@color/white"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        android:padding="2dp"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_visit_history" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -274,10 +359,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:background="@drawable/rect_red_radius48"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/edit_info"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -482,10 +569,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:background="@drawable/rect_red_radius48"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/add_photo"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -527,10 +616,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
                             android:background="@drawable/rect_red_radius48"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/add_review"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />

@@ -129,6 +129,7 @@
                 android:drawablePadding="4dp"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="6dp"
+                android:visibility="invisible"
                 android:text="@string/dest"
                 android:textColor="@color/white"
                 android:textSize="12sp"

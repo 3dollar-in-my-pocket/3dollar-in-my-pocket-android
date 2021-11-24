@@ -32,6 +32,7 @@ import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -63,6 +64,8 @@ class StoreDetailActivity :
 
     private val naverMapFragment = StoreDetailNaverMapFragment()
 
+    private val visitHistoryAdapter = VisitHistoryAdapter()
+
     override fun onTouch() {
         // 지도 스크롤 이벤트 구분용
         binding.scroll.requestDisallowInterceptTouchEvent(true)
@@ -93,6 +96,7 @@ class StoreDetailActivity :
                 StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
+        binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -163,8 +167,10 @@ class StoreDetailActivity :
                 binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
             }
         }
+
         viewModel.storeInfo.observe(this) {
             initStoreInfo(it)
+            updateVisitHistory(it)
 
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
@@ -183,6 +189,20 @@ class StoreDetailActivity :
             categoryAdapter.submitList(it)
         }
         initMap()
+    }
+
+    private fun updateVisitHistory(it: StoreDetail?) {
+        binding.tvVisitHistory.text = getString(R.string.visit_count).format(it?.visitHistory?.existsCounts ?: 0)
+        val good = it?.visitHistories?.count { history -> history.isExist() } ?: 0
+        val bad = it?.visitHistories?.size?.minus(good) ?: 0
+        binding.tvGood.text = "${good}명"
+        binding.tvBad.text = "${bad}명"
+        visitHistoryAdapter.submitList(it?.visitHistories)
+        binding.ibPlus.setOnClickListener {
+            if (visitHistoryAdapter.itemCount > 0) {
+                binding.rvVisitHistory.isVisible = true
+            }
+        }
     }
 
     private fun initStoreInfo(it: StoreDetail?) {

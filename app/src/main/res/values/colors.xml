@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#EE624C</color>
     <color name="colorAccent">#EE624C</color>
     <color name="colorOnPrimary">#E5E5E5</color>
+    <color name="color_green">#00c667</color>
     
     <color name="color_white">#FFFFFF</color>
     <color name="color_kakao">#F7E317</color>
