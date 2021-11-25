@@ -30,10 +30,10 @@ class StoreByMenuNaverMapFragment : NaverMapFragment() {
         binding.btnFindLocation.layoutParams = params
 
         viewModel.storeByRating.observe(this) { res ->
-            addMarkers(R.drawable.ic_store_selected, res.getAllStores().map { LatLng(it.latitude, it.longitude) })
+            addMarkers(R.drawable.ic_store_selected, res.map { LatLng(it.latitude, it.longitude) })
         }
         viewModel.storeByDistance.observe(this) { res ->
-            addMarkers(R.drawable.ic_store_selected, res.getAllStores().map { LatLng(it.latitude, it.longitude) })
+            addMarkers(R.drawable.ic_store_selected, res.map { LatLng(it.latitude, it.longitude) })
         }
 
         moveToCurrentLocation()

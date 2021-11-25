@@ -5,32 +5,40 @@ import android.content.Intent
 import androidx.activity.viewModels
 import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
-import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreList
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
+import kotlinx.android.synthetic.main.activity_store_by_menu.*
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 
-class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu) {
+class StoreByMenuActivity :
+    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu) {
 
     override val viewModel: StoreByMenuViewModel by viewModels()
 
-    private var currentPosition: LatLng = NaverMapUtils.DEFAULT_LOCATION
-
     private lateinit var menuType: CategoryInfo
 
-    private val storeByDistanceAdapters = arrayListOf<SearchByDistanceRecyclerAdapter>()
+    private val listener = object : OnItemClickListener<StoreInfo> {
+        override fun onClick(item: StoreInfo) {
+            val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
+            startActivity(intent)
+        }
+    }
+    private val storeByDistanceAdapters by lazy {
+        SearchByDistanceRecyclerAdapter(listener)
+    }
 
-    private val storeByRatingAdapters = arrayListOf<SearchByRatingRecyclerAdapter>()
+    private val storeByRatingAdapters by lazy {
+        SearchByRatingRecyclerAdapter(listener)
+    }
 
     override fun initView() {
         val adRequest: AdRequest = AdRequest.Builder().build()
@@ -46,80 +54,63 @@ class StoreByMenuActivity : BaseActivity<ActivityStoreByMenuBinding, StoreByMenu
 
         binding.btnMenu.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
-            viewModel.changeCategory(menuType, currentPosition)
+            naverMapFragment.currentPosition?.let { currentPosition ->
+                viewModel.changeCategory(menuType, currentPosition)
+            }
         }
         binding.btnSortByDistance.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
-            viewModel.changeSortType(SortType.DISTANCE, currentPosition)
+            naverMapFragment.currentPosition?.let { currentPosition ->
+                viewModel.changeSortType(SortType.DISTANCE, currentPosition)
+            }
         }
         binding.btnSortByScore.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
-            viewModel.changeSortType(SortType.RATING, currentPosition)
+            naverMapFragment.currentPosition?.let { currentPosition ->
+                viewModel.changeSortType(SortType.RATING, currentPosition)
+            }
         }
         viewModel.storeByRating.observe(this) {
-            storeByRatingAdapters[0].submitList(it.storeList4)
-            storeByRatingAdapters[1].submitList(it.storeList3)
-            storeByRatingAdapters[2].submitList(it.storeList2)
-            storeByRatingAdapters[3].submitList(it.storeList1)
-            storeByRatingAdapters[4].submitList(it.storeList0)
+            val storeInfoList = if (binding.cbCertification.isChecked) {
+                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
+            } else {
+                it
+            }
+            storeByRatingAdapters.submitList(storeInfoList)
         }
         viewModel.storeByDistance.observe(this) {
-            storeByDistanceAdapters[0].submitList(it.storeList50)
-            storeByDistanceAdapters[1].submitList(it.storeList100)
-            storeByDistanceAdapters[2].submitList(it.storeList500)
-            storeByDistanceAdapters[3].submitList(it.storeList1000)
-            storeByDistanceAdapters[4].submitList(it.storeListOver1000)
+            val storeInfoList = if (binding.cbCertification.isChecked) {
+                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
+            } else {
+                it
+            }
+            storeByDistanceAdapters.submitList(storeInfoList)
         }
         binding.btnBack.setOnClickListener {
             finish()
         }
+        binding.cbCertification.setOnCheckedChangeListener { _, _ ->
+            naverMapFragment.currentPosition?.let {
+                viewModel.requestStoreInfo(it)
+            }
+        }
     }
 
     private fun initAdapter() {
-        val searchByDistanceListener = object : OnItemClickListener<StoreList> {
-            override fun onClick(item: StoreList) {
-                val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
-                startActivity(intent)
-            }
-        }
-        val searchByRatingListener = object : OnItemClickListener<StoreList> {
-            override fun onClick(item: StoreList) {
-                val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
-                startActivity(intent)
-            }
-        }
-        storeByDistanceAdapters.apply {
-            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
-            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
-            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
-            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
-            add(SearchByDistanceRecyclerAdapter(searchByDistanceListener))
-        }
-        storeByRatingAdapters.apply {
-            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
-            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
-            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
-            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
-            add(SearchByRatingRecyclerAdapter(searchByRatingListener))
-        }
-
-        val rvDistances = arrayOf(binding.rvDistance1, binding.rvDistance2, binding.rvDistance3, binding.rvDistance4, binding.rvDistance5)
-        val rvRatings = arrayOf(binding.rvRating1, binding.rvRating2, binding.rvRating3, binding.rvRating4, binding.rvRating5)
-        rvDistances.forEachIndexed { index, recyclerView ->
-            recyclerView.adapter = storeByDistanceAdapters[index]
-            recyclerView.itemAnimator = null
-        }
-        rvRatings.forEachIndexed { index, recyclerView ->
-            recyclerView.adapter = storeByRatingAdapters[index]
-            recyclerView.itemAnimator = null
+        binding.run {
+            rvDistance.adapter = storeByDistanceAdapters
+            rvDistance.itemAnimator = null
+            rvRating.adapter = storeByRatingAdapters
+            rvRating.itemAnimator = null
         }
     }
 
     companion object {
         private const val KEY_MENU = "KEY_MENU"
 
-        fun getIntent(context: Context, category: CategoryInfo) = Intent(context, StoreByMenuActivity::class.java).apply {
-            putExtra(KEY_MENU, category)
-        }
+        fun getIntent(context: Context, category: CategoryInfo) =
+            Intent(context, StoreByMenuActivity::class.java).apply {
+                putExtra(KEY_MENU, category)
+            }
     }
 }
