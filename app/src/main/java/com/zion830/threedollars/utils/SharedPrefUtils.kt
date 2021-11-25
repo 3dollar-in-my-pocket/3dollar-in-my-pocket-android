@@ -5,29 +5,25 @@ import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import java.lang.Exception
 import java.lang.reflect.Type
 
 object SharedPrefUtils {
     private const val PREFERENCE_FILE_KEY = "preference_file_key"
     private const val KAKAO_ACCESS_TOKEN = "kakao_access_token"
     private const val KAKAO_REFRESH_TOKEN = "kakao_refresh_token"
-    private const val USER_NAME_KEY = "user_name_key"
     private const val USER_ID_KEY = "user_id_key"
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
     private const val CATEGORY_LIST = "category_list"
+    private const val LOGIN_TYPE = "login_type"
+    private const val GOOGLE_TOKEN = "google_token"
 
     private val sharedPreferences = GlobalApplication.getContext().getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
     fun saveAccessToken(accessToken: String?) = sharedPreferences.edit {
         putString(ACCESS_TOKEN_KEY, accessToken)
-        commit()
-    }
-
-    fun saveUserName(name: String?) = sharedPreferences.edit {
-        putString(USER_NAME_KEY, name)
         commit()
     }
 
@@ -72,6 +68,20 @@ object SharedPrefUtils {
         saveList(categoryInfo, CATEGORY_LIST)
     }
 
+    fun saveLoginType(loginType: LoginType?) = sharedPreferences.edit {
+        putString(LOGIN_TYPE, loginType?.socialName)
+        commit()
+    }
+
+    fun getLoginType() = sharedPreferences.getString(LOGIN_TYPE, "")
+
+    fun saveGoogleToken(token: String) = sharedPreferences.edit {
+        putString(GOOGLE_TOKEN, token)
+        commit()
+    }
+
+    fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
+
     fun getCategories(): List<CategoryInfo> {
         return try {
             val gson = Gson()
@@ -97,9 +107,10 @@ object SharedPrefUtils {
     }
 
     fun clearUserInfo() {
-        saveUserName(null)
         saveAccessToken("")
         saveKakaoToken("", "")
+        saveGoogleToken("")
+        saveLoginType(null)
         saveUserId(-1)
     }
 }

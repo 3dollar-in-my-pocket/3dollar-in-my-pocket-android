@@ -13,7 +13,8 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.listener.OnItemClickListener
 
-class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(R.layout.fragment_my_review) {
+class MyReviewFragment :
+    BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(R.layout.fragment_my_review) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 

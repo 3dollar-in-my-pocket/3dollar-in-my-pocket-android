@@ -6,14 +6,10 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.request.NewStore
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
-import com.zion830.threedollars.repository.model.v2.response.store.StoreDetailResponse
-import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 
 class EditStoreViewModel : BaseViewModel() {

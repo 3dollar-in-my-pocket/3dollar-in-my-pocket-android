@@ -1,4 +1,4 @@
-package com.zion830.threedollars.login
+package com.zion830.threedollars.ui.login
 
 import android.os.Handler
 import android.view.View
@@ -28,7 +28,7 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
             activity?.supportFragmentManager?.popBackStack()
         }
         binding.btnFinish.setOnClickListener {
-            viewModel.updateName()
+            viewModel.trySignUp()
         }
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0
