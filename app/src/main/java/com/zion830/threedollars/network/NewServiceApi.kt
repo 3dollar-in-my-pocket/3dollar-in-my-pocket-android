@@ -1,5 +1,6 @@
 package com.zion830.threedollars.network
 
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.repository.model.v2.request.*
 import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
@@ -78,24 +79,6 @@ interface NewServiceApi {
         @Query("storeId") storeId: Int,
     ): Response<StoreDetailResponse>
 
-    @GET("/api/v2/stores/distance")
-    suspend fun getStoreByDistance(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-        @Query("category") category: String,
-    ): Response<StoreByDistanceResponse>
-
-    @GET("/api/v2/stores/review")
-    suspend fun getStoreByRating(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-        @Query("category") category: String,
-    ): Response<StoreByRatingResponse>
-
     @GET("/api/v2/stores/near")
     suspend fun getNearStore(
         @Query("latitude") latitude: Double,
@@ -103,6 +86,8 @@ interface NewServiceApi {
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Query("distance") distance: Double = 100000.0,
+        @Query("orderType") orderType : String = Constants.DISTANCE_ASC,
+        @Query("category") category : String = ""
     ): Response<NearStoreResponse>
 
     @GET("/api/v2/store/{storeId}/images")
