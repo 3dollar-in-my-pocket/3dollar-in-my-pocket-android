@@ -30,7 +30,7 @@
             android:id="@+id/layout_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="272dp"
+            android:minWidth="280dp"
             android:onClick="@{() -> listener.onClick(item)}"
             android:paddingVertical="14dp"
             tools:ignore="UnusedAttribute">
@@ -131,6 +131,7 @@
                 android:paddingVertical="6dp"
                 android:text="@string/dest"
                 android:textColor="@color/white"
+                android:visibility="invisible"
                 android:textSize="12sp"
                 app:drawableStartCompat="@drawable/ic_dest"
                 app:layout_constraintBottom_toBottomOf="@id/ll_distance_rating"
