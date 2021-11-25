@@ -234,4 +234,7 @@
     <string name="is_certification_store">인증된 가게만</string>
     <string name="dest">방문하기</string>
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
+
+    <string name="close">닫기</string>
+    <string name="today_not_popup">오늘 하루 보지않기</string>
 </resources>

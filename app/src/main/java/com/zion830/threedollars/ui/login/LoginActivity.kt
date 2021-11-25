@@ -14,11 +14,13 @@ import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
+import com.zion830.threedollars.Constants.TIME_MILLIS_DAY
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.repository.model.LoginType
+import com.zion830.threedollars.ui.popup.PopupActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +30,7 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
+import java.util.*
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
@@ -64,7 +67,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 val token =
-                    GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account, "oauth2:https://www.googleapis.com/auth/plus.me")
+                    GoogleAuthUtil.getToken(
+                        GlobalApplication.getContext(),
+                        account?.account,
+                        "oauth2:https://www.googleapis.com/auth/plus.me"
+                    )
                 SharedPrefUtils.saveGoogleToken(token)
                 SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
@@ -113,7 +120,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                     SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
                     SharedPrefUtils.saveAccessToken(it.value?.token)
 
-                    startActivity(MainActivity.getIntent(this))
+                    if (Calendar.getInstance().timeInMillis - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
+                        startActivity(PopupActivity.getIntent(this))
+                    } else {
+                        startActivity(MainActivity.getIntent(this))
+                    }
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
@@ -126,14 +137,22 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
-                startActivity(MainActivity.getIntent(this))
+                if (Calendar.getInstance().timeInMillis - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
+                    startActivity(PopupActivity.getIntent(this))
+                } else {
+                    startActivity(MainActivity.getIntent(this))
+                }
                 finish()
             }
         }
     }
 
     private fun addInputNameFragment() {
-        supportFragmentManager.addNewFragment(R.id.layout_container, InputNameFragment.getInstance(), InputNameFragment::class.java.name)
+        supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            InputNameFragment.getInstance(),
+            InputNameFragment::class.java.name
+        )
     }
 
     private fun tryKakaoLogin() {
