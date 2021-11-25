@@ -1,4 +1,4 @@
-package com.zion830.threedollars.login
+package com.zion830.threedollars.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,17 +6,15 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.UserRepository
+import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
 import com.zion830.threedollars.repository.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
-import java.net.ConnectException
 
 class LoginViewModel : BaseViewModel() {
 
@@ -36,6 +34,8 @@ class LoginViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
+    private val latestSocialType: MutableLiveData<LoginType> = MutableLiveData(LoginType.of(SharedPrefUtils.getLoginType()))
+
     private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
     val isNameUpdated: LiveData<Boolean>
         get() = _isNameUpdated
@@ -44,35 +44,34 @@ class LoginViewModel : BaseViewModel() {
     val isAlreadyUsed: LiveData<Int>
         get() = _isAlreadyUsed
 
-    fun tryLogin(accessToken: String) {
+    fun tryLogin(socialType: LoginType, accessToken: String) {
+        latestSocialType.postValue(socialType)
+        SharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userRepository.login(LoginRequest(token = accessToken))
+            val loginResult = userRepository.login(LoginRequest(socialType.socialName, accessToken))
             _loginResult.postValue(safeApiCall(loginResult))
         }
     }
 
-    fun updateName() {
+    fun trySignUp() {
         if (userName.value.isNullOrBlank()) {
             _msgTextId.value = R.string.name_empty
             return
         }
 
-        val updateNameHandler = CoroutineExceptionHandler { _, t ->
-            when (t) {
-                is HttpException -> {
-                    _isAvailable.postValue(false)
-                }
-                is ConnectException -> {
-                    _msgTextId.postValue(R.string.set_name_failed)
-                }
-                else -> {
-                    _isNameUpdated.postValue(true)
-                }
-            }
+        if (latestSocialType.value == null) {
+            _msgTextId.postValue(R.string.connection_failed)
+            return
         }
 
-        viewModelScope.launch(Dispatchers.IO + updateNameHandler) {
-            val request = SignUpRequest(name = userName.value!!, token = SharedPrefUtils.getKakaoAccessToken().toString())
+        val token = if (latestSocialType.value!!.socialName == LoginType.KAKAO.socialName) {
+            SharedPrefUtils.getKakaoAccessToken()
+        } else {
+            SharedPrefUtils.getGoogleToken()
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val request = SignUpRequest(userName.value!!, latestSocialType.value!!.socialName, token.toString())
             val signUpResult = userRepository.signUp(request)
             if (signUpResult.isSuccessful) {
                 SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")

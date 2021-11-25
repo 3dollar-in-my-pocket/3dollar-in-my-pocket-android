@@ -14,6 +14,7 @@ android {
         resValue "string", "admob_id", properties.getProperty("admob_id")
         resValue "string", "admob_unit_id", properties.getProperty("admob_unit_id")
         buildConfigField "String", "NMF_CLIENT_ID", "\"${properties.getProperty('nmf_client_id')}\""
+        buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         manifestPlaceholders = [
                 google_map_key: properties.getProperty('google_map_key'),
                 nmf_client_id : properties.getProperty('nmf_client_id'),
@@ -27,14 +28,14 @@ android {
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_release')}\""
-            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
+            buildConfigField "String", "GOOGLE_ID", "\"${properties.getProperty('google_client_id_release')}\""
         }
         debug {
             manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_develop')}\""
-            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
+            buildConfigField "String", "GOOGLE_ID", "\"${properties.getProperty('google_client_id_release')}\""
         }
     }
 }
@@ -56,5 +57,4 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.firebase:firebase-config-ktx:21.0.1'
 }

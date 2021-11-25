@@ -4,12 +4,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
-import com.zion830.threedollars.splash.SplashActivity
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
+import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment
@@ -40,30 +41,6 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         binding.btnDeleteAccount.setOnClickListener {
             showDeleteAccountDialog()
         }
-        binding.btnTest.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    SharedPrefUtils.changeServerStatus()
-                    SharedPrefUtils.clearUserInfo()
-                    initTestBtn()
-                    requireActivity().finish()
-                }
-                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                }
-                .setTitle("잠깐!!!!!!")
-                .setMessage("확인을 누르면 앱이 종료됩니다.")
-                .create()
-                .show()
-        }
-        initTestBtn()
-    }
-
-    private fun initTestBtn() {
-        if (SharedPrefUtils.isTestServer()) {
-            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 dev)"
-        } else {
-            binding.btnTest.text = "[DEBUG] 서버 변경하기 (현재 prod)"
-        }
     }
 
     private fun showDeleteAccountDialog() {
@@ -80,6 +57,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         viewModel.deleteUser {
             showToast(R.string.delete_account_success)
             SharedPrefUtils.clearUserInfo()
+            GlobalApplication.googleClient.signOut()
             requireActivity().finish()
         }
     }
@@ -89,6 +67,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         SharedPrefUtils.clearUserInfo()
         showToast(R.string.logout_message)
         startActivity(Intent(requireContext(), SplashActivity::class.java))
+        requireActivity().finish()
     }
 
     private fun addEditNameFragment() {

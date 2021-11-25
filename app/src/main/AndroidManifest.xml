@@ -23,7 +23,7 @@
     
         <activity
             android:exported="true"
-            android:name=".splash.SplashActivity"
+            android:name="com.zion830.threedollars.ui.splash.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +35,7 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.zion830.threedollars.ui.login.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.store_detail.StoreDetailActivity"

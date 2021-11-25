@@ -14,7 +14,7 @@ import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 
 
-class DeleteStoreDialog : DialogFragment() {
+class DeleteStoreDialog(private val storeId: Int) : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class DeleteStoreDialog : DialogFragment() {
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
-            viewModel.deleteStore()
+            viewModel.deleteStore(storeId)
             dismiss()
         }
         binding.rgReason.setOnCheckedChangeListener { _, checkedId ->
@@ -60,6 +60,6 @@ class DeleteStoreDialog : DialogFragment() {
 
     companion object {
 
-        fun getInstance() = DeleteStoreDialog()
+        fun getInstance(storeId: Int) = DeleteStoreDialog(storeId)
     }
 }

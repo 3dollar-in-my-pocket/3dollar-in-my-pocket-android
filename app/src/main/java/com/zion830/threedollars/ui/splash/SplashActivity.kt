@@ -1,17 +1,24 @@
-package com.zion830.threedollars.splash
+package com.zion830.threedollars.ui.splash
 
 import android.animation.Animator
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
-import com.zion830.threedollars.login.LoginActivity
+import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.ui.VersionUpdateDialog
+import com.zion830.threedollars.ui.login.LoginActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 
@@ -31,11 +38,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                     { minimum, current ->
                         VersionUpdateDialog.getInstance(minimum, current).show(supportFragmentManager, VersionUpdateDialog::class.java.name)
                     }, {
-                        if (SharedPrefUtils.getKakaoAccessToken().isNullOrEmpty()) {
+                        if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
                             startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                             finish()
                         } else {
-                            tryServiceLogin(SharedPrefUtils.getKakaoAccessToken()!!)
+                            tryServiceLogin()
                         }
                     })
             }
@@ -50,8 +57,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
         })
     }
 
-    private fun tryServiceLogin(token: String) {
-        viewModel.tryLogin(token)
+    private fun tryServiceLogin() {
+        viewModel.tryLogin()
 
         viewModel.loginResult.observe(this) {
             when (it) {
@@ -62,10 +69,29 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                 }
                 is ResultWrapper.GenericError -> {
                     if (it.code == 400) {
-                        viewModel.refreshToken()
+                        if (SharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
+                            viewModel.refreshKakaoToken()
+                        } else {
+                            try {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                                    if (account != null && account.idToken != null) {
+                                        viewModel.refreshGoogleToken(account)
+                                    } else {
+                                        withContext(Dispatchers.Main) {
+                                            startActivity(Intent(applicationContext, LoginActivity::class.java))
+                                            finish()
+                                        }
+                                    }
+                                }
+                            } catch (e: Exception) {
+
+                            }
+                        }
                     }
                     if (it.code in 401..499) {
                         startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
                     }
                     if (it.code == 503) {
                         AlertDialog.Builder(this)

@@ -5,6 +5,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.zion830.threedollars.repository.MyReviewDataSource
 import com.zion830.threedollars.repository.MyStoreDataSource
+import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.repository.model.v2.response.my.MyReviews
@@ -39,17 +40,21 @@ class UserInfoViewModel : BaseViewModel() {
         it.isNullOrBlank()
     }
 
-    private val refresh: MutableLiveData<Boolean> = MutableLiveData(true)
+    private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
 
-    val myStore: LiveData<List<StoreInfo>?> = refresh.switchMap {
+    val myStore: LiveData<List<StoreInfo>?> = isUpdated.switchMap {
         liveData(Dispatchers.IO + coroutineExceptionHandler) {
             emit(
-                userRepository.getMyStore(NaverMapUtils.DEFAULT_LOCATION.latitude, NaverMapUtils.DEFAULT_LOCATION.longitude, 0).body()?.data?.contents
+                userRepository.getMyStore(
+                    NaverMapUtils.DEFAULT_LOCATION.latitude,
+                    NaverMapUtils.DEFAULT_LOCATION.longitude,
+                    0
+                ).body()?.data?.contents
             )
         }
     }
 
-    val myReview: LiveData<MyReviews?> = refresh.switchMap {
+    val myReview: LiveData<MyReviews?> = isUpdated.switchMap {
         liveData(Dispatchers.IO + coroutineExceptionHandler) {
             emit(userRepository.getMyReviews(0).body()?.data)
         }
@@ -57,7 +62,11 @@ class UserInfoViewModel : BaseViewModel() {
 
     val myAllStore: LiveData<PagedList<StoreInfo>> by lazy {
         LivePagedListBuilder(
-            MyStoreDataSource.Factory(viewModelScope, Dispatchers.IO + coroutineExceptionHandler, NaverMapUtils.DEFAULT_LOCATION),
+            MyStoreDataSource.Factory(
+                viewModelScope,
+                Dispatchers.IO + coroutineExceptionHandler,
+                NaverMapUtils.DEFAULT_LOCATION
+            ),
             MyStoreDataSource.pageConfig
         ).build()
     }
@@ -69,10 +78,13 @@ class UserInfoViewModel : BaseViewModel() {
         ).build()
     }
 
+    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
+    val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
+
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             _userInfo.postValue(userRepository.getMyInfo().body())
-            refresh.postValue(true)
+            isUpdated.postValue(true)
         }
     }
 
@@ -131,7 +143,7 @@ class UserInfoViewModel : BaseViewModel() {
     }
 
     fun logout() {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             userRepository.logout()
         }
     }

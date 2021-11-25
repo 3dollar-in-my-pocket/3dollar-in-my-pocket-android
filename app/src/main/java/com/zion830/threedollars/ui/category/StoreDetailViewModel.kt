@@ -8,14 +8,11 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.Category
-import com.zion830.threedollars.repository.model.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.Image
-import com.zion830.threedollars.repository.model.v2.response.store.Menu
-import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
+import com.zion830.threedollars.repository.model.v2.response.store.*
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -46,7 +43,8 @@ class StoreDetailViewModel : BaseViewModel() {
             allMenu[category.key] = category.value
         }
         allMenu.map {
-            val key = SharedPrefUtils.getCategories().find { categoryInfo -> categoryInfo.category == it.key } ?: CategoryInfo()
+            val key = SharedPrefUtils.getCategories()
+                .find { categoryInfo -> categoryInfo.category == it.key } ?: CategoryInfo()
             Category(key, it.value)
         }
     }
@@ -100,6 +98,9 @@ class StoreDetailViewModel : BaseViewModel() {
     val photoDeleted: LiveData<Boolean>
         get() = _photoDeleted
 
+    private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
+    val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
+
     fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -109,6 +110,7 @@ class StoreDetailViewModel : BaseViewModel() {
                 longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude
             )
             _storeInfo.postValue(data.body()?.data)
+            _isExistStoreInfo.postValue(storeId to (data.code() == 200))
             hideLoading()
         }
     }
@@ -119,7 +121,11 @@ class StoreDetailViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(storeInfo.value!!.storeId, storeInfo.value!!.latitude, storeInfo.value!!.longitude)
+            val data = repository.getStoreDetail(
+                storeInfo.value!!.storeId,
+                storeInfo.value!!.latitude,
+                storeInfo.value!!.longitude
+            )
             _storeInfo.postValue(data.body()?.data)
         }
         hideLoading()
@@ -136,16 +142,18 @@ class StoreDetailViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request = NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
+            val request =
+                NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
             repository.addReview(request)
             _msgTextId.postValue(R.string.success_add_review)
             _addReviewResult.postValue(true)
         }
     }
 
-    fun deleteStore() {
+    fun deleteStore(storeId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = repository.deleteStore(storeInfo.value?.storeId ?: -1, deleteType.value!!.key)
+            val requestStoreId = if (storeInfo.value == null) storeId else storeInfo.value!!.storeId
+            val result = repository.deleteStore(requestStoreId, deleteType.value!!.key)
 
             _deleteStoreResult.postValue(result.isSuccessful)
             if (result.body()?.data?.isDeleted == true) {
@@ -210,8 +218,12 @@ class StoreDetailViewModel : BaseViewModel() {
 
     fun initSelectedCategory() {
         _selectedCategory.value = SharedPrefUtils.getCategories().map { menu ->
-            val selectedCategory = categoryInfo.value?.find { categoryInfo -> categoryInfo.category.category == menu.category }
-            SelectedCategory(selectedCategory != null, menu, selectedCategory?.menu?.map { MyMenu(it.category, it.name, it.price) })
+            val selectedCategory =
+                categoryInfo.value?.find { categoryInfo -> categoryInfo.category.category == menu.category }
+            SelectedCategory(
+                selectedCategory != null,
+                menu,
+                selectedCategory?.menu?.map { MyMenu(it.category, it.name, it.price) })
         }
     }
 
