@@ -58,7 +58,24 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
     }
 
     private fun tryServiceLogin() {
-        viewModel.tryLogin()
+        when (SharedPrefUtils.getLoginType()) {
+            LoginType.KAKAO.socialName -> {
+                viewModel.refreshKakaoToken()
+            }
+            LoginType.GOOGLE.socialName -> {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                    if (account != null && account.idToken != null) {
+                        viewModel.refreshGoogleToken(account)
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            startActivity(Intent(applicationContext, LoginActivity::class.java))
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
 
         viewModel.loginResult.observe(this) {
             when (it) {
@@ -69,25 +86,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                 }
                 is ResultWrapper.GenericError -> {
                     if (it.code == 400) {
-                        if (SharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
-                            viewModel.refreshKakaoToken()
-                        } else {
-                            try {
-                                lifecycleScope.launch(Dispatchers.IO) {
-                                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
-                                    if (account != null && account.idToken != null) {
-                                        viewModel.refreshGoogleToken(account)
-                                    } else {
-                                        withContext(Dispatchers.Main) {
-                                            startActivity(Intent(applicationContext, LoginActivity::class.java))
-                                            finish()
-                                        }
-                                    }
-                                }
-                            } catch (e: Exception) {
-
-                            }
-                        }
+                        showToast(R.string.login_failed)
+                        startActivity(Intent(this, LoginActivity::class.java))
                     }
                     if (it.code in 401..499) {
                         startActivity(Intent(this, LoginActivity::class.java))

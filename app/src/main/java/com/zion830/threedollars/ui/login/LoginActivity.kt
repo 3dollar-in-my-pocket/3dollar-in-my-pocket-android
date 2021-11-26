@@ -65,8 +65,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
             lifecycleScope.launch(Dispatchers.IO) {
                 val token =
                     GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account, "oauth2:https://www.googleapis.com/auth/plus.me")
-                SharedPrefUtils.saveGoogleToken(token)
                 SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+                SharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
@@ -142,6 +142,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 Log.e(localClassName, "로그인 실패", error)
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
+                SharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
                 tryLogin(token)

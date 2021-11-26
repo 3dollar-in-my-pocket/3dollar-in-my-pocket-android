@@ -53,6 +53,7 @@ object RetrofitBuilder {
     val kakaoLoginApi: KakaoLoginApi = Retrofit.Builder()
         .baseUrl(KAKAO_LOGIN_URL)
         .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClientNoHeader)
         .build()
         .create(KakaoLoginApi::class.java)
 }
