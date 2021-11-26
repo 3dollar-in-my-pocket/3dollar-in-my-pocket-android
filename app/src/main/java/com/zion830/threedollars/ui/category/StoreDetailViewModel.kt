@@ -12,7 +12,10 @@ import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.repository.model.v2.response.store.Image
+import com.zion830.threedollars.repository.model.v2.response.store.Menu
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -136,17 +139,25 @@ class StoreDetailViewModel : BaseViewModel() {
     }
 
     fun addReview(rating: Float) {
+        if (rating == 0f) {
+            _msgTextId.postValue(R.string.over_rating_1)
+            return
+        }
+
         if (reviewContent.value.isNullOrBlank()) {
             _addReviewResult.postValue(false)
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request =
-                NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
-            repository.addReview(request)
-            _msgTextId.postValue(R.string.success_add_review)
-            _addReviewResult.postValue(true)
+            val request = NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
+            val response = repository.addReview(request)
+            if (response.isSuccessful) {
+                _msgTextId.postValue(R.string.success_add_review)
+                _addReviewResult.postValue(true)
+            } else {
+                _addReviewResult.postValue(false)
+            }
         }
     }
 

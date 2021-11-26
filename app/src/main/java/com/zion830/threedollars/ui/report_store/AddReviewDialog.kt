@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.response.Review
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.utils.showToast
 
 class AddReviewDialog(
     private val content: Review?
@@ -41,7 +42,7 @@ class AddReviewDialog(
 
         if (content != null) {
             viewModel.reviewContent.value = content.contents
-            binding.rating.rating = content.rating.toFloat()
+            binding.rating.rating = content.rating
         } else {
             viewModel.reviewContent.value = ""
             binding.rating.rating = 0f
@@ -49,12 +50,17 @@ class AddReviewDialog(
 
         binding.btnFinish.setOnClickListener {
             if (content == null) {
-                viewModel.addReview(binding.rating.rating)
+                if (binding.rating.rating == 0f) {
+                    showToast(R.string.over_rating_1)
+                } else {
+                    viewModel.addReview(binding.rating.rating)
+                    dismiss()
+                }
             } else {
                 val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
                 viewModel.editReview(content.reviewId, newReview)
+                dismiss()
             }
-            dismiss()
         }
 
         return binding.root
