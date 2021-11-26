@@ -1,7 +1,6 @@
 package com.zion830.threedollars.repository.model.v2.response.store
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.repository.model.MenuType
 
 data class StoreInfo(
     @SerializedName("categories")
@@ -21,5 +20,7 @@ data class StoreInfo(
     @SerializedName("storeName")
     val storeName: String = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = ""
+    val updatedAt: String = "",
+    @SerializedName("visitHistory")
+    val visitHistory: VisitHistory = VisitHistory()
 )

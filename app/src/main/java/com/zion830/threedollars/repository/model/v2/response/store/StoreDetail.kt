@@ -37,5 +37,26 @@ data class StoreDetail(
     @SerializedName("updatedAt")
     val updatedAt: String? = "",
     @SerializedName("user")
-    val user: User = User()
+    val user: User = User(),
+    @SerializedName("visitHistory")
+    val visitHistory: VisitHistory = VisitHistory(),
+    @SerializedName("visitHistories")
+    val visitHistories: List<DetailVisitHistory> = listOf()
 )
+
+data class DetailVisitHistory(
+    @SerializedName("createdAt")
+    val createdAt: String? = "",
+    @SerializedName("updatedAt")
+    val updatedAt: String? = "",
+    @SerializedName("type")
+    val type: String? = "",
+    @SerializedName("storeId")
+    val storeId: Int? = 0,
+    @SerializedName("visitHistoryId")
+    val visitHistoryId: Int? = 0,
+    @SerializedName("user")
+    val user: User = User()
+) {
+    fun isExist() = type == "EXISTS"
+}

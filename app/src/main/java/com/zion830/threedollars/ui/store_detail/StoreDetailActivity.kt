@@ -12,6 +12,8 @@ import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -32,6 +34,7 @@ import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -42,6 +45,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
+import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 
@@ -62,6 +66,8 @@ class StoreDetailActivity :
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
     private val naverMapFragment = StoreDetailNaverMapFragment()
+
+    private val visitHistoryAdapter = VisitHistoryAdapter()
 
     override fun onTouch() {
         // 지도 스크롤 이벤트 구분용
@@ -94,6 +100,7 @@ class StoreDetailActivity :
                 StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
+        binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
             finish()
@@ -175,8 +182,10 @@ class StoreDetailActivity :
                 binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
             }
         }
+
         viewModel.storeInfo.observe(this) {
             initStoreInfo(it)
+            updateVisitHistory(it)
 
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
@@ -204,6 +213,31 @@ class StoreDetailActivity :
         initMap()
     }
 
+    private fun updateVisitHistory(it: StoreDetail?) {
+        binding.tvVisitHistory.text = buildSpannedString {
+            append("이번 주 ")
+            bold {
+                append((it?.visitHistory?.existsCounts ?: 0).toString())
+                append("명")
+            }
+            append("이 다녀간 가게에요!")
+            getString(R.string.visit_count).format(it?.visitHistory?.existsCounts ?: 0)
+        }
+        val good = it?.visitHistories?.count { history -> history.isExist() } ?: 0
+        val bad = it?.visitHistories?.size?.minus(good) ?: 0
+        binding.tvGood.text = "${good}명"
+        binding.tvBad.text = "${bad}명"
+        visitHistoryAdapter.submitList(it?.visitHistories)
+
+        binding.ibPlus.setOnClickListener {
+            if (visitHistoryAdapter.itemCount > 0) {
+                binding.rvVisitHistory.isVisible = true
+            } else {
+                binding.root.showSnack("아직 인증 내역이 없어요!")
+            }
+        }
+    }
+
     private fun initStoreInfo(it: StoreDetail?) {
         if (it != null) {
             val distance = it.distance
@@ -214,8 +248,7 @@ class StoreDetailActivity :
                 )
             } ${getString(R.string.updated_at)}"
 
-
-            binding.tvDistance.text = if (distance < 1000) "${distance}m" else "1km+"
+            binding.tvDistance.text = "${distance.toString().toFormattedNumber()}m"
             binding.tvStoreType.isVisible = true
             binding.tvEmptyStoreType.isVisible = false
             binding.tvUpdatedAt.isVisible = !it.updatedAt.isNullOrBlank()
