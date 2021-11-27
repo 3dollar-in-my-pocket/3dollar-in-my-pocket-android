@@ -7,6 +7,7 @@ import com.zion830.threedollars.repository.model.MenuType
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 
 object StringUtils {
@@ -65,8 +66,12 @@ object StringUtils {
 
     @JvmStatic
     fun getTimeString(zuluString: String?, pattern: String = "MM월 dd일 hh:mm:ss"): String {
-        return Instant.parse("${zuluString}Z")
-            .atZone(ZoneId.of("Etc/UTC"))
-            .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
+        return try {
+            Instant.parse("${zuluString}Z")
+                .atZone(ZoneId.of("Etc/UTC"))
+                .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
+        } catch (e: DateTimeParseException) {
+            ""
+        }
     }
 }
