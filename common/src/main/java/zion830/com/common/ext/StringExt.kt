@@ -10,3 +10,5 @@ fun String?.isNotNullOrBlank() = !isNullOrBlank()
 fun String?.isNotNullOrEmpty() = !isNullOrEmpty()
 
 fun String?.toFormattedNumber() = if (this.isNullOrBlank()) "" else DecimalFormat("#,###").format(this.toLong())
+
+fun Int.toFormattedNumber() = DecimalFormat("#,###").format(this.toLong())

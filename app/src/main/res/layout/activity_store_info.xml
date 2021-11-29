@@ -198,7 +198,7 @@
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="32dp"
-                                android:background="@color/color_d0d0d0" />
+                                android:background="@color/gray20" />
 
                             <Button
                                 android:id="@+id/btn_send_money"
@@ -246,7 +246,7 @@
                             android:id="@+id/iv_badge"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_bedge"
+                            android:src="@drawable/ic_badge"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -359,9 +359,8 @@
                             android:id="@+id/btn_add_store_info"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
+                            android:background="@drawable/ripple_translate"
                             android:backgroundTint="@color/color_sub_red_hint"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/edit_info"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
@@ -544,6 +543,7 @@
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="1"
                             tools:listitem="@layout/item_category" />
                     </TableLayout>
 
@@ -569,9 +569,8 @@
                             android:id="@+id/btn_add_photo"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
+                            android:background="@drawable/ripple_translate"
                             android:backgroundTint="@color/color_sub_red_hint"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/add_photo"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
@@ -616,9 +615,8 @@
                             android:id="@+id/btn_add_review"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
+                            android:background="@drawable/ripple_translate"
                             android:backgroundTint="@color/color_sub_red_hint"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@string/add_review"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
@@ -641,33 +639,36 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="50dp"
+                        android:text="@string/no_review"
+                        android:textColor="@color/color_gray1"
+                        android:textSize="16sp"
+                        android:visibility="@{viewModel.storeInfo.reviews.size() == 0 ? View.VISIBLE : View.GONE}" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_review"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginVertical="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="120dp"
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="2"
                         tools:listitem="@layout/item_review" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="50dp"
-                        android:text="@string/no_review"
-                        android:textColor="@color/color_gray1"
-                        android:textSize="16sp"
-                        android:visibility="@{viewModel.storeInfo.reviews.size() == 0 ? View.VISIBLE : View.GONE}" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
-            android:id="@id/progress"
+            android:id="@id/progress_indicator"
             visibleIf="@{viewModel.isLoading()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -675,6 +676,37 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_button_back"
+            android:layout_width="232dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_certification"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/ripple_translate"
+            android:elevation="4dp"
+            android:text="@string/add_certification"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/view_button_back"
+            app:layout_constraintEnd_toEndOf="@id/view_button_back"
+            app:layout_constraintStart_toStartOf="@id/view_button_back"
+            app:layout_constraintTop_toTopOf="@id/view_button_back"
+            tools:ignore="UnusedAttribute" />
 
         <LinearLayout
             android:id="@+id/container"

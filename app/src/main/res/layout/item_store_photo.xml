@@ -56,7 +56,7 @@
                 android:id="@+id/tv_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show_more"
+                android:text="@string/more"
                 android:textColor="@color/color_white" />
         </LinearLayout>
     </FrameLayout>

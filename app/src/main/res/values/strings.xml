@@ -22,7 +22,7 @@
     <string name="login_name_fail">시작못해요</string>
     <string name="login_name_already_exist">중복된 닉네임</string>
     <string name="invalidate_name">잘못된 형식의 닉네임</string>
-    <string name="login_failed">로그인에 실패했습니다. 네크워크 연결 상태를 확인해주세요!</string>
+    <string name="login_failed">로그인에 실패했습니다. 네트워크 연결 상태를 확인해주세요!</string>
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>
@@ -59,7 +59,7 @@
     <string name="request_delete_reason3">중복 제보된 가게예요</string>
     <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
     <string name="title_mypage">마이페이지</string>
-    <string name="show_more">더보기</string>
+    <string name="show_all_menu">모두보기</string>
     <string name="plus">+%d</string>
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
 
@@ -111,6 +111,7 @@
     <string name="location_no_address">알 수 없는 위치</string>
     <string name="find_location_error">위치를 인식할 수 없습니다. 다시 시도해주세요!</string>
     <string name="error_pick_image">이미지를 불러오는데 실패했습니다.</string>
+    <string name="upload_image">이미지를 업로드하는 중입니다...</string>
     <string name="remove_image">이미지 첨부를 취소하시겠습니까?</string>
     <string name="category">카테고리</string>
     <string name="category_title1">이 안에 </string>
@@ -138,7 +139,11 @@
     <string name="store_detail_menu">상세 메뉴 입력 </string>
     <string name="add_store_finish">가게 등록하기</string>
     <string name="edit_store_finish">가게 정보 수정하기</string>
+    <string name="add_certification">방문 인증하기</string>
+    <string name="visit_success">방문 성공</string>
+    <string name="visit_failed">방문 실패</string>
     <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
+    <string name="add_certification_success">방문 인증이 완료되었습니다. 감사합니다!</string>
     <string name="photo_count">가게사진 %d개</string>
     <string name="review_count">리뷰 %d개</string>
     <string name="hint_menu_name">ex) 슈크림</string>
@@ -152,6 +157,8 @@
     <string name="success_edit_review">리뷰가 수정되었습니다.</string>
     <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
     <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="failed_certification">방문 인증에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="already_certification">오늘 이미 방문 인증한 가게입니다.\n다음에 다시 인증해주세요.</string>
     <string name="failed_edit_store">가게 정보 추가에 실패했습니다. 다시 시도해주세요.</string>
     <string name="failed_delete_store">가게 정보 삭제 요청이 실패했습니다. 다시 시도해주세요.</string>
     <string name="success_delete_store">가게 삭제 요청을 보냈습니다. 3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다.</string>

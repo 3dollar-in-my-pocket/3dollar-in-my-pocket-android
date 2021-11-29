@@ -83,6 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_marker"
+                android:layout_marginBottom="10dp"
                 app:layout_constraintBottom_toBottomOf="@id/map_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -130,13 +131,15 @@
                 android:text="@string/select_store_location"
                 android:textColor="@color/color_black"
                 android:textSize="16sp" />
-            
+
             <TextView
                 android:id="@+id/btn_finish"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/rect_red_radius48"
+                android:background="@drawable/ripple_translate"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@string/finish_select_store_location"

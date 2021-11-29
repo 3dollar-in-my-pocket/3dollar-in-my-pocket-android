@@ -435,7 +435,6 @@
             android:background="@drawable/selector_btn_radius48"
             android:elevation="4dp"
             android:enabled="@{viewModel.isFinished()}"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@string/add_store_finish"
             android:textColor="@android:color/white"
             android:textSize="16sp"
@@ -447,7 +446,7 @@
             tools:ignore="UnusedAttribute" />
 
         <ProgressBar
-            android:id="@+id/progress"
+            android:id="@+id/progress_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.INVISIBLE}"
