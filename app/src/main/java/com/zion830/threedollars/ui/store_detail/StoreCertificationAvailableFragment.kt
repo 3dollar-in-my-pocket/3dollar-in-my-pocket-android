@@ -92,6 +92,6 @@ class StoreCertificationAvailableFragment :
     }
 
     companion object {
-        const val MIN_DISTANCE = 100
+        const val MIN_DISTANCE = 500
     }
 }
