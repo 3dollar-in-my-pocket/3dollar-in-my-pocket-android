@@ -7,6 +7,7 @@ import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
 import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.visit_history.MyVisitHistoryResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -135,6 +136,15 @@ interface NewServiceApi {
 
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<MyInfoResponse>
+
+    @GET("/api/v1/user/activity")
+    suspend fun getUserActivity(): Response<UserActivityResponse>
+
+    @GET("/api/v2/store/visits/me")
+    suspend fun getMyVisitHistory(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int
+    ): Response<MyVisitHistoryResponse>
 
     @PUT("/api/v2/user/me")
     suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
