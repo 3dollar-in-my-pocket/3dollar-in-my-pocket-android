@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -54,6 +56,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             } else {
                 android.R.color.white
             }
+            binding.divider.setBackgroundColor(
+                if (destination.id == R.id.navigation_mypage) {
+                    ContextCompat.getColor(this, R.color.gray90)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
         }
 
         binding.navView.setOnNavigationItemSelectedListener {

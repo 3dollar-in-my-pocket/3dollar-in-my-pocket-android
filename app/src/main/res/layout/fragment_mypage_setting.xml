@@ -2,27 +2,27 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <import type="android.view.View" />
-        
+
         <variable
             name="viewModel"
             type="com.zion830.threedollars.UserInfoViewModel" />
     </data>
-    
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/color_black"
             android:clickable="true"
             android:focusable="true">
-    
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -31,7 +31,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-    
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
-            
+
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -51,11 +51,12 @@
                 android:layout_margin="36dp"
                 android:background="@android:color/transparent"
                 android:foreground="?attr/actionBarItemBackground"
-                android:src="@drawable/ic_back_wh"
+                android:src="@drawable/ic_arrow_left"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white"
                 tools:ignore="UnusedAttribute" />
-    
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_detail"
                 android:layout_width="0dp"
@@ -63,7 +64,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_back">
-        
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -72,7 +73,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-        
+
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
@@ -86,7 +87,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="무슨이윤지" />
-                
+
                 <TextView
                     android:id="@+id/btn_edit_name"
                     android:layout_width="wrap_content"
@@ -104,7 +105,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_name"
                     tools:ignore="UnusedAttribute" />
-                
+
                 <View
                     android:id="@+id/view"
                     android:layout_width="0dp"
@@ -114,7 +115,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_name" />
-                
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_ask"
                     android:layout_width="0dp"
@@ -128,7 +129,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/view">
-                    
+
                     <ImageView
                         android:id="@+id/iv_ask"
                         android:layout_width="wrap_content"
@@ -137,7 +138,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -148,7 +149,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_ask"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -157,7 +158,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_terms"
                     android:layout_width="0dp"
@@ -171,7 +172,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_ask">
-                    
+
                     <ImageView
                         android:id="@+id/iv_terms"
                         android:layout_width="wrap_content"
@@ -180,7 +181,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -191,7 +192,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_terms"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -200,7 +201,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                
+
                 <View
                     android:id="@+id/view2"
                     android:layout_width="0dp"
@@ -211,7 +212,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_terms" />
-                
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_account"
                     android:layout_width="0dp"
@@ -223,7 +224,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/view2"
                     app:layout_goneMarginTop="16dp">
-                    
+
                     <ImageView
                         android:id="@+id/iv_kakao_logo"
                         android:layout_width="16dp"
@@ -235,7 +236,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -246,7 +247,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_kakao_logo"
                         app:layout_constraintTop_toTopOf="parent" />
-                    
+
                     <TextView
                         android:id="@+id/button_logout"
                         android:layout_width="wrap_content"
@@ -262,7 +263,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                
+
                 <TextView
                     android:id="@+id/btn_delete_account"
                     android:layout_width="wrap_content"
@@ -280,7 +281,7 @@
                     app:drawableStartCompat="@drawable/ic_info_gray"
                     app:layout_constraintStart_toStartOf="@id/layout_account"
                     app:layout_constraintTop_toBottomOf="@id/layout_account" />
-    
+
                 <Button
                     android:id="@+id/btn_test"
                     android:layout_width="match_parent"
@@ -294,7 +295,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/btn_delete_account" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-    
+
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -304,7 +305,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/setting_container"
             android:layout_width="match_parent"

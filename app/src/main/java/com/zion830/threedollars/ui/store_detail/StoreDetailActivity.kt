@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
-import com.zion830.threedollars.repository.model.v2.response.Review
+import com.zion830.threedollars.repository.model.v2.response.my.Review
 import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter

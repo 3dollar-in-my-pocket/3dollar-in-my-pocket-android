@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.mypage.MyPageViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,19 +67,21 @@
                 android:layout_marginTop="37dp"
                 android:background="@drawable/circle_gray"
                 android:backgroundTint="@color/gray80"
+                android:padding="12dp"
+                android:src="@drawable/ic_no_store"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
             <TextView
-                android:id="@+id/tv_user_badge"
+                android:id="@+id/tv_user_medal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/rect_pink_round_stroke"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="6dp"
-                android:text="칭호 들어갈 자리"
+                android:text="내 칭호"
                 android:textColor="@color/color_sub_red"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,13 +98,13 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_user_badge"
+                app:layout_constraintTop_toBottomOf="@id/tv_user_medal"
                 tools:text="마고수" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="36dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,9 +112,10 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_name">
 
                 <LinearLayout
+                    android:id="@+id/layout_store"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginHorizontal="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/rect_black_radius16"
                     android:backgroundTint="@color/gray90"
@@ -122,7 +128,7 @@
                         android:id="@+id/tv_store_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
+                        android:text="@{String.valueOf(viewModel.userActivity.activity.storesCount)}"
                         android:textColor="@color/white"
                         android:textSize="24sp" />
 
@@ -136,6 +142,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_review"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
@@ -151,7 +158,7 @@
                         android:id="@+id/tv_review_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
+                        android:text="@{String.valueOf(viewModel.userActivity.activity.reviewsCount)}"
                         android:textColor="@color/white"
                         android:textSize="24sp" />
 
@@ -165,9 +172,10 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_medal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginHorizontal="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/rect_black_radius16"
                     android:backgroundTint="@color/gray90"
@@ -177,10 +185,10 @@
                     android:paddingVertical="14dp">
 
                     <TextView
-                        android:id="@+id/tv_badge_count"
+                        android:id="@+id/tv_medal_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5"
+                        android:text="@{String.valueOf(viewModel.userActivity.activity.medalsCounts)}"
                         android:textColor="@color/white"
                         android:textSize="24sp" />
 
@@ -188,7 +196,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
-                        android:text="@string/my_badge"
+                        android:text="@string/my_medal"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -225,24 +233,30 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
+            android:layout_marginStart="10dp"
             android:contentDescription="@null"
+            android:paddingVertical="10dp"
+            android:paddingEnd="20dp"
             android:src="@drawable/ic_arrow_right"
             app:layout_constraintBottom_toBottomOf="@id/tv_message"
             app:layout_constraintStart_toEndOf="@id/tv_message"
-            app:layout_constraintTop_toTopOf="@id/tv_message" />
+            app:layout_constraintTop_toTopOf="@id/tv_message"
+            tools:ignore="RtlSymmetry" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recent_visit_history"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:clipToPadding="true"
+            android:layout_marginTop="23dp"
+            android:clipToPadding="false"
             android:orientation="horizontal"
             android:overScrollMode="never"
-            android:paddingHorizontal="24dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_message" />
+            app:layout_constraintTop_toBottomOf="@id/tv_message"
+            tools:listitem="@layout/item_recent_visit_history" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
