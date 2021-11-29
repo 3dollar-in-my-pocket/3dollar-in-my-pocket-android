@@ -122,22 +122,6 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun refresh() {
-        if (storeInfo.value == null) {
-            return
-        }
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(
-                storeInfo.value!!.storeId,
-                storeInfo.value!!.latitude,
-                storeInfo.value!!.longitude
-            )
-            _storeInfo.postValue(data.body()?.data)
-        }
-        hideLoading()
-    }
-
     fun clearReview() {
         reviewContent.value = ""
     }
@@ -227,7 +211,6 @@ class StoreDetailViewModel : BaseViewModel() {
             }
 
             responses.await()
-            refresh()
             _uploadImageStatus.postValue(false)
         }
     }

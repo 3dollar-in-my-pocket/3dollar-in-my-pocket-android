@@ -4,6 +4,8 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationAvailableBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
@@ -25,7 +27,10 @@ class StoreCertificationAvailableFragment :
 
     private lateinit var naverMapFragment: StoreCertificationNaverMapFragment
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     override fun initView() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         naverMapFragment = StoreCertificationNaverMapFragment {
             it?.let {
                 val distance = NaverMapUtils.calculateDistance(it, storeDetailViewModel.storeLocation.value)
@@ -73,7 +78,7 @@ class StoreCertificationAvailableFragment :
             when (it) {
                 in 200..299 -> {
                     showToast(R.string.add_certification_success)
-                    storeDetailViewModel.refresh()
+                    (requireActivity() as? StoreDetailActivity)?.refreshStoreInfo()
                 }
                 409 -> {
                     showToast(R.string.already_certification)

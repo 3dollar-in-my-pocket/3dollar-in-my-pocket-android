@@ -51,7 +51,7 @@ class EditStoreDetailFragment :
 
     override fun initView() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        initMap()
+        refreshStoreInfo()
 
         initKeyboard()
 
@@ -85,7 +85,7 @@ class EditStoreDetailFragment :
 
         editStoreViewModel.editStoreResult.observe(viewLifecycleOwner) {
             if (it) {
-                viewModel.refresh()
+                refreshStoreInfo()
                 requireActivity().onBackPressed()
             } else {
                 showToast(R.string.failed_edit_store)
@@ -274,7 +274,7 @@ class EditStoreDetailFragment :
         return result
     }
 
-    private fun initMap() {
+    private fun refreshStoreInfo() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation

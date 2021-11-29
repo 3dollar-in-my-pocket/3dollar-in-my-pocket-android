@@ -75,16 +75,18 @@
 
             <LinearLayout
                 android:id="@+id/layout_store_info"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@id/iv_category"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_category"
                 app:layout_constraintTop_toTopOf="@id/iv_category">
 
                 <TextView
                     android:id="@+id/tv_store_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="19dp"
                     android:layout_marginBottom="4dp"
@@ -96,7 +98,7 @@
 
                 <TextView
                     android:id="@+id/tv_store_category"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="19dp"
                     android:ellipsize="end"

@@ -38,6 +38,7 @@ import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.android.synthetic.main.fragment_ask.*
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -208,6 +209,7 @@ class StoreDetailActivity :
                 progressDialog?.show()
             } else {
                 progressDialog?.dismiss()
+                refreshStoreInfo()
             }
         }
         viewModel.storeInfo.observe(this) {
@@ -237,7 +239,7 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
-        initMap()
+        refreshStoreInfo()
     }
 
     private fun updateVisitHistory(it: StoreDetail?) {
@@ -307,7 +309,7 @@ class StoreDetailActivity :
         }
     }
 
-    private fun initMap() {
+    fun refreshStoreInfo() {
         val storeId = intent.getIntExtra(KEY_STORE_ID, 0)
 
         try {
@@ -327,7 +329,7 @@ class StoreDetailActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
-            initMap()
+            refreshStoreInfo()
         }
     }
 
