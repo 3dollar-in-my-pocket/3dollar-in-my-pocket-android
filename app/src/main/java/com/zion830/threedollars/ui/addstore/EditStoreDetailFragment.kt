@@ -50,8 +50,7 @@ class EditStoreDetailFragment :
     private var storeTarget: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     override fun initView() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         initMap()
 
         initKeyboard()
