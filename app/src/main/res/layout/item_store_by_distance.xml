@@ -31,7 +31,7 @@
             visibleIf="@{item.visitHistory.isCertified}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_bedge_16"
+            android:src="@drawable/ic_badge_16"
             app:layout_constraintBottom_toBottomOf="@id/tv_store_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_store_name" />

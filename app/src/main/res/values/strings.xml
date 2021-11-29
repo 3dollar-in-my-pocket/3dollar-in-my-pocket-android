@@ -139,6 +139,7 @@
     <string name="store_detail_menu">상세 메뉴 입력 </string>
     <string name="add_store_finish">가게 등록하기</string>
     <string name="edit_store_finish">가게 정보 수정하기</string>
+    <string name="certification">방문 인증</string>
     <string name="add_certification">방문 인증하기</string>
     <string name="visit_success">방문 성공</string>
     <string name="visit_failed">방문 실패</string>
@@ -198,6 +199,10 @@
     <string name="no_category_msg">한 개 이상의 카테고리를 선택해주세요.</string>
     <string name="no_menu_msg">메뉴 정보를 한개 이상 입력해주세요!</string>
 
+    <string name="my_store">제보한 가게</string>
+    <string name="my_review">내가 쓴 리뷰</string>
+    <string name="my_badge">내 칭호</string>
+    <string name="my_certification_message">최근 내가 들린 가게는?</string>
     <string name="title_setting">설정</string>
     <string name="ask">문의사항</string>
     <string name="faq">FAQ</string>
