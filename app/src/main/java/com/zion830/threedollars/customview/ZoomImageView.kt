@@ -1,13 +1,12 @@
 package com.zion830.threedollars.customview
 
-import android.content.Context;
-import android.graphics.Matrix;
-import android.graphics.PointF;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import androidx.appcompat.widget.AppCompatImageView;
+import android.content.Context
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import androidx.appcompat.widget.AppCompatImageView
 
 class ZoomImageView @JvmOverloads constructor(
     context: Context,
@@ -19,7 +18,7 @@ class ZoomImageView @JvmOverloads constructor(
     private val lastPoint = PointF() // 마지막 좌표
     private var matrixValue = FloatArray(9)
     private var minScale = 0.5f // 축소 최대 비율
-    private var maxScale = 2f // 확대 최대 비율
+    private var maxScale = 4f // 확대 최대 비율
     private var saveScale = 1f // 현재 이미지 비율
     private var right = 0f
     private var bottom = 0f
@@ -106,16 +105,16 @@ class ZoomImageView @JvmOverloads constructor(
                 }
                 if (limitY) {
                     if (y + deltaY > 0) {
-                        deltaY = -y
+                        deltaY = -y * 2
                     } else if (y + deltaY < -bottom) {
-                        deltaY = -(y + bottom)
+                        deltaY = -(y + bottom) * 2
                     }
                 }
                 if (limitX) {
                     if (x + deltaX > 0) {
-                        deltaX = -x
+                        deltaX = -x * 2
                     } else if (x + deltaX < -right) {
-                        deltaX = -(x + right)
+                        deltaX = -(x + right) * 2
                     }
                 }
                 if (saveScale > 1.0f) {

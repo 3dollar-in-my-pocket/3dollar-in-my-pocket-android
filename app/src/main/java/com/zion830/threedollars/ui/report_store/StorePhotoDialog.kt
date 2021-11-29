@@ -43,12 +43,18 @@ class StorePhotoDialog : DialogFragment() {
         val binding = FragmentStorePhotoBinding.inflate(inflater)
         binding.viewModel = viewModel
 
+        val startIndex = arguments?.getInt(KEY_START_INDEX) ?: 0
         val adapter = StoreImageSliderAdapter()
         val indicatorAdapter = StorePreviewImageAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
                 binding.slider.smoothScrollToPosition(item.index)
             }
         })
+
+        if (startIndex > 0) {
+            indicatorAdapter.updateFocusedIndex(startIndex)
+            binding.slider.scrollToPosition(startIndex)
+        }
 
         binding.slider.adapter = adapter
         val snapHelper = PagerSnapHelper()
@@ -92,5 +98,15 @@ class StorePhotoDialog : DialogFragment() {
         binding.btnBack.setOnClickListener { dismiss() }
 
         return binding.root
+    }
+
+    companion object {
+        private const val KEY_START_INDEX = "start_index"
+
+        fun getInstance(startIndex: Int) = StorePhotoDialog().apply {
+            val bundle = Bundle()
+            bundle.putInt(KEY_START_INDEX, startIndex)
+            arguments = bundle
+        }
     }
 }

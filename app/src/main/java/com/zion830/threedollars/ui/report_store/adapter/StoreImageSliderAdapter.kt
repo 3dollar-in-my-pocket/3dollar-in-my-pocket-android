@@ -14,6 +14,11 @@ class StoreImageSliderAdapter : BaseRecyclerView<ItemImageSliderBinding, Image>(
 
     fun getItems(): List<Image> = currentList
 
+    override fun submitList(list: List<Image>?) {
+        super.submitList(null)
+        super.submitList(list)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemImageSliderBinding, Image> {
         return SliderAdapterHolder(parent)
     }

@@ -65,7 +65,7 @@ object StringUtils {
     }
 
     @JvmStatic
-    fun getTimeString(zuluString: String?, pattern: String = "MM월 dd일 hh:mm:ss"): String {
+    fun getTimeString(zuluString: String?, pattern: String = "MM월 dd일 HH:mm:ss"): String {
         return try {
             Instant.parse("${zuluString}Z")
                 .atZone(ZoneId.of("Etc/UTC"))

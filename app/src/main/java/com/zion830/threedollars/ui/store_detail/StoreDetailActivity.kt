@@ -48,7 +48,6 @@ import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
-
 class StoreDetailActivity :
     BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info),
     OnMapTouchListener {
@@ -65,9 +64,11 @@ class StoreDetailActivity :
 
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
-    private val naverMapFragment = StoreDetailNaverMapFragment()
+    private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
     private val visitHistoryAdapter = VisitHistoryAdapter()
+
+    private var progressDialog: AlertDialog? = null
 
     override fun onTouch() {
         // 지도 스크롤 이벤트 구분용
@@ -97,7 +98,7 @@ class StoreDetailActivity :
         )
         photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
-                StorePhotoDialog().show(supportFragmentManager, StorePhotoDialog::class.java.name)
+                StorePhotoDialog.getInstance(item.index).show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
         binding.rvVisitHistory.adapter = visitHistoryAdapter
@@ -159,6 +160,20 @@ class StoreDetailActivity :
                 false
             )
         }
+        binding.btnCertification.setOnClickListener {
+            naverMapFragment.updateCurrentLocation {
+                if (it == null) {
+                    return@updateCurrentLocation
+                }
+                val distance = NaverMapUtils.calculateDistance(naverMapFragment.currentPosition, viewModel.storeLocation.value)
+                supportFragmentManager.addNewFragment(
+                    R.id.container,
+                    if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
+                    StoreCertificationAvailableFragment::class.java.name,
+                    false
+                )
+            }
+        }
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(
                 storeId,
@@ -182,7 +197,19 @@ class StoreDetailActivity :
                 binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
             }
         }
-
+        viewModel.uploadImageStatus.observe(this) {
+            if (it) {
+                if (progressDialog == null) {
+                    progressDialog = AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setView(R.layout.layout_image_upload_progress)
+                        .create()
+                }
+                progressDialog?.show()
+            } else {
+                progressDialog?.dismiss()
+            }
+        }
         viewModel.storeInfo.observe(this) {
             initStoreInfo(it)
             updateVisitHistory(it)
@@ -214,22 +241,46 @@ class StoreDetailActivity :
     }
 
     private fun updateVisitHistory(it: StoreDetail?) {
+        val isExist = it?.visitHistories?.count { history -> history.isExist() } ?: 0
+        val isNotExist = it?.visitHistories?.size?.minus(isExist) ?: 0
+        val hasCertification = isExist + isNotExist > 0
+
         binding.tvVisitHistory.text = buildSpannedString {
             append("이번 주 ")
             bold {
-                append((it?.visitHistory?.existsCounts ?: 0).toString())
-                append("명")
+                if (hasCertification) {
+                    append((isExist + isNotExist).toString())
+                    append("명")
+                } else {
+                    append("방문 인증")
+                }
             }
-            append("이 다녀간 가게에요!")
-            getString(R.string.visit_count).format(it?.visitHistory?.existsCounts ?: 0)
+            append(if (hasCertification) "이 다녀간 가게에요!" else " 내역이 없어요 :(")
         }
-        val good = it?.visitHistories?.count { history -> history.isExist() } ?: 0
-        val bad = it?.visitHistories?.size?.minus(good) ?: 0
-        binding.tvGood.text = "${good}명"
-        binding.tvBad.text = "${bad}명"
+        binding.tvGood.text = "${isExist}명"
+        binding.tvGood.setTextColor(ContextCompat.getColor(this, if (isExist > 0) R.color.color_green else R.color.gray30))
+        binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(this, if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off),
+            null,
+            null,
+            null
+        )
+        binding.tvBad.text = "${isNotExist}명"
+        binding.tvBad.setTextColor(ContextCompat.getColor(this, if (isNotExist > 0) R.color.color_main_red else R.color.gray30))
+        binding.tvBad.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(this, if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off),
+            null,
+            null,
+            null
+        )
         visitHistoryAdapter.submitList(it?.visitHistories)
 
         binding.ibPlus.setOnClickListener {
+            if (binding.rvVisitHistory.isVisible) {
+                binding.rvVisitHistory.isVisible = false
+                return@setOnClickListener
+            }
+
             if (visitHistoryAdapter.itemCount > 0) {
                 binding.rvVisitHistory.isVisible = true
             } else {

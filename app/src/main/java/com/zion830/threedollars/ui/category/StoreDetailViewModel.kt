@@ -79,6 +79,10 @@ class StoreDetailViewModel : BaseViewModel() {
     val deleteStoreResult: LiveData<Boolean>
         get() = _deleteStoreResult
 
+    private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val uploadImageStatus: LiveData<Boolean>
+        get() = _uploadImageStatus
+
     private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val closeActivity: LiveData<Boolean>
         get() = _closeActivity
@@ -207,7 +211,7 @@ class StoreDetailViewModel : BaseViewModel() {
     }
 
     fun saveImages(images: List<MultipartBody.Part>) {
-        showLoading()
+        _uploadImageStatus.value = true
 
         if (images.isEmpty()) {
             return
@@ -224,6 +228,7 @@ class StoreDetailViewModel : BaseViewModel() {
 
             responses.await()
             refresh()
+            _uploadImageStatus.postValue(false)
         }
     }
 
