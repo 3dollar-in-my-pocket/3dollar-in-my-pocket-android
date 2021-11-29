@@ -165,10 +165,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 }
             } else {
                 moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+                showToast(R.string.find_location_error)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
-            showToast(R.string.find_location_error)
             moveCamera(NaverMapUtils.DEFAULT_LOCATION)
         }
     }
@@ -189,7 +189,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
-            showToast(R.string.find_location_error)
         }
     }
 
