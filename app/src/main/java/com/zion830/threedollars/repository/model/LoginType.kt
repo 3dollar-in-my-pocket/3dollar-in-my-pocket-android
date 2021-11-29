@@ -1,7 +1,7 @@
 package com.zion830.threedollars.repository.model
 
 enum class LoginType(val socialName: String) {
-    KAKAO("KAKAO"), GOOGLE("GOOGLE"), NONE("");
+    KAKAO("KAKAO"), GOOGLE("GOOGLE"), APPLE("APPLE"), NONE("");
 
     companion object {
 
