@@ -78,4 +78,7 @@ object Constants {
     // orderType
     const val DISTANCE_ASC = "DISTANCE_ASC"
     const val REVIEW_DESC = "REVIEW_DESC"
+
+    //popup
+    const val TIME_MILLIS_DAY = 86400000L
 }

@@ -36,4 +36,8 @@
     <color name="gray80">#323232</color>
     <color name="gray90">#232323</color>
     <color name="gray95">#1a1a1a</color>
+    <color name="color_black_2C2C2C">#2C2C2C</color>
+    <color name="color_4f4f4f">#4f4f4f</color>
+    <color name="color_969696">#969696</color>
+    <color name="color_959595">#959595</color>
 </resources>

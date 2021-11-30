@@ -64,28 +64,28 @@
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
 
     <string name="none">없음</string>
-    
+
     <string name="nearest_store">가장 가까운 음식점</string>
     <string name="if_you_have_money1">지금 당장\n</string>
     <string name="if_you_have_money2">3천원</string>
     <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
     <string name="sort_by_distance">거리순</string>
-    
+
     <string-array name="menu_name">
         <item>붕어빵</item>
         <item>문어빵,</item>
         <item>계란빵,</item>
         <item>호떡아</item>
     </string-array>
-    
+
     <string-array name="menu_desc">
         <item>만나기 30초 전</item>
         <item>다 내꺼야</item>
         <item>내 입으로</item>
         <item>기다려</item>
     </string-array>
-    
+
     <string name="road">길거리</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
@@ -213,7 +213,7 @@
     <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
-    
+
     <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
@@ -227,7 +227,7 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
-    
+
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
@@ -243,4 +243,8 @@
     <string name="dest">방문하기</string>
 
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
+
+    <string name="close">닫기</string>
+    <string name="today_not_popup">오늘 하루 보지않기</string>
+    <string name="popup">팝업</string>
 </resources>

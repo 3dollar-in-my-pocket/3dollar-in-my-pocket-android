@@ -30,7 +30,7 @@
             android:id="@+id/layout_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="272dp"
+            android:minWidth="280dp"
             android:onClick="@{() -> listener.onClick(item)}"
             android:paddingVertical="14dp"
             tools:ignore="UnusedAttribute">

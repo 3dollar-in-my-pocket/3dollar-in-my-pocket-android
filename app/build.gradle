@@ -14,7 +14,6 @@ android {
         resValue "string", "admob_id", properties.getProperty("admob_id")
         resValue "string", "admob_unit_id", properties.getProperty("admob_unit_id")
         buildConfigField "String", "NMF_CLIENT_ID", "\"${properties.getProperty('nmf_client_id')}\""
-        buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         manifestPlaceholders = [
                 google_map_key: properties.getProperty('google_map_key'),
                 nmf_client_id : properties.getProperty('nmf_client_id'),
@@ -29,6 +28,7 @@ android {
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_release')}\""
             buildConfigField "String", "GOOGLE_ID", "\"${properties.getProperty('google_client_id_release')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
         }
         debug {
             manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
@@ -36,6 +36,7 @@ android {
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_develop')}\""
             buildConfigField "String", "GOOGLE_ID", "\"${properties.getProperty('google_client_id_release')}\""
+            buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key_release')}\""
         }
     }
 }
