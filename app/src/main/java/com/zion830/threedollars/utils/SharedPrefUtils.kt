@@ -19,8 +19,17 @@ object SharedPrefUtils {
     private const val CATEGORY_LIST = "category_list"
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
+    private const val POPUP_TIME = "popup_time"
 
-    private val sharedPreferences = GlobalApplication.getContext().getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
+    private val sharedPreferences = GlobalApplication.getContext()
+        .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
+
+    fun getPopupTime() = sharedPreferences.getLong(POPUP_TIME, 86400000L)
+
+    fun setPopupTime(timeInMillis: Long) = sharedPreferences.edit {
+        putLong(POPUP_TIME, timeInMillis)
+        commit()
+    }
 
     fun saveAccessToken(accessToken: String?) = sharedPreferences.edit {
         putString(ACCESS_TOKEN_KEY, accessToken)

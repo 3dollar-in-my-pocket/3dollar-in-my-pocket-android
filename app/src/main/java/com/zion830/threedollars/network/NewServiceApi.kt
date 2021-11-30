@@ -5,6 +5,7 @@ import com.zion830.threedollars.repository.model.v2.request.*
 import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
+import com.zion830.threedollars.repository.model.v2.response.PopupsResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
 import com.zion830.threedollars.repository.model.v2.response.store.*
 import com.zion830.threedollars.repository.model.v2.response.visit_history.MyVisitHistoryResponse
@@ -158,4 +159,7 @@ interface NewServiceApi {
 
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
+
+    @GET("/api/v1/popups")
+    suspend fun getPopups(@Query("platform") platform: String = "AOS"): Response<PopupsResponse>
 }

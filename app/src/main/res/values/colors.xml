@@ -22,7 +22,11 @@
     <color name="color_202020">#202020</color>
     <color name="color_5C5C5C">#5C5C5C</color>
     <color name="color_black">#1C1C1C</color>
+    <color name="color_black_2C2C2C">#2C2C2C</color>
+    <color name="color_4f4f4f">#4f4f4f</color>
     <color name="color_979797">#979797</color>
+    <color name="color_969696">#969696</color>
+    <color name="color_959595">#959595</color>
     <color name="color_999999">#999999</color>
     <color name="color_99FFFFFF">#99FFFFFF</color>
     <color name="color_FFA1AA">#FFA1AA</color>

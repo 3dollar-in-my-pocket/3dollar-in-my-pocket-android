@@ -4,25 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
-    
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.zion830.threedollars.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
-    
+
     <fragment
         android:id="@+id/navigation_category"
         android:name="com.zion830.threedollars.ui.category.SelectCategoryFragment"
         android:label="@string/category"
         tools:layout="@layout/fragment_select_category" />
-    
+
     <fragment
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"
         tools:layout="@layout/fragment_new_my_page" />
-    
+
+    tools:layout="@layout/fragment_mypage" />
+
+    <fragment
+        android:id="@+id/navigation_popup"
+        android:name="com.zion830.threedollars.ui.popup.PopupFragment"
+        android:label="@string/popup"
+        tools:layout="@layout/fragment_popup" />
+
     <fragment
         android:id="@+id/navigation_review"
         android:label="@string/title_add_store" />
