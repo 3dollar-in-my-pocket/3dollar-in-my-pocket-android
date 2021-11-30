@@ -33,7 +33,7 @@ class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layou
                 startActivity(MainActivity.getIntent(this@PopupActivity))
             }
             tvTodayNotPopup.setOnClickListener {
-                SharedPrefUtils.setPopupTime(Calendar.getInstance().timeInMillis)
+                SharedPrefUtils.setPopupTime(System.currentTimeMillis())
                 startActivity(MainActivity.getIntent(this@PopupActivity))
             }
             ivPopup.setOnClickListener {

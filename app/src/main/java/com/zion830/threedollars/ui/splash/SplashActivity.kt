@@ -69,7 +69,7 @@ class SplashActivity :
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-                    if (Calendar.getInstance().timeInMillis - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
+                    if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
                         startActivity(PopupActivity.getIntent(this))
                     } else {
                         startActivity(Intent(this, MainActivity::class.java))

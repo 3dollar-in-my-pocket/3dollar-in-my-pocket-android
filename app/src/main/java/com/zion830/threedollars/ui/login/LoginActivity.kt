@@ -120,7 +120,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                     SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
                     SharedPrefUtils.saveAccessToken(it.value?.token)
 
-                    if (Calendar.getInstance().timeInMillis - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
+                    if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
                         startActivity(PopupActivity.getIntent(this))
                     } else {
                         startActivity(MainActivity.getIntent(this))
@@ -137,7 +137,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
-                if (Calendar.getInstance().timeInMillis - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
+                if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
                     startActivity(PopupActivity.getIntent(this))
                 } else {
                     startActivity(MainActivity.getIntent(this))
