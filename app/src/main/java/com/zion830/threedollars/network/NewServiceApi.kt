@@ -5,6 +5,7 @@ import com.zion830.threedollars.repository.model.v2.request.*
 import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
+import com.zion830.threedollars.repository.model.v2.response.PopupsResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
 import com.zion830.threedollars.repository.model.v2.response.store.*
 import okhttp3.MultipartBody
@@ -86,8 +87,8 @@ interface NewServiceApi {
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Query("distance") distance: Double = 100000.0,
-        @Query("orderType") orderType : String = Constants.DISTANCE_ASC,
-        @Query("category") category : String = ""
+        @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
+        @Query("category") category: String = ""
     ): Response<NearStoreResponse>
 
     @GET("/api/v2/store/{storeId}/images")
@@ -143,4 +144,7 @@ interface NewServiceApi {
 
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
+
+    @GET("/api/v1/popups")
+    suspend fun getPopups(@Query("platform") platform: String = "AOS"): Response<PopupsResponse>
 }
