@@ -1,13 +1,16 @@
 package com.zion830.threedollars.ui.popup
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.viewModels
@@ -64,8 +67,27 @@ class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layou
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {
-
+        @SuppressWarnings("deprecation")
+        @Override
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            val intent = parse(url)
+            return if (isIntent(url)) {
+                if (isExistInfo(intent) or isExistPackage(intent))
+                    start(intent)
+                else
+                    gotoMarket(intent)
+            } else if (isMarket(url))
+                start(intent)
+            else
+                false
+        }
+
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @Override
+        override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+            val url = request.url.toString()
+
             val intent = parse(url)
             return if (isIntent(url)) {
                 if (isExistInfo(intent) or isExistPackage(intent))
