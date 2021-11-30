@@ -131,7 +131,6 @@
                 android:paddingVertical="6dp"
                 android:text="@string/dest"
                 android:textColor="@color/white"
-                android:visibility="invisible"
                 android:textSize="12sp"
                 android:visibility="invisible"
                 app:drawableStartCompat="@drawable/ic_dest"
