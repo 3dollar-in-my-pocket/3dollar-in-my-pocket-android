@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.zion830.threedollars.Constants.TIME_MILLIS_DAY
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
@@ -14,7 +13,6 @@ import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.ui.VersionUpdateDialog
 import com.zion830.threedollars.ui.login.LoginActivity
-import com.zion830.threedollars.ui.popup.PopupActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
@@ -69,11 +67,7 @@ class SplashActivity :
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-                    if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
-                        startActivity(PopupActivity.getIntent(this))
-                    } else {
-                        startActivity(Intent(this, MainActivity::class.java))
-                    }
+                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
                 is ResultWrapper.GenericError -> {

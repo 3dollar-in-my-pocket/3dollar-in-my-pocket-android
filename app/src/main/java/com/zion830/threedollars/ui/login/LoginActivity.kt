@@ -14,13 +14,11 @@ import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
-import com.zion830.threedollars.Constants.TIME_MILLIS_DAY
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.ui.popup.PopupActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +28,6 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
-import java.util.*
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
@@ -119,12 +116,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-
-                    if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
-                        startActivity(PopupActivity.getIntent(this))
-                    } else {
-                        startActivity(MainActivity.getIntent(this))
-                    }
+                    startActivity(MainActivity.getIntent(this))
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
@@ -137,11 +129,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
-                if (System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > TIME_MILLIS_DAY) {
-                    startActivity(PopupActivity.getIntent(this))
-                } else {
-                    startActivity(MainActivity.getIntent(this))
-                }
+                startActivity(MainActivity.getIntent(this))
                 finish()
             }
         }

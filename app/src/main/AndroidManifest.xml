@@ -47,9 +47,6 @@
             android:name=".ui.addstore.activity.NewStoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.popup.PopupActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>

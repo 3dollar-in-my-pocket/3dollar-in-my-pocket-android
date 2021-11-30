@@ -4,37 +4,35 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
-import androidx.activity.viewModels
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import com.zion830.threedollars.MainActivity
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ActivityPopupBinding
+import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.BaseFragment
 import java.net.URISyntaxException
-import java.util.*
 
-class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layout.activity_popup) {
+class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layout.fragment_popup) {
 
-    override val viewModel: PopupViewModel by viewModels()
+    override val viewModel: PopupViewModel by activityViewModels()
 
     override fun initView() {
         binding.run {
             tvClose.setOnClickListener {
-                startActivity(MainActivity.getIntent(this@PopupActivity))
+                it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
                 SharedPrefUtils.setPopupTime(System.currentTimeMillis())
-                startActivity(MainActivity.getIntent(this@PopupActivity))
+                it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
                 ivPopup.isVisible = false
@@ -106,7 +104,7 @@ class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layou
 
         private fun isExistInfo(intent: Intent?): Boolean {
             return try {
-                intent != null && packageManager.getPackageInfo(
+                intent != null && requireActivity().packageManager.getPackageInfo(
                     intent.`package`.toString(),
                     PackageManager.GET_ACTIVITIES
                 ) != null
@@ -117,7 +115,7 @@ class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layou
         }
 
         private fun isExistPackage(intent: Intent?): Boolean =
-            intent != null && packageManager.getLaunchIntentForPackage(intent.`package`.toString()) != null
+            intent != null && requireActivity().packageManager.getLaunchIntentForPackage(intent.`package`.toString()) != null
 
         private fun parse(url: String): Intent? {
             return try {
@@ -141,10 +139,5 @@ class PopupActivity : BaseActivity<ActivityPopupBinding, PopupViewModel>(R.layou
             }
             return true
         }
-    }
-
-    companion object {
-
-        fun getIntent(context: Context): Intent = Intent(context, PopupActivity::class.java)
     }
 }
