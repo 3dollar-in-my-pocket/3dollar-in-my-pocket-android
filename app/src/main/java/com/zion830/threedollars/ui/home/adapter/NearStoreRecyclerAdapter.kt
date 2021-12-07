@@ -13,7 +13,8 @@ import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class NearStoreRecyclerAdapter(
-    private val clickListener: OnItemClickListener<StoreInfo?>
+    private val clickListener: OnItemClickListener<StoreInfo?>,
+    private val certificationClick: (StoreInfo?) -> Unit
 ) : ListAdapter<StoreInfo?, NearStoreViewHolder>(object : DiffUtil.ItemCallback<StoreInfo?>() {
     override fun areItemsTheSame(oldItem: StoreInfo, newItem: StoreInfo): Boolean {
         return oldItem == newItem
@@ -67,7 +68,9 @@ class NearStoreViewHolder(parent: ViewGroup?) :
         }
 
         binding.item = item
+        binding.tvDest.setOnClickListener {
 
+        }
         val categoryInfo = SharedPrefUtils.getCategories()
         val categories =
             item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }

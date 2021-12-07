@@ -64,13 +64,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 val token =
-                    GoogleAuthUtil.getToken(
-                        GlobalApplication.getContext(),
-                        account?.account,
-                        "oauth2:https://www.googleapis.com/auth/plus.me"
-                    )
-                SharedPrefUtils.saveGoogleToken(token)
+                    GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account, "oauth2:https://www.googleapis.com/auth/plus.me")
                 SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+                SharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
@@ -116,6 +112,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
                     SharedPrefUtils.saveAccessToken(it.value?.token)
+
                     startActivity(MainActivity.getIntent(this))
                     finish()
                 }
@@ -136,11 +133,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     }
 
     private fun addInputNameFragment() {
-        supportFragmentManager.addNewFragment(
-            R.id.layout_container,
-            InputNameFragment.getInstance(),
-            InputNameFragment::class.java.name
-        )
+        supportFragmentManager.addNewFragment(R.id.layout_container, InputNameFragment.getInstance(), InputNameFragment::class.java.name)
     }
 
     private fun tryKakaoLogin() {
@@ -149,6 +142,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 Log.e(localClassName, "로그인 실패", error)
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
+                SharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
                 tryLogin(token)

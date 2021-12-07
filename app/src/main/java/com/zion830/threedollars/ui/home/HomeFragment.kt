@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -38,6 +37,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
+    fun getMapCenterLatLng() = try {
+        naverMapFragment.getMapCenterLatLng()
+    } catch (e: Exception) {
+        null
+    }
+
     override fun initView() {
         naverMapFragment = NearStoreNaverMapFragment {
             binding.tvRetrySearch.isVisible = true
@@ -71,7 +76,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 }
                 storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
             }
-        })
+        }) {
+
+        }
         storeDetailViewModel.isExistStoreInfo.observe(viewLifecycleOwner) { isExistStore ->
             val storeId = isExistStore.first
             val isExist = isExistStore.second

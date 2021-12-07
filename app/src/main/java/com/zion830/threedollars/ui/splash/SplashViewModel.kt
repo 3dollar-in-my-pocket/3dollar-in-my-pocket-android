@@ -9,7 +9,6 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.repository.model.v2.request.KakaoRefreshTokenRequest
 import com.zion830.threedollars.repository.model.v2.request.LoginRequest
 import com.zion830.threedollars.repository.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -26,6 +25,9 @@ class SplashViewModel : BaseViewModel() {
 
     private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
     val loginResult: LiveData<ResultWrapper<SignUser?>> = _loginResult
+
+    private val _refreshResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
+    val refreshResult: LiveData<ResultWrapper<SignUser?>> = _refreshResult
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -63,13 +65,14 @@ class SplashViewModel : BaseViewModel() {
 
     fun refreshKakaoToken() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val request = kakaoLoginApi.refreshToken(KakaoRefreshTokenRequest(refreshToken = SharedPrefUtils.getKakaoRefreshToken().toString()))
+            val response = kakaoLoginApi.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
 
-            if (request.isSuccessful && request.body() != null) {
-                SharedPrefUtils.saveKakaoToken(request.body()!!.accessToken, request.body()!!.refreshToken)
+            if (response.isSuccessful && response.body() != null) {
+                SharedPrefUtils.saveLoginType(LoginType.KAKAO)
+                SharedPrefUtils.saveKakaoToken(response.body()?.accessToken ?: "", response.body()?.refreshToken ?: "")
                 tryLogin()
             } else {
-                _loginResult.postValue(ResultWrapper.GenericError(401))
+                _loginResult.postValue(ResultWrapper.GenericError(response.code()))
             }
         }
     }

@@ -61,7 +61,9 @@ object SharedPrefUtils {
 
     fun saveKakaoToken(accessToken: String?, refreshToken: String?) = sharedPreferences.edit {
         putString(KAKAO_ACCESS_TOKEN, accessToken)
-        putString(KAKAO_REFRESH_TOKEN, refreshToken)
+        if (!refreshToken.isNullOrBlank()) {
+            putString(KAKAO_REFRESH_TOKEN, refreshToken)
+        }
         commit()
     }
 

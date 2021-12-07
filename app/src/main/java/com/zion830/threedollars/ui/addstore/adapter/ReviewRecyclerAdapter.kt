@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
-import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -29,7 +28,6 @@ class ReviewRecyclerAdapter(
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         holder.bind(getItem(position), null)
-        Log.d("review", getItem(position).toString())
     }
 }
 
@@ -60,7 +58,7 @@ class ReviewViewHolder(
             }
         }
 
-        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
+        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yyyy.MM.dd E")
         binding.ibSidemenu.isVisible = item.user.userId == SharedPrefUtils.getUserId()
         binding.ibSidemenu.setOnClickListener {
             popupMenu.show()

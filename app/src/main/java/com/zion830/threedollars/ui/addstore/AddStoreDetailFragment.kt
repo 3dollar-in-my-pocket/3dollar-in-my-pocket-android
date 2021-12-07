@@ -6,16 +6,19 @@ import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
+import kotlinx.android.synthetic.main.item_edit_category_menu.view.*
 import zion830.com.common.base.BaseFragment
 
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
@@ -94,7 +97,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 getAppearanceDays(),
                 viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                 viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                getMenuList(),
+                getMenuList().reversed(),
                 getPaymentMethod(),
                 viewModel.storeName.value ?: "이름 없음",
                 storeType = getStoreType()
@@ -132,16 +135,32 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
     private fun getMenuList(): List<MyMenu> {
         val menuList = arrayListOf<MyMenu>()
+
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
-                val name = it.findViewById(R.id.et_name) as EditText
+                val editMenuRecyclerView = (it.rv_menu_edit as RecyclerView)
+                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
                 val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
                     editCategoryMenuRecyclerAdapter.items[i].menuType.category
                 } else {
-                    "BUNGEOPPANG"
+                    ""
                 }
-                val price = it.findViewById(R.id.et_price) as EditText
-                menuList.add(MyMenu(category, name.text.toString(), price.text.toString()))
+
+                var isEmptyCategory = true
+                repeat(menuSize) { index ->
+                    val menuRow = editMenuRecyclerView.getChildAt(index)
+                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
+                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
+
+                    if (name.isNotEmpty() || price.isNotEmpty()) {
+                        menuList.add(MyMenu(category, name, price))
+                        isEmptyCategory = false
+                    }
+                }
+
+                if (isEmptyCategory) {
+                    menuList.add(MyMenu(category, "", ""))
+                }
             }
         }
 

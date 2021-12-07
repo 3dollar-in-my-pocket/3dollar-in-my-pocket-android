@@ -52,8 +52,8 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
-            android:visibility="@{viewModel.hasData ? View.VISIBLE : View.GONE}" >
-        
+            android:visibility="@{viewModel.hasData ? View.VISIBLE : View.GONE}">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_distance1"
                 bindItem="@{viewModel.storeByDistance}"

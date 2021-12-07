@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

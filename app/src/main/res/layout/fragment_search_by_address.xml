@@ -5,7 +5,7 @@
 
     <data>
 
-    <variable
+        <variable
             name="viewModel"
             type="zion830.com.common.base.BaseViewModel" />
     </data>
@@ -84,7 +84,7 @@
             app:layout_constraintTop_toTopOf="@id/btn_search"
             app:startIconDrawable="@drawable/ic_reading_glasses">
 
-        <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,7 +111,20 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/color_E2E2E2" />
+                android:background="@color/gray10" />
+
+            <TextView
+                android:id="@+id/tv_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                android:drawablePadding="10dp"
+                android:gravity="center_horizontal"
+                android:paddingBottom="20dp"
+                android:text="@string/empty_result"
+                android:textColor="@color/color_828282"
+                android:visibility="gone"
+                app:drawableTopCompat="@drawable/ic_no_store" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_search_result"
@@ -119,16 +132,6 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_search_by_address" />
-
-            <TextView
-                android:id="@+id/tv_empty"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:paddingBottom="20dp"
-                android:text="@string/empty_result"
-                android:textColor="@color/color_828282"
-                android:visibility="gone" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

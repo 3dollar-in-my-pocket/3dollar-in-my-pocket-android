@@ -50,9 +50,8 @@ class EditStoreDetailFragment :
     private var storeTarget: LatLng = NaverMapUtils.DEFAULT_LOCATION
 
     override fun initView() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        initMap()
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        refreshStoreInfo()
 
         initKeyboard()
 
@@ -86,7 +85,7 @@ class EditStoreDetailFragment :
 
         editStoreViewModel.editStoreResult.observe(viewLifecycleOwner) {
             if (it) {
-                viewModel.refresh()
+                refreshStoreInfo()
                 requireActivity().onBackPressed()
             } else {
                 showToast(R.string.failed_edit_store)
@@ -275,7 +274,7 @@ class EditStoreDetailFragment :
         return result
     }
 
-    private fun initMap() {
+    private fun refreshStoreInfo() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation

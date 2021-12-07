@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.R
@@ -14,8 +16,11 @@ import com.zion830.threedollars.utils.SizeUtils
 class StoreDetailNaverMapFragment : NaverMapFragment() {
     val viewModel: StoreDetailViewModel by activityViewModels()
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         val params = binding.btnFindLocation.layoutParams as ViewGroup.MarginLayoutParams
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(55f))
@@ -34,5 +39,9 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         viewModel.requestStoreInfo(viewModel.storeInfo.value?.storeId ?: 0 - 1, position.latitude, position.longitude)
+    }
+
+    fun updateCurrentLocation(onMyLocationLoaded: (LatLng?) -> Unit) {
+        updateMyLatestLocation(onMyLocationLoaded)
     }
 }

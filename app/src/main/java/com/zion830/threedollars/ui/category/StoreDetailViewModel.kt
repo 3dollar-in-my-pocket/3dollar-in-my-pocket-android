@@ -12,7 +12,10 @@ import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import com.zion830.threedollars.repository.model.v2.request.NewReview
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.repository.model.v2.response.store.Image
+import com.zion830.threedollars.repository.model.v2.response.store.Menu
+import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -76,6 +79,10 @@ class StoreDetailViewModel : BaseViewModel() {
     val deleteStoreResult: LiveData<Boolean>
         get() = _deleteStoreResult
 
+    private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val uploadImageStatus: LiveData<Boolean>
+        get() = _uploadImageStatus
+
     private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val closeActivity: LiveData<Boolean>
         get() = _closeActivity
@@ -115,38 +122,30 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun refresh() {
-        if (storeInfo.value == null) {
-            return
-        }
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getStoreDetail(
-                storeInfo.value!!.storeId,
-                storeInfo.value!!.latitude,
-                storeInfo.value!!.longitude
-            )
-            _storeInfo.postValue(data.body()?.data)
-        }
-        hideLoading()
-    }
-
     fun clearReview() {
         reviewContent.value = ""
     }
 
     fun addReview(rating: Float) {
+        if (rating == 0f) {
+            _msgTextId.postValue(R.string.over_rating_1)
+            return
+        }
+
         if (reviewContent.value.isNullOrBlank()) {
             _addReviewResult.postValue(false)
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request =
-                NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
-            repository.addReview(request)
-            _msgTextId.postValue(R.string.success_add_review)
-            _addReviewResult.postValue(true)
+            val request = NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
+            val response = repository.addReview(request)
+            if (response.isSuccessful) {
+                _msgTextId.postValue(R.string.success_add_review)
+                _addReviewResult.postValue(true)
+            } else {
+                _addReviewResult.postValue(false)
+            }
         }
     }
 
@@ -196,7 +195,7 @@ class StoreDetailViewModel : BaseViewModel() {
     }
 
     fun saveImages(images: List<MultipartBody.Part>) {
-        showLoading()
+        _uploadImageStatus.value = true
 
         if (images.isEmpty()) {
             return
@@ -212,7 +211,7 @@ class StoreDetailViewModel : BaseViewModel() {
             }
 
             responses.await()
-            refresh()
+            _uploadImageStatus.postValue(false)
         }
     }
 

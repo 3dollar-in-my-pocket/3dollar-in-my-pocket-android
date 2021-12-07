@@ -198,7 +198,7 @@
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="32dp"
-                                android:background="@color/color_d0d0d0" />
+                                android:background="@color/gray20" />
 
                             <Button
                                 android:id="@+id/btn_send_money"
@@ -224,6 +224,105 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_store_info">
+
+                    <TextView
+                        android:id="@+id/tv_visit_history"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="30dp"
+                        android:bufferType="spannable"
+                        android:text="@string/visit_count"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="16dp">
+
+                        <ImageView
+                            android:id="@+id/iv_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_badge"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:background="@drawable/rect_white_radius16"
+                            android:paddingVertical="12dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/iv_badge"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="10dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/ib_plus"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <TextView
+                                    android:id="@+id/tv_good"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawablePadding="10dp"
+                                    android:gravity="start|center_vertical"
+                                    android:textColor="@color/color_green"
+                                    android:textStyle="bold"
+                                    app:drawableStartCompat="@drawable/ic_good" />
+
+                                <TextView
+                                    android:id="@+id/tv_bad"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:drawablePadding="10dp"
+                                    android:gravity="start|center_vertical"
+                                    android:textColor="@color/color_main_red"
+                                    android:textStyle="bold"
+                                    app:drawableStartCompat="@drawable/ic_bad" />
+                            </LinearLayout>
+
+                            <ImageButton
+                                android:id="@+id/ib_plus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:background="@android:color/transparent"
+                                android:src="@drawable/ic_plus"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:tint="@color/black" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_visit_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/rect_gray_radius12"
+                        android:backgroundTint="@color/white"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        android:padding="2dp"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_visit_history" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -260,11 +359,12 @@
                             android:id="@+id/btn_add_store_info"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:background="@drawable/ripple_translate"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:text="@string/edit_info"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -443,6 +543,7 @@
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="1"
                             tools:listitem="@layout/item_category" />
                     </TableLayout>
 
@@ -468,11 +569,12 @@
                             android:id="@+id/btn_add_photo"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:background="@drawable/ripple_translate"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:text="@string/add_photo"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -513,11 +615,12 @@
                             android:id="@+id/btn_add_review"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:background="@drawable/rect_red_radius48"
-                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:background="@drawable/ripple_translate"
+                            android:backgroundTint="@color/color_sub_red_hint"
                             android:text="@string/add_review"
-                            android:textColor="@color/color_white"
+                            android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -536,33 +639,36 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="50dp"
+                        android:text="@string/no_review"
+                        android:textColor="@color/color_gray1"
+                        android:textSize="16sp"
+                        android:visibility="@{viewModel.storeInfo.reviews.size() == 0 ? View.VISIBLE : View.GONE}" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_review"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="24dp"
-                        android:layout_marginVertical="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="120dp"
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="2"
                         tools:listitem="@layout/item_review" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingBottom="50dp"
-                        android:text="@string/no_review"
-                        android:textColor="@color/color_gray1"
-                        android:textSize="16sp"
-                        android:visibility="@{viewModel.storeInfo.reviews.size() == 0 ? View.VISIBLE : View.GONE}" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
-            android:id="@id/progress"
+            android:id="@id/progress_indicator"
             visibleIf="@{viewModel.isLoading()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -570,6 +676,37 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_button_back"
+            android:layout_width="232dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_certification"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/ripple_translate"
+            android:elevation="4dp"
+            android:text="@string/add_certification"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/view_button_back"
+            app:layout_constraintEnd_toEndOf="@id/view_button_back"
+            app:layout_constraintStart_toStartOf="@id/view_button_back"
+            app:layout_constraintTop_toTopOf="@id/view_button_back"
+            tools:ignore="UnusedAttribute" />
 
         <LinearLayout
             android:id="@+id/container"

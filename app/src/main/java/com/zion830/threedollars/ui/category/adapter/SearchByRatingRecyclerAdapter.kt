@@ -4,9 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreList
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener

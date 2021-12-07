@@ -164,13 +164,31 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     }
                 }
             } else {
-                showToast(R.string.find_location_error)
                 moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+                showToast(R.string.find_location_error)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
-            showToast(R.string.find_location_error)
             moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun updateMyLatestLocation(onMyLocationLoaded: (LatLng?) -> Unit) {
+        try {
+            if (isLocationAvailable() && isGpsAvailable()) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnSuccessListener {
+                    if (it != null) {
+                        currentPosition = LatLng(it.latitude, it.longitude)
+                        onMyLocationLoaded(currentPosition)
+                    } else {
+                        onMyLocationLoaded(null)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(this::class.java.name, e.message ?: "")
         }
     }
 

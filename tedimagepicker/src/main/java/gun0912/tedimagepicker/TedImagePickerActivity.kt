@@ -23,6 +23,7 @@ import gun0912.tedimagepicker.adapter.GridSpacingItemDecoration
 import gun0912.tedimagepicker.adapter.MediaAdapter
 import gun0912.tedimagepicker.adapter.SelectedMediaAdapter
 import gun0912.tedimagepicker.base.BaseRecyclerViewAdapter
+import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.TedImagePickerBaseBuilder
 import gun0912.tedimagepicker.builder.type.AlbumType
 import gun0912.tedimagepicker.builder.type.SelectType
@@ -196,8 +197,12 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         mediaAdapter = MediaAdapter(this, builder).apply {
             onItemClickListener = object : BaseRecyclerViewAdapter.OnItemClickListener<Media> {
                 override fun onItemClick(data: Media, itemPosition: Int, layoutPosition: Int) {
-                    binding.isAlbumOpened = false
-                    this@TedImagePickerActivity.onMediaClick(data.uri)
+                    if (mediaAdapter.getSelectedItemCount() < TedImagePicker.MAX_COUNT) {
+                        binding.isAlbumOpened = false
+                        this@TedImagePickerActivity.onMediaClick(data.uri)
+                    } else {
+                        ToastUtil.showToast("한번에 첨부 가능한 사진은 최대 ${TedImagePicker.MAX_COUNT}장 입니다.")
+                    }
                 }
 
                 override fun onHeaderClick() {

@@ -18,6 +18,11 @@ class StorePreviewImageAdapter(
         this.clickListener = clickListener
     }
 
+    override fun submitList(list: List<StoreImage>?) {
+        super.submitList(null)
+        super.submitList(list)
+    }
+
     fun updateFocusedIndex(index: Int) {
         val temp = focusedIndex
         focusedIndex = index

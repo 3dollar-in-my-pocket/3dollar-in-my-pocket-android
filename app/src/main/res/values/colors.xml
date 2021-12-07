@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#EE624C</color>
     <color name="colorAccent">#EE624C</color>
     <color name="colorOnPrimary">#E5E5E5</color>
-    
+    <color name="color_green">#00c667</color>
     <color name="color_white">#FFFFFF</color>
     <color name="color_kakao">#F7E317</color>
     <color name="color_toss">#0050FF</color>
@@ -12,23 +12,32 @@
     <color name="color_main_red_opa50">#50EE624C</color>
     <color name="color_sub_red">#F3A2A9</color>
     <color name="color_sub_red_hint">#66F3A2A9</color>
+    <color name="certification_radius">#30F3A2A9</color>
     <color name="color_gray1">#C8C8C8</color>
     <color name="color_gray2">#F5F5F5</color>
-    <color name="color_d0d0d0">#d0d0d0</color>
     <color name="color_gray3">#fafafa</color>
     <color name="color_828282">#828282</color>
-    <color name="color_E2E2E2">#E2E2E2</color>
     <color name="color_202020">#202020</color>
     <color name="color_5C5C5C">#5C5C5C</color>
     <color name="color_black">#1C1C1C</color>
-    <color name="color_black_2C2C2C">#2C2C2C</color>
-    <color name="color_4f4f4f">#4f4f4f</color>
     <color name="color_979797">#979797</color>
-    <color name="color_969696">#969696</color>
-    <color name="color_959595">#959595</color>
     <color name="color_999999">#999999</color>
     <color name="color_99FFFFFF">#99FFFFFF</color>
-    <color name="color_323232">#323232</color>
-    <color name="color_232323">#232323</color>
     <color name="color_FFA1AA">#FFA1AA</color>
+
+    <color name="gray5">#4f4f4f</color>
+    <color name="gray10">#E2E2E2</color>
+    <color name="gray20">#d0d0d0</color>
+    <color name="gray30">#B7B7B7</color>
+    <color name="gray40">#969696</color>
+    <color name="gray50">#787878</color>
+    <color name="gray60">#5a5a5a</color>
+    <color name="gray70">#464646</color>
+    <color name="gray80">#323232</color>
+    <color name="gray90">#232323</color>
+    <color name="gray95">#1a1a1a</color>
+    <color name="color_black_2C2C2C">#2C2C2C</color>
+    <color name="color_4f4f4f">#4f4f4f</color>
+    <color name="color_969696">#969696</color>
+    <color name="color_959595">#959595</color>
 </resources>

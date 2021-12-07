@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.CategoryViewModel
+import com.zion830.threedollars.ui.home.HomeFragment
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -41,8 +42,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             categoryViewModel.loadCategories()
         }
 
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.navView.itemIconTintList = null
         binding.navView.setupWithNavController(navController)
@@ -53,7 +53,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         popupViewModel.popups.observe(this) { popups ->
             if (popups.isNotEmpty() && System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > Constants.TIME_MILLIS_DAY) {
                 binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
-
             }
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -76,7 +75,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_review -> {
-                    startActivity(Intent(this, NewStoreActivity::class.java))
+                    if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_home) {
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
+                        val homeFragment: HomeFragment? = navHostFragment?.childFragmentManager?.fragments?.get(0) as? HomeFragment
+                        startActivity(NewStoreActivity.getInstance(this, homeFragment?.getMapCenterLatLng()))
+                    } else {
+                        startActivity(NewStoreActivity.getInstance(this, null))
+                    }
                 }
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)

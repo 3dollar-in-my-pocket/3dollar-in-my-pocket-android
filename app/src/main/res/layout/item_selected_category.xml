@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{item.menuType.name}"
-                android:textColor="@{item.isSelected ? @color/color_black : @color/color_4f4f4f}"
+                android:textColor="@{item.isSelected ? @color/color_black : @color/gray5}"
                 android:textSize="12sp"
                 tools:text="붕어빵" />
         </LinearLayout>

@@ -50,6 +50,11 @@ interface NewServiceApi {
         @Body newStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
 
+    @POST("/api/v2/store/visit")
+    suspend fun addVisitHistory(
+        @Body newVisitHistory: NewVisitHistory
+    ): Response<BaseResponse<String>>
+
     @PUT("/api/v2/store/{storeId}")
     suspend fun editStore(
         @Path("storeId") storeId: Int,

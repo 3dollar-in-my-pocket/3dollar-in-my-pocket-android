@@ -28,7 +28,7 @@
             loadImage="@{viewModel.popups.get(0).imageUrl}"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@id/cl_bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,8 +46,9 @@
 
             <TextView
                 android:id="@+id/tv_today_not_popup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
                 android:text="@string/today_not_popup"
                 android:textColor="@color/white"
                 android:textSize="16sp"
@@ -69,8 +70,9 @@
 
             <TextView
                 android:id="@+id/tv_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
                 android:text="@string/close"
                 android:textColor="@color/white"
                 android:textSize="16sp"

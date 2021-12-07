@@ -18,11 +18,16 @@ class PhotoRecyclerAdapter(
 ) : ListAdapter<StoreImage, PhotoRecyclerAdapter.PhotoViewHolder>(BaseDiffUtilCallback()) {
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(getItem(position), clickListener)
+        holder.bind(position, getItem(position), clickListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(parent, itemCount)
+    }
+
+    override fun submitList(list: MutableList<StoreImage>?) {
+        super.submitList(null)
+        super.submitList(list)
     }
 
     class PhotoViewHolder(
@@ -30,13 +35,13 @@ class PhotoRecyclerAdapter(
         private val size: Int = 0
     ) : BaseViewHolder<ItemPhotoBinding, StoreImage>(R.layout.item_photo, parent) {
 
-        override fun bind(item: StoreImage, listener: OnItemClickListener<StoreImage>?) {
+        fun bind(position: Int, item: StoreImage, listener: OnItemClickListener<StoreImage>?) {
             super.bind(item, listener)
             when {
-                item.index < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
+                position < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
                     binding.layoutMore.isVisible = false
                 }
-                (item.index == MAX_COUNT - 1) -> {
+                (position == MAX_COUNT - 1) -> {
                     binding.tvMoreCount.text = "+${size - MAX_COUNT}"
                 }
                 else -> {
