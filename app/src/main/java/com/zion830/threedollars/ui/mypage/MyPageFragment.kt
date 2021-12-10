@@ -10,6 +10,7 @@ import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.RecentVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 
@@ -64,6 +65,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
             binding.tvName.text = it.data.name
             binding.tvUserMedal.text = it.data.medal?.name ?: "장착한 칭호가 없어요!"
+            binding.ivProfile.loadUrlImg(it.data.medal?.iconUrl)
         }
     }
 

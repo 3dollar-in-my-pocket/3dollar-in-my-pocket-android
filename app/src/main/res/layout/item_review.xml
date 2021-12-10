@@ -2,23 +2,24 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-    
+
         <variable
             name="item"
             type="com.zion830.threedollars.repository.model.v2.response.my.Review" />
-    
+
         <import type="com.zion830.threedollars.utils.StringUtils" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rect_white_radius_12"
-        android:padding="16dp">
-        
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -26,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-            
+
             <com.willy.ratingbar.ScaleRatingBar
                 android:id="@+id/rating_score"
                 android:layout_width="wrap_content"
@@ -43,33 +44,53 @@
                 app:srb_starPadding="2dp"
                 app:srb_starWidth="16dp"
                 tools:ignore="UnusedAttribute" />
-            
+
+            <TextView
+                android:id="@+id/tv_medal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rect_red_stroke_round"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="4dp"
+                android:singleLine="true"
+                android:text="@{item.user.medal.name}"
+                android:textColor="@color/color_main_red"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rating_score"
+                tools:text="붕어빵챌린저" />
+
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
                 android:singleLine="true"
                 android:text="@{item.user.name}"
-                android:textColor="@color/color_black"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rating_score"
+                app:layout_constraintBottom_toBottomOf="@id/tv_medal"
+                app:layout_constraintStart_toEndOf="@id/tv_medal"
+                app:layout_constraintTop_toTopOf="@id/tv_medal"
                 tools:text="강남역 2출 앞" />
-            
+
             <ImageButton
                 android:id="@+id/ib_sidemenu"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="?actionBarItemBackground"
-                android:paddingStart="6dp"
-                android:paddingBottom="6dp"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="16dp"
                 android:scaleType="fitEnd"
-                android:src="@drawable/ic_sidemenu"
+                android:src="@drawable/ic_menu_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            
+                app:layout_constraintTop_toBottomOf="@id/tv_description"
+                tools:ignore="RtlSymmetry" />
+
             <TextView
                 android:id="@+id/tv_description"
                 android:layout_width="0dp"
@@ -80,9 +101,9 @@
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_medal"
                 tools:text="음~ 냠냠긋 음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~" />
-            
+
             <TextView
                 android:id="@+id/tv_created_at"
                 android:layout_width="wrap_content"
@@ -90,9 +111,8 @@
                 android:layout_marginStart="8dp"
                 android:textColor="@color/color_gray1"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name"
-                app:layout_constraintStart_toEndOf="@id/tv_name"
-                app:layout_constraintTop_toTopOf="@id/tv_name" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

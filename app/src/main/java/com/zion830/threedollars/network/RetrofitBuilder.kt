@@ -16,7 +16,7 @@ object RetrofitBuilder {
     private const val TIME_OUT_SEC = 5L
 
     private val interceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.HEADERS
+        level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val okHttpClient = OkHttpClient.Builder()

@@ -99,6 +99,17 @@
                     tools:text="강남역 2출 앞" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@{item.user.name}"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_my_medal"
+                    app:layout_constraintStart_toEndOf="@id/tv_my_medal"
+                    app:layout_constraintTop_toTopOf="@id/tv_my_medal" />
+
+                <TextView
                     android:id="@+id/tv_description"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

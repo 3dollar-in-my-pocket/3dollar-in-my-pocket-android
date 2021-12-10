@@ -58,7 +58,7 @@ class ReviewViewHolder(
             }
         }
 
-        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yyyy.MM.dd E")
+        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd E")
         binding.ibSidemenu.isVisible = item.user.userId == SharedPrefUtils.getUserId()
         binding.ibSidemenu.setOnClickListener {
             popupMenu.show()
