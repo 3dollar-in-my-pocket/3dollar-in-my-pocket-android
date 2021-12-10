@@ -36,7 +36,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srb_clickable="true"
                 app:srb_drawableEmpty="@drawable/ic_star_off"
-                app:srb_drawableFilled="@drawable/ic_star"
+                app:srb_drawableFilled="@drawable/ic_star_on"
                 app:srb_isIndicator="true"
                 app:srb_numStars="5"
                 app:srb_starHeight="16dp"

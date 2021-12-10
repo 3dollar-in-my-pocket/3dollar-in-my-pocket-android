@@ -91,6 +91,7 @@
 
             <ImageView
                 android:id="@+id/iv_category"
+                bindMenuIcons="@{item.store.categories}"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:layout_marginEnd="16dp"
