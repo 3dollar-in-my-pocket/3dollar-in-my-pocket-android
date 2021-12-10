@@ -20,13 +20,14 @@ fun ImageView.bindMenuIcon(category: String?) {
     setImageResource(MenuType.of(category).colorIcon)
 }
 
-@BindingAdapter("bindMenuIcons")
-fun ImageView.bindMenuIcons(category: List<String>?) {
+@BindingAdapter("bindMenuIcons", "isSelected", requireAll = false)
+fun ImageView.bindMenuIcons(category: List<String>? = emptyList(), isSelected: Boolean? = true) {
     if (category.isNullOrEmpty()) {
         return
     }
 
-    setImageResource(MenuType.of(category.first()).colorIcon)
+    val menu = MenuType.of(category.first())
+    setImageResource(if (isSelected == null || isSelected) menu.colorIcon else menu.grayIcon)
 }
 
 @BindingAdapter("bindMenuIntroTitle")

@@ -17,6 +17,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.HomeFragment
+import com.zion830.threedollars.ui.mypage.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -34,6 +35,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     private val popupViewModel: PopupViewModel by viewModels()
 
     private val categoryViewModel: CategoryViewModel by viewModels()
+
+    private val myPageViewModel: MyPageViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 

@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.mypage
 
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
@@ -17,7 +16,7 @@ import zion830.com.common.ext.addNewFragment
 
 class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {
 
-    override val viewModel: MyPageViewModel by viewModels()
+    override val viewModel: MyPageViewModel by activityViewModels()
 
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()
 
@@ -25,6 +24,10 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
 
     override fun onResume() {
         super.onResume()
+        refreshData()
+    }
+
+    private fun refreshData() {
         viewModel.requestUserActivity()
         viewModel.requestVisitHistory()
         userInfoViewModel.updateUserInfo()
@@ -48,6 +51,9 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         binding.layoutReview.onSingleClick {
             addShowAllReviewFragment()
         }
+        binding.tvMessage.setOnClickListener {
+            addShowAllVisitHistoryFragment()
+        }
         observeUiData()
     }
 
@@ -57,6 +63,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         }
         userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
             binding.tvName.text = it.data.name
+            binding.tvUserMedal.text = it.data.medal?.name ?: "장착한 칭호가 없어요!"
         }
     }
 
@@ -81,6 +88,14 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             R.id.layout_container,
             MyReviewFragment(),
             MyReviewFragment::class.java.name
+        )
+    }
+
+    private fun addShowAllVisitHistoryFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            MyVisitHistoryFragment(),
+            MyVisitHistoryFragment::class.java.name
         )
     }
 }

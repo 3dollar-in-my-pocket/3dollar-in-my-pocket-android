@@ -16,7 +16,7 @@ buildscript {
         okhttp_version = '4.9.1'
         glide_version = '4.11.0'
         serialization_version = '1.0.0-RC'
-        paging_version = '2.1.2'
+        paging_version = '3.1.0'
         junit_version = '4.13'
         android_junit_version = '1.1.2'
         espresso_version = '3.3.0'
