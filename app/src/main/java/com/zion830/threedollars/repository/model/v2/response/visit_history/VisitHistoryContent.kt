@@ -12,7 +12,7 @@ data class VisitHistoryContent(
     @Json(name = "dateOfVisit")
     val dateOfVisit: String? = "",
     @Json(name = "store")
-    val store: StoreInfo? = StoreInfo(),
+    val store: StoreInfo = StoreInfo(),
     @Json(name = "type")
     val type: String? = "",
     @Json(name = "updatedAt")

@@ -22,16 +22,10 @@ interface NewServiceApi {
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
 
-    @GET("/api/v2/store/reviews/me")
+    @GET("/api/v3/store/reviews/me")
     suspend fun getMyReviews(
-        @Query("cachingTotalElements") cachingTotalElements: Int,
-        @Query("cursor") cursor: Int,
-        @Query("size") size: Int = 100,
-    ): Response<MyReviewResponse>
-
-    @GET("/api/v2/store/reviews/me")
-    suspend fun getMyReviews(
-        @Query("size") size: Int = 100,
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20,
     ): Response<MyReviewResponse>
 
     @PUT("/api/v2/store/review/{reviewId}")
@@ -111,11 +105,10 @@ interface NewServiceApi {
         @Query("size") size: Int = 100,
     ): Response<MyStoreResponse>
 
-    @GET("/api/v2/stores/me")
+    @GET("/api/v3/stores/me")
     suspend fun getMyStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("size") size: Int = 100,
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
 
     // 카테고리
@@ -152,6 +145,9 @@ interface NewServiceApi {
 
     @GET("/api/v2/user/name/check")
     suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
+
+    @GET("/api/v1/medals")
+    suspend fun getMedals()
 
     // faq
     @GET("/api/v2/faq/categories")

@@ -2,7 +2,7 @@ package com.zion830.threedollars.repository.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 
 data class MyReviewResponse(
     @SerializedName("data")
@@ -24,14 +24,14 @@ data class ReviewDetail(
     val rating: Float = 0f,
     @SerializedName("reviewId")
     val reviewId: Int = 0,
-    @SerializedName("storeId")
-    val storeId: Int = 0,
+    @SerializedName("store")
+    val store: StoreInfo = StoreInfo(),
     @SerializedName("storeName")
     val storeName: String = "",
     @SerializedName("updatedAt")
     val updatedAt: String = "",
     @SerializedName("user")
-    val user: SignUser = SignUser()
+    val user: User = User()
 )
 
 data class MyReviews(

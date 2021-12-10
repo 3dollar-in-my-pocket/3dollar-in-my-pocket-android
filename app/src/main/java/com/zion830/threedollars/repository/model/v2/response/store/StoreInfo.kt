@@ -22,5 +22,7 @@ data class StoreInfo(
     @SerializedName("updatedAt")
     val updatedAt: String = "",
     @SerializedName("visitHistory")
-    val visitHistory: VisitHistory = VisitHistory()
+    val visitHistory: VisitHistory = VisitHistory(),
+    @SerializedName("isDeleted")
+    val isDeleted: Boolean = false
 )
