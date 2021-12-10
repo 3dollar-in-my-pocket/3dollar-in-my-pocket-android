@@ -21,10 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
-import java.util.*
 
-class SplashActivity :
-    BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
+class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
 
     override val viewModel: SplashViewModel by viewModels()
 
@@ -38,8 +36,7 @@ class SplashActivity :
             override fun onAnimationEnd(animation: Animator?) {
                 VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
                     { minimum, current ->
-                        VersionUpdateDialog.getInstance(minimum, current)
-                            .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                        VersionUpdateDialog.getInstance(minimum, current).show(supportFragmentManager, VersionUpdateDialog::class.java.name)
                     }, {
                         if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
                             startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
