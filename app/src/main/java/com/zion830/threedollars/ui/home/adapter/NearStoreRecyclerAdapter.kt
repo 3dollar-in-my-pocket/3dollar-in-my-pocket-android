@@ -32,7 +32,7 @@ class NearStoreRecyclerAdapter(
     fun getItemPosition(item: StoreInfo) = currentList.indexOfFirst { it?.storeId == item.storeId }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NearStoreViewHolder {
-        return NearStoreViewHolder(parent)
+        return NearStoreViewHolder(parent, certificationClick)
     }
 
     override fun onBindViewHolder(holder: NearStoreViewHolder, position: Int) {
@@ -41,7 +41,10 @@ class NearStoreRecyclerAdapter(
     }
 }
 
-class NearStoreViewHolder(parent: ViewGroup?) :
+class NearStoreViewHolder(
+    parent: ViewGroup?,
+    private val certificationClick: (StoreInfo?) -> Unit
+) :
     BaseViewHolder<ItemStoreLocationBinding, StoreInfo?>(R.layout.item_store_location, parent) {
 
     fun bindPosition(isSelected: Boolean) {
@@ -69,7 +72,7 @@ class NearStoreViewHolder(parent: ViewGroup?) :
 
         binding.item = item
         binding.tvDest.setOnClickListener {
-
+            certificationClick(item)
         }
         val categoryInfo = SharedPrefUtils.getCategories()
         val categories =
