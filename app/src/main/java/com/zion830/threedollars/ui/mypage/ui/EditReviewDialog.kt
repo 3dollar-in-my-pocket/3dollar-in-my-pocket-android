@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.report_store
+package com.zion830.threedollars.ui.mypage.ui
 
 import android.content.Context
 import android.graphics.Color
@@ -11,18 +11,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.v2.request.NewReview
-import com.zion830.threedollars.repository.model.v2.response.my.Review
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.showToast
 
-class AddReviewDialog(
-    private val content: Review?
+class EditReviewDialog(
+    private val content: ReviewDetail?,
+    private val onComplete: (NewReview) -> Unit
 ) : DialogFragment() {
-    private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,32 +30,25 @@ class AddReviewDialog(
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DialogAddReviewBinding.inflate(inflater)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        binding.viewModel = viewModel
         binding.lifecycleOwner = this
-
         binding.ibClose.setOnClickListener {
             dismiss()
         }
-
-        if (content != null) {
-            binding.rating.rating = content.rating
-            binding.etContent.setText(content.contents)
-        }
-
+        binding.etContent.setText(content?.contents)
+        binding.rating.rating = content?.rating ?: 0f
         binding.btnFinish.setOnClickListener {
-            if (binding.rating.rating == 0f) {
-                showToast(R.string.over_rating_1)
-                return@setOnClickListener
-            }
-
-            if (content == null) {
-                viewModel.addReview(binding.etContent.text.toString(), binding.rating.rating)
-                dismiss()
-            } else {
-                val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
-                viewModel.editReview(content.reviewId, newReview)
-                dismiss()
+            when {
+                binding.rating.rating == 0f -> {
+                    showToast(R.string.over_rating_1)
+                }
+                binding.etContent.text.isBlank() -> {
+                    showToast(R.string.input_content)
+                }
+                else -> {
+                    val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
+                    onComplete(newReview)
+                    dismiss()
+                }
             }
         }
         binding.etContent.addTextChangedListener {
@@ -77,10 +68,5 @@ class AddReviewDialog(
         val deviceWidth = size.x
         params?.width = (deviceWidth * 0.9).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
-    }
-
-    companion object {
-
-        fun getInstance(content: Review? = null) = AddReviewDialog(content)
     }
 }

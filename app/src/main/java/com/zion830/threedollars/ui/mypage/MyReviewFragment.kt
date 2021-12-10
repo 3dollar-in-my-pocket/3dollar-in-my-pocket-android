@@ -1,15 +1,18 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.content.Intent
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyReviewBinding
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.ui.EditReviewDialog
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.listener.OnItemClickListener
 
@@ -18,14 +21,35 @@ class MyReviewFragment :
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
-    private lateinit var adapter: MyReviewRecyclerAdapter
+    private val myReviewViewModel: MyReviewViewModel by viewModels()
+
+    private val myPageViewModel: MyPageViewModel by activityViewModels()
+
+    private var adapter: MyReviewRecyclerAdapter? = null
+
+    override fun onResume() {
+        super.onResume()
+        adapter?.refresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        myPageViewModel.requestUserActivity()
+        myPageViewModel.requestVisitHistory()
+    }
 
     override fun initView() {
         adapter = MyReviewRecyclerAdapter(object : OnItemClickListener<ReviewDetail> {
             override fun onClick(item: ReviewDetail) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
+        }, {
+            EditReviewDialog(it) { review ->
+                myReviewViewModel.editReview(it.reviewId, review)
+            }.show(requireActivity().supportFragmentManager, EditReviewDialog::class.java.simpleName)
+        }, {
+            myReviewViewModel.deleteReview(it.reviewId)
         })
         binding.rvReview.adapter = adapter
         binding.btnBack.setOnClickListener {
@@ -36,16 +60,13 @@ class MyReviewFragment :
     }
 
     private fun observeUiData() {
-        viewModel.myAllReview.observe(this) {
-            adapter.submitList(it)
+        myReviewViewModel.updateReview.observe(viewLifecycleOwner) {
+            adapter?.refresh()
         }
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            Constants.SHOW_STORE_DETAIL -> {
-                // viewModel.updatePreviewData()
+        lifecycleScope.launch {
+            myReviewViewModel.myReviewPager.collectLatest {
+                adapter?.submitData(it)
             }
         }
     }
