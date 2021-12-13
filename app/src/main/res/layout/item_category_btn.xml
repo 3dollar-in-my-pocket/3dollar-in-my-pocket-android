@@ -43,6 +43,7 @@
                 android:layout_marginTop="4dp"
                 android:text="@{item.name}"
                 android:textColor="@android:color/black"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 tools:text="붕어빵" />
         </LinearLayout>

@@ -125,6 +125,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@{viewModel.storeInfo.user.name}"
                                 android:textColor="@color/color_sub_red"
+                                android:fontFamily="@font/applegothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -144,6 +145,7 @@
                             android:text="@{viewModel.storeInfo.storeName}"
                             android:textColor="@color/color_black"
                             android:textSize="20sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             tools:text="50m 이내에" />
 
@@ -279,6 +281,7 @@
                                     android:drawablePadding="10dp"
                                     android:gravity="start|center_vertical"
                                     android:textColor="@color/color_green"
+                                    android:fontFamily="@font/applegothic_bold"
                                     android:textStyle="bold"
                                     app:drawableStartCompat="@drawable/ic_good" />
 
@@ -290,6 +293,7 @@
                                     android:drawablePadding="10dp"
                                     android:gravity="start|center_vertical"
                                     android:textColor="@color/color_main_red"
+                                    android:fontFamily="@font/applegothic_bold"
                                     android:textStyle="bold"
                                     app:drawableStartCompat="@drawable/ic_bad" />
                             </LinearLayout>
@@ -338,6 +342,7 @@
                             android:text="@string/store_info"
                             android:textColor="@color/color_black"
                             android:textSize="16sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -364,6 +369,7 @@
                             android:text="@string/edit_info"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -388,6 +394,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/store_type"
                                 android:textColor="@color/color_black"
+                                android:fontFamily="@font/applegothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -422,6 +429,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/show_type"
                                 android:textColor="@color/color_black"
+                                android:fontFamily="@font/applegothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -451,6 +459,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/payment_type"
                                 android:textColor="@color/color_black"
+                                android:fontFamily="@font/applegothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -522,6 +531,7 @@
                             android:text="@{@string/category_menu(viewModel.categoryCount)}"
                             android:textColor="@color/color_black"
                             android:textSize="16sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -559,6 +569,7 @@
                             android:text="@{@string/photo_count(viewModel.storeInfo.images.size())}"
                             android:textColor="@color/color_black"
                             android:textSize="16sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -574,6 +585,7 @@
                             android:text="@string/add_photo"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -605,6 +617,7 @@
                             android:text="@{@string/review_count(viewModel.storeInfo.reviews.size())}"
                             android:textColor="@color/color_black"
                             android:textSize="16sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -620,6 +633,7 @@
                             android:text="@string/add_review"
                             android:textColor="@color/color_main_red"
                             android:textSize="12sp"
+                            android:fontFamily="@font/applegothic_bold"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -701,6 +715,7 @@
             android:text="@string/add_certification"
             android:textColor="@android:color/white"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/view_button_back"
             app:layout_constraintEnd_toEndOf="@id/view_button_back"

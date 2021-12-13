@@ -31,6 +31,7 @@
             android:textColor="@color/color_black"
             android:textColorHint="@color/color_gray1"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold" />
         
         <EditText
@@ -50,6 +51,7 @@
             android:textColor="@color/color_black"
             android:textColorHint="@color/color_gray1"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold" />
     </LinearLayout>
 </layout>

@@ -116,6 +116,7 @@
                 android:textColor="@color/color_white"
                 android:layout_marginTop="16dp"
                 android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

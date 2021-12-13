@@ -47,6 +47,7 @@
             android:textSize="16sp"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@id/iv_badge"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_goneMarginStart="0dp"
             app:layout_constraintTop_toTopOf="parent"

@@ -60,6 +60,7 @@
             android:background="@drawable/ripple_translate"
             android:textColor="@android:color/white"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
             app:layout_constraintEnd_toEndOf="@id/view_submit_back"

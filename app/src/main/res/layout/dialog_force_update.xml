@@ -51,6 +51,7 @@
             android:text="@string/go_to_update"
             android:textColor="@color/color_white"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

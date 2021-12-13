@@ -32,6 +32,7 @@
             android:layout_marginStart="8dp"
             android:text="@{item.category.name}"
             android:textColor="@color/color_black"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/iv_category"
             app:layout_constraintStart_toEndOf="@id/iv_category"

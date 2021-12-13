@@ -37,6 +37,7 @@
                 android:text="@{@string/question(item.question)}"
                 android:textColor="@color/color_sub_red"
                 android:textSize="14sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

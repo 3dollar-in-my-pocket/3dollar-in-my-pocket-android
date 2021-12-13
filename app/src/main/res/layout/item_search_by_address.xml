@@ -29,6 +29,7 @@
             android:text="@{item.placeName}"
             android:textColor="@android:color/black"
             android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             tools:text="서울시" />
 
@@ -40,6 +41,7 @@
             android:layout_marginBottom="16dp"
             android:text="@{item.roadAddressName}"
             android:textColor="#727272"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             tools:text="서울시" />
 
