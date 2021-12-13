@@ -19,7 +19,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils.dpToPx
+import zion830.com.common.ext.disableDoubleClick
 import zion830.com.common.ext.filterNotNull
+import zion830.com.common.listener.OnItemClickListener
 
 
 @BindingAdapter("visibleIf")
@@ -96,7 +98,11 @@ fun ImageView.loadBitmap(bitmap: Bitmap?) {
 @BindingAdapter("onSingleClick")
 fun View.onSingleClick(listener: () -> Unit) {
     setOnClickListener {
-        listener()
+        object : OnItemClickListener<Any?> {
+            override fun onClick(item: Any?) {
+                listener()
+            }
+        }.disableDoubleClick().onClick(null)
     }
 }
 

@@ -22,6 +22,7 @@ data class UserActivityData(
 @JsonClass(generateAdapter = true)
 data class Medal(
     val iconUrl: String? = "",
+    val disableIconUrl: String? = "",
     val medalId: Int? = 0,
     val name: String? = "",
 )

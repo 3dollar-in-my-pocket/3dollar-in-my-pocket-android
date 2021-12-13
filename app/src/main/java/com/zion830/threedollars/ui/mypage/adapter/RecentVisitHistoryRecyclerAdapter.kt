@@ -13,8 +13,8 @@ class RecentVisitHistoryRecyclerAdapter(
 ) : BaseRecyclerView<ItemRecentVisitHistoryBinding, VisitHistoryContent>(R.layout.item_recent_visit_history) {
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemRecentVisitHistoryBinding, VisitHistoryContent>, position: Int) {
-        super.onBindViewHolder(holder, position)
         val item = getItem(position)
+        super.onBindViewHolder(holder, position)
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item?.createdAt)
@@ -25,7 +25,9 @@ class RecentVisitHistoryRecyclerAdapter(
             }
             tvCategories.text = categories
             layoutItem.setOnClickListener {
-                onClick(item.store?.storeId ?: -1)
+                if (!item.store.isDeleted) {
+                    onClick(item.store.storeId)
+                }
             }
         }
     }

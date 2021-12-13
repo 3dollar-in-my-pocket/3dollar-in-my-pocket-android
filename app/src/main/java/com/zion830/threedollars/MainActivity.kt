@@ -53,7 +53,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         binding.navView.setupWithNavController(navController)
 
         viewModel.msgTextId.observe(this) {
-            binding.container.showSnack(it, color = R.color.color_main_red)
+            if (it >= 0) {
+                binding.container.showSnack(it, color = R.color.color_main_red)
+            }
         }
         popupViewModel.popups.observe(this) { popups ->
             if (popups.isNotEmpty() && System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > Constants.TIME_MILLIS_DAY) {
