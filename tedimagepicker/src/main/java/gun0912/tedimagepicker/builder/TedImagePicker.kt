@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 
 class TedImagePicker {
     companion object {
-        const val MAX_COUNT = 5
+        const val MAX_COUNT = 3
 
         @JvmStatic
         fun with(context: Context) = Builder(WeakReference(context))

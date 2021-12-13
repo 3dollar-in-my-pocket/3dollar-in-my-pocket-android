@@ -39,7 +39,7 @@ class MyVisitHistoryFragment :
     override fun initView() {
         adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<VisitHistoryContent> {
             override fun onClick(item: VisitHistoryContent) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.store?.storeId ?: -1)
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })

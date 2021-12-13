@@ -147,7 +147,13 @@ interface NewServiceApi {
     suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
 
     @GET("/api/v1/medals")
-    suspend fun getMedals()
+    suspend fun getMedals(): Response<BaseResponse<List<Medal>>>
+
+    @GET("/api/v1/user/medals")
+    suspend fun getMyMedals(): Response<BaseResponse<List<Medal>>>
+
+    @PUT("/api/v1/user/medal")
+    suspend fun updateMyMedals(@Body updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>>
 
     // faq
     @GET("/api/v2/faq/categories")

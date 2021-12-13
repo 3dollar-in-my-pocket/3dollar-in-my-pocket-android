@@ -101,7 +101,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="25dp"
-                android:layout_marginBottom="226dp"
+                android:layout_marginBottom="240dp"
                 android:background="@drawable/circle_white"
                 android:backgroundTint="@color/color_toss"
                 android:elevation="8dp"

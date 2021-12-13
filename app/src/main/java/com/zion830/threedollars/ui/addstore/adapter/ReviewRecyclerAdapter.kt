@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.addstore.adapter
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.isVisible
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.ListAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemReviewBinding
@@ -58,8 +58,8 @@ class ReviewViewHolder(
             }
         }
 
-        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yyyy.MM.dd E")
-        binding.ibSidemenu.isVisible = item.user.userId == SharedPrefUtils.getUserId()
+        binding.tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd E")
+        binding.ibSidemenu.isInvisible = item.user.userId != SharedPrefUtils.getUserId()
         binding.ibSidemenu.setOnClickListener {
             popupMenu.show()
         }

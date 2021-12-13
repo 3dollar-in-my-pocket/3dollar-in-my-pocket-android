@@ -17,7 +17,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="76dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_profile"
@@ -72,6 +73,7 @@
                     android:background="@drawable/circle_gray"
                     android:backgroundTint="@color/gray80"
                     android:padding="12dp"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_no_store"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -243,6 +245,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="23dp"
+                android:layout_marginBottom="56dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 android:overScrollMode="never"

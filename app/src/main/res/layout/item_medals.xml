@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_medal_icon"
+            android:layout_width="match_parent"
+            android:layout_height="155dp"
+            android:background="@drawable/rect_gray_pink_radius8"
+            android:padding="16dp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_gray_pink_radius8"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textColor="@color/color_sub_red"
+            android:textStyle="bold" />
+    </LinearLayout>
+</layout>

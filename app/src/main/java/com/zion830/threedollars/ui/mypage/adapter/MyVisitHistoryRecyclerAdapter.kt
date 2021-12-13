@@ -20,8 +20,9 @@ class MyVisitHistoryRecyclerAdapter(
         object : BaseViewHolder<ItemMyVisitHistoryBinding, VisitHistoryContent>(R.layout.item_my_visit_history, parent) {}
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemMyVisitHistoryBinding, VisitHistoryContent>, position: Int) {
-        holder.bind(getItem(position) ?: VisitHistoryContent(), listener)
         val item = getItem(position) ?: VisitHistoryContent()
+        holder.bind(item, if (!item.store.isDeleted) listener else null)
+
         val beforeItem = if (position > 0) getItem(position - 1) else null
         val categoryInfo = SharedPrefUtils.getCategories()
         val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
