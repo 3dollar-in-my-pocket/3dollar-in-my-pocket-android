@@ -26,6 +26,10 @@ class UserInfoViewModel : BaseViewModel() {
     val isNameUpdated: LiveData<Boolean>
         get() = _isNameUpdated
 
+    private val _logoutResult: MutableLiveData<Boolean> = MutableLiveData()
+    val logoutResult: LiveData<Boolean>
+        get() = _logoutResult
+
     val userName: MutableLiveData<String> = MutableLiveData("")
 
     val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
@@ -100,7 +104,8 @@ class UserInfoViewModel : BaseViewModel() {
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userRepository.logout()
+            val response = userRepository.logout()
+            _logoutResult.postValue(response.isSuccessful)
         }
     }
 

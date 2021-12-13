@@ -41,6 +41,17 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         binding.btnDeleteAccount.setOnClickListener {
             showDeleteAccountDialog()
         }
+
+        viewModel.logoutResult.observe(viewLifecycleOwner) {
+            if (it) {
+                SharedPrefUtils.clearUserInfo()
+                showToast(R.string.logout_message)
+                startActivity(Intent(requireContext(), SplashActivity::class.java))
+                requireActivity().finish()
+            } else {
+                showToast(R.string.connection_failed)
+            }
+        }
     }
 
     private fun showDeleteAccountDialog() {
@@ -64,10 +75,6 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
 
     private fun tryLogout() {
         viewModel.logout()
-        SharedPrefUtils.clearUserInfo()
-        showToast(R.string.logout_message)
-        startActivity(Intent(requireContext(), SplashActivity::class.java))
-        requireActivity().finish()
     }
 
     private fun addEditNameFragment() {
