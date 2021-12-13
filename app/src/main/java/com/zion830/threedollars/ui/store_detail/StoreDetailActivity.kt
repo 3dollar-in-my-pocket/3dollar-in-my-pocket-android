@@ -203,6 +203,13 @@ class StoreDetailActivity :
                 refreshStoreInfo()
             }
         }
+        viewModel.isExistStoreInfo.observe(this) { isExistStore ->
+            val isExist = isExistStore.second
+            if (!isExist) {
+                showToast(R.string.exist_store_error)
+                finish()
+            }
+        }
         viewModel.storeInfo.observe(this) {
             initStoreInfo(it)
             updateVisitHistory(it)
@@ -229,7 +236,6 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
-        refreshStoreInfo()
     }
 
     private fun startCertification() {

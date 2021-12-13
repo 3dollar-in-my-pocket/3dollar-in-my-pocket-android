@@ -73,25 +73,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
-                if (item == null) {
-                    return
+                if (item != null) {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, startCertification)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                } else {
+                    showToast(R.string.exist_store_error)
                 }
-                storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
             }
         }) { item ->
             if (item != null) {
                 startCertification = true
                 storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
-            }
-        }
-        storeDetailViewModel.isExistStoreInfo.observe(viewLifecycleOwner) { isExistStore ->
-            val storeId = isExistStore.first
-            val isExist = isExistStore.second
-            if (isExist) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), storeId, startCertification)
-                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-            } else {
-                showToast(R.string.exist_store_error)
             }
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
