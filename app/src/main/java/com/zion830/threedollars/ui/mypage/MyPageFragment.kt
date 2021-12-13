@@ -35,6 +35,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     override fun initView() {
+        viewModel.initAllMedals()
         visitHistoryAdapter = RecentVisitHistoryRecyclerAdapter {
             val intent = StoreDetailActivity.getIntent(requireContext(), it)
             startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
@@ -52,8 +53,14 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         binding.layoutReview.onSingleClick {
             addShowAllReviewFragment()
         }
+        binding.layoutMedal.onSingleClick {
+            addShowAllMedalFragment()
+        }
         binding.tvMessage.setOnClickListener {
             addShowAllVisitHistoryFragment()
+        }
+        binding.ivProfile.setOnClickListener {
+            addShowAllMedalFragment()
         }
         observeUiData()
     }
@@ -64,8 +71,10 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         }
         userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
             binding.tvName.text = it.data.name
-            binding.tvUserMedal.text = it.data.medal?.name ?: "장착한 칭호가 없어요!"
-            binding.ivProfile.loadUrlImg(it.data.medal?.iconUrl)
+        }
+        viewModel.selectedMedal.observe(viewLifecycleOwner) {
+            binding.tvUserMedal.text = it?.name ?: "장착한 칭호가 없어요!"
+            binding.ivProfile.loadUrlImg(it?.iconUrl)
         }
     }
 
@@ -90,6 +99,14 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             R.id.layout_container,
             MyReviewFragment(),
             MyReviewFragment::class.java.name
+        )
+    }
+
+    private fun addShowAllMedalFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            MyMedalFragment(),
+            MyMedalFragment::class.java.name
         )
     }
 

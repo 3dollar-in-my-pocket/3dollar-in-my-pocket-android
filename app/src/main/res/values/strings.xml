@@ -109,6 +109,7 @@
     <string name="before_30_seconds">만나기 30초 전</string>
     <string name="location_no_address">알 수 없는 위치</string>
     <string name="find_location_error">위치를 인식할 수 없습니다. GPS가 켜져있는지 확인해주세요!</string>
+    <string name="error_change_medal">칭호 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="error_pick_image">이미지를 불러오는데 실패했습니다.</string>
     <string name="upload_image">이미지를 업로드하는 중입니다...</string>
     <string name="remove_image">이미지 첨부를 취소하시겠습니까?</string>
@@ -226,6 +227,7 @@
     <string name="official_email">3dollarinmypocket@gmail.com</string>
     <string name="no_mail_app">실행할 메일 앱이 없습니다. 3dollarinmypocket@gmail.com로 문의사항을 전달해주세요.</string>
     <string name="delete_account_confirm">회원을 탈퇴하시겠습니까? 탈퇴하면 계정에 다시 접근할 수 없습니다.</string>
+    <string name="change_medal">장착중인 칭호를 변경하시겠어요?</string>
     <string name="monday">월</string>
     <string name="tuesday">화</string>
     <string name="wednesday">수</string>
@@ -250,6 +252,6 @@
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
 
     <string name="close">닫기</string>
-    <string name="disable_popup">앞으로 보지않기</string>
+    <string name="disable_popup">오늘 하루 보지않기</string>
     <string name="popup">팝업</string>
 </resources>

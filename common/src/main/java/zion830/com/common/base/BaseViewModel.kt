@@ -39,6 +39,7 @@ open class BaseViewModel : ViewModel() {
 
     open fun handleError(t: Throwable) {
         _msgTextId.postValue(R.string.connection_failed)
+        _msgTextId.postValue(-1)
     }
 
     protected suspend fun <T> safeApiCall(

@@ -1,13 +1,10 @@
 package zion830.com.common.base
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -34,7 +31,9 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
         initView()
 
         viewModel.msgTextId.observe(this) {
-            binding.root.showSnack(it)
+            if (it >= 0) {
+                binding.root.showSnack(it)
+            }
         }
     }
 
