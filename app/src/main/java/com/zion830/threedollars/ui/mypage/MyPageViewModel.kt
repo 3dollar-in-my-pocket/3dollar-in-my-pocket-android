@@ -25,7 +25,8 @@ class MyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = service.getUserActivity()
             if (response.isSuccessful) {
-                _userActivity.postValue(response.body()?.data)
+                val userActivity = response.body()?.data
+                _userActivity.postValue(userActivity)
             } else {
                 _msgTextId.postValue(R.string.connection_failed)
             }
@@ -36,7 +37,8 @@ class MyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = service.getMyVisitHistory(null, 20)
             if (response.isSuccessful) {
-                _myVisitHistory.postValue(response.body()?.data?.contents)
+                val myVisitHistory = response.body()?.data
+                _myVisitHistory.postValue(myVisitHistory?.contents)
             }
         }
     }
