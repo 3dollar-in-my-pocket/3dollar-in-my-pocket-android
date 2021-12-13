@@ -24,8 +24,8 @@ class MyStoreRecyclerAdapter(
         object : BaseViewHolder<ItemMyStoreBinding, StoreInfo>(R.layout.item_my_store, parent) {}
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemMyStoreBinding, StoreInfo>, position: Int) {
-        holder.bind(getItem(position) ?: StoreInfo(), listener)
         val item = getItem(position)
+        holder.bind(getItem(position) ?: StoreInfo(), if (item?.isDeleted == false) listener else null)
         val rating = "${item?.rating ?: 0}점"
         val visitCount = ((item?.visitHistory?.existsCounts ?: 0) + (item?.visitHistory?.notExistsCounts ?: 0)).toString() + "명"
         val categoryInfo = SharedPrefUtils.getCategories()
@@ -36,7 +36,7 @@ class MyStoreRecyclerAdapter(
             tvRating.text = rating
             tvVisitCount.text = visitCount
             tvVisitCount.setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(root.context, if (item?.isDeleted == true) R.drawable.ic_badge_off else R.drawable.ic_badge_16),
+                ContextCompat.getDrawable(root.context, if (item?.isDeleted == true) R.drawable.ic_badge_off else R.drawable.ic_badge_mini),
                 null,
                 null,
                 null

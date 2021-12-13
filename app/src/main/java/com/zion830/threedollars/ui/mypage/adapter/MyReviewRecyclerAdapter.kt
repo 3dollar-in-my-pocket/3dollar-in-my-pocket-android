@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -27,12 +28,13 @@ class MyReviewRecyclerAdapter(
         object : BaseViewHolder<ItemMyReviewBinding, ReviewDetail>(R.layout.item_my_review, parent) {}
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemMyReviewBinding, ReviewDetail>, position: Int) {
-        holder.bind(getItem(position) ?: ReviewDetail(), listener)
         val item = getItem(position) ?: ReviewDetail()
+        holder.bind(item, if (!item.store.isDeleted) listener else null)
         val previousItem = if (position > 0) getItem(position - 1) else null
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd E")
+            ibSideMenu.isInvisible = item.store.isDeleted
 
             val titleVisibility = !(position > 0 && previousItem?.store?.storeId == item.store.storeId)
             tvStoreName.isVisible = titleVisibility
