@@ -3,23 +3,18 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
 import com.zion830.threedollars.repository.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
+import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class MyVisitHistoryRecyclerAdapter(
     private val listener: OnItemClickListener<VisitHistoryContent>,
-) : PagingDataAdapter<VisitHistoryContent, BaseViewHolder<ItemMyVisitHistoryBinding, VisitHistoryContent>>(object :
-    DiffUtil.ItemCallback<VisitHistoryContent>() {
-    override fun areItemsTheSame(oldItem: VisitHistoryContent, newItem: VisitHistoryContent): Boolean = oldItem == newItem
-
-    override fun areContentsTheSame(oldItem: VisitHistoryContent, newItem: VisitHistoryContent): Boolean = oldItem == newItem
-}) {
+) : PagingDataAdapter<VisitHistoryContent, BaseViewHolder<ItemMyVisitHistoryBinding, VisitHistoryContent>>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         object : BaseViewHolder<ItemMyVisitHistoryBinding, VisitHistoryContent>(R.layout.item_my_visit_history, parent) {}

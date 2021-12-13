@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyReviewBinding
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.StringUtils
+import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -17,11 +17,7 @@ class MyReviewRecyclerAdapter(
     private val listener: OnItemClickListener<ReviewDetail>,
     private val editReview: (ReviewDetail) -> Unit,
     private val deleteReview: (ReviewDetail) -> Unit,
-) : PagingDataAdapter<ReviewDetail, BaseViewHolder<ItemMyReviewBinding, ReviewDetail>>(object : DiffUtil.ItemCallback<ReviewDetail>() {
-    override fun areItemsTheSame(oldItem: ReviewDetail, newItem: ReviewDetail): Boolean = oldItem == newItem
-
-    override fun areContentsTheSame(oldItem: ReviewDetail, newItem: ReviewDetail): Boolean = oldItem == newItem
-}) {
+) : PagingDataAdapter<ReviewDetail, BaseViewHolder<ItemMyReviewBinding, ReviewDetail>>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         object : BaseViewHolder<ItemMyReviewBinding, ReviewDetail>(R.layout.item_my_review, parent) {}

@@ -4,21 +4,17 @@ import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyStoreBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.SharedPrefUtils
+import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class MyStoreRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>
-) : PagingDataAdapter<StoreInfo, BaseViewHolder<ItemMyStoreBinding, StoreInfo>>(object : DiffUtil.ItemCallback<StoreInfo>() {
-    override fun areItemsTheSame(oldItem: StoreInfo, newItem: StoreInfo): Boolean = oldItem == newItem
-
-    override fun areContentsTheSame(oldItem: StoreInfo, newItem: StoreInfo): Boolean = oldItem == newItem
-}) {
+) : PagingDataAdapter<StoreInfo, BaseViewHolder<ItemMyStoreBinding, StoreInfo>>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         object : BaseViewHolder<ItemMyStoreBinding, StoreInfo>(R.layout.item_my_store, parent) {}
