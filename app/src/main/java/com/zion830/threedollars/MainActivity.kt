@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -53,9 +54,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         binding.navView.setupWithNavController(navController)
 
         viewModel.msgTextId.observe(this) {
-            if (it >= 0) {
-                binding.container.showSnack(it, color = R.color.color_main_red)
-            }
+            binding.container.showSnack(it, color = R.color.color_main_red)
         }
         popupViewModel.popups.observe(this) { popups ->
             if (popups.isNotEmpty() && System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > Constants.TIME_MILLIS_DAY) {
@@ -63,22 +62,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
             }
         }
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
-                android.R.color.black
-            } else {
-                android.R.color.white
-            }
-            binding.divider.setBackgroundColor(
-                if (destination.id == R.id.navigation_mypage) {
-                    ContextCompat.getColor(this, R.color.gray90)
-                } else {
-                    Color.TRANSPARENT
-                }
-            )
-            binding.navView.isVisible = destination.id != R.id.navigation_popup
-        }
+        initNavController(navController)
+        initNavView()
+    }
 
+    private fun initNavView() {
         binding.navView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_home -> {
@@ -104,6 +92,24 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                 }
             }
             true
+        }
+    }
+
+    private fun initNavController(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
+                android.R.color.black
+            } else {
+                android.R.color.white
+            }
+            binding.divider.setBackgroundColor(
+                if (destination.id == R.id.navigation_mypage) {
+                    ContextCompat.getColor(this, R.color.gray90)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
+            binding.navView.isVisible = destination.id != R.id.navigation_popup
         }
     }
 
