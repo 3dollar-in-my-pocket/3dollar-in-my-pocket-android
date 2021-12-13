@@ -1,17 +1,9 @@
 package com.zion830.threedollars
 
 import androidx.lifecycle.*
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
-import com.zion830.threedollars.repository.MyReviewDataSource
-import com.zion830.threedollars.repository.MyStoreDataSource
-import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.UserRepository
 import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.repository.model.v2.response.my.MyReviews
-import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.utils.NaverMapUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,42 +33,6 @@ class UserInfoViewModel : BaseViewModel() {
     }
 
     private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
-
-    val myStore: LiveData<List<StoreInfo>?> = isUpdated.switchMap {
-        liveData(Dispatchers.IO + coroutineExceptionHandler) {
-            emit(
-                userRepository.getMyStore(
-                    NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    0
-                ).body()?.data?.contents
-            )
-        }
-    }
-
-    val myReview: LiveData<MyReviews?> = isUpdated.switchMap {
-        liveData(Dispatchers.IO + coroutineExceptionHandler) {
-            emit(userRepository.getMyReviews(0).body()?.data)
-        }
-    }
-
-    val myAllStore: LiveData<PagedList<StoreInfo>> by lazy {
-        LivePagedListBuilder(
-            MyStoreDataSource.Factory(
-                viewModelScope,
-                Dispatchers.IO + coroutineExceptionHandler,
-                NaverMapUtils.DEFAULT_LOCATION
-            ),
-            MyStoreDataSource.pageConfig
-        ).build()
-    }
-
-    val myAllReview: LiveData<PagedList<ReviewDetail>> by lazy {
-        LivePagedListBuilder(
-            MyReviewDataSource.Factory(viewModelScope, Dispatchers.IO + coroutineExceptionHandler),
-            MyReviewDataSource.pageConfig
-        ).build()
-    }
 
     private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo

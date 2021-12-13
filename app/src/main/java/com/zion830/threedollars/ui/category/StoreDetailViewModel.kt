@@ -25,7 +25,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
-import zion830.com.common.ext.isNotNullOrBlank
 
 // TODO : Edit 로직 분리 필요
 class StoreDetailViewModel : BaseViewModel() {
@@ -95,12 +94,6 @@ class StoreDetailViewModel : BaseViewModel() {
     val addReviewResult: LiveData<Boolean>
         get() = _addReviewResult
 
-    val reviewContent = MutableLiveData<String>()
-
-    val isAvailableReview = Transformations.map(reviewContent) {
-        it.isNotNullOrBlank()
-    }
-
     private val _photoDeleted: MutableLiveData<Boolean> = MutableLiveData()
     val photoDeleted: LiveData<Boolean>
         get() = _photoDeleted
@@ -122,23 +115,14 @@ class StoreDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun clearReview() {
-        reviewContent.value = ""
-    }
-
-    fun addReview(rating: Float) {
-        if (rating == 0f) {
-            _msgTextId.postValue(R.string.over_rating_1)
-            return
-        }
-
-        if (reviewContent.value.isNullOrBlank()) {
+    fun addReview(content: String, rating: Float) {
+        if (content.isBlank()) {
             _addReviewResult.postValue(false)
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request = NewReviewRequest(reviewContent.value!!, rating, _storeInfo.value?.storeId ?: -1)
+            val request = NewReviewRequest(content, rating, _storeInfo.value?.storeId ?: -1)
             val response = repository.addReview(request)
             if (response.isSuccessful) {
                 _msgTextId.postValue(R.string.success_add_review)
@@ -173,7 +157,7 @@ class StoreDetailViewModel : BaseViewModel() {
     }
 
     fun editReview(reviewId: Int, newReview: NewReview) {
-        if (reviewContent.value.isNullOrBlank()) {
+        if (newReview.contents.isBlank()) {
             _addReviewResult.postValue(false)
             return
         }

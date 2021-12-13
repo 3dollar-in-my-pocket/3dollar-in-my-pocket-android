@@ -37,6 +37,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
+    private var startCertification = false
+
     fun getMapCenterLatLng() = try {
         naverMapFragment.getMapCenterLatLng()
     } catch (e: Exception) {
@@ -76,14 +78,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 }
                 storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
             }
-        }) {
-
+        }) { item ->
+            if (item != null) {
+                startCertification = true
+                storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
+            }
         }
         storeDetailViewModel.isExistStoreInfo.observe(viewLifecycleOwner) { isExistStore ->
             val storeId = isExistStore.first
             val isExist = isExistStore.second
             if (isExist) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), storeId)
+                val intent = StoreDetailActivity.getIntent(requireContext(), storeId, startCertification)
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             } else {
                 showToast(R.string.exist_store_error)
@@ -155,5 +160,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onResume() {
         super.onResume()
         naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
+        startCertification = false
     }
 }

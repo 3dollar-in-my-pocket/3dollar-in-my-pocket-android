@@ -1,8 +1,7 @@
-package com.zion830.threedollars.repository.model.v2.response
+package com.zion830.threedollars.repository.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.repository.model.v2.response.my.User
 
 data class Review(
     @SerializedName("contents")

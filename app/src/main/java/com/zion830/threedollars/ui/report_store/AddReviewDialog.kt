@@ -9,12 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.v2.request.NewReview
-import com.zion830.threedollars.repository.model.v2.response.Review
+import com.zion830.threedollars.repository.model.v2.response.my.Review
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 
@@ -36,33 +37,32 @@ class AddReviewDialog(
         binding.lifecycleOwner = this
 
         binding.ibClose.setOnClickListener {
-            viewModel.clearReview()
             dismiss()
         }
 
         if (content != null) {
-            viewModel.reviewContent.value = content.contents
             binding.rating.rating = content.rating
-        } else {
-            viewModel.reviewContent.value = ""
-            binding.rating.rating = 0f
+            binding.etContent.setText(content.contents)
         }
 
         binding.btnFinish.setOnClickListener {
+            if (binding.rating.rating == 0f) {
+                showToast(R.string.over_rating_1)
+                return@setOnClickListener
+            }
+
             if (content == null) {
-                if (binding.rating.rating == 0f) {
-                    showToast(R.string.over_rating_1)
-                } else {
-                    viewModel.addReview(binding.rating.rating)
-                    dismiss()
-                }
+                viewModel.addReview(binding.etContent.text.toString(), binding.rating.rating)
+                dismiss()
             } else {
                 val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
                 viewModel.editReview(content.reviewId, newReview)
                 dismiss()
             }
         }
-
+        binding.etContent.addTextChangedListener {
+            binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()
+        }
         return binding.root
     }
 

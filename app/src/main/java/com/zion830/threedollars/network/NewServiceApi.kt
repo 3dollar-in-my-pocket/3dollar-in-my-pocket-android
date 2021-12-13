@@ -8,6 +8,7 @@ import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.repository.model.v2.response.PopupsResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
 import com.zion830.threedollars.repository.model.v2.response.store.*
+import com.zion830.threedollars.repository.model.v2.response.visit_history.MyVisitHistoryResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -21,16 +22,10 @@ interface NewServiceApi {
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
 
-    @GET("/api/v2/store/reviews/me")
+    @GET("/api/v3/store/reviews/me")
     suspend fun getMyReviews(
-        @Query("cachingTotalElements") cachingTotalElements: Int,
-        @Query("cursor") cursor: Int,
-        @Query("size") size: Int = 100,
-    ): Response<MyReviewResponse>
-
-    @GET("/api/v2/store/reviews/me")
-    suspend fun getMyReviews(
-        @Query("size") size: Int = 100,
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20,
     ): Response<MyReviewResponse>
 
     @PUT("/api/v2/store/review/{reviewId}")
@@ -110,11 +105,10 @@ interface NewServiceApi {
         @Query("size") size: Int = 100,
     ): Response<MyStoreResponse>
 
-    @GET("/api/v2/stores/me")
+    @GET("/api/v3/stores/me")
     suspend fun getMyStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("size") size: Int = 100,
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
 
     // 카테고리
@@ -137,11 +131,23 @@ interface NewServiceApi {
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<MyInfoResponse>
 
+    @GET("/api/v1/user/activity")
+    suspend fun getUserActivity(): Response<UserActivityResponse>
+
+    @GET("/api/v2/store/visits/me")
+    suspend fun getMyVisitHistory(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int
+    ): Response<MyVisitHistoryResponse>
+
     @PUT("/api/v2/user/me")
     suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
 
     @GET("/api/v2/user/name/check")
     suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
+
+    @GET("/api/v1/medals")
+    suspend fun getMedals()
 
     // faq
     @GET("/api/v2/faq/categories")

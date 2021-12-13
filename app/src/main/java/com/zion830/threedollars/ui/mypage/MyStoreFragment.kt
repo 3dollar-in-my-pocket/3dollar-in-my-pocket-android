@@ -1,19 +1,23 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.content.Intent
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.showToast
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
 
 class MyStoreFragment :
@@ -21,18 +25,22 @@ class MyStoreFragment :
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
-    private val storeDetailViewModel: StoreDetailViewModel by viewModels()
+    private val myPageViewModel: MyPageViewModel by activityViewModels()
 
-    private lateinit var adapter: MyStoreRecyclerAdapter
+    private val myStoreViewModel: MyStoreViewModel by viewModels()
+
+    private var adapter: MyStoreRecyclerAdapter? = null
+
+    override fun onResume() {
+        super.onResume()
+        adapter?.refresh()
+    }
 
     override fun initView() {
         adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
             override fun onClick(item: StoreInfo) {
-                storeDetailViewModel.requestStoreInfo(
-                    storeId = item.storeId,
-                    item.latitude,
-                    item.longitude
-                )
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })
         binding.rvStore.adapter = adapter
@@ -40,32 +48,35 @@ class MyStoreFragment :
             activity?.supportFragmentManager?.popBackStack()
             viewModel.updateUserInfo()
         }
-        observeUiData()
-
-        storeDetailViewModel.isExistStoreInfo.observe(viewLifecycleOwner) { isExistStore ->
-            val storeId = isExistStore.first
-            val isExist = isExistStore.second
-            if (isExist) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), storeId)
-                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-            } else {
-                showToast(R.string.exist_store_error)
-            }
+        binding.ibSetting.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                MyPageSettingFragment(),
+                MyPageSettingFragment::class.java.name
+            )
         }
+        observeUiData()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        myPageViewModel.requestUserActivity()
+        myPageViewModel.requestVisitHistory()
     }
 
     private fun observeUiData() {
-        viewModel.myAllStore.observe(this) {
-            adapter.submitList(it)
+        myStoreViewModel.totalCount.observe(viewLifecycleOwner) {
+            binding.tvStoreCount.text = buildSpannedString {
+                bold {
+                    append("${it}개")
+                }
+                append(" 제보하셨네요!")
+            }
         }
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            Constants.SHOW_STORE_DETAIL -> {
-                // viewModel.updatePreviewData()
-                // TODO : 강제 갱신되도록 처리
+        lifecycleScope.launch {
+            myStoreViewModel.myStorePager.collectLatest {
+                adapter?.submitData(it)
             }
         }
     }

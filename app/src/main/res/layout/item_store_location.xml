@@ -19,7 +19,7 @@
     </data>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/color_white}"
@@ -30,7 +30,8 @@
             android:id="@+id/layout_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minWidth="280dp"
+            android:clickable="true"
+            android:focusable="true"
             android:onClick="@{() -> listener.onClick(item)}"
             android:paddingVertical="14dp"
             tools:ignore="UnusedAttribute">
@@ -126,17 +127,17 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="14dp"
                 android:background="@drawable/rect_red_radius14"
+                android:clickable="true"
                 android:drawablePadding="4dp"
+                android:focusable="true"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="6dp"
                 android:text="@string/dest"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:visibility="invisible"
                 app:drawableStartCompat="@drawable/ic_dest"
                 app:layout_constraintBottom_toBottomOf="@id/ll_distance_rating"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ll_distance_rating"
                 app:layout_constraintTop_toTopOf="@id/ll_distance_rating" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

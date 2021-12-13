@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
@@ -9,21 +8,14 @@ import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
+import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class NearStoreRecyclerAdapter(
     private val clickListener: OnItemClickListener<StoreInfo?>,
     private val certificationClick: (StoreInfo?) -> Unit
-) : ListAdapter<StoreInfo?, NearStoreViewHolder>(object : DiffUtil.ItemCallback<StoreInfo?>() {
-    override fun areItemsTheSame(oldItem: StoreInfo, newItem: StoreInfo): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: StoreInfo, newItem: StoreInfo): Boolean {
-        return oldItem == newItem
-    }
-}) {
+) : ListAdapter<StoreInfo?, NearStoreViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
 
     fun getItemLocation(position: Int) =
@@ -32,7 +24,7 @@ class NearStoreRecyclerAdapter(
     fun getItemPosition(item: StoreInfo) = currentList.indexOfFirst { it?.storeId == item.storeId }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NearStoreViewHolder {
-        return NearStoreViewHolder(parent)
+        return NearStoreViewHolder(parent, certificationClick)
     }
 
     override fun onBindViewHolder(holder: NearStoreViewHolder, position: Int) {
@@ -41,7 +33,10 @@ class NearStoreRecyclerAdapter(
     }
 }
 
-class NearStoreViewHolder(parent: ViewGroup?) :
+class NearStoreViewHolder(
+    parent: ViewGroup?,
+    private val certificationClick: (StoreInfo?) -> Unit
+) :
     BaseViewHolder<ItemStoreLocationBinding, StoreInfo?>(R.layout.item_store_location, parent) {
 
     fun bindPosition(isSelected: Boolean) {
@@ -69,7 +64,7 @@ class NearStoreViewHolder(parent: ViewGroup?) :
 
         binding.item = item
         binding.tvDest.setOnClickListener {
-
+            certificationClick(item)
         }
         val categoryInfo = SharedPrefUtils.getCategories()
         val categories =

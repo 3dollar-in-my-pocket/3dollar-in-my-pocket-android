@@ -5,7 +5,7 @@
 
     <string name="score">%.1f점</string>
     <string name="score_only">%.1f</string>
-    <string name="count">%d개</string>
+    <string name="count">%d개 제보하셨네요!</string>
     <string name="img_count">+%d</string>
     <string name="distance">%dm</string>
     <string name="save">저장하기</string>
@@ -32,7 +32,6 @@
     <string name="server_500_msg">서버 점검 중!</string>
 
     <string name="my_page_show_all">전체보기</string>
-    <string name="my_page_stores">내가 등록한 음식점</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
     <string name="my_page_reviews">내가 쓴 리뷰</string>
     <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
@@ -64,28 +63,28 @@
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
 
     <string name="none">없음</string>
-
+    
     <string name="nearest_store">가장 가까운 음식점</string>
     <string name="if_you_have_money1">지금 당장\n</string>
     <string name="if_you_have_money2">3천원</string>
     <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
     <string name="sort_by_distance">거리순</string>
-
+    
     <string-array name="menu_name">
         <item>붕어빵</item>
         <item>문어빵,</item>
         <item>계란빵,</item>
         <item>호떡아</item>
     </string-array>
-
+    
     <string-array name="menu_desc">
         <item>만나기 30초 전</item>
         <item>다 내꺼야</item>
         <item>내 입으로</item>
         <item>기다려</item>
     </string-array>
-
+    
     <string name="road">길거리</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
@@ -139,6 +138,7 @@
     <string name="store_detail_menu">상세 메뉴 입력 </string>
     <string name="add_store_finish">가게 등록하기</string>
     <string name="edit_store_finish">가게 정보 수정하기</string>
+    <string name="certification">방문 인증</string>
     <string name="add_certification">방문 인증하기</string>
     <string name="visit_success">방문 성공</string>
     <string name="visit_failed">방문 실패</string>
@@ -154,6 +154,7 @@
     <string name="failed_add_review">리뷰 등록에 실패했습니다. 다시 시도해주세요.</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
     <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
+    <string name="input_content">내용을 입력해주세요.</string>
     <string name="success_edit_review">리뷰가 수정되었습니다.</string>
     <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
     <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
@@ -198,6 +199,11 @@
     <string name="no_category_msg">한 개 이상의 카테고리를 선택해주세요.</string>
     <string name="no_menu_msg">메뉴 정보를 한개 이상 입력해주세요!</string>
 
+    <string name="my_store">제보한 가게</string>
+    <string name="my_review">내가 쓴 리뷰</string>
+    <string name="my_visit_history">방문 인증 내역</string>
+    <string name="my_medal">내 칭호</string>
+    <string name="my_certification_message">최근 내가 들린 가게는?</string>
     <string name="title_setting">설정</string>
     <string name="ask">문의사항</string>
     <string name="faq">FAQ</string>
@@ -213,7 +219,7 @@
     <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
-
+    
     <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
@@ -227,7 +233,7 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
-
+    
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
@@ -241,7 +247,6 @@
     <string name="retry_search">현재 지도에서 가게 재검색</string>
     <string name="is_certification_store">인증된 가게만</string>
     <string name="dest">방문하기</string>
-
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
 
     <string name="close">닫기</string>

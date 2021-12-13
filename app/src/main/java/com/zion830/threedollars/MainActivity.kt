@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
@@ -15,6 +17,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.HomeFragment
+import com.zion830.threedollars.ui.mypage.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -32,6 +35,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     private val popupViewModel: PopupViewModel by viewModels()
 
     private val categoryViewModel: CategoryViewModel by viewModels()
+
+    private val myPageViewModel: MyPageViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 
@@ -53,6 +58,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         popupViewModel.popups.observe(this) { popups ->
             if (popups.isNotEmpty() && System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > Constants.TIME_MILLIS_DAY) {
                 binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
+
             }
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -61,6 +67,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             } else {
                 android.R.color.white
             }
+            binding.divider.setBackgroundColor(
+                if (destination.id == R.id.navigation_mypage) {
+                    ContextCompat.getColor(this, R.color.gray90)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
             binding.navView.isVisible = destination.id != R.id.navigation_popup
         }
 

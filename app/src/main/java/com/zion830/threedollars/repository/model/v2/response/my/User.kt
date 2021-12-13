@@ -10,7 +10,9 @@ data class User(
     @SerializedName("socialType")
     val socialType: String = "KAKAO",
     @SerializedName("userId")
-    val userId: Int = 0
+    val userId: Int = 0,
+    @SerializedName("medal")
+    val medal: Medal? = Medal()
 ) {
     fun isKakaoUser() = socialType == LoginType.KAKAO.socialName
 }

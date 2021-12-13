@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
-import com.zion830.threedollars.repository.model.v2.response.Review
+import com.zion830.threedollars.repository.model.v2.response.my.Review
 import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
@@ -60,6 +60,8 @@ class StoreDetailActivity :
     private val categoryAdapter = CategoryInfoRecyclerAdapter()
 
     private var storeId = 0
+
+    private var startCertificationExactly: Boolean? = false
 
     private lateinit var photoAdapter: PhotoRecyclerAdapter
 
@@ -162,18 +164,7 @@ class StoreDetailActivity :
             )
         }
         binding.btnCertification.setOnClickListener {
-            naverMapFragment.updateCurrentLocation {
-                if (it == null) {
-                    return@updateCurrentLocation
-                }
-                val distance = NaverMapUtils.calculateDistance(naverMapFragment.currentPosition, viewModel.storeLocation.value)
-                supportFragmentManager.addNewFragment(
-                    R.id.container,
-                    if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
-                    StoreCertificationAvailableFragment::class.java.name,
-                    false
-                )
-            }
+            startCertification()
         }
         viewModel.addReviewResult.observe(this) {
             viewModel.requestStoreInfo(
@@ -220,26 +211,57 @@ class StoreDetailActivity :
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
             }?.toMutableList())
+            initWeekdays(it)
 
-            binding.layoutBtnDayOfWeek.tbMon.isChecked =
-                it?.appearanceDays?.contains("MONDAY") == true
-            binding.layoutBtnDayOfWeek.tbTue.isChecked =
-                it?.appearanceDays?.contains("TUESDAY") == true
-            binding.layoutBtnDayOfWeek.tbWen.isChecked =
-                it?.appearanceDays?.contains("WEDNESDAY") == true
-            binding.layoutBtnDayOfWeek.tbThur.isChecked =
-                it?.appearanceDays?.contains("THURSDAY") == true
-            binding.layoutBtnDayOfWeek.tbFri.isChecked =
-                it?.appearanceDays?.contains("FRIDAY") == true
-            binding.layoutBtnDayOfWeek.tbSat.isChecked =
-                it?.appearanceDays?.contains("SATURDAY") == true
-            binding.layoutBtnDayOfWeek.tbSun.isChecked =
-                it?.appearanceDays?.contains("SUNDAY") == true
+            startCertificationExactly = if (startCertificationExactly != null) {
+                intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
+            } else {
+                null
+            }
+
+            if (startCertificationExactly == true) {
+                lifecycleScope.launch {
+                    startCertification()
+                    startCertificationExactly = null
+                }
+            }
         }
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
         refreshStoreInfo()
+    }
+
+    private fun startCertification() {
+        naverMapFragment.updateCurrentLocation {
+            if (it == null) {
+                return@updateCurrentLocation
+            }
+            val distance = NaverMapUtils.calculateDistance(naverMapFragment.currentPosition, viewModel.storeLocation.value)
+            supportFragmentManager.addNewFragment(
+                R.id.container,
+                if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
+                StoreCertificationAvailableFragment::class.java.name,
+                false
+            )
+        }
+    }
+
+    private fun initWeekdays(it: StoreDetail?) {
+        binding.layoutBtnDayOfWeek.tbMon.isChecked =
+            it?.appearanceDays?.contains("MONDAY") == true
+        binding.layoutBtnDayOfWeek.tbTue.isChecked =
+            it?.appearanceDays?.contains("TUESDAY") == true
+        binding.layoutBtnDayOfWeek.tbWen.isChecked =
+            it?.appearanceDays?.contains("WEDNESDAY") == true
+        binding.layoutBtnDayOfWeek.tbThur.isChecked =
+            it?.appearanceDays?.contains("THURSDAY") == true
+        binding.layoutBtnDayOfWeek.tbFri.isChecked =
+            it?.appearanceDays?.contains("FRIDAY") == true
+        binding.layoutBtnDayOfWeek.tbSat.isChecked =
+            it?.appearanceDays?.contains("SATURDAY") == true
+        binding.layoutBtnDayOfWeek.tbSun.isChecked =
+            it?.appearanceDays?.contains("SUNDAY") == true
     }
 
     private fun updateVisitHistory(it: StoreDetail?) {
@@ -372,12 +394,13 @@ class StoreDetailActivity :
 
     companion object {
         private const val KEY_STORE_ID = "KEY_STORE_ID"
+        private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
         private const val EDIT_STORE_INFO = 234
-        private const val PICK_IMAGE_MULTIPLE = 235
 
-        fun getIntent(context: Context, storeId: Int) =
+        fun getIntent(context: Context, storeId: Int, startCertification: Boolean = false) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 putExtra(KEY_STORE_ID, storeId)
+                putExtra(KEY_START_CERTIFICATION, startCertification)
             }
     }
 }

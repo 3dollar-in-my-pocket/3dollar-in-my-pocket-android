@@ -8,6 +8,7 @@ import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
 import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.repository.model.v2.response.my.*
+import com.zion830.threedollars.repository.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
 
@@ -43,12 +44,16 @@ class UserRepository(
         return service.checkNickname(nickname)
     }
 
-    suspend fun getMyReviews(cursor: Int): Response<MyReviewResponse> {
-        return service.getMyReviews()
+    suspend fun getMyReviews(cursor: Int?, size: Int): Response<MyReviewResponse> {
+        return service.getMyReviews(cursor, size)
     }
 
-    suspend fun getMyStore(latitude: Double, longitude: Double, cursor: Int): Response<MyStoreResponse> {
-        return service.getMyStore(latitude, longitude)
+    suspend fun getMyStore(cursor: Int?, size: Int): Response<MyStoreResponse> {
+        return service.getMyStore(cursor, size)
+    }
+
+    suspend fun getMyVisitHistory(cursor: Int?, size: Int): Response<MyVisitHistoryResponse> {
+        return service.getMyVisitHistory(cursor, size)
     }
 
     suspend fun getFAQCategory(): Response<FAQCategoryResponse> = service.getFAQCategory()
