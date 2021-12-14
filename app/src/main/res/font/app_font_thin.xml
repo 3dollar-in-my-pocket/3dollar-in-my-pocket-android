@@ -7,7 +7,7 @@
         app:fontWeight="300" />
     
     <font
-        app:font="@font/applegothic"
+        app:font="@font/applegothic_bold"
         app:fontStyle="normal"
         app:fontWeight="700" />
 </font-family>

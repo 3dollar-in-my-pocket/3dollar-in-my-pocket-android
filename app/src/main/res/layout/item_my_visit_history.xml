@@ -79,8 +79,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:fontFamily="@font/applegothic_bold"
-                android:textStyle="bold"
                 tools:text="19:29:29" />
         </LinearLayout>
 

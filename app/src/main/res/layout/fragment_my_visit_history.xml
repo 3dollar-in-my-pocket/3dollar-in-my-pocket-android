@@ -22,10 +22,10 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/applegothic_bold"
             android:text="@string/my_visit_history"
             android:textColor="@color/color_white"
             android:textSize="16sp"
-            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/btn_back"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,13 +75,29 @@
             app:layout_constraintTop_toBottomOf="@id/tv_title"
             tools:listitem="@layout/item_my_visit_history" />
 
-        <ProgressBar
+        <ImageView
+            android:id="@+id/iv_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/img_no_visit_history"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+        <include
+            android:id="@+id/layout_no_data"
+            layout="@layout/layout_no_data"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:subtitle="@{@string/no_visit_history_sub}"
+            app:title="@{@string/no_visit_history}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

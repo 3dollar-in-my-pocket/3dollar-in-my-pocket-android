@@ -89,7 +89,6 @@
                     android:paddingVertical="6dp"
                     android:textColor="@color/color_sub_red"
                     android:fontFamily="@font/applegothic_bold"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_profile" />

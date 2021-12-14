@@ -12,7 +12,7 @@
         android:fontWeight="400" />
     
     <font
-        android:font="@font/applegothic"
+        android:font="@font/applegothic_bold"
         android:fontStyle="normal"
         android:fontWeight="700" />
     
