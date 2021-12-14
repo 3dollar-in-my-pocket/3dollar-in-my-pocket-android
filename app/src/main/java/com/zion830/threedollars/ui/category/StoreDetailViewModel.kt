@@ -25,6 +25,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 // TODO : Edit 로직 분리 필요
 class StoreDetailViewModel : BaseViewModel() {
@@ -104,10 +106,13 @@ class StoreDetailViewModel : BaseViewModel() {
     fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val startDate = LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
             val data = repository.getStoreDetail(
                 storeId,
                 latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude
+                longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                startDate
             )
             _storeInfo.postValue(data.body()?.data)
             _isExistStoreInfo.postValue(storeId to (data.code() == 200))

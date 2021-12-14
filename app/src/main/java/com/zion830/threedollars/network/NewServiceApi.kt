@@ -42,7 +42,7 @@ interface NewServiceApi {
     // 가게
     @POST("/api/v2/store")
     suspend fun saveStore(
-        @Body newStoreRequest: NewStoreRequest
+        @Body newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
 
     @POST("/api/v2/store/visit")
@@ -78,6 +78,7 @@ interface NewServiceApi {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("storeId") storeId: Int,
+        @Query("startDate") startDate: String?
     ): Response<StoreDetailResponse>
 
     @GET("/api/v2/stores/near")

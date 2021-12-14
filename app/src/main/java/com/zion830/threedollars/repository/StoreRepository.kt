@@ -26,8 +26,9 @@ class StoreRepository(
     suspend fun getStoreDetail(
         storeId: Int,
         latitude: Double,
-        longitude: Double
-    ): Response<StoreDetailResponse> = newService.getStoreInfo(latitude, longitude, storeId)
+        longitude: Double,
+        startDate: String?
+    ): Response<StoreDetailResponse> = newService.getStoreInfo(latitude, longitude, storeId, startDate)
 
     suspend fun getCategoryByDistance(
         category: String,
@@ -79,7 +80,7 @@ class StoreRepository(
     ) = newService.deleteImage(imageId)
 
     suspend fun saveStore(
-        newStoreRequest: NewStoreRequest
+        newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.saveStore(newStoreRequest)
 
     suspend fun updateStore(

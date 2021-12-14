@@ -20,9 +20,18 @@ data class UserActivityData(
 )
 
 @JsonClass(generateAdapter = true)
+data class Acquisition(
+    val description: String? = ""
+)
+
+@JsonClass(generateAdapter = true)
 data class Medal(
     val iconUrl: String? = "",
     val disableIconUrl: String? = "",
     val medalId: Int? = 0,
     val name: String? = "",
-)
+    val introduction: String? = "",
+    val acquisition: Acquisition? = Acquisition(),
+) {
+    fun getCondition() = acquisition?.description ?: ""
+}
