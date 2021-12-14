@@ -195,11 +195,11 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         mediaAdapter = MediaAdapter(this, builder).apply {
             onItemClickListener = object : BaseRecyclerViewAdapter.OnItemClickListener<Media> {
                 override fun onItemClick(data: Media, itemPosition: Int, layoutPosition: Int) {
-                    if (mediaAdapter.getSelectedItemCount() < TedImagePicker.MAX_COUNT) {
+                    if (!mediaAdapter.isSelectedItem(data.uri) && mediaAdapter.getSelectedItemCount() >= TedImagePicker.MAX_COUNT) {
+                        ToastUtil.showToast("한번에 첨부 가능한 사진은 최대 ${TedImagePicker.MAX_COUNT}장 입니다.")
+                    } else {
                         binding.isAlbumOpened = false
                         this@TedImagePickerActivity.onMediaClick(data.uri)
-                    } else {
-                        ToastUtil.showToast("한번에 첨부 가능한 사진은 최대 ${TedImagePicker.MAX_COUNT}장 입니다.")
                     }
                 }
 
