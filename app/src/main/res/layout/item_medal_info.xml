@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.my.Medal" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_medal_icon"
+            loadImage="@{item.iconUrl}"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:padding="16dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            visibleIf="@{item.name.length() > 0}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="@{item.name}"
+            android:textColor="@color/color_sub_red"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_condition"
+            visibleIf="@{item.condition.length() > 0}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="@{item.condition}"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            visibleIf="@{item.introduction.length() > 0}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:paddingHorizontal="80dp"
+            android:text="@{item.introduction}"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</layout>
