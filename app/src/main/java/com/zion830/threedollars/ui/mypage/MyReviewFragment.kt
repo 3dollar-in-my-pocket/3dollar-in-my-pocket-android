@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.mypage
 
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +13,8 @@ import com.zion830.threedollars.databinding.FragmentMyReviewBinding
 import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.ui.EditReviewDialog
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.vm.MyReviewViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

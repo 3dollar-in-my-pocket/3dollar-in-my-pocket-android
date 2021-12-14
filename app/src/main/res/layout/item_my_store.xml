@@ -46,7 +46,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
             app:layout_constraintTop_toTopOf="parent">
-
+ㅈ
             <TextView
                 android:id="@+id/tv_store_name"
                 android:layout_width="0dp"

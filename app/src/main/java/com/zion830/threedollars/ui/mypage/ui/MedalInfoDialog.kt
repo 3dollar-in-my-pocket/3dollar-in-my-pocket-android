@@ -13,8 +13,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.databinding.DialogMedalInfoBinding
 import com.zion830.threedollars.repository.model.v2.response.my.Medal
-import com.zion830.threedollars.ui.mypage.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.adapter.MedalInfoRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 
 class MedalInfoDialog : DialogFragment() {
 

@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.mypage
+package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

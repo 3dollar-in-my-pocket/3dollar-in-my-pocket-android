@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.mypage
 
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,6 +15,8 @@ import com.zion830.threedollars.databinding.FragmentMyStoreBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.vm.MyStoreViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

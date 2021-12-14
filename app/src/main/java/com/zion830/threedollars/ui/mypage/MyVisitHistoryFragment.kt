@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.mypage
 
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +12,8 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.repository.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.vm.MyVisitHistoryViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

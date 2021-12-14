@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.mypage.FAQViewModel" />
+            type="com.zion830.threedollars.ui.mypage.vm.FAQViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

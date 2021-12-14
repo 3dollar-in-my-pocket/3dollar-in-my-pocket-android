@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.mypage
+package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,7 +37,7 @@ class MyPageViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = service.getMedals()
             if (response.isSuccessful) {
-                _allMedals.postValue(response.body()?.data)
+                _allMedals.postValue(response.body()?.data ?: emptyList())
             }
         }
     }
