@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
@@ -36,8 +35,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private lateinit var adapter: NearStoreRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
-
-    private var startCertification = false
 
     fun getMapCenterLatLng() = try {
         naverMapFragment.getMapCenterLatLng()
@@ -74,7 +71,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
                 if (item != null) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, startCertification)
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
                 } else {
                     showToast(R.string.exist_store_error)
@@ -82,8 +79,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }) { item ->
             if (item != null) {
-                startCertification = true
-                storeDetailViewModel.requestStoreInfo(item.storeId, item.latitude, item.longitude)
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, true)
+                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
@@ -152,6 +149,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onResume() {
         super.onResume()
         naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
-        startCertification = false
     }
 }
