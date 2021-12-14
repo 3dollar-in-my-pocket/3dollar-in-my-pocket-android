@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.mypage
 
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
@@ -75,6 +76,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     private fun observeUiData() {
         viewModel.myVisitHistory.observe(viewLifecycleOwner) {
             visitHistoryAdapter.submitList(it)
+            binding.layoutEmptyVisitHistory.isVisible = it.isNullOrEmpty()
         }
         userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
             binding.tvName.text = it.data.name

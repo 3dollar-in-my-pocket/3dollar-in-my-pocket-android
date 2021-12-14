@@ -13,6 +13,8 @@
     <string name="updated_at">업데이트</string>
     <string name="about_medal">칭호 살펴보기</string>
     <string name="no_visit_history">방문 인증 내역이 없어요!</string>
+    <string name="try_visit_history">방문을 인증해보세요!</string>
+    <string name="try_visit_history_msg">아직 내가 인증한 가게가 없어요 ㅠㅠ</string>
     <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
     <string name="store_empty">제보한 가게가 없어요!</string>
     <string name="store_empty_sub">발견한 가게를 제보해 보세요 :)</string>

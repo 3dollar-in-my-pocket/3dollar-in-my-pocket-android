@@ -85,10 +85,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:background="@drawable/rect_pink_round_stroke"
+                    android:fontFamily="@font/applegothic_bold"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="6dp"
                     android:textColor="@color/color_sub_red"
-                    android:fontFamily="@font/applegothic_bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_profile" />
@@ -98,9 +98,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:fontFamily="@font/applegothic_bold"
                     android:textColor="@color/white"
                     android:textSize="30sp"
-                    android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -136,7 +136,8 @@
                             android:layout_height="wrap_content"
                             android:text="@{String.valueOf(viewModel.userActivity.activity.storesCount)}"
                             android:textColor="@color/white"
-                            android:textSize="24sp" />
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -166,7 +167,8 @@
                             android:layout_height="wrap_content"
                             android:text="@{String.valueOf(viewModel.userActivity.activity.reviewsCount)}"
                             android:textColor="@color/white"
-                            android:textSize="24sp" />
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -196,7 +198,8 @@
                             android:layout_height="wrap_content"
                             android:text="@{String.valueOf(viewModel.userActivity.activity.medalsCounts)}"
                             android:textColor="@color/white"
-                            android:textSize="24sp" />
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -216,11 +219,11 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="30dp"
                 android:drawablePadding="6dp"
+                android:fontFamily="@font/applegothic_bold"
                 android:gravity="center"
                 android:text="@string/certification"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:drawableStartCompat="@drawable/ic_badge_16"
                 app:layout_constraintStart_toStartOf="parent"
@@ -258,6 +261,50 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_message"
                 tools:listitem="@layout/item_recent_visit_history" />
+
+            <LinearLayout
+                android:id="@+id/layout_empty_visit_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="23dp"
+                android:background="@drawable/rect_white_radius16"
+                android:backgroundTint="@color/gray95"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="20dp"
+                app:layout_constraintStart_toStartOf="@id/tv_message"
+                app:layout_constraintTop_toBottomOf="@id/tv_message">
+
+                <ImageView
+                    android:id="@+id/iv_category"
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/empty_data"
+                    android:src="@drawable/img_empty" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@string/try_visit_history"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/try_visit_history_msg"
+                        android:textColor="@color/gray30"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>
