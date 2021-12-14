@@ -4,7 +4,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

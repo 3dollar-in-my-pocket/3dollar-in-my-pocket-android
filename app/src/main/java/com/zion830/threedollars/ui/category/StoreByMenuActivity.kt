@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.category
 import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
@@ -15,7 +14,6 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
-import kotlinx.android.synthetic.main.activity_store_by_menu.*
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 

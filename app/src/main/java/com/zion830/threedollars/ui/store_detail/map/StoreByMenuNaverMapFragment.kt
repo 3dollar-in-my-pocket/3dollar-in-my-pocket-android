@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.store_detail.map
 import android.content.Intent
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants

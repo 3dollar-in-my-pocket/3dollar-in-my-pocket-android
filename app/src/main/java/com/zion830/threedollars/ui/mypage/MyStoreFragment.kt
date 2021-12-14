@@ -2,10 +2,13 @@ package com.zion830.threedollars.ui.mypage
 
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -74,9 +77,22 @@ class MyStoreFragment :
             }
         }
 
-        lifecycleScope.launch {
-            myStoreViewModel.myStorePager.collectLatest {
-                adapter?.submitData(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    myStoreViewModel.myStorePager.collectLatest {
+                        adapter?.submitData(it)
+                    }
+                }
+                launch {
+                    adapter?.loadStateFlow?.collectLatest { loadState ->
+                        if (loadState.refresh is LoadState.NotLoading) {
+                            binding.ivEmpty.isVisible = adapter?.itemCount == 0
+                            binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                            binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                        }
+                    }
+                }
             }
         }
     }

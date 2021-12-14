@@ -1,9 +1,12 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.content.Intent
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -53,17 +56,22 @@ class MyVisitHistoryFragment :
 
     private fun observeUiData() {
         lifecycleScope.launch {
-            myVisitHistoryViewModel.myHistoryPager.collectLatest {
-                adapter?.submitData(it)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            Constants.SHOW_STORE_DETAIL -> {
-                // viewModel.updatePreviewData()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    launch {
+                        myVisitHistoryViewModel.myHistoryPager.collectLatest {
+                            adapter?.submitData(it)
+                        }
+                    }
+                    launch {
+                        adapter?.loadStateFlow?.collectLatest { loadState ->
+                            if (loadState.refresh is LoadState.NotLoading) {
+                                binding.ivEmpty.isVisible = adapter?.itemCount == 0
+                                binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                            }
+                        }
+                    }
+                }
             }
         }
     }
