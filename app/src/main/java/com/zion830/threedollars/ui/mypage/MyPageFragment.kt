@@ -62,6 +62,13 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         binding.ivProfile.setOnClickListener {
             addShowAllMedalFragment()
         }
+        binding.tvName.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                EditNameFragment(),
+                EditNameFragment::class.java.name
+            )
+        }
         observeUiData()
     }
 
