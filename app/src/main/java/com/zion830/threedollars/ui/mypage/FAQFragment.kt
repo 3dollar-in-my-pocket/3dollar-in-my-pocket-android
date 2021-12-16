@@ -10,6 +10,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
 import com.zion830.threedollars.repository.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.FAQViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment

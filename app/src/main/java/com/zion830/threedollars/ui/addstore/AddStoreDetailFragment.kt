@@ -5,7 +5,6 @@ import android.os.Handler
 import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
@@ -18,7 +17,6 @@ import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
-import kotlinx.android.synthetic.main.item_edit_category_menu.view.*
 import zion830.com.common.base.BaseFragment
 
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
@@ -138,7 +136,8 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
             binding.rvMenu.getChildAt(i)?.let {
-                val editMenuRecyclerView = (it.rv_menu_edit as RecyclerView)
+                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
+                val editMenuRecyclerView = (view as RecyclerView)
                 val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
                 val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
                     editCategoryMenuRecyclerAdapter.items[i].menuType.category

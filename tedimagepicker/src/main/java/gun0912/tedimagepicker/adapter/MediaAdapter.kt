@@ -20,8 +20,7 @@ import gun0912.tedimagepicker.zoom.TedImageZoomActivity
 internal class MediaAdapter(
     private val activity: Activity,
     private val builder: TedImagePickerBaseBuilder<*>
-) :
-    BaseSimpleHeaderAdapter<Media>(if (builder.showCameraTile) 1 else 0) {
+) : BaseSimpleHeaderAdapter<Media>(if (builder.showCameraTile) 1 else 0) {
 
     internal val selectedUriList: MutableList<Uri> = mutableListOf()
     var onMediaAddListener: (() -> Unit)? = null
@@ -30,6 +29,8 @@ internal class MediaAdapter(
     override fun getItemViewHolder(parent: ViewGroup) = ImageViewHolder(parent)
 
     fun getSelectedItemCount() = selectedUriList.size
+
+    fun isSelectedItem(uri: Uri) = selectedUriList.contains(uri)
 
     fun toggleMediaSelect(uri: Uri) {
         if (selectedUriList.contains(uri)) {

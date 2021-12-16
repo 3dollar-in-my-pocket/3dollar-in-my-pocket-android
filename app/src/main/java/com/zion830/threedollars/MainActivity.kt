@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -18,7 +17,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.HomeFragment
-import com.zion830.threedollars.ui.mypage.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst

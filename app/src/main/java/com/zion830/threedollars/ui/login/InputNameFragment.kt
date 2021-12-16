@@ -4,7 +4,6 @@ import android.os.Handler
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
 import zion830.com.common.base.BaseFragment

@@ -56,7 +56,7 @@ class AddStoreViewModel : BaseViewModel() {
             val result = repository.saveStore(newStore)
 
             if (result.isSuccessful) {
-                val storeId = result.body()?.data?.storeId
+                val storeId = result.body()?.data?.storeId ?: -1
                 _newStoreId.postValue(storeId)
             } else {
                 _newStoreId.postValue(-1)
@@ -79,14 +79,14 @@ class AddStoreViewModel : BaseViewModel() {
     fun removeCategory(item: SelectedCategory) {
         val newList = _selectedCategory.value?.map {
             SelectedCategory(if (item.menuType == it.menuType) false else it.isSelected, it.menuType)
-        }
+        } ?: emptyList()
         _selectedCategory.value = newList
     }
 
     fun removeAllCategory() {
         val newList = _selectedCategory.value?.map {
             SelectedCategory(false, it.menuType)
-        }
+        } ?: emptyList()
         _selectedCategory.value = newList
     }
 }

@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.mypage.MyPageViewModel" />
+            type="com.zion830.threedollars.ui.mypage.vm.MyPageViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -26,6 +26,7 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/applegothic_bold"
                 android:text="@string/my_medal"
                 android:textColor="@color/color_white"
                 android:textSize="16sp"
@@ -68,6 +69,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="40dp"
                 android:bufferType="spannable"
+                android:fontFamily="@font/applegothic_bold"
                 android:text="@string/my_medal"
                 android:textColor="@color/white"
                 android:textSize="12sp"
@@ -106,10 +108,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
+                android:drawablePadding="8dp"
+                android:fontFamily="@font/applegothic_bold"
+                android:gravity="center"
+                android:paddingBottom="8dp"
                 android:text="@string/my_medal"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold"
+                app:drawableEndCompat="@drawable/ic_info"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider" />
 
@@ -118,7 +125,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"

@@ -2,12 +2,12 @@
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <font
-        app:font="@font/spoqa_light"
+        app:font="@font/applegothic"
         app:fontStyle="normal"
         app:fontWeight="300" />
     
     <font
-        app:font="@font/spoqa_regular"
+        app:font="@font/applegothic_bold"
         app:fontStyle="normal"
         app:fontWeight="700" />
 </font-family>

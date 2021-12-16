@@ -8,6 +8,8 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.ui.MedalInfoDialog
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.ext.showSnack
@@ -28,6 +30,9 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>(R.
         binding.rvMedal.itemAnimator = null
         binding.btnBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+        }
+        binding.tvAllMedal.setOnClickListener {
+            MedalInfoDialog().show(this.parentFragmentManager, MedalInfoDialog::class.java.simpleName)
         }
         observeData()
     }

@@ -43,7 +43,6 @@
                 android:layout_marginStart="4dp"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 tools:text="10월 1일 192929" />
         </LinearLayout>
 

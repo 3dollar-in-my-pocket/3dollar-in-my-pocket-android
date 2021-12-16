@@ -28,6 +28,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:textColor="@color/color_sub_red"
+            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold" />
     </LinearLayout>
 </layout>

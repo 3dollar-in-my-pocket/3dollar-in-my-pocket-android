@@ -16,7 +16,6 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -38,7 +37,6 @@ import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import gun0912.tedimagepicker.builder.TedImagePicker
-import kotlinx.android.synthetic.main.fragment_ask.*
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -203,6 +201,13 @@ class StoreDetailActivity :
                 refreshStoreInfo()
             }
         }
+        viewModel.isExistStoreInfo.observe(this) { isExistStore ->
+            val isExist = isExistStore.second
+            if (!isExist) {
+                showToast(R.string.exist_store_error)
+                finish()
+            }
+        }
         viewModel.storeInfo.observe(this) {
             initStoreInfo(it)
             updateVisitHistory(it)
@@ -229,7 +234,6 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
-        refreshStoreInfo()
     }
 
     private fun startCertification() {
@@ -270,7 +274,7 @@ class StoreDetailActivity :
         val hasCertification = isExist + isNotExist > 0
 
         binding.tvVisitHistory.text = buildSpannedString {
-            append("이번 주 ")
+            append("이번 달 ")
             bold {
                 if (hasCertification) {
                     append((isExist + isNotExist).toString())

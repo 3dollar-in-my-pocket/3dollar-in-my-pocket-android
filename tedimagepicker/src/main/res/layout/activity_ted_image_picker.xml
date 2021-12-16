@@ -88,6 +88,7 @@
                 android:text="@string/ted_image_picker_title"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"

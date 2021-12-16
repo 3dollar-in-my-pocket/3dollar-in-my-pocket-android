@@ -30,6 +30,7 @@
                 android:text="@string/ask"
                 android:textColor="@color/color_white"
                 android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"

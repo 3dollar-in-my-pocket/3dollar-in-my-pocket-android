@@ -19,9 +19,7 @@ class TedImagePicker {
     }
 
     @SuppressLint("ParcelCreator")
-    class Builder(private val contextWeakReference: WeakReference<Context>) :
-        TedImagePickerBaseBuilder<Builder>() {
-
+    class Builder(private val contextWeakReference: WeakReference<Context>) : TedImagePickerBaseBuilder<Builder>() {
 
         fun errorListener(onErrorListener: OnErrorListener): Builder {
             this.onErrorListener = onErrorListener
@@ -70,7 +68,6 @@ class TedImagePicker {
                 startInternal(it)
             }
         }
-
     }
 }
 

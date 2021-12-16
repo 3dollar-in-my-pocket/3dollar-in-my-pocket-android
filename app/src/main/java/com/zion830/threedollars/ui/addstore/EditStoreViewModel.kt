@@ -11,6 +11,8 @@ import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class EditStoreViewModel : BaseViewModel() {
 
@@ -38,7 +40,14 @@ class EditStoreViewModel : BaseViewModel() {
 
     fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _storeInfo.postValue(repository.getStoreDetail(storeId, latitude, longitude).body()?.data)
+            _storeInfo.postValue(
+                repository.getStoreDetail(
+                    storeId,
+                    latitude,
+                    longitude,
+                    LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                ).body()?.data
+            )
         }
     }
 

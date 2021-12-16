@@ -25,7 +25,7 @@ class HomeViewModel : BaseViewModel() {
     fun updateCurrentLocation(latlng: LatLng) {
         searchResultLocation.value = latlng
         currentLocation.value = latlng
-        addressText.value = getCurrentLocationName(latlng)
+        addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
     fun requestStoreInfo(location: LatLng) {

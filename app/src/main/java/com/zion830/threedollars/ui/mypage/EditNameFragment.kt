@@ -6,7 +6,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding

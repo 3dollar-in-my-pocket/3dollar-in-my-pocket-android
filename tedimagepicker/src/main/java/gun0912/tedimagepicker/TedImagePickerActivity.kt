@@ -39,7 +39,6 @@ import gun0912.tedimagepicker.util.ToastUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.layout_done_button.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -159,8 +158,8 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable(EXTRA_BUILDER, builder)
         super.onSaveInstanceState(outState)
+        outState.putParcelable(EXTRA_BUILDER, builder)
     }
 
     private fun setupRecyclerView() {
@@ -168,7 +167,6 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         setupMediaRecyclerView()
         setupSelectedMediaRecyclerView()
     }
-
 
     private fun setupAlbumRecyclerView() {
 
@@ -197,11 +195,11 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         mediaAdapter = MediaAdapter(this, builder).apply {
             onItemClickListener = object : BaseRecyclerViewAdapter.OnItemClickListener<Media> {
                 override fun onItemClick(data: Media, itemPosition: Int, layoutPosition: Int) {
-                    if (mediaAdapter.getSelectedItemCount() < TedImagePicker.MAX_COUNT) {
+                    if (!mediaAdapter.isSelectedItem(data.uri) && mediaAdapter.getSelectedItemCount() >= TedImagePicker.MAX_COUNT) {
+                        ToastUtil.showToast("한번에 첨부 가능한 사진은 최대 ${TedImagePicker.MAX_COUNT}장 입니다.")
+                    } else {
                         binding.isAlbumOpened = false
                         this@TedImagePickerActivity.onMediaClick(data.uri)
-                    } else {
-                        ToastUtil.showToast("한번에 첨부 가능한 사진은 최대 ${TedImagePicker.MAX_COUNT}장 입니다.")
                     }
                 }
 
@@ -402,7 +400,7 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     }
 
     private fun setupListener() {
-        binding.viewDoneTop.root.btn_submit.setOnClickListener {
+        binding.viewDoneTop.btnSubmit.setOnClickListener {
             onMultiMediaDone()
         }
 

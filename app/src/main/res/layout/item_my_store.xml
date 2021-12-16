@@ -46,16 +46,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
             app:layout_constraintTop_toTopOf="parent">
-
+ㅈ
             <TextView
                 android:id="@+id/tv_store_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/applegothic_bold"
                 android:singleLine="true"
                 android:text="@{item.storeName}"
                 android:textColor="@color/color_white"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -81,11 +81,11 @@
             android:background="@drawable/rect_red_radius48"
             android:backgroundTint="@{item.deleted ? @color/gray60 : @color/color_green}"
             android:drawablePadding="4dp"
+            android:fontFamily="@font/applegothic_bold"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
             android:textColor="@color/white"
             android:textSize="12sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_store_info"

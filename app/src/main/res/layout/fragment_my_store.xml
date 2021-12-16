@@ -22,6 +22,7 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/applegothic_bold"
             android:text="@string/my_store"
             android:textColor="@color/color_white"
             android:textSize="16sp"
@@ -88,13 +89,28 @@
             app:layout_constraintTop_toBottomOf="@id/tv_store_count"
             tools:listitem="@layout/item_my_store" />
 
-        <ProgressBar
+        <ImageView
+            android:id="@+id/iv_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/img_no_store"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+        <include
+            android:id="@+id/layout_no_data"
+            layout="@layout/layout_no_data"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:subtitle="@{@string/store_empty_sub}"
+            app:title="@{@string/store_empty}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

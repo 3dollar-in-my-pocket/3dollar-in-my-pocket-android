@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.mypage
 
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
@@ -8,6 +9,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.RecentVisitHistoryRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
@@ -62,12 +64,20 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         binding.ivProfile.setOnClickListener {
             addShowAllMedalFragment()
         }
+        binding.tvName.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                EditNameFragment(),
+                EditNameFragment::class.java.name
+            )
+        }
         observeUiData()
     }
 
     private fun observeUiData() {
         viewModel.myVisitHistory.observe(viewLifecycleOwner) {
             visitHistoryAdapter.submitList(it)
+            binding.layoutEmptyVisitHistory.isVisible = it.isNullOrEmpty()
         }
         userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
             binding.tvName.text = it.data.name

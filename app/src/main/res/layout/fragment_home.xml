@@ -140,6 +140,7 @@
                     android:text="@string/empty_store"
                     android:textColor="@color/black"
                     android:textSize="16sp"
+                    android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold" />
 
                 <TextView

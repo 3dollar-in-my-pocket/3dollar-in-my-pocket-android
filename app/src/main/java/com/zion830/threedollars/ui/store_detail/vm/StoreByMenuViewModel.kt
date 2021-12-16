@@ -64,9 +64,12 @@ class StoreByMenuViewModel : BaseViewModel() {
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 SortType.RATING -> {
-                    val data = repository.getCategoryByReview(_category.value?.category?: "", location.latitude, location.longitude)
+                    val data = repository.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
                     storeByRating.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
+                }
+                else -> {
+
                 }
             }
         }
