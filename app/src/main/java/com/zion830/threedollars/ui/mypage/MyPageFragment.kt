@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.mypage
 
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
@@ -11,6 +12,8 @@ import com.zion830.threedollars.ui.mypage.adapter.RecentVisitHistoryRecyclerAdap
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 
 
