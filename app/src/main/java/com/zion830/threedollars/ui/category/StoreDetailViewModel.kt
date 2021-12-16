@@ -230,14 +230,14 @@ class StoreDetailViewModel : BaseViewModel() {
                 it.menuType,
                 it.menuDetail
             )
-        }
+        } ?: emptyList()
         _selectedCategory.value = newList
     }
 
     fun removeAllCategory() {
         val newList = _selectedCategory.value?.map {
             SelectedCategory(false, it.menuType)
-        }
+        } ?: emptyList()
         _selectedCategory.value = newList
     }
 
