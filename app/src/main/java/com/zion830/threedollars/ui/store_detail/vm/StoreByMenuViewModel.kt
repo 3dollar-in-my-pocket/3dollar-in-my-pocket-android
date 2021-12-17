@@ -1,76 +1,41 @@
 package com.zion830.threedollars.ui.store_detail.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.response.AllStoreResponse
-import com.zion830.threedollars.repository.model.response.SearchByDistanceResponse
-import com.zion830.threedollars.repository.model.response.SearchByReviewResponse
-import com.zion830.threedollars.ui.store_detail.SortType
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.category.SortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.await
 import zion830.com.common.base.BaseViewModel
 
 class StoreByMenuViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
 
-    val nearStoreInfo: MutableLiveData<AllStoreResponse> = MutableLiveData()
+    val nearStoreInfo: MutableLiveData<NearStoreResponse> = MutableLiveData()
 
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
     val sortType: LiveData<SortType>
         get() = _sortType
 
-    private val _category: MutableLiveData<MenuType> = MutableLiveData(MenuType.BUNGEOPPANG)
-    val category: LiveData<MenuType>
+    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData()
+    val category: LiveData<CategoryInfo>
         get() = _category
 
-    val storeByDistance = MutableLiveData<SearchByDistanceResponse>()
-    val storeByRating = MutableLiveData<SearchByReviewResponse>()
+    val storeByDistance = MutableLiveData<List<StoreInfo>>()
+    val storeByRating = MutableLiveData<List<StoreInfo>>()
     val hasData = MutableLiveData<Boolean>()
 
-    val firstSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.getStoresOver3()?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.getStoresOver3()?.isNotEmpty() == true || storeByDistance.value?.storeList50?.isNotEmpty() == true
-        }
+    fun changeCategory(menuType: CategoryInfo) {
+        _category.value = menuType
     }
 
-    val secondSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList2?.isNotEmpty() == true || storeByDistance.value?.storeList100?.isNotEmpty() == true
-        }
-    }
-
-    val thirdSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList1?.isNotEmpty() == true || storeByDistance.value?.storeList500?.isNotEmpty() == true
-        }
-    }
-
-    val fourthSectionVisibility = MediatorLiveData<Boolean>().apply {
-        addSource(storeByDistance) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
-        }
-        addSource(storeByRating) {
-            value = storeByRating.value?.storeList0?.isNotEmpty() == true || storeByDistance.value?.storeList1000?.isNotEmpty() == true
-        }
-    }
-
-    fun changeCategory(menuType: MenuType, location: LatLng) {
+    fun changeCategory(menuType: CategoryInfo, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -83,9 +48,9 @@ class StoreByMenuViewModel : BaseViewModel() {
             requestStoreInfo(location)
 
             if (sortType == SortType.DISTANCE) {
-                storeByRating.value = SearchByReviewResponse()
+                storeByRating.value = listOf()
             } else {
-                storeByDistance.value = SearchByDistanceResponse()
+                storeByDistance.value = listOf()
             }
         }
     }
@@ -94,14 +59,17 @@ class StoreByMenuViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (sortType.value) {
                 SortType.DISTANCE -> {
-                    val data = repository.getCategoryByDistance(_category.value?.key ?: "", location.latitude, location.longitude).await()
-                    storeByDistance.postValue(data)
-                    hasData.postValue(data.isNotEmpty())
+                    val data = repository.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
+                    storeByDistance.postValue(data.body()?.data)
+                    hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 SortType.RATING -> {
-                    val data = repository.getCategoryByReview(_category.value?.key ?: "", location.latitude, location.longitude).await()
-                    storeByRating.postValue(data)
-                    hasData.postValue(data.isNotEmpty())
+                    val data = repository.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
+                    storeByRating.postValue(data.body()?.data)
+                    hasData.postValue(data.body()?.data?.isNotEmpty())
+                }
+                else -> {
+
                 }
             }
         }

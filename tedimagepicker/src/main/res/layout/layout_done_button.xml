@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="text"
+            type="String" />
+
+        <variable
+            name="background"
+            type="Integer" />
+
+        <variable
+            name="textColor"
+            type="Integer" />
+
+        <variable
+            name="buttonDrawableOnly"
+            type="boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/view_submit_back"
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:background="@drawable/back_navigation"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:background="@drawable/rect_red_radius48"
+            android:elevation="4dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="@{text}"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/applegothic_bold"
+            android:textStyle="bold"
+            android:visibility="@{!buttonDrawableOnly}"
+            app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
+            app:layout_constraintEnd_toEndOf="@id/view_submit_back"
+            app:layout_constraintStart_toStartOf="@id/view_submit_back"
+            app:layout_constraintTop_toTopOf="@id/view_submit_back"
+            tools:ignore="UnusedAttribute" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

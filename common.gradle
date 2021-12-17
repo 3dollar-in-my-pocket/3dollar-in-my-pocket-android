@@ -4,31 +4,30 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 31
     signingConfigs {
         release {
             keyAlias '3dollor'
             keyPassword '3dollor'
-            storeFile file('/Users/yunji/Downloads/3dollor-android-key')
+            storeFile file('C:\\Users\\USER\\Downloads\\3dollor-android-key.jks')
             storePassword '3dollor'
         }
     }
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion 30
-        versionCode 5
-        versionName "1.0.1"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 28
+        versionName "2.4.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
         archivesBaseName = "3dollor_${versionName}(${versionCode})"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
             signingConfig signingConfigs.release
         }
     }
@@ -36,18 +35,24 @@ android {
         exclude 'META-INF/common_release.kotlin_module'
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
@@ -62,6 +67,7 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
 
@@ -84,13 +90,32 @@ dependencies {
 
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-user:$kakao_login"
+    implementation "com.kakao.sdk:v2-link:$kakao_login"
 
     // google
-    implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
-    implementation 'com.google.maps.android:android-maps-utils:1.3.1'
-    implementation platform('com.google.firebase:firebase-bom:26.4.0')
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.gms:play-services-ads:20.5.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-config-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.android.play:core:1.10.2'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-config-ktx:21.0.1'
+
+    // naver4
+    implementation "com.naver.maps:map-sdk:$naver_map_version"
 
     // image slider
-    implementation 'com.github.smarteist:autoimageslider:1.4.0'
     implementation "com.github.ome450901:SimpleRatingBar:$ratingbar_version"
+
+    implementation "com.github.greenfrvr:hashtag-view:1.3.1"
+
+    // AB Test
+    implementation 'io.hackle:hackle-android-sdk:1.1.2'
 }

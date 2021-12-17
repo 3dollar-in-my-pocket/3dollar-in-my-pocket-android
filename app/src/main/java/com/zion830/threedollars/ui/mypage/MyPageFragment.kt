@@ -1,90 +1,98 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.content.Intent
-import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
-import com.zion830.threedollars.databinding.FragmentMypageBinding
-import com.zion830.threedollars.repository.model.response.Review
-import com.zion830.threedollars.repository.model.response.Store
-import com.zion830.threedollars.ui.mypage.adapter.MyReviewPreviewRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.adapter.MyStorePreviewRecyclerAdapter
+import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
+import com.zion830.threedollars.ui.MyPageSettingFragment
+import com.zion830.threedollars.ui.mypage.adapter.RecentVisitHistoryRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
-import zion830.com.common.listener.OnItemClickListener
 
 
-class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.layout.fragment_mypage) {
+class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {
 
-    override val viewModel: UserInfoViewModel by activityViewModels()
+    override val viewModel: MyPageViewModel by activityViewModels()
 
-    private lateinit var storeAdapter: MyStorePreviewRecyclerAdapter
+    private val userInfoViewModel: UserInfoViewModel by activityViewModels()
 
-    private lateinit var reviewAdapter: MyReviewPreviewRecyclerAdapter
+    private lateinit var visitHistoryAdapter: RecentVisitHistoryRecyclerAdapter
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
+    private fun refreshData() {
+        viewModel.requestUserActivity()
+        viewModel.requestVisitHistory()
+        userInfoViewModel.updateUserInfo()
+    }
 
     override fun initView() {
-        storeAdapter = MyStorePreviewRecyclerAdapter(
-            object : OnItemClickListener<Store> {
-                override fun onClick(item: Store) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                }
-            }, object : OnItemClickListener<Store> {
-                override fun onClick(item: Store) {
-                    addShowAllStoreFragment()
-                }
-            })
-        reviewAdapter = MyReviewPreviewRecyclerAdapter(
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                }
-            }
-        )
-
-        binding.rvStore.adapter = storeAdapter
-        binding.rvReview.adapter = reviewAdapter
-        LinearSnapHelper().attachToRecyclerView(binding.rvStore)
-
-        binding.layoutNickname.onSingleClick {
-            addEditNameFragment()
+        viewModel.initAllMedals()
+        visitHistoryAdapter = RecentVisitHistoryRecyclerAdapter {
+            val intent = StoreDetailActivity.getIntent(requireContext(), it)
+            startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
         }
-        binding.tvShowAllStore.onSingleClick {
+
+        binding.rvRecentVisitHistory.adapter = visitHistoryAdapter
+        LinearSnapHelper().attachToRecyclerView(binding.rvRecentVisitHistory)
+
+        binding.ibSetting.onSingleClick {
+            addSettingPageFragment()
+        }
+        binding.layoutStore.onSingleClick {
             addShowAllStoreFragment()
         }
-        binding.tvShowAllReview.onSingleClick {
+        binding.layoutReview.onSingleClick {
             addShowAllReviewFragment()
         }
-        viewModel.updateUserInfo()
+        binding.layoutMedal.onSingleClick {
+            addShowAllMedalFragment()
+        }
+        binding.tvMessage.setOnClickListener {
+            addShowAllVisitHistoryFragment()
+        }
+        binding.ivProfile.setOnClickListener {
+            addShowAllMedalFragment()
+        }
+        binding.tvName.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                EditNameFragment(),
+                EditNameFragment::class.java.name
+            )
+        }
         observeUiData()
     }
 
     private fun observeUiData() {
-        viewModel.myStore.observe(this) {
-            it.store?.let { items ->
-                storeAdapter.submitList(items.toMutableList())
-                binding.ivNoStore.visibility = if (items.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
-            }
+        viewModel.myVisitHistory.observe(viewLifecycleOwner) {
+            visitHistoryAdapter.submitList(it)
+            binding.layoutEmptyVisitHistory.isVisible = it.isNullOrEmpty()
         }
-        viewModel.myReview.observe(this) {
-            it.review?.let { items ->
-                reviewAdapter.submitList(items.toMutableList())
-            }
+        userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
+            binding.tvName.text = it.data.name
+        }
+        viewModel.selectedMedal.observe(viewLifecycleOwner) {
+            binding.tvUserMedal.text = it?.name ?: "장착한 칭호가 없어요!"
+            binding.ivProfile.loadUrlImg(it?.iconUrl)
         }
     }
 
-    private fun addEditNameFragment() {
+    private fun addSettingPageFragment() {
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
-            EditNameFragment(),
-            EditNameFragment::class.java.name
+            MyPageSettingFragment(),
+            MyPageSettingFragment::class.java.name
         )
     }
 
@@ -104,13 +112,19 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding, UserInfoViewModel>(R.
         )
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun addShowAllMedalFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            MyMedalFragment(),
+            MyMedalFragment::class.java.name
+        )
+    }
 
-        when (requestCode) {
-            Constants.ADD_STORE, Constants.SHOW_STORE_DETAIL -> {
-                viewModel.updateUserInfo()
-            }
-        }
+    private fun addShowAllVisitHistoryFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            MyVisitHistoryFragment(),
+            MyVisitHistoryFragment::class.java.name
+        )
     }
 }

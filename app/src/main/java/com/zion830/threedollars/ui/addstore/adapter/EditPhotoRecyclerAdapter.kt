@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.addstore.adapter
 import android.net.Uri
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemPhotoForUrlBinding
-import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.listener.OnItemClickListener
 

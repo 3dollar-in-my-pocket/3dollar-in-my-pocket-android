@@ -9,7 +9,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    private val BASE_URL = BuildConfig.BASE_URL
+    private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
+    private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
+    private val BASE_URL: String = BuildConfig.BASE_URL
+
     private const val TIME_OUT_SEC = 5L
 
     private val interceptor = HttpLoggingInterceptor().apply {
@@ -21,6 +24,7 @@ object RetrofitBuilder {
         .addInterceptor {
             val request = it.request().newBuilder()
                 .addHeader("Authorization", SharedPrefUtils.getAccessToken() ?: "")
+                .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_" + BuildConfig.VERSION_NAME)
                 .build()
             it.proceed(request)
         }
@@ -32,17 +36,24 @@ object RetrofitBuilder {
         .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
         .build()
 
-    val service: ServiceApi = Retrofit.Builder()
+    val mapService: KakaoMapApi = Retrofit.Builder()
+        .baseUrl(KAKAO_SEARCH_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClientNoHeader)
+        .build()
+        .create(KakaoMapApi::class.java)
+
+    val newServiceApi: NewServiceApi = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
-        .create(ServiceApi::class.java)
+        .create(NewServiceApi::class.java)
 
-    val loginService: ServiceApi = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+    val kakaoLoginApi: KakaoLoginApi = Retrofit.Builder()
+        .baseUrl(KAKAO_LOGIN_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClientNoHeader)
         .build()
-        .create(ServiceApi::class.java)
+        .create(KakaoLoginApi::class.java)
 }

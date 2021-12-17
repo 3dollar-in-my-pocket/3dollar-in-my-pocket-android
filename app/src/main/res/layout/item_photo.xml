@@ -7,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.ui.addstore.StoreImage" />
+            type="com.zion830.threedollars.ui.addstore.ui_model.StoreImage" />
         
         <variable
             name="listener"
@@ -15,11 +15,13 @@
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="104dp"
-        android:layout_height="104dp"
-        android:layout_margin="2dp"
-        android:background="@drawable/rect_light_gray_stroke"
+        android:id="@+id/layout_item"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/rect_white_radius_12"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:onClick="@{() -> listener.onClick(item)}"
         tools:ignore="UnusedAttribute">
         
         <ImageView
@@ -34,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
         
         <ImageView
-            loadRoundImage="@{item.uri}"
+            loadRoundImage="@{item.url}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@null"
@@ -46,5 +48,35 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        
+        <LinearLayout
+            android:id="@+id/layout_more"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rect_gray_radius8"
+            android:backgroundTint="#30111111"
+            android:gravity="center"
+            android:orientation="vertical">
+            
+            <TextView
+                android:id="@+id/tv_more_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_sub_red"
+                android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/more"
+                android:textColor="@color/color_white"
+                android:textSize="12sp"
+                android:fontFamily="@font/applegothic_bold"
+                android:textStyle="bold" />
+        
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

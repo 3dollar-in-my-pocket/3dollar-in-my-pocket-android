@@ -1,27 +1,58 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
-import android.net.Uri
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemPhotoBinding
-import com.zion830.threedollars.ui.addstore.StoreImage
-import zion830.com.common.base.BaseRecyclerView
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
+import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
+
 class PhotoRecyclerAdapter(
-    clickListener: OnItemClickListener<StoreImage>
-) : BaseRecyclerView<ItemPhotoBinding, StoreImage>(R.layout.item_photo) {
+    private val clickListener: OnItemClickListener<StoreImage>,
+) : ListAdapter<StoreImage, PhotoRecyclerAdapter.PhotoViewHolder>(BaseDiffUtilCallback()) {
 
-    init {
-        submitList(listOf(StoreImage(0, null)))
-        this.clickListener = clickListener
+    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
+        holder.bind(position, getItem(position), clickListener)
     }
 
-    fun addPhoto(uri: Uri?) {
-        val newList = currentList.dropLast(1) + listOf(StoreImage(currentList.size - 1, uri)) + StoreImage(currentList.size, null)
-        submitList(newList)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
+        return PhotoViewHolder(parent, itemCount)
     }
 
-    fun removePhoto(position: Int) {
-        submitList(currentList.filter { it.index != position }.mapIndexed { index, storeImage -> StoreImage(index, storeImage.uri) })
+    override fun submitList(list: MutableList<StoreImage>?) {
+        super.submitList(null)
+        super.submitList(list)
+    }
+
+    class PhotoViewHolder(
+        parent: ViewGroup,
+        private val size: Int = 0
+    ) : BaseViewHolder<ItemPhotoBinding, StoreImage>(R.layout.item_photo, parent) {
+
+        fun bind(position: Int, item: StoreImage, listener: OnItemClickListener<StoreImage>?) {
+            super.bind(item, listener)
+            when {
+                position < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
+                    binding.layoutMore.isVisible = false
+                }
+                (position == MAX_COUNT - 1) -> {
+                    binding.tvMoreCount.text = "+${size - MAX_COUNT}"
+                }
+                else -> {
+                    itemView.visibility = View.GONE
+                    itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val MAX_COUNT = 4
     }
 }

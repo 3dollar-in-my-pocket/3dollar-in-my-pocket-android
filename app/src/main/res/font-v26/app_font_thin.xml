@@ -2,12 +2,12 @@
 <font-family xmlns:android="http://schemas.android.com/apk/res/android">
     
     <font
-        android:font="@font/spoqa_light"
+        android:font="@font/applegothic"
         android:fontStyle="normal"
         android:fontWeight="400" />
     
     <font
-        android:font="@font/spoqa_bold"
+        android:font="@font/applegothic_bold"
         android:fontStyle="normal"
         android:fontWeight="700" />
 </font-family>

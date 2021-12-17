@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.store.DetailVisitHistory" />
+
+        <import type="com.zion830.threedollars.utils.StringUtils" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@{item.exist ? @drawable/rect_green_stroke : @drawable/rect_red_stroke_round}"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp">
+
+            <ImageView
+                android:id="@+id/tv_status"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@{item.exist ? @drawable/ic_good : @drawable/ic_bad}" />
+
+            <TextView
+                android:id="@+id/tv_created_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@{item.exist ? @color/color_green : @color/color_main_red}"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@{item.user.name}"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:fontFamily="@font/applegothic_bold"
+            android:textStyle="bold" />
+    </LinearLayout>
+</layout>

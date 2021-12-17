@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -18,8 +19,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils
 import com.willy.ratingbar.ScaleRatingBar
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.model.response.Image
-import com.zion830.threedollars.ui.addstore.StoreImage
+import com.zion830.threedollars.repository.model.v2.response.store.Image
+import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.utils.StringUtils.getString
 
 @BindingAdapter("bindRating")
@@ -81,4 +82,26 @@ fun ImageView.loadRoundStoreImage(storeImage: StoreImage?) {
         .transition(DrawableTransitionOptions.withCrossFade())
         .apply(requestOptions)
         .into(this)
+}
+
+@BindingAdapter("storeType")
+fun TextView.storeType(storeType: String?) {
+    text = when (storeType) {
+        "STORE" -> getString(R.string.store)
+        "CONVENIENCE_STORE" -> getString(R.string.convenience_store)
+        "ROAD" -> getString(R.string.road)
+        else -> {
+            isVisible = false
+            ""
+        }
+    }
+}
+
+fun findStoreType(storeType: String?): Int {
+    return when (storeType) {
+        "ROAD" -> 0
+        "STORE" -> 1
+        "CONVENIENCE_STORE" -> 2
+        else -> 0
+    }
 }

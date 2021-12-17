@@ -1,48 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-    
+
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.login.LoginViewModel" />
+            type="com.zion830.threedollars.ui.login.LoginViewModel" />
     </data>
-    
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/color_black"
             android:orientation="vertical">
-        
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/app_name"
-                android:scaleType="center"
-                android:src="@drawable/ic_login_back" />
-        
-            <Button
-                android:id="@+id/btn_login_kakao"
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/view_lottie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="160dp"
-                android:background="@drawable/btn_kakao"
-                android:drawableStart="@drawable/ic_kakao"
-                android:drawablePadding="8dp"
-                android:paddingHorizontal="76dp"
-                android:paddingVertical="12dp"
-                android:text="@string/login_kakao"
-                android:textColor="#381e1f"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="70dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="center"
+                android:src="@drawable/ic_login_back"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="signin.json"
+                app:lottie_loop="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="500dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_login_kakao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="24dp"
+                    android:background="@drawable/btn_kakao"
+                    android:drawableStart="@drawable/ic_kakao"
+                    android:paddingHorizontal="82dp"
+                    android:paddingVertical="12dp"
+                    android:text="@string/login_kakao"
+                    android:textColor="#381e1f"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/applegothic_bold"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_login_google"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_kakao"
+                    android:backgroundTint="@color/white"
+                    android:drawableStart="@drawable/ic_logo_google"
+                    android:paddingHorizontal="82dp"
+                    android:paddingVertical="12dp"
+                    android:text="@string/login_google"
+                    android:textAllCaps="false"
+                    android:textColor="#381e1f"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/applegothic_bold"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
         </FrameLayout>
-    
+
         <LinearLayout
             android:id="@+id/layout_container"
             android:layout_width="match_parent"

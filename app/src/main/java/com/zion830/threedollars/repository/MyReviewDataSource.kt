@@ -1,67 +1,39 @@
 package com.zion830.threedollars.repository
 
-import androidx.paging.DataSource
-import androidx.paging.PageKeyedDataSource
-import androidx.paging.PagedList
-import com.zion830.threedollars.repository.model.response.Review
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import retrofit2.await
-import kotlin.coroutines.CoroutineContext
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
 
-class MyReviewDataSource(
-    private val scope: CoroutineScope,
-    private val context: CoroutineContext
-) : PageKeyedDataSource<Int, Review>() {
+class MyReviewDataSource : PagingSource<Int, ReviewDetail>() {
 
-    private val repository: UserRepository = UserRepository()
+    private val userRepository = UserRepository()
 
-    private var totalPage = 0
+    override fun getRefreshKey(state: PagingState<Int, ReviewDetail>): Int? = null
 
-    class Factory(
-        private val scope: CoroutineScope,
-        private val context: CoroutineContext
-    ) : DataSource.Factory<Int, Review>() {
-
-        override fun create(): DataSource<Int, Review> = MyReviewDataSource(scope, context)
-    }
-
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Review>) {
-        scope.launch(context) {
-            val data = repository.getMyReviews().await()
-            totalPage = data.totalPages
-            callback.onResult(data.review ?: listOf(), null, 2)
-        }
-    }
-
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Review>) {
-
-    }
-
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Review>) {
-        if (params.key > totalPage) {
-            return
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ReviewDetail> {
+        val cursor = params.key
+        if (cursor == -1) {
+            return LoadResult.Error(Exception())
         }
 
-        scope.launch(context) {
-            val data = repository.getMyReviews(page = params.key).await()
-            callback.onResult(data.review ?: listOf(), params.key + 1)
-        }
-    }
+        return try {
+            val response = userRepository.getMyReviews(cursor, LOAD_SIZE)
 
-    override fun invalidate() {
-        super.invalidate()
-        scope.cancel()
+            if (response.isSuccessful) {
+                LoadResult.Page(
+                    data = response.body()?.data?.contents ?: emptyList(),
+                    null,
+                    response.body()?.data?.nextCursor
+                )
+            } else {
+                LoadResult.Error(Exception(response.message()))
+            }
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
     }
 
     companion object {
-        private const val PAGE_SIZE = 10
-
-        val pageConfig = PagedList.Config.Builder()
-            .setPageSize(PAGE_SIZE)
-            .setInitialLoadSizeHint(PAGE_SIZE)
-            .setPrefetchDistance(PAGE_SIZE)
-            .build()
+        const val LOAD_SIZE = 20
     }
 }

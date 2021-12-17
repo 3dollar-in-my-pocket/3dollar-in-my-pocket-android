@@ -2,17 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.zion830.threedollars">
-    
-    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <queries>
         <package android:name="com.kakao.talk" />
     </queries>
-    
+
     <application
         android:name=".GlobalApplication"
-        android:allowBackup="true"
         android:icon="@drawable/ic_app_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -20,35 +20,56 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-    
-        <activity android:name=".splash.SplashActivity">
+
+        <activity
+            android:name="com.zion830.threedollars.ui.splash.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-            
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".login.LoginActivity" />
-        <activity android:name=".ui.addstore.AddStoreActivity" />
-        <activity android:name=".ui.store_detail.StoreDetailActivity" />
-        <activity android:name=".ui.store_detail.StoreByMenuActivity" />
-        <activity android:name=".ui.store_detail.EditStoreActivity" />
-        <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.zion830.threedollars.ui.login.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.store_detail.StoreDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.category.StoreByMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.addstore.activity.NewStoreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-            
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-            
+
                 <data
                     android:host="oauth"
-                    android:scheme="${kakao_key}" />
+                    android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>
-    
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="${nmf_client_id}" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admob_id}" />
+
     </application>
 </manifest>

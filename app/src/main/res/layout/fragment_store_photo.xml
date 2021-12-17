@@ -2,34 +2,35 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
-        
+            type="com.zion830.threedollars.ui.category.StoreDetailViewModel" />
+
         <import type="com.zion830.threedollars.utils.StringUtils" />
-        
+
         <import type="android.view.View" />
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80FFFFFF">
-        
+        android:background="@android:color/black">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rect_white_bottom_corner"
+            android:backgroundTint="@color/color_black"
             android:elevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnusedAttribute">
-    
+
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
@@ -41,55 +42,70 @@
                 android:src="@drawable/ic_close_black"
                 app:layout_constraintBottom_toBottomOf="@id/layout_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/color_white" />
+
             <TextView
                 android:id="@+id/tv_store_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="200dp"
                 android:singleLine="true"
-                android:text="@{viewModel.storeInfo.storeName}"
-                android:textColor="@android:color/black"
+                android:text="@string/add_photo"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/btn_back" />
+
+            <ImageButton
+                android:id="@+id/ib_trash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="22dp"
+                android:background="?attr/actionBarItemBackground"
+                android:src="@drawable/ic_trash"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    
-        <com.smarteist.autoimageslider.SliderView
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/slider"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/rv_indicator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_title"
-            app:sliderIndicatorEnabled="false" />
-    
+            tools:listitem="@layout/item_image_slider" />
+
         <View
             android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="120dp"
-            android:background="@android:color/white"
+            android:background="@color/color_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-    
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_indicator"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
             android:clipToPadding="false"
             android:orientation="horizontal"
             android:paddingHorizontal="13dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/view"
             tools:listitem="@layout/item_photo_preview" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

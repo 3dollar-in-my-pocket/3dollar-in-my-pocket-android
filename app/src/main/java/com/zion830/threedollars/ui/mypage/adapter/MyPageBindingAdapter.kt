@@ -1,10 +1,14 @@
 package com.zion830.threedollars.ui.mypage.adapter
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.MenuType
-import java.util.*
+import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 
 
 @BindingAdapter("bindMenuIcon")
@@ -13,53 +17,67 @@ fun ImageView.bindMenuIcon(category: String?) {
         return
     }
 
-    setImageResource(
-        when (category.toUpperCase(Locale.ROOT)) {
-            "BUNGEOPPANG" -> R.drawable.ic_fish
-            "TAKOYAKI" -> R.drawable.ic_takoyaki
-            "HOTTEOK" -> R.drawable.ic_hodduck
-            else -> R.drawable.ic_egg
-        }
-    )
+    setImageResource(MenuType.of(category).colorIcon)
+}
+
+@BindingAdapter("bindMenuIcons", "isSelected", requireAll = false)
+fun ImageView.bindMenuIcons(category: List<String>? = emptyList(), isSelected: Boolean? = true) {
+    if (category.isNullOrEmpty()) {
+        return
+    }
+
+    val menu = MenuType.of(category.first())
+    setImageResource(if (isSelected == null || isSelected) menu.colorIcon else menu.grayIcon)
+}
+
+@BindingAdapter("bindMenuIntroTitle")
+fun TextView.bindMenuIntroTitle(menuType: CategoryInfo?) {
+    if (menuType == null) {
+        return
+    }
+
+    val menuName = if (menuType.name == "닭꼬치") "꼬치꼬치" else menuType.name
+    val index = menuType.description.indexOf(menuName)
+    val spannableString = SpannableStringBuilder(menuType.description).apply {
+        setSpan(
+            StyleSpan(Typeface.BOLD),
+            index,
+            index + menuName.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
+    text = spannableString
+}
+
+@BindingAdapter("bindWhiteMenuIcon")
+fun ImageView.bindWhiteMenuIcon(category: String?) {
+    if (category == null) {
+        return
+    }
+
+    setImageResource(MenuType.of(category).colorIcon)
+}
+
+@BindingAdapter("bindWhiteMenuIcon")
+fun ImageView.bindWhiteMenuIcon(categories: List<String>?) {
+    if (categories.isNullOrEmpty()) {
+        return
+    }
+
+    setImageResource(MenuType.of(categories.firstOrNull()).colorIcon)
 }
 
 @BindingAdapter("bindMenuIcon", "isSelected")
-fun ImageView.bindMenuIcon(category: String?, isSelected: Boolean) {
+fun ImageView.bindSelectableMenuIcon(category: String?, isSelected: Boolean = true) {
     if (category == null) {
         return
     }
 
     setImageResource(
         if (isSelected) {
-            when (category.toUpperCase(Locale.ROOT)) {
-                "BUNGEOPPANG" -> R.drawable.ic_fish
-                "TAKOYAKI" -> R.drawable.ic_takoyaki
-                "HOTTEOK" -> R.drawable.ic_hodduck
-                else -> R.drawable.ic_egg
-            }
+            MenuType.of(category).colorIcon
         } else {
-            when (category.toUpperCase(Locale.ROOT)) {
-                "BUNGEOPPANG" -> R.drawable.img_fish_card_off
-                "TAKOYAKI" -> R.drawable.img_takoyaki_card_off
-                "HOTTEOK" -> R.drawable.ic_hodduck_card_off
-                else -> R.drawable.ic_egg_card_off
-            }
-        }
-    )
-}
-
-@BindingAdapter("bindMenuBigIcon", "isSelected", requireAll = true)
-fun ImageView.bindMenuBigIcon(category: String?, isSelected: Boolean) {
-    if (category == null) {
-        return
-    }
-
-    setImageResource(
-        when (category.toUpperCase()) {
-            "BUNGEOPPANG" -> if (isSelected) R.drawable.ic_fish else R.drawable.ic_gray_fish
-            "TAKOYAKI" -> if (isSelected) R.drawable.ic_takoyaki else R.drawable.ic_takoyaki_gray
-            "HOTTEOK" -> if (isSelected) R.drawable.ic_hodduck else R.drawable.ic_hodduck_gray
-            else -> if (isSelected) R.drawable.ic_egg else R.drawable.ic_egg_gray
+            MenuType.of(category).grayIcon
         }
     )
 }
@@ -70,14 +88,7 @@ fun ImageView.bindSmallMenuIcon(category: String?) {
         return
     }
 
-    setImageResource(
-        when (category.toUpperCase()) {
-            "BUNGEOPPANG" -> R.drawable.ic_menu1
-            "TAKOYAKI" -> R.drawable.ic_menu2
-            "HOTTEOK" -> R.drawable.ic_menu4
-            else -> R.drawable.ic_menu3
-        }
-    )
+    setImageResource(MenuType.of(category).colorIcon)
 }
 
 @BindingAdapter("bindSmallMenuIcon")
@@ -86,12 +97,5 @@ fun ImageView.bindSmallMenuIcon(category: MenuType?) {
         return
     }
 
-    setImageResource(
-        when (category.key) {
-            "BUNGEOPPANG" -> R.drawable.ic_menu1
-            "TAKOYAKI" -> R.drawable.ic_menu2
-            "HOTTEOK" -> R.drawable.ic_menu4
-            else -> R.drawable.ic_menu3
-        }
-    )
+    setImageResource(MenuType.of(category.key).colorIcon)
 }

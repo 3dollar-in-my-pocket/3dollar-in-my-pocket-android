@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.FAQ" />
+        
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+        
+        <import type="android.view.View" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp">
+        
+        <LinearLayout
+            android:id="@+id/layout_faq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/rect_light_gray"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:ignore="UnusedAttribute">
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{@string/question(item.question)}"
+                android:textColor="@color/color_sub_red"
+                android:textSize="14sp"
+                android:fontFamily="@font/applegothic_bold"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Q. 제 주변에는 가게가 많이 없어요." />
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:text="@{item.answer}"
+                android:textColor="@color/color_white"
+                android:textStyle="normal"
+                tools:text="저희 가슴속 3천원은 오직 여러분의 소중한 제보로 완성되는 사용자 참여형 서비스입니다. 함께 따뜻한 겨울을 완성해요! :)" />
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/btn_delete_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{() -> listener.onClick(item)}"
+            android:padding="8dp"
+            android:text="@string/delete_account_btn"
+            android:textColor="@color/color_main_red"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_faq"
+            app:setDeleteAccountBtnVisibility="@{item}" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

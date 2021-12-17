@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,8 +19,20 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils.dpToPx
+import zion830.com.common.ext.disableDoubleClick
 import zion830.com.common.ext.filterNotNull
+import zion830.com.common.listener.OnItemClickListener
 
+
+@BindingAdapter("visibleIf")
+fun View.visibleIf(value: Boolean) {
+    isVisible = value
+}
+
+@BindingAdapter("invisibleIf")
+fun View.invisibleIf(value: Boolean) {
+    visibility = if (value) View.INVISIBLE else View.VISIBLE
+}
 
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter("bindItem")
@@ -40,14 +53,6 @@ fun ImageView.loadDrawableImg(drawableResId: Int) {
 fun ImageView.loadUrlImg(url: String?) {
     Glide.with(context)
         .load(url)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(this)
-}
-
-@BindingAdapter("loadImage")
-fun ImageView.loadUriImg(uri: Uri?) {
-    Glide.with(context)
-        .load(uri)
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(this)
 }
@@ -93,7 +98,11 @@ fun ImageView.loadBitmap(bitmap: Bitmap?) {
 @BindingAdapter("onSingleClick")
 fun View.onSingleClick(listener: () -> Unit) {
     setOnClickListener {
-        listener()
+        object : OnItemClickListener<Any?> {
+            override fun onClick(item: Any?) {
+                listener()
+            }
+        }.disableDoubleClick().onClick(null)
     }
 }
 

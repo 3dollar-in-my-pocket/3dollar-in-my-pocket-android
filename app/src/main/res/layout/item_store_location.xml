@@ -2,122 +2,183 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.response.AllStoreResponseItem" />
-        
+            type="com.zion830.threedollars.repository.model.v2.response.store.StoreInfo" />
+
         <variable
             name="isSelectedItem"
             type="java.lang.Boolean" />
-        
+
         <variable
             name="listener"
             type="zion830.com.common.listener.OnItemClickListener" />
     </data>
-    
+
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
-        android:padding="4dp"
-        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/gmm_white}"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/color_white}"
         app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="true">
-        
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/layout_item"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:minWidth="172dp"
-            android:minHeight="172dp"
+            android:clickable="true"
+            android:focusable="true"
             android:onClick="@{() -> listener.onClick(item)}"
+            android:paddingVertical="14dp"
             tools:ignore="UnusedAttribute">
-            
-            <TextView
-                android:id="@+id/tv_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:background="@drawable/rect_stroke_pink"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="2dp"
-                android:text="@{@string/distance(item.distance)}"
-                android:textColor="@color/color_sub_red"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="150m" />
-            
+
             <ImageView
                 android:id="@+id/iv_menu_icon"
-                android:layout_width="110dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="8dp"
+                bindMenuIcons="@{item.categories}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_fish"
-                app:bindMenuIcon="@{item.category}"
-                app:isSelected="@{isSelectedItem}"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_distance" />
-    
-            <LinearLayout
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_store_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@{item.storeName}"
+                android:textColor="@{isSelectedItem ? @android:color/white : @color/gray90}"
+                android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/iv_badge"
+                app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="강남역 1출" />
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
+                android:textColor="@{isSelectedItem ? @color/color_FFA1AA : @color/gray40}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_store_name"
+                tools:ignore="RtlSymmetry"
+                tools:text="#붕어 #호떡" />
+
+            <LinearLayout
+                android:id="@+id/ll_distance_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_menu_icon">
-        
-                <com.willy.ratingbar.ScaleRatingBar
-                    android:id="@+id/rating_score"
-                    style="@style/PinkRatingBar"
-                    bindRating="@{item.rating}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_menu_icon"
-                    app:srb_clickable="true"
-                    app:srb_isIndicator="true"
-                    app:srb_drawableEmpty="@drawable/ic_star_off"
-                    app:srb_drawableFilled="@drawable/ic_star"
-                    app:srb_numStars="5"
-                    app:srb_starHeight="15dp"
-                    app:srb_starPadding="2dp"
-                    app:srb_starWidth="15dp"
-                    tools:ignore="UnusedAttribute" />
-        
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_category">
+
                 <TextView
-                    android:id="@+id/tv_score"
+                    android:id="@+id/tv_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="@{@string/score(item.rating)}"
-                    android:textColor="@{isSelectedItem ? @color/color_white : @color/color_gray1}"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/rating_score"
-                    app:layout_constraintStart_toEndOf="@id/rating_score"
-                    app:layout_constraintTop_toTopOf="@id/rating_score"
-                    tools:text="3.8점" />
+                    android:layout_marginEnd="12dp"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/gray80}"
+                    android:textSize="12sp"
+                    tools:drawableStart="@drawable/ic_near"
+                    tools:text="121m" />
+
+                <TextView
+                    android:id="@+id/tv_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/gray80}"
+                    android:textSize="12sp"
+                    tools:drawableStart="@drawable/ic_star_pink"
+                    tools:text="3.4점" />
             </LinearLayout>
-    
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@drawable/rect_black_radius16"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
+
+            <ImageView
+                android:id="@+id/iv_badge"
+                visibleIf="@{item.visitHistory.isCertified}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="14dp"
+                android:src="@drawable/ic_badge"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_dest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="14dp"
+                android:background="@drawable/rect_red_radius14"
+                android:clickable="true"
+                android:drawablePadding="4dp"
+                android:focusable="true"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp"
+                android:text="@string/dest"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:drawableStartCompat="@drawable/ic_dest"
+                app:layout_constraintBottom_toBottomOf="@id/ll_distance_rating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ll_distance_rating" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="23dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_no_store" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_store"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/applegothic_bold"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/empty_store_msg"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

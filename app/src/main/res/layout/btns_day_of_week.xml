@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <data>
+        
+        <variable
+            name="clickable"
+            type="boolean" />
+    </data>
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+        
+        <ToggleButton
+            android:id="@+id/tb_mon"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/monday"
+            android:textOn="@string/monday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_tue"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/tuesday"
+            android:textOn="@string/tuesday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_wen"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/wednesday"
+            android:textOn="@string/wednesday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_thur"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/thursday"
+            android:textOn="@string/thursday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_fri"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/friday"
+            android:textOn="@string/friday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_sat"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/saturday"
+            android:textOn="@string/saturday" />
+        
+        <ToggleButton
+            android:id="@+id/tb_sun"
+            style="@style/ToggleButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/btn_toggle"
+            android:clickable="@{clickable}"
+            android:textOff="@string/sunday"
+            android:textOn="@string/sunday" />
+    </LinearLayout>
+</layout>

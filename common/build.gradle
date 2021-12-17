@@ -1,2 +1,11 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply from: '../common.gradle'
+dependencies {
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
+}

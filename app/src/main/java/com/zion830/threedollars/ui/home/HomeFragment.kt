@@ -1,29 +1,24 @@
 package com.zion830.threedollars.ui.home
 
 import android.content.Intent
-import android.util.Log
-import android.view.View
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
+import android.net.Uri
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearSnapHelper
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.LatLng
+import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.response.AllStoreResponseItem
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.store_detail.StoreByMenuActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
 import zion830.com.common.listener.OnSnapPositionChangeListener
 import zion830.com.common.listener.SnapOnScrollListener
@@ -31,42 +26,68 @@ import zion830.com.common.listener.SnapOnScrollListener
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home) {
 
-    override val viewModel: HomeViewModel by viewModels()
+    override val viewModel: HomeViewModel by activityViewModels()
 
-    private var currentPosition: LatLng = DEFAULT_LOCATION
+    private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    private lateinit var mapFragment: SupportMapFragment
+    private val storeDetailViewModel: StoreDetailViewModel by viewModels()
 
     private lateinit var adapter: NearStoreRecyclerAdapter
 
-    private var googleMap: GoogleMap? = null
+    private lateinit var naverMapFragment: NearStoreNaverMapFragment
+
+    fun getMapCenterLatLng() = try {
+        naverMapFragment.getMapCenterLatLng()
+    } catch (e: Exception) {
+        null
+    }
 
     override fun initView() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { map ->
-            googleMap = map
-            initMap(map)
-            binding.btnFindLocation.setOnClickListener {
-                requireActivity().requestPermissionIfNeeds()
-                initMap(map, googleMap?.cameraPosition?.zoom ?: DEFAULT_ZOOM)
-            }
-            viewModel.nearStoreInfo.observe(this@HomeFragment) { store ->
-                val storeInRange = store.filter { it.distance <= 2000 }
-                map.setDefaultMarkers(storeInRange.map { LatLng(it.latitude, it.longitude) })
-                adapter.submitList(storeInRange)
-            }
+        naverMapFragment = NearStoreNaverMapFragment {
+            binding.tvRetrySearch.isVisible = true
+        }
+        childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+
+        viewModel.addressText.observe(viewLifecycleOwner) {
+            binding.tvAddress.text = it ?: getString(R.string.location_no_address)
+        }
+        searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
+            naverMapFragment.moveCamera(it)
+            binding.tvAddress.text =
+                getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+        }
+        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
+            binding.layoutEmpty.isVisible = store.isNullOrEmpty()
+            adapter.submitList(store)
+        }
+        binding.layoutAddress.setOnClickListener {
+            requireActivity().supportFragmentManager.addNewFragment(
+                R.id.layout_container,
+                SearchAddressFragment(),
+                SearchAddressFragment::class.java.name
+            )
         }
 
-        // 주변 음식점 리스트
-        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<AllStoreResponseItem> {
-            override fun onClick(item: AllStoreResponseItem) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.id)
+        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
+            override fun onClick(item: StoreInfo?) {
+                if (item != null) {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                } else {
+                    showToast(R.string.exist_store_error)
+                }
+            }
+        }) { item ->
+            if (item != null) {
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, true)
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
-        })
+        }
+        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf()) {
+                onStoreClicked(it)
+            }
+        }
 
         binding.rvStore.adapter = adapter
         val snapHelper = LinearSnapHelper()
@@ -77,83 +98,56 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (position >= 0) {
+                            naverMapFragment.updateMarkerIcon(
+                                R.drawable.ic_store_off,
+                                adapter.focusedIndex
+                            )
                             adapter.focusedIndex = position
+                            naverMapFragment.updateMarkerIcon(
+                                R.drawable.ic_marker,
+                                adapter.focusedIndex
+                            )
                             adapter.notifyDataSetChanged()
-                            moveCameraToCurrentPosition(adapter.getItemLocation(position), googleMap?.cameraPosition?.zoom)
+                            naverMapFragment.moveCameraWithAnim(adapter.getItemLocation(position))
                         }
                     }
                 })
         )
-
-        // 상단 버튼바
-        binding.btnMenu1.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.BUNGEOPPANG.key))
+        binding.tvRetrySearch.setOnClickListener {
+            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
+            binding.tvRetrySearch.isVisible = false
         }
-        binding.btnMenu2.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.TAKOYAKI.key))
-        }
-        binding.btnMenu3.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.GYERANPPANG.key))
-        }
-        binding.btnMenu4.setOnClickListener {
-            startActivity(StoreByMenuActivity.getIntent(requireContext(), MenuType.HOTTEOK.key))
-        }
-
-        // 3천원 글자 두껍게 바꾸기
-        binding.tvMsg2.text = buildSpannedString {
-            append(getString(R.string.if_you_have_money1))
-            bold { append(getString(R.string.if_you_have_money2)) }
-            append(getString(R.string.if_you_have_money3))
+        binding.ibToss.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
+            startActivity(browserIntent)
+            hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
     }
 
-    private fun initMap(googleMap: GoogleMap, zoomLevel: Float = DEFAULT_ZOOM) {
-        googleMap.uiSettings.isMyLocationButtonEnabled = false
+    private fun onStoreClicked(storeInfo: StoreInfo) {
+        val position = adapter.getItemPosition(storeInfo)
+        if (position >= 0) {
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+            adapter.focusedIndex = position
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
+            naverMapFragment.moveCameraWithAnim(LatLng(storeInfo.latitude, storeInfo.longitude))
 
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    currentPosition = it.toLatLng()
-                    moveCameraToCurrentPosition(it.toLatLng(), zoomLevel)
-                    setLocationText()
-                    viewModel.requestStoreInfo(currentPosition)
-                }
-                googleMap.isMyLocationEnabled = true
-            } else {
-                setLocationText()
-                showToast(R.string.find_location_error)
-                viewModel.requestStoreInfo(currentPosition)
-                moveCameraToCurrentPosition(currentPosition, zoomLevel)
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
+            adapter.notifyDataSetChanged()
+            binding.rvStore.scrollToPosition(position)
         }
-    }
-
-    private fun setLocationText() {
-        binding.tvMyLocation.text = getCurrentLocationName(currentPosition)
-        binding.tvMyLocation.visibility = if (binding.tvMyLocation.text.isNullOrBlank()) View.GONE else View.VISIBLE
-    }
-
-    private fun moveCameraToCurrentPosition(position: LatLng, zoomLevel: Float?) {
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            Constants.SHOW_STORE_BY_CATEGORY -> {
-                viewModel.requestStoreInfo(currentPosition)
-            }
-            Constants.ADD_STORE -> {
-                viewModel.requestStoreInfo(currentPosition)
-            }
-            Constants.GET_LOCATION_PERMISSION -> {
-                googleMap?.let {
-                    initMap(it)
-                }
-            }
+
+        if (requestCode == Constants.GET_LOCATION_PERMISSION) {
+            naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
     }
 }

@@ -4,34 +4,39 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMenuEditBinding
-import com.zion830.threedollars.repository.model.response.Menu
+import com.zion830.threedollars.repository.model.v2.request.MyMenu
 import zion830.com.common.base.BaseViewHolder
 
 
-class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEditBinding, Menu>>() {
-    private val items = arrayListOf<Menu>()
+class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEditBinding, MyMenu>>() {
+    private val items = arrayListOf<MyMenu>()
 
     init {
         addNewRow()
     }
 
     fun addNewRow() {
-        items.add(Menu())
-        notifyItemRemoved(items.size - 1)
+        items.add(MyMenu())
+        notifyItemInserted(items.size - 1)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemMenuEditBinding, Menu> =
-        object : BaseViewHolder<ItemMenuEditBinding, Menu>(R.layout.item_menu_edit, parent) {}
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemMenuEditBinding, MyMenu> =
+        object : BaseViewHolder<ItemMenuEditBinding, MyMenu>(R.layout.item_menu_edit, parent) {}
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holder: BaseViewHolder<ItemMenuEditBinding, Menu>, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<ItemMenuEditBinding, MyMenu>, position: Int) {
         holder.bind(items[position], null)
+        holder.binding.etPrice.setOnFocusChangeListener { view, focused ->
+            if (focused && position == items.size - 1) {
+                addNewRow()
+            }
+        }
     }
 
-    fun submitList(newItems: MutableList<Menu>?) {
+    fun submitList(newItems: List<MyMenu>?) {
         items.clear()
-        items.addAll(if (newItems.isNullOrEmpty()) listOf(Menu("", "")) else newItems)
+        items.addAll(if (newItems.isNullOrEmpty()) listOf(MyMenu()) else newItems)
         notifyDataSetChanged()
     }
 }

@@ -4,6 +4,10 @@ import androidx.annotation.StringRes
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.MenuType
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 
 object StringUtils {
@@ -30,14 +34,8 @@ object StringUtils {
             return getString(R.string.none)
         }
 
-        return getString(
-            when (category.toUpperCase(Locale.ROOT)) {
-                "BUNGEOPPANG" -> R.string.bung
-                "TAKOYAKI" -> R.string.tako
-                "HOTTEOK" -> R.string.hodduck
-                else -> R.string.gye
-            }
-        )
+        val categories = SharedPrefUtils.getCategories()
+        return categories.find { categoryInfo -> categoryInfo.category == category }?.category ?: ""
     }
 
     @JvmStatic
@@ -64,5 +62,16 @@ object StringUtils {
         }
 
         return stringDescArray[index]
+    }
+
+    @JvmStatic
+    fun getTimeString(zuluString: String?, pattern: String = "MM월 dd일 HH:mm:ss"): String {
+        return try {
+            Instant.parse("${zuluString}Z")
+                .atZone(ZoneId.of("Etc/UTC"))
+                .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
+        } catch (e: DateTimeParseException) {
+            ""
+        }
     }
 }

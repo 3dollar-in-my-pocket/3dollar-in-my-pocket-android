@@ -2,29 +2,28 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.store_detail.vm.StoreEditViewModel" />
-        
-        <import type="com.zion830.threedollars.ui.store_detail.DeleteType" />
+            type="com.zion830.threedollars.ui.category.StoreDetailViewModel" />
+
+        <import type="com.zion830.threedollars.ui.report_store.DeleteType" />
     </data>
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingBottom="36dp">
-        
+        android:background="@android:color/transparent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:background="@drawable/rect_white"
             android:padding="20dp">
-            
+
             <ImageButton
                 android:id="@+id/ib_close"
                 android:layout_width="wrap_content"
@@ -33,7 +32,7 @@
                 android:src="@drawable/ic_close"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
@@ -43,7 +42,7 @@
                 android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            
+
             <TextView
                 android:id="@+id/tv_title2"
                 android:layout_width="wrap_content"
@@ -52,10 +51,11 @@
                 android:text="@string/request_delete_description"
                 android:textColor="#BDBDBD"
                 android:textSize="12sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
-            
+
             <RadioGroup
                 android:id="@+id/rg_reason"
                 android:layout_width="0dp"
@@ -63,7 +63,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title2">
-                
+
                 <RadioButton
                     android:id="@+id/btn_reason1"
                     android:layout_width="match_parent"
@@ -79,8 +79,9 @@
                     android:text="@string/request_delete_reason1"
                     android:textAlignment="textStart"
                     android:textColor="@color/color_black"
+                    android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold" />
-                
+
                 <RadioButton
                     android:id="@+id/btn_reason2"
                     android:layout_width="match_parent"
@@ -96,8 +97,9 @@
                     android:text="@string/request_delete_reason2"
                     android:textAlignment="textStart"
                     android:textColor="@color/color_black"
+                    android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold" />
-                
+
                 <RadioButton
                     android:id="@+id/btn_reason3"
                     android:layout_width="match_parent"
@@ -113,9 +115,10 @@
                     android:text="@string/request_delete_reason3"
                     android:textAlignment="textStart"
                     android:textColor="@color/color_black"
+                    android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold" />
             </RadioGroup>
-            
+
             <Button
                 android:id="@+id/btn_finish"
                 android:layout_width="0dp"
@@ -126,8 +129,9 @@
                 android:enabled="@{viewModel.deleteType != DeleteType.NONE}"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:text="@string/request_delete"
-                android:textColor="@color/gmm_white"
+                android:textColor="@color/color_white"
                 android:textSize="16sp"
+                android:fontFamily="@font/applegothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

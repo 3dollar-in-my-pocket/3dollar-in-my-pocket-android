@@ -1,30 +1,45 @@
 <resources>
     <string name="app_name">가슴속3천원</string>
-    
+    <string name="android_version">Android Version</string>
+    <string name="help_feedback_title">[Android] 가슴속 3천원 1:1 문의</string>
+
     <string name="score">%.1f점</string>
     <string name="score_only">%.1f</string>
-    <string name="count">%d개</string>
+    <string name="count">%d개 제보하셨네요!</string>
     <string name="img_count">+%d</string>
     <string name="distance">%dm</string>
     <string name="save">저장하기</string>
-    
+    <string name="more">더보기</string>
+    <string name="updated_at">업데이트</string>
+    <string name="about_medal">칭호 살펴보기</string>
+    <string name="no_visit_history">방문 인증 내역이 없어요!</string>
+    <string name="try_visit_history">방문을 인증해보세요!</string>
+    <string name="try_visit_history_msg">아직 내가 인증한 가게가 없어요 ㅠㅠ</string>
+    <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
+    <string name="store_empty">제보한 가게가 없어요!</string>
+    <string name="store_empty_sub">발견한 가게를 제보해 보세요 :)</string>
+    <string name="my_review_empty">아직 작성한 리뷰가 없어요!</string>
+
     <string name="kakao_url">https://kauth.kakao.com</string>
     <string name="login_kakao">카카오 계정으로 로그인</string>
+    <string name="login_google">구글 계정으로 로그인</string>
     <string name="login_name">닉네임 입력!</string>
     <string name="login_name1">저는 닉네임</string>
     <string name="login_name2">로</string>
     <string name="login_name3">시작할래요</string>
     <string name="login_name_fail">시작못해요</string>
     <string name="login_name_already_exist">중복된 닉네임</string>
-    <string name="login_failed">로그인에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="invalidate_name">잘못된 형식의 닉네임</string>
+    <string name="login_failed">로그인에 실패했습니다. 네트워크 연결 상태를 확인해주세요!</string>
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>
     <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
-    <string name="plz">마무리 중입니다 조금만 기다려주세요 선생님</string>
-    
+    <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
+    <string name="server_500">서버 점검 중!</string>
+    <string name="server_500_msg">서버 점검 중!</string>
+
     <string name="my_page_show_all">전체보기</string>
-    <string name="my_page_stores">내가 등록한 음식점</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
     <string name="my_page_reviews">내가 쓴 리뷰</string>
     <string name="my_page_reviews_empty">내가 쓴 리뷰가 없어요</string>
@@ -36,23 +51,25 @@
     <string name="title_activity_home">MainActivity</string>
     <string name="title_home">홈</string>
     <string name="title_add_store">가게 제보</string>
+    <string name="search_by_address">위치 검색</string>
+    <string name="search_by_address_hint">구, 동, 건물명, 역 등으로 검색</string>
     <string name="no_review">아직 리뷰가 없어요!</string>
+    <string name="no_menu_info">상세 메뉴 없음</string>
     <string name="store_distance"> 이내에 위치한\n음식점입니다.</string>
     <string name="store_distance_long">1km+에 위치한\n음식점입니다.</string>
-    <string name="add_review">리뷰 남기기</string>
-    <string name="request_delete">삭제 요청</string>
+    <string name="add_review">리뷰쓰기</string>
+    <string name="request_delete">삭제요청</string>
     <string name="request_delete_title">삭제하시는\n이유가 궁금해요!</string>
     <string name="request_delete_description">3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다</string>
     <string name="request_delete_reason1">없어진 가게예요</string>
-    <string name="request_delete_reason2">위치가 잘못됐어요</string>
+    <string name="request_delete_reason2">허위 제보로 요청된 가게에요</string>
     <string name="request_delete_reason3">중복 제보된 가게예요</string>
     <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
     <string name="title_mypage">마이페이지</string>
-    
-    <string name="bung">붕어빵</string>
-    <string name="tako">문어빵</string>
-    <string name="gye">계란빵</string>
-    <string name="hodduck">호떡</string>
+    <string name="show_all_menu">모두보기</string>
+    <string name="plus">+%d</string>
+    <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
+
     <string name="none">없음</string>
     
     <string name="nearest_store">가장 가까운 음식점</string>
@@ -76,53 +93,173 @@
         <item>기다려</item>
     </string-array>
     
+    <string name="road">길거리</string>
+    <string name="store">매장</string>
+    <string name="convenience_store">편의점</string>
+
+    <string name="cash">현금</string>
+    <string name="card">카드</string>
+    <string name="banking">계좌이체</string>
+
+    <string name="editor">님의 제보</string>
+    <string name="share">공유하기</string>
+    <string name="send_money">송금하기</string>
+    <string name="update_available">업데이트가 필요합니다!</string>
+    <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
+
     <string name="request_permission">권한이 필요해요 😮</string>
+    <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
     <string name="request_permission_ok">알았어요</string>
+    <string name="go_to_update">업데이트 하기</string>
     <string name="request_permission_cancel">싫어요</string>
     <string name="request_location_permission_description">주변 가게를 검색하기 위해 현재 위치 정보가 필요해요.</string>
     <string name="no_store">주변에 가게가 없어요</string>
     <string name="before_30_seconds">만나기 30초 전</string>
     <string name="location_no_address">알 수 없는 위치</string>
-    <string name="find_location_error">위치를 인식할 수 없습니다. 다시 시도해주세요!</string>
+    <string name="find_location_error">위치를 인식할 수 없습니다. GPS가 켜져있는지 확인해주세요!</string>
+    <string name="error_change_medal">칭호 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="error_pick_image">이미지를 불러오는데 실패했습니다.</string>
+    <string name="upload_image">이미지를 업로드하는 중입니다...</string>
     <string name="remove_image">이미지 첨부를 취소하시겠습니까?</string>
     <string name="category">카테고리</string>
+    <string name="category_title1">이 안에 </string>
+    <string name="category_title2">네 최애 </string>
+    <string name="category_title3">하나쯤은 있겠지!</string>
+    <string name="category_delete_all">전체삭제</string>
     <string name="menu_detail">상세메뉴</string>
     <string name="no_menu">등록된 정보가 없습니다</string>
     <string name="store_name">가게 이름</string>
+    <string name="store_name_empty">가게 이름을 입력해주세요!</string>
+    <string name="store_location">가게 위치</string>
+    <string name="edit">수정하기</string>
     <string name="add_store_info">가게 정보 추가하기</string>
-    <string name="add_photo">사진 등록 </string>
+    <string name="add_photo">사진제보</string>
+    <string name="add_photo_finish">사진 등록</string>
     <string name="writer">님이\n제보한 음식점입니다.</string>
     <string name="edit_photo">총 %d개의 사진 제보!</string>
     <string name="edit_menu">총 %d개의 메뉴 제보!</string>
+    <string name="select">총 %d개 선택하기</string>
+    <string name="store_info">가게 정보</string>
+    <string name="edit_info">정보수정</string>
+    <string name="edit_store">가게 정보 수정</string>
     <string name="option">(선택)</string>
+    <string name="enable_multi_select">다중선택 가능</string>
     <string name="store_detail_menu">상세 메뉴 입력 </string>
-    <string name="add_store_finish">현재 위치로 등록하기</string>
+    <string name="add_store_finish">가게 등록하기</string>
+    <string name="edit_store_finish">가게 정보 수정하기</string>
+    <string name="certification">방문 인증</string>
+    <string name="add_certification">방문 인증하기</string>
+    <string name="visit_success">방문 성공</string>
+    <string name="visit_failed">방문 실패</string>
     <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
+    <string name="add_certification_success">방문 인증이 완료되었습니다. 감사합니다!</string>
+    <string name="photo_count">가게사진 %d개</string>
     <string name="review_count">리뷰 %d개</string>
     <string name="hint_menu_name">ex) 슈크림</string>
     <string name="hint_menu_price">ex) 3개 2천원</string>
     <string name="hint_menu_location">ex) 강남역 2번 출구 </string>
+    <string name="select_store_location">맛집 위치는 바로 여기!</string>
+    <string name="finish_select_store_location">이 위치로 주소 설정</string>
     <string name="failed_add_review">리뷰 등록에 실패했습니다. 다시 시도해주세요.</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
+    <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
+    <string name="input_content">내용을 입력해주세요.</string>
+    <string name="success_edit_review">리뷰가 수정되었습니다.</string>
+    <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
     <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="failed_certification">방문 인증에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="already_certification">오늘 이미 방문 인증한 가게입니다.\n다음에 다시 인증해주세요.</string>
     <string name="failed_edit_store">가게 정보 추가에 실패했습니다. 다시 시도해주세요.</string>
     <string name="failed_delete_store">가게 정보 삭제 요청이 실패했습니다. 다시 시도해주세요.</string>
     <string name="success_delete_store">가게 삭제 요청을 보냈습니다. 3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다.</string>
     <string name="error_no_kakao_login">카카오톡에서 로그인이 되어있는지 확인해주세요.</string>
     <string name="error_file_size">10MB 이상의 파일은 첨부할 수 없습니다.</string>
-    
+    <string name="cancel_add_store">가게 제보를 취소하시겠어요?</string>
+    <string name="add">추가하기</string>
+
     <string name="under_50m">50m 이내</string>
     <string name="under_100m">100m 이내</string>
     <string name="under_500m">500m 이내</string>
     <string name="under_1km">1km 이내</string>
-    
+    <string name="over_1km">1km+ 이상</string>
+
     <string name="over_0">0점 이상</string>
     <string name="over_1">1점 이상</string>
     <string name="over_2">2점 이상</string>
     <string name="over_3">3점 이상</string>
-    
+    <string name="over_4">4점 이상</string>
+
+    <string name="store_type">가게형태</string>
+    <string name="empty_store">주변 2km 이내에 가게가 없어요</string>
+    <string name="empty_store_msg">다른 주소로 검색하거나 직접 제보해보세요!</string>
+    <string name="empty_data">아직 등록된 정보가 없어요.</string>
+    <string name="empty_result">검색 결과가 없어요.</string>
+    <string name="show_type">출몰시기</string>
+    <string name="payment_type">결제방식</string>
+    <string name="show_all">모두보기</string>
+    <string name="category_menu">카테고리 및 메뉴 %d개</string>
+    <string name="category_select">카테고리 선택</string>
+
     <string name="recommend_store">이 가게를\n추천하시나요?</string>
     <string name="recommend_store_hint">리뷰를 남겨주세요!</string>
     <string name="recommend_store_finish">리뷰 등록하기</string>
+    <string name="edit_review">리뷰 수정</string>
+    <string name="delete_review">리뷰 삭제</string>
+    <string name="no_category_msg">한 개 이상의 카테고리를 선택해주세요.</string>
+    <string name="no_menu_msg">메뉴 정보를 한개 이상 입력해주세요!</string>
+
+    <string name="my_store">제보한 가게</string>
+    <string name="my_review">내가 쓴 리뷰</string>
+    <string name="my_visit_history">방문 인증 내역</string>
+    <string name="my_medal">내 칭호</string>
+    <string name="my_certification_message">최근 내가 들린 가게는?</string>
+    <string name="title_setting">설정</string>
+    <string name="ask">문의사항</string>
+    <string name="faq">FAQ</string>
+    <string name="feedback">1:1 문의</string>
+    <string name="term_of_service">이용약관</string>
+    <string name="kakao_user">카카오 계정 회원</string>
+    <string name="google_user">구글 계정 회원</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_message">로그아웃이 완료되었습니다. 앱을 이용하려면 재시작해주세요.</string>
+    <string name="delete_account_success">탈퇴가 완료되었습니다. 이용해주셔서 감사합니다!</string>
+    <string name="delete_account">회원탈퇴</string>
+    <string name="delete_account_btn">회원탈퇴하기 →</string>
+    <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="faq_message">어떤 점이 궁금하셨나요?</string>
+    <string name="question">Q. %s</string>
+    
+    <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
+    <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
+    <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
+    <string name="official_email">3dollarinmypocket@gmail.com</string>
+    <string name="no_mail_app">실행할 메일 앱이 없습니다. 3dollarinmypocket@gmail.com로 문의사항을 전달해주세요.</string>
+    <string name="delete_account_confirm">회원을 탈퇴하시겠습니까? 탈퇴하면 계정에 다시 접근할 수 없습니다.</string>
+    <string name="change_medal">장착중인 칭호를 변경하시겠어요?</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+    <string name="sunday">일</string>
+    
+    <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
+    <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
+    <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
+
+    <string name="find_location">놀러가기</string>
+    <string name="share_kakao_title">올 때 붕어빵, 잊지마!!!</string>
+    <string name="share_kakao">당신은 붕어빵 셔틀에 당첨되셨습니다. 지금 바로 가슴속 3천원을 설치하고 위치를 파악하여 미션을 수행하세요!</string>
+    <string name="share_kakao_success">카카오톡 공유 완료!</string>
+    <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
+
+    <string name="retry_search">현재 지도에서 가게 재검색</string>
+    <string name="is_certification_store">인증된 가게만</string>
+    <string name="dest">방문하기</string>
+    <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
+
+    <string name="close">닫기</string>
+    <string name="disable_popup">오늘 하루 보지않기</string>
+    <string name="popup">팝업</string>
 </resources>

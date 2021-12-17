@@ -4,8 +4,8 @@ import android.app.Activity
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
@@ -38,6 +38,12 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
                 viewModel.initNameUpdateInfo()
                 viewModel.clearName()
                 activity?.supportFragmentManager?.popBackStack()
+            }
+        }
+        viewModel.isAlreadyUsed.observe(this) {
+            binding.tvAlreadyExist.isVisible = it > 0
+            if (it != -1) {
+                binding.tvAlreadyExist.text = getString(it)
             }
         }
     }
