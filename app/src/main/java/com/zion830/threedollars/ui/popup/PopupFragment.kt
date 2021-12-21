@@ -29,7 +29,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
-                SharedPrefUtils.setPopupTime(System.currentTimeMillis())
+                SharedPrefUtils.setIsPopup()
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
