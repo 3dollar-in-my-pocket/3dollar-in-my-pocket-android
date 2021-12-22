@@ -57,7 +57,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
         popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && SharedPrefUtils.getIsPopup()) {
+            if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
                 binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
             }
         }

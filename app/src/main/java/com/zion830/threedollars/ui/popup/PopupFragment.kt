@@ -29,7 +29,9 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
-                SharedPrefUtils.setIsPopup()
+                viewModel?.popups?.value?.let { popup ->
+                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl)
+                }
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {

@@ -19,15 +19,15 @@ object SharedPrefUtils {
     private const val CATEGORY_LIST = "category_list"
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
-    private const val IS_POPUP = "is_popup"
+    private const val POPUP_URL = "popup_url"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
-    fun getIsPopup() = sharedPreferences.getBoolean(IS_POPUP, false)
+    fun getPopupUrl() = sharedPreferences.getString(POPUP_URL, "")
 
-    fun setIsPopup() = sharedPreferences.edit {
-        putBoolean(IS_POPUP, true)
+    fun setPopupUrl(url: String) = sharedPreferences.edit {
+        putString(POPUP_URL, url)
         commit()
     }
 
