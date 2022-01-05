@@ -28,7 +28,8 @@ class StoreRepository(
         latitude: Double,
         longitude: Double,
         startDate: String?
-    ): Response<StoreDetailResponse> = newService.getStoreInfo(latitude, longitude, storeId, startDate)
+    ): Response<StoreDetailResponse> =
+        newService.getStoreInfo(latitude, longitude, storeId, startDate)
 
     suspend fun getCategoryByDistance(
         category: String,
@@ -94,4 +95,9 @@ class StoreRepository(
     ): Response<DeleteStoreResponse> = newService.deleteStore(storeId, deleteReasonType)
 
     suspend fun getCategories() = newService.getCategories()
+
+    suspend fun getNearExist(
+        latitude: Double,
+        longitude: Double
+    ): Response<NearExistResponse> = newService.getNearExists(latitude = latitude, longitude = longitude)
 }

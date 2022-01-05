@@ -42,6 +42,10 @@ class AddStoreViewModel : BaseViewModel() {
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
         SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
+
+    private val _isNearExist: MutableLiveData<Boolean> = MutableLiveData()
+    val isNearExist: LiveData<Boolean> get() = _isNearExist
+
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
@@ -68,6 +72,16 @@ class AddStoreViewModel : BaseViewModel() {
         }
     }
 
+    fun getNearExists(latitude: Double, longitude: Double) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val nearExistResponse = repository.getNearExist(latitude, longitude)
+
+            if (nearExistResponse.isSuccessful) {
+                _isNearExist.postValue(nearExistResponse.body()?.nearExist?.isExists)
+            }
+        }
+    }
+
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
     }
@@ -78,7 +92,10 @@ class AddStoreViewModel : BaseViewModel() {
 
     fun removeCategory(item: SelectedCategory) {
         val newList = _selectedCategory.value?.map {
-            SelectedCategory(if (item.menuType == it.menuType) false else it.isSelected, it.menuType)
+            SelectedCategory(
+                if (item.menuType == it.menuType) false else it.isSelected,
+                it.menuType
+            )
         } ?: emptyList()
         _selectedCategory.value = newList
     }
