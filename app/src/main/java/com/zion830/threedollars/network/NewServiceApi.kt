@@ -62,6 +62,12 @@ interface NewServiceApi {
         @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
     ): Response<DeleteStoreResponse>
 
+    @GET("/api/v1/stores/near/exists")
+    suspend fun getNearExists(
+        @Query("mapLatitude") latitude: Double,
+        @Query("mapLongitude") longitude: Double
+    ) : Response<NearExistResponse>
+
     @DELETE("/api/v2/store/image/{imageId}")
     suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
 
