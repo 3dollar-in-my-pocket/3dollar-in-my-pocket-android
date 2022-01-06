@@ -64,6 +64,7 @@ interface NewServiceApi {
 
     @GET("/api/v1/stores/near/exists")
     suspend fun getNearExists(
+        @Query("distance") distance : Double = 10.0,
         @Query("mapLatitude") latitude: Double,
         @Query("mapLongitude") longitude: Double
     ) : Response<NearExistResponse>

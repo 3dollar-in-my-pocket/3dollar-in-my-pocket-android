@@ -99,5 +99,5 @@ class StoreRepository(
     suspend fun getNearExist(
         latitude: Double,
         longitude: Double
-    ): Response<NearExistResponse> = newService.getNearExists(latitude, longitude)
+    ): Response<NearExistResponse> = newService.getNearExists(latitude = latitude, longitude = longitude)
 }

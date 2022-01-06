@@ -5,21 +5,26 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="24dp"
-        android:background="@drawable/rect_white_radius_12">
+        android:background="@drawable/inset_dialog"
+        android:padding="24dp">
 
         <ImageView
+            android:id="@+id/iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:src="@drawable/ic_close"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/tv_title" />
 
         <TextView
             android:id="@+id/tv_title"
+            style="@style/LightTextViewStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10m이내에 이미 제보된\n가게가 있어요!"
+            android:text="@string/dialog_near_exist_title"
+            android:textColor="@color/black"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +32,10 @@
             android:id="@+id/tv_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="중복된 가게 제보인지 확인해 주세요"
+            android:layout_marginTop="12dp"
+            android:text="@string/dialog_near_exist_subtitle"
+            android:textColor="@color/gray50"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
@@ -51,15 +59,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/ripple_translate"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
             android:padding="16dp"
-            android:text="이 위치가 맞아요!"
+            android:text="@string/dialog_near_exist_button_finish"
             android:textColor="@color/color_white"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_address" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
