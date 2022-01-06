@@ -8,6 +8,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,8 @@ class AddStoreViewModel : BaseViewModel() {
         it.count { item -> item.isSelected }
     }
 
+    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
+
     fun addNewStore(newStore: NewStoreRequest) {
         showLoading()
 
@@ -78,6 +81,15 @@ class AddStoreViewModel : BaseViewModel() {
 
             if (nearExistResponse.isSuccessful) {
                 _isNearExist.postValue(nearExistResponse.body()?.nearExist?.isExists)
+            }
+        }
+    }
+
+    fun requestStoreInfo(location: LatLng) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.getAllStore(location.latitude, location.longitude)
+            if (data.isSuccessful) {
+                nearStoreInfo.postValue(data.body()?.data)
             }
         }
     }

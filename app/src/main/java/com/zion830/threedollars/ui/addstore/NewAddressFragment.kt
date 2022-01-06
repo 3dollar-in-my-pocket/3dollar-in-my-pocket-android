@@ -1,7 +1,8 @@
 package com.zion830.threedollars.ui.addstore
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
@@ -9,13 +10,15 @@ import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 
 class NewAddressFragment :
     BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
 
-    override val viewModel: AddStoreViewModel by viewModels()
+    override val viewModel: AddStoreViewModel by activityViewModels()
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment
 
@@ -34,6 +37,14 @@ class NewAddressFragment :
         }
         binding.btnFinish.setOnClickListener {
             viewModel.getNearExists(latitude, longitude)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            delay(1000)
+            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
         }
     }
 
@@ -63,6 +74,13 @@ class NewAddressFragment :
                 } else {
                     moveAddStoreDetailFragment()
                 }
+            })
+            nearStoreInfo.observe(viewLifecycleOwner) { res ->
+                naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
+            }
+            selectedLocation.observe(viewLifecycleOwner, { latLng ->
+                if (latLng != null)
+                    requestStoreInfo(latLng)
             })
         }
     }
