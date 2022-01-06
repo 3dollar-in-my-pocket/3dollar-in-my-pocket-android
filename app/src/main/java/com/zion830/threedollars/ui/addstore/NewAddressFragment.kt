@@ -22,10 +22,10 @@ class NewAddressFragment :
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment
 
-    private val latitude by lazy {
+    private val latitude by lazy(LazyThreadSafetyMode.NONE) {
         arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
     }
-    private val longitude by lazy {
+    private val longitude by lazy(LazyThreadSafetyMode.NONE) {
         arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
     }
 
