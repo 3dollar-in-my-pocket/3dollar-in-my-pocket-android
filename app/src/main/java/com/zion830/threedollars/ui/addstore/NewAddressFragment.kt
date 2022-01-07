@@ -14,6 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
+import kotlin.properties.Delegates
 
 class NewAddressFragment :
     BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
@@ -22,14 +23,13 @@ class NewAddressFragment :
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment
 
-    private val latitude by lazy(LazyThreadSafetyMode.NONE) {
-        arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
-    }
-    private val longitude by lazy(LazyThreadSafetyMode.NONE) {
-        arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
-    }
+    private var latitude by Delegates.notNull<Double>()
+    private var longitude by Delegates.notNull<Double>()
 
     override fun initView() {
+        latitude = arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
+        longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
+
         initMap()
         initViewModels()
         binding.btnBack.setOnClickListener {
@@ -40,18 +40,15 @@ class NewAddressFragment :
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            delay(1000)
-            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
-        }
-    }
-
     private fun initMap() {
         naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude)) {
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+        }
+
+        lifecycleScope.launch {
+            delay(1000)
+            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
         }
 
         if (latitude > 0) {
@@ -79,8 +76,11 @@ class NewAddressFragment :
                 naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
             }
             selectedLocation.observe(viewLifecycleOwner, { latLng ->
-                if (latLng != null)
+                if (latLng != null) {
                     requestStoreInfo(latLng)
+                    latitude = latLng.latitude
+                    longitude = latLng.longitude
+                }
             })
         }
     }
