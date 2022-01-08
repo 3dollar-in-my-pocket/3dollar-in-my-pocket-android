@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
@@ -12,7 +11,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -29,8 +27,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override val viewModel: HomeViewModel by activityViewModels()
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
-
-    private val storeDetailViewModel: StoreDetailViewModel by viewModels()
 
     private lateinit var adapter: NearStoreRecyclerAdapter
 
@@ -71,7 +67,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
                 if (item != null) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
+                    val intent =
+                        StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
                 } else {
                     showToast(R.string.exist_store_error)

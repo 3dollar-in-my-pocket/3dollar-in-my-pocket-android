@@ -43,20 +43,35 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         listener = requireActivity() as? OnMapTouchListener
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_naver_map, container, false)
         binding.lifecycleOwner = this
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragment_map) as? MapFragment?
-            ?: MapFragment.newInstance().also { childFragmentManager.beginTransaction().add(R.id.fragment_map, it).commit() }
+            ?: MapFragment.newInstance().also {
+                childFragmentManager.beginTransaction().add(R.id.fragment_map, it).commit()
+            }
         mapFragment.getMapAsync(this)
 
         val frameLayout = TouchableWrapper(requireActivity(), null, 0, listener)
-        frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+        frameLayout.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                android.R.color.transparent
+            )
+        )
         (binding.root as? ViewGroup)?.addView(
             frameLayout,
-            ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
         )
 
         return binding.root
@@ -73,7 +88,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             moveToCurrentLocation(true)
         }
 
-        map.locationSource = FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE)
+        map.locationSource =
+            FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE)
         map.locationTrackingMode = LocationTrackingMode.Follow
         map.uiSettings.isZoomControlEnabled = false
         map.uiSettings.isScaleBarEnabled = false
@@ -105,7 +121,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
     }
 
-    fun addStoreMarkers(@DrawableRes drawableRes: Int, storeInfoList: List<StoreInfo>, onClick: (marker: StoreInfo) -> Unit = {}) {
+    fun addStoreMarkers(
+        @DrawableRes drawableRes: Int,
+        storeInfoList: List<StoreInfo>,
+        onClick: (marker: StoreInfo) -> Unit = {}
+    ) {
         if (naverMap == null) {
             return
         }

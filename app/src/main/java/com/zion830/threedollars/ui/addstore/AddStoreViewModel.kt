@@ -8,6 +8,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
@@ -42,12 +43,18 @@ class AddStoreViewModel : BaseViewModel() {
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
         SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
+
+    private val _isNearExist: MutableLiveData<Boolean> = MutableLiveData()
+    val isNearExist: LiveData<Boolean> get() = _isNearExist
+
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
     val selectedCount: LiveData<Int> = Transformations.map(selectedCategory) {
         it.count { item -> item.isSelected }
     }
+
+    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
 
     fun addNewStore(newStore: NewStoreRequest) {
         showLoading()
@@ -68,6 +75,25 @@ class AddStoreViewModel : BaseViewModel() {
         }
     }
 
+    fun getNearExists(latitude: Double, longitude: Double) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val nearExistResponse = repository.getNearExist(latitude, longitude)
+
+            if (nearExistResponse.isSuccessful) {
+                _isNearExist.postValue(nearExistResponse.body()?.nearExist?.isExists)
+            }
+        }
+    }
+
+    fun requestStoreInfo(location: LatLng) {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.getAllStore(location.latitude, location.longitude)
+            if (data.isSuccessful) {
+                nearStoreInfo.postValue(data.body()?.data)
+            }
+        }
+    }
+
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
     }
@@ -78,7 +104,10 @@ class AddStoreViewModel : BaseViewModel() {
 
     fun removeCategory(item: SelectedCategory) {
         val newList = _selectedCategory.value?.map {
-            SelectedCategory(if (item.menuType == it.menuType) false else it.isSelected, it.menuType)
+            SelectedCategory(
+                if (item.menuType == it.menuType) false else it.isSelected,
+                it.menuType
+            )
         } ?: emptyList()
         _selectedCategory.value = newList
     }
