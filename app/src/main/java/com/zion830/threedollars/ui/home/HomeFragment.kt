@@ -120,6 +120,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             startActivity(browserIntent)
             hackleApp.track(Constants.TOSS_BTN_CLICKED)
         }
+
+        naverMapFragment.moveToCurrentLocation(false)
     }
 
     private fun onStoreClicked(storeInfo: StoreInfo) {
