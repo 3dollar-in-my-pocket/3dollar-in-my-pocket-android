@@ -10,6 +10,7 @@ import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,8 +45,8 @@ class AddStoreViewModel : BaseViewModel() {
         SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
 
-    private val _isNearExist: MutableLiveData<Boolean> = MutableLiveData()
-    val isNearExist: LiveData<Boolean> get() = _isNearExist
+    private val _isNearStoreExist: MutableLiveData<Boolean> = MutableLiveData()
+    val isNearStoreExist: LiveData<Boolean> get() = _isNearStoreExist
 
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
@@ -75,24 +76,21 @@ class AddStoreViewModel : BaseViewModel() {
         }
     }
 
-    fun getNearExists(latitude: Double, longitude: Double) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val nearExistResponse = repository.getNearExist(latitude, longitude)
-
-            if (nearExistResponse.isSuccessful) {
-                _isNearExist.postValue(nearExistResponse.body()?.nearExist?.isExists)
-            }
+    fun requestStoreInfo(location: LatLng?) {
+        if (location == null || location == NaverMapUtils.DEFAULT_LOCATION) {
+            return
         }
-    }
 
-    fun requestStoreInfo(location: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.getAllStore(location.latitude, location.longitude)
             if (data.isSuccessful) {
                 nearStoreInfo.postValue(data.body()?.data)
+                _isNearStoreExist.postValue(hasStoreDistanceUnder10M(data.body()?.data))
             }
         }
     }
+
+    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) = stores?.find { store -> store.distance <= 10 } != null
 
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
