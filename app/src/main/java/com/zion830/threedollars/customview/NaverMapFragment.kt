@@ -85,7 +85,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
             requireActivity().requestPermissionIfNeeds()
-            moveToCurrentLocation(true)
+            moveToCurrentLocation(false)
         }
 
         map.locationSource =
@@ -183,9 +183,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                         }
                     }
                 }
-            } else {
-                moveCamera(NaverMapUtils.DEFAULT_LOCATION)
-                showToast(R.string.find_location_error)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")

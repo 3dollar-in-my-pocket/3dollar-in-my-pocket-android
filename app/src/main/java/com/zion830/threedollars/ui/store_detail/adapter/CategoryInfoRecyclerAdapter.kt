@@ -12,14 +12,18 @@ import zion830.com.common.listener.OnItemClickListener
 
 class CategoryInfoRecyclerAdapter : BaseRecyclerView<ItemCategoryBinding, Category>(R.layout.item_category) {
 
+    override fun onBindViewHolder(holder: BaseViewHolder<ItemCategoryBinding, Category>, position: Int) {
+        super.onBindViewHolder(holder, position)
+        val menuAdapter = holder.binding.rvMenu.adapter as? MenuRecyclerAdapter
+        menuAdapter?.submitList(getItem(position).menu?.map { MyMenu(it.category, it.name, it.price) }
+            ?.filterNot { it.name.isEmpty() && it.price.isEmpty() })
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemCategoryBinding, Category> {
         return object : BaseViewHolder<ItemCategoryBinding, Category>(R.layout.item_category, parent) {
             override fun bind(item: Category, listener: OnItemClickListener<Category>?) {
                 super.bind(item, listener)
-                binding.rvMenu.adapter = MenuRecyclerAdapter().apply {
-                    submitList(item.menu?.map { MyMenu(it.category, it.name, it.price) }
-                        ?.filterNot { it.name.isNullOrEmpty() && it.price.isNullOrEmpty() })
-                }
+                binding.rvMenu.adapter = MenuRecyclerAdapter()
             }
         }
     }
