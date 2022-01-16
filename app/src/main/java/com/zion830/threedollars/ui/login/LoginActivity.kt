@@ -116,7 +116,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
-                    addInputNameFragment()
+                    if (it.code in 400..499) {
+                        addInputNameFragment()
+                    } else {
+                        showToast(R.string.connection_failed)
+                    }
                 }
                 else -> {
                     showToast(R.string.connection_failed)
