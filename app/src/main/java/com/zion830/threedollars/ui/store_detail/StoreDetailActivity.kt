@@ -128,7 +128,10 @@ class StoreDetailActivity :
                 }
             }.startMultiImage { uriData ->
                 lifecycleScope.launch {
-                    viewModel.saveImages(getImageFiles(uriData))
+                    val images = getImageFiles(uriData)
+                    if (images != null) {
+                        viewModel.saveImages(images)
+                    }
                 }
             }
         }
@@ -380,12 +383,12 @@ class StoreDetailActivity :
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part> {
+    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part>? {
         val imageList = ArrayList<MultipartBody.Part>()
         data.forEach {
             if (!FileUtils.isAvailable(it)) {
                 binding.tvStoreName.showSnack(R.string.error_file_size)
-                return listOf()
+                return null
             }
 
             FileUtils.uriToFile(it)?.run {
