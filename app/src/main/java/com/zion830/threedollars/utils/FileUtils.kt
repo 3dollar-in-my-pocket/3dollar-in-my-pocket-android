@@ -16,7 +16,7 @@ object FileUtils {
 
         val resolver = GlobalApplication.getContext().contentResolver
         val tempFile = File.createTempFile("image${System.currentTimeMillis()}", ".png")
-        resolver.openInputStream(uri).use { stream ->
+        resolver.openInputStream(uri)?.use { stream ->
             val outputStream = FileOutputStream(tempFile)
             IOUtils.copyStream(stream, outputStream)
             outputStream.close()
