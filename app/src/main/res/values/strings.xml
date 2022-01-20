@@ -34,7 +34,8 @@
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>
-    <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="connection_failed">요청을 처리하는데 문제가 생긴것 같아요! 다시 한번 시도해주시고 계속 안된다면 문의 부탁드립니다!</string>
+    <string name="server_error">서버 점검 중입니다! 이용에 불편을 드려 죄송합니다 ㅠ_ㅠ</string>
     <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
     <string name="server_500">서버 점검 중!</string>
     <string name="server_500_msg">서버 점검 중!</string>

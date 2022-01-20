@@ -37,10 +37,18 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         observeUiData()
         binding.btnLoginKakao.onSingleClick {
             SharedPrefUtils.saveLoginType(LoginType.KAKAO)
-            tryKakaoLogin()
+            tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
             SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+            tryLoginBySocialType()
+        }
+    }
+
+    private fun tryLoginBySocialType() {
+        if (SharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
+            tryKakaoLogin()
+        } else {
             tryGoogleLogin()
         }
     }
@@ -95,7 +103,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
     }
 
-    private fun tryLogin(token: OAuthToken) {
+    private fun tryLoginBySocialType(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
                 Log.d(localClassName, it.groupUserToken.toString())
@@ -116,14 +124,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
-                    if (it.code == 409) {
-                        addInputNameFragment()
-                    } else {
-                        showToast(R.string.connection_failed)
+                    when (it.code) {
+                        400 -> showToast(R.string.connection_failed)
+                        404 -> addInputNameFragment()
+                        503 -> showToast(R.string.server_500)
+                        500, 502 -> showToast(R.string.connection_failed)
+                        else -> showToast(R.string.connection_failed)
                     }
-                }
-                else -> {
-                    showToast(R.string.connection_failed)
                 }
             }
         }
@@ -148,7 +155,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 SharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
-                tryLogin(token)
+                tryLoginBySocialType(token)
             }
         }
 
