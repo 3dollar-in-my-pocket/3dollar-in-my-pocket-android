@@ -50,7 +50,7 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         binding.token.isVisible = BuildConfig.BUILD_TYPE == "debug"
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val token = "길게 클릭하면 토큰이 복사됩니다!\n${task.result}"
+                val token = "테스트용 토큰입니다 - 길게 클릭하면 복사됩니다!\n${task.result}"
                 binding.token.text = token
                 binding.token.setOnLongClickListener {
                     val manager = (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
