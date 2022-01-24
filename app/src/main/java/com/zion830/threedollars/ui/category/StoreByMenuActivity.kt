@@ -18,7 +18,7 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.listener.OnItemClickListener
 
 class StoreByMenuActivity :
-    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu) {
+    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu), OnMapTouchListener {
 
     override val viewModel: StoreByMenuViewModel by viewModels()
 
@@ -36,6 +36,11 @@ class StoreByMenuActivity :
 
     private val storeByRatingAdapters by lazy {
         SearchByRatingRecyclerAdapter(listener)
+    }
+
+    override fun onTouch() {
+        // 지도 스크롤 이벤트 구분용
+        binding.scroll.requestDisallowInterceptTouchEvent(true)
     }
 
     override fun initView() {
