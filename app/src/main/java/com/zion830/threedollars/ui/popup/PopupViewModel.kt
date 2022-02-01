@@ -17,13 +17,9 @@ class PopupViewModel : BaseViewModel() {
 
     val popupInitialImage = popups.map { it.firstOrNull()?.imageUrl }
 
-    init {
-        getPopups()
-    }
-
-    private fun getPopups() {
+    fun getPopups(position: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            popups.postValue(popupRepository.getPopups().body()?.data)
+            popups.postValue(popupRepository.getPopups(position = position).body()?.data)
         }
     }
 }
