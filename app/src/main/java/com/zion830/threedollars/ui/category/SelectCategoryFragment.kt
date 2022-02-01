@@ -11,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSelectCategoryBinding
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
@@ -26,7 +28,10 @@ class SelectCategoryFragment :
 
     private val popupViewModel: PopupViewModel by viewModels()
 
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun initView() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         popupViewModel.getPopups("MENU_CATEGORY_BANNER")
         initViewModel()
         if (viewModel.categories.value?.isEmpty() == true) {
@@ -74,6 +79,9 @@ class SelectCategoryFragment :
 
                 binding.cdAdCategory.setOnClickListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
+                    firebaseAnalytics.logEvent("category_banner_clicked") {
+                        param("referral", "category_page")
+                    }
                 }
             }
             binding.cdAdCategory.isVisible = popups.isNotEmpty()
