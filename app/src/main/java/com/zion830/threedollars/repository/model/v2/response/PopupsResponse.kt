@@ -13,12 +13,16 @@ data class PopupsResponse(
 )
 
 data class Popups(
-    @SerializedName("createdAt")
-    val createdAt: String = "",
+    @SerializedName("bgColor")
+    val bgColor: String = "",
+    @SerializedName("fontColor")
+    val fontColor: String = "",
     @SerializedName("imageUrl")
     val imageUrl: String = "",
     @SerializedName("linkUrl")
     val linkUrl: String = "",
-    @SerializedName("updatedAt")
-    val updatedAt: String = ""
+    @SerializedName("subTitle")
+    val subTitle: String = "",
+    @SerializedName("title")
+    val title: String = ""
 )

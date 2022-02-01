@@ -64,10 +64,10 @@ interface NewServiceApi {
 
     @GET("/api/v1/stores/near/exists")
     suspend fun getNearExists(
-        @Query("distance") distance : Double = 10.0,
+        @Query("distance") distance: Double = 10.0,
         @Query("mapLatitude") latitude: Double,
         @Query("mapLongitude") longitude: Double
-    ) : Response<NearExistResponse>
+    ): Response<NearExistResponse>
 
     @DELETE("/api/v2/store/image/{imageId}")
     suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
@@ -171,5 +171,8 @@ interface NewServiceApi {
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 
     @GET("/api/v1/popups")
-    suspend fun getPopups(@Query("platform") platform: String = "AOS"): Response<PopupsResponse>
+    suspend fun getPopups(
+        @Query("platform") platform: String = "AOS",
+        @Query("position") position: String
+    ): Response<PopupsResponse>
 }

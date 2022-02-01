@@ -36,13 +36,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     private val categoryViewModel: CategoryViewModel by viewModels()
 
-    private val myPageViewModel: MyPageViewModel by viewModels()
-
     private lateinit var navHostFragment: NavHostFragment
 
     override fun initView() {
         requestPermissionFirst()
-
+        popupViewModel.getPopups(position = "SPLASH")
         if (SharedPrefUtils.getCategories().isEmpty()) {
             categoryViewModel.loadCategories()
         }
