@@ -70,6 +70,7 @@
     <string name="show_all_menu">모두보기</string>
     <string name="plus">+%d</string>
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
+    <string name="visit_count_default">이번주 0명이 다녀간 가게에요!</string>
 
     <string name="none">없음</string>
     
