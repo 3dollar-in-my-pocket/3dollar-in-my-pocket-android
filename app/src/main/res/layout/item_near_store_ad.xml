@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.Popups" />
+
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/adCardView"
@@ -17,8 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:paddingVertical="4dp"
             android:focusable="true"
+            android:onClick="@{() -> listener.onClick(item)}"
+            android:paddingVertical="6dp"
             tools:ignore="UnusedAttribute">
 
             <TextView
@@ -43,6 +54,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="6dp"
+                android:text="@{item.title}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
@@ -58,6 +70,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="6dp"
+                android:text="@{item.subTitle}"
                 android:textColor="@color/color_FFA1AA"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@id/iv_ad_image"

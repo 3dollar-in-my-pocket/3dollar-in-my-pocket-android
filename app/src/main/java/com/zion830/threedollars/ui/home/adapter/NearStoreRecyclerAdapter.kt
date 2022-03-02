@@ -28,6 +28,7 @@ import zion830.com.common.listener.OnItemClickListener
 
 class NearStoreRecyclerAdapter(
     private val clickListener: OnItemClickListener<StoreInfo?>,
+    private val adClickListener: OnItemClickListener<Popups>,
     private val certificationClick: (StoreInfo?) -> Unit
 ) : ListAdapter<AdAndStoreItem?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
@@ -84,7 +85,7 @@ class NearStoreRecyclerAdapter(
                 holder.bindPosition(focusedIndex == position)
             }
             is NearStoreAdViewHolder -> {
-                holder.bind(getItem(position) as Popups, null)
+                holder.bind(getItem(position) as Popups, adClickListener)
             }
             is NearStoreEmptyViewHolder -> {
                 holder.bind(getItem(position) as HomeStoreEmptyResponse, null)
@@ -117,12 +118,10 @@ class NearStoreAdViewHolder(parent: ViewGroup) :
     @SuppressLint("Range")
     override fun bind(item: Popups, listener: OnItemClickListener<Popups>?) {
         super.bind(item, listener)
-        binding.tvAdTitle.text = item.title
         if (!item.fontColor.isNullOrEmpty()) {
             binding.tvAdTitle.setTextColor(Color.parseColor(item.fontColor))
             binding.tvAdBody.setTextColor(Color.parseColor(item.fontColor))
         }
-        binding.tvAdBody.text = item.subTitle
 
         if (!item.bgColor.isNullOrEmpty()) {
             binding.layoutItem.setBackgroundColor(Color.parseColor(item.bgColor))

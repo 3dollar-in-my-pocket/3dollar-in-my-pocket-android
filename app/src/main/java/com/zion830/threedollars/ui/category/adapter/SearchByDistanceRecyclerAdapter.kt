@@ -13,7 +13,8 @@ import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 class SearchByDistanceRecyclerAdapter(
-    private val listener: OnItemClickListener<StoreInfo>
+    private val listener: OnItemClickListener<StoreInfo>,
+    private val adListener: OnItemClickListener<Popups>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = arrayListOf<AdAndStoreItem>()
 
@@ -53,7 +54,7 @@ class SearchByDistanceRecyclerAdapter(
                 holder.bind(items[position] as StoreInfo, listener)
             }
             is SearchByAdViewHolder -> {
-                holder.bind(items[position] as Popups, null)
+                holder.bind(items[position] as Popups, adListener)
             }
         }
     }

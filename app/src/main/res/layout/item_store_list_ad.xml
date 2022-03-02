@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.Popups" />
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_item"
         android:layout_width="match_parent"
@@ -35,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/detail"
+            android:onClick="@{() -> listener.onClick(item)}"
             android:textColor="@color/color_FFA1AA"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,6 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:textColor="@color/black"
+            android:text="@{item.title}"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_ad"
@@ -56,6 +67,7 @@
             style="@style/LightTextViewStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{item.subTitle}"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:textColor="@color/gray60"

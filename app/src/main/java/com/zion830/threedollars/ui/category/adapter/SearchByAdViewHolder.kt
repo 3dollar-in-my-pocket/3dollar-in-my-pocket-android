@@ -17,13 +17,10 @@ class SearchByAdViewHolder(parent: ViewGroup) :
     @SuppressLint("Range")
     override fun bind(item: Popups, listener: OnItemClickListener<Popups>?) {
         super.bind(item, listener)
-        binding.tvAdTitle.text = item.title
         if (!item.fontColor.isNullOrEmpty()) {
             binding.tvAdTitle.setTextColor(Color.parseColor(item.fontColor))
             binding.tvAdBody.setTextColor(Color.parseColor(item.fontColor))
         }
-        binding.tvAdBody.text = item.subTitle
-
         if (!item.bgColor.isNullOrEmpty()) {
             binding.layoutItem.setBackgroundColor(Color.parseColor(item.bgColor))
         }
@@ -32,8 +29,5 @@ class SearchByAdViewHolder(parent: ViewGroup) :
             .load(item.imageUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(binding.ivAdImage)
-
-        binding.tvDetail.setOnClickListener {
-        }
     }
 }

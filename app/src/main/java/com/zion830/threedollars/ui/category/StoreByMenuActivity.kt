@@ -11,6 +11,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
+import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
@@ -39,12 +40,17 @@ class StoreByMenuActivity :
             startActivity(intent)
         }
     }
+    private val adListener = object : OnItemClickListener<Popups> {
+        override fun onClick(item: Popups) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+        }
+    }
     private val storeByDistanceAdapters by lazy {
-        SearchByDistanceRecyclerAdapter(listener)
+        SearchByDistanceRecyclerAdapter(listener,adListener)
     }
 
     private val storeByRatingAdapters by lazy {
-        SearchByRatingRecyclerAdapter(listener)
+        SearchByRatingRecyclerAdapter(listener,adListener)
     }
 
     override fun onTouch() {

@@ -11,6 +11,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
+import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
@@ -76,6 +77,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                     showToast(R.string.exist_store_error)
                 }
             }
+        }, object : OnItemClickListener<Popups> {
+            override fun onClick(item: Popups) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+            }
+
         }) { item ->
             if (item != null) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, true)
