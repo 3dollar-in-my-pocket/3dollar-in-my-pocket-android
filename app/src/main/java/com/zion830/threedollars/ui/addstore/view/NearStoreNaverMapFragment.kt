@@ -36,7 +36,7 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestStoreInfo(position)
+        viewModel.requestHomeItem(position)
         viewModel.updateCurrentLocation(position)
     }
 

@@ -2,8 +2,10 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
@@ -12,6 +14,7 @@ import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
+import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
@@ -53,7 +56,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { store ->
-            binding.layoutEmpty.isVisible = store.isNullOrEmpty()
             adapter.submitList(store)
         }
         binding.layoutAddress.setOnClickListener {
@@ -81,7 +83,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf()) {
+            val list = res?.filterIsInstance<StoreInfo>()
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
                 onStoreClicked(it)
             }
         }
@@ -105,13 +108,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                                 adapter.focusedIndex
                             )
                             adapter.notifyDataSetChanged()
-                            naverMapFragment.moveCameraWithAnim(adapter.getItemLocation(position))
+                            adapter.getItemLocation(position)
+                                ?.let { naverMapFragment.moveCameraWithAnim(it) }
                         }
                     }
                 })
         )
         binding.tvRetrySearch.setOnClickListener {
-            viewModel.requestStoreInfo(naverMapFragment.getMapCenterLatLng())
+            viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
         binding.ibToss.setOnClickListener {
@@ -147,6 +151,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override fun onResume() {
         super.onResume()
-        naverMapFragment.getMapCenterLatLng().let { viewModel.requestStoreInfo(it) }
+        naverMapFragment.getMapCenterLatLng().let { viewModel.requestHomeItem(it) }
     }
 }

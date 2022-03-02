@@ -28,7 +28,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                viewModel.requestStoreInfo(location)
+                viewModel.requestHomeItem(location)
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()

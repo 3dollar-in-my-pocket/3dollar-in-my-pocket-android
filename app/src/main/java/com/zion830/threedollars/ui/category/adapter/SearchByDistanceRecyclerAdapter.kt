@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.category.adapter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
