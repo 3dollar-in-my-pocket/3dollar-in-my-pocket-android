@@ -30,6 +30,8 @@
     <color name="color_999999">#999999</color>
     <color name="color_99FFFFFF">#99FFFFFF</color>
     <color name="color_FFA1AA">#FFA1AA</color>
+    <color name="color_FF5C43">#FF5C43</color>
+    <color name="color_33FF5C43">#33FF5C43</color>
 
     <color name="gray5">#4f4f4f</color>
     <color name="gray10">#E2E2E2</color>

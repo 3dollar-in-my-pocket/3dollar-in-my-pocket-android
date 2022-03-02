@@ -9,6 +9,10 @@
             name="viewModel"
             type="com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel" />
 
+        <variable
+            name="popupViewModel"
+            type="com.zion830.threedollars.ui.popup.PopupViewModel" />
+
         <import type="com.zion830.threedollars.utils.StringUtils" />
 
         <import type="android.view.View" />
@@ -214,6 +218,16 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/no_store"
                         android:textColor="@color/color_gray1"
+                        android:visibility="gone" />
+
+                    <include
+                        android:id="@+id/itemStoreListAd"
+                        layout="@layout/item_store_list_ad"
+                        visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.popups.empty}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="30dp"
                         android:visibility="gone" />
 
                     <LinearLayout
