@@ -25,6 +25,7 @@ import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class NearStoreRecyclerAdapter(
@@ -127,11 +128,7 @@ class NearStoreAdViewHolder(parent: ViewGroup) :
         if (!item.bgColor.isNullOrEmpty()) {
             binding.layoutItem.setBackgroundColor(item.bgColor.toColorInt())
         }
-
-        Glide.with(binding.ivAdImage)
-            .load(item.imageUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(binding.ivAdImage)
+        binding.ivAdImage.loadUrlImg(item.imageUrl)
     }
 }
 

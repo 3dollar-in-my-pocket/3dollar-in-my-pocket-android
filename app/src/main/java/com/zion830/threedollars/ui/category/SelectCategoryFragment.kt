@@ -20,6 +20,7 @@ import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class SelectCategoryFragment :
@@ -75,10 +76,7 @@ class SelectCategoryFragment :
                 }
                 popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
 
-                Glide.with(requireContext())
-                    .load(popup.imageUrl)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(binding.ivAdImage)
+                binding.ivAdImage.loadUrlImg(popup.imageUrl)
 
                 binding.cdAdCategory.setOnClickListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))

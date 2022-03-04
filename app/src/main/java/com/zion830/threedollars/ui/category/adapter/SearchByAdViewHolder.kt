@@ -9,6 +9,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreListAdBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class SearchByAdViewHolder(parent: ViewGroup) :
@@ -24,10 +25,6 @@ class SearchByAdViewHolder(parent: ViewGroup) :
         if (!item.bgColor.isNullOrEmpty()) {
             binding.layoutItem.setBackgroundColor(item.bgColor.toColorInt())
         }
-
-        Glide.with(binding.ivAdImage)
-            .load(item.imageUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(binding.ivAdImage)
+        binding.ivAdImage.loadUrlImg(item.imageUrl)
     }
 }

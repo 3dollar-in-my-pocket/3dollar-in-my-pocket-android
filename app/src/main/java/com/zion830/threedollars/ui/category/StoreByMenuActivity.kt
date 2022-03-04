@@ -21,6 +21,7 @@ import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class StoreByMenuActivity :
@@ -99,10 +100,7 @@ class StoreByMenuActivity :
 
                     popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
-                    Glide.with(ivAdImage)
-                        .load(popups[0].imageUrl)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(ivAdImage)
+                    ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                     tvDetail.setOnClickListener {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
