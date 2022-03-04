@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home.adapter
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -119,12 +120,12 @@ class NearStoreAdViewHolder(parent: ViewGroup) :
     override fun bind(item: Popups, listener: OnItemClickListener<Popups>?) {
         super.bind(item, listener)
         if (!item.fontColor.isNullOrEmpty()) {
-            binding.tvAdTitle.setTextColor(Color.parseColor(item.fontColor))
-            binding.tvAdBody.setTextColor(Color.parseColor(item.fontColor))
+            binding.tvAdTitle.setTextColor(item.fontColor.toColorInt())
+            binding.tvAdBody.setTextColor(item.fontColor.toColorInt())
         }
 
         if (!item.bgColor.isNullOrEmpty()) {
-            binding.layoutItem.setBackgroundColor(Color.parseColor(item.bgColor))
+            binding.layoutItem.setBackgroundColor(item.bgColor.toColorInt())
         }
 
         Glide.with(binding.ivAdImage)

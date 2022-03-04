@@ -2,9 +2,9 @@ package com.zion830.threedollars.ui.category
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import androidx.activity.viewModels
+import androidx.core.graphics.toColorInt
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.ads.AdRequest
@@ -91,15 +91,13 @@ class StoreByMenuActivity :
             if (popups.isNotEmpty()) {
                 binding.itemStoreListAd.run {
                     tvAdTitle.text = popups[0].title
-                    if (!popups[0].fontColor.isNullOrEmpty()) {
-                        tvAdTitle.setTextColor(Color.parseColor(popups[0].fontColor))
-                        tvAdBody.setTextColor(Color.parseColor(popups[0].fontColor))
+                    popups[0].fontColor?.let {
+                        tvAdTitle.setTextColor(it.toColorInt())
+                        tvAdBody.setTextColor(it.toColorInt())
                     }
                     tvAdBody.text = popups[0].subTitle
 
-                    if (!popups[0].bgColor.isNullOrEmpty()) {
-                        layoutItem.setBackgroundColor(Color.parseColor(popups[0].bgColor))
-                    }
+                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
                     Glide.with(ivAdImage)
                         .load(popups[0].imageUrl)
@@ -110,8 +108,8 @@ class StoreByMenuActivity :
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                     }
                 }
-                    storeByDistanceAdapters.submitAdList(popups)
-                    storeByRatingAdapters.submitAdList(popups)
+                storeByDistanceAdapters.submitAdList(popups)
+                storeByRatingAdapters.submitAdList(popups)
             }
         })
         viewModel.storeByRating.observe(this) {

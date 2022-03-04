@@ -1,8 +1,8 @@
 package com.zion830.threedollars.ui.category.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.zion830.threedollars.R
@@ -18,11 +18,11 @@ class SearchByAdViewHolder(parent: ViewGroup) :
     override fun bind(item: Popups, listener: OnItemClickListener<Popups>?) {
         super.bind(item, listener)
         if (!item.fontColor.isNullOrEmpty()) {
-            binding.tvAdTitle.setTextColor(Color.parseColor(item.fontColor))
-            binding.tvAdBody.setTextColor(Color.parseColor(item.fontColor))
+            binding.tvAdTitle.setTextColor(item.fontColor.toColorInt())
+            binding.tvAdBody.setTextColor(item.fontColor.toColorInt())
         }
         if (!item.bgColor.isNullOrEmpty()) {
-            binding.layoutItem.setBackgroundColor(Color.parseColor(item.bgColor))
+            binding.layoutItem.setBackgroundColor(item.bgColor.toColorInt())
         }
 
         Glide.with(binding.ivAdImage)

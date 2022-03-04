@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import androidx.core.graphics.toColorInt
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
@@ -65,12 +66,14 @@ class SelectCategoryFragment :
             if (popups.isNotEmpty()) {
                 val popup = popups[0]
                 binding.tvAdTitle.text = popup.title
-                binding.tvAdTitle.setTextColor(Color.parseColor(popup.fontColor))
 
                 binding.tvAdBody.text = popup.subTitle
-                binding.tvAdBody.setTextColor(Color.parseColor(popup.fontColor))
 
-                binding.cdAdCategory.setCardBackgroundColor(Color.parseColor(popup.bgColor))
+                popup.fontColor?.let {
+                    binding.tvAdTitle.setTextColor(it.toColorInt())
+                    binding.tvAdBody.setTextColor(it.toColorInt())
+                }
+                popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
 
                 Glide.with(requireContext())
                     .load(popup.imageUrl)
