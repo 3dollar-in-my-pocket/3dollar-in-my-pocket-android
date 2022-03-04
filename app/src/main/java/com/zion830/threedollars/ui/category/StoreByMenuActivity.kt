@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.ads.AdRequest
-import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
@@ -46,11 +45,11 @@ class StoreByMenuActivity :
         }
     }
     private val storeByDistanceAdapters by lazy {
-        SearchByDistanceRecyclerAdapter(listener,adListener)
+        SearchByDistanceRecyclerAdapter(listener, adListener)
     }
 
     private val storeByRatingAdapters by lazy {
-        SearchByRatingRecyclerAdapter(listener,adListener)
+        SearchByRatingRecyclerAdapter(listener, adListener)
     }
 
     override fun onTouch() {
