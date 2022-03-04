@@ -66,6 +66,9 @@ class SearchByDistanceRecyclerAdapter(
     }
 
     fun submitAdList(newItems: List<AdAndStoreItem>) {
+        if (items.isEmpty()) {
+            return
+        }
         val list = items.filterIsInstance<StoreInfo>()
         items.clear()
         items.addAll(list)

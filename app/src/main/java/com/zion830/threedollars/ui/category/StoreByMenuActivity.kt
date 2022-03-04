@@ -110,12 +110,8 @@ class StoreByMenuActivity :
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                     }
                 }
-                if (storeByDistanceAdapters.itemCount != 0) {
                     storeByDistanceAdapters.submitAdList(popups)
-                }
-                if (storeByRatingAdapters.itemCount != 0) {
                     storeByRatingAdapters.submitAdList(popups)
-                }
             }
         })
         viewModel.storeByRating.observe(this) {

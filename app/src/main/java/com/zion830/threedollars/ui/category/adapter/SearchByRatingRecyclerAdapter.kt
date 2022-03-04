@@ -13,7 +13,7 @@ import zion830.com.common.listener.OnItemClickListener
 
 class SearchByRatingRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>,
-    private val adListener : OnItemClickListener<Popups>
+    private val adListener: OnItemClickListener<Popups>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = arrayListOf<AdAndStoreItem>()
 
@@ -63,6 +63,9 @@ class SearchByRatingRecyclerAdapter(
     }
 
     fun submitAdList(newItems: List<AdAndStoreItem>) {
+        if (items.isEmpty()) {
+            return
+        }
         val list = items.filterIsInstance<StoreInfo>()
         items.clear()
         items.addAll(list)
