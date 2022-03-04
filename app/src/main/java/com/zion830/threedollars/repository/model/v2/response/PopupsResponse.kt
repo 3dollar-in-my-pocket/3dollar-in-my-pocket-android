@@ -2,6 +2,7 @@ package com.zion830.threedollars.repository.model.v2.response
 
 import com.google.gson.annotations.SerializedName
 
+interface AdAndStoreItem
 
 data class PopupsResponse(
     @SerializedName("data")
@@ -14,9 +15,9 @@ data class PopupsResponse(
 
 data class Popups(
     @SerializedName("bgColor")
-    val bgColor: String = "",
+    val bgColor: String? = "",
     @SerializedName("fontColor")
-    val fontColor: String = "",
+    val fontColor: String? = "",
     @SerializedName("imageUrl")
     val imageUrl: String = "",
     @SerializedName("linkUrl")
@@ -25,4 +26,4 @@ data class Popups(
     val subTitle: String = "",
     @SerializedName("title")
     val title: String = ""
-)
+) : AdAndStoreItem

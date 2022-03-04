@@ -3,8 +3,10 @@ package com.zion830.threedollars.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.repository.PopupRepository
 import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
 import com.zion830.threedollars.utils.getCurrentLocationName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,8 +15,9 @@ import zion830.com.common.base.BaseViewModel
 class HomeViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
+    private val popupRepository = PopupRepository()
 
-    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
+    val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()
 
     val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
 
@@ -28,12 +31,21 @@ class HomeViewModel : BaseViewModel() {
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun requestStoreInfo(location: LatLng) {
+    fun requestHomeItem(location: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getAllStore(location.latitude, location.longitude)
-            if (data.isSuccessful) {
-                nearStoreInfo.postValue(data.body()?.data)
+            val storeData = repository.getAllStore(location.latitude, location.longitude)
+            val adData = popupRepository.getPopups("MAIN_PAGE_CARD").body()?.data
+
+            val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
+            storeData.body()?.data?.let { resultList.addAll(it) }
+
+            if (resultList.isEmpty()) {
+                resultList.add(HomeStoreEmptyResponse())
             }
+            if (adData != null) {
+                adData.firstOrNull()?.let { resultList.add(1, it) }
+            }
+            nearStoreInfo.postValue(resultList.toList())
         }
     }
 }

@@ -2,25 +2,35 @@ package com.zion830.threedollars.ui.category
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.viewModels
+import androidx.core.graphics.toColorInt
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.ads.AdRequest
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
+import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
+import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
 import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class StoreByMenuActivity :
-    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu), OnMapTouchListener {
+    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu),
+    OnMapTouchListener {
 
     override val viewModel: StoreByMenuViewModel by viewModels()
+
+    private val popupViewModel: PopupViewModel by viewModels()
 
     private lateinit var menuType: CategoryInfo
 
@@ -30,12 +40,17 @@ class StoreByMenuActivity :
             startActivity(intent)
         }
     }
+    private val adListener = object : OnItemClickListener<Popups> {
+        override fun onClick(item: Popups) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+        }
+    }
     private val storeByDistanceAdapters by lazy {
-        SearchByDistanceRecyclerAdapter(listener)
+        SearchByDistanceRecyclerAdapter(listener, adListener)
     }
 
     private val storeByRatingAdapters by lazy {
-        SearchByRatingRecyclerAdapter(listener)
+        SearchByRatingRecyclerAdapter(listener, adListener)
     }
 
     override fun onTouch() {
@@ -73,6 +88,28 @@ class StoreByMenuActivity :
                 viewModel.changeSortType(SortType.RATING, currentPosition)
             }
         }
+        popupViewModel.popups.observe(this, { popups ->
+            if (popups.isNotEmpty()) {
+                binding.itemStoreListAd.run {
+                    tvAdTitle.text = popups[0].title
+                    popups[0].fontColor?.let {
+                        tvAdTitle.setTextColor(it.toColorInt())
+                        tvAdBody.setTextColor(it.toColorInt())
+                    }
+                    tvAdBody.text = popups[0].subTitle
+
+                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+
+                    ivAdImage.loadUrlImg(popups[0].imageUrl)
+
+                    tvDetail.setOnClickListener {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                    }
+                }
+                storeByDistanceAdapters.submitAdList(popups)
+                storeByRatingAdapters.submitAdList(popups)
+            }
+        })
         viewModel.storeByRating.observe(this) {
             val storeInfoList = if (binding.cbCertification.isChecked) {
                 it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
@@ -80,6 +117,7 @@ class StoreByMenuActivity :
                 it
             }
             storeByRatingAdapters.submitList(storeInfoList)
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
         viewModel.storeByDistance.observe(this) {
             val storeInfoList = if (binding.cbCertification.isChecked) {
@@ -88,6 +126,7 @@ class StoreByMenuActivity :
                 it
             }
             storeByDistanceAdapters.submitList(storeInfoList)
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
         binding.btnBack.setOnClickListener {
             finish()
