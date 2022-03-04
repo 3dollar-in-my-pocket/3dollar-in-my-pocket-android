@@ -7,7 +7,6 @@ import com.zion830.threedollars.repository.PopupRepository
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.getCurrentLocationName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,15 +39,11 @@ class HomeViewModel : BaseViewModel() {
             val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
             storeData.body()?.data?.let { resultList.addAll(it) }
 
-            if (resultList.isNotEmpty()) {
-                if (adData != null) {
-                    adData.firstOrNull()?.let { resultList.add(1, it) }
-                }
-            } else {
+            if (resultList.isEmpty()) {
                 resultList.add(HomeStoreEmptyResponse())
-                if (adData != null) {
-                    adData.firstOrNull()?.let { resultList.add(1, it) }
-                }
+            }
+            if (adData != null) {
+                adData.firstOrNull()?.let { resultList.add(1, it) }
             }
             nearStoreInfo.postValue(resultList.toList())
         }
