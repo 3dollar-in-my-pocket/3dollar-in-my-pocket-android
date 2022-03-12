@@ -47,36 +47,40 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_ad_title"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="6dp"
-                android:text="@{item.title}"
-                android:textColor="@color/black"
-                android:textSize="16sp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_ad"
-                tools:text="가3팀이 붕어빵을 판다?" />
+                app:layout_constraintTop_toBottomOf="@id/tv_ad">
 
-            <TextView
-                android:id="@+id/tv_ad_body"
-                style="@style/LightTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="6dp"
-                android:text="@{item.subTitle}"
-                android:textColor="@color/color_FFA1AA"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_ad_title"
-                tools:text="일이삼사오육칠팔구십일이삼사일이삼사오육칠팔구십일이삼사" />
+                <TextView
+                    android:id="@+id/tv_ad_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="6dp"
+                    android:text="@{item.title}"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    tools:text="가3팀이 붕어빵을 판다?" />
+
+                <TextView
+                    android:id="@+id/tv_ad_body"
+                    style="@style/LightTextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="6dp"
+                    android:text="@{item.subTitle}"
+                    android:textColor="@color/color_FFA1AA"
+                    android:textSize="12sp"
+                    tools:text="일이삼사오육칠팔구십일이삼사일이삼사오육칠팔구십일이삼사" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/iv_ad_image"
