@@ -95,20 +95,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:listitem="@layout/item_store_location" />
-
-            <ImageButton
-                android:id="@+id/ib_toss"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="240dp"
-                android:background="@drawable/circle_white"
-                android:backgroundTint="@color/color_toss"
-                android:elevation="8dp"
-                android:foreground="?android:attr/actionBarItemBackground"
-                android:src="@drawable/ic_toss_big"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

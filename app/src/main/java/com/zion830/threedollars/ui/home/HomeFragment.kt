@@ -2,10 +2,8 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
@@ -15,7 +13,6 @@ import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
@@ -124,13 +121,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
-        binding.ibToss.setOnClickListener {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
-            startActivity(browserIntent)
-            hackleApp.track(Constants.TOSS_BTN_CLICKED)
-        }
-
         naverMapFragment.moveToCurrentLocation(false)
     }
 
