@@ -131,7 +131,7 @@ fun Context.shareWithKakao(shareFormat: ShareFormat) {
             content = Content(
                 title = getString(R.string.share_kakao_title),
                 description = getString(R.string.share_kakao),
-                imageUrl = BuildConfig.BASE_URL + "/images/share-with-kakao.png",
+                imageUrl = BuildConfig.BASE_URL + "api/images/share-with-kakao.png",
                 link = Link(getString(R.string.download_url), getString(R.string.download_url))
             ),
             buttons = listOf(
