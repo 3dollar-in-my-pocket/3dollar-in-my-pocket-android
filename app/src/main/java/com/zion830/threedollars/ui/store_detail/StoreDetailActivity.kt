@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.repository.model.v2.response.my.Review
@@ -78,6 +79,8 @@ class StoreDetailActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
+
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
@@ -127,6 +130,7 @@ class StoreDetailActivity :
                         .show()
                 }
             }.startMultiImage { uriData ->
+                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
@@ -135,13 +139,8 @@ class StoreDetailActivity :
                 }
             }
         }
-        binding.btnSendMoney.setOnClickListener {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
-            startActivity(browserIntent)
-            hackleApp.track(Constants.TOSS_BTN_CLICKED)
-        }
         binding.btnShare.setOnClickListener {
+            EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
             val shareFormat = ShareFormat(
                 getString(R.string.kakao_map_format),
                 binding.tvStoreName.text.toString(),
@@ -157,6 +156,7 @@ class StoreDetailActivity :
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.btnAddStoreInfo.setOnClickListener {
+            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 EditStoreDetailFragment(),
@@ -165,9 +165,11 @@ class StoreDetailActivity :
             )
         }
         binding.btnCertification.setOnClickListener {
+            EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
         }
         viewModel.addReviewResult.observe(this) {
+            EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
             viewModel.requestStoreInfo(
                 storeId,
                 viewModel.storeInfo.value?.latitude,

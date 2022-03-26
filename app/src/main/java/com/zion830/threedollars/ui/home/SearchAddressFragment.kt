@@ -5,6 +5,8 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.repository.model.v2.response.kakao.Document
@@ -36,9 +38,11 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         })
         binding.rvSearchResult.adapter = adapter
         binding.btnBack.setOnClickListener {
+            EventTracker.logEvent(Constants.CLOSE_BTN_CLICKED)
             requireActivity().onBackPressed()
         }
         binding.btnSearch.setOnClickListener {
+            EventTracker.logEvent(Constants.LOCATION_ITEM_CLICKED)
             if (binding.etSearch.text.isNullOrBlank()) {
                 showToast("검색어가 없습니다.")
             } else {

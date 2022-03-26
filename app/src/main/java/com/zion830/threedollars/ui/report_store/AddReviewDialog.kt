@@ -12,6 +12,8 @@ import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.repository.model.v2.request.NewReview
@@ -37,6 +39,7 @@ class AddReviewDialog(
         binding.lifecycleOwner = this
 
         binding.ibClose.setOnClickListener {
+            EventTracker.logEvent(Constants.REVIEW_WRITE_CLOSE_BTN_CLICKED)
             dismiss()
         }
 
@@ -46,6 +49,7 @@ class AddReviewDialog(
         }
 
         binding.btnFinish.setOnClickListener {
+            EventTracker.logEvent(Constants.REVIEW_REGISTER_BTN_CLICKED)
             if (binding.rating.rating == 0f) {
                 showToast(R.string.over_rating_1)
                 return@setOnClickListener
@@ -59,6 +63,9 @@ class AddReviewDialog(
                 viewModel.editReview(content.reviewId, newReview)
                 dismiss()
             }
+        }
+        binding.rating.setOnClickListener {
+            EventTracker.logEvent(Constants.STAR_BTN_CLICKED)
         }
         binding.etContent.addTextChangedListener {
             binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()

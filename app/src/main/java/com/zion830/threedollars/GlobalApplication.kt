@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.repository.model.LoginType
@@ -21,6 +22,9 @@ class GlobalApplication : Application() {
 
     companion object {
         private lateinit var APPLICATION_CONTEXT: Context
+        lateinit var eventTracker: FirebaseAnalytics
+            private set
+
         private val googleSignInOptions by lazy {
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
@@ -47,6 +51,7 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         APPLICATION_CONTEXT = applicationContext
+        eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
 
         RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)

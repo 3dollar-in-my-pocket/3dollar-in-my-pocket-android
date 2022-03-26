@@ -49,6 +49,8 @@ class UserInfoViewModel : BaseViewModel() {
     }
 
     fun updateName() {
+        EventTracker.logEvent(Constants.NICKNAME_CHANGE_BTN_CLICKED)
+
         if (userName.value.isNullOrBlank()) {
             return
         }

@@ -11,12 +11,14 @@ object Constants {
 
     /* GA event key */
     // common
+    const val REFERRAL = "referral"
+    const val CATEGORY_BANNER_CLICKED = "category_banner_clicked"
     const val BACK_BTN_CLICKED = "back_button_clicked"
     const val CURRENT_LOCATION_BTN_CLICKED = "current_location_button_clicked"
-    const val TOSS_BTN_CLICKED = "toss_button_clicked"
 
     //login
     const val KAKAO_BTN_CLICKED = "kakao_login_button_clicked"
+    const val GOOGLE_BTN_CLICKED = "google_login_button_clicked"
 
     // nickname_init
     const val NICKNAME_CHANGE_BTN_CLICKED = "nickname_change_button_clicked"
@@ -42,8 +44,9 @@ object Constants {
     const val STORE_MODIFY_BTN_CLICKED = "store_modify_button_clicked"
     const val IMAGE_ATTACH_BTN_CLICKED = "image_attach_button_clicked"
     const val REVIEW_WRITE_BTN_CLICKED = "review_write_button_clicked"
+    const val STORE_CERTIFICATION_BTN_CLICKED = "store_certification_button_clicked"
 
-    // review writrequestStoreInfo e
+    // review
     const val REVIEW_WRITE_CLOSE_BTN_CLICKED = "review_write_close_button_clicked"
     const val STAR_BTN_CLICKED = "review_write_close_button_clicked"
     const val REVIEW_REGISTER_BTN_CLICKED = "review_write_close_button_clicked"
@@ -63,6 +66,7 @@ object Constants {
     // my info
     const val SETTING_BTN_CLICKED = "setting_button_clicked"
     const val SHOW_ALL_MY_STORE_BTN_CLICKED = "show_all_my_store_button_clicked"
+    const val SHOW_ALL_MY_MEDAL_BTN_CLICKED = "show_all_my_medal_button_clicked"
     const val SHOW_ALL_MY_REVIEW_BTN_CLICKED = "show_all_my_review_button_clicked"
 
     // setting

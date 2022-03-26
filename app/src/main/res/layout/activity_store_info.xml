@@ -195,20 +195,6 @@
                                 android:text="@string/share"
                                 android:textColor="@color/color_black"
                                 android:textSize="16sp" />
-
-                            <Button
-                                android:id="@+id/btn_send_money"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:background="@android:color/transparent"
-                                android:drawableStart="@drawable/ic_toss_small"
-                                android:drawablePadding="-24dp"
-                                android:paddingStart="24dp"
-                                android:text="@string/send_money"
-                                android:textColor="@color/color_toss"
-                                android:textSize="16sp"
-                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

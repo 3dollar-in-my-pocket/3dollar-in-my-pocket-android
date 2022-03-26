@@ -7,6 +7,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
@@ -57,6 +58,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             adapter.submitList(store)
         }
         binding.layoutAddress.setOnClickListener {
+            EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 SearchAddressFragment(),
@@ -67,6 +69,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
                 if (item != null) {
+                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
                     val intent =
                         StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)

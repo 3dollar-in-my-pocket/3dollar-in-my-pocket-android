@@ -5,9 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.viewModels
 import androidx.core.graphics.toColorInt
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.ads.AdRequest
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
@@ -36,6 +36,7 @@ class StoreByMenuActivity :
 
     private val listener = object : OnItemClickListener<StoreInfo> {
         override fun onClick(item: StoreInfo) {
+            EventTracker.logEvent(Constants.STORE_LIST_ITEM_CLICKED)
             val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
             startActivity(intent)
         }
@@ -77,12 +78,14 @@ class StoreByMenuActivity :
             }
         }
         binding.btnSortByDistance.setOnClickListener {
+            EventTracker.logEvent(Constants.ORDER_BY_DISTANCE_BTN_CLICKED)
             naverMapFragment.moveToCurrentLocation()
             naverMapFragment.currentPosition?.let { currentPosition ->
                 viewModel.changeSortType(SortType.DISTANCE, currentPosition)
             }
         }
         binding.btnSortByScore.setOnClickListener {
+            EventTracker.logEvent(Constants.ORDER_BY_RATING_BTN_CLICKED)
             naverMapFragment.moveToCurrentLocation()
             naverMapFragment.currentPosition?.let { currentPosition ->
                 viewModel.changeSortType(SortType.RATING, currentPosition)

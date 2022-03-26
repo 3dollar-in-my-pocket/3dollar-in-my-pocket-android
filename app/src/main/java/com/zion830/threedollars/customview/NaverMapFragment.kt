@@ -13,6 +13,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -84,6 +86,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("CURRENT_LOCATION_BTN_CLICKED") {}
             requireActivity().requestPermissionIfNeeds()
             moveToCurrentLocation(false)
         }

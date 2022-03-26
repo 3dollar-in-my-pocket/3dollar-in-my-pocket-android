@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.category
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import androidx.core.graphics.toColorInt
 import androidx.core.text.bold
@@ -10,10 +9,10 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSelectCategoryBinding
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
@@ -43,6 +42,7 @@ class SelectCategoryFragment :
         val categoryAdapter =
             SelectCategoryRecyclerAdapter(object : OnItemClickListener<CategoryInfo> {
                 override fun onClick(item: CategoryInfo) {
+                    EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
                     startActivity(StoreByMenuActivity.getIntent(requireContext(), item))
                 }
             })
@@ -80,7 +80,7 @@ class SelectCategoryFragment :
 
                 binding.cdAdCategory.setOnClickListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                    firebaseAnalytics.logEvent("category_banner_clicked") {
+                    firebaseAnalytics.logEvent(Constants.CATEGORY_BANNER_CLICKED) {
                         param("referral", "category_page")
                     }
                 }
