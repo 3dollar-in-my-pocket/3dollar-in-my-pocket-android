@@ -8,6 +8,8 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import io.hackle.android.HackleApp
 import zion830.com.common.BR
 
@@ -19,6 +21,14 @@ abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
     protected lateinit var binding: B
 
     protected abstract val viewModel: VM
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, this::class.java.simpleName)
+            param(FirebaseAnalytics.Param.SCREEN_CLASS, this::class.java.simpleName)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, layoutResId, container, false)

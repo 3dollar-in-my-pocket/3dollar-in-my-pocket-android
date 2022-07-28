@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
 import com.zion830.threedollars.repository.model.v2.request.MyMenu
@@ -34,6 +36,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.btnEditAddress.setOnClickListener {
+            EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
             requireActivity().supportFragmentManager.popBackStack()
         }
         viewModel.selectedLocation.observe(viewLifecycleOwner) {
@@ -67,6 +70,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
         binding.rvMenu.itemAnimator = null
         binding.btnSubmit.setOnClickListener {
+            EventTracker.logEvent(Constants.STORE_REGISTER_SUBMIT_BTN_CLICKED)
             saveStore()
         }
         viewModel.newStoreId.observe(this) {

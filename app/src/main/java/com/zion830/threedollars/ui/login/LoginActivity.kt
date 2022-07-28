@@ -12,10 +12,8 @@ import com.google.android.gms.tasks.Task
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.zion830.threedollars.*
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.MainActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -36,10 +34,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     override fun initView() {
         observeUiData()
         binding.btnLoginKakao.onSingleClick {
+            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.KAKAO)
             tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
+            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }

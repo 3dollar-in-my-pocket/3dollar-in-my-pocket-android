@@ -2,20 +2,18 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
@@ -60,6 +58,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             adapter.submitList(store)
         }
         binding.layoutAddress.setOnClickListener {
+            EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 SearchAddressFragment(),
@@ -70,6 +69,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
                 if (item != null) {
+                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
                     val intent =
                         StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
@@ -124,13 +124,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
-        binding.ibToss.setOnClickListener {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.toss_scheme)))
-            startActivity(browserIntent)
-            hackleApp.track(Constants.TOSS_BTN_CLICKED)
-        }
-
         naverMapFragment.moveToCurrentLocation(false)
     }
 
