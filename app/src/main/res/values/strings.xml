@@ -96,6 +96,8 @@
     </string-array>
     
     <string name="road">길거리</string>
+    <string name="road_food">길거리음식</string>
+    <string name="food_truck">푸드트럭</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
 
@@ -245,7 +247,17 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
-    
+
+    <string-array name="day_name">
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
+        <item>일요일</item>
+    </string-array>
+
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
@@ -269,4 +281,16 @@
     <string name="dialog_near_exist_button_finish">이 위치가 맞아요!</string>
     <string name="ad">광고</string>
     <string name="detail"><![CDATA[자세히 보기 >]]></string>
+    <string name="evaluation">리뷰 남기기</string>
+    <string name="phone_number">연락처</string>
+    <string name="sns">SNS</string>
+    <string name="owner_one_word">사장님 한마디</string>
+    <string name="shortcut">바로가기</string>
+    <string name="appearance_day">영업 일정</string>
+    <string name="store_feedback">가게 평가</string>
+    <string name="review_title">리뷰 남기기</string>
+    <string name="how_was_the_food_truck">푸드트럭은\n어떠셨나요?</string>
+    <string name="select_multi_review">! 여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="review_complete">리뷰 남기기 완료!</string>
+    <string name="review_toast">소중한 리뷰가 사장님께 전달되었습니다!</string>
 </resources>
