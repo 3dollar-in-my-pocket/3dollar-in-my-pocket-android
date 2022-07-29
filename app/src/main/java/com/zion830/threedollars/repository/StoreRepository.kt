@@ -4,6 +4,7 @@ import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.network.RetrofitBuilder
+import com.zion830.threedollars.repository.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
@@ -99,5 +100,38 @@ class StoreRepository(
     suspend fun getNearExist(
         latitude: Double,
         longitude: Double
-    ): Response<NearExistResponse> = newService.getNearExists(latitude = latitude, longitude = longitude)
+    ): Response<NearExistResponse> =
+        newService.getNearExists(latitude = latitude, longitude = longitude)
+
+    suspend fun getBossCategory(): Response<BossCategoriesResponse> = newService.getBossCategories()
+
+    suspend fun getBossNearStore(
+        latitude: Double,
+        longitude: Double
+    ): Response<BossNearStoreResponse> = newService.getBossNearStore(
+        latitude = latitude,
+        longitude = longitude,
+        mapLatitude = latitude,
+        mapLongitude = longitude,
+        orderType = DISTANCE_ASC
+    )
+
+    suspend fun getBossStoreDetail(
+        bossStoreId: String,
+        latitude: Double,
+        longitude: Double
+    ): Response<BossStoreDetailResponse> = newService.getBossStoreDetail(
+        bossStoreId = bossStoreId,
+        latitude = latitude,
+        longitude = longitude
+    )
+
+    suspend fun getBossStoreFeedbackFull(bossStoreId: String): Response<BossStoreFeedbackFullResponse> =
+        newService.getBossStoreFeedbackFull(bossStoreId = bossStoreId)
+
+    suspend fun getBossStoreFeedbackType(): Response<BossStoreFeedbackTypeResponse> =
+        newService.getBossStoreFeedbackType()
+
+    suspend fun postBossStoreFeedback(bossStoreId: String,bossStoreFeedbackRequest: BossStoreFeedbackRequest): Response<BaseResponse<String>> =
+        newService.postBossStoreFeedback(bossStoreId,bossStoreFeedbackRequest)
 }
