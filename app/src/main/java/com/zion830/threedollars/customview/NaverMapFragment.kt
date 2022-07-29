@@ -22,6 +22,8 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
+import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 
@@ -126,8 +128,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     fun addStoreMarkers(
         @DrawableRes drawableRes: Int,
-        storeInfoList: List<StoreInfo>,
-        onClick: (marker: StoreInfo) -> Unit = {}
+        list: List<AdAndStoreItem>,
+        onClick: (marker: AdAndStoreItem) -> Unit = {}
     ) {
         if (naverMap == null) {
             return
@@ -136,13 +138,19 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.forEach { it.map = null }
         markers.clear()
 
-        val newMarkers = storeInfoList.map { storeInfo ->
+        val newMarkers = list.map { item ->
             Marker().apply {
-                this.position = LatLng(storeInfo.latitude, storeInfo.longitude)
+
+                this.position = if(item is StoreInfo) {
+                    LatLng(item.latitude, item.longitude)
+                }else {
+                    val location = (item as BossNearStoreResponse.BossNearStoreModel).location
+                    LatLng(location.latitude,location.longitude)
+                }
                 this.icon = OverlayImage.fromResource(drawableRes)
                 this.map = naverMap
                 setOnClickListener {
-                    onClick(storeInfo)
+                    onClick(item)
                     true
                 }
             }
