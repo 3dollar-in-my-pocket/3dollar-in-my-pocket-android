@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.home.adapter.BossCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.RoadFoodCategoriesRecyclerAdapter
@@ -78,8 +80,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
                 if (isRoadFoodMode) {
                     viewModel.getRoadFoodCategory()
+                    naverMapFragment.onActivityResult(
+                        Constants.MODE_ROAD_FOOD,
+                        Activity.RESULT_OK,
+                        null
+                    )
                 } else {
                     viewModel.getBossCategory()
+                    naverMapFragment.onActivityResult(
+                        Constants.MODE_FOOD_TRUCK,
+                        Activity.RESULT_OK,
+                        null
+                    )
                 }
                 setCompoundDrawablesRelativeWithIntrinsicBounds(
                     if (isRoadFoodMode) R.drawable.ic_sync_pink else R.drawable.ic_sync_green,
@@ -123,7 +135,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }, object : OnItemClickListener<BossNearStoreResponse.BossNearStoreModel?> {
             override fun onClick(item: BossNearStoreResponse.BossNearStoreModel?) {
-                // TODO: 상세 페이지로 이동
+                if (item != null) {
+                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
+                    val intent =
+                        FoodTruckStoreDetailActivity.getIntent(
+                            requireContext(),
+                            item.bossStoreId,
+                            item.location.latitude,
+                            item.location.longitude
+                        )
+                    startActivity(intent)
+                } else {
+                    showToast(R.string.exist_store_error)
+                }
             }
         },
             object : OnItemClickListener<Popups> {
@@ -179,7 +203,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                                 adapter.focusedIndex = position
                             }
                             naverMapFragment.updateMarkerIcon(
-                                R.drawable.ic_marker,
+                                if (isRoadFoodMode) R.drawable.ic_marker else R.drawable.ic_marker_green,
                                 adapter.focusedIndex
                             )
                             adapter.notifyDataSetChanged()
@@ -222,7 +246,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         if (position >= 0) {
             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
             adapter.focusedIndex = position
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(
+                if (isRoadFoodMode) R.drawable.ic_marker else R.drawable.ic_marker_green,
+                adapter.focusedIndex
+            )
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is StoreInfo) {
                     LatLng(adAndStoreItem.latitude, adAndStoreItem.longitude)

@@ -62,6 +62,13 @@
             android:name=".ui.addstore.activity.NewStoreActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
