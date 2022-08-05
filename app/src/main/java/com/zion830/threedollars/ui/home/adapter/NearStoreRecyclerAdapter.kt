@@ -213,7 +213,13 @@ class BossNearStoreViewHolder(parent: ViewGroup?) :
     fun bindPosition(isSelected: Boolean) {
         binding.isSelectedItem = isSelected
         binding.tvDistance.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            if (isSelected) R.drawable.ic_near_line else R.drawable.ic_near,
+            if (isSelected) R.drawable.ic_near_line else R.drawable.ic_near_green,
+            0,
+            0,
+            0
+        )
+        binding.tvReviewCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (isSelected) R.drawable.ic_review_white else R.drawable.ic_review_green,
             0,
             0,
             0
@@ -236,6 +242,7 @@ class BossNearStoreViewHolder(parent: ViewGroup?) :
         }
         val categories = item.categories.joinToString(" ") { it.name.toString() }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
+        binding.tvReviewCount.text = "${item.totalFeedbacksCounts}개"
         binding.tvStoreName.text = item.name
         binding.tvCategory.text = categories
     }
