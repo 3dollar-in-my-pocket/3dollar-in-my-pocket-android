@@ -8,6 +8,8 @@ object Constants {
     const val SHOW_STORE_DETAIL: Int = 12
     const val GET_LOCATION_PERMISSION: Int = 13
     const val GOOGLE_SIGN_IN: Int = 14
+    const val MODE_ROAD_FOOD: Int = 15
+    const val MODE_FOOD_TRUCK: Int = 16
 
     /* GA event key */
     // common

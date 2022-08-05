@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.repository.model.LoginType
+import com.zion830.threedollars.repository.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import java.lang.reflect.Type
 
@@ -17,6 +18,7 @@ object SharedPrefUtils {
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
     private const val CATEGORY_LIST = "category_list"
+    private const val FEED_BACK_LIST = "feed_back_list"
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
     private const val POPUP_URL = "popup_url"
@@ -79,6 +81,10 @@ object SharedPrefUtils {
         saveList(categoryInfo, CATEGORY_LIST)
     }
 
+    fun saveFeedbackType(feedbackType: List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>) {
+        saveList(feedbackType, FEED_BACK_LIST)
+    }
+
     fun saveLoginType(loginType: LoginType?) = sharedPreferences.edit {
         putString(LOGIN_TYPE, loginType?.socialName)
         commit()
@@ -98,6 +104,17 @@ object SharedPrefUtils {
             val gson = Gson()
             val json = sharedPreferences.getString(CATEGORY_LIST, null)
             val type: Type = object : TypeToken<List<CategoryInfo>?>() {}.type
+            gson.fromJson(json, type)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    fun getFeedbackType(): List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel> {
+        return try {
+            val gson = Gson()
+            val json = sharedPreferences.getString(FEED_BACK_LIST, null)
+            val type: Type = object : TypeToken<List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
