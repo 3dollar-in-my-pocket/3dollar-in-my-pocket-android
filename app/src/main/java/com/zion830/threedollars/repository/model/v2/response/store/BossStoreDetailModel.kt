@@ -3,6 +3,8 @@ package com.zion830.threedollars.repository.model.v2.response.store
 
 import com.google.gson.annotations.SerializedName
 
+interface BossStoreDetailItem
+
 data class BossStoreDetailModel(
     @SerializedName("appearanceDays")
     val appearanceDays: List<AppearanceDay>?,
@@ -49,7 +51,7 @@ data class BossStoreDetailModel(
         val name: String?,
         @SerializedName("price")
         val price: Int?
-    )
+    ) : BossStoreDetailItem
 
     data class AppearanceDay(
         @SerializedName("dayOfTheWeek")

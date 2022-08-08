@@ -60,13 +60,33 @@ fun ImageView.loadUrlImg(url: String?) {
 @SuppressLint("RestrictedApi")
 @BindingAdapter("loadRoundImage")
 fun ImageView.loadRoundUriImg(uri: Uri?) {
-    val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
+    val requestOptions =
+        RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
     setPadding(0, 0, 0, 0)
 
     Glide.with(context)
         .load(uri)
         .transition(DrawableTransitionOptions.withCrossFade())
         .apply(requestOptions)
+        .into(this)
+}
+
+
+@SuppressLint("RestrictedApi")
+@BindingAdapter("loadCircleImage")
+fun ImageView.loadCircleStringImg(uri: String?) {
+    Glide.with(context)
+        .load(uri)
+        .circleCrop()
+        .into(this)
+}
+
+@SuppressLint("RestrictedApi")
+@BindingAdapter("loadCircleImage")
+fun ImageView.loadCircleStringImg(drawableResId: Int?) {
+    Glide.with(context)
+        .load(drawableResId)
+        .circleCrop()
         .into(this)
 }
 
@@ -77,7 +97,8 @@ fun ImageView.loadRoundUrlImg(url: String?) {
         return
     }
 
-    val requestOptions = RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
+    val requestOptions =
+        RequestOptions().transform(CenterCrop(), RoundedCorners(dpToPx(context, 8).toInt()))
     setPadding(0, 0, 0, 0)
 
     Glide.with(context)

@@ -294,4 +294,8 @@
     <string name="review_complete">리뷰 남기기 완료!</string>
     <string name="review_toast">소중한 리뷰가 사장님께 전달되었습니다!</string>
     <string name="food_truck_review_count">%d개</string>
+    <string name="menu_info">메뉴 정보</string>
+    <string name="food_truck_price">%d원</string>
+    <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
+    <string name="food_truck_menu_more">%d개의 메뉴가 더 있습니다.</string>
 </resources>

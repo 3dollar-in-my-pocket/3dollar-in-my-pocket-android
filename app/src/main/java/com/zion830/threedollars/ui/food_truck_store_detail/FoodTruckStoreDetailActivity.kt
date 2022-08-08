@@ -12,6 +12,8 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
+import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuEmptyResponse
+import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuMoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.AppearanceDayModel
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -30,6 +32,7 @@ class FoodTruckStoreDetailActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private lateinit var foodTruckCategoriesAdapter: FoodTruckCategoriesRecyclerAdapter
+    private lateinit var foodTruckMenuAdapter: FoodTruckMenuRecyclerAdapter
     private lateinit var foodTruckReviewRecyclerAdapter: FoodTruckReviewRecyclerAdapter
     private lateinit var appearanceDayAdapter: AppearanceDayRecyclerAdapter
 
@@ -65,6 +68,11 @@ class FoodTruckStoreDetailActivity :
 
         foodTruckCategoriesAdapter = FoodTruckCategoriesRecyclerAdapter()
         binding.foodTruckCategoryRecyclerView.adapter = foodTruckCategoriesAdapter
+
+        foodTruckMenuAdapter = FoodTruckMenuRecyclerAdapter {
+            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value?.menus)
+        }
+        binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
 
         foodTruckReviewRecyclerAdapter = FoodTruckReviewRecyclerAdapter()
         binding.foodTruckReviewRecyclerView.adapter = foodTruckReviewRecyclerAdapter
@@ -116,6 +124,20 @@ class FoodTruckStoreDetailActivity :
             appearanceDayAdapter.submitList(appearanceDayDefaultModelList.map {
                 appearanceDayModelList?.find { item -> it.dayOfTheWeek == item.dayOfTheWeek } ?: it
             })
+            if (bossStoreDetailModel.menus.isNullOrEmpty()) {
+                foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
+            } else if (bossStoreDetailModel.menus.size > 5) {
+                val sublist = bossStoreDetailModel.menus.subList(0, 5)
+                val foodTruckMenuMoreResponse = FoodTruckMenuMoreResponse(
+                    moreTitle = getString(
+                        R.string.food_truck_menu_more,
+                        bossStoreDetailModel.menus.size - 5
+                    ), moreImage = bossStoreDetailModel.menus[5].imageUrl
+                )
+                foodTruckMenuAdapter.submitList(sublist + foodTruckMenuMoreResponse)
+            } else {
+                foodTruckMenuAdapter.submitList(bossStoreDetailModel.menus)
+            }
 
             binding.run {
                 ivStoreType.loadUrlImg(bossStoreDetailModel.categories?.firstOrNull()?.imageUrl)
