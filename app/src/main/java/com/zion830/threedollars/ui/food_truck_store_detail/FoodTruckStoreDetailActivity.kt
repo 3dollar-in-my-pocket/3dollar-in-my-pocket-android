@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -17,12 +16,10 @@ import com.zion830.threedollars.repository.model.v2.response.store.AppearanceDay
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
-import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.shareWithKakao
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.ext.toFormattedNumber
 
 class FoodTruckStoreDetailActivity :
     BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail),
@@ -33,6 +30,7 @@ class FoodTruckStoreDetailActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private lateinit var foodTruckCategoriesAdapter: FoodTruckCategoriesRecyclerAdapter
+    private lateinit var foodTruckReviewRecyclerAdapter: FoodTruckReviewRecyclerAdapter
     private lateinit var appearanceDayAdapter: AppearanceDayRecyclerAdapter
 
 
@@ -68,6 +66,9 @@ class FoodTruckStoreDetailActivity :
         foodTruckCategoriesAdapter = FoodTruckCategoriesRecyclerAdapter()
         binding.foodTruckCategoryRecyclerView.adapter = foodTruckCategoriesAdapter
 
+        foodTruckReviewRecyclerAdapter = FoodTruckReviewRecyclerAdapter()
+        binding.foodTruckReviewRecyclerView.adapter = foodTruckReviewRecyclerAdapter
+
         appearanceDayAdapter = AppearanceDayRecyclerAdapter()
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
 
@@ -75,14 +76,14 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-            val intent = Intent(this,FoodTruckReviewActivity::class.java)
-            intent.putExtra(KEY_STORE_ID,storeId)
+            val intent = Intent(this, FoodTruckReviewActivity::class.java)
+            intent.putExtra(KEY_STORE_ID, storeId)
 
             startActivity(intent)
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = Intent(this,FoodTruckReviewActivity::class.java)
-            intent.putExtra(KEY_STORE_ID,storeId)
+            val intent = Intent(this, FoodTruckReviewActivity::class.java)
+            intent.putExtra(KEY_STORE_ID, storeId)
 
             startActivity(intent)
         }
@@ -122,14 +123,14 @@ class FoodTruckStoreDetailActivity :
                 tvDistance.text = "${bossStoreDetailModel.distance}m"
                 phoneNumberTextView.text = bossStoreDetailModel.contactsNumber
                 ownerOneWordTextView.text = bossStoreDetailModel.introduction
-//                    storeImageView.loadRoundUrlImg(bossStoreDetailModel.imageUrl)
-                storeImageView.loadRoundUrlImg("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Food_trucks_-_RecStores_Novembre_2015_Igualada_-_17.JPG/220px-Food_trucks_-_RecStores_Novembre_2015_Igualada_-_17.JPG")
+                storeImageView.loadRoundUrlImg(bossStoreDetailModel.imageUrl)
             }
         }
 
         viewModel.bossStoreFeedbackFullModelList.observe(this) { bossStoreFeedbackFullModeList ->
             binding.reviewCountTextView.text =
                 "${bossStoreFeedbackFullModeList.sumOf { it.count }}개"
+            foodTruckReviewRecyclerAdapter.submitList(bossStoreFeedbackFullModeList.map { it.feedbackFullModelToReviewModel() })
         }
 
 

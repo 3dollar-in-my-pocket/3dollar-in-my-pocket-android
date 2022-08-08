@@ -394,8 +394,7 @@
                         android:id="@+id/bottomReviewTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginEnd="24dp"
+                        android:layout_marginEnd="16dp"
                         android:background="@drawable/rect_green_radius16_opa10"
                         android:bufferType="spannable"
                         android:paddingHorizontal="16dp"
@@ -403,8 +402,9 @@
                         android:text="@string/review_title"
                         android:textColor="@color/color_green"
                         android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="@id/feedbackTextView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@id/feedbackTextView" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/feedbackConstraintLayout"
@@ -412,10 +412,25 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:background="@drawable/rect_white_top_corner"
-                        android:padding="16dp"
+                        android:paddingVertical="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/feedbackTextView">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/foodTruckReviewRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="4dp"
+                            android:clipToPadding="false"
+                            android:orientation="vertical"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:listitem="@layout/item_appearance_day" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>

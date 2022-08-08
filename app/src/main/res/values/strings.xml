@@ -293,4 +293,5 @@
     <string name="select_multi_review">! 여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="review_complete">리뷰 남기기 완료!</string>
     <string name="review_toast">소중한 리뷰가 사장님께 전달되었습니다!</string>
+    <string name="food_truck_review_count">%d개</string>
 </resources>
