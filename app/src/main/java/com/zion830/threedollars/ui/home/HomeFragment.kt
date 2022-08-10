@@ -138,12 +138,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 if (item != null) {
                     EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
                     val intent =
-                        FoodTruckStoreDetailActivity.getIntent(
-                            requireContext(),
-                            item.bossStoreId,
-                            item.location.latitude,
-                            item.location.longitude
-                        )
+                        FoodTruckStoreDetailActivity.getIntent(requireContext(), item.bossStoreId)
                     startActivity(intent)
                 } else {
                     showToast(R.string.exist_store_error)
@@ -202,10 +197,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                             } else {
                                 adapter.focusedIndex = position
                             }
-                            naverMapFragment.updateMarkerIcon(
-                                if (isRoadFoodMode) R.drawable.ic_marker else R.drawable.ic_marker_green,
-                                adapter.focusedIndex
-                            )
+                            if (isRoadFoodMode) {
+                                naverMapFragment.updateMarkerIcon(
+                                    R.drawable.ic_marker,
+                                    adapter.focusedIndex
+                                )
+                            } else {
+                                naverMapFragment.updateMarkerIcon(
+                                    if (adapter.isFoodTruckOpen(position)) R.drawable.ic_food_truck_clicked_off else R.drawable.ic_marker_green,
+                                    adapter.focusedIndex
+                                )
+
+                            }
+
                             adapter.notifyDataSetChanged()
                             adapter.getItemLocation(position)
                                 ?.let {

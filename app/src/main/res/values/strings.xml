@@ -298,4 +298,5 @@
     <string name="food_truck_price">%d원</string>
     <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
     <string name="food_truck_menu_more">%d개의 메뉴가 더 있습니다.</string>
+    <string name="ready_ing">준비중</string>
 </resources>

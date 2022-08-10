@@ -88,7 +88,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("CURRENT_LOCATION_BTN_CLICKED") {}
+            FirebaseAnalytics.getInstance(requireContext())
+                .logEvent("CURRENT_LOCATION_BTN_CLICKED") {}
             requireActivity().requestPermissionIfNeeds()
             moveToCurrentLocation(false)
         }
@@ -141,13 +142,21 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         val newMarkers = list.map { item ->
             Marker().apply {
 
-                this.position = if(item is StoreInfo) {
+                this.position = if (item is StoreInfo) {
                     LatLng(item.latitude, item.longitude)
-                }else {
+                } else {
                     val location = (item as BossNearStoreResponse.BossNearStoreModel).location
-                    LatLng(location.latitude,location.longitude)
+                    LatLng(location.latitude, location.longitude)
                 }
-                this.icon = OverlayImage.fromResource(drawableRes)
+                this.icon = if (item is StoreInfo) {
+                    OverlayImage.fromResource(drawableRes)
+                } else{
+                    if((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED"){
+                        OverlayImage.fromResource(R.drawable.ic_food_truck_off)
+                    } else{
+                        OverlayImage.fromResource(drawableRes)
+                    }
+                }
                 this.map = naverMap
                 setOnClickListener {
                     onClick(item)

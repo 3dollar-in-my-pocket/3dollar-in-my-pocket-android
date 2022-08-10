@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home.adapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.naver.maps.geometry.LatLng
@@ -16,13 +17,13 @@ import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyRespo
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcon
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
+
 
 class NearStoreRecyclerAdapter(
     private val clickListener: OnItemClickListener<StoreInfo?>,
@@ -48,6 +49,17 @@ class NearStoreRecyclerAdapter(
         }
         else -> {
             null
+        }
+    }
+
+    fun isFoodTruckOpen(position: Int): Boolean {
+        return when (getItem(position)) {
+            is BossNearStoreResponse.BossNearStoreModel -> {
+                (getItem(position) as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED"
+            }
+            else -> {
+                false
+            }
         }
     }
 
@@ -96,9 +108,9 @@ class NearStoreRecyclerAdapter(
         when (holder) {
             is NearStoreViewHolder -> {
                 holder.bind(getItem(position) as StoreInfo, listener = clickListener)
-                if(isAd) {
+                if (isAd) {
                     holder.bindPosition(if (focusedIndex == 0) focusedIndex == position else focusedIndex + 1 == position)
-                }else{
+                } else {
                     holder.bindPosition(focusedIndex == position)
                 }
             }
@@ -113,9 +125,9 @@ class NearStoreRecyclerAdapter(
                     getItem(position) as BossNearStoreResponse.BossNearStoreModel,
                     listener = bossClickListener
                 )
-                if(isAd) {
+                if (isAd) {
                     holder.bindPosition(if (focusedIndex == 0) focusedIndex == position else focusedIndex + 1 == position)
-                }else{
+                } else {
                     holder.bindPosition(focusedIndex == position)
                 }
             }
@@ -237,7 +249,15 @@ class BossNearStoreViewHolder(parent: ViewGroup?) :
         }
 
         binding.item = item
-        if(item.categories.isNotEmpty()) {
+        if (item.openStatus?.status == "CLOSED") {
+            binding.readyTextView.isVisible = true
+            binding.ivMenuIcon.alpha = 0.4f
+        } else {
+            binding.readyTextView.isVisible = false
+            binding.ivMenuIcon.alpha = 1.0f
+        }
+
+        if (item.categories.isNotEmpty()) {
             binding.ivMenuIcon.loadUrlImg(item.categories[0].imageUrl)
         }
         val categories = item.categories.joinToString(" ") { it.name.toString() }
@@ -245,5 +265,6 @@ class BossNearStoreViewHolder(parent: ViewGroup?) :
         binding.tvReviewCount.text = "${item.totalFeedbacksCounts}개"
         binding.tvStoreName.text = item.name
         binding.tvCategory.text = "#${categories}"
+
     }
 }

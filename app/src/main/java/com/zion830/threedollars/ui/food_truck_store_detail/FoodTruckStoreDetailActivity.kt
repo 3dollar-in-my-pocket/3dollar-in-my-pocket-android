@@ -16,9 +16,7 @@ import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuEmptyR
 import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuMoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.AppearanceDayModel
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
-import com.zion830.threedollars.utils.OnMapTouchListener
-import com.zion830.threedollars.utils.ShareFormat
-import com.zion830.threedollars.utils.shareWithKakao
+import com.zion830.threedollars.utils.*
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
@@ -56,14 +54,19 @@ class FoodTruckStoreDetailActivity :
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
-        latitude = intent.getDoubleExtra(LATITUDE, 0.0)
-        longitude = intent.getDoubleExtra(LONGITUDE, 0.0)
+        if (isLocationAvailable() && isGpsAvailable()) {
+            val locationResult = fusedLocationProviderClient.lastLocation
+            locationResult.addOnSuccessListener {
+                if (it != null) {
+                    viewModel.getFoodTruckStoreDetail(
+                        bossStoreId = storeId,
+                        latitude = it.latitude,
+                        longitude = it.longitude
+                    )
+                }
+            }
+        }
 
-        viewModel.getFoodTruckStoreDetail(
-            bossStoreId = storeId,
-            latitude = latitude,
-            longitude = longitude
-        )
         viewModel.getBossStoreFeedbackFull(bossStoreId = storeId)
 
         foodTruckCategoriesAdapter = FoodTruckCategoriesRecyclerAdapter()
@@ -159,14 +162,10 @@ class FoodTruckStoreDetailActivity :
 
     companion object {
         private const val KEY_STORE_ID = "KEY_STORE_ID"
-        private const val LATITUDE = "LATITUDE"
-        private const val LONGITUDE = "LONGITUDE"
 
-        fun getIntent(context: Context, storeId: String, latitude: Double, longitude: Double) =
+        fun getIntent(context: Context, storeId: String) =
             Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
                 putExtra(KEY_STORE_ID, storeId)
-                putExtra(LATITUDE, latitude)
-                putExtra(LONGITUDE, longitude)
             }
     }
 }
