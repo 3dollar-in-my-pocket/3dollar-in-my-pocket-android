@@ -224,28 +224,6 @@
                             android:layout_height="wrap_content"
                             android:padding="16dp">
 
-                            <TextView
-                                android:id="@+id/phoneNumberTitleTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/phone_number"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toTopOf="@id/snsTitleTextView"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/phoneNumberTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/phone_number"
-                                android:textColor="@color/gray50"
-                                android:textSize="14sp"
-                                app:layout_constraintBottom_toBottomOf="@id/phoneNumberTitleTextView"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintTop_toTopOf="@id/phoneNumberTitleTextView"
-                                tools:text="010-1234-5678" />
 
                             <TextView
                                 android:id="@+id/snsTitleTextView"
@@ -257,7 +235,7 @@
                                 android:textSize="14sp"
                                 app:layout_constraintBottom_toTopOf="@id/ownerOneWordTitleTextView"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/phoneNumberTitleTextView" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:id="@+id/snsTextView"
@@ -332,30 +310,30 @@
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="20dp"
+                        tools:ignore="UnusedAttribute">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/menuInfoRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="24dp"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="20dp"
-                            tools:ignore="UnusedAttribute">
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="4dp"
+                            android:clipToPadding="false"
+                            android:orientation="vertical"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:listitem="@layout/item_appearance_day" />
 
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/menuInfoRecyclerView"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="4dp"
-                                android:clipToPadding="false"
-                                android:orientation="vertical"
-                                android:overScrollMode="never"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:listitem="@layout/item_appearance_day" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout

@@ -143,7 +143,6 @@ class FoodTruckStoreDetailActivity :
                 ivStoreType.loadUrlImg(bossStoreDetailModel.categories?.firstOrNull()?.imageUrl)
                 tvStoreName.text = bossStoreDetailModel.name
                 tvDistance.text = "${bossStoreDetailModel.distance}m"
-                phoneNumberTextView.text = bossStoreDetailModel.contactsNumber
                 ownerOneWordTextView.text = bossStoreDetailModel.introduction
                 storeImageView.loadRoundUrlImg(bossStoreDetailModel.imageUrl)
             }
