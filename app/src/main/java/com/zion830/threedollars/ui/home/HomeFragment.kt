@@ -117,7 +117,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
-                SearchAddressFragment(),
+                SearchAddressFragment.newInstance(isRoadFoodMode),
                 SearchAddressFragment::class.java.name
             )
         }
