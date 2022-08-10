@@ -73,28 +73,28 @@
     <string name="visit_count_default">이번주 0명이 다녀간 가게에요!</string>
 
     <string name="none">없음</string>
-    
+
     <string name="nearest_store">가장 가까운 음식점</string>
     <string name="if_you_have_money1">지금 당장\n</string>
     <string name="if_you_have_money2">3천원</string>
     <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
     <string name="sort_by_distance">거리순</string>
-    
+
     <string-array name="menu_name">
         <item>붕어빵</item>
         <item>문어빵,</item>
         <item>계란빵,</item>
         <item>호떡아</item>
     </string-array>
-    
+
     <string-array name="menu_desc">
         <item>만나기 30초 전</item>
         <item>다 내꺼야</item>
         <item>내 입으로</item>
         <item>기다려</item>
     </string-array>
-    
+
     <string name="road">길거리</string>
     <string name="road_food">길거리음식</string>
     <string name="food_truck">푸드트럭</string>
@@ -232,7 +232,7 @@
     <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
-    
+
     <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
@@ -301,4 +301,6 @@
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요!</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
+
+    <string name="error_429">일시적으로 너무 많은 요청이 발생하였습니다. 잠시 후 다시 이용해주세요.</string>
 </resources>

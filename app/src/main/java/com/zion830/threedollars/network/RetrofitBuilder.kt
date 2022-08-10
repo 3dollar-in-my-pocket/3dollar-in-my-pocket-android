@@ -1,12 +1,17 @@
 package com.zion830.threedollars.network
 
+import android.os.Handler
+import android.os.Looper
 import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.showToast
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+
 
 object RetrofitBuilder {
     private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
@@ -23,10 +28,25 @@ object RetrofitBuilder {
         .addInterceptor(interceptor)
         .addInterceptor {
             val request = it.request().newBuilder()
-                .addHeader("Authorization", SharedPrefUtils.getAccessToken() ?: "")
-                .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_" + BuildConfig.VERSION_NAME)
+                .addHeader(
+                    "Authorization",
+                    SharedPrefUtils.getAccessToken() ?: ""
+                )
+                .addHeader(
+                    "X-ANDROID-SERVICE-VERSION",
+                    BuildConfig.BUILD_TYPE + "_" + BuildConfig.VERSION_NAME
+                )
                 .build()
-            it.proceed(request)
+
+            it.proceed(request).apply {
+                if (code == 429) {
+                    // 추후 BaseViewModel safeApiCall로 로직 옮겨야함
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed(Runnable {
+                        showToast(R.string.error_429)
+                    }, 0)
+                }
+            }
         }
         .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
         .build()
