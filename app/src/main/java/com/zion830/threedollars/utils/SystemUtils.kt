@@ -85,7 +85,7 @@ fun getCurrentLocationName(location: LatLng?): String? {
     val geoCoder = Geocoder(GlobalApplication.getContext(), Locale.KOREA)
     return try {
         val addresses: List<Address> =
-            geoCoder.getFromLocation(location.latitude, location.longitude, 1)
+            geoCoder.getFromLocation(location.latitude, location.longitude, 1) as List<Address>
         if (addresses.isEmpty()) {
             notFindMsg
         } else {

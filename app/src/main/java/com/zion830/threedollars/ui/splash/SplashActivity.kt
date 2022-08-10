@@ -30,11 +30,11 @@ class SplashActivity :
     override fun initView() {
         binding.lottieView.playAnimation()
         binding.lottieView.addAnimatorListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 // do nothing
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
                     { minimum, current ->
                         VersionUpdateDialog.getInstance(minimum, current)
@@ -49,11 +49,11 @@ class SplashActivity :
                     })
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 // do nothing
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
                 // do nothing
             }
         })
