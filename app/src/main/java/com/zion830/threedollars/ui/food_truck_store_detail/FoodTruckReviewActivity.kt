@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -34,6 +33,9 @@ class FoodTruckReviewActivity :
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
 
         binding.btnBack.setOnClickListener {
+            val intent = Intent(this, FoodTruckStoreDetailActivity::class.java)
+            intent.putExtra(FoodTruckStoreDetailActivity.KEY_STORE_ID, storeId)
+            startActivity(intent)
             finish()
         }
 
@@ -70,9 +72,12 @@ class FoodTruckReviewActivity :
                     duration = Toast.LENGTH_LONG
                     view = binding.root
                 }.show()
+                val intent = Intent(this, FoodTruckStoreDetailActivity::class.java)
+                intent.putExtra(FoodTruckStoreDetailActivity.KEY_STORE_ID, storeId)
+                startActivity(intent)
                 finish()
             } else {
-                if(it.code() == 409){
+                if (it.code() == 409) {
                     showToast("오늘 이미 피드백을 추가한 가게입니다.\n내일 다시 인증해주세요 :)")
                 }
             }

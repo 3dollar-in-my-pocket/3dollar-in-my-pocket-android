@@ -87,16 +87,17 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
+
             val intent = Intent(this, FoodTruckReviewActivity::class.java)
             intent.putExtra(KEY_STORE_ID, storeId)
-
             startActivity(intent)
+            finish()
         }
         binding.bottomReviewTextView.setOnClickListener {
             val intent = Intent(this, FoodTruckReviewActivity::class.java)
             intent.putExtra(KEY_STORE_ID, storeId)
-
             startActivity(intent)
+            finish()
         }
         binding.btnShare.setOnClickListener {
             EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
@@ -161,7 +162,7 @@ class FoodTruckStoreDetailActivity :
     }
 
     companion object {
-        private const val KEY_STORE_ID = "KEY_STORE_ID"
+        const val KEY_STORE_ID = "KEY_STORE_ID"
 
         fun getIntent(context: Context, storeId: String) =
             Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
