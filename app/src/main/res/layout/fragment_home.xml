@@ -170,6 +170,33 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:listitem="@layout/item_store_location" />
+
+            <TextView
+                android:id="@+id/foodTruckToolTipTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_gray80_radius8"
+                android:paddingVertical="12dp"
+                android:paddingStart="48dp"
+                android:paddingEnd="16dp"
+                android:text="@string/food_truck_tool_tip"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/categoryConstraintLayout" />
+
+            <ImageView
+                android:id="@+id/foodTruckToolTipImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_finger_arrow_up"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/foodTruckToolTipTextView"
+                app:layout_constraintStart_toStartOf="@id/foodTruckToolTipTextView"
+                app:layout_constraintTop_toBottomOf="@id/modeChangeTextView"
+                app:layout_constraintVertical_bias="0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

@@ -22,6 +22,7 @@ object SharedPrefUtils {
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
     private const val POPUP_URL = "popup_url"
+    private const val FOOD_TRUCK_TOOL_TIP = "food_truck_tool_tip"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
@@ -114,12 +115,20 @@ object SharedPrefUtils {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(FEED_BACK_LIST, null)
-            val type: Type = object : TypeToken<List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>?>() {}.type
+            val type: Type = object :
+                TypeToken<List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
         }
     }
+
+    fun saveFoodTruckToolTip(isFirst: Boolean) = sharedPreferences.edit {
+        putBoolean(FOOD_TRUCK_TOOL_TIP, isFirst)
+        commit()
+    }
+
+    fun getFoodTruckToolTip() = sharedPreferences.getBoolean(FOOD_TRUCK_TOOL_TIP, true)
 
     fun <T> saveList(list: List<T?>?, key: String?) {
         if (list.isNullOrEmpty()) {

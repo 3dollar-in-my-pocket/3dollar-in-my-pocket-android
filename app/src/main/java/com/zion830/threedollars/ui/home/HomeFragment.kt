@@ -23,6 +23,7 @@ import com.zion830.threedollars.ui.home.adapter.BossCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.RoadFoodCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import kotlinx.coroutines.flow.collect
@@ -60,6 +61,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     override fun initView() {
+        if (SharedPrefUtils.getFoodTruckToolTip()) {
+            binding.foodTruckToolTipImageView.isVisible = true
+            binding.foodTruckToolTipTextView.isVisible = true
+        }
         viewModel.getRoadFoodCategory()
         naverMapFragment = NearStoreNaverMapFragment {
             binding.tvRetrySearch.isVisible = true
@@ -75,6 +80,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
         binding.modeChangeTextView.setOnClickListener {
+            if (SharedPrefUtils.getFoodTruckToolTip()) {
+                SharedPrefUtils.saveFoodTruckToolTip(false)
+                binding.foodTruckToolTipImageView.isVisible = false
+                binding.foodTruckToolTipTextView.isVisible = false
+            }
             isRoadFoodMode = !isRoadFoodMode
             binding.modeChangeTextView.run {
 
@@ -138,7 +148,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 if (item != null) {
                     EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
                     val intent =
-                        FoodTruckStoreDetailActivity.getIntent(requireContext(), item.bossStoreId)
+                        FoodTruckStoreDetailActivity.getIntent(
+                            requireContext(),
+                            item.bossStoreId
+                        )
                     startActivity(intent)
                 } else {
                     showToast(R.string.exist_store_error)

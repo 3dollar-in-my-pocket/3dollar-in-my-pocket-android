@@ -300,4 +300,5 @@
     <string name="food_truck_menu_more">%d개의 메뉴가 더 있습니다.</string>
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요!</string>
+    <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
 </resources>
