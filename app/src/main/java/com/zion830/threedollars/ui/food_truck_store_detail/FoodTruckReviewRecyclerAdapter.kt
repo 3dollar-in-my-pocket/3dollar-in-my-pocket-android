@@ -49,7 +49,7 @@ class FoodTruckReviewViewHolder(parent: ViewGroup) :
     ) {
         binding.guideline.setGuidelinePercent(item.ratio.toFloat())
 
-        if (position > 2) {
+        if (position > 2 || item.count == 0) {
             binding.barBackView.setBackgroundResource(R.drawable.rect_gray_radius16)
             binding.barView.setBackgroundResource(R.drawable.rect_gray10_radius16)
         } else {

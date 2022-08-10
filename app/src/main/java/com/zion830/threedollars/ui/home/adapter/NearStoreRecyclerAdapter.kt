@@ -238,12 +238,12 @@ class BossNearStoreViewHolder(parent: ViewGroup?) :
 
         binding.item = item
         if(item.categories.isNotEmpty()) {
-            binding.ivMenuIcon.bindMenuIcon(item.categories[0].imageUrl)
+            binding.ivMenuIcon.loadUrlImg(item.categories[0].imageUrl)
         }
         val categories = item.categories.joinToString(" ") { it.name.toString() }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
         binding.tvReviewCount.text = "${item.totalFeedbacksCounts}개"
         binding.tvStoreName.text = item.name
-        binding.tvCategory.text = categories
+        binding.tvCategory.text = "#${categories}"
     }
 }
