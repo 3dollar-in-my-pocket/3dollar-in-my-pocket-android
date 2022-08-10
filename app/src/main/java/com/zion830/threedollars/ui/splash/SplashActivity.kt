@@ -22,7 +22,8 @@ import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 
-class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
+class SplashActivity :
+    BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
 
     override val viewModel: SplashViewModel by viewModels()
 
@@ -36,7 +37,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             override fun onAnimationEnd(animation: Animator?) {
                 VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
                     { minimum, current ->
-                        VersionUpdateDialog.getInstance(minimum, current).show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                        VersionUpdateDialog.getInstance(minimum, current)
+                            .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
                     }, {
                         if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
                             startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
@@ -64,7 +66,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
             }
             LoginType.GOOGLE.socialName -> {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                    val account =
+                        GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
                     if (account != null && account.idToken != null) {
                         viewModel.refreshGoogleToken(account)
                     } else {
@@ -100,6 +103,17 @@ class SplashActivity : BaseActivity<ActivitySplashBinding, SplashViewModel>(R.la
                             }
                             .setTitle(getString(R.string.server_500))
                             .setMessage(getString(R.string.server_500_msg))
+                            .setCancelable(false)
+                            .create()
+                            .show()
+                    }
+                    if (it.code in 500..599) {
+                        AlertDialog.Builder(this)
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                finish()
+                            }
+                            .setTitle(it.msg ?: getString(R.string.server_500))
+                            .setMessage(it.msg ?: getString(R.string.server_500_msg))
                             .setCancelable(false)
                             .create()
                             .show()
