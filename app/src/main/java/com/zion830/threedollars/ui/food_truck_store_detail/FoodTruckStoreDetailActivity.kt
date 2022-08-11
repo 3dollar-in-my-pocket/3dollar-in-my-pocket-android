@@ -106,7 +106,18 @@ class FoodTruckStoreDetailActivity :
                 binding.tvStoreName.text.toString(),
                 LatLng(latitude, longitude)
             )
-            shareWithKakao(shareFormat)
+            shareWithKakao(
+                shareFormat = shareFormat,
+                title = getString(
+                    R.string.share_kakao_food_truck_title,
+                    viewModel.bossStoreDetailModel.value?.name
+                ),
+                description = getString(
+                    R.string.share_kakao_food_truck,
+                    viewModel.bossStoreDetailModel.value?.name
+                ),
+                imageUrl = viewModel.bossStoreDetailModel.value?.imageUrl
+            )
         }
 
         binding.snsTextView.setOnClickListener {

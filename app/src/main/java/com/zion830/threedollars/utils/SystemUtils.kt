@@ -24,7 +24,6 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import java.util.*
@@ -125,13 +124,18 @@ fun Context.shareUrl(url: String) {
     startActivity(Intent.createChooser(sendIntent, url))
 }
 
-fun Context.shareWithKakao(shareFormat: ShareFormat) {
+fun Context.shareWithKakao(
+    shareFormat: ShareFormat,
+    title: String?,
+    description: String?,
+    imageUrl: String?
+) {
     if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
         val feed = FeedTemplate(
             content = Content(
-                title = getString(R.string.share_kakao_title),
-                description = getString(R.string.share_kakao),
-                imageUrl = BuildConfig.BASE_URL + "api/images/share-with-kakao.png",
+                title = title ?: "",
+                description = description,
+                imageUrl = imageUrl ?: "",
                 link = Link(getString(R.string.download_url), getString(R.string.download_url))
             ),
             buttons = listOf(

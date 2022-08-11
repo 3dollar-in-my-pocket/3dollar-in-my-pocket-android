@@ -102,7 +102,8 @@ class StoreDetailActivity :
         )
         photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
-                StorePhotoDialog.getInstance(item.index).show(supportFragmentManager, StorePhotoDialog::class.java.name)
+                StorePhotoDialog.getInstance(item.index)
+                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
         binding.rvVisitHistory.adapter = visitHistoryAdapter
@@ -146,7 +147,18 @@ class StoreDetailActivity :
                 binding.tvStoreName.text.toString(),
                 viewModel.selectedLocation.value ?: viewModel.storeLocation.value
             )
-            shareWithKakao(shareFormat)
+            shareWithKakao(
+                shareFormat = shareFormat,
+                title = getString(
+                    R.string.share_kakao_road_food_title,
+                    viewModel.storeInfo.value?.storeName
+                ),
+                description = getString(
+                    R.string.share_kakao_road_food,
+                    viewModel.storeInfo.value?.storeName
+                ),
+                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png"
+            )
         }
         binding.rvPhoto.adapter = photoAdapter
         binding.rvCategory.adapter = categoryAdapter
@@ -246,7 +258,10 @@ class StoreDetailActivity :
             if (it == null) {
                 return@updateCurrentLocation
             }
-            val distance = NaverMapUtils.calculateDistance(naverMapFragment.currentPosition, viewModel.storeLocation.value)
+            val distance = NaverMapUtils.calculateDistance(
+                naverMapFragment.currentPosition,
+                viewModel.storeLocation.value
+            )
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
@@ -291,17 +306,33 @@ class StoreDetailActivity :
             append(if (hasCertification) "이 다녀간 가게에요!" else " 내역이 없어요 :(")
         }
         binding.tvGood.text = "${isExist}명"
-        binding.tvGood.setTextColor(ContextCompat.getColor(this, if (isExist > 0) R.color.color_green else R.color.gray30))
+        binding.tvGood.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (isExist > 0) R.color.color_green else R.color.gray30
+            )
+        )
         binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(this, if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off),
+            ContextCompat.getDrawable(
+                this,
+                if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off
+            ),
             null,
             null,
             null
         )
         binding.tvBad.text = "${isNotExist}명"
-        binding.tvBad.setTextColor(ContextCompat.getColor(this, if (isNotExist > 0) R.color.color_main_red else R.color.gray30))
+        binding.tvBad.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (isNotExist > 0) R.color.color_main_red else R.color.gray30
+            )
+        )
         binding.tvBad.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(this, if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off),
+            ContextCompat.getDrawable(
+                this,
+                if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off
+            ),
             null,
             null,
             null

@@ -265,6 +265,10 @@
     <string name="find_location">놀러가기</string>
     <string name="share_kakao_title">올 때 붕어빵, 잊지마!!!</string>
     <string name="share_kakao">당신은 붕어빵 셔틀에 당첨되셨습니다. 지금 바로 가슴속 3천원을 설치하고 위치를 파악하여 미션을 수행하세요!</string>
+    <string name="share_kakao_food_truck_title">[푸드트럭] %s</string>
+    <string name="share_kakao_food_truck">%s 푸드트럭 보러가기</string>
+    <string name="share_kakao_road_food_title">[길거리음식] %s</string>
+    <string name="share_kakao_road_food">%s 길거리음식 보러가기</string>
     <string name="share_kakao_success">카카오톡 공유 완료!</string>
     <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
 
