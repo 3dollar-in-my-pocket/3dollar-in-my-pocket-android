@@ -53,7 +53,7 @@ class FoodTruckStoreDetailActivity :
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        storeId = intent.getStringExtra(KEY_STORE_ID).toString()
+        storeId = intent.getStringExtra(STORE_ID).toString()
         if (isLocationAvailable() && isGpsAvailable()) {
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
@@ -89,13 +89,13 @@ class FoodTruckStoreDetailActivity :
         binding.topReviewTextView.setOnClickListener {
 
             val intent = Intent(this, FoodTruckReviewActivity::class.java)
-            intent.putExtra(KEY_STORE_ID, storeId)
+            intent.putExtra(STORE_ID, storeId)
             startActivity(intent)
             finish()
         }
         binding.bottomReviewTextView.setOnClickListener {
             val intent = Intent(this, FoodTruckReviewActivity::class.java)
-            intent.putExtra(KEY_STORE_ID, storeId)
+            intent.putExtra(STORE_ID, storeId)
             startActivity(intent)
             finish()
         }
@@ -116,7 +116,9 @@ class FoodTruckStoreDetailActivity :
                     R.string.share_kakao_food_truck,
                     viewModel.bossStoreDetailModel.value?.name
                 ),
-                imageUrl = viewModel.bossStoreDetailModel.value?.imageUrl
+                imageUrl = viewModel.bossStoreDetailModel.value?.imageUrl,
+                storeId = storeId,
+                type = getString(R.string.scheme_host_kakao_link_food_truck_type)
             )
         }
 
@@ -173,11 +175,21 @@ class FoodTruckStoreDetailActivity :
     }
 
     companion object {
-        const val KEY_STORE_ID = "KEY_STORE_ID"
+        const val STORE_ID = "storeId"
 
-        fun getIntent(context: Context, storeId: String) =
+        fun getIntent(context: Context, storeId: String? = null, deepLink: Uri? = null) =
             Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
-                putExtra(KEY_STORE_ID, storeId)
+                storeId?.let {
+                    putExtra(STORE_ID, it)
+                }
+                deepLink?.let {
+                    val deepLinkStoreId = it.getQueryParameter(STORE_ID) ?: run {
+                        // 딥링크 name 파라미터 없음 오류 로그남기기
+                        // DeepLink does'nt have name query parameter
+                        ""
+                    }
+                    putExtra(STORE_ID, deepLinkStoreId)
+                }
             }
     }
 }

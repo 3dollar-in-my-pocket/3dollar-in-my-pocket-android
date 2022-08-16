@@ -307,4 +307,11 @@
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
 
     <string name="error_429">일시적으로 너무 많은 요청이 발생하였습니다. 잠시 후 다시 이용해주세요.</string>
+
+    <string name="scheme_host_main">main</string>
+    <string name="scheme_host_kakao_link">kakaolink</string>
+    <string name="scheme_host_kakao_link_food_truck_type">foodTruck</string>
+    <string name="scheme_host_kakao_link_road_food_type">streetFood</string>
+    <string name="scheme_host_kakao_link_store_id">storeId</string>
+    <string name="scheme_host_kakao_link_store_type">storeType</string>
 </resources>

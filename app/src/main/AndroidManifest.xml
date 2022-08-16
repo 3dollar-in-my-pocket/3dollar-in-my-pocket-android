@@ -62,12 +62,24 @@
             android:name=".ui.addstore.activity.NewStoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
-            android:screenOrientation="portrait" />
+            android:name="com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".SchemeActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kakao${kakao_key}" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">

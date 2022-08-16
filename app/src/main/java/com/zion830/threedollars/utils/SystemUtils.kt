@@ -128,7 +128,9 @@ fun Context.shareWithKakao(
     shareFormat: ShareFormat,
     title: String?,
     description: String?,
-    imageUrl: String?
+    imageUrl: String?,
+    storeId : String?,
+    type : String?
 ) {
     if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
         val feed = FeedTemplate(
@@ -141,7 +143,12 @@ fun Context.shareWithKakao(
             buttons = listOf(
                 Button(
                     title = getString(R.string.find_location),
-                    link = Link(shareFormat.shareUrl, shareFormat.shareUrl)
+                    link = Link(
+                        webUrl = shareFormat.shareUrl,
+                        mobileWebUrl = shareFormat.shareUrl,
+                        androidExecParams = mapOf("storeId" to storeId.toString(),"storeType" to type.toString()),
+                        iosExecParams = mapOf("storeId" to storeId.toString(),"storeType" to type.toString())
+                    )
                 )
             )
         )

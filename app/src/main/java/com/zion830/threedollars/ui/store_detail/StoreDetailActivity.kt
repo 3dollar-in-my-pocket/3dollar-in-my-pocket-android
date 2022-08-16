@@ -30,6 +30,7 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -86,7 +87,7 @@ class StoreDetailActivity :
         binding.admob.loadAd(adRequest)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        storeId = intent.getIntExtra(KEY_STORE_ID, 0)
+        storeId = intent.getIntExtra(STORE_ID, 0)
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
@@ -157,7 +158,9 @@ class StoreDetailActivity :
                     R.string.share_kakao_road_food,
                     viewModel.storeInfo.value?.storeName
                 ),
-                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png"
+                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+                storeId = storeId.toString(),
+                type = getString(R.string.scheme_host_kakao_link_road_food_type)
             )
         }
         binding.rvPhoto.adapter = photoAdapter
@@ -372,7 +375,7 @@ class StoreDetailActivity :
     }
 
     fun refreshStoreInfo() {
-        val storeId = intent.getIntExtra(KEY_STORE_ID, 0)
+        val storeId = intent.getIntExtra(STORE_ID, 0)
 
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
@@ -433,13 +436,25 @@ class StoreDetailActivity :
     }
 
     companion object {
-        private const val KEY_STORE_ID = "KEY_STORE_ID"
+        private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
         private const val EDIT_STORE_INFO = 234
 
-        fun getIntent(context: Context, storeId: Int, startCertification: Boolean = false) =
+        fun getIntent(
+            context: Context,
+            storeId: Int? = null,
+            startCertification: Boolean = false,
+            deepLink: Uri? = null
+        ) =
             Intent(context, StoreDetailActivity::class.java).apply {
-                putExtra(KEY_STORE_ID, storeId)
+                storeId?.let {
+                    putExtra(STORE_ID, it)
+                }
+                deepLink?.let {
+                    val deepLinkStoreId =
+                        it.getQueryParameter(STORE_ID) ?: run { "" }
+                    putExtra(STORE_ID, deepLinkStoreId.toInt())
+                }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
             }
     }
