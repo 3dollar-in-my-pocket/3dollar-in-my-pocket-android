@@ -10,7 +10,7 @@ data class CategoryInfo(
     @SerializedName("name")
     val name: String = "붕어빵",
     @SerializedName("description")
-    val description: String = "",
+    val description: String = "붕어빵 만나기 30초 전",
     @SerializedName("isNew")
     val isNew: Boolean = false
 ): Serializable

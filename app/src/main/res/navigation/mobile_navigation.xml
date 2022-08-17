@@ -11,11 +11,11 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/navigation_category"
-        android:name="com.zion830.threedollars.ui.category.SelectCategoryFragment"
-        android:label="@string/category"
-        tools:layout="@layout/fragment_select_category" />
+   <fragment
+        android:id="@+id/navigation_street"
+        android:name="com.zion830.threedollars.ui.category.StreetByMenuFragment"
+        android:label="@string/road_food"
+        tools:layout="@layout/fragment_street_by_menu" />
 
     <fragment
         android:id="@+id/navigation_mypage"

@@ -23,7 +23,7 @@ class StoreByMenuViewModel : BaseViewModel() {
     val sortType: LiveData<SortType>
         get() = _sortType
 
-    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData()
+    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData(CategoryInfo())
     val category: LiveData<CategoryInfo>
         get() = _category
 

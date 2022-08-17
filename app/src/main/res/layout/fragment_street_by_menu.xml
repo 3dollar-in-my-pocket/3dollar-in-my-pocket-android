@@ -44,29 +44,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute">
 
-                <ImageButton
-                    android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="19dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@null"
-                    android:foreground="?attr/actionBarItemBackground"
-                    android:src="@drawable/ic_arrow_left"
-                    app:layout_constraintBottom_toBottomOf="@id/layout_title"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/layout_title" />
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_marginVertical="19dp"
+                    android:layout_marginStart="24dp"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@id/btn_back"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/layout_title"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/btn_back">
+                    app:layout_constraintTop_toTopOf="@id/layout_title">
 
                     <ImageView
                         android:id="@+id/iv_menu_icon"
@@ -78,7 +65,7 @@
 
                     <TextView
                         android:id="@+id/btn_menu"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
@@ -108,21 +95,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.gms.ads.AdView
-                android:id="@+id/admob"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:adSize="BANNER"
-                app:adUnitId="@string/admob_unit_id"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/color_gray3"
-                app:layout_constraintBottom_toTopOf="@+id/admob"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container">
@@ -260,7 +237,15 @@
                             tools:listitem="@layout/item_store_by_rating" />
                     </LinearLayout>
 
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/admob"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:adSize="BANNER"
+                        app:adUnitId="@string/admob_unit_id" />
+
                 </LinearLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
