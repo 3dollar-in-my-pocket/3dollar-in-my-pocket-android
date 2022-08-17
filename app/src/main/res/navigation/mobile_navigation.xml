@@ -23,8 +23,6 @@
         android:label="@string/title_mypage"
         tools:layout="@layout/fragment_new_my_page" />
 
-    tools:layout="@layout/fragment_mypage" />
-
     <fragment
         android:id="@+id/navigation_popup"
         android:name="com.zion830.threedollars.ui.popup.PopupFragment"

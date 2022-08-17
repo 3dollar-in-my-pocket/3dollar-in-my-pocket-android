@@ -17,7 +17,6 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.HomeFragment
-import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -70,11 +69,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_category -> {
+                R.id.navigation_street -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_category)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_review -> {
+                R.id.navigation_truck -> {
                     if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_home) {
                         val navHostFragment =
                             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?

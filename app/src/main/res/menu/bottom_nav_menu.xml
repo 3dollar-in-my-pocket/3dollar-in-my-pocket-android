@@ -7,14 +7,14 @@
         android:title="@string/title_home" />
     
     <item
-        android:id="@+id/navigation_category"
-        android:icon="@drawable/selector_category"
-        android:title="@string/category" />
+        android:id="@+id/navigation_street"
+        android:icon="@drawable/selector_street"
+        android:title="@string/road_food" />
     
     <item
-        android:id="@+id/navigation_review"
-        android:icon="@drawable/ic_write_off"
-        android:title="@string/title_add_store" />
+        android:id="@+id/navigation_truck"
+        android:icon="@drawable/selector_truck"
+        android:title="@string/food_truck" />
     
     <item
         android:id="@+id/navigation_mypage"
