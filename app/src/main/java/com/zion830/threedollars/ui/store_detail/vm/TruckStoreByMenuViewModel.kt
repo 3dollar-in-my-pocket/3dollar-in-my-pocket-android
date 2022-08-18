@@ -6,41 +6,40 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.StoreRepository
+import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 
-class StoreByMenuViewModel : BaseViewModel() {
+class TruckStoreByMenuViewModel : BaseViewModel() {
 
     private val repository = StoreRepository()
-
-    val nearStoreInfo: MutableLiveData<NearStoreResponse> = MutableLiveData()
 
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
     val sortType: LiveData<SortType>
         get() = _sortType
-
-    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData(CategoryInfo())
-    val category: LiveData<CategoryInfo>
+    private val _category: MutableLiveData<BossCategoriesResponse.BossCategoriesModel> =
+        MutableLiveData(BossCategoriesResponse.BossCategoriesModel())
+    val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
         get() = _category
 
-    private val _categories: MutableLiveData<List<CategoryInfo>> = MutableLiveData(SharedPrefUtils.getCategories())
+    private val _categories: MutableLiveData<List<CategoryInfo>> =
+        MutableLiveData(SharedPrefUtils.getCategories())
     val categories: LiveData<List<CategoryInfo>> = _categories
 
-    val storeByDistance = MutableLiveData<List<StoreInfo>>()
-    val storeByRating = MutableLiveData<List<StoreInfo>>()
+    val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
+    val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val hasData = MutableLiveData<Boolean>()
 
-    fun changeCategory(menuType: CategoryInfo) {
+    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel) {
         _category.value = menuType
     }
 
-    fun changeCategory(menuType: CategoryInfo, location: LatLng) {
+    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -53,7 +52,7 @@ class StoreByMenuViewModel : BaseViewModel() {
             requestStoreInfo(location)
 
             if (sortType == SortType.DISTANCE) {
-                storeByRating.value = listOf()
+                storeByReview.value = listOf()
             } else {
                 storeByDistance.value = listOf()
             }
@@ -64,13 +63,21 @@ class StoreByMenuViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (sortType.value) {
                 SortType.DISTANCE -> {
-                    val data = repository.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
+                    val data = repository.getDistanceBossNearStore(
+                        _category.value?.categoryId ?: "",
+                        location.latitude,
+                        location.longitude
+                    )
                     storeByDistance.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
-                SortType.RATING -> {
-                    val data = repository.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
-                    storeByRating.postValue(data.body()?.data)
+                SortType.REVIEW -> {
+                    val data = repository.getFeedbacksCountsBossNearStore(
+                        _category.value?.categoryId ?: "",
+                        location.latitude,
+                        location.longitude
+                    )
+                    storeByReview.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 else -> {

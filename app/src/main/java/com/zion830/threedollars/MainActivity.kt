@@ -17,7 +17,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.home.HomeFragment
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
@@ -33,7 +33,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private val storeByMenuViewModel: StoreByMenuViewModel by viewModels()
+    private val streetStoreByMenuViewModel: StreetStoreByMenuViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 
@@ -41,7 +41,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         requestPermissionFirst()
         popupViewModel.getPopups(position = "SPLASH")
         if (SharedPrefUtils.getCategories().isEmpty()) {
-            storeByMenuViewModel.loadCategories()
+            streetStoreByMenuViewModel.loadCategories()
         }
 
         navHostFragment =

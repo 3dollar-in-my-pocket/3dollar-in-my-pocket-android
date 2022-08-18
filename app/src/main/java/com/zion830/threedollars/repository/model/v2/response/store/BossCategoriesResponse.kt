@@ -13,8 +13,10 @@ data class BossCategoriesResponse(
 ) {
     data class BossCategoriesModel(
         @SerializedName("categoryId")
-        val categoryId: String? = "All",
+        val categoryId: String? = "622b7d0105ecea5baeafd245",
         @SerializedName("name")
-        val name: String? = "전체"
+        val name: String? = "한식",
+        @SerializedName("imageUrl")
+        val imageUrl: String? = "https://storage.threedollars.co.kr/menu/icon_menu_3x_bab.png"
     )
 }

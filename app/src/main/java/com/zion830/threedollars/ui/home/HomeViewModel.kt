@@ -104,7 +104,7 @@ class HomeViewModel : BaseViewModel() {
     fun getBossCategory() {
         viewModelScope.launch(coroutineExceptionHandler) {
             repository.getBossCategory().body()?.data?.let {
-                _bossCategoryModelList.emit(listOf(BossCategoriesResponse.BossCategoriesModel()) + it)
+                _bossCategoryModelList.emit(listOf(BossCategoriesResponse.BossCategoriesModel(categoryId = "All", name = "전체")) + it)
             }
         }
     }

@@ -6,7 +6,7 @@ import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
 
 data class BossNearStoreResponse(
     @SerializedName("data")
-    val data: List<BossNearStoreModel>?,
+    val data: List<BossNearStoreModel>,
     @SerializedName("message")
     val message: String?,
     @SerializedName("resultCode")

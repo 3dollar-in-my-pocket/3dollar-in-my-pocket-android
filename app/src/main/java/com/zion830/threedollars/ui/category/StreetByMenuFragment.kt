@@ -19,17 +19,17 @@ import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapte
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
-import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StoreByMenuViewModel>(R.layout.fragment_street_by_menu),
+    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu),
     OnMapTouchListener {
 
-    override val viewModel: StoreByMenuViewModel by activityViewModels()
+    override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 

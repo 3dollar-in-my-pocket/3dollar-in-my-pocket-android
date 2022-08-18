@@ -9,13 +9,13 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 
 
 class StoreByMenuNaverMapFragment : NaverMapFragment() {
-    val viewModel: StoreByMenuViewModel by activityViewModels()
+    val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)

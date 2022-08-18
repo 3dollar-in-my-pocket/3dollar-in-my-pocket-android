@@ -12,7 +12,6 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -25,7 +24,7 @@ import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
@@ -35,7 +34,7 @@ class SelectCategoryDialogFragment :
 
     private lateinit var binding: DialogBottomSelectCategoryBinding
 
-    private val viewModel: StoreByMenuViewModel by activityViewModels()
+    private val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 
