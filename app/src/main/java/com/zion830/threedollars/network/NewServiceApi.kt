@@ -189,6 +189,17 @@ interface NewServiceApi {
         @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
     ): Response<BossNearStoreResponse>
 
+    @GET("/api/v1/boss/stores/around")
+    suspend fun getCategoryIdBossNearStore(
+        @Query("categoryId") categoryId : String,
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("distanceKm") distance: Double = 100000.0,
+        @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
+    ): Response<BossNearStoreResponse>
+
     @GET("/api/v1/boss/store/{bossStoreId}")
     suspend fun getBossStoreDetail(
         @Path("bossStoreId") bossStoreId: String,

@@ -83,6 +83,7 @@ object Constants {
 
     // orderType
     const val DISTANCE_ASC = "DISTANCE_ASC"
+    const val TOTAL_FEEDBACKS_COUNTS_DESC = "TOTAL_FEEDBACKS_COUNTS_DESC"
     const val REVIEW_DESC = "REVIEW_DESC"
 
     //popup

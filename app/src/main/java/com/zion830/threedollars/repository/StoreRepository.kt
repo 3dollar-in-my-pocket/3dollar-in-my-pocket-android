@@ -2,6 +2,7 @@ package com.zion830.threedollars.repository
 
 import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
+import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.network.RetrofitBuilder
 import com.zion830.threedollars.repository.model.v2.request.BossStoreFeedbackRequest
@@ -114,6 +115,32 @@ class StoreRepository(
         mapLatitude = latitude,
         mapLongitude = longitude,
         orderType = DISTANCE_ASC
+    )
+
+    suspend fun getDistanceBossNearStore(
+        categoryId : String,
+        latitude: Double,
+        longitude: Double
+    ): Response<BossNearStoreResponse> = newService.getCategoryIdBossNearStore(
+        categoryId = categoryId,
+        latitude = latitude,
+        longitude = longitude,
+        mapLatitude = latitude,
+        mapLongitude = longitude,
+        orderType = DISTANCE_ASC
+    )
+
+    suspend fun getFeedbacksCountsBossNearStore(
+        categoryId : String,
+        latitude: Double,
+        longitude: Double
+    ): Response<BossNearStoreResponse> = newService.getCategoryIdBossNearStore(
+        categoryId = categoryId,
+        latitude = latitude,
+        longitude = longitude,
+        mapLatitude = latitude,
+        mapLongitude = longitude,
+        orderType = TOTAL_FEEDBACKS_COUNTS_DESC
     )
 
     suspend fun getBossStoreDetail(
