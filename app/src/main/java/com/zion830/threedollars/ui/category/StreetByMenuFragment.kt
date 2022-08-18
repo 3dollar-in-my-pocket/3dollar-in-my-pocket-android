@@ -13,6 +13,7 @@ import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
@@ -92,6 +93,16 @@ class StreetByMenuFragment :
                 viewModel.changeSortType(SortType.RATING, currentPosition)
             }
         }
+
+        binding.newStoreFloatingButton.setOnClickListener {
+            startActivity(
+                NewStoreActivity.getInstance(
+                    requireContext(),
+                    naverMapFragment.getMapCenterLatLng()
+                )
+            )
+        }
+
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 binding.itemStoreListAd.run {
@@ -114,7 +125,7 @@ class StreetByMenuFragment :
                 storeByRatingAdapters.submitAdList(popups)
             }
         }
-        viewModel.category.observe(viewLifecycleOwner){
+        viewModel.category.observe(viewLifecycleOwner) {
             naverMapFragment.currentPosition?.let { currentPosition ->
                 viewModel.requestStoreInfo(currentPosition)
             }
