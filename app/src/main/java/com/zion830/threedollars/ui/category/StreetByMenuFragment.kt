@@ -2,8 +2,6 @@ package com.zion830.threedollars.ui.category
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -21,8 +19,7 @@ import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
-import com.zion830.threedollars.utils.*
-import zion830.com.common.base.BaseActivity
+import com.zion830.threedollars.utils.OnMapTouchListener
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
@@ -71,6 +68,10 @@ class StreetByMenuFragment :
         val naverMapFragment = StoreByMenuNaverMapFragment()
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
+        binding.categoryImageView.setOnClickListener {
+            val bottomSheetDialog = SelectCategoryDialogFragment()
+            bottomSheetDialog.show(parentFragmentManager, "")
+        }
         binding.btnMenu.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
             naverMapFragment.currentPosition?.let { currentPosition ->
@@ -111,6 +112,11 @@ class StreetByMenuFragment :
                 }
                 storeByDistanceAdapters.submitAdList(popups)
                 storeByRatingAdapters.submitAdList(popups)
+            }
+        }
+        viewModel.category.observe(viewLifecycleOwner){
+            naverMapFragment.currentPosition?.let { currentPosition ->
+                viewModel.requestStoreInfo(currentPosition)
             }
         }
         viewModel.storeByRating.observe(viewLifecycleOwner) {

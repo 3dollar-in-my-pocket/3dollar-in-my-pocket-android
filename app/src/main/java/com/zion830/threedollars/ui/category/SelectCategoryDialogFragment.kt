@@ -3,35 +3,67 @@ package com.zion830.threedollars.ui.category
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentSelectCategoryBinding
+import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import zion830.com.common.base.BaseFragment
+import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
+import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
-class SelectCategoryFragment :
-    BaseFragment<FragmentSelectCategoryBinding, CategoryViewModel>(R.layout.fragment_select_category) {
+class SelectCategoryDialogFragment :
+    BottomSheetDialogFragment() {
 
-    override val viewModel: CategoryViewModel by activityViewModels()
+    private lateinit var binding: DialogBottomSelectCategoryBinding
+
+    private val viewModel: StoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
-    override fun initView() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.dialog_bottom_select_category,
+            container,
+            false
+        )
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        binding.lifecycleOwner = this
+        binding.setVariable(BR.viewModel, viewModel)
+        initView()
+    }
+
+    private fun initView() {
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         popupViewModel.getPopups("MENU_CATEGORY_BANNER")
         initViewModel()
@@ -43,7 +75,8 @@ class SelectCategoryFragment :
             SelectCategoryRecyclerAdapter(object : OnItemClickListener<CategoryInfo> {
                 override fun onClick(item: CategoryInfo) {
                     EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
-                    startActivity(StoreByMenuActivity.getIntent(requireContext(), item))
+                    viewModel.changeCategory(menuType = item)
+                    dismiss()
                 }
             })
 
@@ -63,7 +96,7 @@ class SelectCategoryFragment :
 
     @SuppressLint("Range")
     private fun initViewModel() {
-        popupViewModel.popups.observe(viewLifecycleOwner, { popups ->
+        popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 val popup = popups[0]
                 binding.tvAdTitle.text = popup.title
@@ -87,6 +120,6 @@ class SelectCategoryFragment :
             }
             binding.cdAdCategory.isVisible = popups.isNotEmpty()
 
-        })
+        }
     }
 }

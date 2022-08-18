@@ -47,9 +47,9 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginVertical="19dp"
                     android:layout_marginStart="24dp"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="@id/layout_title"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,12 +76,20 @@
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/iv_menu_icon"
-                        app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
-                        app:layout_constraintTop_toTopOf="@id/iv_menu_icon"
                         tools:ignore="UnusedAttribute"
                         tools:text="군고구마" />
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/categoryImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_down"
+                    app:layout_constraintBottom_toBottomOf="@id/layout_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/layout_title" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
