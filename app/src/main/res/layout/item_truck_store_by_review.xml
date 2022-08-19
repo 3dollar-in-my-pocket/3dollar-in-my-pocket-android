@@ -31,17 +31,16 @@
             android:id="@+id/tv_store_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/applegothic_bold"
             android:maxLength="12"
             android:singleLine="true"
             android:text="@{item.name}"
             android:textColor="@color/color_black"
             android:textSize="16sp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:fontFamily="@font/applegothic_bold"
             android:textStyle="bold"
-            app:layout_goneMarginStart="0dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="0dp"
             tools:text="강남역 1출" />
 
         <TextView

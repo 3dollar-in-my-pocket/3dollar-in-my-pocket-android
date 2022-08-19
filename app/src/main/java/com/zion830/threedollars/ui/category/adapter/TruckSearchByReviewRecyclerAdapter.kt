@@ -3,13 +3,10 @@ package com.zion830.threedollars.ui.category.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
 import com.zion830.threedollars.databinding.ItemTruckStoreByReviewBinding
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -82,14 +79,17 @@ class TruckSearchByReviewRecyclerAdapter(
 }
 
 class TruckSearchByReviewViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemTruckStoreByReviewBinding, BossNearStoreResponse.BossNearStoreModel>(R.layout.item_truck_store_by_review, parent) {
+    BaseViewHolder<ItemTruckStoreByReviewBinding, BossNearStoreResponse.BossNearStoreModel>(
+        R.layout.item_truck_store_by_review,
+        parent
+    ) {
 
-    override fun bind(item: BossNearStoreResponse.BossNearStoreModel, listener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel>?) {
+    override fun bind(
+        item: BossNearStoreResponse.BossNearStoreModel,
+        listener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel>?
+    ) {
         super.bind(item, listener)
-
-//        val categoryInfo = SharedPrefUtils.getCategories()
-//        val categories =
-//            item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
-//        binding.tvCategory.text = categories
+        val categories = item.categories.joinToString(" ") { "#${it.name}" }
+        binding.tvCategory.text = categories
     }
 }
