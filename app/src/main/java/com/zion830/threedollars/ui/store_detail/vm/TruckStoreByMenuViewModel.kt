@@ -27,9 +27,9 @@ class TruckStoreByMenuViewModel : BaseViewModel() {
     val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
         get() = _category
 
-    private val _categories: MutableLiveData<List<CategoryInfo>> =
-        MutableLiveData(SharedPrefUtils.getCategories())
-    val categories: LiveData<List<CategoryInfo>> = _categories
+    private val _categories: MutableLiveData<List<BossCategoriesResponse.BossCategoriesModel>> =
+        MutableLiveData(SharedPrefUtils.getTruckCategories())
+    val categories: LiveData<List<BossCategoriesResponse.BossCategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
@@ -89,11 +89,11 @@ class TruckStoreByMenuViewModel : BaseViewModel() {
 
     fun loadCategories() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = repository.getCategories()
+            val response = repository.getBossCategory()
 
             if (response.isSuccessful) {
                 _categories.postValue(response.body()?.data ?: emptyList())
-                SharedPrefUtils.saveCategories(response.body()?.data ?: emptyList())
+                SharedPrefUtils.saveTruckCategories(response.body()?.data ?: emptyList())
             } else {
                 _msgTextId.postValue(R.string.connection_failed)
             }

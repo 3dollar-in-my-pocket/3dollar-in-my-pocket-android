@@ -70,7 +70,7 @@ class StreetByMenuFragment :
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {
-            val bottomSheetDialog = SelectCategoryDialogFragment()
+            val bottomSheetDialog = StreetSelectCategoryDialogFragment()
             bottomSheetDialog.show(parentFragmentManager, "")
         }
         binding.btnMenu.setOnClickListener {

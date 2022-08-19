@@ -16,7 +16,6 @@ import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecycle
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.map.TruckStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -66,7 +65,7 @@ class TruckByMenuFragment :
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {
-            val bottomSheetDialog = SelectCategoryDialogFragment()
+            val bottomSheetDialog = TruckSelectCategoryDialogFragment()
             bottomSheetDialog.show(parentFragmentManager, "")
         }
         binding.btnMenu.setOnClickListener {

@@ -38,6 +38,13 @@ class SplashViewModel : BaseViewModel() {
                 }
             }
 
+            val bossCategory = storeRepository.getBossCategory()
+            if (bossCategory.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    SharedPrefUtils.saveTruckCategories(bossCategory.body()?.data ?: emptyList())
+                }
+            }
+
             val bossStoreFeedbackTypeResponse = storeRepository.getBossStoreFeedbackType()
             if (bossStoreFeedbackTypeResponse.isSuccessful) {
                 withContext(Dispatchers.Main) {

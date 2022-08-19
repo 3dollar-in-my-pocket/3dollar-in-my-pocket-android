@@ -20,21 +20,23 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
+import com.zion830.threedollars.databinding.DialogBottomTruckSelectCategoryBinding
+import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.StreetSelectCategoryRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.TruckSelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
-class SelectCategoryDialogFragment :
+class TruckSelectCategoryDialogFragment :
     BottomSheetDialogFragment() {
 
-    private lateinit var binding: DialogBottomSelectCategoryBinding
+    private lateinit var binding: DialogBottomTruckSelectCategoryBinding
 
-    private val viewModel: StreetStoreByMenuViewModel by activityViewModels()
+    private val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 
@@ -48,7 +50,7 @@ class SelectCategoryDialogFragment :
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.dialog_bottom_select_category,
+            R.layout.dialog_bottom_truck_select_category,
             container,
             false
         )
@@ -71,9 +73,9 @@ class SelectCategoryDialogFragment :
         }
 
         val categoryAdapter =
-            SelectCategoryRecyclerAdapter(object : OnItemClickListener<CategoryInfo> {
-                override fun onClick(item: CategoryInfo) {
-                    EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            TruckSelectCategoryRecyclerAdapter(object : OnItemClickListener<BossCategoriesResponse.BossCategoriesModel> {
+                override fun onClick(item: BossCategoriesResponse.BossCategoriesModel) {
+                    EventTracker.logEvent(item.name + Constants.CATEGORY_BTN_CLICKED_FORMAT)
                     viewModel.changeCategory(menuType = item)
                     dismiss()
                 }
