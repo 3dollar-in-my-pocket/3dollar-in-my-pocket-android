@@ -15,8 +15,10 @@ data class BossCategoriesResponse(
         @SerializedName("categoryId")
         val categoryId: String? = "622b7d0105ecea5baeafd245",
         @SerializedName("name")
-        val name: String? = "한식",
+        val name: String = "한식",
         @SerializedName("imageUrl")
-        val imageUrl: String? = "https://storage.threedollars.co.kr/menu/icon_menu_3x_bab.png"
+        val imageUrl: String? = "https://storage.threedollars.co.kr/menu/icon_menu_3x_bab.png",
+        @SerializedName("description")
+        val description : String = "한식 만나기 30초 전"
     )
 }

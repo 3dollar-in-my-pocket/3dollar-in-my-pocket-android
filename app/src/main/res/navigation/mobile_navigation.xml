@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_street_by_menu" />
 
     <fragment
+        android:id="@+id/navigation_truck"
+        android:name="com.zion830.threedollars.ui.category.TruckByMenuFragment"
+        android:label="@string/food_truck"
+        tools:layout="@layout/fragment_truck_by_menu" />
+
+    <fragment
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"

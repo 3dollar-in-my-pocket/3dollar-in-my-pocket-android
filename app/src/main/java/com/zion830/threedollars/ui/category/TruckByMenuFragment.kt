@@ -5,40 +5,39 @@ import android.net.Uri
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.google.android.gms.ads.AdRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
+import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
-import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
-import com.zion830.threedollars.ui.category.adapter.StreetSearchByRatingRecyclerAdapter
+import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFragment
-import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
+import com.zion830.threedollars.ui.store_detail.map.TruckStoreByMenuNaverMapFragment
+import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
-class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu),
+class TruckByMenuFragment :
+    BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu),
     OnMapTouchListener {
 
-    override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
+    override val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private var menuType: CategoryInfo = CategoryInfo()
+    private var menuType: BossCategoriesResponse.BossCategoriesModel = BossCategoriesResponse.BossCategoriesModel()
 
-    private val listener = object : OnItemClickListener<StoreInfo> {
-        override fun onClick(item: StoreInfo) {
+    private val listener = object : OnItemClickListener<BossNearStoreResponse.BossNearStoreModel> {
+        override fun onClick(item: BossNearStoreResponse.BossNearStoreModel) {
             EventTracker.logEvent(Constants.STORE_LIST_ITEM_CLICKED)
-            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+            val intent = FoodTruckStoreDetailActivity.getIntent(requireContext(), item.bossStoreId)
             startActivity(intent)
         }
     }
@@ -47,12 +46,12 @@ class StreetByMenuFragment :
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
         }
     }
-    private val storeByDistanceAdapters by lazy {
-        StreetSearchByDistanceRecyclerAdapter(listener, adListener)
+    private val truckStoreByDistanceAdapters by lazy {
+        TruckSearchByDistanceRecyclerAdapter(listener, adListener)
     }
 
-    private val storeByRatingAdapters by lazy {
-        StreetSearchByRatingRecyclerAdapter(listener, adListener)
+    private val truckStoreByReviewAdapters by lazy {
+        TruckSearchByReviewRecyclerAdapter(listener, adListener)
     }
 
     override fun onTouch() {
@@ -61,12 +60,9 @@ class StreetByMenuFragment :
     }
 
     override fun initView() {
-        val adRequest: AdRequest = AdRequest.Builder().build()
-        binding.admob.loadAd(adRequest)
-
         initAdapter()
 
-        val naverMapFragment = StreetStoreByMenuNaverMapFragment()
+        val naverMapFragment = TruckStoreByMenuNaverMapFragment()
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {
@@ -90,17 +86,8 @@ class StreetByMenuFragment :
             EventTracker.logEvent(Constants.ORDER_BY_RATING_BTN_CLICKED)
             naverMapFragment.moveToCurrentLocation()
             naverMapFragment.currentPosition?.let { currentPosition ->
-                viewModel.changeSortType(SortType.RATING, currentPosition)
+                viewModel.changeSortType(SortType.REVIEW, currentPosition)
             }
-        }
-
-        binding.newStoreFloatingButton.setOnClickListener {
-            startActivity(
-                NewStoreActivity.getInstance(
-                    requireContext(),
-                    naverMapFragment.getMapCenterLatLng()
-                )
-            )
         }
 
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
@@ -121,8 +108,8 @@ class StreetByMenuFragment :
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                     }
                 }
-                storeByDistanceAdapters.submitAdList(popups)
-                storeByRatingAdapters.submitAdList(popups)
+                truckStoreByDistanceAdapters.submitAdList(popups)
+                truckStoreByReviewAdapters.submitAdList(popups)
             }
         }
         viewModel.category.observe(viewLifecycleOwner) {
@@ -130,36 +117,21 @@ class StreetByMenuFragment :
                 viewModel.requestStoreInfo(currentPosition)
             }
         }
-        viewModel.storeByRating.observe(viewLifecycleOwner) {
-            val storeInfoList = if (binding.cbCertification.isChecked) {
-                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
-            } else {
-                it
-            }
-            storeByRatingAdapters.submitList(storeInfoList)
+        viewModel.storeByReview.observe(viewLifecycleOwner) {
+            truckStoreByReviewAdapters.submitList(it)
             popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
-            val storeInfoList = if (binding.cbCertification.isChecked) {
-                it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
-            } else {
-                it
-            }
-            storeByDistanceAdapters.submitList(storeInfoList)
+            truckStoreByDistanceAdapters.submitList(it)
             popupViewModel.getPopups("STORE_CATEGORY_LIST")
-        }
-        binding.cbCertification.setOnCheckedChangeListener { _, _ ->
-            naverMapFragment.currentPosition?.let {
-                viewModel.requestStoreInfo(it)
-            }
         }
     }
 
     private fun initAdapter() {
         binding.run {
-            rvDistance.adapter = storeByDistanceAdapters
+            rvDistance.adapter = truckStoreByDistanceAdapters
             rvDistance.itemAnimator = null
-            rvRating.adapter = storeByRatingAdapters
+            rvRating.adapter = truckStoreByReviewAdapters
             rvRating.itemAnimator = null
         }
     }

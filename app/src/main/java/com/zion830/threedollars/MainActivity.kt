@@ -74,20 +74,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_truck -> {
-                    if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_home) {
-                        val navHostFragment =
-                            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
-                        val homeFragment: HomeFragment? =
-                            navHostFragment?.childFragmentManager?.fragments?.get(0) as? HomeFragment
-                        startActivity(
-                            NewStoreActivity.getInstance(
-                                this,
-                                homeFragment?.getMapCenterLatLng()
-                            )
-                        )
-                    } else {
-                        startActivity(NewStoreActivity.getInstance(this, null))
-                    }
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_truck)
+                    binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)

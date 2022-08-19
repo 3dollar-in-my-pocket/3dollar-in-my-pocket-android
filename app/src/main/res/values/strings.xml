@@ -79,6 +79,7 @@
     <string name="if_you_have_money2">3천원</string>
     <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
+    <string name="sort_by_review">리뷰순</string>
     <string name="sort_by_distance">거리순</string>
 
     <string-array name="menu_name">

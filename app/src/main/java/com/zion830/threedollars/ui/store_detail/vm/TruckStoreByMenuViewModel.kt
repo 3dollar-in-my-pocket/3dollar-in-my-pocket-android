@@ -64,18 +64,18 @@ class TruckStoreByMenuViewModel : BaseViewModel() {
             when (sortType.value) {
                 SortType.DISTANCE -> {
                     val data = repository.getDistanceBossNearStore(
-                        _category.value?.categoryId ?: "",
-                        location.latitude,
-                        location.longitude
+                        categoryId = _category.value?.categoryId ?: "",
+                        latitude = location.latitude,
+                        longitude = location.longitude
                     )
                     storeByDistance.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 SortType.REVIEW -> {
                     val data = repository.getFeedbacksCountsBossNearStore(
-                        _category.value?.categoryId ?: "",
-                        location.latitude,
-                        location.longitude
+                        categoryId = _category.value?.categoryId ?: "",
+                        latitude = location.latitude,
+                        longitude = location.longitude
                     )
                     storeByReview.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
