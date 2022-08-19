@@ -9,8 +9,6 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
@@ -30,11 +28,17 @@ class TruckStoreByMenuNaverMapFragment : NaverMapFragment() {
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(24f))
         binding.btnFindLocation.layoutParams = params
 
+        binding.btnFindLocation.setImageResource(R.drawable.ic_search_green)
+
         viewModel.storeByReview.observe(this) { res ->
-            addMarkers(R.drawable.ic_store_selected, res.map { LatLng(it.location.latitude, it.location.longitude) })
+            addMarkers(
+                R.drawable.ic_truck_store_selected,
+                res.map { LatLng(it.location.latitude, it.location.longitude) })
         }
         viewModel.storeByDistance.observe(this) { res ->
-            addMarkers(R.drawable.ic_store_selected, res.map { LatLng(it.location.latitude, it.location.longitude) })
+            addMarkers(
+                R.drawable.ic_truck_store_selected,
+                res.map { LatLng(it.location.latitude, it.location.longitude) })
         }
 
         moveToCurrentLocation()
@@ -42,7 +46,9 @@ class TruckStoreByMenuNaverMapFragment : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        viewModel.changeCategory(viewModel.category.value ?: BossCategoriesResponse.BossCategoriesModel(), position)
+        viewModel.changeCategory(
+            viewModel.category.value ?: BossCategoriesResponse.BossCategoriesModel(), position
+        )
         viewModel.requestStoreInfo(position)
     }
 
