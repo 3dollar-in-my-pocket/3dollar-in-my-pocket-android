@@ -18,6 +18,8 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
 
     private var isFirstLoad = true
 
+    private var isRoadFoodMode = true
+
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
@@ -37,7 +39,11 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestHomeItem(position)
+        if (isRoadFoodMode) {
+            viewModel.requestHomeItem(position)
+        } else {
+            viewModel.getBossNearStore(position)
+        }
         viewModel.updateCurrentLocation(position)
     }
 
@@ -49,9 +55,11 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
             }
             Constants.MODE_ROAD_FOOD -> {
                 binding.btnFindLocation.setImageResource(R.drawable.ic_search)
+                isRoadFoodMode = true
             }
             Constants.MODE_FOOD_TRUCK -> {
                 binding.btnFindLocation.setImageResource(R.drawable.ic_search_green)
+                isRoadFoodMode = false
             }
         }
     }
