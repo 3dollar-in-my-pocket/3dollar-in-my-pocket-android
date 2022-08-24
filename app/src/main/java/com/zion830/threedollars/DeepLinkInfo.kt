@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.StringRes
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
+import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 
 enum class DeepLinkInfo(@StringRes val hostStringResId: Int) {
@@ -18,12 +19,7 @@ enum class DeepLinkInfo(@StringRes val hostStringResId: Int) {
 
     DETAIL(R.string.scheme_host_kakao_link) {
         override fun getIntent(context: Context, deepLinkUri: Uri): Intent {
-            return if (deepLinkUri.getQueryParameter(context.getString(R.string.scheme_host_kakao_link_store_type)) ==
-                context.getString(R.string.scheme_host_kakao_link_food_truck_type)
-            ) FoodTruckStoreDetailActivity.getIntent(context, deepLink = deepLinkUri)
-            else {
-                StoreDetailActivity.getIntent(context, deepLink = deepLinkUri)
-            }
+            return SplashActivity.getIntent(context,deepLinkUri,deepLinkUri.getQueryParameter(context.getString(R.string.scheme_host_kakao_link_store_type)))
         }
     };
 

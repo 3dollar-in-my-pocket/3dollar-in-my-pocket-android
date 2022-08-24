@@ -174,18 +174,13 @@ class FoodTruckStoreDetailActivity :
     companion object {
         const val STORE_ID = "storeId"
 
-        fun getIntent(context: Context, storeId: String? = null, deepLink: Uri? = null) =
+        fun getIntent(context: Context, storeId: String? = null, deepLinkStoreId: String? = null) =
             Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
                 storeId?.let {
                     putExtra(STORE_ID, it)
                 }
-                deepLink?.let {
-                    val deepLinkStoreId = it.getQueryParameter(STORE_ID) ?: run {
-                        // 딥링크 name 파라미터 없음 오류 로그남기기
-                        // DeepLink does'nt have name query parameter
-                        ""
-                    }
-                    putExtra(STORE_ID, deepLinkStoreId)
+                deepLinkStoreId?.let {
+                    putExtra(STORE_ID, it)
                 }
             }
     }

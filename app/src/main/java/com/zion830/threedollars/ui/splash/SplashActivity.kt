@@ -1,7 +1,9 @@
 package com.zion830.threedollars.ui.splash
 
 import android.animation.Animator
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +14,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.ui.VersionUpdateDialog
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.login.LoginActivity
+import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
@@ -84,7 +88,29 @@ class SplashActivity :
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-                    startActivity(Intent(this, MainActivity::class.java))
+
+                    when (intent.getStringExtra(STORE_TYPE)) {
+                        getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
+                            startActivity(
+                                FoodTruckStoreDetailActivity.getIntent(
+                                    this,
+                                    deepLinkStoreId = intent.getStringExtra(STORE_ID)
+                                )
+                            )
+                        }
+                        getString(R.string.scheme_host_kakao_link_road_food_type) -> {
+                            startActivity(
+                                StoreDetailActivity.getIntent(
+                                    this,
+                                    deepLinkStoreId = intent.getStringExtra(STORE_ID)
+                                )
+                            )
+                        }
+                        else -> {
+                            startActivity(Intent(this, MainActivity::class.java))
+                        }
+
+                    }
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
@@ -124,5 +150,29 @@ class SplashActivity :
                 }
             }
         }
+    }
+
+    companion object {
+        private const val STORE_ID = "storeId"
+        private const val STORE_TYPE = "STORE_TYPE"
+
+        fun getIntent(
+            context: Context,
+            deepLink: Uri? = null,
+            storeType: String? = null
+        ) =
+            Intent(context, SplashActivity::class.java).apply {
+                deepLink?.let {
+                    val deepLinkStoreId = it.getQueryParameter(STORE_ID) ?: run {
+                        // 딥링크 name 파라미터 없음 오류 로그남기기
+                        // DeepLink does'nt have name query parameter
+                        ""
+                    }
+                    putExtra(STORE_ID, deepLinkStoreId)
+                }
+                storeType?.let {
+                    putExtra(STORE_TYPE, it)
+                }
+            }
     }
 }

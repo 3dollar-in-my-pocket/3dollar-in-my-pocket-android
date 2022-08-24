@@ -444,16 +444,14 @@ class StoreDetailActivity :
             context: Context,
             storeId: Int? = null,
             startCertification: Boolean = false,
-            deepLink: Uri? = null
+            deepLinkStoreId: String? = null
         ) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 storeId?.let {
                     putExtra(STORE_ID, it)
                 }
-                deepLink?.let {
-                    val deepLinkStoreId =
-                        it.getQueryParameter(STORE_ID) ?: run { "" }
-                    putExtra(STORE_ID, deepLinkStoreId.toInt())
+                deepLinkStoreId?.let {
+                    putExtra(STORE_ID, it.toInt())
                 }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
             }
