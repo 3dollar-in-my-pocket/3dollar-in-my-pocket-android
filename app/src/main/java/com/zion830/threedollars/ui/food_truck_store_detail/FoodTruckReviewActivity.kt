@@ -33,8 +33,7 @@ class FoodTruckReviewActivity :
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
 
         binding.btnBack.setOnClickListener {
-            val intent = Intent(this, FoodTruckStoreDetailActivity::class.java)
-            intent.putExtra(FoodTruckStoreDetailActivity.STORE_ID, storeId)
+            val intent = FoodTruckStoreDetailActivity.getIntent(this,storeId)
             startActivity(intent)
             finish()
         }
@@ -72,8 +71,7 @@ class FoodTruckReviewActivity :
                     duration = Toast.LENGTH_LONG
                     view = binding.root
                 }.show()
-                val intent = Intent(this, FoodTruckStoreDetailActivity::class.java)
-                intent.putExtra(FoodTruckStoreDetailActivity.STORE_ID, storeId)
+                val intent = FoodTruckStoreDetailActivity.getIntent(this,storeId)
                 startActivity(intent)
                 finish()
             } else {
@@ -88,7 +86,7 @@ class FoodTruckReviewActivity :
         private const val KEY_STORE_ID = "KEY_STORE_ID"
 
         fun getIntent(context: Context, storeId: String) =
-            Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
+            Intent(context, FoodTruckReviewActivity::class.java).apply {
                 putExtra(KEY_STORE_ID, storeId)
             }
     }

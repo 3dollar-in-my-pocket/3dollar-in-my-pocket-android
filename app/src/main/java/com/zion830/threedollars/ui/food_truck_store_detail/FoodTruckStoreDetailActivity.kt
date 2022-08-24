@@ -87,15 +87,12 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-
-            val intent = Intent(this, FoodTruckReviewActivity::class.java)
-            intent.putExtra(STORE_ID, storeId)
+            val intent = FoodTruckReviewActivity.getIntent(this,storeId)
             startActivity(intent)
             finish()
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = Intent(this, FoodTruckReviewActivity::class.java)
-            intent.putExtra(STORE_ID, storeId)
+            val intent = FoodTruckReviewActivity.getIntent(this,storeId)
             startActivity(intent)
             finish()
         }
