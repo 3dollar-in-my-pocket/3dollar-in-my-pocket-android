@@ -55,18 +55,20 @@ fun TextView.bindMenuIntroTitle(menuType: BossCategoriesResponse.BossCategoriesM
     if (menuType == null) {
         return
     }
-
     val menuName = menuType.name
     val index = menuType.description.indexOf(menuName)
-    val spannableString = SpannableStringBuilder(menuType.description).apply {
-        setSpan(
-            StyleSpan(Typeface.BOLD),
-            index,
-            index + menuName.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
-    text = spannableString
+    text = if (index != -1) {
+        val spannableString = SpannableStringBuilder(menuType.description).apply {
+            setSpan(
+                StyleSpan(Typeface.BOLD),
+                index,
+                index + menuName.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        spannableString
+    } else
+        menuType.description
 }
 
 @BindingAdapter("bindWhiteMenuIcon")
