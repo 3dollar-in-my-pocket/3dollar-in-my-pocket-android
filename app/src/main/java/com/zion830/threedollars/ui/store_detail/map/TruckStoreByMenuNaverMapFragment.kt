@@ -31,14 +31,18 @@ class TruckStoreByMenuNaverMapFragment : NaverMapFragment() {
         binding.btnFindLocation.setImageResource(R.drawable.ic_search_green)
 
         viewModel.storeByReview.observe(this) { res ->
-            addMarkers(
-                R.drawable.ic_truck_store_selected,
-                res.map { LatLng(it.location.latitude, it.location.longitude) })
+            res?.let {
+                addMarkers(
+                    R.drawable.ic_truck_store_selected,
+                    res.map { LatLng(it.location.latitude, it.location.longitude) })
+            }
         }
         viewModel.storeByDistance.observe(this) { res ->
-            addMarkers(
-                R.drawable.ic_truck_store_selected,
-                res.map { LatLng(it.location.latitude, it.location.longitude) })
+            res?.let {
+                addMarkers(
+                    R.drawable.ic_truck_store_selected,
+                    res.map { LatLng(it.location.latitude, it.location.longitude) })
+            }
         }
 
         moveToCurrentLocation()

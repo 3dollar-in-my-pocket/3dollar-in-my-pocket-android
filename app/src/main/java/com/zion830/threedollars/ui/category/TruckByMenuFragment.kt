@@ -31,7 +31,8 @@ class TruckByMenuFragment :
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private var menuType: BossCategoriesResponse.BossCategoriesModel = BossCategoriesResponse.BossCategoriesModel()
+    private var menuType: BossCategoriesResponse.BossCategoriesModel =
+        BossCategoriesResponse.BossCategoriesModel()
 
     private val listener = object : OnItemClickListener<BossNearStoreResponse.BossNearStoreModel> {
         override fun onClick(item: BossNearStoreResponse.BossNearStoreModel) {
@@ -90,25 +91,27 @@ class TruckByMenuFragment :
         }
 
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
-            if (popups.isNotEmpty()) {
-                binding.itemStoreListAd.run {
-                    tvAdTitle.text = popups[0].title
-                    popups[0].fontColor?.let {
-                        tvAdTitle.setTextColor(it.toColorInt())
-                        tvAdBody.setTextColor(it.toColorInt())
+            popups?.let {
+                if (popups.isNotEmpty()) {
+                    binding.itemStoreListAd.run {
+                        tvAdTitle.text = popups[0].title
+                        popups[0].fontColor?.let {
+                            tvAdTitle.setTextColor(it.toColorInt())
+                            tvAdBody.setTextColor(it.toColorInt())
+                        }
+                        tvAdBody.text = popups[0].subTitle
+
+                        popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+
+                        ivAdImage.loadUrlImg(popups[0].imageUrl)
+
+                        tvDetail.setOnClickListener {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                        }
                     }
-                    tvAdBody.text = popups[0].subTitle
-
-                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
-
-                    ivAdImage.loadUrlImg(popups[0].imageUrl)
-
-                    tvDetail.setOnClickListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
-                    }
+                    truckStoreByDistanceAdapters.submitAdList(popups)
+                    truckStoreByReviewAdapters.submitAdList(popups)
                 }
-                truckStoreByDistanceAdapters.submitAdList(popups)
-                truckStoreByReviewAdapters.submitAdList(popups)
             }
         }
         viewModel.category.observe(viewLifecycleOwner) {
@@ -117,12 +120,16 @@ class TruckByMenuFragment :
             }
         }
         viewModel.storeByReview.observe(viewLifecycleOwner) {
-            truckStoreByReviewAdapters.submitList(it)
-            popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            it?.let {
+                truckStoreByReviewAdapters.submitList(it)
+                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            }
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
-            truckStoreByDistanceAdapters.submitList(it)
-            popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            it?.let {
+                truckStoreByDistanceAdapters.submitList(it)
+                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            }
         }
     }
 
