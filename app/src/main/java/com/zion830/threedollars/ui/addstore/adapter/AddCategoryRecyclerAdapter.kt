@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
-import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder

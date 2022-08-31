@@ -4,20 +4,20 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     signingConfigs {
         release {
             keyAlias '3dollor'
             keyPassword '3dollor'
-            storeFile file('C:\\Users\\USER\\Downloads\\3dollor-android-key.jks')
+            storeFile file('3dollor-android-key.jks')
             storePassword '3dollor'
         }
     }
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 35
-        versionName "2.4.7"
+        targetSdkVersion 33
+        versionCode 37
+        versionName "3.0.1"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

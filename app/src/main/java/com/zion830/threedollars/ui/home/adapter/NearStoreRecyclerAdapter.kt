@@ -1,26 +1,22 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ItemBossStoreLocationBinding
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
-import com.zion830.threedollars.databinding.ItemStoreListAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
 import com.zion830.threedollars.repository.model.v2.response.Popups
+import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.category.adapter.SearchByAdViewHolder
-import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
-import com.zion830.threedollars.ui.category.adapter.SearchByDistanceViewHolder
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -28,12 +24,15 @@ import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+
 class NearStoreRecyclerAdapter(
     private val clickListener: OnItemClickListener<StoreInfo?>,
+    private val bossClickListener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel?>,
     private val adClickListener: OnItemClickListener<Popups>,
     private val certificationClick: (StoreInfo?) -> Unit
 ) : ListAdapter<AdAndStoreItem?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
+    var isAd = false
 
     fun getItemLocation(position: Int) = when (getItem(position)) {
         is StoreInfo -> {
@@ -42,15 +41,34 @@ class NearStoreRecyclerAdapter(
                 (getItem(position) as StoreInfo).longitude
             )
         }
+        is BossNearStoreResponse.BossNearStoreModel -> {
+            LatLng(
+                (getItem(position) as BossNearStoreResponse.BossNearStoreModel).location.latitude,
+                (getItem(position) as BossNearStoreResponse.BossNearStoreModel).location.longitude
+            )
+        }
         else -> {
             null
         }
     }
 
-    fun getItemPosition(item: StoreInfo) =
+    fun isFoodTruckOpen(position: Int): Boolean {
+        return when (getItem(position)) {
+            is BossNearStoreResponse.BossNearStoreModel -> {
+                (getItem(position) as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED"
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    fun getItemPosition(item: AdAndStoreItem) =
         currentList.indexOfFirst {
-            if (it is StoreInfo) {
+            if (it is StoreInfo && item is StoreInfo) {
                 it.storeId == item.storeId
+            } else if (it is BossNearStoreResponse.BossNearStoreModel && item is BossNearStoreResponse.BossNearStoreModel) {
+                it.bossStoreId == item.bossStoreId
             } else {
                 false
             }
@@ -58,7 +76,10 @@ class NearStoreRecyclerAdapter(
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is StoreInfo -> {
-            VIEW_TYPE_STORE
+            VIEW_TYPE_ROAD_FOOD_STORE
+        }
+        is BossNearStoreResponse.BossNearStoreModel -> {
+            VIEW_TYPE_FOOD_TRUCK_STORE
         }
         is Popups -> {
             VIEW_TYPE_AD
@@ -72,8 +93,11 @@ class NearStoreRecyclerAdapter(
         VIEW_TYPE_AD -> {
             NearStoreAdViewHolder(parent)
         }
-        VIEW_TYPE_STORE -> {
+        VIEW_TYPE_ROAD_FOOD_STORE -> {
             NearStoreViewHolder(parent, certificationClick)
+        }
+        VIEW_TYPE_FOOD_TRUCK_STORE -> {
+            BossNearStoreViewHolder(parent)
         }
         else -> {
             NearStoreEmptyViewHolder(parent)
@@ -84,7 +108,11 @@ class NearStoreRecyclerAdapter(
         when (holder) {
             is NearStoreViewHolder -> {
                 holder.bind(getItem(position) as StoreInfo, listener = clickListener)
-                holder.bindPosition(focusedIndex == position)
+                if (isAd) {
+                    holder.bindPosition(if (focusedIndex == 0) focusedIndex == position else focusedIndex + 1 == position)
+                } else {
+                    holder.bindPosition(focusedIndex == position)
+                }
             }
             is NearStoreAdViewHolder -> {
                 holder.bind(getItem(position) as Popups, adClickListener)
@@ -92,13 +120,25 @@ class NearStoreRecyclerAdapter(
             is NearStoreEmptyViewHolder -> {
                 holder.bind(getItem(position) as HomeStoreEmptyResponse, null)
             }
+            is BossNearStoreViewHolder -> {
+                holder.bind(
+                    getItem(position) as BossNearStoreResponse.BossNearStoreModel,
+                    listener = bossClickListener
+                )
+                if (isAd) {
+                    holder.bindPosition(if (focusedIndex == 0) focusedIndex == position else focusedIndex + 1 == position)
+                } else {
+                    holder.bindPosition(focusedIndex == position)
+                }
+            }
         }
     }
 
     companion object {
         private const val VIEW_TYPE_EMPTY = 0
         private const val VIEW_TYPE_AD = 1
-        private const val VIEW_TYPE_STORE = 2
+        private const val VIEW_TYPE_ROAD_FOOD_STORE = 2
+        private const val VIEW_TYPE_FOOD_TRUCK_STORE = 3
     }
 }
 
@@ -173,5 +213,58 @@ class NearStoreViewHolder(
         binding.ivMenuIcon.bindMenuIcons(item.categories)
         binding.tvRating.text = "${item.rating}점"
         binding.tvCategory.text = categories
+    }
+}
+
+class BossNearStoreViewHolder(parent: ViewGroup?) :
+    BaseViewHolder<ItemBossStoreLocationBinding, BossNearStoreResponse.BossNearStoreModel?>(
+        R.layout.item_boss_store_location,
+        parent
+    ) {
+
+    fun bindPosition(isSelected: Boolean) {
+        binding.isSelectedItem = isSelected
+        binding.tvDistance.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (isSelected) R.drawable.ic_near_line else R.drawable.ic_near_green,
+            0,
+            0,
+            0
+        )
+        binding.tvReviewCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (isSelected) R.drawable.ic_review_white else R.drawable.ic_review_green,
+            0,
+            0,
+            0
+        )
+    }
+
+    override fun bind(
+        item: BossNearStoreResponse.BossNearStoreModel?,
+        listener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel?>?
+    ) {
+        super.bind(item, listener)
+
+        if (item == null) {
+            return
+        }
+
+        binding.item = item
+        if (item.openStatus?.status == "CLOSED") {
+            binding.readyTextView.isVisible = true
+            binding.ivMenuIcon.alpha = 0.4f
+        } else {
+            binding.readyTextView.isVisible = false
+            binding.ivMenuIcon.alpha = 1.0f
+        }
+
+        if (item.categories.isNotEmpty()) {
+            binding.ivMenuIcon.loadUrlImg(item.categories[0].imageUrl)
+        }
+        val categories = item.categories.joinToString(" ") { it.name.toString() }
+        binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"
+        binding.tvReviewCount.text = "${item.totalFeedbacksCounts}개"
+        binding.tvStoreName.text = item.name
+        binding.tvCategory.text = "#${categories}"
+
     }
 }

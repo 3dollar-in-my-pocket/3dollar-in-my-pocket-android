@@ -24,7 +24,6 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import java.util.*
@@ -85,7 +84,7 @@ fun getCurrentLocationName(location: LatLng?): String? {
     val geoCoder = Geocoder(GlobalApplication.getContext(), Locale.KOREA)
     return try {
         val addresses: List<Address> =
-            geoCoder.getFromLocation(location.latitude, location.longitude, 1)
+            geoCoder.getFromLocation(location.latitude, location.longitude, 1) as List<Address>
         if (addresses.isEmpty()) {
             notFindMsg
         } else {
@@ -125,19 +124,31 @@ fun Context.shareUrl(url: String) {
     startActivity(Intent.createChooser(sendIntent, url))
 }
 
-fun Context.shareWithKakao(shareFormat: ShareFormat) {
+fun Context.shareWithKakao(
+    shareFormat: ShareFormat,
+    title: String?,
+    description: String?,
+    imageUrl: String?,
+    storeId : String?,
+    type : String?
+) {
     if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
         val feed = FeedTemplate(
             content = Content(
-                title = getString(R.string.share_kakao_title),
-                description = getString(R.string.share_kakao),
-                imageUrl = BuildConfig.BASE_URL + "api/images/share-with-kakao.png",
+                title = title ?: "",
+                description = description,
+                imageUrl = imageUrl ?: "",
                 link = Link(getString(R.string.download_url), getString(R.string.download_url))
             ),
             buttons = listOf(
                 Button(
                     title = getString(R.string.find_location),
-                    link = Link(shareFormat.shareUrl, shareFormat.shareUrl)
+                    link = Link(
+                        webUrl = shareFormat.shareUrl,
+                        mobileWebUrl = shareFormat.shareUrl,
+                        androidExecParams = mapOf("storeId" to storeId.toString(),"storeType" to type.toString()),
+                        iosExecParams = mapOf("storeId" to storeId.toString(),"storeType" to type.toString())
+                    )
                 )
             )
         )

@@ -11,19 +11,23 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
+   <fragment
+        android:id="@+id/navigation_street"
+        android:name="com.zion830.threedollars.ui.category.StreetByMenuFragment"
+        android:label="@string/road_food"
+        tools:layout="@layout/fragment_street_by_menu" />
+
     <fragment
-        android:id="@+id/navigation_category"
-        android:name="com.zion830.threedollars.ui.category.SelectCategoryFragment"
-        android:label="@string/category"
-        tools:layout="@layout/fragment_select_category" />
+        android:id="@+id/navigation_truck"
+        android:name="com.zion830.threedollars.ui.category.TruckByMenuFragment"
+        android:label="@string/food_truck"
+        tools:layout="@layout/fragment_truck_by_menu" />
 
     <fragment
         android:id="@+id/navigation_mypage"
         android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
         android:label="@string/title_mypage"
         tools:layout="@layout/fragment_new_my_page" />
-
-    tools:layout="@layout/fragment_mypage" />
 
     <fragment
         android:id="@+id/navigation_popup"

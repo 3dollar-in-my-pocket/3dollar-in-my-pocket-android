@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 
 
@@ -47,6 +48,27 @@ fun TextView.bindMenuIntroTitle(menuType: CategoryInfo?) {
         )
     }
     text = spannableString
+}
+
+@BindingAdapter("bindMenuIntroTitle")
+fun TextView.bindMenuIntroTitle(menuType: BossCategoriesResponse.BossCategoriesModel?) {
+    if (menuType == null) {
+        return
+    }
+    val menuName = menuType.name
+    val index = menuType.description.indexOf(menuName)
+    text = if (index != -1) {
+        val spannableString = SpannableStringBuilder(menuType.description).apply {
+            setSpan(
+                StyleSpan(Typeface.BOLD),
+                index,
+                index + menuName.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        spannableString
+    } else
+        menuType.description
 }
 
 @BindingAdapter("bindWhiteMenuIcon")

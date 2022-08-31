@@ -30,6 +30,7 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -86,7 +87,7 @@ class StoreDetailActivity :
         binding.admob.loadAd(adRequest)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        storeId = intent.getIntExtra(KEY_STORE_ID, 0)
+        storeId = intent.getIntExtra(STORE_ID, 0)
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
                 override fun onClick(item: Review) {
@@ -102,7 +103,8 @@ class StoreDetailActivity :
         )
         photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
-                StorePhotoDialog.getInstance(item.index).show(supportFragmentManager, StorePhotoDialog::class.java.name)
+                StorePhotoDialog.getInstance(item.index)
+                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })
         binding.rvVisitHistory.adapter = visitHistoryAdapter
@@ -146,7 +148,20 @@ class StoreDetailActivity :
                 binding.tvStoreName.text.toString(),
                 viewModel.selectedLocation.value ?: viewModel.storeLocation.value
             )
-            shareWithKakao(shareFormat)
+            shareWithKakao(
+                shareFormat = shareFormat,
+                title = getString(
+                    R.string.share_kakao_road_food_title,
+                    viewModel.storeInfo.value?.storeName
+                ),
+                description = getString(
+                    R.string.share_kakao_road_food,
+                    viewModel.storeInfo.value?.storeName
+                ),
+                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+                storeId = storeId.toString(),
+                type = getString(R.string.scheme_host_kakao_link_road_food_type)
+            )
         }
         binding.rvPhoto.adapter = photoAdapter
         binding.rvCategory.adapter = categoryAdapter
@@ -246,7 +261,10 @@ class StoreDetailActivity :
             if (it == null) {
                 return@updateCurrentLocation
             }
-            val distance = NaverMapUtils.calculateDistance(naverMapFragment.currentPosition, viewModel.storeLocation.value)
+            val distance = NaverMapUtils.calculateDistance(
+                naverMapFragment.currentPosition,
+                viewModel.storeLocation.value
+            )
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
@@ -291,17 +309,33 @@ class StoreDetailActivity :
             append(if (hasCertification) "이 다녀간 가게에요!" else " 내역이 없어요 :(")
         }
         binding.tvGood.text = "${isExist}명"
-        binding.tvGood.setTextColor(ContextCompat.getColor(this, if (isExist > 0) R.color.color_green else R.color.gray30))
+        binding.tvGood.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (isExist > 0) R.color.color_green else R.color.gray30
+            )
+        )
         binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(this, if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off),
+            ContextCompat.getDrawable(
+                this,
+                if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off
+            ),
             null,
             null,
             null
         )
         binding.tvBad.text = "${isNotExist}명"
-        binding.tvBad.setTextColor(ContextCompat.getColor(this, if (isNotExist > 0) R.color.color_main_red else R.color.gray30))
+        binding.tvBad.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (isNotExist > 0) R.color.color_main_red else R.color.gray30
+            )
+        )
         binding.tvBad.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(this, if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off),
+            ContextCompat.getDrawable(
+                this,
+                if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off
+            ),
             null,
             null,
             null
@@ -341,7 +375,7 @@ class StoreDetailActivity :
     }
 
     fun refreshStoreInfo() {
-        val storeId = intent.getIntExtra(KEY_STORE_ID, 0)
+        val storeId = intent.getIntExtra(STORE_ID, 0)
 
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
@@ -402,13 +436,23 @@ class StoreDetailActivity :
     }
 
     companion object {
-        private const val KEY_STORE_ID = "KEY_STORE_ID"
+        private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
         private const val EDIT_STORE_INFO = 234
 
-        fun getIntent(context: Context, storeId: Int, startCertification: Boolean = false) =
+        fun getIntent(
+            context: Context,
+            storeId: Int? = null,
+            startCertification: Boolean = false,
+            deepLinkStoreId: String? = null
+        ) =
             Intent(context, StoreDetailActivity::class.java).apply {
-                putExtra(KEY_STORE_ID, storeId)
+                storeId?.let {
+                    putExtra(STORE_ID, it)
+                }
+                deepLinkStoreId?.let {
+                    putExtra(STORE_ID, it.toInt())
+                }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
             }
     }

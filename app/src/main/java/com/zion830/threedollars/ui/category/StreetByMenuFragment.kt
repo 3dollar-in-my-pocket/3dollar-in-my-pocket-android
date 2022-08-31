@@ -1,43 +1,44 @@
 package com.zion830.threedollars.ui.category
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.viewModels
 import androidx.core.graphics.toColorInt
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.google.android.gms.ads.AdRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ActivityStoreByMenuBinding
+import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.category.adapter.SearchByDistanceRecyclerAdapter
-import com.zion830.threedollars.ui.category.adapter.SearchByRatingRecyclerAdapter
+import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
+import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
+import com.zion830.threedollars.ui.category.adapter.StreetSearchByRatingRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.ui.store_detail.map.StoreByMenuNaverMapFragment
-import com.zion830.threedollars.ui.store_detail.vm.StoreByMenuViewModel
-import com.zion830.threedollars.utils.*
-import zion830.com.common.base.BaseActivity
+import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFragment
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
+import com.zion830.threedollars.utils.OnMapTouchListener
+import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
-class StoreByMenuActivity :
-    BaseActivity<ActivityStoreByMenuBinding, StoreByMenuViewModel>(R.layout.activity_store_by_menu),
+class StreetByMenuFragment :
+    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu),
     OnMapTouchListener {
 
-    override val viewModel: StoreByMenuViewModel by viewModels()
+    override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private lateinit var menuType: CategoryInfo
+    private var menuType: CategoryInfo = CategoryInfo()
 
     private val listener = object : OnItemClickListener<StoreInfo> {
         override fun onClick(item: StoreInfo) {
             EventTracker.logEvent(Constants.STORE_LIST_ITEM_CLICKED)
-            val intent = StoreDetailActivity.getIntent(this@StoreByMenuActivity, item.storeId)
+            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
             startActivity(intent)
         }
     }
@@ -47,11 +48,11 @@ class StoreByMenuActivity :
         }
     }
     private val storeByDistanceAdapters by lazy {
-        SearchByDistanceRecyclerAdapter(listener, adListener)
+        StreetSearchByDistanceRecyclerAdapter(listener, adListener)
     }
 
     private val storeByRatingAdapters by lazy {
-        SearchByRatingRecyclerAdapter(listener, adListener)
+        StreetSearchByRatingRecyclerAdapter(listener, adListener)
     }
 
     override fun onTouch() {
@@ -65,12 +66,13 @@ class StoreByMenuActivity :
 
         initAdapter()
 
-        val naverMapFragment = StoreByMenuNaverMapFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        val naverMapFragment = StreetStoreByMenuNaverMapFragment()
+        parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
-        menuType = intent.getSerializableExtra(KEY_MENU) as? CategoryInfo ?: CategoryInfo()
-        viewModel.changeCategory(menuType)
-
+        binding.categoryImageView.setOnClickListener {
+            val bottomSheetDialog = StreetSelectCategoryDialogFragment()
+            bottomSheetDialog.show(parentFragmentManager, "")
+        }
         binding.btnMenu.setOnClickListener {
             naverMapFragment.moveToCurrentLocation()
             naverMapFragment.currentPosition?.let { currentPosition ->
@@ -91,7 +93,17 @@ class StoreByMenuActivity :
                 viewModel.changeSortType(SortType.RATING, currentPosition)
             }
         }
-        popupViewModel.popups.observe(this, { popups ->
+
+        binding.newStoreFloatingButton.setOnClickListener {
+            startActivity(
+                NewStoreActivity.getInstance(
+                    requireContext(),
+                    naverMapFragment.getMapCenterLatLng()
+                )
+            )
+        }
+
+        popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 binding.itemStoreListAd.run {
                     tvAdTitle.text = popups[0].title
@@ -112,8 +124,13 @@ class StoreByMenuActivity :
                 storeByDistanceAdapters.submitAdList(popups)
                 storeByRatingAdapters.submitAdList(popups)
             }
-        })
-        viewModel.storeByRating.observe(this) {
+        }
+        viewModel.category.observe(viewLifecycleOwner) {
+            naverMapFragment.currentPosition?.let { currentPosition ->
+                viewModel.requestStoreInfo(currentPosition)
+            }
+        }
+        viewModel.storeByRating.observe(viewLifecycleOwner) {
             val storeInfoList = if (binding.cbCertification.isChecked) {
                 it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
             } else {
@@ -122,7 +139,7 @@ class StoreByMenuActivity :
             storeByRatingAdapters.submitList(storeInfoList)
             popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
-        viewModel.storeByDistance.observe(this) {
+        viewModel.storeByDistance.observe(viewLifecycleOwner) {
             val storeInfoList = if (binding.cbCertification.isChecked) {
                 it.filter { storeInfo -> storeInfo.visitHistory.isCertified }
             } else {
@@ -130,9 +147,6 @@ class StoreByMenuActivity :
             }
             storeByDistanceAdapters.submitList(storeInfoList)
             popupViewModel.getPopups("STORE_CATEGORY_LIST")
-        }
-        binding.btnBack.setOnClickListener {
-            finish()
         }
         binding.cbCertification.setOnCheckedChangeListener { _, _ ->
             naverMapFragment.currentPosition?.let {
@@ -148,14 +162,5 @@ class StoreByMenuActivity :
             rvRating.adapter = storeByRatingAdapters
             rvRating.itemAnimator = null
         }
-    }
-
-    companion object {
-        private const val KEY_MENU = "KEY_MENU"
-
-        fun getIntent(context: Context, category: CategoryInfo) =
-            Intent(context, StoreByMenuActivity::class.java).apply {
-                putExtra(KEY_MENU, category)
-            }
     }
 }

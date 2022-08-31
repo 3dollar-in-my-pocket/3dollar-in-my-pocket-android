@@ -12,7 +12,7 @@ import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
-class SearchByDistanceRecyclerAdapter(
+class StreetSearchByDistanceRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>,
     private val adListener: OnItemClickListener<Popups>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -41,7 +41,7 @@ class SearchByDistanceRecyclerAdapter(
             SearchByAdViewHolder(parent)
         }
         VIEW_TYPE_STORE -> {
-            SearchByDistanceViewHolder(parent)
+            StreetSearchByDistanceViewHolder(parent)
         }
         else -> {
             throw IllegalStateException("Not Found ViewHolder Type $viewType")
@@ -50,7 +50,7 @@ class SearchByDistanceRecyclerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is SearchByDistanceViewHolder -> {
+            is StreetSearchByDistanceViewHolder -> {
                 holder.bind(items[position] as StoreInfo, listener)
             }
             is SearchByAdViewHolder -> {
@@ -84,7 +84,7 @@ class SearchByDistanceRecyclerAdapter(
 }
 
 
-class SearchByDistanceViewHolder(parent: ViewGroup) :
+class StreetSearchByDistanceViewHolder(parent: ViewGroup) :
     BaseViewHolder<ItemStoreByDistanceBinding, StoreInfo>(R.layout.item_store_by_distance, parent) {
 
     override fun bind(item: StoreInfo, listener: OnItemClickListener<StoreInfo>?) {

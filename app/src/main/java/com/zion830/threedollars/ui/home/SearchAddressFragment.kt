@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home
 
+import android.os.Bundle
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
@@ -30,7 +31,12 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                viewModel.requestHomeItem(location)
+                if(arguments?.getBoolean(IS_ROAD_FOOD_MODE) == true){
+                    viewModel.requestHomeItem(location)
+                }
+                else{
+                    viewModel.getBossNearStore(location)
+                }
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -62,5 +68,16 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
             false
         }
+    }
+    companion object {
+
+        const val IS_ROAD_FOOD_MODE = "IS_ROAD_FOOD_MODE"
+
+        fun newInstance(isRoadFoodMode : Boolean) =
+            SearchAddressFragment().apply {
+                arguments = Bundle().apply {
+                        putBoolean(IS_ROAD_FOOD_MODE, isRoadFoodMode)
+                }
+            }
     }
 }

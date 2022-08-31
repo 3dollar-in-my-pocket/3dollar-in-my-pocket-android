@@ -21,6 +21,9 @@ import io.hackle.android.HackleApp
 class GlobalApplication : Application() {
 
     companion object {
+        lateinit var instance: GlobalApplication
+            private set
+
         private lateinit var APPLICATION_CONTEXT: Context
         lateinit var eventTracker: FirebaseAnalytics
             private set
@@ -50,6 +53,7 @@ class GlobalApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         APPLICATION_CONTEXT = applicationContext
         eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
 

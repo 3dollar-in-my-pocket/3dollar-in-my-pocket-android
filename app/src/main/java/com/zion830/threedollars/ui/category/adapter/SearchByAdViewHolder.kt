@@ -3,8 +3,6 @@ package com.zion830.threedollars.ui.category.adapter
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreListAdBinding
 import com.zion830.threedollars.repository.model.v2.response.Popups

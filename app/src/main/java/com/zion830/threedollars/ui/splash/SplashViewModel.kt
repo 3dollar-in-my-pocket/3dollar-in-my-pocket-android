@@ -37,13 +37,30 @@ class SplashViewModel : BaseViewModel() {
                     SharedPrefUtils.saveCategories(result.body()?.data ?: emptyList())
                 }
             }
+
+            val bossCategory = storeRepository.getBossCategory()
+            if (bossCategory.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    SharedPrefUtils.saveTruckCategories(bossCategory.body()?.data ?: emptyList())
+                }
+            }
+
+            val bossStoreFeedbackTypeResponse = storeRepository.getBossStoreFeedbackType()
+            if (bossStoreFeedbackTypeResponse.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    SharedPrefUtils.saveFeedbackType(
+                        bossStoreFeedbackTypeResponse.body()?.data ?: emptyList()
+                    )
+                }
+            }
         }
     }
 
     fun tryLogin() {
         viewModelScope.launch(coroutineExceptionHandler) {
             val loginType = SharedPrefUtils.getLoginType() ?: ""
-            val token = if (loginType == LoginType.KAKAO.socialName) SharedPrefUtils.getKakaoAccessToken() else SharedPrefUtils.getGoogleToken()
+            val token =
+                if (loginType == LoginType.KAKAO.socialName) SharedPrefUtils.getKakaoAccessToken() else SharedPrefUtils.getGoogleToken()
 
             if (token.isNullOrBlank()) {
                 _loginResult.postValue(ResultWrapper.GenericError(400))
@@ -57,7 +74,11 @@ class SplashViewModel : BaseViewModel() {
     }
 
     fun refreshGoogleToken(account: GoogleSignInAccount) {
-        val token = GoogleAuthUtil.getToken(GlobalApplication.getContext(), account.account, "oauth2:https://www.googleapis.com/auth/plus.me")
+        val token = GoogleAuthUtil.getToken(
+            GlobalApplication.getContext(),
+            account.account,
+            "oauth2:https://www.googleapis.com/auth/plus.me"
+        )
         SharedPrefUtils.saveGoogleToken(token)
         SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
         tryLogin()
@@ -65,11 +86,15 @@ class SplashViewModel : BaseViewModel() {
 
     fun refreshKakaoToken() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = kakaoLoginApi.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
+            val response =
+                kakaoLoginApi.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
 
             if (response.isSuccessful && response.body() != null) {
                 SharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                SharedPrefUtils.saveKakaoToken(response.body()?.accessToken ?: "", response.body()?.refreshToken ?: "")
+                SharedPrefUtils.saveKakaoToken(
+                    response.body()?.accessToken ?: "",
+                    response.body()?.refreshToken ?: ""
+                )
                 tryLogin()
             } else {
                 _loginResult.postValue(ResultWrapper.GenericError(response.code()))

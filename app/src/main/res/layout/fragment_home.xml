@@ -20,9 +20,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+
+            <TextView
+                android:id="@+id/modeChangeTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/rect_black_radius12"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:maxWidth="280dp"
+                android:minHeight="48dp"
+                android:paddingHorizontal="8dp"
+                android:singleLine="true"
+                android:text="@string/road_food"
+                android:textColor="@color/color_FFA1AA"
+                android:textSize="12sp"
+                app:drawableStartCompat="@drawable/ic_sync_pink"
+                app:layout_constraintEnd_toStartOf="@id/layout_address"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="길거리음식" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_address"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:background="@drawable/rect_white_radius_12"
@@ -30,27 +54,39 @@
                 android:gravity="center"
                 android:minHeight="48dp"
                 android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintStart_toEndOf="@id/modeChangeTextView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.58">
 
                 <TextView
                     android:id="@+id/tv_address"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:maxWidth="280dp"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/addressArrowImageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="강남" />
 
                 <ImageView
+                    android:id="@+id/addressArrowImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:src="@drawable/ic_arrow_down" />
-            </LinearLayout>
+                    android:src="@drawable/ic_gray_arrow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_address"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/container"
@@ -62,6 +98,45 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/categoryConstraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_address">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/bossCategoryRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="16dp"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:listitem="@layout/item_home_boss_category" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/roadFoodCategoryRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:listitem="@layout/item_home_boss_category" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
                 android:id="@+id/tv_retry_search"
                 android:layout_width="wrap_content"
@@ -69,8 +144,8 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/ripple_translate"
                 android:clickable="true"
-                android:focusable="true"
                 android:elevation="8dp"
+                android:focusable="true"
                 android:paddingHorizontal="24dp"
                 android:paddingVertical="12dp"
                 android:text="@string/retry_search"
@@ -78,7 +153,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_address" />
+                app:layout_constraintTop_toBottomOf="@id/categoryConstraintLayout" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"
@@ -95,6 +170,33 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:listitem="@layout/item_store_location" />
+
+            <TextView
+                android:id="@+id/foodTruckToolTipTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_gray80_radius8"
+                android:paddingVertical="12dp"
+                android:paddingStart="48dp"
+                android:paddingEnd="16dp"
+                android:text="@string/food_truck_tool_tip"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/categoryConstraintLayout" />
+
+            <ImageView
+                android:id="@+id/foodTruckToolTipImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_finger_arrow_up"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/foodTruckToolTipTextView"
+                app:layout_constraintStart_toStartOf="@id/foodTruckToolTipTextView"
+                app:layout_constraintTop_toBottomOf="@id/modeChangeTextView"
+                app:layout_constraintVertical_bias="0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>
