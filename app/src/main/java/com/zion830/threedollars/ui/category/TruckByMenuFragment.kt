@@ -62,7 +62,7 @@ class TruckByMenuFragment :
     override fun initView() {
         initAdapter()
 
-        val naverMapFragment = TruckStoreByMenuNaverMapFragment()
+        val naverMapFragment = TruckStoreByMenuNaverMapFragment(this)
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {

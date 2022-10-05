@@ -66,7 +66,7 @@ class StreetByMenuFragment :
 
         initAdapter()
 
-        val naverMapFragment = StreetStoreByMenuNaverMapFragment()
+        val naverMapFragment = StreetStoreByMenuNaverMapFragment(this)
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {
