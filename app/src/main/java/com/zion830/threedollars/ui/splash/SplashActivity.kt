@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -63,6 +64,22 @@ class SplashActivity :
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_LOGIN_ERROR_REQUEST_CODE) {
+            if (resultCode == 200) {
+                val account =
+                    GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                if (account != null && account.idToken != null)
+                    try {
+                        viewModel.refreshGoogleToken(account)
+                    } catch (e: UserRecoverableAuthException) {
+                        startActivityForResult(e.intent, GOOGLE_LOGIN_ERROR_REQUEST_CODE)
+                    }
+            }
+        }
+    }
+
     private fun tryServiceLogin() {
         when (SharedPrefUtils.getLoginType()) {
             LoginType.KAKAO.socialName -> {
@@ -73,7 +90,11 @@ class SplashActivity :
                     val account =
                         GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
                     if (account != null && account.idToken != null) {
-                        viewModel.refreshGoogleToken(account)
+                        try {
+                            viewModel.refreshGoogleToken(account)
+                        } catch (e: UserRecoverableAuthException) {
+                            startActivityForResult(e.intent, 1001)
+                        }
                     } else {
                         withContext(Dispatchers.Main) {
                             startActivity(Intent(applicationContext, LoginActivity::class.java))
@@ -155,6 +176,7 @@ class SplashActivity :
     companion object {
         private const val STORE_ID = "storeId"
         private const val STORE_TYPE = "STORE_TYPE"
+        private const val GOOGLE_LOGIN_ERROR_REQUEST_CODE = 1001
 
         fun getIntent(
             context: Context,

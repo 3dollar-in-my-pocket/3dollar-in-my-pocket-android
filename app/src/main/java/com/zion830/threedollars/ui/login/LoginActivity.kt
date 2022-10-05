@@ -1,6 +1,9 @@
 package com.zion830.threedollars.ui.login
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Message
+import android.util.Base64
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +14,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.zion830.threedollars.*
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
@@ -25,6 +29,7 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
+import java.security.MessageDigest
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
