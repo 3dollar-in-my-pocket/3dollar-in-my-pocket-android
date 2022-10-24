@@ -22,17 +22,17 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:src="@drawable/ic_rectangle_gray"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/ic_rectangle_gray" />
 
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:bufferType="spannable"
             android:paddingHorizontal="20dp"
-            android:layout_marginTop="24dp"
             android:textColor="@android:color/black"
             android:textSize="24sp" />
 
@@ -58,7 +58,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="16dp"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
@@ -73,8 +73,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
                     android:textSize="12sp"
                     android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_ad_title"
