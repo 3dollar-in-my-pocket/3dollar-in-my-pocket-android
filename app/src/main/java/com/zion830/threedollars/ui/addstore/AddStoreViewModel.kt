@@ -29,6 +29,10 @@ class AddStoreViewModel : BaseViewModel() {
         it.isNotNullOrBlank()
     }
 
+    private val _isMapUpdated: MutableLiveData<Unit> = MutableLiveData()
+    val isMapUpdated: LiveData<Unit>
+        get() = _isMapUpdated
+
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation

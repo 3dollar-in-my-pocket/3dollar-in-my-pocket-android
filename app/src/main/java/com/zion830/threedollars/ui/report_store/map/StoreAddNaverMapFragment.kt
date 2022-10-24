@@ -11,9 +11,7 @@ import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.utils.SizeUtils
 
-class StoreAddNaverMapFragment(
-    private val onMapUpdated: (LatLng?) -> Unit,
-) : NaverMapFragment() {
+class StoreAddNaverMapFragment : NaverMapFragment() {
 
     private val addStoreViewModel: AddStoreViewModel by activityViewModels()
 
@@ -28,7 +26,6 @@ class StoreAddNaverMapFragment(
         naverMap?.addOnCameraIdleListener {
             if (System.currentTimeMillis() - lastTime > 1000 && isIdleAvailable) {
                 val selectedPosition = naverMap?.cameraPosition?.target
-                onMapUpdated(selectedPosition)
                 addStoreViewModel.updateLocation(selectedPosition)
                 lastTime = System.currentTimeMillis()
             }
@@ -38,24 +35,17 @@ class StoreAddNaverMapFragment(
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(58f))
         binding.btnFindLocation.layoutParams = params
 
-        val latitude = arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
-        val longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
-
         moveToCurrentLocation(false)
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        onMapUpdated(position)
         addStoreViewModel.updateLocation(position)
         isIdleAvailable = true
     }
 
     companion object {
-        fun getInstance(
-            latLng: LatLng?,
-            onMapUpdated: (LatLng?) -> Unit,
-        ) = StoreAddNaverMapFragment(onMapUpdated).apply {
+        fun getInstance(latLng: LatLng?) = StoreAddNaverMapFragment().apply {
             latLng?.let {
                 val bundle = Bundle()
                 bundle.putDouble(NewStoreActivity.KEY_LATITUDE, latLng.latitude)

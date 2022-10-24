@@ -43,10 +43,9 @@ class NewAddressFragment :
     }
 
     private fun initMap() {
-        naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude)) {
-            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-        }
-        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
+        naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.map_container, naverMapFragment)?.commit()
     }
 
     private fun initViewModel() {
@@ -54,24 +53,27 @@ class NewAddressFragment :
             nearStoreInfo.observe(viewLifecycleOwner) { res ->
                 naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
             }
-            selectedLocation.observe(viewLifecycleOwner, { latLng ->
+            selectedLocation.observe(viewLifecycleOwner) { latLng ->
                 if (latLng != null) {
+                    binding.tvAddress.text =
+                        getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
                     requestStoreInfo(latLng)
                     latitude = latLng.latitude
                     longitude = latLng.longitude
                 }
-            })
+            }
         }
     }
 
     private fun showNearExistDialog() {
-        val dialog = NearExistDialog.getInstance(latitude, longitude)
-        dialog.setDialogListener(object : NearExistDialog.DialogListener {
-            override fun accept() {
-                moveAddStoreDetailFragment()
-            }
-        })
-        dialog.show(parentFragmentManager, "")
+        NearExistDialog.getInstance(latitude, longitude)
+            .apply {
+                setDialogListener(object : NearExistDialog.DialogListener {
+                    override fun accept() {
+                        moveAddStoreDetailFragment()
+                    }
+                })
+            }.show(parentFragmentManager, "")
     }
 
     private fun moveAddStoreDetailFragment() {
