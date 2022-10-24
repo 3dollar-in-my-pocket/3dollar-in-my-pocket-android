@@ -35,7 +35,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="500dp"
+                android:layout_marginTop="450dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -47,7 +47,7 @@
                     android:layout_marginHorizontal="24dp"
                     android:background="@drawable/btn_kakao"
                     android:drawableStart="@drawable/ic_kakao"
-                    android:paddingHorizontal="82dp"
+                    android:paddingHorizontal="62dp"
                     android:paddingVertical="12dp"
                     android:text="@string/login_kakao"
                     android:textColor="#381e1f"
@@ -65,7 +65,7 @@
                     android:background="@drawable/btn_kakao"
                     android:backgroundTint="@color/white"
                     android:drawableStart="@drawable/ic_logo_google"
-                    android:paddingHorizontal="82dp"
+                    android:paddingHorizontal="62dp"
                     android:paddingVertical="12dp"
                     android:text="@string/login_google"
                     android:textAllCaps="false"
