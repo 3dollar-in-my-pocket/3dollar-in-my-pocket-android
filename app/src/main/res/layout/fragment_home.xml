@@ -23,11 +23,10 @@
 
             <TextView
                 android:id="@+id/modeChangeTextView"
-                android:layout_width="0dp"
+                android:layout_width="94dp"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="24dp"
                 android:background="@drawable/rect_black_radius12"
                 android:elevation="6dp"
                 android:gravity="center"
@@ -39,7 +38,6 @@
                 android:textColor="@color/color_FFA1AA"
                 android:textSize="12sp"
                 app:drawableStartCompat="@drawable/ic_sync_pink"
-                app:layout_constraintEnd_toStartOf="@id/layout_address"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="길거리음식" />
@@ -48,17 +46,19 @@
                 android:id="@+id/layout_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/rect_white_radius_12"
                 android:elevation="6dp"
                 android:gravity="center"
                 android:minHeight="48dp"
                 android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/modeChangeTextView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.58">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/tv_address"
@@ -102,7 +102,7 @@
                 android:id="@+id/categoryConstraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_address">
