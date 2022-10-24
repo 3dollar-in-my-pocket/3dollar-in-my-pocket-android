@@ -230,6 +230,14 @@
                             android:layout_marginTop="30dp"
                             android:visibility="gone" />
 
+                        <com.google.android.gms.ads.AdView
+                            android:id="@+id/admob"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            app:adSize="BANNER"
+                            app:adUnitId="@string/admob_unit_id" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -259,14 +267,6 @@
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                 tools:listitem="@layout/item_store_by_rating" />
                         </LinearLayout>
-
-                        <com.google.android.gms.ads.AdView
-                            android:id="@+id/admob"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:adSize="BANNER"
-                            app:adUnitId="@string/admob_unit_id" />
-
                     </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
