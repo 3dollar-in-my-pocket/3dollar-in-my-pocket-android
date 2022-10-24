@@ -8,10 +8,12 @@
         <variable
             name="item"
             type="com.zion830.threedollars.repository.model.v2.response.Popups" />
+
         <variable
             name="listener"
             type="zion830.com.common.listener.OnItemClickListener" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_item"
         android:layout_width="match_parent"
@@ -43,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/detail"
             android:onClick="@{() -> listener.onClick(item)}"
+            android:text="@string/detail"
             android:textColor="@color/color_FFA1AA"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,36 +54,39 @@
 
         <TextView
             android:id="@+id/tv_ad_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:textColor="@color/black"
+            android:layout_marginEnd="8dp"
             android:text="@{item.title}"
+            android:textColor="@color/black"
             android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_ad"
-            tools:text="가3팀이 붕어빵을 판다?" />
+            tools:text="가3팀이 붕어빵을 판다?가3팀이 붕어빵을 판다?가3팀이 붕어빵을 판다?" />
 
         <TextView
             android:id="@+id/tv_ad_body"
             style="@style/LightTextViewStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@{item.subTitle}"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{item.subTitle}"
             android:textColor="@color/gray60"
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_ad_title"
-            tools:text="붕어빵 팔꺼니까 익선동으로 많이 와주세요" />
+            tools:text="붕어빵 팔꺼니까 익선동으로 많이 와주세요 붕어빵 팔꺼니까 익선동으로 많이 와주세요 붕어빵 팔꺼니까 익선동으로 많이 와주세요 붕어빵 팔꺼니까 익선동으로 많이 와주세요 붕어빵 팔꺼니까 익선동으로 많이 와주세요" />
 
         <ImageView
             android:id="@+id/iv_ad_image"
-            android:layout_width="120dp"
-            android:layout_height="68dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_detail"
             tools:src="@drawable/ic_launcher_background" />
