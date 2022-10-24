@@ -40,7 +40,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private val markers = arrayListOf<Marker>()
 
-    private var listener: OnMapTouchListener? = null
+    var listener: OnMapTouchListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

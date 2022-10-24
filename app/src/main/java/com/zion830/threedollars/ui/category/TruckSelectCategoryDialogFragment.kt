@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.category
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,8 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -42,6 +45,21 @@ class TruckSelectCategoryDialogFragment :
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener {
+            val bottomSheetDialog = it as BottomSheetDialog
+            setupRatio(bottomSheetDialog)
+        }
+        return dialog
+    }
+
+    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+        val behavior = BottomSheetBehavior.from<View>(bottomSheet)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
