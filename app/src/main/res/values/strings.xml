@@ -315,4 +315,6 @@
     <string name="scheme_host_kakao_link_road_food_type">streetFood</string>
     <string name="scheme_host_kakao_link_store_id">storeId</string>
     <string name="scheme_host_kakao_link_store_type">storeType</string>
+    <string name="recruit_boss_title">푸드트럭 사장님 모집 중!</string>
+    <string name="recruit_boss_body">현재 푸드트럭 사장님을 모집 하고 있어요.\n앱스토어에 가슴속 3천원 사장님을\n검색해 주세요.</string>
 </resources>

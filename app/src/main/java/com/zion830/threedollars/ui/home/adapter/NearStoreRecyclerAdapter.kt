@@ -1,12 +1,15 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.internal.ViewUtils.dpToPx
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemBossStoreLocationBinding
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
@@ -21,6 +24,7 @@ import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.convertDpToPx
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
@@ -151,6 +155,12 @@ class NearStoreEmptyViewHolder(parent: ViewGroup) :
         listener: OnItemClickListener<HomeStoreEmptyResponse>?
     ) {
         super.bind(item, listener)
+        val params = binding.storeImageView.layoutParams
+        params.width = GlobalApplication.getContext()
+            .convertDpToPx(if (item.emptyImage == R.drawable.ic_no_store) 75f else 45f).toInt()
+        params.height = GlobalApplication.getContext()
+            .convertDpToPx(if (item.emptyImage == R.drawable.ic_no_store) 75f else 45f).toInt()
+        binding.storeImageView.layoutParams = params
     }
 }
 

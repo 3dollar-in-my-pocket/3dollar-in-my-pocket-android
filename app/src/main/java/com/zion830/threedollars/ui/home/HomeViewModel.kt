@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.PopupRepository
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
@@ -64,7 +65,13 @@ class HomeViewModel : BaseViewModel() {
                 }
             }
             if (resultList.isEmpty()) {
-                resultList.add(HomeStoreEmptyResponse())
+                resultList.add(
+                    HomeStoreEmptyResponse(
+                        emptyImage = R.drawable.img_truck,
+                        emptyTitle = R.string.recruit_boss_title,
+                        emptyBody = R.string.recruit_boss_body
+                    )
+                )
             }
             if (adData != null) {
                 adData.firstOrNull()?.let { resultList.add(1, it) }
@@ -104,7 +111,14 @@ class HomeViewModel : BaseViewModel() {
     fun getBossCategory() {
         viewModelScope.launch(coroutineExceptionHandler) {
             repository.getBossCategory().body()?.data?.let {
-                _bossCategoryModelList.emit(listOf(BossCategoriesResponse.BossCategoriesModel(categoryId = "All", name = "전체")) + it)
+                _bossCategoryModelList.emit(
+                    listOf(
+                        BossCategoriesResponse.BossCategoriesModel(
+                            categoryId = "All",
+                            name = "전체"
+                        )
+                    ) + it
+                )
             }
         }
     }
