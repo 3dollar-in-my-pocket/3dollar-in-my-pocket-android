@@ -3,6 +3,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply from: '../common.gradle'
 
+android {
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/common_release.kotlin_module']
+        }
+    }
+    namespace 'gun0912.tedimagepicker'
+}
+
 dependencies {
     implementation 'io.github.ParkSangGwon:tedpermission-coroutine:3.2.3'
 

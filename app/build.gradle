@@ -8,6 +8,8 @@ Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
+
+    namespace 'com.zion830.threedollars'
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -35,6 +37,11 @@ android {
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "HACKLE_KEY", "\"${properties.getProperty('hackle_develop')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
+        }
+    }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/common_release.kotlin_module']
         }
     }
 }

@@ -39,6 +39,22 @@
           }
         },
         {
+          "client_id": "174359764387-pmr2a7mr0kntmafkrvm20n3tb26p9gai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "48d8441f27052b0ff5e70b3522f893acdfebd4d7"
+          }
+        },
+        {
+          "client_id": "174359764387-r43vc73trbdlrg2ko9okl7uhgn1eiqa2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "9bbc3bb993768dcf80fdb0149e2caec7925fa1f1"
+          }
+        },
+        {
           "client_id": "174359764387-34sjr18nsc3k08tuvtjkcp0rbp2scdb9.apps.googleusercontent.com",
           "client_type": 3
         }
