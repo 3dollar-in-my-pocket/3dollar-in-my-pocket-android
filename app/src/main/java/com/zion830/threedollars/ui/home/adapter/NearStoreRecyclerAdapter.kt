@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
@@ -22,6 +23,7 @@ import com.zion830.threedollars.repository.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.convertDpToPx
@@ -161,6 +163,7 @@ class NearStoreEmptyViewHolder(parent: ViewGroup) :
         params.height = GlobalApplication.getContext()
             .convertDpToPx(if (item.emptyImage == R.drawable.ic_no_store) 75f else 45f).toInt()
         binding.storeImageView.layoutParams = params
+        binding.emptyBodyTextView.textPartTypeface("가슴속 3천원 사장님", Typeface.BOLD)
     }
 }
 

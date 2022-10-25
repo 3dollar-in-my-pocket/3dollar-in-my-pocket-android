@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rect_white_radius16"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        tools:ignore="UnusedAttribute">
+
+
+        <TextView
+            android:id="@+id/emptyTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/applegothic_bold"
+            android:singleLine="true"
+            android:text="@{item.emptyTitle}"
+            android:textColor="@color/color_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="0dp"
+            tools:text="푸드트럭 사장님 모집 중!" />
+
+        <TextView
+            android:id="@+id/emptyBodyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:text="@{item.emptyBody}"
+            android:textColor="@color/gray60"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emptyTitleTextView"
+            tools:text="앱스토어에 가슴속 3천원 사장님을 검색해 주세요." />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

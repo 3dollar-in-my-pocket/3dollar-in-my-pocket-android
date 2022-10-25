@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemTruckStoreByDistanceBinding
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
 import zion830.com.common.base.BaseViewHolder
@@ -28,6 +29,9 @@ class TruckSearchByDistanceRecyclerAdapter(
             is BossNearStoreResponse.BossNearStoreModel -> {
                 VIEW_TYPE_STORE
             }
+            is HomeStoreEmptyResponse -> {
+                VIEW_TYPE_EMPTY
+            }
             else -> {
                 throw IllegalStateException("Not Found ViewHolder Type")
             }
@@ -40,6 +44,9 @@ class TruckSearchByDistanceRecyclerAdapter(
         }
         VIEW_TYPE_STORE -> {
             TruckSearchByDistanceViewHolder(parent)
+        }
+        VIEW_TYPE_EMPTY -> {
+            TruckSearchEmptyViewHolder(parent)
         }
         else -> {
             throw IllegalStateException("Not Found ViewHolder Type $viewType")
@@ -54,6 +61,9 @@ class TruckSearchByDistanceRecyclerAdapter(
             is SearchByAdViewHolder -> {
                 holder.bind(items[position] as Popups, adListener)
             }
+            is TruckSearchEmptyViewHolder -> {
+                holder.bind(items[position] as HomeStoreEmptyResponse, null)
+            }
         }
     }
 
@@ -63,11 +73,21 @@ class TruckSearchByDistanceRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun submitEmptyList(newItems: List<AdAndStoreItem>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
     fun submitAdList(newItems: List<AdAndStoreItem>) {
         if (items.isEmpty()) {
             return
         }
-        val list = items.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+        var list: List<AdAndStoreItem> =
+            items.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+        if (list.isEmpty()) {
+            list = items.filterIsInstance<HomeStoreEmptyResponse>()
+        }
         items.clear()
         items.addAll(list)
         items.add(1, newItems[0])
@@ -78,6 +98,7 @@ class TruckSearchByDistanceRecyclerAdapter(
     companion object {
         private const val VIEW_TYPE_AD = 1
         private const val VIEW_TYPE_STORE = 2
+        private const val VIEW_TYPE_EMPTY = 3
     }
 }
 

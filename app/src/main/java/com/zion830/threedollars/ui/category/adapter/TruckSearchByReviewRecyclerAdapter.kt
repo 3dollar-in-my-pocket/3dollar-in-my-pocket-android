@@ -1,13 +1,23 @@
 package com.zion830.threedollars.ui.category.adapter
 
+import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.view.ViewGroup
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.RecyclerView
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
+import com.zion830.threedollars.databinding.ItemTruckSearchEmptyBinding
 import com.zion830.threedollars.databinding.ItemTruckStoreByReviewBinding
 import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.convertDpToPx
 import zion830.com.common.listener.OnItemClickListener
 
 class TruckSearchByReviewRecyclerAdapter(
@@ -26,6 +36,9 @@ class TruckSearchByReviewRecyclerAdapter(
             is BossNearStoreResponse.BossNearStoreModel -> {
                 VIEW_TYPE_STORE
             }
+            is HomeStoreEmptyResponse -> {
+                VIEW_TYPE_EMPTY
+            }
             else -> {
                 throw IllegalStateException("Not Found ViewHolder Type")
             }
@@ -38,6 +51,9 @@ class TruckSearchByReviewRecyclerAdapter(
         }
         VIEW_TYPE_STORE -> {
             TruckSearchByReviewViewHolder(parent)
+        }
+        VIEW_TYPE_EMPTY -> {
+            TruckSearchEmptyViewHolder(parent)
         }
         else -> {
             throw IllegalStateException("Not Found ViewHolder Type $viewType")
@@ -52,6 +68,9 @@ class TruckSearchByReviewRecyclerAdapter(
             is SearchByAdViewHolder -> {
                 holder.bind(items[position] as Popups, adListener)
             }
+            is TruckSearchEmptyViewHolder -> {
+                holder.bind(items[position] as HomeStoreEmptyResponse, null)
+            }
         }
     }
 
@@ -61,11 +80,21 @@ class TruckSearchByReviewRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun submitEmptyList(newItems: List<AdAndStoreItem>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
     fun submitAdList(newItems: List<AdAndStoreItem>) {
         if (items.isEmpty()) {
             return
         }
-        val list = items.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+        var list: List<AdAndStoreItem> =
+            items.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+        if (list.isEmpty()) {
+            list = items.filterIsInstance<HomeStoreEmptyResponse>()
+        }
         items.clear()
         items.addAll(list)
         items.add(1, newItems[0])
@@ -75,6 +104,7 @@ class TruckSearchByReviewRecyclerAdapter(
     companion object {
         private const val VIEW_TYPE_AD = 1
         private const val VIEW_TYPE_STORE = 2
+        private const val VIEW_TYPE_EMPTY = 3
     }
 }
 
@@ -91,5 +121,21 @@ class TruckSearchByReviewViewHolder(parent: ViewGroup) :
         super.bind(item, listener)
         val categories = item.categories.joinToString(" ") { "#${it.name}" }
         binding.tvCategory.text = categories
+    }
+}
+
+class TruckSearchEmptyViewHolder(parent: ViewGroup) :
+    BaseViewHolder<ItemTruckSearchEmptyBinding, HomeStoreEmptyResponse>(
+        R.layout.item_truck_search_empty,
+        parent
+    ) {
+
+    @SuppressLint("Range")
+    override fun bind(
+        item: HomeStoreEmptyResponse,
+        listener: OnItemClickListener<HomeStoreEmptyResponse>?
+    ) {
+        super.bind(item, listener)
+        binding.emptyBodyTextView.textPartTypeface("가슴속 3천원 사장님", Typeface.BOLD)
     }
 }

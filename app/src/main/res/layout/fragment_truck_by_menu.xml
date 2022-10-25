@@ -147,39 +147,6 @@
                         app:layout_constraintTop_toBottomOf="@id/tv_category" />
 
                     <LinearLayout
-                        android:id="@+id/ll_sort_button_group"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="@drawable/rect_gray_radius12"
-                        android:orientation="horizontal"
-                        android:padding="5dp"
-                        app:layout_constraintBottom_toBottomOf="@id/cb_certification"
-                        app:layout_constraintDimensionRatio="W, 3.18181818:1"
-                        app:layout_constraintStart_toStartOf="@id/cb_certification"
-                        app:layout_constraintTop_toTopOf="@id/cb_certification">
-
-                        <Button
-                            android:id="@+id/btn_sort_by_distance"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@{viewModel.sortType == SortType.DISTANCE ? @drawable/rect_white_radius_10 : null}"
-                            android:text="@string/sort_by_distance"
-                            android:textColor="@{viewModel.sortType == SortType.DISTANCE ? @color/color_green : @color/gray40}"
-                            android:textSize="14sp" />
-
-                        <Button
-                            android:id="@+id/btn_sort_by_score"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@{viewModel.sortType == SortType.REVIEW ? @drawable/rect_white_radius_10 : null}"
-                            android:text="@string/sort_by_review"
-                            android:textColor="@{viewModel.sortType == SortType.REVIEW ? @color/color_green : @color/gray40}"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -190,34 +157,33 @@
                         app:layout_constraintTop_toBottomOf="@id/ll_sort_button_group">
 
                         <ImageView
-                            visibleIf="@{!viewModel.hasData}"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="30dp"
-                            android:src="@drawable/ic_no_store"
-                            android:visibility="gone" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="30dp"
+                        android:src="@drawable/ic_no_store"
+                        android:visibility="gone" />
+                        <!--                            visibleIf="@{!viewModel.hasData}"-->
 
                         <TextView
-                            visibleIf="@{!viewModel.hasData}"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/no_store"
-                            android:textColor="@color/color_gray1"
-                            android:visibility="gone" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/no_store"
+                        android:textColor="@color/color_gray1"
+                        android:visibility="gone" />
+                        <!--                            visibleIf="@{!viewModel.hasData}"-->
 
                         <include
                             android:id="@+id/itemStoreListAd"
                             layout="@layout/item_store_list_ad"
-                            visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.popups.empty}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="24dp"
                             android:layout_marginTop="30dp"
                             android:visibility="gone" />
-
+<!--                        visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.popups.empty}"-->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -248,6 +214,39 @@
                                 tools:listitem="@layout/item_store_by_rating" />
                         </LinearLayout>
 
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_sort_button_group"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/rect_gray_radius12"
+                        android:orientation="horizontal"
+                        android:padding="5dp"
+                        app:layout_constraintBottom_toBottomOf="@id/cb_certification"
+                        app:layout_constraintDimensionRatio="W, 3.18181818:1"
+                        app:layout_constraintStart_toStartOf="@id/cb_certification"
+                        app:layout_constraintTop_toTopOf="@id/cb_certification">
+
+                        <Button
+                            android:id="@+id/btn_sort_by_distance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@{viewModel.sortType == SortType.DISTANCE ? @drawable/rect_white_radius_10 : null}"
+                            android:text="@string/sort_by_distance"
+                            android:textColor="@{viewModel.sortType == SortType.DISTANCE ? @color/color_green : @color/gray40}"
+                            android:textSize="14sp" />
+
+                        <Button
+                            android:id="@+id/btn_sort_by_score"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@{viewModel.sortType == SortType.REVIEW ? @drawable/rect_white_radius_10 : null}"
+                            android:text="@string/sort_by_review"
+                            android:textColor="@{viewModel.sortType == SortType.REVIEW ? @color/color_green : @color/gray40}"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
+import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
 import com.zion830.threedollars.repository.model.v2.response.Popups
 import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
@@ -121,13 +122,21 @@ class TruckByMenuFragment :
         }
         viewModel.storeByReview.observe(viewLifecycleOwner) {
             it?.let {
-                truckStoreByReviewAdapters.submitList(it)
+                if (it.isEmpty()) {
+                    truckStoreByReviewAdapters.submitEmptyList(listOf(HomeStoreEmptyResponse(emptyTitle = R.string.recruit_boss_title, emptyBody = R.string.recruit_boss_body)))
+                } else {
+                    truckStoreByReviewAdapters.submitList(it)
+                }
                 popupViewModel.getPopups("STORE_CATEGORY_LIST")
             }
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             it?.let {
-                truckStoreByDistanceAdapters.submitList(it)
+                if (it.isEmpty()) {
+                    truckStoreByDistanceAdapters.submitEmptyList(listOf(HomeStoreEmptyResponse(emptyTitle = R.string.recruit_boss_title, emptyBody = R.string.recruit_boss_body)))
+                } else {
+                    truckStoreByDistanceAdapters.submitList(it)
+                }
                 popupViewModel.getPopups("STORE_CATEGORY_LIST")
             }
         }
