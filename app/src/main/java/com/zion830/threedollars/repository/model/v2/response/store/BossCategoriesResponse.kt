@@ -13,7 +13,7 @@ data class BossCategoriesResponse(
 ) {
     data class BossCategoriesModel(
         @SerializedName("categoryId")
-        val categoryId: String? = "622b7d0105ecea5baeafd245",
+        val categoryId: String? = "628a42eb899ec19e976e54d7",
         @SerializedName("name")
         val name: String = "한식",
         @SerializedName("imageUrl")
