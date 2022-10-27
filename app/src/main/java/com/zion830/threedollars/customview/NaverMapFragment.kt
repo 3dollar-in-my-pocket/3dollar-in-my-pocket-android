@@ -42,9 +42,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     var listener: OnMapTouchListener? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = requireActivity() as? OnMapTouchListener
+    fun setOnMapTouchListener(mapListener: OnMapTouchListener) {
+        listener = mapListener
     }
 
     override fun onCreateView(
