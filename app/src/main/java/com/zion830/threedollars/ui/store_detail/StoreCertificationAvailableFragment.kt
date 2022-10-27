@@ -12,11 +12,9 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
-import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import zion830.com.common.base.BaseFragment
-import zion830.com.common.ext.addNewFragment
 
 class StoreCertificationAvailableFragment :
     BaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>(R.layout.layout_certification_available) {
@@ -31,20 +29,7 @@ class StoreCertificationAvailableFragment :
 
     override fun initView() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        naverMapFragment = StoreCertificationNaverMapFragment {
-            it?.let {
-                val distance = NaverMapUtils.calculateDistance(it, storeDetailViewModel.storeLocation.value)
-                if (distance > MIN_DISTANCE) {
-                    requireActivity().supportFragmentManager.popBackStack()
-                    requireActivity().supportFragmentManager.addNewFragment(
-                        R.id.container,
-                        StoreCertificationFragment(),
-                        StoreCertificationFragment::class.java.name,
-                        false
-                    )
-                }
-            }
-        }
+        naverMapFragment = StoreCertificationNaverMapFragment()
 
         binding.ibClose.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
