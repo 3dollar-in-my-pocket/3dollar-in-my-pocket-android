@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
@@ -29,9 +31,11 @@ class DeleteStoreDialog(private val storeId: Int) : DialogFragment() {
         binding.lifecycleOwner = this
 
         binding.ibClose.setOnClickListener {
+            EventTracker.logEvent(Constants.DELETE_POPUP_CLOSE_BTN_CLICKED)
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
+            EventTracker.logEvent(Constants.DELETE_REQUEST_SUBMIT_BTN_CLICKED)
             viewModel.deleteStore(storeId)
             dismiss()
         }

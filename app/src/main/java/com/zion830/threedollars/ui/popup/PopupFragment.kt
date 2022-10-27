@@ -13,6 +13,8 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -23,16 +25,26 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
 
     override val viewModel: PopupViewModel by activityViewModels()
 
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun initView() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+
         binding.run {
             tvClose.setOnClickListener {
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
-                SharedPrefUtils.setPopupTime(System.currentTimeMillis())
+                viewModel?.popups?.value?.let { popup ->
+                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl)
+                }
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
+                firebaseAnalytics.logEvent("splash_popup_clicked") {
+                    param("referral", "splash_popup_page")
+                }
+
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel?.popups?.value?.let { popups ->

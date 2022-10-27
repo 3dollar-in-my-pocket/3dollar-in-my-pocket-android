@@ -1,53 +1,88 @@
 package com.zion830.threedollars.ui.addstore
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
+import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
+import kotlin.properties.Delegates
 
-class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
+class NewAddressFragment :
+    BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
 
-    override val viewModel: AddStoreViewModel by viewModels()
+    override val viewModel: AddStoreViewModel by activityViewModels()
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment
 
+    private var latitude by Delegates.notNull<Double>()
+    private var longitude by Delegates.notNull<Double>()
+
     override fun initView() {
+        latitude = arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
+        longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
+
         initMap()
+        initViewModel()
 
         binding.btnBack.setOnClickListener {
             requireActivity().onBackPressed()
         }
         binding.btnFinish.setOnClickListener {
-            requireActivity().supportFragmentManager.addNewFragment(
-                R.id.container,
-                AddStoreDetailFragment(),
-                AddStoreDetailFragment::class.java.name,
-                false
-            )
+            if (viewModel.isNearStoreExist.value == true) {
+                showNearExistDialog()
+            } else {
+                moveAddStoreDetailFragment()
+            }
         }
     }
 
     private fun initMap() {
-        val latitude = arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
-        val longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
-        naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude)) {
-            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-        }
+        naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.map_container, naverMapFragment)?.commit()
+    }
 
-        if (latitude > 0) {
-            val latLng = LatLng(latitude, longitude)
-            naverMapFragment.moveCamera(latLng)
-            viewModel.updateLocation(latLng)
-            binding.tvAddress.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+    private fun initViewModel() {
+        viewModel.run {
+            nearStoreInfo.observe(viewLifecycleOwner) { res ->
+                naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
+            }
+            selectedLocation.observe(viewLifecycleOwner) { latLng ->
+                if (latLng != null) {
+                    binding.tvAddress.text =
+                        getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                    requestStoreInfo(latLng)
+                    latitude = latLng.latitude
+                    longitude = latLng.longitude
+                }
+            }
         }
+    }
 
-        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
+    private fun showNearExistDialog() {
+        NearExistDialog.getInstance(latitude, longitude)
+            .apply {
+                setDialogListener(object : NearExistDialog.DialogListener {
+                    override fun accept() {
+                        moveAddStoreDetailFragment()
+                    }
+                })
+            }.show(parentFragmentManager, "")
+    }
+
+    private fun moveAddStoreDetailFragment() {
+        requireActivity().supportFragmentManager.addNewFragment(
+            R.id.container,
+            AddStoreDetailFragment(),
+            AddStoreDetailFragment::class.java.name,
+            false
+        )
     }
 
     companion object {

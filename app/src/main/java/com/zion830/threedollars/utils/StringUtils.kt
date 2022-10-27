@@ -1,6 +1,11 @@
 package com.zion830.threedollars.utils
 
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.repository.model.MenuType
@@ -72,6 +77,26 @@ object StringUtils {
                 .format(DateTimeFormatter.ofPattern(pattern).withLocale(Locale.KOREA))
         } catch (e: DateTimeParseException) {
             ""
+        }
+    }
+    fun TextView.textPartTypeface(changeText: String?, @StyleRes style: Int, isLast: Boolean = false) {
+        if (changeText == null)
+            return
+        val index = if (isLast) {
+            text.toString().lastIndexOf(changeText)
+        } else {
+            text.toString().indexOf(changeText)
+        }
+        if (index != -1) {
+            val ssb = SpannableString(text)
+
+            ssb.setSpan(
+                StyleSpan(style),
+                index,
+                index + changeText.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            text = ssb
         }
     }
 }

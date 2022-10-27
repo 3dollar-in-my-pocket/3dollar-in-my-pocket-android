@@ -8,7 +8,9 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.repository.StoreRepository
 import com.zion830.threedollars.repository.model.MenuType
 import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +29,10 @@ class AddStoreViewModel : BaseViewModel() {
         it.isNotNullOrBlank()
     }
 
+    private val _isMapUpdated: MutableLiveData<Unit> = MutableLiveData()
+    val isMapUpdated: LiveData<Unit>
+        get() = _isMapUpdated
+
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation
@@ -42,12 +48,18 @@ class AddStoreViewModel : BaseViewModel() {
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
         SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
+
+    private val _isNearStoreExist: MutableLiveData<Boolean> = MutableLiveData()
+    val isNearStoreExist: LiveData<Boolean> get() = _isNearStoreExist
+
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
     val selectedCount: LiveData<Int> = Transformations.map(selectedCategory) {
         it.count { item -> item.isSelected }
     }
+
+    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
 
     fun addNewStore(newStore: NewStoreRequest) {
         showLoading()
@@ -68,6 +80,22 @@ class AddStoreViewModel : BaseViewModel() {
         }
     }
 
+    fun requestStoreInfo(location: LatLng?) {
+        if (location == null || location == NaverMapUtils.DEFAULT_LOCATION) {
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            val data = repository.getAllStore(location.latitude, location.longitude)
+            if (data.isSuccessful) {
+                nearStoreInfo.postValue(data.body()?.data)
+                _isNearStoreExist.postValue(hasStoreDistanceUnder10M(data.body()?.data))
+            }
+        }
+    }
+
+    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) = stores?.find { store -> store.distance <= 10 } != null
+
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
     }
@@ -78,7 +106,10 @@ class AddStoreViewModel : BaseViewModel() {
 
     fun removeCategory(item: SelectedCategory) {
         val newList = _selectedCategory.value?.map {
-            SelectedCategory(if (item.menuType == it.menuType) false else it.isSelected, it.menuType)
+            SelectedCategory(
+                if (item.menuType == it.menuType) false else it.isSelected,
+                it.menuType
+            )
         } ?: emptyList()
         _selectedCategory.value = newList
     }

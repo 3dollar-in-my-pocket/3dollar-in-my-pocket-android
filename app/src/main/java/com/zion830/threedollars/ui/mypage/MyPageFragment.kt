@@ -4,6 +4,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
@@ -97,6 +98,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     private fun addShowAllStoreFragment() {
+        EventTracker.logEvent(Constants.SHOW_ALL_MY_STORE_BTN_CLICKED)
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyStoreFragment(),
@@ -105,6 +107,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     private fun addShowAllReviewFragment() {
+        EventTracker.logEvent(Constants.SHOW_ALL_MY_REVIEW_BTN_CLICKED)
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyReviewFragment(),
@@ -113,6 +116,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     private fun addShowAllMedalFragment() {
+        EventTracker.logEvent(Constants.SHOW_ALL_MY_MEDAL_BTN_CLICKED)
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyMedalFragment(),

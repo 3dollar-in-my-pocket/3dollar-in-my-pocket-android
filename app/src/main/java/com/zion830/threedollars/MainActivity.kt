@@ -15,10 +15,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
-import com.zion830.threedollars.ui.category.CategoryViewModel
 import com.zion830.threedollars.ui.home.HomeFragment
-import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
@@ -34,20 +33,19 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private val categoryViewModel: CategoryViewModel by viewModels()
-
-    private val myPageViewModel: MyPageViewModel by viewModels()
+    private val streetStoreByMenuViewModel: StreetStoreByMenuViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 
     override fun initView() {
         requestPermissionFirst()
-
+        popupViewModel.getPopups(position = "SPLASH")
         if (SharedPrefUtils.getCategories().isEmpty()) {
-            categoryViewModel.loadCategories()
+            streetStoreByMenuViewModel.loadCategories()
         }
 
-        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.navView.itemIconTintList = null
         binding.navView.setupWithNavController(navController)
@@ -56,9 +54,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
         popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && System.currentTimeMillis() - SharedPrefUtils.getPopupTime() > Constants.TIME_MILLIS_DAY) {
+            if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
                 binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
-
             }
         }
         initNavController(navController)
@@ -72,18 +69,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_category -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_category)
+                R.id.navigation_street -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_street)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_review -> {
-                    if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_home) {
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment?
-                        val homeFragment: HomeFragment? = navHostFragment?.childFragmentManager?.fragments?.get(0) as? HomeFragment
-                        startActivity(NewStoreActivity.getInstance(this, homeFragment?.getMapCenterLatLng()))
-                    } else {
-                        startActivity(NewStoreActivity.getInstance(this, null))
-                    }
+                R.id.navigation_truck -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_truck)
+                    binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)

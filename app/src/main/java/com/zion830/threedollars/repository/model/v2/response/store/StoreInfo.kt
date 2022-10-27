@@ -1,6 +1,9 @@
 package com.zion830.threedollars.repository.model.v2.response.store
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
+
+interface StoreByMenuItem
 
 data class StoreInfo(
     @SerializedName("categories")
@@ -25,4 +28,4 @@ data class StoreInfo(
     val visitHistory: VisitHistory = VisitHistory(),
     @SerializedName("isDeleted")
     val isDeleted: Boolean = false
-)
+) : AdAndStoreItem

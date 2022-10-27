@@ -1,6 +1,16 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply from: '../common.gradle'
+
+android {
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/common_release.kotlin_module']
+        }
+    }
+    namespace 'zion830.com.common'
+}
 dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"

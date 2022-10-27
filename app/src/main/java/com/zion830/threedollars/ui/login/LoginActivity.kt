@@ -1,6 +1,9 @@
 package com.zion830.threedollars.ui.login
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Message
+import android.util.Base64
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,11 +14,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
+import com.zion830.threedollars.*
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.MainActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.repository.model.LoginType
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -27,6 +29,7 @@ import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
+import java.security.MessageDigest
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
@@ -36,11 +39,21 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     override fun initView() {
         observeUiData()
         binding.btnLoginKakao.onSingleClick {
+            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.KAKAO)
-            tryKakaoLogin()
+            tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
+            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+            tryLoginBySocialType()
+        }
+    }
+
+    private fun tryLoginBySocialType() {
+        if (SharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
+            tryKakaoLogin()
+        } else {
             tryGoogleLogin()
         }
     }
@@ -95,7 +108,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
     }
 
-    private fun tryLogin(token: OAuthToken) {
+    private fun tryLoginBySocialType(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
                 Log.d(localClassName, it.groupUserToken.toString())
@@ -116,10 +129,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                     finish()
                 }
                 is ResultWrapper.GenericError -> {
-                    addInputNameFragment()
-                }
-                else -> {
-                    showToast(R.string.connection_failed)
+                    when (it.code) {
+                        400 -> showToast(R.string.connection_failed)
+                        404 -> addInputNameFragment()
+                        503 -> showToast(R.string.server_500)
+                        500, 502 -> showToast(R.string.connection_failed)
+                        else -> showToast(R.string.connection_failed)
+                    }
                 }
             }
         }
@@ -144,7 +160,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 SharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
-                tryLogin(token)
+                tryLoginBySocialType(token)
             }
         }
 

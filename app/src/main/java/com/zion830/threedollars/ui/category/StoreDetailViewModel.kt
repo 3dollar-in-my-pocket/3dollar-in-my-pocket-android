@@ -247,4 +247,10 @@ class StoreDetailViewModel : BaseViewModel() {
             _photoDeleted.postValue(data.isSuccessful)
         }
     }
+
+    override fun handleError(t: Throwable) {
+        super.handleError(t)
+        _msgTextId.postValue(R.string.connection_failed)
+        hideLoading()
+    }
 }

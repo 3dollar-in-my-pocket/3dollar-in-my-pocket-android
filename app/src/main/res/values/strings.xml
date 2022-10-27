@@ -34,7 +34,8 @@
     <string name="name_empty">닉네임을 입력해주세요</string>
     <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
     <string name="set_name_success">닉네임이 변경되었습니다!</string>
-    <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="connection_failed">요청을 처리하는데 문제가 생긴것 같아요! 다시 한번 시도해주시고 계속 안된다면 문의 부탁드립니다!</string>
+    <string name="server_error">서버 점검 중입니다! 이용에 불편을 드려 죄송합니다 ㅠ_ㅠ</string>
     <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
     <string name="server_500">서버 점검 중!</string>
     <string name="server_500_msg">서버 점검 중!</string>
@@ -69,31 +70,35 @@
     <string name="show_all_menu">모두보기</string>
     <string name="plus">+%d</string>
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
+    <string name="visit_count_default">이번주 0명이 다녀간 가게에요!</string>
 
     <string name="none">없음</string>
-    
+
     <string name="nearest_store">가장 가까운 음식점</string>
     <string name="if_you_have_money1">지금 당장\n</string>
     <string name="if_you_have_money2">3천원</string>
     <string name="if_you_have_money3">이 있으시다면</string>
     <string name="sort_by_score">별점순</string>
+    <string name="sort_by_review">리뷰순</string>
     <string name="sort_by_distance">거리순</string>
-    
+
     <string-array name="menu_name">
         <item>붕어빵</item>
         <item>문어빵,</item>
         <item>계란빵,</item>
         <item>호떡아</item>
     </string-array>
-    
+
     <string-array name="menu_desc">
         <item>만나기 30초 전</item>
         <item>다 내꺼야</item>
         <item>내 입으로</item>
         <item>기다려</item>
     </string-array>
-    
+
     <string name="road">길거리</string>
+    <string name="road_food">길거리음식</string>
+    <string name="food_truck">푸드트럭</string>
     <string name="store">매장</string>
     <string name="convenience_store">편의점</string>
 
@@ -190,8 +195,8 @@
     <string name="over_4">4점 이상</string>
 
     <string name="store_type">가게형태</string>
-    <string name="empty_store">주변 2km 이내에 가게가 없어요</string>
-    <string name="empty_store_msg">다른 주소로 검색하거나 직접 제보해보세요!</string>
+    <string name="empty_store">2km 이내에 가게가 없어요</string>
+    <string name="empty_store_msg">다른 주소로 검색하거나\n직접 제보해보세요!</string>
     <string name="empty_data">아직 등록된 정보가 없어요.</string>
     <string name="empty_result">검색 결과가 없어요.</string>
     <string name="show_type">출몰시기</string>
@@ -228,7 +233,7 @@
     <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
     <string name="faq_message">어떤 점이 궁금하셨나요?</string>
     <string name="question">Q. %s</string>
-    
+
     <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
     <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
@@ -243,7 +248,17 @@
     <string name="friday">금</string>
     <string name="saturday">토</string>
     <string name="sunday">일</string>
-    
+
+    <string-array name="day_name">
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
+        <item>일요일</item>
+    </string-array>
+
     <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
     <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
     <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
@@ -251,6 +266,10 @@
     <string name="find_location">놀러가기</string>
     <string name="share_kakao_title">올 때 붕어빵, 잊지마!!!</string>
     <string name="share_kakao">당신은 붕어빵 셔틀에 당첨되셨습니다. 지금 바로 가슴속 3천원을 설치하고 위치를 파악하여 미션을 수행하세요!</string>
+    <string name="share_kakao_food_truck_title">[푸드트럭] %s</string>
+    <string name="share_kakao_food_truck">%s 푸드트럭 보러가기</string>
+    <string name="share_kakao_road_food_title">[길거리음식] %s</string>
+    <string name="share_kakao_road_food">%s 길거리음식 보러가기</string>
     <string name="share_kakao_success">카카오톡 공유 완료!</string>
     <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
 
@@ -260,6 +279,43 @@
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
 
     <string name="close">닫기</string>
-    <string name="disable_popup">오늘 하루 보지않기</string>
+    <string name="disable_popup">앞으로 보지않기</string>
     <string name="popup">팝업</string>
+    <string name="dialog_near_exist_title">10m이내에 이미 제보된\n가게가 있어요!</string>
+    <string name="dialog_near_exist_subtitle">중복된 가게 제보인지 확인해 주세요</string>
+    <string name="dialog_near_exist_button_finish">이 위치가 맞아요!</string>
+    <string name="ad">광고</string>
+    <string name="detail"><![CDATA[자세히 보기 >]]></string>
+    <string name="evaluation">리뷰 남기기</string>
+    <string name="phone_number">연락처</string>
+    <string name="sns">SNS</string>
+    <string name="owner_one_word">사장님 한마디</string>
+    <string name="shortcut">바로가기</string>
+    <string name="appearance_day">영업 일정</string>
+    <string name="store_feedback">가게 평가</string>
+    <string name="review_title">리뷰 남기기</string>
+    <string name="how_was_the_food_truck">푸드트럭은\n어떠셨나요?</string>
+    <string name="select_multi_review">! 여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="review_complete">리뷰 남기기 완료!</string>
+    <string name="review_toast">소중한 리뷰가 사장님께 전달되었습니다!</string>
+    <string name="food_truck_review_count">%d개</string>
+    <string name="menu_info">메뉴 정보</string>
+    <string name="food_truck_price">%d원</string>
+    <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
+    <string name="food_truck_menu_more">%d개의 메뉴가 더 있습니다.</string>
+    <string name="ready_ing">준비중</string>
+    <string name="getting_ready_now">지금은 준비중이에요!</string>
+    <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
+
+    <string name="error_429">일시적으로 너무 많은 요청이 발생하였습니다. 잠시 후 다시 이용해주세요.</string>
+
+    <string name="scheme_host_main">main</string>
+    <string name="scheme_host_kakao_link">kakaolink</string>
+    <string name="scheme_host_kakao_link_food_truck_type">foodTruck</string>
+    <string name="scheme_host_kakao_link_road_food_type">streetFood</string>
+    <string name="scheme_host_kakao_link_store_id">storeId</string>
+    <string name="scheme_host_kakao_link_store_type">storeType</string>
+    <string name="recruit_boss_title">푸드트럭 사장님 모집 중!</string>
+    <string name="recruit_boss_body">현재 푸드트럭 사장님을 모집 하고 있어요.\n앱스토어에 가슴속 3천원 사장님을\n검색해 주세요.</string>
+    <string name="recruit_boss_body_short">앱스토어에 가슴속 3천원 사장님을 검색해 주세요.</string>
 </resources>

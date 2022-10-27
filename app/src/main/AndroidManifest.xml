@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.zion830.threedollars">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -20,6 +19,21 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_app_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <service
+            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name="com.zion830.threedollars.ui.splash.SplashActivity"
@@ -41,11 +55,27 @@
             android:name=".ui.store_detail.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.category.StoreByMenuActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.addstore.activity.NewStoreActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".SchemeActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kakao${kakao_key}" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">

@@ -38,9 +38,10 @@ class EditAddressFragment :
     }
 
     private fun initMap() {
-        naverMapFragment = StoreEditNaverMapFragment({
-            binding.tvAddress.text = getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-        }, null)
+        naverMapFragment = StoreEditNaverMapFragment {
+            binding.tvAddress.text =
+                getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+        }
 
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
 

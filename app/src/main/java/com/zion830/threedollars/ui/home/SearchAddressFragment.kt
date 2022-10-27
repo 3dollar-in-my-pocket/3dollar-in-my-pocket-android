@@ -1,10 +1,13 @@
 package com.zion830.threedollars.ui.home
 
+import android.os.Bundle
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.repository.model.v2.response.kakao.Document
@@ -28,7 +31,12 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                viewModel.requestStoreInfo(location)
+                if(arguments?.getBoolean(IS_ROAD_FOOD_MODE) == true){
+                    viewModel.requestHomeItem(location)
+                }
+                else{
+                    viewModel.getBossNearStore(location)
+                }
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -36,9 +44,11 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         })
         binding.rvSearchResult.adapter = adapter
         binding.btnBack.setOnClickListener {
+            EventTracker.logEvent(Constants.CLOSE_BTN_CLICKED)
             requireActivity().onBackPressed()
         }
         binding.btnSearch.setOnClickListener {
+            EventTracker.logEvent(Constants.LOCATION_ITEM_CLICKED)
             if (binding.etSearch.text.isNullOrBlank()) {
                 showToast("검색어가 없습니다.")
             } else {
@@ -58,5 +68,16 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
             false
         }
+    }
+    companion object {
+
+        const val IS_ROAD_FOOD_MODE = "IS_ROAD_FOOD_MODE"
+
+        fun newInstance(isRoadFoodMode : Boolean) =
+            SearchAddressFragment().apply {
+                arguments = Bundle().apply {
+                        putBoolean(IS_ROAD_FOOD_MODE, isRoadFoodMode)
+                }
+            }
     }
 }

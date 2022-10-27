@@ -4,20 +4,20 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     signingConfigs {
         release {
             keyAlias '3dollor'
             keyPassword '3dollor'
-            storeFile file('C:\\Users\\USER\\Downloads\\3dollor-android-key.jks')
+            storeFile file('3dollor-android-key.jks')
             storePassword '3dollor'
         }
     }
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 28
-        versionName "2.4.0"
+        targetSdkVersion 33
+        versionCode 39
+        versionName "3.0.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -30,9 +30,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
             signingConfig signingConfigs.release
         }
-    }
-    packagingOptions {
-        exclude 'META-INF/common_release.kotlin_module'
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -96,8 +93,10 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services-ads:20.5.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
-    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-auth-ktx'

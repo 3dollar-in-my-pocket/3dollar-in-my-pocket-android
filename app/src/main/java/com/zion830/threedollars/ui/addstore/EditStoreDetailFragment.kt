@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
@@ -53,6 +55,7 @@ class EditStoreDetailFragment :
         initKeyboard()
 
         binding.ibWrite.setOnClickListener {
+            EventTracker.logEvent(Constants.ADDRESS_EDIT_BTN_CLICKED)
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
                 EditAddressFragment(),
@@ -161,6 +164,7 @@ class EditStoreDetailFragment :
                 viewModel.removeAllCategory()
             }
             binding.btnSubmit.setOnClickListener {
+                EventTracker.logEvent(Constants.STORE_EDIT_BTN_CLICKED)
                 if (binding.etName.text.isNullOrBlank()) {
                     showToast(R.string.store_name_empty)
                     return@setOnClickListener

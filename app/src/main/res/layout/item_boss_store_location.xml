@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse.BossNearStoreModel" />
+
+        <variable
+            name="isSelectedItem"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="listener"
+            type="zion830.com.common.listener.OnItemClickListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        app:cardBackgroundColor="@{isSelectedItem ? @color/color_black : @color/color_white}"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> listener.onClick(item)}"
+            android:paddingVertical="14dp"
+            tools:ignore="UnusedAttribute">
+
+            <ImageView
+                android:id="@+id/iv_menu_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_store_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/applegothic_bold"
+                android:singleLine="true"
+                android:text="@{item.name}"
+                android:textColor="@{isSelectedItem ? @android:color/white : @color/gray90}"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="강남역 1출" />
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
+                android:textColor="@{isSelectedItem ? @color/color_green : @color/gray40}"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_store_name"
+                tools:ignore="RtlSymmetry"
+                tools:text="#붕어 #호떡" />
+
+            <LinearLayout
+                android:id="@+id/ll_distance_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_category">
+
+                <TextView
+                    android:id="@+id/tv_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/gray80}"
+                    android:textSize="12sp"
+                    tools:drawableStart="@drawable/ic_near"
+                    tools:text="121m" />
+
+                <TextView
+                    android:id="@+id/tv_review_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:drawablePadding="4dp"
+                    android:textColor="@{isSelectedItem ? @android:color/white : @color/gray80}"
+                    android:textSize="12sp"
+                    tools:drawableStart="@drawable/ic_review_white"
+                    tools:text="121m" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/readyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rect_gray60_corner"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="@string/ready_ing"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/ll_distance_rating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ll_distance_rating" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

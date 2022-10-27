@@ -17,7 +17,7 @@ open class BaseViewModel : ViewModel() {
     protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
         t.printStackTrace()
         handleError(t)
-        FirebaseCrashlytics.getInstance().recordException(t)
+        FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
     }
 
     protected val _isLoading = MutableLiveData<Boolean>()

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/categoryLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:background="#00000000"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/categoryNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rect_white_radius16"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:text="@{item.name}"
+            android:textColor="@color/gray40"
+            android:textSize="12sp"
+            tools:text="전체" />
+    </LinearLayout>
+</layout>

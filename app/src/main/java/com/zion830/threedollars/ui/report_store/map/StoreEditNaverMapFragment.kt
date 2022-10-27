@@ -10,10 +10,7 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.SizeUtils
 
-open class StoreEditNaverMapFragment(
-    private val onMapUpdated: (LatLng?) -> Unit,
-    val listener: OnMapTouchListener? = null,
-) : NaverMapFragment() {
+open class StoreEditNaverMapFragment(private val onMapUpdated: (LatLng?) -> Unit) : NaverMapFragment() {
 
     private var map: NaverMap? = null
 
