@@ -25,8 +25,7 @@ import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class TruckByMenuFragment :
-    BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu),
-    OnMapTouchListener {
+    BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu) {
 
     override val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
@@ -55,15 +54,16 @@ class TruckByMenuFragment :
         TruckSearchByReviewRecyclerAdapter(listener, adListener)
     }
 
-    override fun onTouch() {
-        // 지도 스크롤 이벤트 구분용
-        binding.scroll.requestDisallowInterceptTouchEvent(true)
-    }
-
     override fun initView() {
         initAdapter()
 
-        val naverMapFragment = TruckStoreByMenuNaverMapFragment(this)
+        val naverMapFragment = TruckStoreByMenuNaverMapFragment()
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {
@@ -123,7 +123,14 @@ class TruckByMenuFragment :
         viewModel.storeByReview.observe(viewLifecycleOwner) {
             it?.let {
                 if (it.isEmpty()) {
-                    truckStoreByReviewAdapters.submitEmptyList(listOf(HomeStoreEmptyResponse(emptyTitle = R.string.recruit_boss_title, emptyBody = R.string.recruit_boss_body)))
+                    truckStoreByReviewAdapters.submitEmptyList(
+                        listOf(
+                            HomeStoreEmptyResponse(
+                                emptyTitle = R.string.recruit_boss_title,
+                                emptyBody = R.string.recruit_boss_body
+                            )
+                        )
+                    )
                 } else {
                     truckStoreByReviewAdapters.submitList(it)
                 }
@@ -133,7 +140,14 @@ class TruckByMenuFragment :
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             it?.let {
                 if (it.isEmpty()) {
-                    truckStoreByDistanceAdapters.submitEmptyList(listOf(HomeStoreEmptyResponse(emptyTitle = R.string.recruit_boss_title, emptyBody = R.string.recruit_boss_body)))
+                    truckStoreByDistanceAdapters.submitEmptyList(
+                        listOf(
+                            HomeStoreEmptyResponse(
+                                emptyTitle = R.string.recruit_boss_title,
+                                emptyBody = R.string.recruit_boss_body
+                            )
+                        )
+                    )
                 } else {
                     truckStoreByDistanceAdapters.submitList(it)
                 }

@@ -22,8 +22,7 @@ import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
 
 class FoodTruckStoreDetailActivity :
-    BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail),
-    OnMapTouchListener {
+    BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail) {
 
     override val viewModel: FoodTruckStoreDetailViewModel by viewModels()
 
@@ -42,14 +41,16 @@ class FoodTruckStoreDetailActivity :
     private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment =
         FoodTruckStoreDetailNaverMapFragment()
 
-    override fun onTouch() {
-        binding.scroll.requestDisallowInterceptTouchEvent(true)
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
-
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -87,12 +88,12 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this,storeId)
+            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
             startActivity(intent)
             finish()
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this,storeId)
+            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
             startActivity(intent)
             finish()
         }

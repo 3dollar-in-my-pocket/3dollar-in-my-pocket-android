@@ -26,8 +26,7 @@ import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu),
-    OnMapTouchListener {
+    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu){
 
     override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
@@ -55,18 +54,19 @@ class StreetByMenuFragment :
         StreetSearchByRatingRecyclerAdapter(listener, adListener)
     }
 
-    override fun onTouch() {
-        // 지도 스크롤 이벤트 구분용
-        binding.scroll.requestDisallowInterceptTouchEvent(true)
-    }
-
     override fun initView() {
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
 
         initAdapter()
 
-        val naverMapFragment = StreetStoreByMenuNaverMapFragment(this)
+        val naverMapFragment = StreetStoreByMenuNaverMapFragment()
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
         binding.categoryImageView.setOnClickListener {

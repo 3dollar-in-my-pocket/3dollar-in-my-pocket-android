@@ -49,11 +49,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
             append("할 수 있어요!")
         }
 
-        naverMapFragment = StoreCertificationNaverMapFragment {
-            it?.let {
-                bindDistance(it)
-            }
-        }
+        naverMapFragment = StoreCertificationNaverMapFragment()
         binding.ibClose.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
