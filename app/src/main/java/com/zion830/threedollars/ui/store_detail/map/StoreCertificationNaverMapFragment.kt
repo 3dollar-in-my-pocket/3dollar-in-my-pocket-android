@@ -13,9 +13,7 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.utils.SizeUtils
 
-class StoreCertificationNaverMapFragment(
-    private val onMapUpdated: (LatLng?) -> Unit,
-) : NaverMapFragment() {
+class StoreCertificationNaverMapFragment : NaverMapFragment() {
 
     private val viewModel: StoreDetailViewModel by activityViewModels()
 

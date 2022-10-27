@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.store_detail.map
 
-import android.content.Context
 import android.content.Intent
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
@@ -12,17 +11,12 @@ import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.SizeUtils
 
 
-class TruckStoreByMenuNaverMapFragment(val mapListener: OnMapTouchListener) : NaverMapFragment() {
+class TruckStoreByMenuNaverMapFragment() : NaverMapFragment() {
     val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = mapListener
-    }
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 

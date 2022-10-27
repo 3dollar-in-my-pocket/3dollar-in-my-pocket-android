@@ -50,8 +50,7 @@ import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 class StoreDetailActivity :
-    BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info),
-    OnMapTouchListener {
+    BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
 
     override val viewModel: StoreDetailViewModel by viewModels()
 
@@ -73,15 +72,15 @@ class StoreDetailActivity :
 
     private var progressDialog: AlertDialog? = null
 
-    override fun onTouch() {
-        // 지도 스크롤 이벤트 구분용
-        binding.scroll.requestDisallowInterceptTouchEvent(true)
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
-
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)

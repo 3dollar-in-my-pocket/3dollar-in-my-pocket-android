@@ -7,7 +7,6 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.SizeUtils
 
 open class StoreEditNaverMapFragment(private val onMapUpdated: (LatLng?) -> Unit) : NaverMapFragment() {
