@@ -1,6 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply plugin: "org.jlleitschuh.gradle.ktlint"
-
 buildscript {
     ext.kotlin_version = '1.6.0'
     ext {
@@ -40,7 +38,6 @@ buildscript {
         classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:$ktlint_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         classpath "com.google.gms:google-services:$google_service_version"
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
