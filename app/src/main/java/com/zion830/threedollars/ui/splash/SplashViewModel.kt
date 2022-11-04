@@ -76,7 +76,7 @@ class SplashViewModel : BaseViewModel() {
     fun refreshGoogleToken(account: GoogleSignInAccount) {
         val token = GoogleAuthUtil.getToken(
             GlobalApplication.getContext(),
-            account.account,
+            account.account!!,
             "oauth2:https://www.googleapis.com/auth/plus.me"
         )
         SharedPrefUtils.saveGoogleToken(token)

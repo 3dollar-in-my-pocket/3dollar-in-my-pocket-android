@@ -76,7 +76,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 val token =
-                    GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account, "oauth2:https://www.googleapis.com/auth/plus.me")
+                    GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account!!, "oauth2:https://www.googleapis.com/auth/plus.me")
                 SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
                 SharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
