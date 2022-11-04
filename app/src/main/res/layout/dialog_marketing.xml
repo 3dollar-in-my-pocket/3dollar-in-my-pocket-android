@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.52" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.94" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_gray80_radius30"
+            android:padding="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideline1">
+
+            <TextView
+                android:id="@+id/allAgreeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="14dp"
+                android:text="@string/all_agree"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/icon_circle_uncheck"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="22dp"
+                android:background="@color/gray70"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/allAgreeTextView" />
+
+            <TextView
+                android:id="@+id/term1TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:drawablePadding="14dp"
+                android:text="@string/term_1"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/icon_uncheck_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view" />
+
+            <ImageView
+                android:id="@+id/term1ImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_gray_arrow"
+                app:layout_constraintBottom_toBottomOf="@id/term1TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/term1TextView" />
+
+            <TextView
+                android:id="@+id/term2TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:drawablePadding="14dp"
+                android:text="@string/term_2"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/icon_uncheck_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/term1TextView" />
+
+            <ImageView
+                android:id="@+id/term2ImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_gray_arrow"
+                app:layout_constraintBottom_toBottomOf="@id/term2TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/term2TextView" />
+
+            <TextView
+                android:id="@+id/term3TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:drawablePadding="14dp"
+                android:text="@string/term_3"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/icon_uncheck_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/term2TextView" />
+
+            <ImageView
+                android:id="@+id/term3ImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_gray_arrow"
+                app:layout_constraintBottom_toBottomOf="@id/term3TextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/term3TextView" />
+
+            <TextView
+                android:id="@+id/agreeContinueTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/selector_btn_radius48"
+                android:enabled="false"
+                android:gravity="center"
+                android:paddingVertical="14dp"
+                android:text="@string/agree_continue"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/term3TextView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
