@@ -6,7 +6,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
+import com.zion830.threedollars.ui.MarketingDialog
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.onSingleClick
 
 class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>(R.layout.fragment_login_name) {
 
@@ -26,8 +28,8 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
         }
-        binding.btnFinish.setOnClickListener {
-            viewModel.trySignUp()
+        binding.btnFinish.onSingleClick {
+            showMarketingDialog()
         }
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0
@@ -37,6 +39,15 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
         }
     }
 
+    private fun showMarketingDialog(){
+        val dialog = MarketingDialog()
+        dialog.setDialogListener(object : MarketingDialog.DialogListener{
+            override fun accept() {
+                viewModel.trySignUp()
+            }
+        })
+        dialog.show(parentFragmentManager,dialog.tag)
+    }
     companion object {
 
         fun getInstance() = InputNameFragment()
