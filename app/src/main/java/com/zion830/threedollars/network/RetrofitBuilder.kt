@@ -1,5 +1,6 @@
 package com.zion830.threedollars.network
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import com.zion830.threedollars.BuildConfig
@@ -28,6 +29,11 @@ object RetrofitBuilder {
         .addInterceptor(interceptor)
         .addInterceptor {
             val request = it.request().newBuilder()
+                .removeHeader("User-Agent")
+                .addHeader(
+                    "User-Agent",
+                    BuildConfig.VERSION_NAME + " (${BuildConfig.APPLICATION_ID}); " + Build.VERSION.SDK_INT
+                )
                 .addHeader(
                     "Authorization",
                     SharedPrefUtils.getAccessToken() ?: ""
