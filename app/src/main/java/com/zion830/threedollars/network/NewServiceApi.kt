@@ -220,4 +220,10 @@ interface NewServiceApi {
         @Path("bossStoreId") bossStoreId: String,
         @Body feedbackTypes: BossStoreFeedbackRequest
     ): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/device")
+    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/device")
+    suspend fun deletePushInformation(): Response<BaseResponse<String>>
 }
