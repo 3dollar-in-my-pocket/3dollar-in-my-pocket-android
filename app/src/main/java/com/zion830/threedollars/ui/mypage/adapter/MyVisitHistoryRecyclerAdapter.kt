@@ -5,7 +5,7 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
-import com.zion830.threedollars.repository.model.v2.response.visit_history.VisitHistoryContent
+import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback

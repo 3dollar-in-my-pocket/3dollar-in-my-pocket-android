@@ -17,7 +17,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo" />
+        <import type="com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo" />
 
         <import type="com.zion830.threedollars.ui.category.SortType" />
     </data>

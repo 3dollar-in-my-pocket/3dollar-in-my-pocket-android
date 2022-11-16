@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreListAdBinding
-import com.zion830.threedollars.repository.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.Popups
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener

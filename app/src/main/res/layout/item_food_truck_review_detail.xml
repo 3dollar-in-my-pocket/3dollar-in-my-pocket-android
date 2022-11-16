@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.response.store.BossStoreFeedbackFullResponse.FoodTruckReviewModel" />
+            type="com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse.FoodTruckReviewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -8,10 +8,10 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuMoreBinding
-import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuMoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.BossStoreDetailItem
-import com.zion830.threedollars.repository.model.v2.response.store.BossStoreDetailModel
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailItem
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener

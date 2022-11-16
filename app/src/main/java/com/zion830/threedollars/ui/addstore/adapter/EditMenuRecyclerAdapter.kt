@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMenuEditBinding
-import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import zion830.com.common.base.BaseViewHolder
 
 
