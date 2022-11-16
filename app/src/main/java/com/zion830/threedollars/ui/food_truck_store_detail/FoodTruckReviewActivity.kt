@@ -10,12 +10,14 @@ import androidx.databinding.DataBindingUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
 import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
-import com.zion830.threedollars.repository.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.util.ToastUtil.context
 import zion830.com.common.base.BaseActivity
 
+@AndroidEntryPoint
 class FoodTruckReviewActivity :
     BaseActivity<ActivityFoodTruckReviewBinding, FoodTruckStoreDetailViewModel>(
         R.layout.activity_food_truck_review

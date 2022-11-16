@@ -18,9 +18,11 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import java.net.URISyntaxException
 
+@AndroidEntryPoint
 class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layout.fragment_popup) {
 
     override val viewModel: PopupViewModel by activityViewModels()

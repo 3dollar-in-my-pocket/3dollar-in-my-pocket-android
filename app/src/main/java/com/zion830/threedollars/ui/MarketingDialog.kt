@@ -8,9 +8,10 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseDialogFragment
 
-
+@AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dialog_marketing) {
 
     private var check1 = false

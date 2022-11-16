@@ -5,12 +5,9 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.core.graphics.toColorInt
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -27,14 +24,16 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomStreetSelectCategoryBinding
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.category.adapter.StreetSelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class StreetSelectCategoryDialogFragment :
     BottomSheetDialogFragment() {
 

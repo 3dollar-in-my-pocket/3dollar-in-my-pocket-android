@@ -14,8 +14,10 @@ import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFr
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 
+@AndroidEntryPoint
 class StoreCertificationAvailableFragment :
     BaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>(R.layout.layout_certification_available) {
 

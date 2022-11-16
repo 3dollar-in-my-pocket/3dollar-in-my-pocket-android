@@ -10,13 +10,15 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
-import com.zion830.threedollars.repository.model.v2.response.kakao.Document
+import com.zion830.threedollars.datasource.model.v2.response.kakao.Document
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeViewModel>(R.layout.fragment_search_by_address) {
 
     override val viewModel: HomeViewModel by activityViewModels()

@@ -12,15 +12,17 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
-import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.FoodTruckMenuMoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.AppearanceDayModel
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
 
+@AndroidEntryPoint
 class FoodTruckStoreDetailActivity :
     BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail) {
 

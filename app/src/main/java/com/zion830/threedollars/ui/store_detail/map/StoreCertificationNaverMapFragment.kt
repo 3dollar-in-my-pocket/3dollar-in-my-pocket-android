@@ -12,7 +12,9 @@ import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StoreCertificationNaverMapFragment : NaverMapFragment() {
 
     private val viewModel: StoreDetailViewModel by activityViewModels()
@@ -58,7 +60,11 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestStoreInfo(viewModel.storeInfo.value?.storeId ?: 0 - 1, position.latitude, position.longitude)
+        viewModel.requestStoreInfo(
+            viewModel.storeInfo.value?.storeId ?: 0 - 1,
+            position.latitude,
+            position.longitude
+        )
         moveCamera(position)
     }
 }

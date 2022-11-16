@@ -12,7 +12,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 

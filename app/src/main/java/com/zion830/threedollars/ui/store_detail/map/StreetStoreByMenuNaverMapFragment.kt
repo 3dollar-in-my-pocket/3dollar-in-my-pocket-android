@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.store_detail.map
 
-import android.content.Context
 import android.content.Intent
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
@@ -9,12 +8,13 @@ import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class StreetStoreByMenuNaverMapFragment() : NaverMapFragment() {
 
     val viewModel: StreetStoreByMenuViewModel by activityViewModels()

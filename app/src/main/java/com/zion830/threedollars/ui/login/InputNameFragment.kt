@@ -7,9 +7,11 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
 import com.zion830.threedollars.ui.MarketingDialog
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.onSingleClick
 
+@AndroidEntryPoint
 class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>(R.layout.fragment_login_name) {
 
     override val viewModel: LoginViewModel by activityViewModels()

@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.store_detail.map
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -12,7 +11,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailViewModel
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FoodTruckStoreDetailNaverMapFragment : NaverMapFragment() {
     val viewModel: FoodTruckStoreDetailViewModel by activityViewModels()
 

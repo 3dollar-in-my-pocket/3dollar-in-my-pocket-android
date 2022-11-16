@@ -15,11 +15,13 @@ import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 
-
-class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
+@AndroidEntryPoint
+class MyPageSettingFragment :
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -34,7 +36,8 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         }
         binding.layoutTerms.setOnClickListener {
             EventTracker.logEvent(Constants.TERMS_OF_USE_BTN_CLICKED)
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
@@ -50,11 +53,10 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             showDeleteAccountDialog()
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
-            if(isCheck){
+            if (isCheck) {
                 // TODO: 푸시 알림 설정
                 // TODO: 디바이스 등록 api 호출
-            }
-            else{
+            } else {
                 // TODO: 푸시 알림 해제
                 // TODO: 디바이스 해제 api 호출
             }
@@ -66,7 +68,8 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
                 val token = "테스트용 토큰입니다 - 길게 클릭하면 복사됩니다!\n${task.result}"
                 binding.token.text = token
                 binding.token.setOnLongClickListener {
-                    val manager = (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                    val manager =
+                        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
                     manager.text = task.result
                     showToast("토큰이 복사되었습니다.")
                     false
