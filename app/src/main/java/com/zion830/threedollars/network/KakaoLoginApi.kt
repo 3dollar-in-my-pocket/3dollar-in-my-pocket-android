@@ -1,7 +1,7 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.BuildConfig
-import com.zion830.threedollars.repository.model.v2.response.kakao.KakaoTokenResponse
+import com.zion830.threedollars.datasource.model.v2.response.kakao.KakaoTokenResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
