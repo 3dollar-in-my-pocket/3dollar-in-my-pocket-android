@@ -16,7 +16,6 @@ import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
-import io.hackle.android.HackleApp
 
 @HiltAndroidApp
 class GlobalApplication : Application() {
@@ -60,7 +59,6 @@ class GlobalApplication : Application() {
 
         RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)
-        HackleApp.initializeApp(this, BuildConfig.HACKLE_KEY)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
