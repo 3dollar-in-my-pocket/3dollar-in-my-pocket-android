@@ -3,16 +3,18 @@ package com.zion830.threedollars.ui.store_detail.vm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.repository.model.v2.request.NewVisitHistory
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.model.v2.request.NewVisitHistory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class StoreCertificationViewModel : BaseViewModel() {
-
-    val service = RetrofitBuilder.newServiceApi
+@HiltViewModel
+class StoreCertificationViewModel @Inject constructor(private val storeDataSource: StoreDataSource) :
+    BaseViewModel() {
 
     private val _addVisitHistoryResult = MutableLiveData<Int>()
     val addVisitHistoryResult: LiveData<Int> get() = _addVisitHistoryResult
@@ -33,7 +35,7 @@ class StoreCertificationViewModel : BaseViewModel() {
         showLoading()
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = service.addVisitHistory(
+            val result = storeDataSource.addVisitHistory(
                 NewVisitHistory(storeId, if (isExist) "EXISTS" else "NOT_EXISTS")
             )
             _addVisitHistoryResult.postValue(result.code())

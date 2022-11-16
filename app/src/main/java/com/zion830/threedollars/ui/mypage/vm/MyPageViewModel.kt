@@ -5,19 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
-import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.repository.model.v2.request.UpdateMedalRequest
-import com.zion830.threedollars.repository.model.v2.response.my.Medal
-import com.zion830.threedollars.repository.model.v2.response.my.UserActivityData
-import com.zion830.threedollars.repository.model.v2.response.visit_history.VisitHistoryContent
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
+import com.zion830.threedollars.datasource.model.v2.response.my.Medal
+import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
+import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class MyPageViewModel : BaseViewModel() {
-
-    private val service = RetrofitBuilder.newServiceApi
+@HiltViewModel
+class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource) :
+    BaseViewModel() {
 
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity
@@ -35,7 +37,7 @@ class MyPageViewModel : BaseViewModel() {
 
     fun initAllMedals() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.getMedals()
+            val response = userDataSource.getMedals()
             if (response.isSuccessful) {
                 _allMedals.postValue(response.body()?.data ?: emptyList())
             }
@@ -44,7 +46,7 @@ class MyPageViewModel : BaseViewModel() {
 
     fun requestUserActivity() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.getUserActivity()
+            val response = userDataSource.getUserActivity()
             if (response.isSuccessful) {
                 val userActivity = response.body()?.data
                 _userActivity.postValue(userActivity)
@@ -56,7 +58,7 @@ class MyPageViewModel : BaseViewModel() {
 
     fun requestVisitHistory() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.getMyVisitHistory(null, 20)
+            val response = userDataSource.getMyVisitHistory(null, 20)
             if (response.isSuccessful) {
                 val myVisitHistory = response.body()?.data
                 _myVisitHistory.postValue(myVisitHistory?.contents)
@@ -70,9 +72,10 @@ class MyPageViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.getMyMedals()
+            val response = userDataSource.getMyMedals()
             _myMedals.postValue(_allMedals.value?.map { medal ->
-                val hasMedal = (response.body()?.data ?: emptyList()).find { it.medalId == medal.medalId } != null
+                val hasMedal = (response.body()?.data
+                    ?: emptyList()).find { it.medalId == medal.medalId } != null
                 val isSelected = medal.medalId == _userActivity.value?.medal?.medalId
                 MyMedal(medal, isSelected, hasMedal)
             } ?: emptyList())
@@ -81,7 +84,7 @@ class MyPageViewModel : BaseViewModel() {
 
     fun changeMedal(medalId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.updateMyMedals(UpdateMedalRequest(medalId))
+            val response = userDataSource.updateMyMedals(UpdateMedalRequest(medalId))
             if (response.isSuccessful) {
                 requestUserActivity()
             } else {

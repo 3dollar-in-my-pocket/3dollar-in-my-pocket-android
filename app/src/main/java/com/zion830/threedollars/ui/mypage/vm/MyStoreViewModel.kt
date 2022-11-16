@@ -5,19 +5,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.zion830.threedollars.repository.MyStoreDataSource
-import com.zion830.threedollars.repository.UserRepository
+import com.zion830.threedollars.datasource.MyStoreDataSourceImpl
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.UserDataSourceImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class MyStoreViewModel : BaseViewModel() {
+@HiltViewModel
+class MyStoreViewModel @Inject constructor(
+    private val userDataSource: UserDataSource,
+    private val myStoreDataSourceImpl: MyStoreDataSourceImpl
+) :
+    BaseViewModel() {
 
-    private val service = UserRepository()
-
-    val myStorePager = Pager(PagingConfig(MyStoreDataSource.LOAD_SIZE)) {
-        MyStoreDataSource()
-    }.flow
+    val myStorePager =
+        Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { myStoreDataSourceImpl }.flow
 
     private val _totalCount: MutableLiveData<Int> = MutableLiveData()
     val totalCount: LiveData<Int> = _totalCount
@@ -28,7 +33,7 @@ class MyStoreViewModel : BaseViewModel() {
 
     fun requestTotalCount() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = service.getMyStore(null, 1)
+            val response = userDataSource.getMyStore(null, 1)
             _totalCount.postValue(
                 if (response.isSuccessful) response.body()?.data?.totalElements ?: 0 else 0
             )

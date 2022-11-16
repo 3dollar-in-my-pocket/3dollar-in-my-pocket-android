@@ -6,22 +6,28 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.repository.model.v2.request.LoginRequest
-import com.zion830.threedollars.repository.model.v2.response.my.SignUser
+import com.zion830.threedollars.datasource.KakaoLoginDataSource
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
+import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
+import javax.inject.Inject
 
-class SplashViewModel : BaseViewModel() {
-    private val newServiceApi = RetrofitBuilder.newServiceApi
-    private val kakaoLoginApi = RetrofitBuilder.kakaoLoginApi
-    private val storeRepository = StoreRepository()
+@HiltViewModel
+class SplashViewModel @Inject constructor(
+    private val storeDataSource: StoreDataSource,
+    private val userDataSource: UserDataSource,
+    private val kakaoLoginDataSource: KakaoLoginDataSource
+) : BaseViewModel() {
 
     private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
     val loginResult: LiveData<ResultWrapper<SignUser?>> = _loginResult
@@ -31,21 +37,21 @@ class SplashViewModel : BaseViewModel() {
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val result = storeRepository.getCategories()
+            val result = storeDataSource.getCategories()
             if (result.isSuccessful) {
                 withContext(Dispatchers.Main) {
                     SharedPrefUtils.saveCategories(result.body()?.data ?: emptyList())
                 }
             }
 
-            val bossCategory = storeRepository.getBossCategory()
+            val bossCategory = storeDataSource.getBossCategory()
             if (bossCategory.isSuccessful) {
                 withContext(Dispatchers.Main) {
                     SharedPrefUtils.saveTruckCategories(bossCategory.body()?.data ?: emptyList())
                 }
             }
 
-            val bossStoreFeedbackTypeResponse = storeRepository.getBossStoreFeedbackType()
+            val bossStoreFeedbackTypeResponse = storeDataSource.getBossStoreFeedbackType()
             if (bossStoreFeedbackTypeResponse.isSuccessful) {
                 withContext(Dispatchers.Main) {
                     SharedPrefUtils.saveFeedbackType(
@@ -67,7 +73,7 @@ class SplashViewModel : BaseViewModel() {
                 return@launch
             }
 
-            val call = newServiceApi.login(LoginRequest(loginType, token))
+            val call = userDataSource.login(LoginRequest(loginType, token))
             val result = safeApiCall(call)
             _loginResult.postValue(result)
         }
@@ -87,7 +93,7 @@ class SplashViewModel : BaseViewModel() {
     fun refreshKakaoToken() {
         viewModelScope.launch(coroutineExceptionHandler) {
             val response =
-                kakaoLoginApi.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
+                kakaoLoginDataSource.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
 
             if (response.isSuccessful && response.body() != null) {
                 SharedPrefUtils.saveLoginType(LoginType.KAKAO)

@@ -1,17 +1,19 @@
 package com.zion830.threedollars
 
 import androidx.lifecycle.*
-import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.UserDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class UserInfoViewModel : BaseViewModel() {
-
-    private val userRepository = UserRepository()
+@HiltViewModel
+class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource): BaseViewModel() {
 
     private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
 
@@ -43,7 +45,7 @@ class UserInfoViewModel : BaseViewModel() {
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _userInfo.postValue(userRepository.getMyInfo().body())
+            _userInfo.postValue(userDataSource.getMyInfo().body())
             isUpdated.postValue(true)
         }
     }
@@ -56,13 +58,13 @@ class UserInfoViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val checkName = userRepository.checkName(userName.value!!)
+            val checkName = userDataSource.checkName(userName.value!!)
             if (checkName.body()?.resultCode?.isNotBlank() == true) {
                 _isAlreadyUsed.postValue(R.string.name_empty)
                 return@launch
             }
 
-            val result = userRepository.updateName(userName.value!!)
+            val result = userDataSource.updateName(userName.value!!)
             if (result.isSuccessful) {
                 _msgTextId.postValue(R.string.set_name_success)
                 _isNameUpdated.postValue(true)
@@ -90,7 +92,7 @@ class UserInfoViewModel : BaseViewModel() {
     fun deleteUser(onSuccess: () -> Unit) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = userRepository.signout()
+            val result = userDataSource.signOut()
 
             withContext(Dispatchers.Main) {
                 hideLoading()
@@ -106,7 +108,7 @@ class UserInfoViewModel : BaseViewModel() {
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userRepository.logout()
+            val response = userDataSource.logout()
             _logoutResult.postValue(response.isSuccessful)
         }
     }

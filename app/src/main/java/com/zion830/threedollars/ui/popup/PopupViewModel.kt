@@ -3,15 +3,18 @@ package com.zion830.threedollars.ui.popup
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.zion830.threedollars.repository.PopupRepository
-import com.zion830.threedollars.repository.model.v2.response.Popups
+import com.zion830.threedollars.datasource.PopupDataSource
+import com.zion830.threedollars.datasource.PopupDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class PopupViewModel : BaseViewModel() {
-
-    private val popupRepository = PopupRepository()
+@HiltViewModel
+class PopupViewModel @Inject constructor(private val popupDataSource: PopupDataSource) :
+    BaseViewModel() {
 
     val popups: MutableLiveData<List<Popups>> = MutableLiveData()
 
@@ -19,7 +22,7 @@ class PopupViewModel : BaseViewModel() {
 
     fun getPopups(position: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            popups.postValue(popupRepository.getPopups(position = position).body()?.data)
+            popups.postValue(popupDataSource.getPopups(position = position).body()?.data)
         }
     }
 }

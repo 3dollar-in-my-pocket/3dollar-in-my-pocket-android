@@ -5,22 +5,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.repository.model.v2.request.LoginRequest
-import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
-import com.zion830.threedollars.repository.model.v2.response.my.SignUser
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.UserDataSourceImpl
+import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
+import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
+import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
 
     val userName: MutableLiveData<String> = MutableLiveData("")
-
-    private val userRepository = UserRepository()
 
     private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
     val loginResult: MutableLiveData<ResultWrapper<SignUser?>>
@@ -48,7 +50,7 @@ class LoginViewModel : BaseViewModel() {
         latestSocialType.postValue(socialType)
         SharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userRepository.login(LoginRequest(socialType.socialName, accessToken))
+            val loginResult = userDataSource.login(LoginRequest(socialType.socialName, accessToken))
             _loginResult.postValue(safeApiCall(loginResult))
         }
     }
@@ -72,7 +74,7 @@ class LoginViewModel : BaseViewModel() {
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val request = SignUpRequest(userName.value!!, latestSocialType.value!!.socialName, token.toString())
-            val signUpResult = userRepository.signUp(request)
+            val signUpResult = userDataSource.signUp(request)
             if (signUpResult.isSuccessful) {
                 SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
                 _isNameUpdated.postValue(true)
