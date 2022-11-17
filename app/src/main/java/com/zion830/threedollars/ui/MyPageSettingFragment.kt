@@ -57,6 +57,7 @@ class MyPageSettingFragment :
                 // TODO: 푸시 알림 설정
                 // TODO: 디바이스 등록 api 호출
             } else {
+                eventTracker.setUserProperty("isAgreedMarketingAd", "false")
                 // TODO: 푸시 알림 해제
                 // TODO: 디바이스 해제 api 호출
             }

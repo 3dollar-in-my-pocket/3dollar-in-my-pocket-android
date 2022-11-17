@@ -3,9 +3,7 @@ package com.zion830.threedollars.ui
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
+import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +16,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
     private var check2 = false
     private var check3 = false
 
-    private lateinit var firebaseAnalytics : FirebaseAnalytics
 
     private var listener: DialogListener? = null
 
@@ -37,7 +34,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
 
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
-        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
 
         binding.run {
 
@@ -110,7 +106,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
                 // TODO: 약관 웹으로 이동
             }
             agreeContinueTextView.setOnClickListener {
-                firebaseAnalytics.setUserProperty("isAgreedMarketingAd", "true")
+                eventTracker.setUserProperty("isAgreedMarketingAd", "true")
                 listener?.accept()
                 dismiss()
             }
