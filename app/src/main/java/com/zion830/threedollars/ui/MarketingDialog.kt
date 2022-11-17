@@ -16,11 +16,10 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
     private var check2 = false
     private var check3 = false
 
-
     private var listener: DialogListener? = null
 
     interface DialogListener {
-        fun accept()
+        fun accept(isMarketing :Boolean)
     }
 
     fun setDialogListener(listener: DialogListener){
@@ -107,7 +106,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
             }
             agreeContinueTextView.setOnClickListener {
                 eventTracker.setUserProperty("isAgreedMarketingAd", "true")
-                listener?.accept()
+                listener?.accept((check2 || check3))
                 dismiss()
             }
         }

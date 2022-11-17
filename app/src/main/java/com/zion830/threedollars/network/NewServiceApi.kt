@@ -191,7 +191,7 @@ interface NewServiceApi {
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getCategoryIdBossNearStore(
-        @Query("categoryId") categoryId : String,
+        @Query("categoryId") categoryId: String,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
@@ -221,9 +221,15 @@ interface NewServiceApi {
         @Body feedbackTypes: BossStoreFeedbackRequest
     ): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/device")
-    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+    @POST("/api/v1/device")
+    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/device")
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/device/settings")
+    suspend fun putPushInformationSetting(@Body informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/device/token")
+    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 }

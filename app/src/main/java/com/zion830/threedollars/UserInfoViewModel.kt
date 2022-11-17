@@ -2,7 +2,8 @@ package com.zion830.threedollars
 
 import androidx.lifecycle.*
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.UserDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationSettingRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,8 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource): BaseViewModel() {
+class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) :
+    BaseViewModel() {
 
     private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
 
@@ -112,6 +114,19 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
             _logoutResult.postValue(response.isSuccessful)
         }
     }
+
+    fun postPushInformation(informationRequest: PushInformationRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            userDataSource.postPushInformation(informationRequest)
+        }
+    }
+
+    fun deletePushInformation() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            userDataSource.deletePushInformation()
+        }
+    }
+
 
     override fun handleError(t: Throwable) {
         super.handleError(t)

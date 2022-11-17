@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
@@ -16,6 +17,8 @@ import com.zion830.threedollars.*
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationSettingRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,7 +75,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 val token =
-                    GoogleAuthUtil.getToken(GlobalApplication.getContext(), account?.account!!, "oauth2:https://www.googleapis.com/auth/plus.me")
+                    GoogleAuthUtil.getToken(
+                        GlobalApplication.getContext(),
+                        account?.account!!,
+                        "oauth2:https://www.googleapis.com/auth/plus.me"
+                    )
                 SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
                 SharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
@@ -120,7 +127,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
+                        if (firebaseToken.isSuccessful) {
+                            viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                        }
+                    }
                     startActivity(MainActivity.getIntent(this))
                     finish()
                 }
@@ -144,7 +155,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     }
 
     private fun addInputNameFragment() {
-        supportFragmentManager.addNewFragment(R.id.layout_container, InputNameFragment.getInstance(), InputNameFragment::class.java.name)
+        supportFragmentManager.addNewFragment(
+            R.id.layout_container,
+            InputNameFragment.getInstance(),
+            InputNameFragment::class.java.name
+        )
     }
 
     private fun tryKakaoLogin() {

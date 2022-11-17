@@ -8,10 +8,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.KakaoLoginDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationSettingRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -107,4 +108,11 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
+
+    fun putPushInformationToken(informationRequest: PushInformationTokenRequest){
+        viewModelScope.launch(coroutineExceptionHandler) {
+            userDataSource.putPushInformationToken(informationRequest)
+        }
+    }
+
 }

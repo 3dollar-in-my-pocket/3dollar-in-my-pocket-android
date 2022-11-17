@@ -1,14 +1,15 @@
 package com.zion830.threedollars.datasource
 
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
-import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
+import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.POST
+import retrofit2.http.PUT
 import zion830.com.common.base.BaseResponse
 
 interface UserDataSource {
@@ -44,5 +45,13 @@ interface UserDataSource {
     suspend fun getMyMedals(): Response<BaseResponse<List<Medal>>>
 
     suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>>
+
+    suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    suspend fun deletePushInformation(): Response<BaseResponse<String>>
+
+    suspend fun putPushInformationSetting(informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>>
+
+    suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
 }

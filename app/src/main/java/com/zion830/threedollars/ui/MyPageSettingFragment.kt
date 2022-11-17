@@ -9,7 +9,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.*
+import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
@@ -54,12 +56,20 @@ class MyPageSettingFragment :
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
             if (isCheck) {
-                // TODO: 푸시 알림 설정
-                // TODO: 디바이스 등록 api 호출
+                eventTracker.setUserProperty("isAgreedMarketingAd", "true")
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        viewModel.postPushInformation(
+                            informationRequest = PushInformationRequest(pushToken = it.result)
+                        )
+                    } else {
+                        // TODO: 실패했을때 예외처리 필요
+                    }
+
+                }
             } else {
                 eventTracker.setUserProperty("isAgreedMarketingAd", "false")
-                // TODO: 푸시 알림 해제
-                // TODO: 디바이스 해제 api 호출
+                viewModel.deletePushInformation()
             }
         }
 

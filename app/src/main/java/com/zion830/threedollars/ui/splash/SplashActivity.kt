@@ -9,11 +9,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationSettingRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.VersionUpdateDialog
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.login.LoginActivity
@@ -35,6 +38,11 @@ class SplashActivity :
     override val viewModel: SplashViewModel by viewModels()
 
     override fun initView() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
+            }
+        }
         binding.lottieView.playAnimation()
         binding.lottieView.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {

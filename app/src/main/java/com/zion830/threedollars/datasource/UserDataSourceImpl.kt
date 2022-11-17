@@ -1,10 +1,7 @@
 package com.zion830.threedollars.datasource
 
+import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.network.NewServiceApi
-import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
-import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
@@ -72,4 +69,16 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>> =
         service.updateMyMedals(updateMedalRequest)
+
+    override suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> =
+        service.postPushInformation(informationRequest)
+
+    override suspend fun deletePushInformation(): Response<BaseResponse<String>> =
+        service.deletePushInformation()
+
+    override suspend fun putPushInformationSetting(informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>> =
+        service.putPushInformationSetting(informationSettingRequest)
+
+    override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
+        service.putPushInformationToken(informationTokenRequest)
 }

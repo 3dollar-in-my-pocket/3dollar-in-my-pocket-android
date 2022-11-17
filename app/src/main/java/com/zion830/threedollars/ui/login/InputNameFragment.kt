@@ -4,21 +4,24 @@ import android.os.Handler
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.MarketingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
-class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>(R.layout.fragment_login_name) {
+class InputNameFragment :
+    BaseFragment<FragmentLoginNameBinding, LoginViewModel>(R.layout.fragment_login_name) {
 
     override val viewModel: LoginViewModel by activityViewModels()
 
     override fun initView() {
         binding.etName.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            val handler: Handler = Handler()
+            val handler = Handler()
             val runnable: Runnable = object : Runnable {
                 override fun run() {
                     binding.scrollView.smoothScrollTo(0, binding.btnFinish.bottom)
@@ -41,15 +44,23 @@ class InputNameFragment : BaseFragment<FragmentLoginNameBinding, LoginViewModel>
         }
     }
 
-    private fun showMarketingDialog(){
+    private fun showMarketingDialog() {
         val dialog = MarketingDialog()
-        dialog.setDialogListener(object : MarketingDialog.DialogListener{
-            override fun accept() {
+        dialog.setDialogListener(object : MarketingDialog.DialogListener {
+            override fun accept(isMarketing: Boolean) {
+                viewModel.postPushInformation(
+                    informationRequest = PushInformationRequest(
+                        pushToken = FirebaseMessaging.getInstance().token.result,
+                        pushSettings =
+                        if (isMarketing) listOf("ADVERTISEMENT") else listOf(),
+                    )
+                )
                 viewModel.trySignUp()
             }
         })
-        dialog.show(parentFragmentManager,dialog.tag)
+        dialog.show(parentFragmentManager, dialog.tag)
     }
+
     companion object {
 
         fun getInstance() = InputNameFragment()
