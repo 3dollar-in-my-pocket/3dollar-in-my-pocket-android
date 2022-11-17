@@ -90,7 +90,7 @@ class TruckSearchByDistanceRecyclerAdapter(
         }
         items.clear()
         items.addAll(list)
-        items.add(1, newItems[0])
+        items.add(1, newItems.random())
         notifyDataSetChanged()
     }
 

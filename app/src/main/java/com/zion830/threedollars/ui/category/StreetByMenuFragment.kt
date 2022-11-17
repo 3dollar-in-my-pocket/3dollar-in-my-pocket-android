@@ -107,20 +107,21 @@ class StreetByMenuFragment :
 
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
+                val popup = popups.random()
                 binding.itemStoreListAd.run {
-                    tvAdTitle.text = popups[0].title
-                    popups[0].fontColor?.let {
+                    tvAdTitle.text = popup.title
+                    popup.fontColor?.let {
                         tvAdTitle.setTextColor(it.toColorInt())
                         tvAdBody.setTextColor(it.toColorInt())
                     }
-                    tvAdBody.text = popups[0].subTitle
+                    tvAdBody.text = popup.subTitle
 
-                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+                    popup.bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
-                    ivAdImage.loadUrlImg(popups[0].imageUrl)
+                    ivAdImage.loadUrlImg(popup.imageUrl)
 
                     tvDetail.setOnClickListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
                     }
                 }
                 storeByDistanceAdapters.submitAdList(popups)

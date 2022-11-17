@@ -22,7 +22,10 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val repository : StoreDataSource, private val popupDataSource: PopupDataSource) : BaseViewModel() {
+class HomeViewModel @Inject constructor(
+    private val repository: StoreDataSource,
+    private val popupDataSource: PopupDataSource
+) : BaseViewModel() {
 
     private val _bossCategoryModelList =
         MutableSharedFlow<List<BossCategoriesResponse.BossCategoriesModel>>()
@@ -76,7 +79,7 @@ class HomeViewModel @Inject constructor(private val repository : StoreDataSource
                 )
             }
             if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
+                adData.randomOrNull()?.let { resultList.add(1, it) }
             }
             nearStoreInfo.postValue(resultList.toList())
         }
@@ -86,7 +89,6 @@ class HomeViewModel @Inject constructor(private val repository : StoreDataSource
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val storeData = repository.getAllStore(location.latitude, location.longitude)
             val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
-
             val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
             storeData.body()?.data?.let {
                 if (selectCategory != "All") {
@@ -103,7 +105,7 @@ class HomeViewModel @Inject constructor(private val repository : StoreDataSource
                 resultList.add(HomeStoreEmptyResponse())
             }
             if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
+                adData.randomOrNull()?.let { resultList.add(1, it) }
             }
             nearStoreInfo.postValue(resultList.toList())
         }
