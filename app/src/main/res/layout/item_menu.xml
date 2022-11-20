@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,7 +8,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.datasource.model.v2.request.MyMenu" />
+            type="com.zion830.threedollars.repository.model.v2.request.MyMenu" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,11 +51,12 @@
             android:maxLength="10"
             android:singleLine="true"
             android:text="@{item.price}"
-            android:textColor="@color/gray5"
+            android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="zzzz" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

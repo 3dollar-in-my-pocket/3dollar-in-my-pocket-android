@@ -33,9 +33,11 @@ class InputNameFragment :
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
         }
+
         binding.btnFinish.onSingleClick {
             showMarketingDialog()
         }
+
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0
             if (it != -1) {
