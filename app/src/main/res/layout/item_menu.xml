@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +7,7 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.request.MyMenu" />
+            type="com.zion830.threedollars.datasource.model.v2.request.MyMenu" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
