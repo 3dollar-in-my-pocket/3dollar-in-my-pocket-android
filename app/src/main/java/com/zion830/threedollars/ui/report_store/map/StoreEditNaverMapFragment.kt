@@ -8,7 +8,9 @@ import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 open class StoreEditNaverMapFragment(private val onMapUpdated: (LatLng?) -> Unit) : NaverMapFragment() {
 
     private var map: NaverMap? = null

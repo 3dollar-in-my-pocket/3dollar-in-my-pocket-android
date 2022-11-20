@@ -5,10 +5,10 @@ import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.BossStoreFeedbackTypeResponse
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import java.lang.reflect.Type
 
 object SharedPrefUtils {

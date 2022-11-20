@@ -10,9 +10,11 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.bindItems
 
 // 가게 수정 화면에서 띄울 다이얼로그
+@AndroidEntryPoint
 class CategoryEditBottomSheetDialog : BottomSheetDialogFragment() {
 
     // TODO : CategoryBottomSheet 두개 통일해야함

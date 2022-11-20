@@ -14,8 +14,9 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class DeleteStoreDialog(private val storeId: Int) : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 

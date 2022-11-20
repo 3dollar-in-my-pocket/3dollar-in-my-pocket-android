@@ -5,19 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
-import com.zion830.threedollars.repository.model.v2.response.FAQCategory
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.UserDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class FAQViewModel : BaseViewModel() {
-
-    private val repository = UserRepository()
+@HiltViewModel
+class FAQViewModel @Inject constructor(private val userDataSource: UserDataSource): BaseViewModel() {
 
     val faqTags: LiveData<List<FAQCategory>> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
-        val result = repository.getFAQCategory()
+        val result = userDataSource.getFAQCategory()
         if (result.isSuccessful) {
             emit(result.body()?.data ?: emptyList())
         }
@@ -29,7 +31,7 @@ class FAQViewModel : BaseViewModel() {
 
     fun loadFaqs(category: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getFAQList(category)
+            val data = userDataSource.getFAQList(category)
             if (data.isSuccessful) {
                 _faqsByTag.postValue(data.body())
             } else {

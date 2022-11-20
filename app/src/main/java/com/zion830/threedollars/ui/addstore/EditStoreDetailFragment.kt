@@ -16,8 +16,8 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.repository.model.v2.request.MyMenu
-import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v2.request.MyMenu
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
@@ -27,9 +27,11 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.replaceFragment
 
+@AndroidEntryPoint
 class EditStoreDetailFragment :
     BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
 

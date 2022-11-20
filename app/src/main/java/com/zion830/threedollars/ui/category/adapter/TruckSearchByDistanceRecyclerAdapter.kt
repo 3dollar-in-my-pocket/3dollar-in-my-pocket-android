@@ -4,10 +4,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemTruckStoreByDistanceBinding
-import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
@@ -90,7 +90,7 @@ class TruckSearchByDistanceRecyclerAdapter(
         }
         items.clear()
         items.addAll(list)
-        items.add(1, newItems[0])
+        items.add(1, newItems.random())
         notifyDataSetChanged()
     }
 

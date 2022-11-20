@@ -3,18 +3,21 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.v2.request.BossStoreFeedbackRequest
-import com.zion830.threedollars.repository.model.v2.response.store.BossStoreDetailModel
-import com.zion830.threedollars.repository.model.v2.response.store.BossStoreFeedbackFullResponse
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class FoodTruckStoreDetailViewModel : BaseViewModel() {
-
-    private val repository = StoreRepository()
+@HiltViewModel
+class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: StoreDataSource) :
+    BaseViewModel() {
 
     private val _bossStoreDetailModel = MutableLiveData<BossStoreDetailModel>()
     val bossStoreDetailModel: LiveData<BossStoreDetailModel> get() = _bossStoreDetailModel
@@ -55,7 +58,8 @@ class FoodTruckStoreDetailViewModel : BaseViewModel() {
         bossStoreFeedbackRequest: BossStoreFeedbackRequest
     ) {
         viewModelScope.launch {
-            _postFeedbackResponse.value = repository.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
+            _postFeedbackResponse.value =
+                repository.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
         }
     }
 }

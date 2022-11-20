@@ -10,9 +10,9 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByRatingRecyclerAdapter
@@ -21,10 +21,12 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class StreetByMenuFragment :
     BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu){
 
@@ -105,20 +107,21 @@ class StreetByMenuFragment :
 
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
+                val popup = popups.random()
                 binding.itemStoreListAd.run {
-                    tvAdTitle.text = popups[0].title
-                    popups[0].fontColor?.let {
+                    tvAdTitle.text = popup.title
+                    popup.fontColor?.let {
                         tvAdTitle.setTextColor(it.toColorInt())
                         tvAdBody.setTextColor(it.toColorInt())
                     }
-                    tvAdBody.text = popups[0].subTitle
+                    tvAdBody.text = popup.subTitle
 
-                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+                    popup.bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
-                    ivAdImage.loadUrlImg(popups[0].imageUrl)
+                    ivAdImage.loadUrlImg(popup.imageUrl)
 
                     tvDetail.setOnClickListener {
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
                     }
                 }
                 storeByDistanceAdapters.submitAdList(popups)

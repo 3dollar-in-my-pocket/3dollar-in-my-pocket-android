@@ -1,7 +1,6 @@
 package com.zion830.threedollars.customview
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,9 +21,9 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
-import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 
 

@@ -7,9 +7,9 @@ import android.text.style.StyleSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.MenuType
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 
 
 @BindingAdapter("bindMenuIcon")

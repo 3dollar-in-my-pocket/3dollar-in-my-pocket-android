@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils
 import com.willy.ratingbar.ScaleRatingBar
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.model.v2.response.store.Image
+import com.zion830.threedollars.datasource.model.v2.response.store.Image
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.utils.StringUtils.getString
 

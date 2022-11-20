@@ -10,7 +10,9 @@ import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StoreAddNaverMapFragment : NaverMapFragment() {
 
     private val addStoreViewModel: AddStoreViewModel by activityViewModels()

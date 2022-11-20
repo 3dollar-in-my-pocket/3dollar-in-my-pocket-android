@@ -13,11 +13,11 @@ import com.google.android.gms.common.api.Scope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
-import com.zion830.threedollars.repository.model.LoginType
+import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.SharedPrefUtils
-import io.hackle.android.HackleApp
+import dagger.hilt.android.HiltAndroidApp
 
-
+@HiltAndroidApp
 class GlobalApplication : Application() {
 
     companion object {
@@ -59,9 +59,9 @@ class GlobalApplication : Application() {
 
         RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)
-        HackleApp.initializeApp(this, BuildConfig.HACKLE_KEY)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
-        NaverMapSdk.getInstance(this).client = NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
+        NaverMapSdk.getInstance(this).client =
+            NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
 
         isLoggedIn = !SharedPrefUtils.getLoginType().isNullOrBlank()
         if (isLoggedIn) {

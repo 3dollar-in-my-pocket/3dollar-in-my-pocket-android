@@ -10,13 +10,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
-import io.hackle.android.HackleApp
 import zion830.com.common.BR
 
 abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes private val layoutResId: Int
 ) : Fragment(layoutResId) {
-    protected val hackleApp = HackleApp.getInstance()
 
     protected lateinit var binding: B
 

@@ -4,16 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.network.RetrofitBuilder
-import com.zion830.threedollars.repository.MapRepository
-import com.zion830.threedollars.repository.model.v2.response.kakao.SearchAddressResponse
+import com.zion830.threedollars.datasource.MapDataSource
+import com.zion830.threedollars.datasource.MapDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.kakao.SearchAddressResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class SearchAddressViewModel : BaseViewModel() {
-
-    private val repository: MapRepository = MapRepository(RetrofitBuilder.mapService)
+@HiltViewModel
+class SearchAddressViewModel @Inject constructor(private val repository : MapDataSource) : BaseViewModel() {
 
     private val _searchResult: MutableLiveData<SearchAddressResponse?> = MutableLiveData()
     val searchResult: LiveData<SearchAddressResponse?> = _searchResult

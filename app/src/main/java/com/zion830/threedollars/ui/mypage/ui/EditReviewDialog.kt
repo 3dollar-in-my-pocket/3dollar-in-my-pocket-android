@@ -13,10 +13,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
-import com.zion830.threedollars.repository.model.v2.request.NewReview
-import com.zion830.threedollars.repository.model.v2.response.my.ReviewDetail
+import com.zion830.threedollars.datasource.model.v2.request.NewReview
+import com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditReviewDialog(
     private val content: ReviewDetail?,
     private val onComplete: (NewReview) -> Unit
@@ -27,7 +29,11 @@ class EditReviewDialog(
         setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding = DialogAddReviewBinding.inflate(inflater)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         binding.lifecycleOwner = this
@@ -45,7 +51,8 @@ class EditReviewDialog(
                     showToast(R.string.input_content)
                 }
                 else -> {
-                    val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
+                    val newReview =
+                        NewReview(binding.etContent.text.toString(), binding.rating.rating)
                     onComplete(newReview)
                     dismiss()
                 }
@@ -59,7 +66,8 @@ class EditReviewDialog(
 
     override fun onResume() {
         super.onResume()
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager =
+            requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = windowManager.defaultDisplay
         val size = Point()
         display.getSize(size)

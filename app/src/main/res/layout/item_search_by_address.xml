@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.response.kakao.Document" />
+            type="com.zion830.threedollars.datasource.model.v2.response.kakao.Document" />
 
         <variable
             name="listener"

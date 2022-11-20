@@ -8,14 +8,15 @@ import androidx.fragment.app.viewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
-import com.zion830.threedollars.repository.model.v2.response.FAQCategory
+import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.FAQViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 
-
+@AndroidEntryPoint
 class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.fragment_faq) {
 
     override val viewModel: FAQViewModel by viewModels()

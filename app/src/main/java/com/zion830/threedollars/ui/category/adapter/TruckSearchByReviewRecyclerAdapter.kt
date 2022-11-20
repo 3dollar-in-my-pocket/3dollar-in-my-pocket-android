@@ -3,21 +3,16 @@ package com.zion830.threedollars.ui.category.adapter
 import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.view.ViewGroup
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.RecyclerView
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemTruckSearchEmptyBinding
 import com.zion830.threedollars.databinding.ItemTruckStoreByReviewBinding
-import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.base.convertDpToPx
 import zion830.com.common.listener.OnItemClickListener
 
 class TruckSearchByReviewRecyclerAdapter(
@@ -97,7 +92,7 @@ class TruckSearchByReviewRecyclerAdapter(
         }
         items.clear()
         items.addAll(list)
-        items.add(1, newItems[0])
+        items.add(1, newItems.random())
         notifyDataSetChanged()
     }
 

@@ -6,20 +6,22 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.Category
-import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
-import com.zion830.threedollars.repository.model.v2.request.MyMenu
-import com.zion830.threedollars.repository.model.v2.request.NewReview
-import com.zion830.threedollars.repository.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.Image
-import com.zion830.threedollars.repository.model.v2.response.store.Menu
-import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.model.Category
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.MyMenu
+import com.zion830.threedollars.datasource.model.v2.request.NewReview
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.Image
+import com.zion830.threedollars.datasource.model.v2.response.store.Menu
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -27,11 +29,11 @@ import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 // TODO : Edit 로직 분리 필요
-class StoreDetailViewModel : BaseViewModel() {
-
-    private val repository = StoreRepository()
+@HiltViewModel
+class StoreDetailViewModel @Inject constructor(private val repository : StoreDataSource) : BaseViewModel() {
 
     private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
     val storeInfo: LiveData<StoreDetail?>

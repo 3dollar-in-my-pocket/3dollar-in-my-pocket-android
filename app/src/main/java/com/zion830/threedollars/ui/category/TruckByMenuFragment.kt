@@ -9,10 +9,10 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
-import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
@@ -20,10 +20,12 @@ import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.map.TruckStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class TruckByMenuFragment :
     BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu) {
 
@@ -94,20 +96,21 @@ class TruckByMenuFragment :
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             popups?.let {
                 if (popups.isNotEmpty()) {
+                    val popup = popups.random()
                     binding.itemStoreListAd.run {
-                        tvAdTitle.text = popups[0].title
-                        popups[0].fontColor?.let {
+                        tvAdTitle.text = popup.title
+                        popup.fontColor?.let {
                             tvAdTitle.setTextColor(it.toColorInt())
                             tvAdBody.setTextColor(it.toColorInt())
                         }
-                        tvAdBody.text = popups[0].subTitle
+                        tvAdBody.text = popup.subTitle
 
-                        popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+                        popup.bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
-                        ivAdImage.loadUrlImg(popups[0].imageUrl)
+                        ivAdImage.loadUrlImg(popup.imageUrl)
 
                         tvDetail.setOnClickListener {
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
                         }
                     }
                     truckStoreByDistanceAdapters.submitAdList(popups)

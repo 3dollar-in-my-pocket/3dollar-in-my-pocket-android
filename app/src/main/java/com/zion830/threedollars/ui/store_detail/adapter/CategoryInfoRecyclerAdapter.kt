@@ -3,8 +3,8 @@ package com.zion830.threedollars.ui.store_detail.adapter
 import android.view.ViewGroup
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryBinding
-import com.zion830.threedollars.repository.model.Category
-import com.zion830.threedollars.repository.model.v2.request.MyMenu
+import com.zion830.threedollars.datasource.model.Category
+import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.ui.addstore.adapter.MenuRecyclerAdapter
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder

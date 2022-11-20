@@ -12,12 +12,13 @@ import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.RecentVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 
-
+@AndroidEntryPoint
 class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {
 
     override val viewModel: MyPageViewModel by activityViewModels()

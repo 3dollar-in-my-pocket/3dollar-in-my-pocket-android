@@ -14,8 +14,10 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogNearExistBinding
 import com.zion830.threedollars.utils.getCurrentLocationName
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class NearExistDialog : DialogFragment() {
 
 

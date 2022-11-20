@@ -7,10 +7,11 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 
-
+@AndroidEntryPoint
 class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(R.layout.fragment_ask) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()

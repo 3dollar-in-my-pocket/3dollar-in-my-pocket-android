@@ -1,10 +1,8 @@
 package com.zion830.threedollars.ui.category.adapter
 
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ItemStreetCategoryBtnBinding
 import com.zion830.threedollars.databinding.ItemTruckCategoryBtnBinding
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.listener.OnItemClickListener
 

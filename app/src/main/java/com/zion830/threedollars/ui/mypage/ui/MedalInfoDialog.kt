@@ -12,10 +12,12 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.databinding.DialogMedalInfoBinding
-import com.zion830.threedollars.repository.model.v2.response.my.Medal
+import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.ui.mypage.adapter.MedalInfoRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MedalInfoDialog : DialogFragment() {
 
     private val viewModel: MyPageViewModel by activityViewModels()

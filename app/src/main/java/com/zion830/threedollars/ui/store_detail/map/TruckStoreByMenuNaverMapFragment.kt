@@ -8,12 +8,13 @@ import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class TruckStoreByMenuNaverMapFragment() : NaverMapFragment() {
     val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
