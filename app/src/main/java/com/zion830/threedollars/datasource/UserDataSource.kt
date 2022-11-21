@@ -50,8 +50,6 @@ interface UserDataSource {
 
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
 
-    suspend fun putPushInformationSetting(informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>>
-
     suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
 }

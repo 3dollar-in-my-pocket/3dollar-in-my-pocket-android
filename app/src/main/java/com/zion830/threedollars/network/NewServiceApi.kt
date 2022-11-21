@@ -227,9 +227,6 @@ interface NewServiceApi {
     @DELETE("/api/v1/device")
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/device/settings")
-    suspend fun putPushInformationSetting(@Body informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>>
-
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 }

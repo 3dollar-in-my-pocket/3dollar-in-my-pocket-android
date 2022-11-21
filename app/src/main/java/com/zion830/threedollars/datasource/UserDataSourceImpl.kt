@@ -76,9 +76,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun deletePushInformation(): Response<BaseResponse<String>> =
         service.deletePushInformation()
 
-    override suspend fun putPushInformationSetting(informationSettingRequest: PushInformationSettingRequest): Response<BaseResponse<String>> =
-        service.putPushInformationSetting(informationSettingRequest)
-
     override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
         service.putPushInformationToken(informationTokenRequest)
 }

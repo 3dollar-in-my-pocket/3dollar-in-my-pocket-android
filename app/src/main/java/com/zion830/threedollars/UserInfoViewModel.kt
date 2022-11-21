@@ -2,7 +2,6 @@ package com.zion830.threedollars
 
 import androidx.lifecycle.*
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationSettingRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
