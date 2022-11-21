@@ -1,6 +1,8 @@
 package com.zion830.threedollars.ui
 
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
@@ -19,10 +21,10 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
     private var listener: DialogListener? = null
 
     interface DialogListener {
-        fun accept(isMarketing :Boolean)
+        fun accept(isMarketing: Boolean)
     }
 
-    fun setDialogListener(listener: DialogListener){
+    fun setDialogListener(listener: DialogListener) {
         this.listener = listener
     }
 
@@ -37,81 +39,188 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
         binding.run {
 
             allAgreeTextView.setOnClickListener {
-                if(check1 && check2 && check3){
+                if (check1 && check2 && check3) {
                     check1 = false
                     check2 = false
                     check3 = false
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_uncheck,0,0,0)
-                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                }else{
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_uncheck,
+                        0,
+                        0,
+                        0
+                    )
+                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                } else {
                     check1 = true
                     check2 = true
                     check3 = true
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_check,0,0,0)
-                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
-                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_check,
+                        0,
+                        0,
+                        0
+                    )
+                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
+                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
+                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
                 }
                 agreeContinueTextView.isEnabled = check1
             }
 
             term1TextView.setOnClickListener {
-                if(check1){
+                if (check1) {
                     check1 = false
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_uncheck,0,0,0)
-                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                }else{
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_uncheck,
+                        0,
+                        0,
+                        0
+                    )
+                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                } else {
                     check1 = true
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_check,0,0,0)
-                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_check,
+                        0,
+                        0,
+                        0
+                    )
+                    term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
                 }
                 agreeContinueTextView.isEnabled = check1
             }
             term2TextView.setOnClickListener {
-                if(check2){
+                if (check2) {
                     check2 = false
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_uncheck,0,0,0)
-                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                }else{
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_uncheck,
+                        0,
+                        0,
+                        0
+                    )
+                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                } else {
                     check2 = true
-                    if(check1 && check3){
-                        allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_check,0,0,0)
+                    if (check1 && check3) {
+                        allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            R.drawable.icon_circle_check,
+                            0,
+                            0,
+                            0
+                        )
                     }
-                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
+                    term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
                 }
             }
             term3TextView.setOnClickListener {
-                if(check3){
+                if (check3) {
                     check3 = false
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_uncheck,0,0,0)
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_uncheck_gray,0,0,0)
-                }else{
+                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_circle_uncheck,
+                        0,
+                        0,
+                        0
+                    )
+                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_uncheck_gray,
+                        0,
+                        0,
+                        0
+                    )
+                } else {
                     check3 = true
-                    if(check1 && check2){
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_circle_check,0,0,0)
+                    if (check1 && check2) {
+                        allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            R.drawable.icon_circle_check,
+                            0,
+                            0,
+                            0
+                        )
                     }
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_check_pink,0,0,0)
+                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        R.drawable.icon_check_pink,
+                        0,
+                        0,
+                        0
+                    )
                 }
             }
             term1ImageView.setOnClickListener {
-                // TODO: 약관 웹으로 이동
+                goWebView(R.string.terms_of_service_url)
             }
             term2ImageView.setOnClickListener {
-                // TODO: 약관 웹으로 이동
+                goWebView(R.string.terms_of_marketing_url)
             }
             term3ImageView.setOnClickListener {
-                // TODO: 약관 웹으로 이동
+                goWebView(R.string.terms_of_marketing_url)
             }
             agreeContinueTextView.setOnClickListener {
-                eventTracker.setUserProperty("isAgreedMarketingAd", "true")
+                eventTracker.setUserProperty("isPushEnable", "true")
                 listener?.accept((check2 || check3))
                 dismiss()
             }
         }
     }
-    companion object{
+
+    private fun goWebView(urlRes: Int) {
+        val browserIntent =
+            Intent(Intent.ACTION_VIEW, Uri.parse(getString(urlRes)))
+        startActivity(browserIntent)
+    }
+
+    companion object {
         const val TAG = "MarketingDialog"
     }
 }

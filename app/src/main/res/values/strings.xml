@@ -235,7 +235,8 @@
     <string name="question">Q. %s</string>
 
     <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
-    <string name="terms_of_service_url">https://www.notion.so/3–3d0a9c55ddd74086b63582c308ca285e</string>
+    <string name="terms_of_service_url">https://massive-iguana-121.notion.site/3-37f521af4ac842ccba75a4fb590c506d</string>
+    <string name="terms_of_marketing_url">https://massive-iguana-121.notion.site/3-91156528267e426b9609d3ed57acb27d</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
     <string name="official_email">3dollarinmypocket@gmail.com</string>
     <string name="no_mail_app">실행할 메일 앱이 없습니다. 3dollarinmypocket@gmail.com로 문의사항을 전달해주세요.</string>
