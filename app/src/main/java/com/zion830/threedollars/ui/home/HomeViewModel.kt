@@ -1,15 +1,17 @@
 package com.zion830.threedollars.ui.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
-import com.zion830.threedollars.datasource.PopupDataSource
-import com.zion830.threedollars.datasource.PopupDataSourceImpl
-import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.*
+import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -24,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: StoreDataSource,
-    private val popupDataSource: PopupDataSource
+    private val popupDataSource: PopupDataSource,
+    private val userDataSource: UserDataSource
 ) : BaseViewModel() {
 
     private val _bossCategoryModelList =
@@ -35,6 +38,11 @@ class HomeViewModel @Inject constructor(
         MutableSharedFlow<List<CategoryInfo>>()
     val roadFoodCategoryModelList: SharedFlow<List<CategoryInfo>> get() = _roadFoodCategoryModelList
 
+    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+
+    val userInfo: LiveData<MyInfoResponse>
+        get() = _userInfo
+
     val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()
 
     val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
@@ -42,6 +50,12 @@ class HomeViewModel @Inject constructor(
     val addressText: MutableLiveData<String> = MutableLiveData()
 
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
+
+    fun getUserInfo() {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            _userInfo.postValue(userDataSource.getMyInfo().body())
+        }
+    }
 
     fun updateCurrentLocation(latlng: LatLng) {
         searchResultLocation.value = latlng
@@ -133,6 +147,24 @@ class HomeViewModel @Inject constructor(
                 _roadFoodCategoryModelList.emit(
                     listOf(CategoryInfo(category = "All", name = "전체")) + it
                 )
+            }
+        }
+    }
+
+    fun postPushInformation(informationRequest: PushInformationRequest, isMarketing: Boolean) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (userDataSource.postPushInformation(informationRequest).isSuccessful) {
+                putMarketingConsent(
+                    (MarketingConsentRequest(if (isMarketing) "APPROVE" else "DENY"))
+                )
+            }
+        }
+    }
+
+    fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (userDataSource.putMarketingConsent(marketingConsentRequest).isSuccessful) {
+                getUserInfo()
             }
         }
     }

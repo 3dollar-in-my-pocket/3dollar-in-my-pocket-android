@@ -8,15 +8,20 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
+import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.home.adapter.BossCategoriesRecyclerAdapter
@@ -65,6 +70,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.foodTruckToolTipImageView.isVisible = true
             binding.foodTruckToolTipTextView.isVisible = true
         }
+        viewModel.getUserInfo()
         viewModel.getRoadFoodCategory()
         naverMapFragment = NearStoreNaverMapFragment {
             binding.tvRetrySearch.isVisible = true
@@ -188,7 +194,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }
 
-
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            if (it.data.marketingConsent == "UNVERIFIED") {
+                showMarketingDialog()
+            }
+        }
         binding.rvStore.adapter = adapter
         binding.bossCategoryRecyclerView.adapter = bossCategoriesAdapter
         binding.roadFoodCategoryRecyclerView.adapter = roadFoodCategoriesAdapter
@@ -280,6 +290,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             adapter.notifyDataSetChanged()
             binding.rvStore.scrollToPosition(position)
         }
+    }
+
+    private fun showMarketingDialog() {
+        val dialog = MarketingDialog()
+        dialog.setDialogListener(object : MarketingDialog.DialogListener {
+            override fun accept(isMarketing: Boolean) {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        viewModel.postPushInformation(
+                            informationRequest = PushInformationRequest(pushToken = it.result),
+                            isMarketing = isMarketing
+                        )
+                    }
+                }
+            }
+        })
+        dialog.show(parentFragmentManager, dialog.tag)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

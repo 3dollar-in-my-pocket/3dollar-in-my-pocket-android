@@ -31,6 +31,10 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
     val isAvailable: LiveData<Boolean>
         get() = _isAvailable
 
+    private val _isPostDevice: MutableLiveData<Boolean> = MutableLiveData()
+    val isPostDevice: LiveData<Boolean>
+        get() = _isPostDevice
+
     val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
         it.isNullOrBlank()
     }
@@ -55,7 +59,7 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
         }
     }
 
-    fun trySignUp() {
+    fun trySignUp(informationRequest: PushInformationRequest, isMarketing: Boolean) {
         if (userName.value.isNullOrBlank()) {
             _msgTextId.value = R.string.name_empty
             return
@@ -81,9 +85,8 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
             val signUpResult = userDataSource.signUp(request)
             if (signUpResult.isSuccessful) {
                 SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
-                _isNameUpdated.postValue(true)
-                _msgTextId.postValue(R.string.success_signup)
-                _isAlreadyUsed.postValue(-1)
+                postPushInformation(informationRequest, isMarketing)
+
             } else {
                 when (signUpResult.code()) {
                     409 -> _isAlreadyUsed.postValue(R.string.login_name_already_exist)
@@ -94,15 +97,27 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
         }
     }
 
-    fun postPushInformation(informationRequest: PushInformationRequest) {
+    fun postPushInformation(informationRequest: PushInformationRequest, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userDataSource.postPushInformation(informationRequest)
+            if (userDataSource.postPushInformation(informationRequest).isSuccessful) {
+                putMarketingConsent(MarketingConsentRequest(if (isMarketing) "APPROVE" else "DENY"))
+            }
         }
     }
 
-    fun putPushInformationToken(informationRequest: PushInformationTokenRequest){
+    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             userDataSource.putPushInformationToken(informationRequest)
+        }
+    }
+
+    private fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (userDataSource.putMarketingConsent(marketingConsentRequest).isSuccessful) {
+                _isNameUpdated.postValue(true)
+                _msgTextId.postValue(R.string.success_signup)
+                _isAlreadyUsed.postValue(-1)
+            }
         }
     }
 }

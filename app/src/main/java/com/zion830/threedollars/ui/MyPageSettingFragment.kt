@@ -56,7 +56,7 @@ class MyPageSettingFragment :
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
             if (isCheck) {
-                eventTracker.setUserProperty("isAgreedMarketingAd", "true")
+                eventTracker.setUserProperty("isPushEnable", "true")
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
                         viewModel.postPushInformation(
@@ -68,7 +68,7 @@ class MyPageSettingFragment :
 
                 }
             } else {
-                eventTracker.setUserProperty("isAgreedMarketingAd", "false")
+                eventTracker.setUserProperty("isPushEnable", "false")
                 viewModel.deletePushInformation()
             }
         }
@@ -97,6 +97,10 @@ class MyPageSettingFragment :
             } else {
                 showToast(R.string.connection_failed)
             }
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner){
+            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
         }
     }
 

@@ -129,7 +129,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:drawablePadding="5dp"
-                    android:onClick="@{() -> viewModel.trySignUp()}"
                     android:text="@string/login_name_already_exist"
                     android:textColor="@color/color_main_red"
                     android:visibility="@{viewModel.isAvailable ? View.INVISIBLE : View.VISIBLE}"

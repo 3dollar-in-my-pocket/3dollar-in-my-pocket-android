@@ -7,6 +7,7 @@ import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentLoginNameBinding
+import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.MarketingDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,14 +51,14 @@ class InputNameFragment :
         val dialog = MarketingDialog()
         dialog.setDialogListener(object : MarketingDialog.DialogListener {
             override fun accept(isMarketing: Boolean) {
-                viewModel.postPushInformation(
-                    informationRequest = PushInformationRequest(
-                        pushToken = FirebaseMessaging.getInstance().token.result,
-                        pushSettings =
-                        if (isMarketing) listOf("ADVERTISEMENT") else listOf(),
-                    )
-                )
-                viewModel.trySignUp()
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        viewModel.trySignUp(
+                            informationRequest = PushInformationRequest(pushToken = it.result),
+                            isMarketing = isMarketing
+                        )
+                    }
+                }
             }
         })
         dialog.show(parentFragmentManager, dialog.tag)
