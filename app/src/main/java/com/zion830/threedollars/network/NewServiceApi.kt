@@ -229,4 +229,7 @@ interface NewServiceApi {
 
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/user/me/marketing-consent")
+    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 }

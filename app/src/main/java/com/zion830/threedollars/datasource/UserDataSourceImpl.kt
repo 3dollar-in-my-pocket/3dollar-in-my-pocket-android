@@ -78,4 +78,7 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
         service.putPushInformationToken(informationTokenRequest)
+
+    override suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>> =
+        service.putMarketingConsent(marketingConsentRequest)
 }
