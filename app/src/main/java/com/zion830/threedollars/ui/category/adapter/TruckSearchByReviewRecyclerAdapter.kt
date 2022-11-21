@@ -92,7 +92,7 @@ class TruckSearchByReviewRecyclerAdapter(
         }
         items.clear()
         items.addAll(list)
-        items.add(1, newItems.random())
+        items.add(1, newItems[0])
         notifyDataSetChanged()
     }
 

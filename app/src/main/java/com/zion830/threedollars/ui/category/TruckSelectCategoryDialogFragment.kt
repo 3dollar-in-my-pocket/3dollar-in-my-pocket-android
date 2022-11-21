@@ -117,7 +117,7 @@ class TruckSelectCategoryDialogFragment :
     private fun initViewModel() {
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
-                val popup = popups.random()
+                val popup = popups[0]
                 binding.tvAdTitle.text = popup.title
 
                 binding.tvAdBody.text = popup.subTitle

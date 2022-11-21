@@ -93,7 +93,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
             if (adData != null) {
-                adData.randomOrNull()?.let { resultList.add(1, it) }
+                adData.firstOrNull()?.let { resultList.add(1, it) }
             }
             nearStoreInfo.postValue(resultList.toList())
         }
@@ -119,7 +119,7 @@ class HomeViewModel @Inject constructor(
                 resultList.add(HomeStoreEmptyResponse())
             }
             if (adData != null) {
-                adData.randomOrNull()?.let { resultList.add(1, it) }
+                adData.firstOrNull()?.let { resultList.add(1, it) }
             }
             nearStoreInfo.postValue(resultList.toList())
         }
