@@ -8,7 +8,6 @@ import androidx.paging.PagingConfig
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.MyReviewDataSourceImpl
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,13 +17,10 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MyReviewViewModel @Inject constructor(
-    private val storeDataSource: StoreDataSource,
-    private val myReviewDataSourceImpl: MyReviewDataSourceImpl
-) : BaseViewModel() {
+class MyReviewViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
 
     val myReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        myReviewDataSourceImpl
+        MyReviewDataSourceImpl()
     }.flow
 
     private val _updateReview: MutableLiveData<Boolean> = MutableLiveData()

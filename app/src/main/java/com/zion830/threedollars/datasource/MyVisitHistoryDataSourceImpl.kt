@@ -5,8 +5,11 @@ import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import javax.inject.Inject
 
-class MyVisitHistoryDataSourceImpl @Inject constructor(private val userDataSource : UserDataSource): PagingSource<Int, VisitHistoryContent>() {
+class MyVisitHistoryDataSourceImpl @Inject constructor() :
+    PagingSource<Int, VisitHistoryContent>() {
 
+    @Inject
+    lateinit var userDataSource: UserDataSource
     override fun getRefreshKey(state: PagingState<Int, VisitHistoryContent>): Int? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VisitHistoryContent> {

@@ -8,9 +8,9 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MyVisitHistoryViewModel @Inject constructor(private val myVisitHistoryDataSourceImpl: MyVisitHistoryDataSourceImpl) :
+class MyVisitHistoryViewModel @Inject constructor() :
     BaseViewModel() {
 
     val myHistoryPager =
-        Pager(PagingConfig(MyVisitHistoryDataSourceImpl.LOAD_SIZE)) { myVisitHistoryDataSourceImpl }.flow
+        Pager(PagingConfig(MyVisitHistoryDataSourceImpl.LOAD_SIZE)) { MyVisitHistoryDataSourceImpl() }.flow
 }
