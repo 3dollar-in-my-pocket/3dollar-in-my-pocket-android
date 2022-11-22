@@ -16,7 +16,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
 
     private var check1 = false
     private var check2 = false
-    private var check3 = false
 
     private var listener: DialogListener? = null
 
@@ -39,10 +38,9 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
         binding.run {
 
             allAgreeTextView.setOnClickListener {
-                if (check1 && check2 && check3) {
+                if (check1 && check2) {
                     check1 = false
                     check2 = false
-                    check3 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         R.drawable.icon_circle_uncheck,
                         0,
@@ -61,16 +59,9 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
                         0,
                         0
                     )
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
-                        0,
-                        0,
-                        0
-                    )
                 } else {
                     check1 = true
                     check2 = true
-                    check3 = true
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         R.drawable.icon_circle_check,
                         0,
@@ -84,12 +75,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
                         0
                     )
                     term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
-                        0,
-                        0,
-                        0
-                    )
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         R.drawable.icon_check_pink,
                         0,
                         0,
@@ -148,7 +133,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
                     )
                 } else {
                     check2 = true
-                    if (check1 && check3) {
+                    if (check1) {
                         allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                             R.drawable.icon_circle_check,
                             0,
@@ -164,51 +149,15 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
                     )
                 }
             }
-            term3TextView.setOnClickListener {
-                if (check3) {
-                    check3 = false
-                    allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_uncheck,
-                        0,
-                        0,
-                        0
-                    )
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
-                        0,
-                        0,
-                        0
-                    )
-                } else {
-                    check3 = true
-                    if (check1 && check2) {
-                        allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            R.drawable.icon_circle_check,
-                            0,
-                            0,
-                            0
-                        )
-                    }
-                    term3TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
-                        0,
-                        0,
-                        0
-                    )
-                }
-            }
             term1ImageView.setOnClickListener {
                 goWebView(R.string.terms_of_service_url)
             }
             term2ImageView.setOnClickListener {
                 goWebView(R.string.terms_of_marketing_url)
             }
-            term3ImageView.setOnClickListener {
-                goWebView(R.string.terms_of_marketing_url)
-            }
             agreeContinueTextView.setOnClickListener {
                 eventTracker.setUserProperty("isPushEnable", "true")
-                listener?.accept((check2 || check3))
+                listener?.accept(check2)
                 dismiss()
             }
         }

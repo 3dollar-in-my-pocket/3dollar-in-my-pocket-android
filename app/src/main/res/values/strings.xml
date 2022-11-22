@@ -320,9 +320,8 @@
     <string name="recruit_boss_body">현재 푸드트럭 사장님을 모집 하고 있어요.\n앱스토어에 가슴속 3천원 사장님을\n검색해 주세요.</string>
     <string name="recruit_boss_body_short">앱스토어에 가슴속 3천원 사장님을 검색해 주세요.</string>
     <string name="all_agree">전체 동의하기</string>
-    <string name="term_1">(필수)이용약관 동의</string>
-    <string name="term_2">(선택)광고성 정보 수신 동의</string>
-    <string name="term_3">(선택)마케팅 활용 동의</string>
+    <string name="term_1">(필수) 이용약관 동의</string>
+    <string name="term_2">(선택) 마케팅 활용 및 광고성 정보 수신 동의</string>
     <string name="agree_continue">동의하고 계속하기</string>
     <string name="push">푸시 알림</string>
 </resources>

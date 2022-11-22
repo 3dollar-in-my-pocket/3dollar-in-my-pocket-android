@@ -100,29 +100,6 @@
                 app:layout_constraintTop_toTopOf="@id/term2TextView" />
 
             <TextView
-                android:id="@+id/term3TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:drawablePadding="14dp"
-                android:text="@string/term_3"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:drawableStartCompat="@drawable/icon_uncheck_gray"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/term2TextView" />
-
-            <ImageView
-                android:id="@+id/term3ImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:src="@drawable/ic_gray_arrow"
-                app:layout_constraintBottom_toBottomOf="@id/term3TextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/term3TextView" />
-
-            <TextView
                 android:id="@+id/agreeContinueTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -137,7 +114,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/term3TextView" />
+                app:layout_constraintTop_toBottomOf="@id/term2TextView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
