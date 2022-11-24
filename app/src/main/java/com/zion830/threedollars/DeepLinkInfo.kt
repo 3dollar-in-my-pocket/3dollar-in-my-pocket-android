@@ -19,7 +19,11 @@ enum class DeepLinkInfo(@StringRes val hostStringResId: Int) {
 
     DETAIL(R.string.scheme_host_kakao_link) {
         override fun getIntent(context: Context, deepLinkUri: Uri): Intent {
-            return SplashActivity.getIntent(context,deepLinkUri,deepLinkUri.getQueryParameter(context.getString(R.string.scheme_host_kakao_link_store_type)))
+            return SplashActivity.getIntent(
+                context,
+                deepLinkUri,
+                deepLinkUri.getQueryParameter(context.getString(R.string.scheme_host_kakao_link_store_type))
+            )
         }
     };
 

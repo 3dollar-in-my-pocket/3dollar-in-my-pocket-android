@@ -79,6 +79,7 @@ object StringUtils {
             ""
         }
     }
+
     fun TextView.textPartTypeface(changeText: String?, @StyleRes style: Int, isLast: Boolean = false) {
         if (changeText == null)
             return

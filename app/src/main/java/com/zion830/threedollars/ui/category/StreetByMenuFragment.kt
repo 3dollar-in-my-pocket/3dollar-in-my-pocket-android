@@ -28,7 +28,7 @@ import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu){
+    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu) {
 
     override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 

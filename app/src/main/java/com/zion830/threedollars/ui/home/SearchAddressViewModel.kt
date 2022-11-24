@@ -14,7 +14,7 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchAddressViewModel @Inject constructor(private val repository : MapDataSource) : BaseViewModel() {
+class SearchAddressViewModel @Inject constructor(private val repository: MapDataSource) : BaseViewModel() {
 
     private val _searchResult: MutableLiveData<SearchAddressResponse?> = MutableLiveData()
     val searchResult: LiveData<SearchAddressResponse?> = _searchResult
