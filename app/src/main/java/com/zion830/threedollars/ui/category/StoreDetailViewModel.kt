@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.model.Category
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
@@ -27,15 +26,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
-class StoreDetailViewModel @Inject constructor(private val repository : StoreDataSource) : BaseViewModel() {
+class StoreDetailViewModel @Inject constructor(private val repository: StoreDataSource) : BaseViewModel() {
 
-    private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
+    private val _storeInfo: SingleLiveEvent<StoreDetail?> = SingleLiveEvent()
     val storeInfo: LiveData<StoreDetail?>
         get() = _storeInfo
 
@@ -55,8 +55,7 @@ class StoreDetailViewModel @Inject constructor(private val repository : StoreDat
         }
     }
 
-    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) })
+    private val _selectedCategory: SingleLiveEvent<List<SelectedCategory>> = SingleLiveEvent()
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
@@ -74,19 +73,19 @@ class StoreDetailViewModel @Inject constructor(private val repository : StoreDat
         }
     }
 
-    private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
+    private val _selectedLocation: SingleLiveEvent<LatLng?> = SingleLiveEvent()
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation
 
-    private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _deleteStoreResult: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val deleteStoreResult: LiveData<Boolean>
         get() = _deleteStoreResult
 
-    private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _uploadImageStatus: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val uploadImageStatus: LiveData<Boolean>
         get() = _uploadImageStatus
 
-    private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private val _closeActivity: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val closeActivity: LiveData<Boolean>
         get() = _closeActivity
 
@@ -147,7 +146,7 @@ class StoreDetailViewModel @Inject constructor(private val repository : StoreDat
 
             _deleteStoreResult.postValue(result.isSuccessful)
             if (result.body()?.data?.isDeleted == true) {
-                _closeActivity.postValue(result.body()?.data?.isDeleted)
+                _closeActivity.value = result.body()?.data?.isDeleted
             }
             _msgTextId.postValue(
                 when (result.code()) {

@@ -1,40 +1,48 @@
 package com.zion830.threedollars.ui.store_detail.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
 
-    private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
+    private val _sortType: SingleLiveEvent<SortType> = SingleLiveEvent<SortType>().apply {
+        value = SortType.DISTANCE
+    }
     val sortType: LiveData<SortType>
         get() = _sortType
-    private val _category: MutableLiveData<BossCategoriesResponse.BossCategoriesModel> =
-        MutableLiveData(BossCategoriesResponse.BossCategoriesModel())
+    private val _category: SingleLiveEvent<BossCategoriesResponse.BossCategoriesModel> =
+        SingleLiveEvent<BossCategoriesResponse.BossCategoriesModel>().apply {
+            value = BossCategoriesResponse.BossCategoriesModel()
+        }
     val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
         get() = _category
 
-    private val _categories: MutableLiveData<List<BossCategoriesResponse.BossCategoriesModel>> =
-        MutableLiveData(SharedPrefUtils.getTruckCategories())
+    private val _categories: SingleLiveEvent<List<BossCategoriesResponse.BossCategoriesModel>> =
+        SingleLiveEvent<List<BossCategoriesResponse.BossCategoriesModel>>().apply {
+            value = SharedPrefUtils.getTruckCategories()
+        }
     val categories: LiveData<List<BossCategoriesResponse.BossCategoriesModel>> = _categories
 
-    val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
-    val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
-    val hasData = MutableLiveData<Boolean>()
+    private val _storeByDistance = SingleLiveEvent<List<BossNearStoreResponse.BossNearStoreModel>>()
+    val storeByDistance: LiveData<List<BossNearStoreResponse.BossNearStoreModel>> get() = _storeByDistance
+
+    private val _storeByReview = SingleLiveEvent<List<BossNearStoreResponse.BossNearStoreModel>>()
+    val storeByReview: LiveData<List<BossNearStoreResponse.BossNearStoreModel>> get() = _storeByReview
 
     fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel) {
         _category.value = menuType
@@ -53,9 +61,9 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
             requestStoreInfo(location)
 
             if (sortType == SortType.DISTANCE) {
-                storeByReview.value = listOf()
+                _storeByReview.value = listOf()
             } else {
-                storeByDistance.value = listOf()
+                _storeByDistance.value = listOf()
             }
         }
     }
@@ -69,8 +77,7 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
                         latitude = location.latitude,
                         longitude = location.longitude
                     )
-                    storeByDistance.postValue(data.body()?.data)
-                    hasData.postValue(data.body()?.data?.isNotEmpty())
+                    _storeByDistance.postValue(data.body()?.data ?: listOf())
                 }
                 SortType.REVIEW -> {
                     val data = storeDataSource.getFeedbacksCountsBossNearStore(
@@ -78,8 +85,7 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
                         latitude = location.latitude,
                         longitude = location.longitude
                     )
-                    storeByReview.postValue(data.body()?.data)
-                    hasData.postValue(data.body()?.data?.isNotEmpty())
+                    _storeByReview.postValue(data.body()?.data ?: listOf())
                 }
                 else -> {
 

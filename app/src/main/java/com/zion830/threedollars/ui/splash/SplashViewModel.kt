@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.splash
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,10 +29,10 @@ class SplashViewModel @Inject constructor(
     private val kakaoLoginDataSource: KakaoLoginDataSource
 ) : BaseViewModel() {
 
-    private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
+    private val _loginResult: SingleLiveEvent<ResultWrapper<SignUser?>> = SingleLiveEvent()
     val loginResult: LiveData<ResultWrapper<SignUser?>> = _loginResult
 
-    private val _refreshResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
+    private val _refreshResult: SingleLiveEvent<ResultWrapper<SignUser?>> = SingleLiveEvent()
     val refreshResult: LiveData<ResultWrapper<SignUser?>> = _refreshResult
 
     init {
@@ -108,7 +108,7 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun putPushInformationToken(informationRequest: PushInformationTokenRequest){
+    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             userDataSource.putPushInformationToken(informationRequest)
         }

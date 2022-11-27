@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -14,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,7 @@ class MyReviewViewModel @Inject constructor(private val storeDataSource: StoreDa
         MyReviewDataSourceImpl()
     }.flow
 
-    private val _updateReview: MutableLiveData<Boolean> = MutableLiveData()
+    private val _updateReview: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val updateReview: LiveData<Boolean>
         get() = _updateReview
 

@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
@@ -15,24 +14,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource) :
     BaseViewModel() {
 
-    private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
+    private val _userActivity: SingleLiveEvent<UserActivityData?> = SingleLiveEvent()
     val userActivity: LiveData<UserActivityData?> = _userActivity
 
-    private val _myVisitHistory: MutableLiveData<List<VisitHistoryContent>?> = MutableLiveData()
+    private val _myVisitHistory: SingleLiveEvent<List<VisitHistoryContent>?> = SingleLiveEvent()
     val myVisitHistory: LiveData<List<VisitHistoryContent>?> = _myVisitHistory
 
-    private val _myMedals: MutableLiveData<List<MyMedal>> = MutableLiveData()
-    val myMedals: MutableLiveData<List<MyMedal>> = _myMedals
+    private val _myMedals: SingleLiveEvent<List<MyMedal>> = SingleLiveEvent()
+    val myMedals: SingleLiveEvent<List<MyMedal>> = _myMedals
 
     val selectedMedal = Transformations.map(userActivity) { it?.medal }
 
-    private val _allMedals: MutableLiveData<List<Medal>> = MutableLiveData()
+    private val _allMedals: SingleLiveEvent<List<Medal>> = SingleLiveEvent()
     val allMedals: LiveData<List<Medal>> = _allMedals
 
     fun initAllMedals() {

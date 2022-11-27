@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,14 +39,14 @@ class HomeViewModel @Inject constructor(
         MutableSharedFlow<List<CategoryInfo>>()
     val roadFoodCategoryModelList: SharedFlow<List<CategoryInfo>> get() = _roadFoodCategoryModelList
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: SingleLiveEvent<MyInfoResponse> = SingleLiveEvent()
 
     val userInfo: LiveData<MyInfoResponse>
         get() = _userInfo
 
-    val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()
+    val nearStoreInfo: SingleLiveEvent<List<AdAndStoreItem>?> = SingleLiveEvent()
 
-    val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
+    val searchResultLocation: SingleLiveEvent<LatLng> = SingleLiveEvent()
 
     val addressText: MutableLiveData<String> = MutableLiveData()
 
@@ -53,7 +54,7 @@ class HomeViewModel @Inject constructor(
 
     fun getUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _userInfo.postValue(userDataSource.getMyInfo().body())
+            _userInfo.value = userDataSource.getMyInfo().body()
         }
     }
 

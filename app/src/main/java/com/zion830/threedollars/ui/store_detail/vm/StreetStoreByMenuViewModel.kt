@@ -1,12 +1,11 @@
 package com.zion830.threedollars.ui.store_detail.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
@@ -15,26 +14,38 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
 
 
-    private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
+    private val _sortType: SingleLiveEvent<SortType> = SingleLiveEvent<SortType>().apply {
+        value = SortType.DISTANCE
+    }
     val sortType: LiveData<SortType>
         get() = _sortType
 
-    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData(CategoryInfo())
+    private val _category: SingleLiveEvent<CategoryInfo> = SingleLiveEvent<CategoryInfo>().apply {
+        value = CategoryInfo()
+    }
     val category: LiveData<CategoryInfo>
         get() = _category
 
-    private val _categories: MutableLiveData<List<CategoryInfo>> = MutableLiveData(SharedPrefUtils.getCategories())
+    private val _categories: SingleLiveEvent<List<CategoryInfo>> = SingleLiveEvent<List<CategoryInfo>>().apply {
+        value = SharedPrefUtils.getCategories()
+    }
     val categories: LiveData<List<CategoryInfo>> = _categories
 
-    val storeByDistance = MutableLiveData<List<StoreInfo>>()
-    val storeByRating = MutableLiveData<List<StoreInfo>>()
-    val hasData = MutableLiveData<Boolean>()
+    private val _storeByDistance = SingleLiveEvent<List<StoreInfo>>()
+    val storeByDistance : LiveData<List<StoreInfo>> get() = _storeByDistance
+
+    private val _storeByRating = SingleLiveEvent<List<StoreInfo>>()
+    val storeByRating : LiveData<List<StoreInfo>> get() = _storeByRating
+
+    private val _hasData  = SingleLiveEvent<Boolean>()
+    val hasData :LiveData<Boolean> get() = _hasData
 
     fun changeCategory(menuType: CategoryInfo) {
         _category.value = menuType
@@ -53,9 +64,9 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
             requestStoreInfo(location)
 
             if (sortType == SortType.DISTANCE) {
-                storeByRating.value = listOf()
+                _storeByRating.value = listOf()
             } else {
-                storeByDistance.value = listOf()
+                _storeByDistance.value = listOf()
             }
         }
     }
@@ -65,13 +76,15 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
             when (sortType.value) {
                 SortType.DISTANCE -> {
                     val data = storeDataSource.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
-                    storeByDistance.postValue(data.body()?.data)
-                    hasData.postValue(data.body()?.data?.isNotEmpty())
+                    val storeList = data.body()?.data ?: listOf()
+                    _storeByDistance.postValue(storeList)
+                    _hasData.postValue(storeList.isNotEmpty())
                 }
                 SortType.RATING -> {
                     val data = storeDataSource.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
-                    storeByRating.postValue(data.body()?.data)
-                    hasData.postValue(data.body()?.data?.isNotEmpty())
+                    val storeList = data.body()?.data ?: listOf()
+                    _storeByRating.postValue(storeList)
+                    _hasData.postValue(storeList.isNotEmpty())
                 }
                 else -> {
 

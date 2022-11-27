@@ -141,8 +141,8 @@
                         android:drawablePadding="8dp"
                         android:padding="14dp"
                         android:text="@string/is_certification_store"
-                        android:visibility="invisible"
                         android:textSize="14sp"
+                        android:visibility="invisible"
                         app:layout_constraintStart_toStartOf="@id/tv_category"
                         app:layout_constraintTop_toBottomOf="@id/tv_category" />
 
@@ -157,23 +157,21 @@
                         app:layout_constraintTop_toBottomOf="@id/ll_sort_button_group">
 
                         <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="30dp"
-                        android:src="@drawable/ic_no_store"
-                        android:visibility="gone" />
-                        <!--                            visibleIf="@{!viewModel.hasData}"-->
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="30dp"
+                            android:src="@drawable/ic_no_store"
+                            android:visibility="gone" />
 
                         <TextView
                             android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/no_store"
-                        android:textColor="@color/color_gray1"
-                        android:visibility="gone" />
-                        <!--                            visibleIf="@{!viewModel.hasData}"-->
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/no_store"
+                            android:textColor="@color/color_gray1"
+                            android:visibility="gone" />
 
                         <include
                             android:id="@+id/itemStoreListAd"
@@ -183,7 +181,7 @@
                             android:layout_marginHorizontal="24dp"
                             android:layout_marginTop="30dp"
                             android:visibility="gone" />
-<!--                        visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.popups.empty}"-->
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

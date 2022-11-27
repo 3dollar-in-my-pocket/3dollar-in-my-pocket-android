@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -11,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +20,7 @@ class MyStoreViewModel @Inject constructor(private val userDataSource: UserDataS
     val myStorePager =
         Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { MyStoreDataSourceImpl() }.flow
 
-    private val _totalCount: MutableLiveData<Int> = MutableLiveData()
+    private val _totalCount: SingleLiveEvent<Int> = SingleLiveEvent()
     val totalCount: LiveData<Int> = _totalCount
 
     init {

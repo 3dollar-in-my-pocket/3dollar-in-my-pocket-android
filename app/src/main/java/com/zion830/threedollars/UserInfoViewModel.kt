@@ -10,44 +10,42 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) :
     BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: SingleLiveEvent<MyInfoResponse> = SingleLiveEvent()
 
     val userInfo: LiveData<MyInfoResponse>
         get() = _userInfo
 
-    private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
+    private val _isAlreadyUsed: SingleLiveEvent<Int> = SingleLiveEvent()
     val isAlreadyUsed: LiveData<Int>
         get() = _isAlreadyUsed
 
-    private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isNameUpdated: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val isNameUpdated: LiveData<Boolean>
         get() = _isNameUpdated
 
-    private val _logoutResult: MutableLiveData<Boolean> = MutableLiveData()
+    private val _logoutResult: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val logoutResult: LiveData<Boolean>
         get() = _logoutResult
 
-    val userName: MutableLiveData<String> = MutableLiveData("")
+    val userName= SingleLiveEvent<String>()
 
     val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
         it.isNullOrBlank()
     }
 
-    private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
-
-    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
+    private val _isExistStoreInfo: SingleLiveEvent<Pair<StoreInfo, Boolean>> = SingleLiveEvent()
     val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _userInfo.postValue(userDataSource.getMyInfo().body())
-            isUpdated.postValue(true)
+            _userInfo.value = userDataSource.getMyInfo().body()
         }
     }
 

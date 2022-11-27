@@ -15,16 +15,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
+import zion830.com.common.base.SingleLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val userDataSource: UserDataSource) :
     BaseViewModel() {
 
-    val userName: MutableLiveData<String> = MutableLiveData("")
+    val userName = SingleLiveEvent<String>()
 
-    private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
-    val loginResult: MutableLiveData<ResultWrapper<SignUser?>>
+    private val _loginResult: SingleLiveEvent<ResultWrapper<SignUser?>> = SingleLiveEvent()
+    val loginResult: SingleLiveEvent<ResultWrapper<SignUser?>>
         get() = _loginResult
 
     private val _isAvailable: MutableLiveData<Boolean> = MutableLiveData(true)
@@ -55,7 +56,9 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
         SharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val loginResult = userDataSource.login(LoginRequest(socialType.socialName, accessToken))
-            _loginResult.postValue(safeApiCall(loginResult))
+            safeApiCall(loginResult).apply {
+                _loginResult.postValue(this)
+            }
         }
     }
 

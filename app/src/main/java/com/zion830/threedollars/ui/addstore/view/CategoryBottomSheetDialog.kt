@@ -43,8 +43,8 @@ class CategoryBottomSheetDialog(
             dismiss()
         }
         viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            adapter.setItems(viewModel.selectedCategory.value ?: listOf())
-            val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
+            adapter.setItems(it ?: listOf())
+            val count = it.count { it.isSelected }
             binding.btnSubmit.text = getString(R.string.select).format(count)
             binding.btnSubmit.isEnabled = count > 0
         }

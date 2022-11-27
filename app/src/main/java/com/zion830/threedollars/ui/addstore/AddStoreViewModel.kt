@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.base.SingleLiveEvent
 import zion830.com.common.ext.isNotNullOrBlank
 import javax.inject.Inject
 
@@ -26,43 +27,30 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
     BaseViewModel() {
 
 
-    val storeName: MutableLiveData<String> = MutableLiveData<String>()
+    val storeName: SingleLiveEvent<String> = SingleLiveEvent<String>()
 
     val isFinished: LiveData<Boolean> = Transformations.map(storeName) {
         it.isNotNullOrBlank()
     }
 
-    private val _isMapUpdated: MutableLiveData<Unit> = MutableLiveData()
-    val isMapUpdated: LiveData<Unit>
-        get() = _isMapUpdated
-
-    private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
+    private val _selectedLocation: SingleLiveEvent<LatLng?> = SingleLiveEvent()
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation
 
-    private val _category: MutableLiveData<MenuType> = MutableLiveData(MenuType.BUNGEOPPANG)
-    val category: LiveData<MenuType>
-        get() = _category
-
-    private val _newStoreId: MutableLiveData<Int> = MutableLiveData()
+    private val _newStoreId: SingleLiveEvent<Int> = SingleLiveEvent()
     val newStoreId: LiveData<Int>
         get() = _newStoreId
 
-    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
-    )
-
-    private val _isNearStoreExist: MutableLiveData<Boolean> = MutableLiveData()
-    val isNearStoreExist: LiveData<Boolean> get() = _isNearStoreExist
-
+    private val _selectedCategory: SingleLiveEvent<List<SelectedCategory>> = SingleLiveEvent()
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
-    val selectedCount: LiveData<Int> = Transformations.map(selectedCategory) {
-        it.count { item -> item.isSelected }
-    }
+    private val _isNearStoreExist: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    val isNearStoreExist: LiveData<Boolean> get() = _isNearStoreExist
 
-    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
+
+
+    val nearStoreInfo: SingleLiveEvent<List<StoreInfo>?> = SingleLiveEvent()
 
     fun addNewStore(newStore: NewStoreRequest) {
         showLoading()

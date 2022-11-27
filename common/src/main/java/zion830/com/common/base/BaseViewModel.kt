@@ -20,13 +20,13 @@ open class BaseViewModel : ViewModel() {
         FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
     }
 
-    protected val _isLoading = MutableLiveData<Boolean>()
+    protected val _isLoading = SingleLiveEvent<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    protected val _msgTextId = MutableLiveData<Int>()
+    protected val _msgTextId = SingleLiveEvent<Int>()
     val msgTextId: LiveData<Int> get() = _msgTextId
 
-    protected val _serverError = MutableLiveData<Boolean>()
+    protected val _serverError = SingleLiveEvent<Boolean>()
     val serverError: LiveData<Boolean> get() = _serverError
 
     fun showLoading() {
