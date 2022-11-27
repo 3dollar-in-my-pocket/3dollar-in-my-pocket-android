@@ -31,6 +31,7 @@ import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
@@ -118,9 +119,9 @@ class TruckSelectCategoryDialogFragment :
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 val popup = popups[0]
-                binding.tvAdTitle.text = popup.title
+                binding.tvAdTitle.text = popup.title.toStringDefault()
 
-                binding.tvAdBody.text = popup.subTitle
+                binding.tvAdBody.text = popup.subTitle.toStringDefault()
 
                 popup.fontColor?.let {
                     binding.tvAdTitle.setTextColor(it.toColorInt())
@@ -131,7 +132,7 @@ class TruckSelectCategoryDialogFragment :
                 binding.ivAdImage.loadUrlImg(popup.imageUrl)
 
                 binding.cdAdCategory.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl.toStringDefault())))
                     firebaseAnalytics.logEvent(Constants.CATEGORY_BANNER_CLICKED) {
                         param("referral", "category_page")
                     }

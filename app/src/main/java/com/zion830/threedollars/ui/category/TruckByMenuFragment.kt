@@ -23,6 +23,7 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
@@ -45,7 +46,7 @@ class TruckByMenuFragment :
     }
     private val adListener = object : OnItemClickListener<Popups> {
         override fun onClick(item: Popups) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl.toStringDefault())))
         }
     }
     private val truckStoreByDistanceAdapters by lazy {
@@ -97,19 +98,19 @@ class TruckByMenuFragment :
             popups?.let {
                 if (popups.isNotEmpty()) {
                     binding.itemStoreListAd.run {
-                        tvAdTitle.text = popups[0].title
+                        tvAdTitle.text = popups[0].title.toStringDefault()
                         popups[0].fontColor?.let {
                             tvAdTitle.setTextColor(it.toColorInt())
                             tvAdBody.setTextColor(it.toColorInt())
                         }
-                        tvAdBody.text = popups[0].subTitle
+                        tvAdBody.text = popups[0].subTitle.toStringDefault()
 
                         popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
                         ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                         tvDetail.setOnClickListener {
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl.toStringDefault())))
                         }
                     }
                     truckStoreByDistanceAdapters.submitAdList(popups)

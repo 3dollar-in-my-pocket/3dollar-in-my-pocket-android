@@ -35,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 import zion830.com.common.listener.OnSnapPositionChangeListener
 import zion830.com.common.listener.SnapOnScrollListener
@@ -166,7 +167,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         },
             object : OnItemClickListener<Popups> {
                 override fun onClick(item: Popups) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl.toStringDefault())))
                 }
 
             }) { item ->
