@@ -26,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import retrofit2.Response
+import zion830.com.common.base.BaseResponse
 import zion830.com.common.base.BaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -104,6 +106,10 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
 
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
+
+    // TODO: SingleLiveData로 수정 필요
+    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
+    val isFavorite: LiveData<Boolean> get() = _isFavorite
 
     fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
@@ -247,6 +253,20 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.deleteImage(selectedImage.imageId)
             _photoDeleted.postValue(data.isSuccessful)
+        }
+    }
+
+    fun putFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.putFavorite(storeType, storeId)
+            _isFavorite.value = response.isSuccessful
+        }
+    }
+
+    fun deleteFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.deleteFavorite(storeType, storeId)
+            _isFavorite.value = !response.isSuccessful
         }
     }
 

@@ -29,6 +29,10 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: 
     private val _postFeedbackResponse = MutableLiveData<Response<BaseResponse<String>>>()
     val postFeedbackResponse: LiveData<Response<BaseResponse<String>>> get() = _postFeedbackResponse
 
+    // TODO: SingleLiveData로 수정 필요
+    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
+    val isFavorite: LiveData<Boolean> get() = _isFavorite
+
     fun getFoodTruckStoreDetail(
         bossStoreId: String,
         latitude: Double,
@@ -60,6 +64,20 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: 
         viewModelScope.launch {
             _postFeedbackResponse.value =
                 repository.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
+        }
+    }
+
+    fun putFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.putFavorite(storeType, storeId)
+            _isFavorite.value = response.isSuccessful
+        }
+    }
+
+    fun deleteFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.deleteFavorite(storeType, storeId)
+            _isFavorite.value = !response.isSuccessful
         }
     }
 }
