@@ -165,12 +165,10 @@
                                 tools:text="3.4점" />
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
                             android:layout_height="32dp"
                             android:layout_marginTop="24dp"
-                            android:gravity="center"
-                            android:orientation="horizontal"
                             android:paddingHorizontal="20dp">
 
                             <Button
@@ -182,8 +180,35 @@
                                 android:drawablePadding="8dp"
                                 android:text="@string/share"
                                 android:textColor="@color/color_black"
-                                android:textSize="16sp" />
-                        </LinearLayout>
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <View
+                                android:id="@+id/view1"
+                                android:layout_width="1dp"
+                                android:layout_height="0dp"
+                                android:background="@color/gray20"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/favoriteButton"
+                                app:layout_constraintStart_toEndOf="@id/btn_share"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <Button
+                                android:id="@+id/favoriteButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:drawableStart="@drawable/ic_food_truck_favorite_off"
+                                android:drawablePadding="8dp"
+                                android:text="@string/favorite"
+                                android:textColor="@color/color_green"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -462,18 +487,47 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rect_black_radius16"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="10dp"
-            android:text="@string/getting_ready_now"
-            android:textColor="@color/white"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomConstraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.95" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/bottomFavoriteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_food_truck_favorite_off"
+                android:drawablePadding="8dp"
+                android:text="@string/favorite"
+                android:textColor="@color/color_green"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/bottomReviewTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/bottomReviewTextView" />
+
+            <Button
+                android:id="@+id/bottomReviewTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/ripple_green"
+                android:fontFamily="@font/applegothic_bold"
+                android:text="@string/review_title"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bottomFavoriteButton"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
