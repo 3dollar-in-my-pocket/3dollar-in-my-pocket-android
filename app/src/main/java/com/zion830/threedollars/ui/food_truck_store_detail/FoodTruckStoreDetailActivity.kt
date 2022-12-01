@@ -137,6 +137,9 @@ class FoodTruckStoreDetailActivity :
         }
         viewModel.bossStoreDetailModel.observe(this@FoodTruckStoreDetailActivity) { bossStoreDetailModel ->
             foodTruckCategoriesAdapter.submitList(bossStoreDetailModel.categories)
+            val isClosed = bossStoreDetailModel.openStatus?.status == "CLOSED"
+
+            if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
 
             val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
                 .map { AppearanceDayModel(dayOfTheWeek = it) }
