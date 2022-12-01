@@ -16,7 +16,7 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class FAQViewModel @Inject constructor(private val userDataSource: UserDataSource): BaseViewModel() {
+class FAQViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
 
     val faqTags: LiveData<List<FAQCategory>> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
         val result = userDataSource.getFAQCategory()

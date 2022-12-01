@@ -108,7 +108,7 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun putPushInformationToken(informationRequest: PushInformationTokenRequest){
+    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             userDataSource.putPushInformationToken(informationRequest)
         }

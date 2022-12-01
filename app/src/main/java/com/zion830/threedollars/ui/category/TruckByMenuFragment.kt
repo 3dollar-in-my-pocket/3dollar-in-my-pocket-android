@@ -122,39 +122,24 @@ class TruckByMenuFragment :
                 viewModel.requestStoreInfo(currentPosition)
             }
         }
+
+        val homeStoreEmptyResponseList = listOf(HomeStoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
+
         viewModel.storeByReview.observe(viewLifecycleOwner) {
-            it?.let {
-                if (it.isEmpty()) {
-                    truckStoreByReviewAdapters.submitEmptyList(
-                        listOf(
-                            HomeStoreEmptyResponse(
-                                emptyTitle = R.string.recruit_boss_title,
-                                emptyBody = R.string.recruit_boss_body
-                            )
-                        )
-                    )
-                } else {
-                    truckStoreByReviewAdapters.submitList(it)
-                }
-                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            if (it.isNullOrEmpty()) {
+                truckStoreByReviewAdapters.submitEmptyList(homeStoreEmptyResponseList)
+            } else {
+                truckStoreByReviewAdapters.submitList(it)
             }
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
-            it?.let {
-                if (it.isEmpty()) {
-                    truckStoreByDistanceAdapters.submitEmptyList(
-                        listOf(
-                            HomeStoreEmptyResponse(
-                                emptyTitle = R.string.recruit_boss_title,
-                                emptyBody = R.string.recruit_boss_body
-                            )
-                        )
-                    )
-                } else {
-                    truckStoreByDistanceAdapters.submitList(it)
-                }
-                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            if (it.isNullOrEmpty()) {
+                truckStoreByDistanceAdapters.submitEmptyList(homeStoreEmptyResponseList)
+            } else {
+                truckStoreByDistanceAdapters.submitList(it)
             }
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
     }
 

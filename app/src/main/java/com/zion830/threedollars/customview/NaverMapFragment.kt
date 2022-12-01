@@ -148,10 +148,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 }
                 this.icon = if (item is StoreInfo) {
                     OverlayImage.fromResource(drawableRes)
-                } else{
-                    if((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED"){
+                } else {
+                    if ((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED") {
                         OverlayImage.fromResource(R.drawable.ic_food_truck_off)
-                    } else{
+                    } else {
                         OverlayImage.fromResource(drawableRes)
                     }
                 }
