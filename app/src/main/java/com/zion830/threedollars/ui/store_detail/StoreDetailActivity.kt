@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
@@ -183,6 +184,12 @@ class StoreDetailActivity :
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
         }
+        binding.favoriteButton.setOnClickListener {
+            clickFavoriteButton()
+        }
+        binding.bottomFavoriteButton.setOnClickListener {
+            clickFavoriteButton()
+        }
         viewModel.addReviewResult.observe(this) {
             EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
             viewModel.requestStoreInfo(
@@ -232,6 +239,8 @@ class StoreDetailActivity :
             initStoreInfo(it)
             updateVisitHistory(it)
 
+            setFavoriteIcon(it?.favorite?.isFavorite)
+
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
@@ -254,6 +263,31 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
+        viewModel.isFavorite.observe(this) {
+            val toastText = if (it) getString(R.string.toast_favorite_add) else getString(R.string.toast_favorite_delete)
+            setFavoriteIcon(it)
+            showCustomBlackToast(toastText)
+        }
+    }
+
+    private fun clickFavoriteButton() {
+        if (viewModel.isFavorite.value == true) {
+            viewModel.deleteFavorite(USER_STORE, storeId.toString())
+        } else {
+            viewModel.putFavorite(USER_STORE, storeId.toString())
+        }
+    }
+
+    private fun setFavoriteIcon(isFavorite: Boolean?) {
+        if (isFavorite == null) {
+            showToast(R.string.connection_failed)
+            return
+        }
+
+        val favoriteIcon = if (isFavorite) R.drawable.ic_road_food_favorite_on else R.drawable.ic_road_food_favorite_off
+
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
     private fun startCertification() {
