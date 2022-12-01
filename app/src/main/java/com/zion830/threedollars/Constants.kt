@@ -88,4 +88,8 @@ object Constants {
 
     //popup
     const val TIME_MILLIS_DAY = 86400000L
+
+    //storeType
+    const val BOSS_STORE = "BOSS_STORE"
+    const val USER_STORE = "USER_STORE"
 }
