@@ -122,4 +122,11 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(KakaoLoginApi::class.java)
+
+    val newServiceApi: NewServiceApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(provideOkHttpClient(getLoggerInterceptor()))
+        .build()
+        .create(NewServiceApi::class.java)
 }
