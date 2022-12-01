@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
-class StoreDetailViewModel @Inject constructor(private val repository : StoreDataSource) : BaseViewModel() {
+class StoreDetailViewModel @Inject constructor(private val repository: StoreDataSource) : BaseViewModel() {
 
     private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
     val storeInfo: LiveData<StoreDetail?>

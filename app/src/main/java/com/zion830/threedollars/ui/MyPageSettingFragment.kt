@@ -99,7 +99,7 @@ class MyPageSettingFragment :
             }
         }
 
-        viewModel.userInfo.observe(viewLifecycleOwner){
+        viewModel.userInfo.observe(viewLifecycleOwner) {
             binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
         }
     }
