@@ -90,14 +90,13 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
+        }
+        binding.feedbackReviewTextView.setOnClickListener {
+            moveFoodTruckReviewActivity()
         }
         binding.btnShare.setOnClickListener {
             EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
@@ -180,6 +179,12 @@ class FoodTruckStoreDetailActivity :
             setFavoriteIcon(it)
             showCustomBlackToast(toastText)
         }
+    }
+
+    private fun moveFoodTruckReviewActivity() {
+        val intent = FoodTruckReviewActivity.getIntent(this, storeId)
+        startActivity(intent)
+        finish()
     }
 
     private fun clickFavoriteButton() {
