@@ -1,6 +1,7 @@
 package com.zion830.threedollars.datasource.model.v2.response.favorite
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 
 data class MyFavoriteFolderResponse(
     @SerializedName("cursor")
@@ -36,7 +37,7 @@ data class MyFavoriteFolderResponse(
         val storeId: String,
         val storeName: String,
         val storeType: String
-    )
+    ) : AdAndStoreItem
 
     data class MyFavoriteFolderMedalModel(
         val createdAt: String,
