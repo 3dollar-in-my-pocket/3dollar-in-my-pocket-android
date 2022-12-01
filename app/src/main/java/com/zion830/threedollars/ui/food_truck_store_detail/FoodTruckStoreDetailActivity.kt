@@ -141,6 +141,8 @@ class FoodTruckStoreDetailActivity :
 
             if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
 
+            setFavoriteIcon(bossStoreDetailModel?.favorite?.isFavorite)
+
             val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
                 .map { AppearanceDayModel(dayOfTheWeek = it) }
             val appearanceDayModelList = bossStoreDetailModel.appearanceDays?.map { it.toModel() }
