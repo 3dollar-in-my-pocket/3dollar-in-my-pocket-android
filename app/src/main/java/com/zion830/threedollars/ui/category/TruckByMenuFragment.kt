@@ -122,16 +122,12 @@ class TruckByMenuFragment :
                 viewModel.requestStoreInfo(currentPosition)
             }
         }
+
+        val homeStoreEmptyResponseList = listOf(HomeStoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
+
         viewModel.storeByReview.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByReviewAdapters.submitEmptyList(
-                    listOf(
-                        HomeStoreEmptyResponse(
-                            emptyTitle = R.string.recruit_boss_title,
-                            emptyBody = R.string.recruit_boss_body
-                        )
-                    )
-                )
+                truckStoreByReviewAdapters.submitEmptyList(homeStoreEmptyResponseList)
             } else {
                 truckStoreByReviewAdapters.submitList(it)
             }
@@ -139,14 +135,7 @@ class TruckByMenuFragment :
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByDistanceAdapters.submitEmptyList(
-                    listOf(
-                        HomeStoreEmptyResponse(
-                            emptyTitle = R.string.recruit_boss_title,
-                            emptyBody = R.string.recruit_boss_body
-                        )
-                    )
-                )
+                truckStoreByDistanceAdapters.submitEmptyList(homeStoreEmptyResponseList)
             } else {
                 truckStoreByDistanceAdapters.submitList(it)
             }
