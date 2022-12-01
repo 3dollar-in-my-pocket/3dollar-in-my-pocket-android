@@ -324,4 +324,8 @@
     <string name="term_2">(선택) 마케팅 활용 및 광고성 정보 수신 동의</string>
     <string name="agree_continue">동의하고 계속하기</string>
     <string name="push">푸시 알림</string>
+    <string name="favorite">즐겨찾기</string>
+    <string name="toast_favorite_add">즐겨찾기가 추가 되었습니다!</string>
+    <string name="toast_favorite_delete">즐겨찾기가 삭제 되었습니다!</string>
+    <string name="toast_favorite_limit_count">즐겨찾기는 최대 %d개 까지 가능합니다!</string>
 </resources>
