@@ -3,13 +3,15 @@ package com.zion830.threedollars.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.zion830.threedollars.di.NetworkModule
+import com.zion830.threedollars.network.NewServiceApi
 import javax.inject.Inject
 
-class MyVisitHistoryDataSourceImpl @Inject constructor() :
+class MyVisitHistoryDataSourceImpl :
     PagingSource<Int, VisitHistoryContent>() {
 
-    @Inject
-    lateinit var userDataSource: UserDataSource
+    private val newServiceApi: NewServiceApi = NetworkModule.newServiceApi
+
     override fun getRefreshKey(state: PagingState<Int, VisitHistoryContent>): Int? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VisitHistoryContent> {
@@ -19,7 +21,7 @@ class MyVisitHistoryDataSourceImpl @Inject constructor() :
         }
 
         return try {
-            val response = userDataSource.getMyVisitHistory(cursor, LOAD_SIZE)
+            val response = newServiceApi.getMyVisitHistory(cursor, LOAD_SIZE)
 
             if (response.isSuccessful) {
                 LoadResult.Page(
