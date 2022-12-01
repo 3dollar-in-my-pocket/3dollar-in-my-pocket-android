@@ -232,4 +232,10 @@ interface NewServiceApi {
 
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 }
