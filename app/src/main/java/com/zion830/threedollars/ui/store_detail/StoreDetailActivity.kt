@@ -113,11 +113,9 @@ class StoreDetailActivity :
         binding.btnBack.setOnClickListener {
             finish()
         }
-        binding.btnDelete.setOnClickListener {
-            binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance(storeId)
-                    .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-            }
+        binding.deleteTextView.setOnClickListener {
+            DeleteStoreDialog.getInstance(storeId)
+                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
         binding.btnAddPhoto.setOnClickListener {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
