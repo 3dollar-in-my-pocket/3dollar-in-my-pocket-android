@@ -8,7 +8,7 @@ import com.zion830.threedollars.databinding.ItemMypageEmptyBinding
 import com.zion830.threedollars.databinding.ItemMypageFavoriteBinding
 import com.zion830.threedollars.databinding.ItemRecentVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -17,7 +17,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
-class RecentVisitHistoryRecyclerAdapter(
+class MyPageRecyclerAdapter(
     private val onClickListener: (AdAndStoreItem) -> Unit,
 ) : ListAdapter<AdAndStoreItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
@@ -42,7 +42,7 @@ class RecentVisitHistoryRecyclerAdapter(
                 holder.bind(getItem(position) as MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel, listener = null)
             }
             is MyPageEmptyViewHolder -> {
-                holder.bind(getItem(position) as HomeStoreEmptyResponse, listener = null)
+                holder.bind(getItem(position) as StoreEmptyResponse, listener = null)
             }
         }
     }
@@ -109,8 +109,8 @@ class RecentVisitHistoryRecyclerAdapter(
     }
 
     inner class MyPageEmptyViewHolder(parent: ViewGroup) :
-        BaseViewHolder<ItemMypageEmptyBinding, HomeStoreEmptyResponse>(R.layout.item_mypage_empty, parent) {
-        override fun bind(item: HomeStoreEmptyResponse, listener: OnItemClickListener<HomeStoreEmptyResponse>?) {
+        BaseViewHolder<ItemMypageEmptyBinding, StoreEmptyResponse>(R.layout.item_mypage_empty, parent) {
+        override fun bind(item: StoreEmptyResponse, listener: OnItemClickListener<StoreEmptyResponse>?) {
             super.bind(item, listener)
             binding.item = item
         }

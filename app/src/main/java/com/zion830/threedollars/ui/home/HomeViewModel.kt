@@ -8,9 +8,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.*
 import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
@@ -85,7 +84,7 @@ class HomeViewModel @Inject constructor(
             }
             if (resultList.isEmpty()) {
                 resultList.add(
-                    HomeStoreEmptyResponse(
+                    StoreEmptyResponse(
                         emptyImage = R.drawable.img_truck,
                         emptyTitle = R.string.recruit_boss_title,
                         emptyBody = R.string.recruit_boss_body
@@ -116,7 +115,7 @@ class HomeViewModel @Inject constructor(
             }
 
             if (resultList.isEmpty()) {
-                resultList.add(HomeStoreEmptyResponse())
+                resultList.add(StoreEmptyResponse())
             }
             if (adData != null) {
                 adData.firstOrNull()?.let { resultList.add(1, it) }
