@@ -11,7 +11,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.customview.NaverMapFragment
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.utils.SizeUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StoreDetailNaverMapFragment : NaverMapFragment() {
     val viewModel: StoreDetailViewModel by activityViewModels()
 
@@ -19,7 +21,8 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
 
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
         val params = binding.btnFindLocation.layoutParams as ViewGroup.MarginLayoutParams
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(55f))
@@ -37,7 +40,11 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestStoreInfo(viewModel.storeInfo.value?.storeId ?: 0 - 1, position.latitude, position.longitude)
+        viewModel.requestStoreInfo(
+            viewModel.storeInfo.value?.storeId ?: 0 - 1,
+            position.latitude,
+            position.longitude
+        )
     }
 
     fun updateCurrentLocation(onMyLocationLoaded: (LatLng?) -> Unit) {

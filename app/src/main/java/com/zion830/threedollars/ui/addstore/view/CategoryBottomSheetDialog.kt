@@ -11,8 +11,10 @@ import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
+import dagger.hilt.android.AndroidEntryPoint
 
 // 가게 추가 화면에서 띄울 다이얼로그
+@AndroidEntryPoint
 class CategoryBottomSheetDialog(
     private val selectedCategory: List<SelectedCategory> = listOf()
 ) : BottomSheetDialogFragment() {

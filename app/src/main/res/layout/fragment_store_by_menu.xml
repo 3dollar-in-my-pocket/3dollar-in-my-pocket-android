@@ -13,7 +13,7 @@
         
         <import type="android.view.View" />
         
-        <import type="com.zion830.threedollars.repository.model.MenuType" />
+        <import type="com.zion830.threedollars.datasource.model.MenuType" />
         
         <import type="com.zion830.threedollars.ui.category.SortType" />
     </data>

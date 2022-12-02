@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse.BossNearStoreModel" />
+            type="com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse.BossNearStoreModel" />
 
         <variable
             name="isSelectedItem"

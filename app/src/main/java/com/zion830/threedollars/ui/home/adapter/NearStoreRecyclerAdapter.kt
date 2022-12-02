@@ -2,13 +2,11 @@ package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.ViewUtils.dpToPx
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
@@ -16,11 +14,11 @@ import com.zion830.threedollars.databinding.ItemBossStoreLocationBinding
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
-import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface

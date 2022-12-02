@@ -6,20 +6,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.MyReviewDataSource
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.v2.request.EditReviewRequest
-import com.zion830.threedollars.repository.model.v2.request.NewReview
+import com.zion830.threedollars.datasource.MyReviewDataSourceImpl
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReview
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class MyReviewViewModel : BaseViewModel() {
+@HiltViewModel
+class MyReviewViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
 
-    private val repository = StoreRepository()
-
-    val myReviewPager = Pager(PagingConfig(MyReviewDataSource.LOAD_SIZE)) {
-        MyReviewDataSource()
+    val myReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
+        MyReviewDataSourceImpl()
     }.flow
 
     private val _updateReview: MutableLiveData<Boolean> = MutableLiveData()
@@ -34,7 +35,7 @@ class MyReviewViewModel : BaseViewModel() {
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val request = EditReviewRequest(newReview.contents, newReview.rating)
-            repository.editReview(reviewId, request)
+            storeDataSource.editReview(reviewId, request)
             _msgTextId.postValue(R.string.success_edit_review)
             _updateReview.postValue(true)
         }
@@ -42,7 +43,7 @@ class MyReviewViewModel : BaseViewModel() {
 
     fun deleteReview(reviewId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            repository.deleteReview(reviewId)
+            storeDataSource.deleteReview(reviewId)
             _msgTextId.postValue(R.string.success_delete_review)
             _updateReview.postValue(true)
         }

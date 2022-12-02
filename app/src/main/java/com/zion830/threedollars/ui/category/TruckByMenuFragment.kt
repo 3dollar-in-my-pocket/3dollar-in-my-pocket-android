@@ -9,10 +9,10 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
-import com.zion830.threedollars.repository.model.v2.response.HomeStoreEmptyResponse
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
@@ -20,10 +20,12 @@ import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.map.TruckStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class TruckByMenuFragment :
     BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu) {
 
@@ -120,39 +122,24 @@ class TruckByMenuFragment :
                 viewModel.requestStoreInfo(currentPosition)
             }
         }
+
+        val homeStoreEmptyResponseList = listOf(HomeStoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
+
         viewModel.storeByReview.observe(viewLifecycleOwner) {
-            it?.let {
-                if (it.isEmpty()) {
-                    truckStoreByReviewAdapters.submitEmptyList(
-                        listOf(
-                            HomeStoreEmptyResponse(
-                                emptyTitle = R.string.recruit_boss_title,
-                                emptyBody = R.string.recruit_boss_body
-                            )
-                        )
-                    )
-                } else {
-                    truckStoreByReviewAdapters.submitList(it)
-                }
-                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            if (it.isNullOrEmpty()) {
+                truckStoreByReviewAdapters.submitEmptyList(homeStoreEmptyResponseList)
+            } else {
+                truckStoreByReviewAdapters.submitList(it)
             }
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
-            it?.let {
-                if (it.isEmpty()) {
-                    truckStoreByDistanceAdapters.submitEmptyList(
-                        listOf(
-                            HomeStoreEmptyResponse(
-                                emptyTitle = R.string.recruit_boss_title,
-                                emptyBody = R.string.recruit_boss_body
-                            )
-                        )
-                    )
-                } else {
-                    truckStoreByDistanceAdapters.submitList(it)
-                }
-                popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            if (it.isNullOrEmpty()) {
+                truckStoreByDistanceAdapters.submitEmptyList(homeStoreEmptyResponseList)
+            } else {
+                truckStoreByDistanceAdapters.submitList(it)
             }
+            popupViewModel.getPopups("STORE_CATEGORY_LIST")
         }
     }
 

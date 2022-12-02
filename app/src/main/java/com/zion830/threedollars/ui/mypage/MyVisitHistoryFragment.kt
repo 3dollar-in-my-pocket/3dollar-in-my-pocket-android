@@ -11,16 +11,18 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
-import com.zion830.threedollars.repository.model.v2.response.visit_history.VisitHistoryContent
+import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.vm.MyVisitHistoryViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class MyVisitHistoryFragment :
     BaseFragment<FragmentMyVisitHistoryBinding, UserInfoViewModel>(R.layout.fragment_my_visit_history) {
 

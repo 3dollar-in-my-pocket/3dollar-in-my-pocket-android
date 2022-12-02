@@ -5,19 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class StreetStoreByMenuViewModel : BaseViewModel() {
-
-    private val repository = StoreRepository()
+@HiltViewModel
+class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
 
 
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
@@ -63,12 +64,12 @@ class StreetStoreByMenuViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             when (sortType.value) {
                 SortType.DISTANCE -> {
-                    val data = repository.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
+                    val data = storeDataSource.getCategoryByDistance(_category.value?.category ?: "", location.latitude, location.longitude)
                     storeByDistance.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
                 SortType.RATING -> {
-                    val data = repository.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
+                    val data = storeDataSource.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
                     storeByRating.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
@@ -81,7 +82,7 @@ class StreetStoreByMenuViewModel : BaseViewModel() {
 
     fun loadCategories() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = repository.getCategories()
+            val response = storeDataSource.getCategories()
 
             if (response.isSuccessful) {
                 _categories.postValue(response.body()?.data ?: emptyList())

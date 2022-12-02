@@ -1,14 +1,14 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.Constants
-import com.zion830.threedollars.repository.model.v2.request.*
-import com.zion830.threedollars.repository.model.v2.response.FAQByCategoryResponse
-import com.zion830.threedollars.repository.model.v2.response.FAQCategoryResponse
-import com.zion830.threedollars.repository.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.repository.model.v2.response.PopupsResponse
-import com.zion830.threedollars.repository.model.v2.response.my.*
-import com.zion830.threedollars.repository.model.v2.response.store.*
-import com.zion830.threedollars.repository.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v2.request.*
+import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
+import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.*
+import com.zion830.threedollars.datasource.model.v2.response.store.*
+import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -191,7 +191,7 @@ interface NewServiceApi {
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getCategoryIdBossNearStore(
-        @Query("categoryId") categoryId : String,
+        @Query("categoryId") categoryId: String,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
@@ -220,4 +220,16 @@ interface NewServiceApi {
         @Path("bossStoreId") bossStoreId: String,
         @Body feedbackTypes: BossStoreFeedbackRequest
     ): Response<BaseResponse<String>>
+
+    @POST("/api/v1/device")
+    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/device")
+    suspend fun deletePushInformation(): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/device/token")
+    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/user/me/marketing-consent")
+    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 }

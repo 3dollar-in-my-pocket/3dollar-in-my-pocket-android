@@ -5,11 +5,14 @@ import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditAddressBinding
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.map.StoreEditNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 
+@AndroidEntryPoint
 class EditAddressFragment :
     BaseFragment<FragmentEditAddressBinding, StoreDetailViewModel>(R.layout.fragment_edit_address) {
 

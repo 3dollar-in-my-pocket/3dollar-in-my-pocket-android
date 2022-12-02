@@ -6,7 +6,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <variable
         name="item"
-        type="com.zion830.threedollars.repository.model.v2.response.store.BossStoreDetailModel.Category" />
+        type="com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel.Category" />
 </data>
 
 <LinearLayout

@@ -23,14 +23,13 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
-import com.zion830.threedollars.repository.model.v2.response.my.Review
-import com.zion830.threedollars.repository.model.v2.response.store.StoreDetail
+import com.zion830.threedollars.datasource.model.v2.response.my.Review
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -38,6 +37,7 @@ import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdap
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -49,6 +49,7 @@ import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class StoreDetailActivity :
     BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
 

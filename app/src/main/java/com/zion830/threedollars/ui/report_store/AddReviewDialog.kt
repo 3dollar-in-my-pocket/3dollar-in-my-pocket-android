@@ -16,11 +16,13 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
-import com.zion830.threedollars.repository.model.v2.request.NewReview
-import com.zion830.threedollars.repository.model.v2.response.my.Review
+import com.zion830.threedollars.datasource.model.v2.request.NewReview
+import com.zion830.threedollars.datasource.model.v2.response.my.Review
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddReviewDialog(
     private val content: Review?
 ) : DialogFragment() {

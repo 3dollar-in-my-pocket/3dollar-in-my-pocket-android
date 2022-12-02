@@ -24,16 +24,16 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomTruckSelectCategoryBinding
-import com.zion830.threedollars.repository.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.ui.category.adapter.StreetSelectCategoryRecyclerAdapter
+import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class TruckSelectCategoryDialogFragment :
     BottomSheetDialogFragment() {
 

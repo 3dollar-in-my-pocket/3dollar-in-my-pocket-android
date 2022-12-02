@@ -5,23 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.repository.StoreRepository
-import com.zion830.threedollars.repository.model.MenuType
-import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.StoreDataSourceImpl
+import com.zion830.threedollars.datasource.model.MenuType
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.isNotNullOrBlank
+import javax.inject.Inject
 
+@HiltViewModel
+class AddStoreViewModel @Inject constructor(private val repository: StoreDataSource) :
+    BaseViewModel() {
 
-class AddStoreViewModel : BaseViewModel() {
-
-    private val repository = StoreRepository()
 
     val storeName: MutableLiveData<String> = MutableLiveData<String>()
 
@@ -94,7 +97,8 @@ class AddStoreViewModel : BaseViewModel() {
         }
     }
 
-    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) = stores?.find { store -> store.distance <= 10 } != null
+    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) =
+        stores?.find { store -> store.distance <= 10 } != null
 
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng

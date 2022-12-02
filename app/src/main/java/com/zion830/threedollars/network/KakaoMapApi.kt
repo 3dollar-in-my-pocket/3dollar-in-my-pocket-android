@@ -1,7 +1,7 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.BuildConfig
-import com.zion830.threedollars.repository.model.v2.response.kakao.SearchAddressResponse
+import com.zion830.threedollars.datasource.model.v2.response.kakao.SearchAddressResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query

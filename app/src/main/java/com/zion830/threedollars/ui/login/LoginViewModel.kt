@@ -5,22 +5,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.UserRepository
-import com.zion830.threedollars.repository.model.LoginType
-import com.zion830.threedollars.repository.model.v2.request.LoginRequest
-import com.zion830.threedollars.repository.model.v2.request.SignUpRequest
-import com.zion830.threedollars.repository.model.v2.response.my.SignUser
+import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.request.*
+import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.base.ResultWrapper
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val userDataSource: UserDataSource) :
+    BaseViewModel() {
 
     val userName: MutableLiveData<String> = MutableLiveData("")
-
-    private val userRepository = UserRepository()
 
     private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
     val loginResult: MutableLiveData<ResultWrapper<SignUser?>>
@@ -30,11 +31,16 @@ class LoginViewModel : BaseViewModel() {
     val isAvailable: LiveData<Boolean>
         get() = _isAvailable
 
+    private val _isPostDevice: MutableLiveData<Boolean> = MutableLiveData()
+    val isPostDevice: LiveData<Boolean>
+        get() = _isPostDevice
+
     val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
         it.isNullOrBlank()
     }
 
-    private val latestSocialType: MutableLiveData<LoginType> = MutableLiveData(LoginType.of(SharedPrefUtils.getLoginType()))
+    private val latestSocialType: MutableLiveData<LoginType> =
+        MutableLiveData(LoginType.of(SharedPrefUtils.getLoginType()))
 
     private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
     val isNameUpdated: LiveData<Boolean>
@@ -48,12 +54,12 @@ class LoginViewModel : BaseViewModel() {
         latestSocialType.postValue(socialType)
         SharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userRepository.login(LoginRequest(socialType.socialName, accessToken))
+            val loginResult = userDataSource.login(LoginRequest(socialType.socialName, accessToken))
             _loginResult.postValue(safeApiCall(loginResult))
         }
     }
 
-    fun trySignUp() {
+    fun trySignUp(informationRequest: PushInformationRequest, isMarketing: Boolean) {
         if (userName.value.isNullOrBlank()) {
             _msgTextId.value = R.string.name_empty
             return
@@ -71,19 +77,46 @@ class LoginViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request = SignUpRequest(userName.value!!, latestSocialType.value!!.socialName, token.toString())
-            val signUpResult = userRepository.signUp(request)
+            val request = SignUpRequest(
+                userName.value!!,
+                latestSocialType.value!!.socialName,
+                token.toString()
+            )
+            val signUpResult = userDataSource.signUp(request)
             if (signUpResult.isSuccessful) {
                 SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
-                _isNameUpdated.postValue(true)
-                _msgTextId.postValue(R.string.success_signup)
-                _isAlreadyUsed.postValue(-1)
+                postPushInformation(informationRequest, isMarketing)
+
             } else {
                 when (signUpResult.code()) {
                     409 -> _isAlreadyUsed.postValue(R.string.login_name_already_exist)
                     400 -> _isAlreadyUsed.postValue(R.string.invalidate_name)
                     else -> _msgTextId.postValue(R.string.connection_failed)
                 }
+            }
+        }
+    }
+
+    fun postPushInformation(informationRequest: PushInformationRequest, isMarketing: Boolean) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (userDataSource.postPushInformation(informationRequest).isSuccessful) {
+                putMarketingConsent(MarketingConsentRequest(if (isMarketing) "APPROVE" else "DENY"))
+            }
+        }
+    }
+
+    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            userDataSource.putPushInformationToken(informationRequest)
+        }
+    }
+
+    private fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (userDataSource.putMarketingConsent(marketingConsentRequest).isSuccessful) {
+                _isNameUpdated.postValue(true)
+                _msgTextId.postValue(R.string.success_signup)
+                _isAlreadyUsed.postValue(-1)
             }
         }
     }

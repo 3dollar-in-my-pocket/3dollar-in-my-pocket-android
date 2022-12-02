@@ -10,8 +10,8 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
-import com.zion830.threedollars.repository.model.v2.request.MyMenu
-import com.zion830.threedollars.repository.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v2.request.MyMenu
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
@@ -19,8 +19,10 @@ import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 
+@AndroidEntryPoint
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
 
     override val viewModel: AddStoreViewModel by activityViewModels()

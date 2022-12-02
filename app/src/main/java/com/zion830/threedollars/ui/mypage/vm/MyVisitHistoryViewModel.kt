@@ -2,15 +2,15 @@ package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.zion830.threedollars.repository.MyVisitHistoryDataSource
-import com.zion830.threedollars.repository.UserRepository
+import com.zion830.threedollars.datasource.MyVisitHistoryDataSourceImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import zion830.com.common.base.BaseViewModel
+import javax.inject.Inject
 
-class MyVisitHistoryViewModel : BaseViewModel() {
+@HiltViewModel
+class MyVisitHistoryViewModel @Inject constructor() :
+    BaseViewModel() {
 
-    private val service = UserRepository()
-
-    val myHistoryPager = Pager(PagingConfig(MyVisitHistoryDataSource.LOAD_SIZE)) {
-        MyVisitHistoryDataSource()
-    }.flow
+    val myHistoryPager =
+        Pager(PagingConfig(MyVisitHistoryDataSourceImpl.LOAD_SIZE)) { MyVisitHistoryDataSourceImpl() }.flow
 }

@@ -1,7 +1,6 @@
 package com.zion830.threedollars.customview
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,9 +21,9 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
-import com.zion830.threedollars.repository.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.repository.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 
 
@@ -149,10 +148,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 }
                 this.icon = if (item is StoreInfo) {
                     OverlayImage.fromResource(drawableRes)
-                } else{
-                    if((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED"){
+                } else {
+                    if ((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED") {
                         OverlayImage.fromResource(R.drawable.ic_food_truck_off)
-                    } else{
+                    } else {
                         OverlayImage.fromResource(drawableRes)
                     }
                 }

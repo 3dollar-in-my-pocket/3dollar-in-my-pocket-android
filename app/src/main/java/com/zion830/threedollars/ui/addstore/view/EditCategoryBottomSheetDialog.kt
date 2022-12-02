@@ -10,7 +10,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditCategoryBottomSheetDialog() : BottomSheetDialogFragment() {
 
     private val viewModel: StoreDetailViewModel by activityViewModels()

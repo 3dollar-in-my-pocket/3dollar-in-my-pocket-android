@@ -21,11 +21,13 @@ import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnBackPressedListener
 
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
     ActivityCompat.OnRequestPermissionsResultCallback {
 

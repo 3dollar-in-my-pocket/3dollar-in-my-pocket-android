@@ -8,7 +8,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
-import com.zion830.threedollars.repository.model.MenuType
+import com.zion830.threedollars.datasource.model.MenuType
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -79,6 +79,7 @@ object StringUtils {
             ""
         }
     }
+
     fun TextView.textPartTypeface(changeText: String?, @StyleRes style: Int, isLast: Boolean = false) {
         if (changeText == null)
             return

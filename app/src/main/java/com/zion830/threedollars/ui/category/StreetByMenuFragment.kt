@@ -10,9 +10,9 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
-import com.zion830.threedollars.repository.model.v2.response.Popups
-import com.zion830.threedollars.repository.model.v2.response.store.CategoryInfo
-import com.zion830.threedollars.repository.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByRatingRecyclerAdapter
@@ -21,12 +21,14 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
+@AndroidEntryPoint
 class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu){
+    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu) {
 
     override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 

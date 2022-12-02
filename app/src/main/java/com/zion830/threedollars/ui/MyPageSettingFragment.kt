@@ -9,17 +9,21 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.*
+import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 
-
-class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
+@AndroidEntryPoint
+class MyPageSettingFragment :
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -34,7 +38,8 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
         }
         binding.layoutTerms.setOnClickListener {
             EventTracker.logEvent(Constants.TERMS_OF_USE_BTN_CLICKED)
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
@@ -49,6 +54,24 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             EventTracker.logEvent(Constants.SIGNOUT_BTN_CLICKED)
             showDeleteAccountDialog()
         }
+        binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+            if (isCheck) {
+                eventTracker.setUserProperty("isPushEnable", "true")
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        viewModel.postPushInformation(
+                            informationRequest = PushInformationRequest(pushToken = it.result)
+                        )
+                    } else {
+                        // TODO: 실패했을때 예외처리 필요
+                    }
+
+                }
+            } else {
+                eventTracker.setUserProperty("isPushEnable", "false")
+                viewModel.deletePushInformation()
+            }
+        }
 
         binding.token.isVisible = BuildConfig.BUILD_TYPE == "debug"
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
@@ -56,7 +79,8 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
                 val token = "테스트용 토큰입니다 - 길게 클릭하면 복사됩니다!\n${task.result}"
                 binding.token.text = token
                 binding.token.setOnLongClickListener {
-                    val manager = (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                    val manager =
+                        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
                     manager.text = task.result
                     showToast("토큰이 복사되었습니다.")
                     false
@@ -73,6 +97,10 @@ class MyPageSettingFragment : BaseFragment<FragmentMypageSettingBinding, UserInf
             } else {
                 showToast(R.string.connection_failed)
             }
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
         }
     }
 

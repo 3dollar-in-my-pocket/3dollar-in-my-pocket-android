@@ -14,13 +14,16 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class VersionUpdateDialog(
-    private val minimumVersion: String,
-    private val currentVersion: String,
-) : DialogFragment() {
+@AndroidEntryPoint
+class VersionUpdateDialog(private val currentVersion: String) : DialogFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val binding = DialogForceUpdateBinding.inflate(inflater)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.setCancelable(false)
@@ -36,13 +39,15 @@ class VersionUpdateDialog(
             )
             requireActivity().finish()
         }
-        binding.tvDescription.text = getString(R.string.update_available_desc).format(currentVersion)
+        binding.tvDescription.text =
+            getString(R.string.update_available_desc).format(currentVersion)
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val windowManager =
+            requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = windowManager.defaultDisplay
         val size = Point()
         display.getSize(size)
@@ -64,6 +69,8 @@ class VersionUpdateDialog(
 
     companion object {
 
-        fun getInstance(minimumVersion: String, currentVersion: String) = VersionUpdateDialog(minimumVersion, currentVersion)
+        fun getInstance(minimumVersion: String, currentVersion: String) = VersionUpdateDialog(
+            currentVersion
+        )
     }
 }
