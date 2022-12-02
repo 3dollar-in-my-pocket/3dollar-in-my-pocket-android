@@ -104,7 +104,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
             if (response.isSuccessful) {
                 _myFavoriteModel.value = response.body()?.data?.favorites
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                _msgTextId.value = R.string.connection_failed
             }
         }
     }
