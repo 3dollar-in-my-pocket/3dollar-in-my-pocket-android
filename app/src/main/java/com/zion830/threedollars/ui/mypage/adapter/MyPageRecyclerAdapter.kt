@@ -18,7 +18,7 @@ import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class MyPageRecyclerAdapter(
-    private val onClickListener: (AdAndStoreItem) -> Unit,
+    private val onClickListener: OnItemClickListener<AdAndStoreItem>,
 ) : ListAdapter<AdAndStoreItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
@@ -49,10 +49,10 @@ class MyPageRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_RECENT_VISIT_HISTORY -> {
-            RecentVisitHistoryViewHolder(parent)
+            RecentVisitHistoryViewHolder(parent, onClickListener)
         }
         VIEW_TYPE_MY_FAVORITE -> {
-            MyFavoriteViewHolder(parent)
+            MyFavoriteViewHolder(parent, onClickListener)
         }
         else -> {
             MyPageEmptyViewHolder(parent)
@@ -64,55 +64,55 @@ class MyPageRecyclerAdapter(
         private const val VIEW_TYPE_RECENT_VISIT_HISTORY = 1
         private const val VIEW_TYPE_MY_FAVORITE = 2
     }
+}
 
-    inner class RecentVisitHistoryViewHolder(parent: ViewGroup) :
-        BaseViewHolder<ItemRecentVisitHistoryBinding, VisitHistoryContent>(R.layout.item_recent_visit_history, parent) {
+class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListener: OnItemClickListener<AdAndStoreItem>) :
+    BaseViewHolder<ItemRecentVisitHistoryBinding, VisitHistoryContent>(R.layout.item_recent_visit_history, parent) {
 
-        override fun bind(item: VisitHistoryContent, listener: OnItemClickListener<VisitHistoryContent>?) {
-            super.bind(item, listener)
-            binding.run {
-                tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
-                ivCategory.bindMenuIcons(item.store.categories)
-                val categoryInfo = SharedPrefUtils.getCategories()
-                val categories = item.store.categories.joinToString(" ") {
-                    "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}"
-                }
-                tvCategories.text = categories
-                layoutItem.setOnClickListener {
-                    if (!item.store.isDeleted) {
-                        onClickListener(item)
-                    }
+    override fun bind(item: VisitHistoryContent, listener: OnItemClickListener<VisitHistoryContent>?) {
+        super.bind(item, listener)
+        binding.run {
+            tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
+            ivCategory.bindMenuIcons(item.store.categories)
+            val categoryInfo = SharedPrefUtils.getCategories()
+            val categories = item.store.categories.joinToString(" ") {
+                "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}"
+            }
+            tvCategories.text = categories
+            layoutItem.setOnClickListener {
+                if (!item.store.isDeleted) {
+                    onClickListener.onClick(item)
                 }
             }
         }
     }
+}
 
-    inner class MyFavoriteViewHolder(parent: ViewGroup) :
-        BaseViewHolder<ItemMypageFavoriteBinding, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>(R.layout.item_mypage_favorite, parent) {
+class MyFavoriteViewHolder(parent: ViewGroup, private val onClickListener: OnItemClickListener<AdAndStoreItem>) :
+    BaseViewHolder<ItemMypageFavoriteBinding, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>(R.layout.item_mypage_favorite, parent) {
 
-        override fun bind(
-            item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel,
-            listener: OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>?
-        ) {
-            super.bind(item, listener)
-            binding.item = item
-            binding.run {
-                val categories = item.categories.joinToString(" ") {
-                    "#${it.name}"
-                }
-                storeCategoriesTextView.text = categories
-                itemLinearLayout.setOnClickListener {
-                    onClickListener(item)
-                }
+    override fun bind(
+        item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel,
+        listener: OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>?
+    ) {
+        super.bind(item, listener)
+        binding.item = item
+        binding.run {
+            val categories = item.categories.joinToString(" ") {
+                "#${it.name}"
+            }
+            storeCategoriesTextView.text = categories
+            itemLinearLayout.setOnClickListener {
+                onClickListener.onClick(item)
             }
         }
     }
+}
 
-    inner class MyPageEmptyViewHolder(parent: ViewGroup) :
-        BaseViewHolder<ItemMypageEmptyBinding, StoreEmptyResponse>(R.layout.item_mypage_empty, parent) {
-        override fun bind(item: StoreEmptyResponse, listener: OnItemClickListener<StoreEmptyResponse>?) {
-            super.bind(item, listener)
-            binding.item = item
-        }
+class MyPageEmptyViewHolder(parent: ViewGroup) :
+    BaseViewHolder<ItemMypageEmptyBinding, StoreEmptyResponse>(R.layout.item_mypage_empty, parent) {
+    override fun bind(item: StoreEmptyResponse, listener: OnItemClickListener<StoreEmptyResponse>?) {
+        super.bind(item, listener)
+        binding.item = item
     }
 }

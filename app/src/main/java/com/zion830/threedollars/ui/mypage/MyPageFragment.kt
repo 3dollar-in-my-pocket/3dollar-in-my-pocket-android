@@ -8,6 +8,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
@@ -21,6 +22,7 @@ import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
+import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {
@@ -47,21 +49,28 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     override fun initView() {
         viewModel.initAllMedals()
         viewModel.getMyFavoriteFolder()
-        visitHistoryAdapter = MyPageRecyclerAdapter {
-            val item = it as VisitHistoryContent
-            val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId)
-            startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-        }
-        myFavoriteAdapter = MyPageRecyclerAdapter {
-            val item = it as MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel
-            if (item.storeType == BOSS_STORE) {
-                val intent = FoodTruckStoreDetailActivity.getIntent(requireContext(), item.storeId)
-                startActivity(intent)
-            } else {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId.toInt())
-                startActivity(intent)
+        visitHistoryAdapter = MyPageRecyclerAdapter(
+            object : OnItemClickListener<AdAndStoreItem> {
+                override fun onClick(item: AdAndStoreItem) {
+                    val visitHistoryContent = item as VisitHistoryContent
+                    val intent = StoreDetailActivity.getIntent(requireContext(), visitHistoryContent.store.storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                }
+            })
+
+        myFavoriteAdapter = MyPageRecyclerAdapter(object : OnItemClickListener<AdAndStoreItem> {
+            override fun onClick(item: AdAndStoreItem) {
+                val myFavoriteFolderFavoriteModel = item as MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel
+                if (item.storeType == BOSS_STORE) {
+                    val intent = FoodTruckStoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId)
+                    startActivity(intent)
+                } else {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId.toInt())
+                    startActivity(intent)
+                }
             }
-        }
+
+        })
 
         binding.rvRecentVisitHistory.adapter = visitHistoryAdapter
         binding.favoriteRecyclerView.adapter = myFavoriteAdapter
