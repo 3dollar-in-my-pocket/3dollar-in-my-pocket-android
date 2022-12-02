@@ -41,7 +41,9 @@ data class StoreDetail(
     @SerializedName("visitHistory")
     val visitHistory: VisitHistory = VisitHistory(),
     @SerializedName("visitHistories")
-    val visitHistories: List<DetailVisitHistory> = listOf()
+    val visitHistories: List<DetailVisitHistory> = listOf(),
+    @SerializedName("favorite")
+    val favorite: StoreDetailFavoriteModel = StoreDetailFavoriteModel()
 )
 
 data class DetailVisitHistory(
@@ -60,3 +62,8 @@ data class DetailVisitHistory(
 ) {
     fun isExist() = type == "EXISTS"
 }
+
+data class StoreDetailFavoriteModel(
+    @SerializedName("isFavorite")
+    val isFavorite: Boolean = false
+)

@@ -33,7 +33,9 @@ data class BossStoreDetailModel(
     @SerializedName("snsUrl")
     val snsUrl: String?,
     @SerializedName("updatedAt")
-    val updatedAt: String?
+    val updatedAt: String?,
+    @SerializedName("favorite")
+    val favorite: StoreDetailFavoriteModel = StoreDetailFavoriteModel()
 ) {
     data class Category(
         @SerializedName("categoryId")
