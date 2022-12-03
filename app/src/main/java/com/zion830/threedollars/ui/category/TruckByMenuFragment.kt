@@ -9,7 +9,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -123,11 +123,11 @@ class TruckByMenuFragment :
             }
         }
 
-        val homeStoreEmptyResponseList = listOf(HomeStoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
+        val storeEmptyResponseList = listOf(StoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
 
         viewModel.storeByReview.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByReviewAdapters.submitEmptyList(homeStoreEmptyResponseList)
+                truckStoreByReviewAdapters.submitEmptyList(storeEmptyResponseList)
             } else {
                 truckStoreByReviewAdapters.submitList(it)
             }
@@ -135,7 +135,7 @@ class TruckByMenuFragment :
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByDistanceAdapters.submitEmptyList(homeStoreEmptyResponseList)
+                truckStoreByDistanceAdapters.submitEmptyList(storeEmptyResponseList)
             } else {
                 truckStoreByDistanceAdapters.submitList(it)
             }

@@ -15,7 +15,7 @@ import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
@@ -122,7 +122,7 @@ class NearStoreRecyclerAdapter(
                 holder.bind(getItem(position) as Popups, adClickListener)
             }
             is NearStoreEmptyViewHolder -> {
-                holder.bind(getItem(position) as HomeStoreEmptyResponse, null)
+                holder.bind(getItem(position) as StoreEmptyResponse, null)
             }
             is BossNearStoreViewHolder -> {
                 holder.bind(
@@ -147,12 +147,12 @@ class NearStoreRecyclerAdapter(
 }
 
 class NearStoreEmptyViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemHomeEmptyBinding, HomeStoreEmptyResponse>(R.layout.item_home_empty, parent) {
+    BaseViewHolder<ItemHomeEmptyBinding, StoreEmptyResponse>(R.layout.item_home_empty, parent) {
 
     @SuppressLint("Range")
     override fun bind(
-        item: HomeStoreEmptyResponse,
-        listener: OnItemClickListener<HomeStoreEmptyResponse>?
+        item: StoreEmptyResponse,
+        listener: OnItemClickListener<StoreEmptyResponse>?
     ) {
         super.bind(item, listener)
         val params = binding.storeImageView.layoutParams

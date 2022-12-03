@@ -3,6 +3,7 @@ package com.zion830.threedollars.datasource.model.v2.response.visit_history
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 
 @JsonClass(generateAdapter = true)
@@ -19,6 +20,6 @@ data class VisitHistoryContent(
     val updatedAt: String? = "",
     @Json(name = "visitHistoryId")
     val visitHistoryId: Int? = 0
-) {
+) : AdAndStoreItem {
     fun isExist() = type == "EXISTS"
 }

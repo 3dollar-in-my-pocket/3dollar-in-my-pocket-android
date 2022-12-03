@@ -8,7 +8,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemTruckSearchEmptyBinding
 import com.zion830.threedollars.databinding.ItemTruckStoreByReviewBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
@@ -31,7 +31,7 @@ class TruckSearchByReviewRecyclerAdapter(
             is BossNearStoreResponse.BossNearStoreModel -> {
                 VIEW_TYPE_STORE
             }
-            is HomeStoreEmptyResponse -> {
+            is StoreEmptyResponse -> {
                 VIEW_TYPE_EMPTY
             }
             else -> {
@@ -64,7 +64,7 @@ class TruckSearchByReviewRecyclerAdapter(
                 holder.bind(items[position] as Popups, adListener)
             }
             is TruckSearchEmptyViewHolder -> {
-                holder.bind(items[position] as HomeStoreEmptyResponse, null)
+                holder.bind(items[position] as StoreEmptyResponse, null)
             }
         }
     }
@@ -88,7 +88,7 @@ class TruckSearchByReviewRecyclerAdapter(
         var list: List<AdAndStoreItem> =
             items.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
         if (list.isEmpty()) {
-            list = items.filterIsInstance<HomeStoreEmptyResponse>()
+            list = items.filterIsInstance<StoreEmptyResponse>()
         }
         items.clear()
         items.addAll(list)
@@ -120,15 +120,15 @@ class TruckSearchByReviewViewHolder(parent: ViewGroup) :
 }
 
 class TruckSearchEmptyViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemTruckSearchEmptyBinding, HomeStoreEmptyResponse>(
+    BaseViewHolder<ItemTruckSearchEmptyBinding, StoreEmptyResponse>(
         R.layout.item_truck_search_empty,
         parent
     ) {
 
     @SuppressLint("Range")
     override fun bind(
-        item: HomeStoreEmptyResponse,
-        listener: OnItemClickListener<HomeStoreEmptyResponse>?
+        item: StoreEmptyResponse,
+        listener: OnItemClickListener<StoreEmptyResponse>?
     ) {
         super.bind(item, listener)
         binding.emptyBodyTextView.textPartTypeface("가슴속 3천원 사장님", Typeface.BOLD)
