@@ -109,4 +109,7 @@ interface StoreDataSource {
 
     suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>>
 
+    suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
+
+    suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
 }

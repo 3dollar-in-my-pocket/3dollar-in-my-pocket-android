@@ -90,14 +90,13 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
+        }
+        binding.feedbackReviewTextView.setOnClickListener {
+            moveFoodTruckReviewActivity()
         }
         binding.btnShare.setOnClickListener {
             EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
@@ -130,9 +129,19 @@ class FoodTruckStoreDetailActivity :
                 )
             )
         }
-
+        binding.favoriteButton.setOnClickListener {
+            clickFavoriteButton()
+        }
+        binding.bottomFavoriteButton.setOnClickListener {
+            clickFavoriteButton()
+        }
         viewModel.bossStoreDetailModel.observe(this@FoodTruckStoreDetailActivity) { bossStoreDetailModel ->
             foodTruckCategoriesAdapter.submitList(bossStoreDetailModel.categories)
+            val isClosed = bossStoreDetailModel.openStatus?.status == "CLOSED"
+
+            if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
+
+            setFavoriteIcon(bossStoreDetailModel?.favorite?.isFavorite)
 
             val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
                 .map { AppearanceDayModel(dayOfTheWeek = it) }
@@ -170,8 +179,37 @@ class FoodTruckStoreDetailActivity :
                 "${bossStoreFeedbackFullModeList.sumOf { it.count }}개"
             foodTruckReviewRecyclerAdapter.submitList(bossStoreFeedbackFullModeList.map { it.feedbackFullModelToReviewModel() })
         }
+        viewModel.isFavorite.observe(this) {
+            val toastText = if (it) getString(R.string.toast_favorite_add) else getString(R.string.toast_favorite_delete)
+            setFavoriteIcon(it)
+            showCustomBlackToast(toastText)
+        }
+    }
 
+    private fun moveFoodTruckReviewActivity() {
+        val intent = FoodTruckReviewActivity.getIntent(this, storeId)
+        startActivity(intent)
+        finish()
+    }
 
+    private fun clickFavoriteButton() {
+        if (viewModel.isFavorite.value == true) {
+            viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
+        } else {
+            viewModel.putFavorite(Constants.BOSS_STORE, storeId)
+        }
+    }
+
+    private fun setFavoriteIcon(isFavorite: Boolean?) {
+        if (isFavorite == null) {
+            showToast(R.string.connection_failed)
+            return
+        }
+
+        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
     companion object {

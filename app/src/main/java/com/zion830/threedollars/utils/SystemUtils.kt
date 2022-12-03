@@ -13,10 +13,13 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.link.LinkClient
 import com.kakao.sdk.template.model.Button
@@ -26,6 +29,9 @@ import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
+import com.zion830.threedollars.databinding.CustomToastBlackBinding
+import gun0912.tedimagepicker.util.ToastUtil
 import java.util.*
 
 
@@ -39,6 +45,20 @@ fun showToast(@StringRes resId: Int) {
 
 fun showToast(text: String) {
     Toast.makeText(GlobalApplication.getContext(), text, Toast.LENGTH_SHORT).show()
+}
+
+fun showCustomBlackToast(text: String) {
+    val inflater = LayoutInflater.from(GlobalApplication.getContext())
+    val binding: CustomToastBlackBinding =
+        DataBindingUtil.inflate(inflater, R.layout.custom_toast_black, null, false)
+
+    binding.toastTextView.text = text
+    Toast(GlobalApplication.getContext()).apply {
+        setGravity(Gravity.BOTTOM or Gravity.CENTER, 0, 0)
+        setMargin(0f, 0.1f)
+        duration = Toast.LENGTH_LONG
+        view = binding.root
+    }.show()
 }
 
 fun Activity.requestPermissionFirst(permission: String = ACCESS_FINE_LOCATION) {
