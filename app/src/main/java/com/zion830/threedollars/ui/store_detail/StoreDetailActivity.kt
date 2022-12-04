@@ -415,11 +415,19 @@ class StoreDetailActivity :
                 locationResult.addOnSuccessListener {
                     if (it != null) {
                         viewModel.requestStoreInfo(storeId, it.latitude, it.longitude)
+                    } else {
+                        showToast(getString(R.string.exist_location_error))
+                        finish()
                     }
                 }
+            } else {
+                showToast(getString(R.string.exist_location_error))
+                finish()
             }
         } catch (e: SecurityException) {
             Log.e(this::class.java.name, e.message ?: "")
+            showToast(getString(R.string.exist_location_error))
+            finish()
         }
     }
 
