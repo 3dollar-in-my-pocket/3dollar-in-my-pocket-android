@@ -167,7 +167,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         },
             object : OnItemClickListener<Popups> {
                 override fun onClick(item: Popups) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl.toStringDefault())))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
                 }
 
             }) { item ->

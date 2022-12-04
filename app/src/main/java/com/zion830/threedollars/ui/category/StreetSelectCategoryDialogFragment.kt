@@ -121,9 +121,9 @@ class StreetSelectCategoryDialogFragment :
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 val popup = popups[0]
-                binding.tvAdTitle.text = popup.title.toStringDefault()
+                binding.tvAdTitle.text = popup.title
 
-                binding.tvAdBody.text = popup.subTitle.toStringDefault()
+                binding.tvAdBody.text = popup.subTitle
 
                 popup.fontColor?.let {
                     binding.tvAdTitle.setTextColor(it.toColorInt())
@@ -134,7 +134,7 @@ class StreetSelectCategoryDialogFragment :
                 binding.ivAdImage.loadUrlImg(popup.imageUrl)
 
                 binding.cdAdCategory.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl.toStringDefault())))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
                     firebaseAnalytics.logEvent(Constants.CATEGORY_BANNER_CLICKED) {
                         param("referral", "category_page")
                     }

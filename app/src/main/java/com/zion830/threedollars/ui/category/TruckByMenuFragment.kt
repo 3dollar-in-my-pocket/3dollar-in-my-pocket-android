@@ -46,7 +46,7 @@ class TruckByMenuFragment :
     }
     private val adListener = object : OnItemClickListener<Popups> {
         override fun onClick(item: Popups) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl.toStringDefault())))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
         }
     }
     private val truckStoreByDistanceAdapters by lazy {
@@ -98,19 +98,19 @@ class TruckByMenuFragment :
             popups?.let {
                 if (popups.isNotEmpty()) {
                     binding.itemStoreListAd.run {
-                        tvAdTitle.text = popups[0].title.toStringDefault()
+                        tvAdTitle.text = popups[0].title
                         popups[0].fontColor?.let {
                             tvAdTitle.setTextColor(it.toColorInt())
                             tvAdBody.setTextColor(it.toColorInt())
                         }
-                        tvAdBody.text = popups[0].subTitle.toStringDefault()
+                        tvAdBody.text = popups[0].subTitle
 
                         popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
 
                         ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                         tvDetail.setOnClickListener {
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl.toStringDefault())))
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                         }
                     }
                     truckStoreByDistanceAdapters.submitAdList(popups)

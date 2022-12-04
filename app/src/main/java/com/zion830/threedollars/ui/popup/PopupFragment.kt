@@ -39,7 +39,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
             }
             tvTodayNotPopup.setOnClickListener {
                 viewModel?.popups?.value?.let { popup ->
-                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl.toStringDefault())
+                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl!!)
                 }
                 it.findNavController().navigateUp()
             }
@@ -51,7 +51,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel?.popups?.value?.let { popups ->
-                    webView.loadUrl(popups[0].linkUrl.toStringDefault())
+                    webView.loadUrl(popups[0].linkUrl!!)
                 }
             }
             webView.apply {
