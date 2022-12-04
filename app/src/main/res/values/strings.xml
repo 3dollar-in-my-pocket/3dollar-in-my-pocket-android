@@ -279,7 +279,6 @@
     <string name="is_certification_store">인증된 가게만</string>
     <string name="dest">방문하기</string>
     <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
-    <string name="exist_location_error">위치 정보가 없습니다.\n다시 확인 해주세요.</string>
 
     <string name="close">닫기</string>
     <string name="disable_popup">앞으로 보지않기</string>
