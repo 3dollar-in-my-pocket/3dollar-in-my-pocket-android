@@ -49,10 +49,14 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             launch {
                 adapter.loadStateFlow.collectLatest { loadState ->
                     if (loadState.refresh is LoadState.NotLoading) {
+                        val isEmpty = adapter.itemCount == 0
 
                         binding.itemCountTextView.text = getString(R.string.count_list, adapter.itemCount)
+                        binding.favoriteListRecyclerView.isVisible = isEmpty.not()
+                        binding.emptyLinearLayout.isVisible = isEmpty
                     }
-                    }
-                    }
-                    }
+                }
+            }
+        }
+    }
 }
