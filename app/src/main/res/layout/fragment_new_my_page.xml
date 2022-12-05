@@ -226,7 +226,7 @@
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_badge_16"
+                app:drawableStartCompat="@drawable/ic_badge_gray"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_profile" />
 
@@ -263,49 +263,66 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_message"
                 tools:listitem="@layout/item_recent_visit_history" />
 
-            <LinearLayout
-                android:id="@+id/layout_empty_visit_history"
+            <TextView
+                android:id="@+id/favoriteTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:background="@drawable/rect_white_radius16"
-                android:backgroundTint="@color/gray95"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="24dp"
-                android:paddingVertical="20dp"
-                app:layout_constraintStart_toStartOf="@id/tv_message"
-                app:layout_constraintTop_toBottomOf="@id/tv_message">
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="48dp"
+                android:drawablePadding="6dp"
+                android:fontFamily="@font/applegothic_bold"
+                android:gravity="center"
+                android:text="@string/favorite"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_favorite_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_recent_visit_history" />
 
-                <ImageView
-                    android:id="@+id/iv_category"
-                    android:layout_width="46dp"
-                    android:layout_height="46dp"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/empty_data"
-                    android:src="@drawable/img_empty" />
+            <TextView
+                android:id="@+id/favoriteTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="10dp"
+                android:text="@string/mypage_favorite_title"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="@id/favoriteTextView"
+                app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/favoriteMoreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rect_gray80_radius30"
+                android:drawablePadding="10dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:text="@string/more"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:text="@string/try_visit_history"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/try_visit_history_msg"
-                        android:textColor="@color/gray30"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favoriteRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="56dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="never"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/favoriteTitleTextView"
+                app:layout_constraintTop_toBottomOf="@id/favoriteTitleTextView"
+                tools:listitem="@layout/item_mypage_favorite" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

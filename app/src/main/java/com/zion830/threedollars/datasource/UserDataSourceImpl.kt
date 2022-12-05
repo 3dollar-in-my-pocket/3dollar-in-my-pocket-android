@@ -4,6 +4,7 @@ import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
@@ -81,4 +82,7 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>> =
         service.putMarketingConsent(marketingConsentRequest)
+
+    override suspend fun getMyFavoriteFolder(cursor: Int?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>> =
+        service.getMyFavoriteFolder(cursor, size)
 }

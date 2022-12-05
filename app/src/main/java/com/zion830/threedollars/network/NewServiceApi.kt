@@ -6,6 +6,7 @@ import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryRespon
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
+import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
@@ -233,9 +234,16 @@ interface NewServiceApi {
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
+    @GET("/api/v1/favorite/store/folder/my")
+    suspend fun getMyFavoriteFolder(
+        @Query("cursor") cursor: Int? = null,
+        @Query("size") size: Int = 5
+    ): Response<BaseResponse<MyFavoriteFolderResponse>>
+
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
     suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
     suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
 }
