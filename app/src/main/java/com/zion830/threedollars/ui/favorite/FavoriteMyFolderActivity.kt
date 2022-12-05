@@ -38,8 +38,19 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     }
 
     override fun initView() {
+        viewModel.getMyFavoriteFolder()
 
         binding.favoriteListRecyclerView.adapter = adapter
+
+        binding.backImageView.setOnClickListener {
+            finish()
+        }
+
+        viewModel.myFavoriteFolderResponse.observe(this) {
+            val title = it.name.ifEmpty { getString(R.string.favorite) }
+            binding.favoriteTitleTextView.text = getString(R.string.favorite_title, it.user.name, title)
+            binding.favoriteBodyTextView.text = it.introduction
+        }
         lifecycleScope.launch {
             launch {
                 viewModel.favoriteMyFolderPager.collectLatest {
