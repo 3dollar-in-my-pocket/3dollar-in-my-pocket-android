@@ -171,7 +171,7 @@ interface NewServiceApi {
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 
-    @GET("/api/v1/popups")
+    @GET("/api/v1/advertisements")
     suspend fun getPopups(
         @Query("platform") platform: String = "AOS",
         @Query("position") position: String

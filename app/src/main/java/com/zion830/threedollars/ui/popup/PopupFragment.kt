@@ -20,6 +20,7 @@ import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.ext.toStringDefault
 import java.net.URISyntaxException
 
 @AndroidEntryPoint
@@ -38,7 +39,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
             }
             tvTodayNotPopup.setOnClickListener {
                 viewModel?.popups?.value?.let { popup ->
-                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl)
+                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl!!)
                 }
                 it.findNavController().navigateUp()
             }
@@ -50,7 +51,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel?.popups?.value?.let { popups ->
-                    webView.loadUrl(popups[0].linkUrl)
+                    webView.loadUrl(popups[0].linkUrl!!)
                 }
             }
             webView.apply {
