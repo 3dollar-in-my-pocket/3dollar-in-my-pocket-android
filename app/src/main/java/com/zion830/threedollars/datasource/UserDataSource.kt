@@ -52,5 +52,5 @@ interface UserDataSource {
 
     suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
-    suspend fun getMyFavoriteFolder(cursor: Int?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
+    suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
 }

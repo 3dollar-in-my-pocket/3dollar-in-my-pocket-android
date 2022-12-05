@@ -98,7 +98,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
         }
     }
 
-    fun getMyFavoriteFolder(cursor: Int? = null, size: Int = 5) {
+    fun getMyFavoriteFolder(cursor: String? = null, size: Int = 5) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = userDataSource.getMyFavoriteFolder(cursor, size)
             if (response.isSuccessful) {

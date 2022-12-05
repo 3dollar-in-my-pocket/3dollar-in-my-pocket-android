@@ -236,8 +236,8 @@ interface NewServiceApi {
 
     @GET("/api/v1/favorite/store/folder/my")
     suspend fun getMyFavoriteFolder(
-        @Query("cursor") cursor: Int? = null,
-        @Query("size") size: Int = 5
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")

@@ -83,6 +83,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>> =
         service.putMarketingConsent(marketingConsentRequest)
 
-    override suspend fun getMyFavoriteFolder(cursor: Int?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>> =
+    override suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getMyFavoriteFolder(cursor, size)
 }
