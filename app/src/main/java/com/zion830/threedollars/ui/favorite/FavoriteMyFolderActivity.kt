@@ -34,6 +34,10 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                 }
                 startActivity(intent)
             }
+        }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
+            override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
+                viewModel.deleteFavorite(item.storeType, item.storeId)
+            }
         })
     }
 
@@ -48,11 +52,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.deleteTextView.setOnClickListener {
             binding.deleteTextView.isVisible = false
             binding.doingDeleteLinearLayout.isVisible = true
+            adapter.setDelete(true)
         }
 
         binding.deleteCompleteTextView.setOnClickListener {
             binding.deleteTextView.isVisible = true
             binding.doingDeleteLinearLayout.isVisible = false
+            adapter.setDelete(false)
         }
 
         binding.allDeleteTextView.setOnClickListener {

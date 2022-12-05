@@ -43,4 +43,11 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
             _isRefresh.value = response.isSuccessful
         }
     }
+
+    fun deleteFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = userDataSource.deleteFavorite(storeType, storeId)
+            _isRefresh.value = response.isSuccessful
+        }
+    }
 }
