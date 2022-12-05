@@ -85,4 +85,7 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getMyFavoriteFolder(cursor, size)
+
+    override suspend fun allDeleteFavorite(): Response<BaseResponse<String>> =
+        service.allDeleteFavorite()
 }

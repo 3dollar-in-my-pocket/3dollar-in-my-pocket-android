@@ -21,6 +21,9 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
     private val _myFavoriteFolderResponse: MutableLiveData<MyFavoriteFolderResponse> = MutableLiveData()
     val myFavoriteFolderResponse: LiveData<MyFavoriteFolderResponse> get() = _myFavoriteFolderResponse
 
+    private val _isRefresh: MutableLiveData<Boolean> = MutableLiveData()
+    val isRefresh: LiveData<Boolean> get() = _isRefresh
+
     fun getMyFavoriteFolder() {
         viewModelScope.launch {
             val response = userDataSource.getMyFavoriteFolder(null, 1)
@@ -31,6 +34,13 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
             } else {
                 _msgTextId.postValue(R.string.connection_failed)
             }
+        }
+    }
+
+    fun allDeleteFavorite() {
+        viewModelScope.launch {
+            val response = userDataSource.allDeleteFavorite()
+            _isRefresh.value = response.isSuccessful
         }
     }
 }

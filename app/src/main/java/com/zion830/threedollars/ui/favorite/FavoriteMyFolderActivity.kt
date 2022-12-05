@@ -45,7 +45,25 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.backImageView.setOnClickListener {
             finish()
         }
+        binding.deleteTextView.setOnClickListener {
+            binding.deleteTextView.isVisible = false
+            binding.doingDeleteLinearLayout.isVisible = true
+        }
 
+        binding.deleteCompleteTextView.setOnClickListener {
+            binding.deleteTextView.isVisible = true
+            binding.doingDeleteLinearLayout.isVisible = false
+        }
+
+        binding.allDeleteTextView.setOnClickListener {
+            viewModel.allDeleteFavorite()
+        }
+
+        viewModel.isRefresh.observe(this) {
+            if (it) {
+                adapter.refresh()
+            }
+        }
         viewModel.myFavoriteFolderResponse.observe(this) {
             val title = it.name.ifEmpty { getString(R.string.favorite) }
             binding.favoriteTitleTextView.text = getString(R.string.favorite_title, it.user.name, title)
