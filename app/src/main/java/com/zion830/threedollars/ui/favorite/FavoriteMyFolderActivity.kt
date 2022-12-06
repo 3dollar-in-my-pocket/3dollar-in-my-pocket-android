@@ -64,6 +64,9 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.allDeleteTextView.setOnClickListener {
             viewModel.allDeleteFavorite()
         }
+        binding.infoEditTextView.setOnClickListener {
+            startActivity(FavoriteMyInfoEditActivity.getIntent(this, binding.favoriteTitleTextView.text.toString(), binding.favoriteBodyTextView.text.toString()))
+        }
 
         viewModel.isRefresh.observe(this) {
             if (it) {
