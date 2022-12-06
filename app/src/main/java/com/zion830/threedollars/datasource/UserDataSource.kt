@@ -7,7 +7,6 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
-import retrofit2.http.*
 import zion830.com.common.base.BaseResponse
 
 interface UserDataSource {
@@ -57,5 +56,7 @@ interface UserDataSource {
     suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
     suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
+
+    suspend fun updateFavoriteInfo(favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
 
 }
