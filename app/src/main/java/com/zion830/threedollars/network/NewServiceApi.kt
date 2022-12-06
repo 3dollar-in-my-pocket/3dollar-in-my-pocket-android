@@ -1,6 +1,7 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
@@ -236,8 +237,8 @@ interface NewServiceApi {
 
     @GET("/api/v1/favorite/store/folder/my")
     suspend fun getMyFavoriteFolder(
-        @Query("cursor") cursor: Int? = null,
-        @Query("size") size: Int = 5
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
@@ -246,4 +247,6 @@ interface NewServiceApi {
     @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
     suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
+    @DELETE("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType : String= FAVORITE_STORE): Response<BaseResponse<String>>
 }

@@ -5,17 +5,17 @@ import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 
 data class MyFavoriteFolderResponse(
     @SerializedName("cursor")
-    val cursor: MyFavoriteFolderCursorModel,
+    val cursor: MyFavoriteFolderCursorModel = MyFavoriteFolderCursorModel(),
     @SerializedName("favorites")
-    val favorites: List<MyFavoriteFolderFavoriteModel>,
+    val favorites: List<MyFavoriteFolderFavoriteModel> = listOf(),
     @SerializedName("folderId")
-    val folderId: String,
+    val folderId: String = "",
     @SerializedName("introduction")
-    val introduction: String,
+    val introduction: String = "",
     @SerializedName("name")
-    val name: String,
+    val name: String = "",
     @SerializedName("user")
-    val user: MyFavoriteFolderUserModel
+    val user: MyFavoriteFolderUserModel = MyFavoriteFolderUserModel()
 ) {
     data class MyFavoriteFolderCategoryModel(
         val category: String,
@@ -27,9 +27,9 @@ data class MyFavoriteFolderResponse(
     )
 
     data class MyFavoriteFolderCursorModel(
-        val hasMore: Boolean,
-        val nextCursor: Any,
-        val totalCount: Int
+        val hasMore: Boolean = false,
+        val nextCursor: String? = "",
+        val totalCount: Int = 0
     )
 
     data class MyFavoriteFolderFavoriteModel(
@@ -40,16 +40,16 @@ data class MyFavoriteFolderResponse(
     ) : AdAndStoreItem
 
     data class MyFavoriteFolderMedalModel(
-        val createdAt: String,
-        val disableIconUrl: String,
-        val iconUrl: String,
-        val medalId: Int,
-        val name: String,
-        val updatedAt: String
+        val createdAt: String = "",
+        val disableIconUrl: String = "",
+        val iconUrl: String = "",
+        val medalId: Int = 0,
+        val name: String = "",
+        val updatedAt: String = ""
     )
 
     data class MyFavoriteFolderUserModel(
-        val medal: MyFavoriteFolderMedalModel,
-        val name: String
+        val medal: MyFavoriteFolderMedalModel = MyFavoriteFolderMedalModel(),
+        val name: String = ""
     )
 }
