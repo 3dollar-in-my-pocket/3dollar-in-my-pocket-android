@@ -105,8 +105,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             )
         }
         binding.favoriteMoreTextView.setOnClickListener {
-            val intent = Intent(requireActivity(), FavoriteMyFolderActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
         }
         observeUiData()
     }
