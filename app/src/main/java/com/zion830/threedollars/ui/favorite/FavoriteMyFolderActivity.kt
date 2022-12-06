@@ -97,4 +97,8 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }
     }
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getMyFavoriteFolder()
+    }
 }
