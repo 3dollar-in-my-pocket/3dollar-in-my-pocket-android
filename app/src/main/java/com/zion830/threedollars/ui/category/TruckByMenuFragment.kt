@@ -23,6 +23,7 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint

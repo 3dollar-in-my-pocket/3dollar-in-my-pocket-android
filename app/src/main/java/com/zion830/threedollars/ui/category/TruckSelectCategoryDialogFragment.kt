@@ -31,6 +31,7 @@ import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint

@@ -54,4 +54,9 @@ interface UserDataSource {
     suspend fun getMyFavoriteFolder(cursor: Int?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     suspend fun eventClick(targetType: String, targetId: String): Response<BaseResponse<String>>
+
+    suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
+
+    suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
+    
 }

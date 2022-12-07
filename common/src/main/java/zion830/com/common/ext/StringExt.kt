@@ -9,6 +9,8 @@ fun String?.isNotNullOrBlank() = !isNullOrBlank()
 
 fun String?.isNotNullOrEmpty() = !isNullOrEmpty()
 
+fun String?.toStringDefault(default:String = "") = this ?: default
+
 fun String?.toFormattedNumber() = if (this.isNullOrBlank()) "" else DecimalFormat("#,###").format(this.toLong())
 
 fun Int.toFormattedNumber() = DecimalFormat("#,###").format(this.toLong())

@@ -23,9 +23,9 @@ data class Popups(
     @SerializedName("imageUrl")
     val imageUrl: String = "",
     @SerializedName("linkUrl")
-    val linkUrl: String = "",
+    val linkUrl: String? = "",
     @SerializedName("subTitle")
-    val subTitle: String = "",
+    val subTitle: String? = "",
     @SerializedName("title")
-    val title: String = ""
+    val title: String? = ""
 ) : AdAndStoreItem

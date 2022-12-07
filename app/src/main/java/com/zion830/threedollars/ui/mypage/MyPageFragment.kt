@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.mypage
 
+import android.content.Intent
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
@@ -13,6 +14,7 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.MyPageSettingFragment
+import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
@@ -101,6 +103,9 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
                 EditNameFragment(),
                 EditNameFragment::class.java.name
             )
+        }
+        binding.favoriteMoreTextView.setOnClickListener {
+            startActivity(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
         }
         observeUiData()
     }
