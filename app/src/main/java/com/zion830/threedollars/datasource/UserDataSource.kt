@@ -7,7 +7,6 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
-import retrofit2.http.*
 import zion830.com.common.base.BaseResponse
 
 interface UserDataSource {
@@ -53,4 +52,6 @@ interface UserDataSource {
     suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
     suspend fun getMyFavoriteFolder(cursor: Int?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    suspend fun eventClick(targetType: String, targetId: String): Response<BaseResponse<String>>
 }

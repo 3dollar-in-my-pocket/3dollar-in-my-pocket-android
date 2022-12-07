@@ -14,6 +14,8 @@ data class PopupsResponse(
 )
 
 data class Popups(
+    @SerializedName("advertisementId")
+    val advertisementId: Int = 0,
     @SerializedName("bgColor")
     val bgColor: String? = "",
     @SerializedName("fontColor")

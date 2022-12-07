@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.addstore.view
 
 import android.content.Intent
-import android.util.Log
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
@@ -9,7 +8,7 @@ import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
-import com.zion830.threedollars.customview.NaverMapFragment
+import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint

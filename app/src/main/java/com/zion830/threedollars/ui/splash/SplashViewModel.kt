@@ -7,6 +7,7 @@ import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.KakaoLoginDataSource
+import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val storeDataSource: StoreDataSource,
     private val userDataSource: UserDataSource,
+    private val popupDataSource: PopupDataSource,
     private val kakaoLoginDataSource: KakaoLoginDataSource
 ) : BaseViewModel() {
 
@@ -57,6 +59,14 @@ class SplashViewModel @Inject constructor(
                     SharedPrefUtils.saveFeedbackType(
                         bossStoreFeedbackTypeResponse.body()?.data ?: emptyList()
                     )
+                }
+            }
+
+            val storeMarkerAdvertisements = popupDataSource.getPopups("STORE_MARKER")
+            if(storeMarkerAdvertisements.isSuccessful){
+                val advertisements = storeMarkerAdvertisements.body()?.data.orEmpty()
+                if(advertisements.isNotEmpty()){
+                    GlobalApplication.storeMarker = advertisements.first()
                 }
             }
         }
