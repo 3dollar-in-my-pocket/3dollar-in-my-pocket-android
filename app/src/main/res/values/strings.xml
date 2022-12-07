@@ -40,6 +40,7 @@
     <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
     <string name="server_500">서버 점검 중!</string>
     <string name="server_500_msg">서버 점검 중!</string>
+    <string name="exist_location_error">위치 정보가 없습니다.\n다시 확인 해주세요.</string>
 
     <string name="my_page_show_all">전체보기</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
