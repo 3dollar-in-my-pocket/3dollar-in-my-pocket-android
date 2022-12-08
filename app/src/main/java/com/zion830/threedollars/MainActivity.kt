@@ -14,8 +14,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
-import com.zion830.threedollars.ui.home.HomeFragment
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
