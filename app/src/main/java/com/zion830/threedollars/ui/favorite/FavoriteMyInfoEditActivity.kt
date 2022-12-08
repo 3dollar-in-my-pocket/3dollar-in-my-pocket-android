@@ -37,6 +37,7 @@ class FavoriteMyInfoEditActivity :
 
         viewModel.isSuccess.observe(this) {
             if (it) {
+                setResult(RESULT_OK, Intent(this, FavoriteMyFolderActivity::class.java))
                 finish()
             }
         }

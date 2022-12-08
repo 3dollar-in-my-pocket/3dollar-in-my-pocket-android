@@ -1,5 +1,8 @@
 package com.zion830.threedollars.ui.favorite
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -37,7 +40,17 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         })
     }
 
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun initView() {
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.getMyFavoriteFolder()
+            }
+        }
+
         viewModel.getMyFavoriteFolder()
 
         binding.favoriteListRecyclerView.adapter = adapter
@@ -61,7 +74,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             viewModel.allDeleteFavorite()
         }
         binding.infoEditTextView.setOnClickListener {
-            startActivity(FavoriteMyInfoEditActivity.getIntent(this, binding.favoriteTitleTextView.text.toString(), binding.favoriteBodyTextView.text.toString()))
+            activityResultLauncher.launch(
+                FavoriteMyInfoEditActivity.getIntent(
+                    this,
+                    binding.favoriteTitleTextView.text.toString(),
+                    binding.favoriteBodyTextView.text.toString()
+                )
+            )
         }
 
         viewModel.isRefresh.observe(this) {
@@ -92,9 +111,5 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                 }
             }
         }
-    }
-    override fun onRestart() {
-        super.onRestart()
-        viewModel.getMyFavoriteFolder()
     }
 }
