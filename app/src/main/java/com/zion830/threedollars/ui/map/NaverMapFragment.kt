@@ -1,6 +1,8 @@
-package com.zion830.threedollars.customview
+package com.zion830.threedollars.ui.map
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -19,16 +22,18 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
-
+    private val viewModel: NaverMapViewModel by viewModels()
     var naverMap: NaverMap? = null
 
     var currentPosition: LatLng? = null
@@ -97,6 +102,18 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.locationTrackingMode = LocationTrackingMode.Follow
         map.uiSettings.isZoomControlEnabled = false
         map.uiSettings.isScaleBarEnabled = false
+        map.addOnLocationChangeListener {
+            map.locationOverlay.bearing = 0f
+        }
+        val storeMarker = GlobalApplication.storeMarker
+        if (!storeMarker.linkUrl.isNullOrEmpty()) {
+            map.locationOverlay.icon = OverlayImage.fromResource(R.drawable.ic_marker_noah)
+            map.locationOverlay.setOnClickListener {
+                viewModel.eventClick("ADVERTISEMENT", storeMarker.advertisementId.toString())
+                context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(storeMarker.linkUrl)))
+                return@setOnClickListener false
+            }
+        }
     }
 
     fun addMarker(@DrawableRes drawableRes: Int, position: LatLng) {

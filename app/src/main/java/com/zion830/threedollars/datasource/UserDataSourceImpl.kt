@@ -1,12 +1,12 @@
 package com.zion830.threedollars.datasource
 
 import com.zion830.threedollars.datasource.model.v2.request.*
-import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.zion830.threedollars.network.NewServiceApi
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
@@ -86,6 +86,9 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getMyFavoriteFolder(cursor, size)
 
+    override suspend fun eventClick(targetType: String, targetId: String): Response<BaseResponse<String>> =
+        service.eventClick(targetType, targetId)
+        
     override suspend fun allDeleteFavorite(): Response<BaseResponse<String>> =
         service.allDeleteFavorite()
 

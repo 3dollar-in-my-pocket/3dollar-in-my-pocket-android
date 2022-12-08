@@ -14,7 +14,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.customview.NaverMapFragment
+import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
