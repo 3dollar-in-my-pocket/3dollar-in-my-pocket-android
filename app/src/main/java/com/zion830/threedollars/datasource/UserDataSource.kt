@@ -58,5 +58,6 @@ interface UserDataSource {
     suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
     suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
-    
+
+    suspend fun updateFavoriteInfo(favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
 }

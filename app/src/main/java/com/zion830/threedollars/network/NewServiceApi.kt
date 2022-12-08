@@ -252,4 +252,7 @@ interface NewServiceApi {
 
     @DELETE("/api/v1/favorite/{favoriteType}/folder")
     suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType : String= FAVORITE_STORE): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun updateFavoriteInfo(@Path("favoriteType") favoriteType: String = FAVORITE_STORE, @Body favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
 }

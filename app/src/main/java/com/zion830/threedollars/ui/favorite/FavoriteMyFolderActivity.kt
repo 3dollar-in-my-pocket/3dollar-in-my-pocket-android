@@ -1,18 +1,17 @@
 package com.zion830.threedollars.ui.favorite
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
-import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -41,7 +40,17 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         })
     }
 
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun initView() {
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.getMyFavoriteFolder()
+            }
+        }
+
         viewModel.getMyFavoriteFolder()
 
         binding.favoriteListRecyclerView.adapter = adapter
@@ -64,6 +73,15 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.allDeleteTextView.setOnClickListener {
             viewModel.allDeleteFavorite()
         }
+        binding.infoEditTextView.setOnClickListener {
+            activityResultLauncher.launch(
+                FavoriteMyInfoEditActivity.getIntent(
+                    this,
+                    binding.favoriteTitleTextView.text.toString(),
+                    binding.favoriteBodyTextView.text.toString()
+                )
+            )
+        }
 
         viewModel.isRefresh.observe(this) {
             if (it) {
@@ -71,8 +89,8 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }
         viewModel.myFavoriteFolderResponse.observe(this) {
-            val title = it.name.ifEmpty { getString(R.string.favorite) }
-            binding.favoriteTitleTextView.text = getString(R.string.favorite_title, it.user.name, title)
+            val title = it.name.ifEmpty { getString(R.string.favorite_title, it.user.name, getString(R.string.favorite)) }
+            binding.favoriteTitleTextView.text = title
             binding.favoriteBodyTextView.text = it.introduction
         }
         lifecycleScope.launch {
