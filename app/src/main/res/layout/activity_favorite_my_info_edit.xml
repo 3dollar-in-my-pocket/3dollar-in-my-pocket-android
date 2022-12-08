@@ -94,7 +94,7 @@
             android:id="@+id/saveButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_btn"
+            android:background="@drawable/selector_enabled_button"
             android:enabled="false"
             android:paddingVertical="22dp"
             android:text="@string/save"
