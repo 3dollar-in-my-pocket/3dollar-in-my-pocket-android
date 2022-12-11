@@ -133,9 +133,7 @@ class TruckSelectCategoryDialogFragment :
 
                 binding.cdAdCategory.setOnClickListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                    firebaseAnalytics.logEvent(Constants.CATEGORY_BANNER_CLICKED) {
-                        param("referral", "category_page")
-                    }
+                    EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
                 }
             }
             binding.cdAdCategory.isVisible = popups.isNotEmpty()

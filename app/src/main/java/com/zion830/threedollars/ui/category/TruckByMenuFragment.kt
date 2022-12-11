@@ -110,6 +110,7 @@ class TruckByMenuFragment :
                         ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                         tvDetail.setOnClickListener {
+                            EventTracker.logEvent(Constants.FOODTRUCK_LIST_AD_BANNER_CLICKED)
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                         }
                     }

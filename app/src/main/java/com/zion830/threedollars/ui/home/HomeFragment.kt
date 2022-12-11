@@ -167,6 +167,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         },
             object : OnItemClickListener<Popups> {
                 override fun onClick(item: Popups) {
+                    EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
                 }
 

@@ -6,6 +6,7 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.gms.ads.AdRequest
+import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -121,6 +122,7 @@ class StreetByMenuFragment :
                     ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                     tvDetail.setOnClickListener {
+                        EventTracker.logEvent(Constants.STORE_LIST_AD_BANNER_CLICKED)
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                     }
                 }

@@ -88,6 +88,11 @@ object Constants {
 
     //popup
     const val TIME_MILLIS_DAY = 86400000L
+    const val SPLASH_POPUP_CLICKED = "splash_popup_clicked"
+    const val HOME_AD_BANNER_CLICKED = "home_ad_banner_clicked"
+    const val CATEGORY_AD_BANNER_CLICKED = "category_ad_banner_clicked"
+    const val STORE_LIST_AD_BANNER_CLICKED = "store_list_ad_banner_clicked"
+    const val FOODTRUCK_LIST_AD_BANNER_CLICKED = "foodtruck_list_ad_banner_clicked"
 
     //storeType
     const val BOSS_STORE = "BOSS_STORE"
