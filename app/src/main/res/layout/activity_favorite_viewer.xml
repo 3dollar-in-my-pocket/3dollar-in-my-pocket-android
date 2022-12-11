@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerViewModel.Event" />
+
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerViewModel" />
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black">
+
+        <View
+            android:id="@+id/favoriteInfoView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-24dp"
+            android:background="@drawable/rect_gray_corner_bottom"
+            android:backgroundTint="@color/gray95"
+            app:layout_constraintBottom_toBottomOf="@id/favoriteMemoText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/closeImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:contentDescription="닫기 버튼"
+            android:onClick="@{()->viewModel.onEventClick(Event.Close.INSTANCE)}"
+            android:src="@drawable/ic_close_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/favoriteTitleText"
+            textFavoriteTitle="@{item}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/closeImage"
+            tools:text="즐겨찾기 이름" />
+
+        <View
+            android:id="@+id/favoriteUserInfoView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="-12dp"
+            android:background="@drawable/rect_white_radius16"
+            android:backgroundTint="@color/gray90"
+            app:layout_constraintBottom_toBottomOf="@id/favoriteUserNameText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favoriteTitleText" />
+
+        <TextView
+            android:id="@+id/favoriteUserMedalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@{item.user.medal.name}"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/favoriteUserInfoView"
+            app:layout_constraintStart_toEndOf="@id/favoriteUserMedalImage"
+            app:layout_constraintTop_toTopOf="@id/favoriteUserInfoView"
+            tools:text="따끈따끈한 뉴비" />
+
+        <ImageView
+            android:id="@+id/favoriteUserMedalImage"
+            loadImage="@{item.user.medal.iconUrl}"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="5dp"
+            android:contentDescription="칭호 아이콘"
+            app:layout_constraintBottom_toBottomOf="@id/favoriteUserMedalText"
+            app:layout_constraintEnd_toStartOf="@id/favoriteUserMedalText"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/favoriteUserInfoView"
+            app:layout_constraintTop_toTopOf="@id/favoriteUserMedalText"
+            tools:ignore="HardcodedText"
+            tools:src="@drawable/ic_star_on" />
+
+        <TextView
+            android:id="@+id/favoriteUserNameText"
+            textFavoriteUserName="@{item.user.name}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:bufferType="spannable"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/favoriteUserInfoView"
+            app:layout_constraintStart_toStartOf="@id/favoriteUserInfoView"
+            app:layout_constraintTop_toBottomOf="@id/favoriteUserMedalText"
+            tools:text="마포구 몽키스패너님의 즐겨찾기" />
+
+        <TextView
+            android:id="@+id/favoriteMemoText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:text="@{item.introduction}"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favoriteUserInfoView"
+            tools:text="제가 고심 끝에 엄선한 가게들입니다. 님들아 이건 꼭 드셔봐야 알아요. 진짜로...꼭꼭...근처 갈 일 있으면, 아니 없더라도 찾아가서 드셔보세요." />
+
+        <TextView
+            android:id="@+id/favoriteCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
+            android:textColor="@color/gray20"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favoriteInfoView"
+            tools:text="20개의 리스트" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favoriteListRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:overScrollMode="never"
+            android:paddingHorizontal="24dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favoriteCountText"
+            tools:listitem="@layout/item_favorite_viewer" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

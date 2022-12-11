@@ -338,6 +338,7 @@
     <string name="all_delete">전체 삭제</string>
     <string name="complete">완료</string>
     <string name="favorite_title">%s님의\n%s</string>
+    <string name="favorite_user_name">%s님의 즐겨찾기</string>
     <string name="count_list">%d개의 리스트</string>
     <string name="favorite_empty">즐겨찾기 리스트가 없어요.\n가게 상세에서 추가해주세요!</string>
     <string name="favorite_body_edit_hint">리스트에 대한 한줄평을 입력해주세요! 공유 시 사용됩니다.</string>

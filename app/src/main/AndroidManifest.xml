@@ -100,6 +100,9 @@
                     android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -241,6 +241,13 @@ interface NewServiceApi {
         @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
+    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
+    suspend fun getFavoriteViewer(
+        @Path("favoriteFolderId") id: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20
+    ): Response<BaseResponse<MyFavoriteFolderResponse>>
+
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
     suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
@@ -251,8 +258,11 @@ interface NewServiceApi {
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType : String= FAVORITE_STORE): Response<BaseResponse<String>>
+    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
 
     @PUT("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun updateFavoriteInfo(@Path("favoriteType") favoriteType: String = FAVORITE_STORE, @Body favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
+    suspend fun updateFavoriteInfo(
+        @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
+        @Body favoriteInfoRequest: FavoriteInfoRequest
+    ): Response<BaseResponse<String>>
 }
