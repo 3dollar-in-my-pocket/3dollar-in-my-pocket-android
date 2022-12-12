@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
@@ -44,9 +46,16 @@ class FoodTruckStoreDetailActivity :
     private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment =
         FoodTruckStoreDetailNaverMapFragment()
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK, Intent(this@FoodTruckStoreDetailActivity, MainActivity::class.java))
+            finish()
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
@@ -88,6 +97,7 @@ class FoodTruckStoreDetailActivity :
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
 
         binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK, Intent(this, MainActivity::class.java))
             finish()
         }
         binding.topReviewTextView.setOnClickListener {

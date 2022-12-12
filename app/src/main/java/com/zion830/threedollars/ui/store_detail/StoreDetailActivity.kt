@@ -10,6 +10,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
@@ -22,6 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
@@ -31,6 +33,7 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -75,8 +78,17 @@ class StoreDetailActivity :
 
     private var progressDialog: AlertDialog? = null
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK, Intent(this@StoreDetailActivity, MainActivity::class.java))
+            finish()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
@@ -112,6 +124,7 @@ class StoreDetailActivity :
         binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK, Intent(this, MainActivity::class.java))
             finish()
         }
         binding.deleteTextView.setOnClickListener {

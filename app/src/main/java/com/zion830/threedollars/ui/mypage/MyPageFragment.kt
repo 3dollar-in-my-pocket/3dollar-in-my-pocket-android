@@ -1,6 +1,9 @@
 package com.zion830.threedollars.ui.mypage
 
 import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
@@ -15,6 +18,7 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
+import com.zion830.threedollars.ui.favorite.FavoriteMyInfoEditActivity
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
@@ -37,6 +41,8 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
 
     private lateinit var myFavoriteAdapter: MyPageRecyclerAdapter
 
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onResume() {
         super.onResume()
         refreshData()
@@ -49,6 +55,13 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     override fun initView() {
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                viewModel.getMyFavoriteFolder()
+            }
+        }
         viewModel.initAllMedals()
         viewModel.getMyFavoriteFolder()
         visitHistoryAdapter = MyPageRecyclerAdapter(
@@ -64,11 +77,9 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             override fun onClick(item: AdAndStoreItem) {
                 val myFavoriteFolderFavoriteModel = item as MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel
                 if (item.storeType == BOSS_STORE) {
-                    val intent = FoodTruckStoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId)
-                    startActivity(intent)
+                    activityResultLauncher.launch(FoodTruckStoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId))
                 } else {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId.toInt())
-                    startActivity(intent)
+                    activityResultLauncher.launch(StoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId.toInt()))
                 }
             }
 
@@ -105,7 +116,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             )
         }
         binding.favoriteMoreTextView.setOnClickListener {
-            startActivity(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
+            activityResultLauncher.launch(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
         }
         observeUiData()
     }
