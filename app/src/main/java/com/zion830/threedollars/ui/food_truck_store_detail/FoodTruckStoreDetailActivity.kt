@@ -152,8 +152,6 @@ class FoodTruckStoreDetailActivity :
 
             if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
 
-            setFavoriteIcon(bossStoreDetailModel?.favorite?.isFavorite)
-
             val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
                 .map { AppearanceDayModel(dayOfTheWeek = it) }
             val appearanceDayModelList = bossStoreDetailModel.appearanceDays?.map { it.toModel() }
@@ -191,9 +189,7 @@ class FoodTruckStoreDetailActivity :
             foodTruckReviewRecyclerAdapter.submitList(bossStoreFeedbackFullModeList.map { it.feedbackFullModelToReviewModel() })
         }
         viewModel.isFavorite.observe(this) {
-            val toastText = if (it) getString(R.string.toast_favorite_add) else getString(R.string.toast_favorite_delete)
             setFavoriteIcon(it)
-            showCustomBlackToast(toastText)
         }
     }
 

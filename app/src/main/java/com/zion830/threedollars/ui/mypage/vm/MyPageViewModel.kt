@@ -12,6 +12,8 @@ import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,7 +111,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
                     _myFavoriteModel.value = it
                 }
             } else {
-                _msgTextId.value = R.string.connection_failed
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }
         }
     }

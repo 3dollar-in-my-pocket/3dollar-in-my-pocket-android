@@ -9,6 +9,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.FavoriteMyFolderDataSourceImpl
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
@@ -32,7 +34,7 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
                     _myFavoriteFolderResponse.value = it
                 }
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }
         }
     }

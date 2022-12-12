@@ -21,6 +21,9 @@ import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.StringUtils.getString
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -113,7 +116,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
 
     fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val startDate = LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
             val data = repository.getStoreDetail(
@@ -122,8 +125,9 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
                 longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
                 startDate
             )
-            _storeInfo.postValue(data.body()?.data)
-            _isExistStoreInfo.postValue(storeId to (data.code() == 200))
+            _storeInfo.value = data.body()?.data
+            _isFavorite.value = data.body()?.data?.favorite?.isFavorite
+            _isExistStoreInfo.value = storeId to (data.code() == 200)
             hideLoading()
         }
     }
@@ -259,6 +263,11 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     fun putFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = repository.putFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
             _isFavorite.value = response.isSuccessful
         }
     }
@@ -266,6 +275,11 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = repository.deleteFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
             _isFavorite.value = !response.isSuccessful
         }
     }

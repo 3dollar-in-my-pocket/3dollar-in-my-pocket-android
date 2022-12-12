@@ -251,8 +251,6 @@ class StoreDetailActivity :
             initStoreInfo(it)
             updateVisitHistory(it)
 
-            setFavoriteIcon(it?.favorite?.isFavorite)
-
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
@@ -276,9 +274,7 @@ class StoreDetailActivity :
             categoryAdapter.submitList(it)
         }
         viewModel.isFavorite.observe(this) {
-            val toastText = if (it) getString(R.string.toast_favorite_add) else getString(R.string.toast_favorite_delete)
             setFavoriteIcon(it)
-            showCustomBlackToast(toastText)
         }
     }
 

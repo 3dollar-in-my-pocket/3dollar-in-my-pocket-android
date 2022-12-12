@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.di.NetworkModule
 import com.zion830.threedollars.network.NewServiceApi
+import com.zion830.threedollars.utils.getErrorMessage
 
 class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
 
@@ -32,7 +33,7 @@ class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResp
                     myFavoriteFolderResponse.cursor.nextCursor
                 )
             } else {
-                LoadResult.Error(Exception(response.message()))
+                LoadResult.Error(Exception(response.errorBody()?.string()?.getErrorMessage()))
             }
         } catch (e: Exception) {
             LoadResult.Error(e)
