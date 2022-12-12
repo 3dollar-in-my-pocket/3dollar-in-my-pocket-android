@@ -45,6 +45,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
@@ -182,10 +183,10 @@ class StoreDetailActivity :
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
         }
-        binding.favoriteButton.setOnClickListener {
+        binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.bottomFavoriteButton.setOnClickListener {
+        binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
         viewModel.addReviewResult.observe(this) {

@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class FoodTruckStoreDetailActivity :
@@ -129,10 +130,10 @@ class FoodTruckStoreDetailActivity :
                 )
             )
         }
-        binding.favoriteButton.setOnClickListener {
+        binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.bottomFavoriteButton.setOnClickListener {
+        binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
         viewModel.bossStoreDetailModel.observe(this@FoodTruckStoreDetailActivity) { bossStoreDetailModel ->
