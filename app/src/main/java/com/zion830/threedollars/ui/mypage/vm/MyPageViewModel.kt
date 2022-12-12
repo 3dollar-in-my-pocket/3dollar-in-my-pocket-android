@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.ext.isNotNullOrEmpty
 import javax.inject.Inject
 
 @HiltViewModel
@@ -102,7 +103,11 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = userDataSource.getMyFavoriteFolder(cursor, size)
             if (response.isSuccessful) {
-                _myFavoriteModel.value = response.body()?.data?.favorites
+                response.body()?.data?.favorites?.filter {
+                    it.isDeleted.not()
+                }?.let {
+                    _myFavoriteModel.value = it
+                }
             } else {
                 _msgTextId.value = R.string.connection_failed
             }
