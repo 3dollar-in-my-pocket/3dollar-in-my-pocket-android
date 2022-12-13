@@ -83,7 +83,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         }
 
         binding.allDeleteTextView.setOnClickListener {
-            viewModel.allDeleteFavorite()
+            val dialog = AllDeleteFavoriteDialog()
+            dialog.setDialogListener(object : AllDeleteFavoriteDialog.DialogListener {
+                override fun click() {
+                    viewModel.allDeleteFavorite()
+                }
+            })
+            dialog.show(supportFragmentManager, dialog.tag)
         }
         binding.infoEditTextView.setOnClickListener {
             activityResultLauncher.launch(
