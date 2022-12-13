@@ -343,4 +343,5 @@
     <string name="favorite_body_edit_hint">리스트에 대한 한줄평을 입력해주세요! 공유 시 사용됩니다.</string>
     <string name="favorite_title_max">%d/36</string>
     <string name="favorite_body_max">%d/150</string>
+    <string name="go_download">다운로드 하러 가기</string>
 </resources>

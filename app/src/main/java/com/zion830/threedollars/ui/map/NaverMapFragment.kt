@@ -25,15 +25,16 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
-    private val viewModel: NaverMapViewModel by viewModels()
     var naverMap: NaverMap? = null
 
     var currentPosition: LatLng? = null
@@ -106,11 +107,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             map.locationOverlay.bearing = 0f
         }
         val storeMarker = GlobalApplication.storeMarker
-        if (!storeMarker.linkUrl.isNullOrEmpty()) {
+        if (storeMarker.imageUrl.isNotEmpty()) {
             map.locationOverlay.icon = OverlayImage.fromResource(R.drawable.ic_marker_noah)
             map.locationOverlay.setOnClickListener {
-                viewModel.eventClick("ADVERTISEMENT", storeMarker.advertisementId.toString())
-                context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(storeMarker.linkUrl)))
+                val dialog = MarkerClickDialog()
+                dialog.show(parentFragmentManager, dialog.tag)
                 return@setOnClickListener false
             }
         }
