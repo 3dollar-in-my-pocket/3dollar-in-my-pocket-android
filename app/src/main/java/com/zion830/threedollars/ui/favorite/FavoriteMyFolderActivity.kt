@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.favorite
 
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -8,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
@@ -42,7 +44,16 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
+
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -56,6 +67,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.favoriteListRecyclerView.adapter = adapter
 
         binding.backImageView.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.deleteTextView.setOnClickListener {
@@ -71,7 +83,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         }
 
         binding.allDeleteTextView.setOnClickListener {
-            viewModel.allDeleteFavorite()
+            val dialog = AllDeleteFavoriteDialog()
+            dialog.setDialogListener(object : AllDeleteFavoriteDialog.DialogListener {
+                override fun click() {
+                    viewModel.allDeleteFavorite()
+                }
+            })
+            dialog.show(supportFragmentManager, dialog.tag)
         }
         binding.infoEditTextView.setOnClickListener {
             activityResultLauncher.launch(

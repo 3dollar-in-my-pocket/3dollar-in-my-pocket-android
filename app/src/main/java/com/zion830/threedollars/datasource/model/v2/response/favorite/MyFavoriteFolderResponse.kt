@@ -36,7 +36,8 @@ data class MyFavoriteFolderResponse(
         val categories: List<MyFavoriteFolderCategoryModel>,
         val storeId: String,
         val storeName: String,
-        val storeType: String
+        val storeType: String,
+        val isDeleted: Boolean
     ) : AdAndStoreItem
 
     data class MyFavoriteFolderMedalModel(

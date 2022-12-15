@@ -32,6 +32,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
 import gun0912.tedimagepicker.util.ToastUtil
+import org.json.JSONObject
 import java.util.*
 
 
@@ -191,4 +192,12 @@ fun Context.goToPermissionSetting() {
             data = Uri.fromParts("package", applicationContext.packageName, null)
         }
     )
+}
+
+fun String.getErrorMessage(): String {
+    return try {
+        JSONObject(this).getString("message")
+    } catch (e: Exception) {
+        ""
+    }
 }

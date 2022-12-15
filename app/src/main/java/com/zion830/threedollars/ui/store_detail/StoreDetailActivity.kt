@@ -10,6 +10,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
@@ -22,6 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
@@ -31,6 +33,7 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -45,6 +48,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
@@ -74,8 +78,17 @@ class StoreDetailActivity :
 
     private var progressDialog: AlertDialog? = null
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
@@ -111,6 +124,7 @@ class StoreDetailActivity :
         binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.deleteTextView.setOnClickListener {
@@ -182,10 +196,10 @@ class StoreDetailActivity :
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
         }
-        binding.favoriteButton.setOnClickListener {
+        binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.bottomFavoriteButton.setOnClickListener {
+        binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
         viewModel.addReviewResult.observe(this) {
@@ -237,8 +251,6 @@ class StoreDetailActivity :
             initStoreInfo(it)
             updateVisitHistory(it)
 
-            setFavoriteIcon(it?.favorite?.isFavorite)
-
             reviewAdapter.submitList(it?.reviews)
             photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
@@ -262,9 +274,7 @@ class StoreDetailActivity :
             categoryAdapter.submitList(it)
         }
         viewModel.isFavorite.observe(this) {
-            val toastText = if (it) getString(R.string.toast_favorite_add) else getString(R.string.toast_favorite_delete)
             setFavoriteIcon(it)
-            showCustomBlackToast(toastText)
         }
     }
 
