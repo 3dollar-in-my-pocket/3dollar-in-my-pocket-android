@@ -46,7 +46,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK, Intent(this@FavoriteMyFolderActivity, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
     }
@@ -67,7 +67,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.favoriteListRecyclerView.adapter = adapter
 
         binding.backImageView.setOnClickListener {
-            setResult(RESULT_OK, Intent(this, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
         binding.deleteTextView.setOnClickListener {

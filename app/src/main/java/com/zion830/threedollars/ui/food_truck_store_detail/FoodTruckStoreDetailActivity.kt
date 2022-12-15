@@ -48,7 +48,7 @@ class FoodTruckStoreDetailActivity :
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK, Intent(this@FoodTruckStoreDetailActivity, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
     }
@@ -97,7 +97,7 @@ class FoodTruckStoreDetailActivity :
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
 
         binding.btnBack.setOnClickListener {
-            setResult(RESULT_OK, Intent(this, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
         binding.topReviewTextView.setOnClickListener {

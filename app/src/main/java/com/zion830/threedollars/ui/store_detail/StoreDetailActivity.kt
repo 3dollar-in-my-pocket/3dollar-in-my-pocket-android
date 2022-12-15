@@ -80,7 +80,7 @@ class StoreDetailActivity :
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK, Intent(this@StoreDetailActivity, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
     }
@@ -124,7 +124,7 @@ class StoreDetailActivity :
         binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
-            setResult(RESULT_OK, Intent(this, MainActivity::class.java))
+            setResult(RESULT_OK)
             finish()
         }
         binding.deleteTextView.setOnClickListener {
