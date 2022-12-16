@@ -105,11 +105,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = userDataSource.getMyFavoriteFolder(cursor, size)
             if (response.isSuccessful) {
-                response.body()?.data?.favorites?.filter {
-                    it.isDeleted.not()
-                }?.let {
-                    _myFavoriteModel.value = it
-                }
+                _myFavoriteModel.value = response.body()?.data?.favorites
             } else {
                 response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }

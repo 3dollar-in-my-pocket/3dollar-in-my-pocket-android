@@ -23,12 +23,9 @@ class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResp
 
             if (response.isSuccessful) {
                 val myFavoriteFolderResponse = response.body()?.data ?: return LoadResult.Error(NullPointerException())
-                val filterFavorites = response.body()?.data?.favorites?.filter {
-                    it.isDeleted.not()
-                } ?: listOf()
 
                 LoadResult.Page(
-                    data = filterFavorites,
+                    data = myFavoriteFolderResponse.favorites,
                     null,
                     myFavoriteFolderResponse.cursor.nextCursor
                 )
