@@ -103,7 +103,9 @@ class MyFavoriteViewHolder(parent: ViewGroup, private val onClickListener: OnIte
             }
             storeCategoriesTextView.text = categories
             itemLinearLayout.setOnClickListener {
-                onClickListener.onClick(item)
+                if (!item.isDeleted) {
+                    onClickListener.onClick(item)
+                }
             }
         }
     }
