@@ -264,7 +264,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = repository.putFavorite(storeType, storeId)
             if (response.isSuccessful) {
-                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+                showCustomBlackToast(getString(R.string.toast_favorite_add))
             } else {
                 response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }
