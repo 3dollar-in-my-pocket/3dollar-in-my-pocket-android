@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
-import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
@@ -28,12 +27,11 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     private val adapter: FavoriteMyFolderRecyclerAdapter by lazy {
         FavoriteMyFolderRecyclerAdapter(object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
-                val intent = if (item.storeType == Constants.BOSS_STORE) {
-                    FoodTruckStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId)
+                if (item.storeType == Constants.BOSS_STORE) {
+                    activityResultLauncher.launch(FoodTruckStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
                 } else {
-                    StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt())
+                    activityResultLauncher.launch(StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt()))
                 }
-                startActivity(intent)
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
@@ -59,6 +57,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         ) { result ->
             if (result.resultCode == RESULT_OK) {
                 viewModel.getMyFavoriteFolder()
+                adapter.refresh()
             }
         }
 
