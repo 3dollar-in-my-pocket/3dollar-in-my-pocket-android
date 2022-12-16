@@ -43,6 +43,7 @@
                 loadImage="@{viewModel.popupsResponse.imageUrl}"
                 android:layout_width="0dp"
                 android:layout_height="160dp"
+                android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
