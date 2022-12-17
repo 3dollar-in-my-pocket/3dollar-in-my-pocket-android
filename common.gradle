@@ -23,15 +23,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "3dollor_${versionName}(${versionCode})"
     }
-
-    buildTypes {
-        release {
-//            debuggable true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-            signingConfig signingConfigs.release
-        }
-    }
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
