@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.map
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,12 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -37,6 +30,7 @@ import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -113,24 +107,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
         val storeMarker = GlobalApplication.storeMarker
         if (storeMarker.imageUrl.isNotEmpty()) {
-            Glide.with(requireContext()).asBitmap().load(storeMarker.imageUrl).diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .listener(object : RequestListener<Bitmap> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean) = false
-
-                    override fun onResourceReady(
-                        resource: Bitmap,
-                        model: Any?,
-                        target: Target<Bitmap>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            map.locationOverlay.icon = OverlayImage.fromBitmap(resource)
-                        }
-                        return false
-                    }
-                }).submit()
+            lifecycleScope.launch(Dispatchers.Main) {
+                map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
+                    storeMarker.imageUrl.urlToBitmap().get()
+                })
+            }
             map.locationOverlay.setOnClickListener {
                 val dialog = MarkerClickDialog()
                 dialog.show(parentFragmentManager, dialog.tag)
