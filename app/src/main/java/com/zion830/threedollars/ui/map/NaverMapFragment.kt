@@ -1,8 +1,6 @@
 package com.zion830.threedollars.ui.map
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -25,13 +23,14 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -108,7 +107,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
         val storeMarker = GlobalApplication.storeMarker
         if (storeMarker.imageUrl.isNotEmpty()) {
-            map.locationOverlay.icon = OverlayImage.fromResource(R.drawable.ic_marker_noah)
+            lifecycleScope.launch(Dispatchers.Main) {
+                map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
+                    storeMarker.imageUrl.urlToBitmap().get()
+                })
+            }
             map.locationOverlay.setOnClickListener {
                 val dialog = MarkerClickDialog()
                 dialog.show(parentFragmentManager, dialog.tag)
