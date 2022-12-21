@@ -35,10 +35,6 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
     val isPostDevice: LiveData<Boolean>
         get() = _isPostDevice
 
-    val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
-        it.isNullOrBlank()
-    }
-
     private val latestSocialType: MutableLiveData<LoginType> =
         MutableLiveData(LoginType.of(SharedPrefUtils.getLoginType()))
 

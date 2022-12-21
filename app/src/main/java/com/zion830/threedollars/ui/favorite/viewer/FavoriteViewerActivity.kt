@@ -1,6 +1,8 @@
 package com.zion830.threedollars.ui.favorite.viewer
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.zion830.threedollars.BR
 import com.zion830.threedollars.Constants
@@ -10,7 +12,9 @@ import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.login.dialog.LoginRequestDialog
+import com.zion830.threedollars.ui.login.name.InputNameActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.toStringDefault
@@ -21,6 +25,15 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     private lateinit var favoriteId: String
     private val adapter by lazy {
         FavoriteViewerAdapter(viewModel)
+    }
+    private var selectedItem: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel? = null
+    private val inputNameLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            selectedItem?.apply {
+                moveToDetailActivity(this)
+            }
+            selectedItem = null
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,14 +55,16 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                 is FavoriteViewerViewModel.Event.Viewer -> {
                     val item = it.item
                     if (GlobalApplication.isLoggedIn) {
-                        val intent = if (item.storeType == Constants.BOSS_STORE) {
-                            FoodTruckStoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId)
-                        } else {
-                            StoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId.toInt())
-                        }
-                        startActivity(intent)
+                        moveToDetailActivity(item)
                     } else {
-                        LoginRequestDialog().show(supportFragmentManager,"")
+                        LoginRequestDialog().setLoginCallBack { isNameUpdate ->
+                            if (isNameUpdate) {
+                                moveToDetailActivity(item)
+                            } else {
+                                selectedItem = item
+                                inputNameLauncher.launch(Intent(this, InputNameActivity::class.java))
+                            }
+                        }.show(supportFragmentManager, "")
                     }
                 }
             }
@@ -65,4 +80,12 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
 
     }
 
+    private fun moveToDetailActivity(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
+        val intent = if (item.storeType == Constants.BOSS_STORE) {
+            FoodTruckStoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId)
+        } else {
+            StoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId.toInt())
+        }
+        startActivity(intent)
+    }
 }

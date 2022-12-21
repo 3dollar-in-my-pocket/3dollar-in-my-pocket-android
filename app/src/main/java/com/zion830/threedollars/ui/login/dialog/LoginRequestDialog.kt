@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.login.dialog
 
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -41,7 +40,7 @@ import zion830.com.common.base.onSingleClick
 class LoginRequestDialog : BottomSheetDialogFragment() {
 
     private val viewModel: LoginViewModel by viewModels()
-
+    private var callBack:(Boolean) ->Unit = {}
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DialogBottomLoginRequestBinding.inflate(inflater)
         observeUiData()
@@ -148,12 +147,13 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                             viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
                         }
                     }
+                    callBack.invoke(true)
                     dismiss()
                 }
                 is ResultWrapper.GenericError -> {
                     when (it.code) {
                         400 -> showToast(R.string.connection_failed)
-                        404 -> addInputNameFragment()
+                        404 -> callBack.invoke(false)
                         503 -> showToast(R.string.server_500)
                         500, 502 -> showToast(R.string.connection_failed)
                         else -> showToast(R.string.connection_failed)
@@ -163,17 +163,10 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
+                callBack.invoke(true)
                 dismiss()
             }
         }
-    }
-
-    private fun addInputNameFragment() {
-//        supportFragmentManager.addNewFragment(
-//            R.id.layout_container,
-//            InputNameFragment.getInstance(),
-//            InputNameFragment::class.java.name
-//        )
     }
 
     private fun tryKakaoLogin() {
@@ -193,6 +186,11 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                 LoginClient.instance.loginWithKakaoAccount(this, callback = loginResCallback)
             }
         }
+    }
+
+    fun setLoginCallBack(callBack:(Boolean) -> Unit):LoginRequestDialog{
+        this.callBack = callBack
+        return this
     }
 
 }
