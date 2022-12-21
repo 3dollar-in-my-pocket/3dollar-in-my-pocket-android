@@ -1,20 +1,19 @@
 package com.zion830.threedollars.ui.favorite.viewer
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.zion830.threedollars.BR
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
+import com.zion830.threedollars.*
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.login.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.name.InputNameActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.toStringDefault
@@ -78,6 +77,25 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
 
     override fun initView() {
 
+    }
+
+    override fun finish() {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val isBackMainActivity = manager.appTasks.isEmpty() || manager.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                it.appTasks.forEach { task ->
+                    if (task.taskInfo.topActivity?.className?.contains("MainActivity") == true) return@let false
+                }
+                return@let true
+            } else {
+                it.getRunningTasks(10).forEach { task ->
+                    if (task.topActivity?.className?.contains("MainActivity") == true) return@let false
+                }
+                return@let true
+            }
+        }
+        if (isBackMainActivity) MainActivity.getIntent(this)
+        super.finish()
     }
 
     private fun moveToDetailActivity(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
