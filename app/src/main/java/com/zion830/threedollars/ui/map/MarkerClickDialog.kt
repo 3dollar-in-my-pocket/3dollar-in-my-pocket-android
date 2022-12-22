@@ -6,16 +6,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.viewModels
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
-import com.zion830.threedollars.GlobalApplication.Companion.storeMarker
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
-import com.zion830.threedollars.databinding.DialogMarketingBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
+
 
 @AndroidEntryPoint
 class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>(R.layout.dialog_marker_click) {
@@ -37,8 +36,16 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>(R.layout.
                 context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.popupsResponse.value?.linkUrl)))
             }
         }
+
         binding.closeImageView.setOnClickListener {
             dismiss()
+        }
+
+        viewModel.popupsResponse.observe(viewLifecycleOwner) {
+            Glide.with(this)
+                .load(it.imageUrl)
+                .transform(GranularRoundedCorners(30f, 30f, 0f, 0f))
+                .into(binding.bannerImageView)
         }
     }
 

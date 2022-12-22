@@ -40,7 +40,6 @@
 
             <ImageView
                 android:id="@+id/bannerImageView"
-                loadImage="@{viewModel.popupsResponse.imageUrl}"
                 android:layout_width="0dp"
                 android:layout_height="160dp"
                 android:scaleType="fitXY"
