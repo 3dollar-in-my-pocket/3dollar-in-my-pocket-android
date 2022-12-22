@@ -8,7 +8,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.CircleOverlay
 import com.zion830.threedollars.R
-import com.zion830.threedollars.customview.NaverMapFragment
+import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.utils.SizeUtils

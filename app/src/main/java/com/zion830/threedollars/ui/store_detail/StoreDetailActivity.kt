@@ -10,6 +10,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
@@ -20,7 +21,9 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
@@ -30,6 +33,7 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -44,6 +48,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
@@ -73,8 +78,17 @@ class StoreDetailActivity :
 
     private var progressDialog: AlertDialog? = null
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
@@ -110,13 +124,12 @@ class StoreDetailActivity :
         binding.rvVisitHistory.adapter = visitHistoryAdapter
 
         binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
-        binding.btnDelete.setOnClickListener {
-            binding.btnDelete.setOnClickListener {
-                DeleteStoreDialog.getInstance(storeId)
-                    .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-            }
+        binding.deleteTextView.setOnClickListener {
+            DeleteStoreDialog.getInstance(storeId)
+                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
         binding.btnAddPhoto.setOnClickListener {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
@@ -182,6 +195,12 @@ class StoreDetailActivity :
         binding.btnCertification.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
+        }
+        binding.favoriteButton.onSingleClick {
+            clickFavoriteButton()
+        }
+        binding.bottomFavoriteButton.onSingleClick {
+            clickFavoriteButton()
         }
         viewModel.addReviewResult.observe(this) {
             EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
@@ -254,6 +273,29 @@ class StoreDetailActivity :
         viewModel.categoryInfo.observe(this) {
             categoryAdapter.submitList(it)
         }
+        viewModel.isFavorite.observe(this) {
+            setFavoriteIcon(it)
+        }
+    }
+
+    private fun clickFavoriteButton() {
+        if (viewModel.isFavorite.value == true) {
+            viewModel.deleteFavorite(USER_STORE, storeId.toString())
+        } else {
+            viewModel.putFavorite(USER_STORE, storeId.toString())
+        }
+    }
+
+    private fun setFavoriteIcon(isFavorite: Boolean?) {
+        if (isFavorite == null) {
+            showToast(R.string.connection_failed)
+            return
+        }
+
+        val favoriteIcon = if (isFavorite) R.drawable.ic_road_food_favorite_on else R.drawable.ic_road_food_favorite_off
+
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
     private fun startCertification() {
@@ -383,11 +425,19 @@ class StoreDetailActivity :
                 locationResult.addOnSuccessListener {
                     if (it != null) {
                         viewModel.requestStoreInfo(storeId, it.latitude, it.longitude)
+                    } else {
+                        showToast(getString(R.string.exist_location_error))
+                        finish()
                     }
                 }
+            } else {
+                showToast(getString(R.string.exist_location_error))
+                finish()
             }
         } catch (e: SecurityException) {
             Log.e(this::class.java.name, e.message ?: "")
+            showToast(getString(R.string.exist_location_error))
+            finish()
         }
     }
 

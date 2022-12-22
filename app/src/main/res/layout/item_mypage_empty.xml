@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rect_white_radius16"
+        android:backgroundTint="@color/gray95"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="20dp">
+
+        <ImageView
+            android:id="@+id/emptyImageView"
+            loadImage="@{item.emptyImage}"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="16dp"
+            tools:src="@drawable/icon_menu_bungeoppang_selected" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/emptyTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@{item.emptyTitle}"
+                android:textColor="@color/gray30"
+                android:textSize="16sp"
+                tools:text="강남역 0번 출구" />
+
+            <TextView
+                android:id="@+id/emptyBodyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:text="@{item.emptyBody}"
+                android:textColor="@color/gray60"
+                android:textSize="12sp"
+                tools:text="붕어빵 땅콩과자 호떡" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

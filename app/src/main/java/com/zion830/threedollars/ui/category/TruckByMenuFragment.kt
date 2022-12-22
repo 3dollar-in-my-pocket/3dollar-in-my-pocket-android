@@ -9,7 +9,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
-import com.zion830.threedollars.datasource.model.v2.response.HomeStoreEmptyResponse
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -99,16 +99,23 @@ class TruckByMenuFragment :
                     binding.itemStoreListAd.run {
                         tvAdTitle.text = popups[0].title
                         popups[0].fontColor?.let {
-                            tvAdTitle.setTextColor(it.toColorInt())
-                            tvAdBody.setTextColor(it.toColorInt())
+                            if (it.isNotEmpty()) {
+                                tvAdTitle.setTextColor(it.toColorInt())
+                                tvAdBody.setTextColor(it.toColorInt())
+                            }
                         }
                         tvAdBody.text = popups[0].subTitle
 
-                        popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+                        popups[0].bgColor?.let {
+                            if (it.isNotEmpty()) {
+                                layoutItem.setBackgroundColor(it.toColorInt())
+                            }
+                        }
 
                         ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                         tvDetail.setOnClickListener {
+                            EventTracker.logEvent(Constants.FOODTRUCK_LIST_AD_BANNER_CLICKED)
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                         }
                     }
@@ -123,11 +130,11 @@ class TruckByMenuFragment :
             }
         }
 
-        val homeStoreEmptyResponseList = listOf(HomeStoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
+        val storeEmptyResponseList = listOf(StoreEmptyResponse(R.string.recruit_boss_title, R.string.recruit_boss_body))
 
         viewModel.storeByReview.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByReviewAdapters.submitEmptyList(homeStoreEmptyResponseList)
+                truckStoreByReviewAdapters.submitEmptyList(storeEmptyResponseList)
             } else {
                 truckStoreByReviewAdapters.submitList(it)
             }
@@ -135,7 +142,7 @@ class TruckByMenuFragment :
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty()) {
-                truckStoreByDistanceAdapters.submitEmptyList(homeStoreEmptyResponseList)
+                truckStoreByDistanceAdapters.submitEmptyList(storeEmptyResponseList)
             } else {
                 truckStoreByDistanceAdapters.submitList(it)
             }

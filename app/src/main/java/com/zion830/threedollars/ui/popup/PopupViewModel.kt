@@ -4,12 +4,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.PopupDataSource
-import com.zion830.threedollars.datasource.PopupDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +22,16 @@ class PopupViewModel @Inject constructor(private val popupDataSource: PopupDataS
 
     fun getPopups(position: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            popups.postValue(popupDataSource.getPopups(position = position).body()?.data)
+            val popupList = popupDataSource.getPopups(position = position).body()?.data?.map {
+                it.copy(
+                    bgColor = it.bgColor.toStringDefault(),
+                    fontColor = it.fontColor.toStringDefault(),
+                    linkUrl = it.linkUrl.toStringDefault(),
+                    subTitle = it.subTitle.toStringDefault(),
+                    title = it.subTitle.toStringDefault()
+                )
+            } ?: listOf()
+            popups.postValue(popupList)
         }
     }
 }

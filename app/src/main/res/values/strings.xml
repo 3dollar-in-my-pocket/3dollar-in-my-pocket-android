@@ -13,6 +13,7 @@
     <string name="updated_at">업데이트</string>
     <string name="about_medal">칭호 살펴보기</string>
     <string name="no_visit_history">방문 인증 내역이 없어요!</string>
+    <string name="no_visit_history_msg">방문 인증으로 정확도를 높혀봐요.</string>
     <string name="try_visit_history">방문을 인증해보세요!</string>
     <string name="try_visit_history_msg">아직 내가 인증한 가게가 없어요 ㅠㅠ</string>
     <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
@@ -39,6 +40,7 @@
     <string name="success_signup">로그인 성공! 환영합니다! ^_^</string>
     <string name="server_500">서버 점검 중!</string>
     <string name="server_500_msg">서버 점검 중!</string>
+    <string name="exist_location_error">위치 정보가 없습니다.\n다시 확인 해주세요.</string>
 
     <string name="my_page_show_all">전체보기</string>
     <string name="my_page_stores_empty">등록한 음식점이 없어요</string>
@@ -305,7 +307,7 @@
     <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
     <string name="food_truck_menu_more">%d개의 메뉴가 더 있습니다.</string>
     <string name="ready_ing">준비중</string>
-    <string name="getting_ready_now">지금은 준비중이에요!</string>
+    <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
 
     <string name="error_429">일시적으로 너무 많은 요청이 발생하였습니다. 잠시 후 다시 이용해주세요.</string>
@@ -324,4 +326,25 @@
     <string name="term_2">(선택) 마케팅 활용 및 광고성 정보 수신 동의</string>
     <string name="agree_continue">동의하고 계속하기</string>
     <string name="push">푸시 알림</string>
+    <string name="favorite">즐겨찾기</string>
+    <string name="mypage_favorite_title">내 음식 플리 들어볼래?</string>
+    <string name="mypage_favorite_empty_title">즐겨찾기 리스트가 없어요!</string>
+    <string name="mypage_favorite_empty_body">가게 상세에서 추가해주세요.</string>
+    <string name="toast_favorite_add">즐겨찾기가 추가 되었습니다!</string>
+    <string name="toast_favorite_delete">즐겨찾기가 삭제 되었습니다!</string>
+    <string name="toast_favorite_limit_count">즐겨찾기는 최대 %d개 까지 가능합니다!</string>
+    <string name="info_edit">정보 수정하기</string>
+    <string name="do_delete">삭제하기</string>
+    <string name="all_delete">전체 삭제</string>
+    <string name="complete">완료</string>
+    <string name="favorite_title">%s님의\n%s</string>
+    <string name="count_list">%d개의 리스트</string>
+    <string name="favorite_empty">즐겨찾기 리스트가 없어요.\n가게 상세에서 추가해주세요!</string>
+    <string name="favorite_body_edit_hint">리스트에 대한 한줄평을 입력해주세요! 공유 시 사용됩니다.</string>
+    <string name="favorite_title_max">%d/36</string>
+    <string name="favorite_body_max">%d/150</string>
+    <string name="go_download">다운로드 하러 가기</string>
+    <string name="cancel">취소</string>
+    <string name="delete">삭제</string>
+    <string name="dialog_all_delete_favorite_title">나의 즐겨찾기 리스트를\n모두 삭제할까요?</string>
 </resources>

@@ -7,14 +7,18 @@ import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
+import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.ext.isNotNullOrEmpty
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +38,9 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
 
     private val _allMedals: MutableLiveData<List<Medal>> = MutableLiveData()
     val allMedals: LiveData<List<Medal>> = _allMedals
+
+    private val _myFavoriteModel: MutableLiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> = MutableLiveData()
+    val myFavoriteModel: LiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> get() = _myFavoriteModel
 
     fun initAllMedals() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -90,6 +97,17 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
             } else {
                 _msgTextId.postValue(R.string.error_change_medal)
                 _msgTextId.postValue(-1)
+            }
+        }
+    }
+
+    fun getMyFavoriteFolder(cursor: String? = null, size: Int = 5) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = userDataSource.getMyFavoriteFolder(cursor, size)
+            if (response.isSuccessful) {
+                _myFavoriteModel.value = response.body()?.data?.favorites
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }
         }
     }

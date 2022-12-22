@@ -1,11 +1,13 @@
 package com.zion830.threedollars.network
 
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
+import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
@@ -170,7 +172,7 @@ interface NewServiceApi {
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 
-    @GET("/api/v1/popups")
+    @GET("/api/v1/advertisements")
     suspend fun getPopups(
         @Query("platform") platform: String = "AOS",
         @Query("position") position: String
@@ -232,4 +234,25 @@ interface NewServiceApi {
 
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
+
+    @GET("/api/v1/favorite/store/folder/my")
+    suspend fun getMyFavoriteFolder(
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int
+    ): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
+    @POST("/api/v1/event/click/{targetType}/{targetId}")
+    suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType : String= FAVORITE_STORE): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun updateFavoriteInfo(@Path("favoriteType") favoriteType: String = FAVORITE_STORE, @Body favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
 }

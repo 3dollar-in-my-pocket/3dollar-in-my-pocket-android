@@ -21,11 +21,16 @@ import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.StringUtils.getString
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import retrofit2.Response
+import zion830.com.common.base.BaseResponse
 import zion830.com.common.base.BaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -105,9 +110,13 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
 
+    // TODO: SingleLiveData로 수정 필요
+    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
+    val isFavorite: LiveData<Boolean> get() = _isFavorite
+
     fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
         showLoading()
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val startDate = LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
             val data = repository.getStoreDetail(
@@ -116,8 +125,9 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
                 longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
                 startDate
             )
-            _storeInfo.postValue(data.body()?.data)
-            _isExistStoreInfo.postValue(storeId to (data.code() == 200))
+            _storeInfo.value = data.body()?.data
+            _isFavorite.value = data.body()?.data?.favorite?.isFavorite
+            _isExistStoreInfo.value = storeId to (data.code() == 200)
             hideLoading()
         }
     }
@@ -247,6 +257,30 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.deleteImage(selectedImage.imageId)
             _photoDeleted.postValue(data.isSuccessful)
+        }
+    }
+
+    fun putFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.putFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_add))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
+            _isFavorite.value = response.isSuccessful
+        }
+    }
+
+    fun deleteFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.deleteFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
+            _isFavorite.value = !response.isSuccessful
         }
     }
 

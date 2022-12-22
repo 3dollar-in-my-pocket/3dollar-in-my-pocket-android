@@ -15,11 +15,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.ext.toStringDefault
 import java.net.URISyntaxException
 
 @AndroidEntryPoint
@@ -38,19 +41,17 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
             }
             tvTodayNotPopup.setOnClickListener {
                 viewModel?.popups?.value?.let { popup ->
-                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl)
+                    SharedPrefUtils.setPopupUrl(popup[0].linkUrl!!)
                 }
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
-                firebaseAnalytics.logEvent("splash_popup_clicked") {
-                    param("referral", "splash_popup_page")
-                }
+                EventTracker.logEvent(Constants.SPLASH_POPUP_CLICKED)
 
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel?.popups?.value?.let { popups ->
-                    webView.loadUrl(popups[0].linkUrl)
+                    webView.loadUrl(popups[0].linkUrl!!)
                 }
             }
             webView.apply {

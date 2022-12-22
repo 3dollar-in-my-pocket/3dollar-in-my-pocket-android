@@ -3,11 +3,14 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
+import com.zion830.threedollars.utils.StringUtils.getString
+import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -29,6 +32,10 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: 
     private val _postFeedbackResponse = MutableLiveData<Response<BaseResponse<String>>>()
     val postFeedbackResponse: LiveData<Response<BaseResponse<String>>> get() = _postFeedbackResponse
 
+    // TODO: SingleLiveData로 수정 필요
+    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
+    val isFavorite: LiveData<Boolean> get() = _isFavorite
+
     fun getFoodTruckStoreDetail(
         bossStoreId: String,
         latitude: Double,
@@ -41,6 +48,7 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: 
                 longitude = longitude
             ).body()?.data?.let {
                 _bossStoreDetailModel.value = it
+                _isFavorite.value = it.favorite.isFavorite
             }
         }
     }
@@ -60,6 +68,30 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: 
         viewModelScope.launch {
             _postFeedbackResponse.value =
                 repository.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
+        }
+    }
+
+    fun putFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.putFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_add))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
+            _isFavorite.value = response.isSuccessful
+        }
+    }
+
+    fun deleteFavorite(storeType: String, storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val response = repository.deleteFavorite(storeType, storeId)
+            if (response.isSuccessful) {
+                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+            } else {
+                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            }
+            _isFavorite.value = !response.isSuccessful
         }
     }
 }

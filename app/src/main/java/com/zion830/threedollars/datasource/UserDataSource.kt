@@ -3,13 +3,10 @@ package com.zion830.threedollars.datasource
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.POST
-import retrofit2.http.PUT
 import zion830.com.common.base.BaseResponse
 
 interface UserDataSource {
@@ -54,4 +51,13 @@ interface UserDataSource {
 
     suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
+    suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    suspend fun eventClick(targetType: String, targetId: String): Response<BaseResponse<String>>
+
+    suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
+
+    suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
+
+    suspend fun updateFavoriteInfo(favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
 }

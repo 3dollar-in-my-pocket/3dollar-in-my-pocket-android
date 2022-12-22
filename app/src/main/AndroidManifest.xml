@@ -60,11 +60,18 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.favorite.FavoriteMyFolderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.favorite.FavoriteMyInfoEditActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SchemeActivity"
             android:exported="true"
@@ -72,8 +79,10 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>

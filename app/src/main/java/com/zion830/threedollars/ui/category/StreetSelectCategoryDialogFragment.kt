@@ -19,7 +19,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -134,9 +133,7 @@ class StreetSelectCategoryDialogFragment :
 
                 binding.cdAdCategory.setOnClickListener {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                    firebaseAnalytics.logEvent(Constants.CATEGORY_BANNER_CLICKED) {
-                        param("referral", "category_page")
-                    }
+                    EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
                 }
             }
             binding.cdAdCategory.isVisible = popups.isNotEmpty()

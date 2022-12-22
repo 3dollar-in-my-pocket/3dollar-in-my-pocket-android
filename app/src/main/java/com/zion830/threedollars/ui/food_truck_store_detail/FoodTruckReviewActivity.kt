@@ -12,6 +12,7 @@ import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
 import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.util.ToastUtil.context
@@ -64,15 +65,7 @@ class FoodTruckReviewActivity :
 
         viewModel.postFeedbackResponse.observe(this) {
             if (it.isSuccessful) {
-                val inflater = LayoutInflater.from(context)
-                val binding: CustomFoodTruckToastBinding =
-                    DataBindingUtil.inflate(inflater, R.layout.custom_food_truck_toast, null, false)
-
-                Toast(context).apply {
-                    setGravity(Gravity.BOTTOM or Gravity.CENTER, 0, 0)
-                    duration = Toast.LENGTH_LONG
-                    view = binding.root
-                }.show()
+                showCustomBlackToast(getString(R.string.review_toast))
                 val intent = FoodTruckStoreDetailActivity.getIntent(this, storeId)
                 startActivity(intent)
                 finish()

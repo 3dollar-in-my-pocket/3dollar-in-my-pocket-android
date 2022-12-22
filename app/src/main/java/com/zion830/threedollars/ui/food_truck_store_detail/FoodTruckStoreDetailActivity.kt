@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
@@ -21,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class FoodTruckStoreDetailActivity :
@@ -43,9 +46,16 @@ class FoodTruckStoreDetailActivity :
     private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment =
         FoodTruckStoreDetailNaverMapFragment()
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
@@ -87,17 +97,17 @@ class FoodTruckStoreDetailActivity :
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
 
         binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.topReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
         }
         binding.bottomReviewTextView.setOnClickListener {
-            val intent = FoodTruckReviewActivity.getIntent(this, storeId)
-            startActivity(intent)
-            finish()
+            moveFoodTruckReviewActivity()
+        }
+        binding.feedbackReviewTextView.setOnClickListener {
+            moveFoodTruckReviewActivity()
         }
         binding.btnShare.setOnClickListener {
             EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
@@ -130,9 +140,17 @@ class FoodTruckStoreDetailActivity :
                 )
             )
         }
-
+        binding.favoriteButton.onSingleClick {
+            clickFavoriteButton()
+        }
+        binding.bottomFavoriteButton.onSingleClick {
+            clickFavoriteButton()
+        }
         viewModel.bossStoreDetailModel.observe(this@FoodTruckStoreDetailActivity) { bossStoreDetailModel ->
             foodTruckCategoriesAdapter.submitList(bossStoreDetailModel.categories)
+            val isClosed = bossStoreDetailModel.openStatus?.status == "CLOSED"
+
+            if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
 
             val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
                 .map { AppearanceDayModel(dayOfTheWeek = it) }
@@ -170,8 +188,35 @@ class FoodTruckStoreDetailActivity :
                 "${bossStoreFeedbackFullModeList.sumOf { it.count }}개"
             foodTruckReviewRecyclerAdapter.submitList(bossStoreFeedbackFullModeList.map { it.feedbackFullModelToReviewModel() })
         }
+        viewModel.isFavorite.observe(this) {
+            setFavoriteIcon(it)
+        }
+    }
 
+    private fun moveFoodTruckReviewActivity() {
+        val intent = FoodTruckReviewActivity.getIntent(this, storeId)
+        startActivity(intent)
+        finish()
+    }
 
+    private fun clickFavoriteButton() {
+        if (viewModel.isFavorite.value == true) {
+            viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
+        } else {
+            viewModel.putFavorite(Constants.BOSS_STORE, storeId)
+        }
+    }
+
+    private fun setFavoriteIcon(isFavorite: Boolean?) {
+        if (isFavorite == null) {
+            showToast(R.string.connection_failed)
+            return
+        }
+
+        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
     companion object {
