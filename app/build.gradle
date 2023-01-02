@@ -25,13 +25,24 @@ android {
     }
     buildTypes {
         release {
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_release')]
+//            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_release'),
+                                    appName3dollar : "@string/app_name_3dollar"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key_release')}\""
         }
         debug {
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev')]
+            applicationIdSuffix '.dev'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            debuggable true
+            signingConfig signingConfigs.debug
+            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev'),
+                                    appName3dollar : "@string/app_name_3dollar_debug"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
