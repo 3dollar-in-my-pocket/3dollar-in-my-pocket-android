@@ -31,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import zion830.com.common.base.convertDpToPx
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -111,6 +112,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
                     storeMarker.imageUrl.urlToBitmap().get()
                 })
+                map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
+                map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
             }
             map.locationOverlay.setOnClickListener {
                 val dialog = MarkerClickDialog()
