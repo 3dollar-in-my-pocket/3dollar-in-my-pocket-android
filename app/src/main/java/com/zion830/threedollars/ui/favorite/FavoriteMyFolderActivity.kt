@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.favorite
 
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -26,12 +27,11 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     private val adapter: FavoriteMyFolderRecyclerAdapter by lazy {
         FavoriteMyFolderRecyclerAdapter(object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
-                val intent = if (item.storeType == Constants.BOSS_STORE) {
-                    FoodTruckStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId)
+                if (item.storeType == Constants.BOSS_STORE) {
+                    activityResultLauncher.launch(FoodTruckStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
                 } else {
-                    StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt())
+                    activityResultLauncher.launch(StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt()))
                 }
-                startActivity(intent)
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
@@ -42,12 +42,22 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
+
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
+
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
                 viewModel.getMyFavoriteFolder()
+                adapter.refresh()
             }
         }
 
@@ -56,6 +66,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.favoriteListRecyclerView.adapter = adapter
 
         binding.backImageView.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.deleteTextView.setOnClickListener {
@@ -71,7 +82,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         }
 
         binding.allDeleteTextView.setOnClickListener {
-            viewModel.allDeleteFavorite()
+            val dialog = AllDeleteFavoriteDialog()
+            dialog.setDialogListener(object : AllDeleteFavoriteDialog.DialogListener {
+                override fun click() {
+                    viewModel.allDeleteFavorite()
+                }
+            })
+            dialog.show(supportFragmentManager, dialog.tag)
         }
         binding.infoEditTextView.setOnClickListener {
             activityResultLauncher.launch(

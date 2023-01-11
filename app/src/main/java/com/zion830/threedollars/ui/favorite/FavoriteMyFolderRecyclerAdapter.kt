@@ -35,11 +35,15 @@ class FavoriteMyFolderRecyclerAdapter(
         if (item != null) {
             holder.bind(item, listener)
             holder.binding.deleteImageView.isVisible = isDelete
-            holder.binding.itemLinearLayout.isClickable = isDelete.not()
             holder.binding.storeCategoriesTextView.text =
                 item.categories.joinToString(" ") { "#${it.name}" }
             holder.binding.deleteImageView.setOnClickListener {
                 deleteListener.onClick(item)
+            }
+            holder.binding.itemLinearLayout.setOnClickListener {
+                if (!item.isDeleted && isDelete.not()) {
+                    listener.onClick(item)
+                }
             }
         }
     }

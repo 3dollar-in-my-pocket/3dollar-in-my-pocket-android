@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -44,9 +46,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
-                firebaseAnalytics.logEvent("splash_popup_clicked") {
-                    param("referral", "splash_popup_page")
-                }
+                EventTracker.logEvent(Constants.SPLASH_POPUP_CLICKED)
 
                 ivPopup.isVisible = false
                 webView.isVisible = true

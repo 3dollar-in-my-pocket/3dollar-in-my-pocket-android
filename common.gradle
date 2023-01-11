@@ -16,21 +16,12 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 42
-        versionName "3.0.3"
+        versionCode 46
+        versionName "3.1.1"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "3dollor_${versionName}(${versionCode})"
-    }
-
-    buildTypes {
-        release {
-//            debuggable true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-            signingConfig signingConfigs.release
-        }
     }
     compileOptions {
         coreLibraryDesugaringEnabled true

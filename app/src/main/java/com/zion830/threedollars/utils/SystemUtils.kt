@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
@@ -20,6 +21,14 @@ import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.FutureTarget
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.link.LinkClient
 import com.kakao.sdk.template.model.Button
@@ -27,11 +36,15 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.overlay.OverlayImage
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
 import gun0912.tedimagepicker.util.ToastUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
 
@@ -192,3 +205,28 @@ fun Context.goToPermissionSetting() {
         }
     )
 }
+
+fun String.getErrorMessage(): String {
+    return try {
+        JSONObject(this).getString("message")
+    } catch (e: Exception) {
+        ""
+    }
+}
+
+fun String.urlToBitmap(): FutureTarget<Bitmap> =
+    Glide.with(GlobalApplication.getContext()).asBitmap().load(this).diskCacheStrategy(DiskCacheStrategy.NONE)
+        .skipMemoryCache(true)
+        .listener(object : RequestListener<Bitmap> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean) = false
+
+            override fun onResourceReady(
+                resource: Bitmap,
+                model: Any?,
+                target: Target<Bitmap>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+        }).submit()

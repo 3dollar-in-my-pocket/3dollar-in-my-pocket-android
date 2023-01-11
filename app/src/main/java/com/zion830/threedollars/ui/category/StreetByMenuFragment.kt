@@ -24,7 +24,6 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
@@ -109,18 +108,25 @@ class StreetByMenuFragment :
         popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
             if (popups.isNotEmpty()) {
                 binding.itemStoreListAd.run {
-                    tvAdTitle.text = popups[0].title
+                    tvAdTitle.text = popups[0].title.toString()
                     popups[0].fontColor?.let {
-                        tvAdTitle.setTextColor(it.toColorInt())
-                        tvAdBody.setTextColor(it.toColorInt())
+                        if (it.isNotEmpty()) {
+                            tvAdTitle.setTextColor(it.toColorInt())
+                            tvAdBody.setTextColor(it.toColorInt())
+                        }
                     }
                     tvAdBody.text = popups[0].subTitle
 
-                    popups[0].bgColor?.let { layoutItem.setBackgroundColor(it.toColorInt()) }
+                    popups[0].bgColor?.let {
+                        if (it.isNotEmpty()) {
+                            layoutItem.setBackgroundColor(it.toColorInt())
+                        }
+                    }
 
                     ivAdImage.loadUrlImg(popups[0].imageUrl)
 
                     tvDetail.setOnClickListener {
+                        EventTracker.logEvent(Constants.STORE_LIST_AD_BANNER_CLICKED)
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
                     }
                 }

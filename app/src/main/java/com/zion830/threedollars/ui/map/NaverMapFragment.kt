@@ -1,8 +1,6 @@
 package com.zion830.threedollars.ui.map
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -30,10 +28,13 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import zion830.com.common.base.convertDpToPx
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
-    private val viewModel: NaverMapViewModel by viewModels()
     var naverMap: NaverMap? = null
 
     var currentPosition: LatLng? = null
@@ -106,11 +107,17 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             map.locationOverlay.bearing = 0f
         }
         val storeMarker = GlobalApplication.storeMarker
-        if (!storeMarker.linkUrl.isNullOrEmpty()) {
-            map.locationOverlay.icon = OverlayImage.fromResource(R.drawable.ic_marker_noah)
+        if (storeMarker.imageUrl.isNotEmpty()) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
+                    storeMarker.imageUrl.urlToBitmap().get()
+                })
+                map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
+                map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
+            }
             map.locationOverlay.setOnClickListener {
-                viewModel.eventClick("ADVERTISEMENT", storeMarker.advertisementId.toString())
-                context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(storeMarker.linkUrl)))
+                val dialog = MarkerClickDialog()
+                dialog.show(parentFragmentManager, dialog.tag)
                 return@setOnClickListener false
             }
         }
