@@ -14,6 +14,7 @@ import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailA
 import com.zion830.threedollars.ui.login.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.name.InputNameActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.toStringDefault
@@ -76,7 +77,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     }
 
     override fun initView() {
-
+        requestPermissionFirst()
     }
 
     override fun finish() {
@@ -94,7 +95,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                 return@let true
             }
         }
-        if (isBackMainActivity) MainActivity.getIntent(this)
+        if (isBackMainActivity) startActivity(MainActivity.getIntent(this))
         super.finish()
     }
 

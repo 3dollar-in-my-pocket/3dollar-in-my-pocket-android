@@ -41,8 +41,8 @@ class GlobalApplication : Application() {
         val googleClient: GoogleSignInClient by lazy {
             GoogleSignIn.getClient(APPLICATION_CONTEXT, googleSignInOptions)
         }
-        var isLoggedIn: Boolean = false
-            private set
+        val isLoggedIn: Boolean
+            get() = !SharedPrefUtils.getLoginType().isNullOrBlank()
         var loginPlatform: LoginType = LoginType.NONE
             private set
 
@@ -66,7 +66,6 @@ class GlobalApplication : Application() {
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
 
-        isLoggedIn = !SharedPrefUtils.getLoginType().isNullOrBlank()
         if (isLoggedIn) {
             loginPlatform = LoginType.of(SharedPrefUtils.getLoginType())
         }
