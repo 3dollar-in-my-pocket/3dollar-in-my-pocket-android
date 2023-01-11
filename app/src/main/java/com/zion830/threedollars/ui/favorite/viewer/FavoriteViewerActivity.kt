@@ -95,7 +95,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                 return@let true
             }
         }
-        if (isBackMainActivity) startActivity(MainActivity.getIntent(this))
+        if (isBackMainActivity && GlobalApplication.isLoggedIn) startActivity(MainActivity.getIntent(this))
         super.finish()
     }
 
