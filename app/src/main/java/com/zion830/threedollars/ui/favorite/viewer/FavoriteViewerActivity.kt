@@ -29,7 +29,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     private var selectedItem: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel? = null
     private val inputNameLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            selectedItem?.apply {
+            selectedItem?.run {
                 moveToDetailActivity(this)
             }
             selectedItem = null
