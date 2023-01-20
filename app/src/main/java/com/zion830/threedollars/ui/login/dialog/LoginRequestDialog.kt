@@ -23,6 +23,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
+import com.zion830.threedollars.databinding.DialogBottomTruckSelectCategoryBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.LoginViewModel
@@ -38,11 +39,17 @@ import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class LoginRequestDialog : BottomSheetDialogFragment() {
-
+    private lateinit var binding: DialogBottomLoginRequestBinding
     private val viewModel: LoginViewModel by viewModels()
     private var callBack:(Boolean) ->Unit = {}
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DialogBottomLoginRequestBinding.inflate(inflater)
+        binding = DialogBottomLoginRequestBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
         observeUiData()
         binding.btnLoginKakao.onSingleClick {
             EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
@@ -57,12 +64,6 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         binding.closeImage.onSingleClick {
             dismiss()
         }
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
     }
 
     private fun tryLoginBySocialType() {
