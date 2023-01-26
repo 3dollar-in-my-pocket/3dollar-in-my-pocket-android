@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
+import zion830.com.common.ext.toStringDefault
 import zion830.com.common.ext.isNotNullOrEmpty
 import javax.inject.Inject
 
@@ -41,7 +42,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
 
     private val _myFavoriteModel: MutableLiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> = MutableLiveData()
     val myFavoriteModel: LiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> get() = _myFavoriteModel
-
+    var id = ""
     fun initAllMedals() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = userDataSource.getMedals()
@@ -105,6 +106,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
         viewModelScope.launch(coroutineExceptionHandler) {
             val response = userDataSource.getMyFavoriteFolder(cursor, size)
             if (response.isSuccessful) {
+                id = response.body()?.data?.folderId.toStringDefault()
                 _myFavoriteModel.value = response.body()?.data?.favorites
             } else {
                 response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }

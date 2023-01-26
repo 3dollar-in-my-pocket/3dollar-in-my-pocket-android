@@ -18,12 +18,12 @@ data class MyFavoriteFolderResponse(
     val user: MyFavoriteFolderUserModel = MyFavoriteFolderUserModel()
 ) {
     data class MyFavoriteFolderCategoryModel(
-        val category: String,
-        val categoryId: String,
-        val description: String,
-        val imageUrl: String,
+        val category: String = "",
+        val categoryId: String = "",
+        val description: String = "",
+        val imageUrl: String = "",
         val isNew: Boolean,
-        val name: String
+        val name: String = ""
     )
 
     data class MyFavoriteFolderCursorModel(
@@ -34,10 +34,10 @@ data class MyFavoriteFolderResponse(
 
     data class MyFavoriteFolderFavoriteModel(
         val categories: List<MyFavoriteFolderCategoryModel>,
-        val storeId: String,
-        val storeName: String,
-        val storeType: String,
-        val isDeleted: Boolean
+        val storeId: String = "",
+        val storeName: String = "",
+        val storeType: String = "",
+        val isDeleted: Boolean = false
     ) : AdAndStoreItem
 
     data class MyFavoriteFolderMedalModel(

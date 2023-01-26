@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.login
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -18,6 +19,7 @@ import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
+import com.zion830.threedollars.ui.login.name.InputNameActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,12 +29,17 @@ import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
-import zion830.com.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layout.activity_login) {
 
     override val viewModel: LoginViewModel by viewModels()
+    private val inputNameLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            startActivity(MainActivity.getIntent(this))
+            finish()
+        }
+    }
 
     override fun initView() {
         observeUiData()
@@ -137,7 +144,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 is ResultWrapper.GenericError -> {
                     when (it.code) {
                         400 -> showToast(R.string.connection_failed)
-                        404 -> addInputNameFragment()
+                        404 -> inputNameLauncher.launch(Intent(this, InputNameActivity::class.java))
                         503 -> showToast(R.string.server_500)
                         500, 502 -> showToast(R.string.connection_failed)
                         else -> showToast(R.string.connection_failed)
@@ -151,14 +158,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
                 finish()
             }
         }
-    }
-
-    private fun addInputNameFragment() {
-        supportFragmentManager.addNewFragment(
-            R.id.layout_container,
-            InputNameFragment.getInstance(),
-            InputNameFragment::class.java.name
-        )
     }
 
     private fun tryKakaoLogin() {

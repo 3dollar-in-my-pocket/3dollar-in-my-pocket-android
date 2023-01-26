@@ -1,24 +1,22 @@
-package com.zion830.threedollars.ui.login
+package com.zion830.threedollars.ui.login.name
 
 import android.os.Handler
 import android.view.View
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentLoginNameBinding
-import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.ui.MarketingDialog
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
-class InputNameFragment :
-    BaseFragment<FragmentLoginNameBinding, LoginViewModel>(R.layout.fragment_login_name) {
+class InputNameActivity :
+    BaseActivity<ActivityLoginNameBinding, InputNameViewModel>(R.layout.activity_login_name) {
 
-    override val viewModel: LoginViewModel by activityViewModels()
+    override val viewModel: InputNameViewModel by viewModels()
 
     override fun initView() {
         binding.etName.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
@@ -32,13 +30,18 @@ class InputNameFragment :
             handler.postDelayed(runnable, 10)
         }
         binding.btnBack.setOnClickListener {
-            activity?.supportFragmentManager?.popBackStack()
+            finish()
         }
 
         binding.btnFinish.onSingleClick {
             showMarketingDialog()
         }
-
+        viewModel.isNameUpdated.observe(this) {
+            if (it) {
+                setResult(RESULT_OK)
+                finish()
+            }
+        }
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0
             if (it != -1) {
@@ -53,19 +56,16 @@ class InputNameFragment :
             override fun accept(isMarketing: Boolean) {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
-                        viewModel.trySignUp(
-                            informationRequest = PushInformationRequest(pushToken = it.result),
-                            isMarketing = isMarketing
-                        )
+                        viewModel.trySignUp()
                     }
                 }
             }
         })
-        dialog.show(parentFragmentManager, dialog.tag)
+        dialog.show(supportFragmentManager, dialog.tag)
     }
 
     companion object {
 
-        fun getInstance() = InputNameFragment()
+        fun getInstance() = InputNameActivity()
     }
 }

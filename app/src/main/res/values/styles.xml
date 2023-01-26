@@ -1,5 +1,5 @@
 <resources>
-    
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -14,13 +14,12 @@
         <item name="fontFamily">@font/app_font</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/rect_gray_top_corner</item>
     </style>
 
@@ -29,42 +28,42 @@
         <item name="android:numStars">5</item>
         <item name="android:isIndicator">true</item>
     </style>
-    
+
     <style name="TextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/app_font</item>
     </style>
-    
+
     <style name="LightTextViewStyle" parent="android:Widget.TextView">
         <item name="fontFamily">@font/app_font_thin</item>
         <item name="android:fontFamily">@font/app_font_thin</item>
     </style>
-    
+
     <style name="ButtonStyle" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
         <item name="android:fontFamily">@font/app_font</item>
     </style>
-    
+
     <style name="EditTextStyle" parent="@android:style/Widget.DeviceDefault.EditText">
         <item name="android:fontFamily">@font/app_font</item>
     </style>
-    
+
     <style name="RadioButtonStyle" parent="@android:style/Widget.DeviceDefault.CompoundButton.RadioButton">
         <item name="android:fontFamily">@font/app_font</item>
     </style>
-    
+
     <style name="CheckboxStyle" parent="@android:style/Widget.DeviceDefault.CompoundButton.CheckBox">
         <item name="android:fontFamily">@font/app_font</item>
     </style>
-    
+
     <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
     </style>
-    
+
     <style name="RatingBar22" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/custom_ratingbar_selector</item>
         <item name="android:minHeight">22dip</item>
         <item name="android:maxHeight">22dip</item>
     </style>
-    
+
     <style name="CustomBottomSheetStyle">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -75,23 +74,23 @@
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
-    
+
     <style name="Widget.Button.Toggle" parent="android:Widget">
         <item name="android:background">@drawable/btn_toggle</item>
     </style>
-    
+
     <style name="ToggleButton" parent="AppTheme">
         <item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item>
         <item name="android:textColor">@drawable/selector_toggle_color</item>
     </style>
-    
+
     <style name="PopupMenu" parent="@style/Widget.AppCompat.Light.PopupMenu">
         <item name="android:textAppearanceLargePopupMenu">@style/PopupMenuTextStyle</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/PopupMenuTextStyle</item>
         <item name="android:fontFamily">@font/app_font</item>
         <item name="android:textSize">12sp</item>
     </style>
-    
+
     <style name="PopupMenuTextStyle" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
         <item name="android:textColor">#727272</item>
         <item name="android:fontFamily">@font/app_font</item>
@@ -107,5 +106,9 @@
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="LoginBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="android:layout_marginTop">-29dp</item>
     </style>
 </resources>

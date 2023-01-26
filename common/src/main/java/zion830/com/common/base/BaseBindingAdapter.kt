@@ -5,10 +5,15 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.net.Uri
+import android.text.Spannable
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
@@ -19,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils.dpToPx
+import zion830.com.common.R
 import zion830.com.common.ext.disableDoubleClick
 import zion830.com.common.ext.filterNotNull
 import zion830.com.common.listener.OnItemClickListener
