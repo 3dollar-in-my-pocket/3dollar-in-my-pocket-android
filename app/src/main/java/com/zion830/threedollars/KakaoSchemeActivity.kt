@@ -7,7 +7,7 @@ import androidx.core.app.TaskStackBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SchemeActivity : AppCompatActivity() {
+class KakaoSchemeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleDeepLink()
@@ -22,7 +22,7 @@ class SchemeActivity : AppCompatActivity() {
         if (isTaskRoot) {
             TaskStackBuilder.create(this).apply {
                 if (needAddMainForParent(deepLinkIntent)) {
-                    addNextIntentWithParentStack(DeepLinkInfo.getMainIntent(this@SchemeActivity))
+                    addNextIntentWithParentStack(DeepLinkInfo.getMainIntent(this@KakaoSchemeActivity))
                 }
                 addNextIntent(deepLinkIntent)
             }.startActivities()
