@@ -19,8 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        tools:targetApi="m">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -74,7 +74,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".SchemeActivity"
+            android:name=".KakaoSchemeActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -85,6 +85,27 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="kakao${kakao_key}" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DynamicLinkActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="3dollars.share.link"
+                    android:scheme="https"
+                    android:pathPattern=".*"/>
+                <data
+                    android:host="3dollars.share.link"
+                    android:scheme="http"
+                    android:pathPattern=".*"/>
             </intent-filter>
         </activity>
         <activity
@@ -104,8 +125,9 @@
         <activity
             android:name="com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.zion830.threedollars.ui.login.name.InputNameActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.zion830.threedollars.ui.login.name.InputNameActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
