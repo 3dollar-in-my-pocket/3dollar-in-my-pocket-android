@@ -42,6 +42,12 @@ class MyPageSettingFragment :
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
+        binding.layoutPrivacyPolicy.setOnClickListener {
+            EventTracker.logEvent(Constants.PRIVACY_POLICY_OF_USE_BTN_CLICKED)
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_url)))
+            startActivity(browserIntent)
+        }
         binding.layoutAsk.setOnClickListener {
             EventTracker.logEvent(Constants.INQUIRY_BTN_CLICKED)
             addAskFragment()
