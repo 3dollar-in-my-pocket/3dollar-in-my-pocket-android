@@ -79,6 +79,7 @@ object Constants {
     const val SIGNOUT_CANCEL_BTN_CLICKED = "signout_alert_cancel_button_clicked"
     const val INQUIRY_BTN_CLICKED = "inquiry_button_clicked"
     const val TERMS_OF_USE_BTN_CLICKED = "terms_of_use_button_clicked"
+    const val PRIVACY_POLICY_OF_USE_BTN_CLICKED = "privacy_policy_of_use_button_clicked"
     const val FIREBASE_INTERVAL: Long = 3600L
 
     // orderType
