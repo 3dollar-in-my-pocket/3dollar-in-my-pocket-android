@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:415186049183:android:4d77df40cb5136920c6aaa",
+        "mobilesdk_app_id": "1:415186049183:android:e231df04a19adc9a0c6aaa",
         "android_client_info": {
-          "package_name": "com.zion830.threedollars"
+          "package_name": "com.zion830.threedollars.dev"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "415186049183-cg7alghevqdekctk40p2m6aoltttlq8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars.dev",
+            "certificate_hash": "6ac0f91b96e9f3577adfb0f6269f2371606270a4"
+          }
+        },
         {
           "client_id": "415186049183-8rar3pa91u5i51kq3gk4n4b074iufmio.apps.googleusercontent.com",
           "client_type": 3
