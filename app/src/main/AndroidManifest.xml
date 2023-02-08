@@ -99,11 +99,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="3dollars.share.link"
+                    android:host="link.threedollars.co.kr"
                     android:scheme="https"
                     android:pathPattern=".*"/>
                 <data
-                    android:host="3dollars.share.link"
+                    android:host="link.threedollars.co.kr"
                     android:scheme="http"
                     android:pathPattern=".*"/>
             </intent-filter>
