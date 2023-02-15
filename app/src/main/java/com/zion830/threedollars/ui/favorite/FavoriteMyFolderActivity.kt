@@ -99,7 +99,12 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                 )
             )
         }
-
+        binding.shareImageView.setOnClickListener {
+            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT,"테테스스트트")
+            },"가슴속삼천원 즐겨찾기 공유하기"))
+        }
         viewModel.isRefresh.observe(this) {
             if (it) {
                 adapter.refresh()
