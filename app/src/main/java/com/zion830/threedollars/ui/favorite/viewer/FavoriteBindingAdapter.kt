@@ -23,3 +23,8 @@ fun TextView.textFavoriteTitle(item: MyFavoriteFolderResponse) {
     text = title
 }
 
+@BindingAdapter("textCategory")
+fun TextView.textCategory(item:List<MyFavoriteFolderResponse.MyFavoriteFolderCategoryModel>){
+    val category = item.joinToString(" ") { "#${it.name}" }.trim()
+    text = category
+}

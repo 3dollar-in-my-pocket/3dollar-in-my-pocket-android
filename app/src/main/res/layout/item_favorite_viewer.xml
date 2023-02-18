@@ -55,12 +55,12 @@
 
         <TextView
             android:id="@+id/storeCategoriesTextView"
+            textCategory="@{item.categories}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{item.storeName}"
             android:textColor="@color/gray30"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@id/storeNameTextView"
