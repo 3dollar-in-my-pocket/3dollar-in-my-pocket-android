@@ -24,7 +24,6 @@ class DynamicLinkActivity : AppCompatActivity() {
     }
 
     private fun handleDeepLink() {
-        Log.e(localClassName, "handleDeepLink")
         Firebase.dynamicLinks
             .getDynamicLink(intent)
             .addOnSuccessListener(this) { pendingDynamicLinkData ->
@@ -32,7 +31,6 @@ class DynamicLinkActivity : AppCompatActivity() {
                 if (pendingDynamicLinkData != null) {
                     deeplink = pendingDynamicLinkData.link
                 }
-                Log.e(localClassName, "addOnSuccessListener")
                 if (deeplink != null) {
                     when (deeplink.lastPathSegment.toStringDefault()) {
                         BOOKMARK -> {
@@ -44,9 +42,9 @@ class DynamicLinkActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Log.d(localClassName, "getDynamicLink: no link found")
+                    finish()
                 }
             }
-            .addOnFailureListener(this) { e -> Log.e(localClassName, "getDynamicLink:onFailure", e) }
+            .addOnFailureListener(this) { finish() }
     }
 }
