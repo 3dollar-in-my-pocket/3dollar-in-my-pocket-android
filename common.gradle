@@ -16,8 +16,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 50
-        versionName "3.1.5"
+        versionCode 51
+        versionName "3.1.6"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
