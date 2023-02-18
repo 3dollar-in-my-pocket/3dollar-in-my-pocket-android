@@ -18,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
@@ -64,7 +65,9 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         viewModel.getMyFavoriteFolder()
 
         binding.favoriteListRecyclerView.adapter = adapter
-
+        binding.shareImageView.onSingleClick {
+            viewModel.createShareUrl()
+        }
         binding.backImageView.setOnClickListener {
             setResult(RESULT_OK)
             finish()
@@ -98,9 +101,6 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                     binding.favoriteBodyTextView.text.toString()
                 )
             )
-        }
-        binding.shareImageView.setOnClickListener {
-            viewModel.createShareUrl()
         }
         viewModel.dynamicLink.observe(this) {
             startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
