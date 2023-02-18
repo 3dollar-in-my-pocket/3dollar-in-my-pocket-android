@@ -11,6 +11,7 @@ import com.zion830.threedollars.*
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
+import com.zion830.threedollars.ui.login.LoginActivity
 import com.zion830.threedollars.ui.login.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.name.InputNameActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
@@ -96,6 +97,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
             }
         }
         if (isBackMainActivity && GlobalApplication.isLoggedIn) startActivity(MainActivity.getIntent(this))
+        else startActivity(Intent(this, LoginActivity::class.java))
         super.finish()
     }
 
