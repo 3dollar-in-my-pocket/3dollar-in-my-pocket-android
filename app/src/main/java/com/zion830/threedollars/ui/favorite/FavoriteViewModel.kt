@@ -72,7 +72,7 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
             socialMetaTagParameters {
                 title = "내 음식 플리 들어볼래?"
                 description = folderName
-                imageUrl = Uri.parse("https://intro.threedollars.co.kr/static/media/img_heart.08e0ea59af3b944ac1d6.webp")
+                imageUrl = Uri.parse("https://storage.threedollars.co.kr/share/favorite_share.png")
             }
         }.addOnCompleteListener {
             if (it.isComplete) {
