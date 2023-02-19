@@ -28,15 +28,21 @@ class DynamicLinkActivity : AppCompatActivity() {
         fun playLottie() {
             binding.lottieView.playAnimation()
             binding.lottieView.addAnimatorListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {}
+                override fun onAnimationStart(animation: Animator) {
+                    // do nothing
+                }
 
                 override fun onAnimationEnd(animation: Animator) {
                     handleDeepLink()
                 }
 
-                override fun onAnimationCancel(animation: Animator) {}
+                override fun onAnimationCancel(animation: Animator) {
+                    // do nothing
+                }
 
-                override fun onAnimationRepeat(animation: Animator) {}
+                override fun onAnimationRepeat(animation: Animator) {
+                    // do nothing
+                }
             })
         }
 
