@@ -34,6 +34,7 @@ android {
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key_release')}\""
+            buildConfigField "String", "DEEP_LINK", "\"${properties.getProperty('deep_link_release')}\""
         }
         debug {
             applicationIdSuffix '.dev'
@@ -46,6 +47,7 @@ android {
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
+            buildConfigField "String", "DEEP_LINK", "\"${properties.getProperty('deep_link')}\""
         }
     }
     packagingOptions {

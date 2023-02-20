@@ -22,6 +22,7 @@ import dagger.hilt.android.HiltAndroidApp
 class GlobalApplication : Application() {
 
     companion object {
+        const val DYNAMIC_LINK = "https://link.threedollars.co.kr"
         lateinit var instance: GlobalApplication
             private set
 
