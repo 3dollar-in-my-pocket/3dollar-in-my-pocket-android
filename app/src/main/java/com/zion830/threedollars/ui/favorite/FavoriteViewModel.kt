@@ -68,7 +68,10 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
             link = Uri.parse("${GlobalApplication.DYNAMIC_LINK}/bookmark?folderId=$folderId")
             domainUriPrefix = BuildConfig.DEEP_LINK
             androidParameters { }
-            iosParameters(if (BuildConfig.DEBUG) "com.macgongmon.-dollar-in-my-pocket-debug" else "com.macgongmon.-dollar-in-my-pocket") {}
+            iosParameters(if (BuildConfig.DEBUG) "com.macgongmon.-dollar-in-my-pocket-debug" else "com.macgongmon.-dollar-in-my-pocket") {
+                appStoreId = "1496099467"
+                minimumVersion = "3.3.0"
+            }
             socialMetaTagParameters {
                 title = "내 음식 플리 들어볼래?"
                 description = folderName
