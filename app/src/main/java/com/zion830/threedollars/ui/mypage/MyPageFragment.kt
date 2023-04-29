@@ -18,7 +18,6 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
-import com.zion830.threedollars.ui.favorite.FavoriteMyInfoEditActivity
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
@@ -119,6 +118,9 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             activityResultLauncher.launch(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
         }
         observeUiData()
+        if (viewModel.isMoveMedalPage) {
+            addShowAllMedalFragment()
+        }
     }
 
     private fun observeUiData() {

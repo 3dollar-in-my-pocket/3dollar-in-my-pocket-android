@@ -11,7 +11,6 @@ import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
@@ -217,6 +216,11 @@ class FoodTruckStoreDetailActivity :
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+    }
+
+    override fun finish() {
+        navigateToMainActivityOnCloseIfNeeded()
+        super.finish()
     }
 
     companion object {

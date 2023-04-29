@@ -13,13 +13,19 @@ import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
+import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.toStringDefault
 
 @AndroidEntryPoint
 class DynamicLinkActivity : AppCompatActivity() {
     companion object {
         const val BOOKMARK = "bookmark"
+        const val HOME = "home"
+        const val MEDAL = "medal"
+        const val STORE = "store"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,50 +52,70 @@ class DynamicLinkActivity : AppCompatActivity() {
             })
         }
 
-        fun settingDeppLink(className: String) {
-            if (className.contains("DynamicLinkActivity")) {
-                playLottie()
-            } else {
-                handleDeepLink()
-            }
-        }
-
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        manager.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                it.appTasks.forEach { task ->
-                    settingDeppLink(task.taskInfo.baseActivity?.className.toString())
-                }
-            } else {
-                it.getRunningTasks(10).forEach { task ->
-                    settingDeppLink(task.baseActivity?.className.toString())
-                }
-            }
+        if (!GlobalApplication.isLoggedIn) {
+            playLottie()
+        } else {
+            handleDeepLink()
         }
     }
 
     private fun handleDeepLink() {
-        Firebase.dynamicLinks
-            .getDynamicLink(intent)
-            .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                var deeplink: Uri? = null
-                if (pendingDynamicLinkData != null) {
-                    deeplink = pendingDynamicLinkData.link
-                }
-                if (deeplink != null) {
-                    when (deeplink.lastPathSegment.toStringDefault()) {
-                        BOOKMARK -> {
-                            val id = deeplink.getQueryParameter("folderId").toStringDefault()
-                            startActivity(Intent(this, FavoriteViewerActivity::class.java).apply {
-                                putExtra("favoriteId", id)
-                            })
-                            finish()
-                        }
+        val pushLink = intent.getStringExtra("link")
+        if (pushLink.isNotNullOrEmpty()) {
+            val deeplink = Uri.parse(pushLink)
+            handleDeepLinkNavigation(deeplink)
+        } else {
+            Firebase.dynamicLinks
+                .getDynamicLink(intent)
+                .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                    var deeplink: Uri? = null
+                    if (pendingDynamicLinkData != null) {
+                        deeplink = pendingDynamicLinkData.link
                     }
+                    if (deeplink != null) handleDeepLinkNavigation(deeplink)
+                    else finish()
+                }
+                .addOnFailureListener(this) { finish() }
+        }
+    }
+
+    private fun handleDeepLinkNavigation(deeplink: Uri) {
+        when (deeplink.lastPathSegment ?: deeplink.host ?: "") {
+            BOOKMARK -> {
+                val id = deeplink.getQueryParameter("folderId").toStringDefault()
+                startActivity(Intent(this, FavoriteViewerActivity::class.java).apply {
+                    putExtra("favoriteId", id)
+                })
+            }
+            HOME -> {
+                startActivity(MainActivity.getIntent(this))
+            }
+            MEDAL -> {
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(MEDAL, MEDAL)
+                })
+            }
+            STORE -> {
+                val id = deeplink.getQueryParameter("storeId").toStringDefault()
+                val type = deeplink.getQueryParameter("storeType").toStringDefault()
+                if (type == "BOSS_STORE") {
+                    startActivity(
+                        FoodTruckStoreDetailActivity.getIntent(
+                            this,
+                            deepLinkStoreId = id
+                        )
+                    )
                 } else {
-                    finish()
+                    startActivity(
+                        StoreDetailActivity.getIntent(
+                            this,
+                            deepLinkStoreId = id
+                        )
+                    )
                 }
             }
-            .addOnFailureListener(this) { finish() }
+        }
+        finish()
     }
+
 }

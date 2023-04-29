@@ -23,7 +23,6 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
@@ -33,7 +32,6 @@ import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
@@ -483,6 +481,11 @@ class StoreDetailActivity :
             }
         }
         return imageList.toList()
+    }
+
+    override fun finish() {
+        navigateToMainActivityOnCloseIfNeeded()
+        super.finish()
     }
 
     companion object {
