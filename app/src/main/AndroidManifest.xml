@@ -107,6 +107,14 @@
                     android:host="link.threedollars.co.kr"
                     android:pathPattern=".*"
                     android:scheme="http" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*"
+                    android:scheme="dollars-dev" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*"
+                    android:scheme="dollars" />
             </intent-filter>
         </activity>
         <activity

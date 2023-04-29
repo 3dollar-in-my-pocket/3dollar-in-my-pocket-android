@@ -1,11 +1,8 @@
 package com.zion830.threedollars
 
 import android.animation.Animator
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -64,6 +61,10 @@ class DynamicLinkActivity : AppCompatActivity() {
         if (pushLink.isNotNullOrEmpty()) {
             val deeplink = Uri.parse(pushLink)
             handleDeepLinkNavigation(deeplink)
+        } else if (intent.data?.scheme.toStringDefault().contains("dollars")) {
+            intent.data?.let {
+                handleDeepLinkNavigation(it)
+            }
         } else {
             Firebase.dynamicLinks
                 .getDynamicLink(intent)
