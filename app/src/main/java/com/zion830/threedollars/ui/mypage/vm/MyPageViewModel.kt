@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.toStringDefault
-import zion830.com.common.ext.isNotNullOrEmpty
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +42,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
     private val _myFavoriteModel: MutableLiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> = MutableLiveData()
     val myFavoriteModel: LiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> get() = _myFavoriteModel
     var id = ""
+    var isMoveMedalPage = false
     fun initAllMedals() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = userDataSource.getMedals()
