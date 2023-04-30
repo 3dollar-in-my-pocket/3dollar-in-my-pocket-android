@@ -1,5 +1,6 @@
 package com.zion830.threedollars
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -132,7 +133,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+        if (permissions.isEmpty()) return
+        val locationIndex = permissions.indexOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (grantResults[locationIndex] == PackageManager.PERMISSION_GRANTED) {
             navHostFragment.childFragmentManager.fragments.forEach { fragment ->
                 fragment.onActivityResult(
                     Constants.GET_LOCATION_PERMISSION,
