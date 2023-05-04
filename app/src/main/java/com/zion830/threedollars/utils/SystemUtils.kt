@@ -1,6 +1,7 @@
 package com.zion830.threedollars.utils
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
@@ -22,7 +23,6 @@ import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -37,16 +37,11 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.overlay.OverlayImage
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
 import com.zion830.threedollars.ui.login.LoginActivity
-import gun0912.tedimagepicker.util.ToastUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
@@ -79,7 +74,11 @@ fun showCustomBlackToast(text: String) {
 
 fun Activity.requestPermissionFirst(permission: String = ACCESS_FINE_LOCATION) {
     if (SharedPrefUtils.isFirstPermissionCheck()) {
-        ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission, POST_NOTIFICATIONS), 0)
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
+        }
     }
 }
 
@@ -234,7 +233,7 @@ fun String.urlToBitmap(): FutureTarget<Bitmap> =
             }
         }).submit()
 
-fun Activity.navigateToMainActivityOnCloseIfNeeded(){
+fun Activity.navigateToMainActivityOnCloseIfNeeded() {
     val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val isBackMainActivity = manager.appTasks.isEmpty() || manager.let {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
