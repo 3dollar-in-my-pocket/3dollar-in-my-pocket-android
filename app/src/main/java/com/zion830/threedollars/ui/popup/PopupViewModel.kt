@@ -28,7 +28,7 @@ class PopupViewModel @Inject constructor(private val popupDataSource: PopupDataS
                     fontColor = it.fontColor.toStringDefault(),
                     linkUrl = it.linkUrl.toStringDefault(),
                     subTitle = it.subTitle.toStringDefault(),
-                    title = it.subTitle.toStringDefault()
+                    title = it.title.toStringDefault()
                 )
             } ?: listOf()
             popups.postValue(popupList)
