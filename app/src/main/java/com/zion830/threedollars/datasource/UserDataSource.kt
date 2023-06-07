@@ -53,11 +53,13 @@ interface UserDataSource {
 
     suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
 
+    suspend fun getFavoriteViewer(favoriteId: String, cursor: String?): Response<BaseResponse<MyFavoriteFolderResponse>>
+
     suspend fun eventClick(targetType: String, targetId: String): Response<BaseResponse<String>>
 
     suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
     suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
 
-    suspend fun updateFavoriteInfo(favoriteInfoRequest : FavoriteInfoRequest) : Response<BaseResponse<String>>
+    suspend fun updateFavoriteInfo(favoriteInfoRequest: FavoriteInfoRequest): Response<BaseResponse<String>>
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.messaging.FirebaseMessaging
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
@@ -118,9 +119,9 @@ class SplashActivity :
             when (it) {
                 is ResultWrapper.Success -> {
                     SharedPrefUtils.saveAccessToken(it.value?.token)
-
-                    when (intent.getStringExtra(STORE_TYPE)) {
-                        getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
+                    val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
+                    when {
+                        deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
                             startActivity(
                                 FoodTruckStoreDetailActivity.getIntent(
                                     this,
@@ -128,13 +129,18 @@ class SplashActivity :
                                 )
                             )
                         }
-                        getString(R.string.scheme_host_kakao_link_road_food_type) -> {
+                        deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
                             startActivity(
                                 StoreDetailActivity.getIntent(
                                     this,
                                     deepLinkStoreId = intent.getStringExtra(STORE_ID)
                                 )
                             )
+                        }
+                        deepLink.contains("dollars") -> {
+                            startActivity(Intent(this, DynamicLinkActivity::class.java).apply {
+                                putExtra("link", deepLink)
+                            })
                         }
                         else -> {
                             startActivity(Intent(this, MainActivity::class.java))
@@ -185,6 +191,7 @@ class SplashActivity :
     companion object {
         private const val STORE_ID = "storeId"
         private const val STORE_TYPE = "STORE_TYPE"
+        private const val PUSH_LINK = "link"
         private const val GOOGLE_LOGIN_ERROR_REQUEST_CODE = 1001
 
         fun getIntent(

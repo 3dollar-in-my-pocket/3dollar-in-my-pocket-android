@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerViewModel" />
+
+        <variable
+            name="item"
+            type="com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rect_white_radius16"
+        android:backgroundTint="@color/gray95"
+        android:onClick="@{()->viewModel.onItemClick(item)}"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="20dp">
+
+        <ImageView
+            android:id="@+id/storeImageView"
+            loadImage="@{item.categories[0].imageUrl}"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:contentDescription="스토어 이미지"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText"
+            tools:src="@drawable/icon_menu_bungeoppang_selected" />
+
+        <TextView
+            android:id="@+id/storeNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{item.storeName}"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/favoriteArrowRightImage"
+            app:layout_constraintStart_toEndOf="@id/storeImageView"
+            app:layout_constraintTop_toTopOf="@id/storeImageView"
+            tools:text="강남역 0번 출구" />
+
+        <TextView
+            android:id="@+id/storeCategoriesTextView"
+            textCategory="@{item.categories}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/gray30"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/storeNameTextView"
+            app:layout_constraintStart_toStartOf="@id/storeNameTextView"
+            app:layout_constraintTop_toBottomOf="@id/storeNameTextView"
+            tools:text="붕어빵 땅콩과자 호떡" />
+
+        <ImageView
+            android:id="@+id/favoriteArrowRightImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

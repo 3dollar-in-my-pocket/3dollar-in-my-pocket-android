@@ -1,5 +1,6 @@
 package com.zion830.threedollars
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
+import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -21,6 +23,7 @@ import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
+import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnBackPressedListener
 
@@ -30,7 +33,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     ActivityCompat.OnRequestPermissionsResultCallback {
 
     override val viewModel: UserInfoViewModel by viewModels()
-
+    private val myPageViewModel: MyPageViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
 
     private val streetStoreByMenuViewModel: StreetStoreByMenuViewModel by viewModels()
@@ -63,7 +66,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     }
 
     private fun initNavView() {
-        binding.navView.setOnNavigationItemSelectedListener {
+        binding.navView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_home -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
@@ -84,6 +87,12 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             }
             true
         }
+        navigateToMedalPageWithDeepLink()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navigateToMedalPageWithDeepLink()
     }
 
     private fun initNavController(navController: NavController) {
@@ -124,7 +133,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+        if (permissions.isEmpty()) return
+        val locationIndex = permissions.indexOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (grantResults[locationIndex] == PackageManager.PERMISSION_GRANTED) {
             navHostFragment.childFragmentManager.fragments.forEach { fragment ->
                 fragment.onActivityResult(
                     Constants.GET_LOCATION_PERMISSION,
@@ -146,6 +157,15 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             binding.navHostFragment.findNavController().navigateUp()
         } else {
             super.onBackPressed()
+        }
+    }
+
+    private fun navigateToMedalPageWithDeepLink() {
+        if (intent.getStringExtra("medal").isNotNullOrEmpty()) {
+            binding.navView.post {
+                myPageViewModel.isMoveMedalPage = true
+                binding.navView.selectedItemId = R.id.navigation_mypage
+            }
         }
     }
 
