@@ -38,7 +38,7 @@
             android:gravity="center"
             android:padding="4dp"
             android:text="@{@string/food_truck_review_count(item.count)}"
-            android:textColor="@color/color_green"
+            android:textColor="@color/green"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/titleTextView"
             app:layout_constraintEnd_toEndOf="parent"

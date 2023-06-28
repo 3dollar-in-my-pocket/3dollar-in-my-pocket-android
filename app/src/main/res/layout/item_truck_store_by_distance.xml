@@ -30,7 +30,7 @@
             android:id="@+id/tv_store_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:maxLength="12"
             android:singleLine="true"
             android:text="@{item.name}"

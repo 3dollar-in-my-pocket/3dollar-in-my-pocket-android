@@ -121,7 +121,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        if (isRoadFoodMode) R.color.color_FFA1AA else R.color.color_green
+                        if (isRoadFoodMode) R.color.color_FFA1AA else R.color.green
                     )
                 )
             }

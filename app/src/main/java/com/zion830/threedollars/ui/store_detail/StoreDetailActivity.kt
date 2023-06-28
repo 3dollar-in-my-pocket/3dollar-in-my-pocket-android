@@ -352,7 +352,7 @@ class StoreDetailActivity :
         binding.tvGood.setTextColor(
             ContextCompat.getColor(
                 this,
-                if (isExist > 0) R.color.color_green else R.color.gray30
+                if (isExist > 0) R.color.green else R.color.gray30
             )
         )
         binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(

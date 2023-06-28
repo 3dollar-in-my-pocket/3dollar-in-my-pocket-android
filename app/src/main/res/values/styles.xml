@@ -34,8 +34,8 @@
     </style>
 
     <style name="LightTextViewStyle" parent="android:Widget.TextView">
-        <item name="fontFamily">@font/app_font_thin</item>
-        <item name="android:fontFamily">@font/app_font_thin</item>
+        <item name="fontFamily">@font/app_font</item>
+        <item name="android:fontFamily">@font/app_font</item>
     </style>
 
     <style name="ButtonStyle" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
@@ -110,5 +110,76 @@
 
     <style name="LoginBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="android:layout_marginTop">-29dp</item>
+    </style>
+
+
+    <!--- font styles -->
+    <style name="apple_gothic_regular" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/apple_gothic_regular</item>
+    </style>
+
+    <style name="apple_gothic_medium" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/apple_gothic_medium</item>
+    </style>
+
+    <style name="apple_gothic_semi_bold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/apple_gothic_semi_bold</item>
+    </style>
+
+    <style name="apple_gothic_bold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/apple_gothic_bold</item>
+    </style>
+
+
+    <!--- regular font styles -->
+    <style name="apple_gothic_regular.size_14sp">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="apple_gothic_regular.size_16sp">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="apple_gothic_regular.size_24sp">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="apple_gothic_regular.size_30sp">
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <!--- medium font styles -->
+    <style name="apple_gothic_medium.size_10sp">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="apple_gothic_medium.size_12sp">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!--- semi bold font styles -->
+    <style name="apple_gothic_semi_bold.size_14sp">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="apple_gothic_semi_bold.size_20sp">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!--- bold font styles -->
+    <style name="apple_gothic_bold.size_12sp">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="apple_gothic_bold.size_16sp">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="apple_gothic_bold.size_24sp">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="apple_gothic_bold.size_30sp">
+        <item name="android:textSize">30sp</item>
     </style>
 </resources>

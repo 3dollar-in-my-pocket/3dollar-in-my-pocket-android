@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_sub_red"
                 android:textSize="16sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold" />
 
             <TextView
@@ -74,7 +74,7 @@
                 android:text="@string/more"
                 android:textColor="@color/color_white"
                 android:textSize="12sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold" />
         
         </LinearLayout>

@@ -26,7 +26,7 @@
             android:id="@+id/emptyTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:singleLine="true"
             android:text="@{item.emptyTitle}"
             android:textColor="@color/color_black"

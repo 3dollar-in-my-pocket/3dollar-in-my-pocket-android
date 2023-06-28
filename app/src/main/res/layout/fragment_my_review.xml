@@ -22,7 +22,7 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:text="@string/my_review"
             android:textColor="@color/color_white"
             android:textSize="16sp"

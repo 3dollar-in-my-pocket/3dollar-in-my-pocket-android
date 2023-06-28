@@ -85,7 +85,7 @@
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
                             android:background="@android:color/transparent"
-                            android:fontFamily="@font/applegothic_bold"
+                            android:fontFamily="@font/apple_gothic_bold"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:text="@{viewModel.category.name}"
                             android:textColor="@android:color/black"

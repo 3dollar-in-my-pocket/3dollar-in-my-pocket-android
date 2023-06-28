@@ -4,7 +4,6 @@
     <color name="colorPrimaryDark">#EE624C</color>
     <color name="colorAccent">#EE624C</color>
     <color name="colorOnPrimary">#E5E5E5</color>
-    <color name="color_green">#00c667</color>
     <color name="color_green_opa10">#1a00c667</color>
     <color name="color_white">#FFFFFF</color>
     <color name="color_kakao">#F7E317</color>
@@ -34,14 +33,35 @@
     <color name="color_33FF5C43">#33FF5C43</color>
 
     <color name="gray5">#f3f3f3</color>
-    <color name="gray10">#E2E2E2</color>
-    <color name="gray20">#d0d0d0</color>
-    <color name="gray30">#B7B7B7</color>
-    <color name="gray40">#969696</color>
-    <color name="gray50">#787878</color>
-    <color name="gray60">#5a5a5a</color>
-    <color name="gray70">#464646</color>
-    <color name="gray80">#323232</color>
+
+    <color name="red">#FF5C43</color>
+
+    <color name="green">#00C667</color>
+    <color name="green_500">#00753D</color>
+    <color name="green_400">#00A455</color>
+    <color name="green_300">#4DD794</color>
+    <color name="green_200">#99E8C2</color>
+    <color name="green_100">#F1FFF8</color>
+
+    <color name="pink">#FF858F</color>
+    <color name="pink_500">#DE616B</color>
+    <color name="pink_400">#F9737E</color>
+    <color name="pink_300">#FFAAB1</color>
+    <color name="pink_200">#FFDADD</color>
+    <color name="pink_100">#FFF3F4</color>
+
+    <color name="gray100">#0F0F0F</color>
+    <color name="gray95">#181818</color>
     <color name="gray90">#232323</color>
-    <color name="gray95">#1a1a1a</color>
+    <color name="gray80">#2E2E2E</color>
+    <color name="gray70">#5A5A5A</color>
+    <color name="gray60">#787878</color>
+    <color name="gray50">#969696</color>
+    <color name="gray40">#878787</color>
+    <color name="gray30">#D0D0D0</color>
+    <color name="gray20">#E2E2E2</color>
+    <color name="gray10">#F4F4F4</color>
+    <color name="gray0">#FAFAFA</color>
+
+
 </resources>

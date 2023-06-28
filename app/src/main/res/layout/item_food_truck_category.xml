@@ -25,7 +25,7 @@ xmlns:tools="http://schemas.android.com/tools">
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         android:text="@{item.name}"
-        android:textColor="@color/color_green"
+        android:textColor="@color/green"
         android:textSize="12sp"
         tools:text="전체" />
 </LinearLayout>

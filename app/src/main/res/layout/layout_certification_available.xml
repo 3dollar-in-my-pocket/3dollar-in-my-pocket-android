@@ -94,7 +94,7 @@
                     android:maxLines="1"
                     android:textColor="@color/white"
                     android:textSize="16sp"
-                    android:fontFamily="@font/applegothic_bold"
+                    android:fontFamily="@font/apple_gothic_bold"
                     android:textStyle="bold" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     android:text="@string/category"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:fontFamily="@font/applegothic_bold"
+                    android:fontFamily="@font/apple_gothic_bold"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -176,8 +176,8 @@
                     android:paddingHorizontal="22dp"
                     android:paddingVertical="6dp"
                     android:text="@string/visit_success"
-                    android:textColor="@color/color_green"
-                    android:fontFamily="@font/applegothic_bold"
+                    android:textColor="@color/green"
+                    android:fontFamily="@font/apple_gothic_bold"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -212,7 +212,7 @@
                     android:paddingVertical="6dp"
                     android:text="@string/visit_failed"
                     android:textColor="@color/color_main_red"
-                    android:fontFamily="@font/applegothic_bold"
+                    android:fontFamily="@font/apple_gothic_bold"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

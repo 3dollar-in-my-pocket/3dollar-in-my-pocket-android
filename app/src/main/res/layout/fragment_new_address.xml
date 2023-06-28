@@ -51,7 +51,7 @@
                 android:text="@string/title_add_store"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -118,7 +118,7 @@
                 android:text="@string/select_store_location"
                 android:textColor="@color/color_black"
                 android:textSize="18sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold" />
 
             <TextView
