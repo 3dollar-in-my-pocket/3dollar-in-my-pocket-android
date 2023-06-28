@@ -38,7 +38,7 @@
                 android:layout_marginStart="4dp"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold"
                 tools:text="10월 1일" />
 

@@ -48,7 +48,7 @@
             android:text="@{item.user.name}"
             android:textColor="@color/black"
             android:textSize="12sp"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:textStyle="bold" />
     </LinearLayout>
 </layout>

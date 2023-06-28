@@ -51,7 +51,7 @@
                 android:text="@string/edit_store"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/btn_back"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,7 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/color_black"
                             android:textSize="18sp"
-                            android:fontFamily="@font/applegothic_bold"
+                            android:fontFamily="@font/apple_gothic_bold"
                             android:textStyle="bold"
                             android:gravity="center_vertical"
                             app:layout_constraintEnd_toStartOf="@id/ib_write"
@@ -163,7 +163,7 @@
                             android:layout_marginBottom="12dp"
                             android:text="@string/store_name"
                             android:textColor="@color/color_black"
-                            android:fontFamily="@font/applegothic_bold"
+                            android:fontFamily="@font/apple_gothic_bold"
                             android:textStyle="bold" />
 
                         <EditText
@@ -180,7 +180,7 @@
                             android:textColor="@color/color_black"
                             android:textColorHint="@color/color_gray1"
                             android:textSize="16sp"
-                            android:fontFamily="@font/applegothic_bold"
+                            android:fontFamily="@font/apple_gothic_bold"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -195,7 +195,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/store_type"
                                 android:textColor="@color/color_black"
-                                android:fontFamily="@font/applegothic_bold"
+                                android:fontFamily="@font/apple_gothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -254,7 +254,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/payment_type"
                                 android:textColor="@color/color_black"
-                                android:fontFamily="@font/applegothic_bold"
+                                android:fontFamily="@font/apple_gothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -322,7 +322,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/show_type"
                                 android:textColor="@color/color_black"
-                                android:fontFamily="@font/applegothic_bold"
+                                android:fontFamily="@font/apple_gothic_bold"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -404,7 +404,7 @@
                             android:text="@string/menu_detail"
                             android:textColor="@color/color_black"
                             android:textSize="16sp"
-                            android:fontFamily="@font/applegothic_bold"
+                            android:fontFamily="@font/apple_gothic_bold"
                             android:textStyle="bold" />
 
                         <TextView
@@ -452,7 +452,7 @@
             android:text="@string/edit_store_finish"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
             app:layout_constraintEnd_toEndOf="@id/view_submit_back"
