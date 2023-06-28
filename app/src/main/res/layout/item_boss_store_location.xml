@@ -69,7 +69,7 @@
                 android:layout_marginTop="8dp"
                 android:paddingEnd="8dp"
                 android:singleLine="true"
-                android:textColor="@{isSelectedItem ? @color/color_green : @color/gray40}"
+                android:textColor="@{isSelectedItem ? @color/green : @color/gray40}"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_store_name"

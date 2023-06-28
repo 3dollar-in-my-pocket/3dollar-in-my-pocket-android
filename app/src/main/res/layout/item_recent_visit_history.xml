@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:background="@drawable/rect_red_radius48_opacity"
-            android:backgroundTint="@{item.exist ? @color/color_green : @color/color_main_red}"
+            android:backgroundTint="@{item.exist ? @color/green : @color/color_main_red}"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingHorizontal="8dp"

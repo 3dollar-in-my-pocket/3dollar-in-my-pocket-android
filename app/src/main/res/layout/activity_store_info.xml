@@ -290,7 +290,7 @@
                                     android:drawablePadding="10dp"
                                     android:fontFamily="@font/applegothic_bold"
                                     android:gravity="start|center_vertical"
-                                    android:textColor="@color/color_green"
+                                    android:textColor="@color/green"
                                     android:textStyle="bold"
                                     app:drawableStartCompat="@drawable/ic_good" />
 

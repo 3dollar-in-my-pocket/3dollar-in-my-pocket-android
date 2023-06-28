@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:textColor="@{item.exist ? @color/color_green : @color/color_main_red}"
+                android:textColor="@{item.exist ? @color/green : @color/color_main_red}"
                 android:textSize="12sp" />
         </LinearLayout>
 

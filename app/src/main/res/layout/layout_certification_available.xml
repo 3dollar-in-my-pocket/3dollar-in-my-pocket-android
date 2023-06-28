@@ -176,7 +176,7 @@
                     android:paddingHorizontal="22dp"
                     android:paddingVertical="6dp"
                     android:text="@string/visit_success"
-                    android:textColor="@color/color_green"
+                    android:textColor="@color/green"
                     android:fontFamily="@font/applegothic_bold"
                     android:textStyle="bold" />
             </LinearLayout>

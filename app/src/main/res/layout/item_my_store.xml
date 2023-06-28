@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:background="@drawable/rect_red_radius48"
-            android:backgroundTint="@{item.deleted ? @color/gray60 : @color/color_green}"
+            android:backgroundTint="@{item.deleted ? @color/gray60 : @color/green}"
             android:drawablePadding="4dp"
             android:fontFamily="@font/applegothic_bold"
             android:paddingHorizontal="10dp"

@@ -235,7 +235,7 @@
                             android:layout_weight="1"
                             android:background="@{viewModel.sortType == SortType.DISTANCE ? @drawable/rect_white_radius_10 : null}"
                             android:text="@string/sort_by_distance"
-                            android:textColor="@{viewModel.sortType == SortType.DISTANCE ? @color/color_green : @color/gray40}"
+                            android:textColor="@{viewModel.sortType == SortType.DISTANCE ? @color/green : @color/gray40}"
                             android:textSize="14sp" />
 
                         <Button
@@ -245,7 +245,7 @@
                             android:layout_weight="1"
                             android:background="@{viewModel.sortType == SortType.REVIEW ? @drawable/rect_white_radius_10 : null}"
                             android:text="@string/sort_by_review"
-                            android:textColor="@{viewModel.sortType == SortType.REVIEW ? @color/color_green : @color/gray40}"
+                            android:textColor="@{viewModel.sortType == SortType.REVIEW ? @color/green : @color/gray40}"
                             android:textSize="14sp" />
                     </LinearLayout>
 

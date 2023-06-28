@@ -55,7 +55,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/rect_radius12_opacity"
-            android:backgroundTint="@{item.exist ? @color/color_green : @color/color_main_red}"
+            android:backgroundTint="@{item.exist ? @color/green : @color/color_main_red}"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
