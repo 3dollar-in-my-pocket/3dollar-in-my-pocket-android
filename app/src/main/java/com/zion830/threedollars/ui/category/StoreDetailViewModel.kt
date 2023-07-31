@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.StoreDataSourceImpl
 import com.zion830.threedollars.datasource.model.Category
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
@@ -29,8 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import retrofit2.Response
-import zion830.com.common.base.BaseResponse
 import zion830.com.common.base.BaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

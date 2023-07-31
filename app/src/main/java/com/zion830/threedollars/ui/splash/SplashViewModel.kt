@@ -17,6 +17,9 @@ import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
@@ -31,11 +34,8 @@ class SplashViewModel @Inject constructor(
     private val kakaoLoginDataSource: KakaoLoginDataSource
 ) : BaseViewModel() {
 
-    private val _loginResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
-    val loginResult: LiveData<ResultWrapper<SignUser?>> = _loginResult
-
-    private val _refreshResult: MutableLiveData<ResultWrapper<SignUser?>> = MutableLiveData()
-    val refreshResult: LiveData<ResultWrapper<SignUser?>> = _refreshResult
+    private val _loginResult: MutableStateFlow<ResultWrapper<SignUser?>?> = MutableStateFlow(null)
+    val loginResult: StateFlow<ResultWrapper<SignUser?>?> = _loginResult.asStateFlow()
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -72,20 +72,20 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun tryLogin() {
+    private fun tryLogin() {
         viewModelScope.launch(coroutineExceptionHandler) {
             val loginType = SharedPrefUtils.getLoginType() ?: ""
             val token =
                 if (loginType == LoginType.KAKAO.socialName) SharedPrefUtils.getKakaoAccessToken() else SharedPrefUtils.getGoogleToken()
 
             if (token.isNullOrBlank()) {
-                _loginResult.postValue(ResultWrapper.GenericError(400))
+                _loginResult.value = ResultWrapper.GenericError(400)
                 return@launch
             }
 
             val call = userDataSource.login(LoginRequest(loginType, token))
             val result = safeApiCall(call)
-            _loginResult.postValue(result)
+            _loginResult.value = result
         }
     }
 
@@ -113,7 +113,7 @@ class SplashViewModel @Inject constructor(
                 )
                 tryLogin()
             } else {
-                _loginResult.postValue(ResultWrapper.GenericError(response.code()))
+                _loginResult.value = ResultWrapper.GenericError(response.code())
             }
         }
     }

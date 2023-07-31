@@ -9,43 +9,35 @@
             type="com.zion830.threedollars.ui.login.LoginViewModel" />
     </data>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/color_black"
-            android:orientation="vertical">
+            android:background="@color/pink">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/view_lottie"
+            <ImageView
+                android:id="@+id/loginImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:contentDescription="@string/app_name"
                 android:scaleType="center"
-                android:src="@drawable/ic_login_back"
+                android:src="@drawable/img_main"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="signin.json"
-                app:lottie_loop="true" />
+                app:layout_constraintVertical_bias="0.3" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias="0"
-                app:layout_constraintTop_toBottomOf="@id/view_lottie">
+                app:layout_constraintTop_toBottomOf="@id/loginImageView"
+                app:layout_constraintVertical_bias="0">
 
                 <Button
                     android:id="@+id/btn_login_kakao"
@@ -84,11 +76,4 @@
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
-    </FrameLayout>
 </layout>

@@ -14,9 +14,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -35,7 +33,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
-import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 import zion830.com.common.listener.OnSnapPositionChangeListener
 import zion830.com.common.listener.SnapOnScrollListener

@@ -4,7 +4,9 @@ import android.content.Intent
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -14,8 +16,12 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.zion830.threedollars.*
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
+import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.MainActivity
+import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
@@ -42,7 +48,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
     }
 
     override fun initView() {
-        observeUiData()
+        collectFlows()
         binding.btnLoginKakao.onSingleClick {
             EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.KAKAO)
@@ -127,35 +133,44 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(R.layou
         }
     }
 
-    private fun observeUiData() {
-        viewModel.loginResult.observe(this) {
-            when (it) {
-                is ResultWrapper.Success -> {
-                    SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
-                    SharedPrefUtils.saveAccessToken(it.value?.token)
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
-                        if (firebaseToken.isSuccessful) {
-                            viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+    private fun collectFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.loginResult.collect {
+                        when (it) {
+                            is ResultWrapper.Success -> {
+                                SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
+                                SharedPrefUtils.saveAccessToken(it.value?.token)
+                                FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
+                                    if (firebaseToken.isSuccessful) {
+                                        viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                                    }
+                                }
+                                startActivity(MainActivity.getIntent(this@LoginActivity))
+                                finish()
+                            }
+
+                            is ResultWrapper.GenericError -> {
+                                when (it.code) {
+                                    400 -> showToast(R.string.connection_failed)
+                                    404 -> inputNameLauncher.launch(Intent(this@LoginActivity, InputNameActivity::class.java))
+                                    503 -> showToast(R.string.server_500)
+                                    500, 502 -> showToast(R.string.connection_failed)
+                                    else -> showToast(R.string.connection_failed)
+                                }
+                            }
                         }
                     }
-                    startActivity(MainActivity.getIntent(this))
-                    finish()
                 }
-                is ResultWrapper.GenericError -> {
-                    when (it.code) {
-                        400 -> showToast(R.string.connection_failed)
-                        404 -> inputNameLauncher.launch(Intent(this, InputNameActivity::class.java))
-                        503 -> showToast(R.string.server_500)
-                        500, 502 -> showToast(R.string.connection_failed)
-                        else -> showToast(R.string.connection_failed)
+                launch {
+                    viewModel.isNameUpdated.collect {
+                        if (it) {
+                            startActivity(MainActivity.getIntent(this@LoginActivity))
+                            finish()
+                        }
                     }
                 }
-            }
-        }
-        viewModel.isNameUpdated.observe(this) {
-            if (it) {
-                startActivity(MainActivity.getIntent(this))
-                finish()
             }
         }
     }

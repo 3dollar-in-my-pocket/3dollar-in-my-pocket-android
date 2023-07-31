@@ -8,8 +8,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemTruckSearchEmptyBinding
 import com.zion830.threedollars.databinding.ItemTruckStoreByReviewBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseViewHolder

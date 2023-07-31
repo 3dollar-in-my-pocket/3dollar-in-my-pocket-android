@@ -6,7 +6,6 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.UserDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
 import dagger.hilt.android.lifecycle.HiltViewModel

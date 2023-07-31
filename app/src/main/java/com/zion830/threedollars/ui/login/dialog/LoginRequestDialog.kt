@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,7 +25,6 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
-import com.zion830.threedollars.databinding.DialogBottomTruckSelectCategoryBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.LoginViewModel
@@ -41,7 +42,7 @@ import zion830.com.common.base.onSingleClick
 class LoginRequestDialog : BottomSheetDialogFragment() {
     private lateinit var binding: DialogBottomLoginRequestBinding
     private val viewModel: LoginViewModel by viewModels()
-    private var callBack:(Boolean) ->Unit = {}
+    private var callBack: (Boolean) -> Unit = {}
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DialogBottomLoginRequestBinding.inflate(inflater)
         return binding.root
@@ -50,7 +51,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
-        observeUiData()
+        collectFlows()
         binding.btnLoginKakao.onSingleClick {
             EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
             SharedPrefUtils.saveLoginType(LoginType.KAKAO)
@@ -137,35 +138,44 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         }
     }
 
-    private fun observeUiData() {
-        viewModel.loginResult.observe(this) {
-            when (it) {
-                is ResultWrapper.Success -> {
-                    SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
-                    SharedPrefUtils.saveAccessToken(it.value?.token)
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
-                        if (firebaseToken.isSuccessful) {
-                            viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+    private fun collectFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.loginResult.collect {
+                        when (it) {
+                            is ResultWrapper.Success -> {
+                                SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
+                                SharedPrefUtils.saveAccessToken(it.value?.token)
+                                FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
+                                    if (firebaseToken.isSuccessful) {
+                                        viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                                    }
+                                }
+                                callBack.invoke(true)
+                                dismiss()
+                            }
+
+                            is ResultWrapper.GenericError -> {
+                                when (it.code) {
+                                    400 -> showToast(R.string.connection_failed)
+                                    404 -> callBack.invoke(false)
+                                    503 -> showToast(R.string.server_500)
+                                    500, 502 -> showToast(R.string.connection_failed)
+                                    else -> showToast(R.string.connection_failed)
+                                }
+                            }
                         }
                     }
-                    callBack.invoke(true)
-                    dismiss()
                 }
-                is ResultWrapper.GenericError -> {
-                    when (it.code) {
-                        400 -> showToast(R.string.connection_failed)
-                        404 -> callBack.invoke(false)
-                        503 -> showToast(R.string.server_500)
-                        500, 502 -> showToast(R.string.connection_failed)
-                        else -> showToast(R.string.connection_failed)
+                launch {
+                    viewModel.isNameUpdated.collect {
+                        if (it) {
+                            callBack.invoke(true)
+                            dismiss()
+                        }
                     }
                 }
-            }
-        }
-        viewModel.isNameUpdated.observe(this) {
-            if (it) {
-                callBack.invoke(true)
-                dismiss()
             }
         }
     }
@@ -189,7 +199,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         }
     }
 
-    fun setLoginCallBack(callBack:(Boolean) -> Unit):LoginRequestDialog{
+    fun setLoginCallBack(callBack: (Boolean) -> Unit): LoginRequestDialog {
         this.callBack = callBack
         return this
     }

@@ -8,8 +8,8 @@ import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
-import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.ui.home.HomeViewModel
+import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 

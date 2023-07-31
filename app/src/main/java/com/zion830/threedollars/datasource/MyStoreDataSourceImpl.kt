@@ -5,7 +5,6 @@ import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.di.NetworkModule
 import com.zion830.threedollars.network.NewServiceApi
-import javax.inject.Inject
 
 class MyStoreDataSourceImpl :
     PagingSource<Int, StoreInfo>() {
