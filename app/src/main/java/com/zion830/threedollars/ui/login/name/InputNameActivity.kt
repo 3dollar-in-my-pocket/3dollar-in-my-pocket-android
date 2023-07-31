@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.login.name
 import android.os.Handler
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.R
@@ -19,11 +20,10 @@ class InputNameActivity :
     override val viewModel: InputNameViewModel by viewModels()
 
     override fun initView() {
-        binding.etName.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
+        binding.nameEditTextView.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
             val handler = Handler()
             val runnable: Runnable = object : Runnable {
                 override fun run() {
-                    binding.scrollView.smoothScrollTo(0, binding.btnFinish.bottom)
                     handler.postDelayed(this, 10)
                 }
             }
@@ -33,7 +33,7 @@ class InputNameActivity :
             finish()
         }
 
-        binding.btnFinish.onSingleClick {
+        binding.finishButton.onSingleClick {
             showMarketingDialog()
         }
         viewModel.isNameUpdated.observe(this) {
@@ -43,9 +43,11 @@ class InputNameActivity :
             }
         }
         viewModel.isAlreadyUsed.observe(this) {
-            binding.tvAlreadyExist.isVisible = it > 0
+            binding.alreadyExistTextView.isVisible = it > 0
+            binding.waringImageView.isVisible = it > 0
+            binding.nameEditTextView.setTextColor(ContextCompat.getColor(this, R.color.red))
             if (it != -1) {
-                binding.tvAlreadyExist.text = getString(it)
+                binding.alreadyExistTextView.text = getString(it)
             }
         }
     }
