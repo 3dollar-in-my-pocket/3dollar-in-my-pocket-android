@@ -101,11 +101,11 @@
             style="@style/apple_gothic_bold.size_16sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@{viewModel.isNameEmpty() ? @color/gray80 : @color/pink}"
-            android:enabled="@{!viewModel.isNameEmpty()}"
+            android:background="@{viewModel.userName.isEmpty ? @color/gray80 : @color/pink}"
+            android:enabled="@{!viewModel.userName.isEmpty}"
             android:paddingVertical="20dp"
             android:text="@string/sing_up"
-            android:textColor="@{viewModel.isNameEmpty() ? @color/gray60 : @color/white}"
+            android:textColor="@{viewModel.userName.isEmpty ? @color/gray60 : @color/white}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -120,7 +120,7 @@
             android:paddingVertical="8dp"
             android:text="@string/login_name_already_exist"
             android:textColor="@color/red"
-            android:visibility="@{viewModel.isAvailable ? View.INVISIBLE : View.VISIBLE}"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/inputNameTextView2" />

@@ -3,13 +3,18 @@ package com.zion830.threedollars.ui.login.name
 import android.os.Handler
 import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.ui.MarketingDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.base.onSingleClick
 
@@ -20,15 +25,6 @@ class InputNameActivity :
     override val viewModel: InputNameViewModel by viewModels()
 
     override fun initView() {
-        binding.nameEditTextView.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            val handler = Handler()
-            val runnable: Runnable = object : Runnable {
-                override fun run() {
-                    handler.postDelayed(this, 10)
-                }
-            }
-            handler.postDelayed(runnable, 10)
-        }
         binding.btnBack.setOnClickListener {
             finish()
         }
@@ -36,20 +32,39 @@ class InputNameActivity :
         binding.finishButton.onSingleClick {
             showMarketingDialog()
         }
-        viewModel.isNameUpdated.observe(this) {
-            if (it) {
-                setResult(RESULT_OK)
-                finish()
+        collectFlows()
+    }
+
+    private fun collectFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.eventsFlow.collect {
+                        when (it) {
+                            InputNameViewModel.Event.NameUpdate -> {
+                                setResult(RESULT_OK)
+                                finish()
+                            }
+
+                            InputNameViewModel.Event.NameAlready -> {
+                                showNameErrorTextView(R.string.login_name_already_exist)
+                            }
+
+                            InputNameViewModel.Event.NameError -> {
+                                showNameErrorTextView(R.string.invalidate_name)
+                            }
+                        }
+                    }
+                }
             }
         }
-        viewModel.isAlreadyUsed.observe(this) {
-            binding.alreadyExistTextView.isVisible = it > 0
-            binding.waringImageView.isVisible = it > 0
-            binding.nameEditTextView.setTextColor(ContextCompat.getColor(this, R.color.red))
-            if (it != -1) {
-                binding.alreadyExistTextView.text = getString(it)
-            }
-        }
+    }
+
+    private fun showNameErrorTextView(@StringRes stringRes: Int) {
+        binding.alreadyExistTextView.isVisible = true
+        binding.waringImageView.isVisible = true
+        binding.nameEditTextView.setTextColor(ContextCompat.getColor(this@InputNameActivity, R.color.red))
+        binding.alreadyExistTextView.text = getString(stringRes)
     }
 
     private fun showMarketingDialog() {
