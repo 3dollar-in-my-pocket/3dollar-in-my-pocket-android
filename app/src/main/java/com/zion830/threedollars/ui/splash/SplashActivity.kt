@@ -26,6 +26,7 @@ import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseActivity
@@ -43,35 +44,21 @@ class SplashActivity :
                 viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
             }
         }
-        binding.lottieView.playAnimation()
-        binding.lottieView.addAnimatorListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                // do nothing
-            }
-
-            override fun onAnimationEnd(animation: Animator) {
-                VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
-                    { minimum, current ->
-                        VersionUpdateDialog.getInstance(minimum, current)
-                            .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
-                    }, {
-                        if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
-                            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                            finish()
-                        } else {
-                            tryServiceLogin()
-                        }
-                    })
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-                // do nothing
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-                // do nothing
-            }
-        })
+        lifecycleScope.launch {
+            delay(2000L)
+            VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
+                { minimum, current ->
+                    VersionUpdateDialog.getInstance(minimum, current)
+                        .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                }, {
+                    if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
+                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                        finish()
+                    } else {
+                        tryServiceLogin()
+                    }
+                })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -95,6 +82,7 @@ class SplashActivity :
             LoginType.KAKAO.socialName -> {
                 viewModel.refreshKakaoToken()
             }
+
             LoginType.GOOGLE.socialName -> {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val account =
@@ -129,6 +117,7 @@ class SplashActivity :
                                 )
                             )
                         }
+
                         deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
                             startActivity(
                                 StoreDetailActivity.getIntent(
@@ -137,11 +126,13 @@ class SplashActivity :
                                 )
                             )
                         }
+
                         deepLink.contains("dollars") -> {
                             startActivity(Intent(this, DynamicLinkActivity::class.java).apply {
                                 putExtra("link", deepLink)
                             })
                         }
+
                         else -> {
                             startActivity(Intent(this, MainActivity::class.java))
                         }
@@ -149,6 +140,7 @@ class SplashActivity :
                     }
                     finish()
                 }
+
                 is ResultWrapper.GenericError -> {
                     if (it.code == 400) {
                         showToast(R.string.login_failed)
@@ -181,6 +173,7 @@ class SplashActivity :
                             .show()
                     }
                 }
+
                 is ResultWrapper.NetworkError -> {
                     showToast(R.string.login_failed)
                 }
@@ -197,7 +190,7 @@ class SplashActivity :
         fun getIntent(
             context: Context,
             deepLink: Uri? = null,
-            storeType: String? = null
+            storeType: String? = null,
         ) =
             Intent(context, SplashActivity::class.java).apply {
                 deepLink?.let {
