@@ -15,8 +15,8 @@ import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons

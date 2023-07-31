@@ -14,7 +14,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -22,7 +21,6 @@ import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
-import zion830.com.common.ext.toStringDefault
 import java.net.URISyntaxException
 
 @AndroidEntryPoint

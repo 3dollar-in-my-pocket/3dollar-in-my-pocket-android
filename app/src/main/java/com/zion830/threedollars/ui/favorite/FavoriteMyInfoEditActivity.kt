@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.zion830.threedollars.R

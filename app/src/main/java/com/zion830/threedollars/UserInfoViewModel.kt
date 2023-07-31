@@ -1,10 +1,9 @@
 package com.zion830.threedollars
 
-import androidx.lifecycle.*
+import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.ui.login.name.InputNameViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -2,20 +2,14 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.content.Context
 import android.content.Intent
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.databinding.DataBindingUtil
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
-import com.zion830.threedollars.databinding.CustomFoodTruckToastBinding
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import gun0912.tedimagepicker.util.ToastUtil.context
 import zion830.com.common.base.BaseActivity
 
 @AndroidEntryPoint

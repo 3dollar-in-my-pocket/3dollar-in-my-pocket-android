@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.login.name
 
-import android.os.Handler
-import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat

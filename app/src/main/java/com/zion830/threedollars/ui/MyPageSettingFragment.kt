@@ -11,8 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
-import com.zion830.threedollars.*
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
+import com.zion830.threedollars.R
+import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.mypage.AskFragment

@@ -3,11 +3,9 @@ package com.zion830.threedollars.ui.map
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.Popups
-import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

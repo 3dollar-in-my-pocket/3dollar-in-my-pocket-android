@@ -1,9 +1,5 @@
 package com.zion830.threedollars.ui.mypage
 
-import android.app.Activity
-import android.os.Handler
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -17,7 +13,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.onSingleClick
