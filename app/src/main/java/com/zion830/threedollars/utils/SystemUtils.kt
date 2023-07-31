@@ -43,7 +43,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
 import com.zion830.threedollars.ui.login.LoginActivity
 import org.json.JSONObject
-import java.util.*
+import java.util.Locale
 
 
 fun showToast(@StringRes resId: Int) {

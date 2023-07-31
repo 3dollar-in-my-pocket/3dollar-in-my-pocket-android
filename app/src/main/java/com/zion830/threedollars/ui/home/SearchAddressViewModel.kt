@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.datasource.MapDataSource
-import com.zion830.threedollars.datasource.MapDataSourceImpl
 import com.zion830.threedollars.datasource.model.v2.response.kakao.SearchAddressResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

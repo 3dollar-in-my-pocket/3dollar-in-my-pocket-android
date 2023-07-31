@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.splash
 
-import android.animation.Animator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri

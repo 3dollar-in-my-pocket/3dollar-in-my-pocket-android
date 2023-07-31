@@ -19,7 +19,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -31,7 +30,6 @@ import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.ext.toStringDefault
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint

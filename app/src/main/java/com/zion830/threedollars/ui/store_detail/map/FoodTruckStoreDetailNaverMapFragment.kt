@@ -8,8 +8,8 @@ import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.R
-import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailViewModel
+import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
