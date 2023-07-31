@@ -23,23 +23,12 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
     override fun initView() {
         EventTracker.logEvent(Constants.NICKNAME_CHANGE_PAGE_BTN_CLICKED)
 
-        binding.etName.onFocusChangeListener = View.OnFocusChangeListener { _, _ ->
-            val handler = Handler()
-            val runnable = object : Runnable {
-                override fun run() {
-                    binding.scrollView.smoothScrollTo(0, binding.btnFinish.bottom)
-                    handler.postDelayed(this, 10)
-                }
-            }
-            handler.postDelayed(runnable, 10)
-        }
-        binding.btnBack.setOnClickListener {
+        binding.backImageView.setOnClickListener {
             viewModel.clearName()
             activity?.supportFragmentManager?.popBackStack()
         }
         viewModel.isNameUpdated.observe(this) {
             if (it) {
-                hideKeyboard(binding.scrollView)
                 viewModel.initNameUpdateInfo()
                 viewModel.clearName()
                 activity?.supportFragmentManager?.popBackStack()
@@ -47,9 +36,9 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         }
         viewModel.isAlreadyUsed.observe(this) {
             EventTracker.logEvent(Constants.NICKNAME_ALREADY_EXISTED)
-            binding.tvAlreadyExist.isVisible = it > 0
+            binding.alreadyExistTextView.isVisible = it > 0
             if (it != -1) {
-                binding.tvAlreadyExist.text = getString(it)
+                binding.alreadyExistTextView.text = getString(it)
             }
         }
     }
@@ -58,8 +47,4 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         viewModel.clearName()
     }
 
-    private fun hideKeyboard(view: View) {
-        val imm: InputMethodManager = requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
 }
