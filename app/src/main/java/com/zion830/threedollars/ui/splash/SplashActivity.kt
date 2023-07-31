@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.messaging.FirebaseMessaging
@@ -102,82 +104,89 @@ class SplashActivity :
             }
         }
 
-        viewModel.loginResult.observe(this) {
-            when (it) {
-                is ResultWrapper.Success -> {
-                    SharedPrefUtils.saveAccessToken(it.value?.token)
-                    val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
-                    when {
-                        deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
-                            startActivity(
-                                FoodTruckStoreDetailActivity.getIntent(
-                                    this,
-                                    deepLinkStoreId = intent.getStringExtra(STORE_ID)
-                                )
-                            )
-                        }
+        collectFlows()
 
-                        deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
-                            startActivity(
-                                StoreDetailActivity.getIntent(
-                                    this,
-                                    deepLinkStoreId = intent.getStringExtra(STORE_ID)
-                                )
-                            )
-                        }
+    }
 
-                        deepLink.contains("dollars") -> {
-                            startActivity(Intent(this, DynamicLinkActivity::class.java).apply {
-                                putExtra("link", deepLink)
-                            })
-                        }
+    private fun collectFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.loginResult.collect {
+                        when (it) {
+                            is ResultWrapper.Success -> {
+                                SharedPrefUtils.saveAccessToken(it.value?.token)
+                                val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
+                                when {
+                                    deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
+                                        startActivity(
+                                            FoodTruckStoreDetailActivity.getIntent(
+                                                this@SplashActivity,
+                                                deepLinkStoreId = intent.getStringExtra(STORE_ID)
+                                            )
+                                        )
+                                    }
 
-                        else -> {
-                            startActivity(Intent(this, MainActivity::class.java))
-                        }
+                                    deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
+                                        startActivity(
+                                            StoreDetailActivity.getIntent(
+                                                this@SplashActivity,
+                                                deepLinkStoreId = intent.getStringExtra(STORE_ID)
+                                            )
+                                        )
+                                    }
 
-                    }
-                    finish()
-                }
+                                    deepLink.contains("dollars") -> {
+                                        startActivity(Intent(this@SplashActivity, DynamicLinkActivity::class.java).apply {
+                                            putExtra("link", deepLink)
+                                        })
+                                    }
 
-                is ResultWrapper.GenericError -> {
-                    if (it.code == 400) {
-                        showToast(R.string.login_failed)
-                        startActivity(Intent(this, LoginActivity::class.java))
-                    }
-                    if (it.code in 401..499) {
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
-                    }
-                    if (it.code == 503) {
-                        AlertDialog.Builder(this)
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                    else -> {
+                                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                                    }
+
+                                }
                                 finish()
                             }
-                            .setTitle(getString(R.string.server_500))
-                            .setMessage(getString(R.string.server_500_msg))
-                            .setCancelable(false)
-                            .create()
-                            .show()
-                    }
-                    if (it.code in 500..599) {
-                        AlertDialog.Builder(this)
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                finish()
-                            }
-                            .setTitle(it.msg ?: getString(R.string.server_500))
-                            .setMessage(it.msg ?: getString(R.string.server_500_msg))
-                            .setCancelable(false)
-                            .create()
-                            .show()
-                    }
-                }
 
-                is ResultWrapper.NetworkError -> {
-                    showToast(R.string.login_failed)
+                            is ResultWrapper.GenericError -> {
+                                if (it.code == 400) {
+                                    showToast(R.string.login_failed)
+                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                }
+                                if (it.code in 401..499) {
+                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                    finish()
+                                }
+                                if (it.code == 503) {
+                                    showAlertDialog()
+                                }
+                                if (it.code in 500..599) {
+                                    showAlertDialog(it.msg)
+                                }
+                            }
+
+                            is ResultWrapper.NetworkError -> {
+                                showToast(R.string.login_failed)
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private fun showAlertDialog(msg: String? = null) {
+        AlertDialog.Builder(this@SplashActivity)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                finish()
+            }
+            .setTitle(msg ?: getString(R.string.server_500))
+            .setMessage(msg ?: getString(R.string.server_500_msg))
+            .setCancelable(false)
+            .create()
+            .show()
     }
 
     companion object {
