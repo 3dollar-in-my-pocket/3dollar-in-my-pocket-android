@@ -7,6 +7,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
 import com.zion830.threedollars.*
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
@@ -18,6 +21,7 @@ import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 
@@ -94,19 +98,28 @@ class MyPageSettingFragment :
             }
         }
 
-        viewModel.logoutResult.observe(viewLifecycleOwner) {
-            if (it) {
-                SharedPrefUtils.clearUserInfo()
-                showToast(R.string.logout_message)
-                startActivity(Intent(requireContext(), SplashActivity::class.java))
-                requireActivity().finish()
-            } else {
-                showToast(R.string.connection_failed)
-            }
-        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.eventsFlow.collect {
+                        when (it) {
+                            UserInfoViewModel.Event.Logout -> {
+                                SharedPrefUtils.clearUserInfo()
+                                showToast(R.string.logout_message)
+                                startActivity(Intent(requireContext(), SplashActivity::class.java))
+                                requireActivity().finish()
+                            }
 
-        viewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
+                            UserInfoViewModel.Event.LogoutError -> showToast(R.string.connection_failed)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.userInfo.collect {
+                        binding.pushSwitchButton.isChecked = it?.data?.device?.isSetupNotification == true
+                    }
+                }
+            }
         }
     }
 

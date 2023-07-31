@@ -4,15 +4,23 @@ import android.app.Activity
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.listener.OnBackPressedListener
 
 @AndroidEntryPoint
@@ -27,20 +35,36 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
             viewModel.clearName()
             activity?.supportFragmentManager?.popBackStack()
         }
-        viewModel.isNameUpdated.observe(this) {
-            if (it) {
-                viewModel.initNameUpdateInfo()
-                viewModel.clearName()
-                activity?.supportFragmentManager?.popBackStack()
+
+        binding.finishButton.onSingleClick {
+            viewModel.updateName()
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.eventsFlow.collect {
+                        when (it) {
+                            UserInfoViewModel.Event.NameAlready -> showNameErrorTextView(R.string.login_name_already_exist)
+                            UserInfoViewModel.Event.NameError -> showNameErrorTextView(R.string.invalidate_name)
+                            UserInfoViewModel.Event.NameUpdate -> {
+                                viewModel.clearName()
+                                activity?.supportFragmentManager?.popBackStack()
+                            }
+                        }
+                    }
+                }
             }
         }
-        viewModel.isAlreadyUsed.observe(this) {
-            EventTracker.logEvent(Constants.NICKNAME_ALREADY_EXISTED)
-            binding.alreadyExistTextView.isVisible = it > 0
-            if (it != -1) {
-                binding.alreadyExistTextView.text = getString(it)
-            }
-        }
+
+    }
+
+    private fun showNameErrorTextView(@StringRes stringRes: Int) {
+        EventTracker.logEvent(Constants.NICKNAME_ALREADY_EXISTED)
+        binding.alreadyExistTextView.isVisible = true
+        binding.waringImageView.isVisible = true
+        binding.nameEditTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+        binding.alreadyExistTextView.text = getString(stringRes)
     }
 
     override fun onBackPressed() {

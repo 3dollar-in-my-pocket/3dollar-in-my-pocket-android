@@ -4,9 +4,13 @@ import androidx.lifecycle.*
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.ui.login.name.InputNameViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
@@ -16,74 +20,47 @@ import javax.inject.Inject
 class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) :
     BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: MutableStateFlow<MyInfoResponse?> = MutableStateFlow(MyInfoResponse())
 
-    val userInfo: LiveData<MyInfoResponse>
-        get() = _userInfo
+    val userInfo = _userInfo.asStateFlow()
 
-    private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
-    val isAlreadyUsed: LiveData<Int>
-        get() = _isAlreadyUsed
+    val userName: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
-    val isNameUpdated: LiveData<Boolean>
-        get() = _isNameUpdated
-
-    private val _logoutResult: MutableLiveData<Boolean> = MutableLiveData()
-    val logoutResult: LiveData<Boolean>
-        get() = _logoutResult
-
-    val userName: MutableLiveData<String> = MutableLiveData("")
-
-    val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
-        it.isNullOrBlank()
-    }
-
-    private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
-
-    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
-    val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
+    private val _eventsFlow = MutableSharedFlow<Event>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _userInfo.postValue(userDataSource.getMyInfo().body())
-            isUpdated.postValue(true)
+            _userInfo.value = userDataSource.getMyInfo().body()
         }
     }
 
     fun updateName() {
         EventTracker.logEvent(Constants.NICKNAME_CHANGE_BTN_CLICKED)
 
-        if (userName.value.isNullOrBlank()) {
+        if (userName.value.isBlank()) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val checkName = userDataSource.checkName(userName.value!!)
+            val checkName = userDataSource.checkName(userName.value)
             if (checkName.body()?.resultCode?.isNotBlank() == true) {
-                _isAlreadyUsed.postValue(R.string.name_empty)
                 return@launch
             }
 
-            val result = userDataSource.updateName(userName.value!!)
+            val result = userDataSource.updateName(userName.value)
             if (result.isSuccessful) {
                 _msgTextId.postValue(R.string.set_name_success)
-                _isNameUpdated.postValue(true)
+                _eventsFlow.emit(Event.NameUpdate)
                 updateUserInfo()
             }
-
-            _isAlreadyUsed.postValue(
+            _eventsFlow.emit(
                 when (result.code()) {
-                    200 -> -1
-                    400 -> R.string.invalidate_name
-                    else -> R.string.login_name_already_exist
+                    400 -> Event.NameError
+                    else -> Event.NameAlready
                 }
             )
         }
-    }
-
-    fun initNameUpdateInfo() {
-        _isNameUpdated.value = false
     }
 
     fun clearName() {
@@ -109,8 +86,12 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userDataSource.logout()
-            _logoutResult.postValue(response.isSuccessful)
+            val logout = userDataSource.logout()
+            if (logout.isSuccessful) {
+                _eventsFlow.emit(Event.Logout)
+            } else {
+                _eventsFlow.emit(Event.LogoutError)
+            }
         }
     }
 
@@ -130,5 +111,14 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
     override fun handleError(t: Throwable) {
         super.handleError(t)
         _msgTextId.postValue(R.string.connection_failed)
+    }
+
+    sealed class Event {
+        object Logout : Event()
+        object LogoutError : Event()
+        object NameAlready : Event()
+        object NameError : Event()
+
+        object NameUpdate : Event()
     }
 }

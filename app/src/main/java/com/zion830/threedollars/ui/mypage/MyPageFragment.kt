@@ -5,6 +5,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.BOSS_STORE
@@ -23,6 +26,7 @@ import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
@@ -117,6 +121,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
         binding.favoriteMoreTextView.setOnClickListener {
             activityResultLauncher.launch(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
         }
+        collectFlows()
         observeUiData()
         if (viewModel.isMoveMedalPage) {
             addShowAllMedalFragment()
@@ -124,6 +129,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
     }
 
     private fun observeUiData() {
+
         viewModel.myVisitHistory.observe(viewLifecycleOwner) {
             val emptyResponseList = listOf(
                 StoreEmptyResponse(
@@ -137,9 +143,6 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
             } else {
                 visitHistoryAdapter.submitList(it)
             }
-        }
-        userInfoViewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.tvName.text = it.data.name
         }
         viewModel.selectedMedal.observe(viewLifecycleOwner) {
             binding.tvUserMedal.text = it?.name ?: "장착한 칭호가 없어요!"
@@ -157,6 +160,18 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R
                 myFavoriteAdapter.submitList(emptyResponseList)
             } else {
                 myFavoriteAdapter.submitList(it)
+            }
+        }
+    }
+
+    private fun collectFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    userInfoViewModel.userInfo.collect {
+                        binding.tvName.text = it?.data?.name
+                    }
+                }
             }
         }
     }
