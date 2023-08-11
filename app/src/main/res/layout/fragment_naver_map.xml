@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_map"
             android:name="com.naver.maps.map.MapFragment"
             android:layout_width="match_parent"
@@ -20,15 +20,13 @@
         
         <ImageButton
             android:id="@+id/btn_find_location"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="75dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/circle_white"
             android:elevation="8dp"
-            android:foreground="?android:attr/actionBarItemBackground"
             android:src="@drawable/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

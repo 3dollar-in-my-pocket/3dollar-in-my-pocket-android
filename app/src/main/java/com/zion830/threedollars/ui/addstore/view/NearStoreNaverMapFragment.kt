@@ -25,7 +25,7 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
         super.onMapReady(map)
 
         val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        params.setMargins(0, 0, 0, SizeUtils.dpToPx(240f))
+        params.setMargins(0, 0, 0, SizeUtils.dpToPx(170f))
         binding.btnFindLocation.layoutParams = params
 
         map.addOnCameraChangeListener { reason, _ ->
