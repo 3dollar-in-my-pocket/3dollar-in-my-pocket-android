@@ -1,23 +1,10 @@
 package com.zion830.threedollars.datasource
 
-import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
-import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
+import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.Medal
-import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.MyStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
-import com.zion830.threedollars.datasource.model.v2.response.my.User
-import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse

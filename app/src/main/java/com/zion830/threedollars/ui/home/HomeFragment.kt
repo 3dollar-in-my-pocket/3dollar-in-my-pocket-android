@@ -1,12 +1,9 @@
 package com.zion830.threedollars.ui.home
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
@@ -22,15 +19,11 @@ import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
-import com.zion830.threedollars.ui.home.adapter.BossCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.home.adapter.RoadFoodCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
@@ -45,10 +38,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
     private lateinit var adapter: NearStoreRecyclerAdapter
-
-    private lateinit var bossCategoriesAdapter: BossCategoriesRecyclerAdapter
-
-    private lateinit var roadFoodCategoriesAdapter: RoadFoodCategoriesRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
@@ -65,7 +54,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override fun initView() {
         viewModel.getUserInfo()
-        viewModel.getRoadFoodCategory()
         naverMapFragment = NearStoreNaverMapFragment {
             binding.tvRetrySearch.isVisible = true
         }
@@ -141,14 +129,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         }
-        bossCategoriesAdapter = BossCategoriesRecyclerAdapter {
-            selectFoodTruck = it.categoryId.toString()
-            getNearStore()
-        }
-        roadFoodCategoriesAdapter = RoadFoodCategoriesRecyclerAdapter {
-            selectRoadFood = it.category
-            getNearStore()
-        }
 
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
             adapter.isAd = res?.find { it is Popups } != null
@@ -212,16 +192,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
         naverMapFragment.moveToCurrentLocation(false)
 
-        lifecycleScope.launch {
-            viewModel.bossCategoryModelList.collect {
-                bossCategoriesAdapter.submitList(it)
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.roadFoodCategoryModelList.collect {
-                roadFoodCategoriesAdapter.submitList(it)
-            }
-        }
     }
 
     private fun getNearStore() {

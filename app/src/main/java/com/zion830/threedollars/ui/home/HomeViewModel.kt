@@ -13,13 +13,9 @@ import com.zion830.threedollars.datasource.model.v2.request.PushInformationReque
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
@@ -30,14 +26,6 @@ class HomeViewModel @Inject constructor(
     private val popupDataSource: PopupDataSource,
     private val userDataSource: UserDataSource
 ) : BaseViewModel() {
-
-    private val _bossCategoryModelList =
-        MutableSharedFlow<List<BossCategoriesResponse.BossCategoriesModel>>()
-    val bossCategoryModelList: SharedFlow<List<BossCategoriesResponse.BossCategoriesModel>> get() = _bossCategoryModelList
-
-    private val _roadFoodCategoryModelList =
-        MutableSharedFlow<List<CategoryInfo>>()
-    val roadFoodCategoryModelList: SharedFlow<List<CategoryInfo>> get() = _roadFoodCategoryModelList
 
     private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
 
@@ -126,31 +114,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    fun getBossCategory() {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            repository.getBossCategory().body()?.data?.let {
-                _bossCategoryModelList.emit(
-                    listOf(
-                        BossCategoriesResponse.BossCategoriesModel(
-                            categoryId = "All",
-                            name = "전체"
-                        )
-                    ) + it
-                )
-            }
-        }
-    }
-
-    fun getRoadFoodCategory() {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            repository.getCategories().body()?.data?.let {
-                _roadFoodCategoryModelList.emit(
-                    listOf(CategoryInfo(category = "All", name = "전체")) + it
-                )
-            }
-        }
-    }
 
     fun postPushInformation(informationRequest: PushInformationRequest, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
