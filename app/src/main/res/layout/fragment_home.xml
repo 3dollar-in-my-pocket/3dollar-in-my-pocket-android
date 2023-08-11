@@ -73,62 +73,71 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/categoryConstraintLayout"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/allMenuTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_address">
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_all_menu"
+                app:drawableStartCompat="@drawable/ic_category"
+                app:layout_constraintStart_toStartOf="@id/layout_address"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bossCategoryRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="16dp"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/item_home_boss_category" />
+            <TextView
+                android:id="@+id/filterTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_filter"
+                app:drawableStartCompat="@drawable/ic_change"
+                app:layout_constraintStart_toEndOf="@id/allMenuTextView"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/roadFoodCategoryRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/item_home_boss_category" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/bossFilterTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_boss_filter"
+                android:textColor="@color/gray40"
+                app:drawableStartCompat="@drawable/ic_uncheck"
+                app:layout_constraintStart_toEndOf="@id/filterTextView"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
             <TextView
                 android:id="@+id/tv_retry_search"
+                style="@style/apple_gothic_bold.size_12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="13dp"
                 android:background="@drawable/ripple_translate"
                 android:clickable="true"
                 android:elevation="8dp"
                 android:focusable="true"
-                android:paddingHorizontal="24dp"
-                android:paddingVertical="12dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="@string/retry_search"
                 android:textColor="@android:color/white"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/categoryConstraintLayout" />
+                app:layout_constraintStart_toStartOf="@id/filterTextView"
+                app:layout_constraintTop_toBottomOf="@id/filterTextView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"

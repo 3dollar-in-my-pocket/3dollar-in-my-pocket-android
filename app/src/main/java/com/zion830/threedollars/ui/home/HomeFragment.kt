@@ -81,8 +81,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
             isRoadFoodMode = !isRoadFoodMode
             getNearStore()
-            binding.bossCategoryRecyclerView.isVisible = !isRoadFoodMode
-            binding.roadFoodCategoryRecyclerView.isVisible = isRoadFoodMode
 
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
@@ -91,6 +89,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 SearchAddressFragment.newInstance(isRoadFoodMode),
                 SearchAddressFragment::class.java.name
             )
+        }
+
+        binding.allMenuTextView.setOnClickListener {
+            // TODO: 전체 메뉴 기능 구현
+        }
+
+        binding.filterTextView.setOnClickListener {
+            // TODO: 거리순 보기 기능 구현
+        }
+
+        binding.bossFilterTextView.setOnClickListener {
+            // TODO: 사장님 직영점만 기능 구현
         }
 
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
@@ -156,8 +166,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }
         binding.rvStore.adapter = adapter
-        binding.bossCategoryRecyclerView.adapter = bossCategoriesAdapter
-        binding.roadFoodCategoryRecyclerView.adapter = roadFoodCategoriesAdapter
 
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.rvStore)
