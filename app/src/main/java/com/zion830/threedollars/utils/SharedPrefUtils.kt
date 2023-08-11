@@ -140,13 +140,6 @@ object SharedPrefUtils {
         }
     }
 
-    fun saveFoodTruckToolTip(isFirst: Boolean) = sharedPreferences.edit {
-        putBoolean(FOOD_TRUCK_TOOL_TIP, isFirst)
-        commit()
-    }
-
-    fun getFoodTruckToolTip() = sharedPreferences.getBoolean(FOOD_TRUCK_TOOL_TIP, true)
-
     fun <T> saveList(list: List<T?>?, key: String?) {
         if (list.isNullOrEmpty()) {
             return

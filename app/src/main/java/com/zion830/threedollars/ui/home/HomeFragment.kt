@@ -64,10 +64,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     override fun initView() {
-        if (SharedPrefUtils.getFoodTruckToolTip()) {
-            binding.foodTruckToolTipImageView.isVisible = true
-            binding.foodTruckToolTipTextView.isVisible = true
-        }
         viewModel.getUserInfo()
         viewModel.getRoadFoodCategory()
         naverMapFragment = NearStoreNaverMapFragment {
@@ -83,49 +79,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
-        binding.modeChangeTextView.setOnClickListener {
-            if (SharedPrefUtils.getFoodTruckToolTip()) {
-                SharedPrefUtils.saveFoodTruckToolTip(false)
-                binding.foodTruckToolTipImageView.isVisible = false
-                binding.foodTruckToolTipTextView.isVisible = false
-            }
             isRoadFoodMode = !isRoadFoodMode
-            binding.modeChangeTextView.run {
-
-                if (isRoadFoodMode) {
-                    viewModel.getRoadFoodCategory()
-                    naverMapFragment.onActivityResult(
-                        Constants.MODE_ROAD_FOOD,
-                        Activity.RESULT_OK,
-                        null
-                    )
-                } else {
-                    viewModel.getBossCategory()
-                    naverMapFragment.onActivityResult(
-                        Constants.MODE_FOOD_TRUCK,
-                        Activity.RESULT_OK,
-                        null
-                    )
-                }
-                setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    if (isRoadFoodMode) R.drawable.ic_sync_pink else R.drawable.ic_sync_green,
-                    0,
-                    0,
-                    0
-                )
-                text =
-                    if (isRoadFoodMode) getString(R.string.road_food) else getString(R.string.food_truck)
-                setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (isRoadFoodMode) R.color.color_FFA1AA else R.color.green
-                    )
-                )
-            }
             getNearStore()
             binding.bossCategoryRecyclerView.isVisible = !isRoadFoodMode
             binding.roadFoodCategoryRecyclerView.isVisible = isRoadFoodMode
-        }
 
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
