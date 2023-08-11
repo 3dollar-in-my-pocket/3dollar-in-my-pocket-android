@@ -7,14 +7,14 @@
         android:title="@string/title_home" />
     
     <item
-        android:id="@+id/navigation_street"
-        android:icon="@drawable/selector_street"
-        android:title="@string/road_food" />
+        android:id="@+id/navigation_write"
+        android:title="제보하기"
+        android:icon="@drawable/selector_write" />
     
     <item
-        android:id="@+id/navigation_truck"
-        android:icon="@drawable/selector_truck"
-        android:title="@string/food_truck" />
+        android:id="@+id/navigation_vote"
+        android:icon="@drawable/selector_vote"
+        android:title="투표하기" />
     
     <item
         android:id="@+id/navigation_mypage"

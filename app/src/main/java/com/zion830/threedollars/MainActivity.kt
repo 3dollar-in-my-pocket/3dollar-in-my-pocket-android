@@ -72,12 +72,12 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_street -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_street)
+                R.id.navigation_write -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
-                R.id.navigation_truck -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_truck)
+                R.id.navigation_vote -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_mypage -> {

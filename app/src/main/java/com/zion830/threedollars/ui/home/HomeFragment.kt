@@ -92,7 +92,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
 
         binding.listViewTextView.setOnClickListener {
-            // TODO: 리스트뷰 기능 구현 
+            // TODO: 리스트뷰 기능 구현
         }
 
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
