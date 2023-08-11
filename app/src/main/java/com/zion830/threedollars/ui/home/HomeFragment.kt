@@ -91,6 +91,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             // TODO: 사장님 직영점만 기능 구현
         }
 
+        binding.listViewTextView.setOnClickListener {
+            // TODO: 리스트뷰 기능 구현 
+        }
+
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
             override fun onClick(item: StoreInfo?) {
                 if (item != null) {

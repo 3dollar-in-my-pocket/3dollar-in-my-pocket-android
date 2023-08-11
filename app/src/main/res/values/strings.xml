@@ -355,4 +355,5 @@
     <string name="fragment_home_all_menu">전체 메뉴</string>
     <string name="fragment_home_filter">거리순 보기</string>
     <string name="fragment_home_boss_filter">사장님 직영점만</string>
+    <string name="fragment_home_list_view">리스트뷰</string>
 </resources>

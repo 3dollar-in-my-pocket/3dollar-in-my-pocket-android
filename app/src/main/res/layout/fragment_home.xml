@@ -139,6 +139,22 @@
                 app:layout_constraintStart_toStartOf="@id/filterTextView"
                 app:layout_constraintTop_toBottomOf="@id/filterTextView" />
 
+            <TextView
+                android:id="@+id/listViewTextView"
+                style="@style/apple_gothic_bold.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rect_gray80_radius40"
+                android:drawablePadding="4dp"
+                android:padding="12dp"
+                android:text="@string/fragment_home_list_view"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_list"
+                app:layout_constraintBottom_toTopOf="@id/rv_store"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"
                 bindItem="@{viewModel.nearStoreInfo}"
