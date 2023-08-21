@@ -4,6 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
@@ -18,12 +21,15 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnItemClickListener
@@ -61,8 +67,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
-            isRoadFoodMode = !isRoadFoodMode
-            getNearStore()
+        isRoadFoodMode = !isRoadFoodMode
+        getNearStore()
 
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
@@ -74,7 +80,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
 
         binding.allMenuTextView.setOnClickListener {
-            // TODO: 전체 메뉴 기능 구현
+            showSelectCategoryDialog()
         }
 
         binding.filterTextView.setOnClickListener {
@@ -128,21 +134,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             }
         }
 
-        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            adapter.isAd = res?.find { it is Popups } != null
-            adapter.submitList(res)
-            val list =
-                if (isRoadFoodMode) res?.filterIsInstance<StoreInfo>() else res?.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
-            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
-                onStoreClicked(it)
-            }
-        }
-
-        viewModel.userInfo.observe(viewLifecycleOwner) {
-            if (it.data.marketingConsent == "UNVERIFIED") {
-                showMarketingDialog()
-            }
-        }
         binding.rvStore.adapter = adapter
 
         val snapHelper = LinearSnapHelper()
@@ -190,6 +181,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
         naverMapFragment.moveToCurrentLocation(false)
 
+        initViewModel()
+    }
+
+    private fun initViewModel() {
+        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
+            adapter.isAd = res?.find { it is Popups } != null
+            adapter.submitList(res)
+            val list =
+                if (isRoadFoodMode) res?.filterIsInstance<StoreInfo>() else res?.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
+                onStoreClicked(it)
+            }
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            if (it.data.marketingConsent == "UNVERIFIED") {
+                showMarketingDialog()
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED){
+                launch {
+                    viewModel.selectCategory.collect{
+                        // TODO: 선택에 맞게 아래 카드뷰의 리스트가 바껴야함, 카드뷰 작업후 진행 예정
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showSelectCategoryDialog() {
+        val dialog = SelectCategoryDialogFragment()
+        dialog.show(parentFragmentManager, "")
     }
 
     private fun getNearStore() {
