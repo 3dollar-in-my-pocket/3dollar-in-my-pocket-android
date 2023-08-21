@@ -26,7 +26,11 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.replaceFragment

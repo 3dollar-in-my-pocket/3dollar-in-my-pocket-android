@@ -11,7 +11,6 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
 import com.zion830.threedollars.datasource.model.v2.response.Popups
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
@@ -33,8 +32,6 @@ class StreetByMenuFragment :
     override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
-
-    private var menuType: CategoryInfo = CategoryInfo()
 
     private val listener = object : OnItemClickListener<StoreInfo> {
         override fun onClick(item: StoreInfo) {
@@ -71,16 +68,6 @@ class StreetByMenuFragment :
         })
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
-        binding.categoryImageView.setOnClickListener {
-            val bottomSheetDialog = StreetSelectCategoryDialogFragment()
-            bottomSheetDialog.show(parentFragmentManager, "")
-        }
-        binding.btnMenu.setOnClickListener {
-            naverMapFragment.moveToCurrentLocation()
-            naverMapFragment.currentPosition?.let { currentPosition ->
-                viewModel.changeCategory(menuType, currentPosition)
-            }
-        }
         binding.btnSortByDistance.setOnClickListener {
             EventTracker.logEvent(Constants.ORDER_BY_DISTANCE_BTN_CLICKED)
             naverMapFragment.moveToCurrentLocation()

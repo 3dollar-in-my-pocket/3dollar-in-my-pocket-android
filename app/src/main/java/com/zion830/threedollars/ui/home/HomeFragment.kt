@@ -46,12 +46,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private var selectRoadFood = "All"
     private var selectFoodTruck = "All"
 
-    fun getMapCenterLatLng() = try {
-        naverMapFragment.getMapCenterLatLng()
-    } catch (e: Exception) {
-        null
-    }
-
     override fun initView() {
         viewModel.getUserInfo()
         naverMapFragment = NearStoreNaverMapFragment {

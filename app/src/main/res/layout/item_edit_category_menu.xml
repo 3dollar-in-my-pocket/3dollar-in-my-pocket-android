@@ -21,7 +21,6 @@
         
         <ImageView
             android:id="@+id/iv_menu_icon"
-            bindWhiteMenuIcon="@{item.menuType.category}"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
