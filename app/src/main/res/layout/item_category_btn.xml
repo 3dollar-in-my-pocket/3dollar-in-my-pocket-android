@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="12dp">
+
+        <ImageView
+            android:id="@+id/selectCircleImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_select_circle"
+            app:layout_constraintBottom_toBottomOf="@id/categoryImageView"
+            app:layout_constraintEnd_toEndOf="@id/categoryImageView"
+            android:visibility="gone"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="@id/categoryImageView"
+            app:layout_constraintTop_toTopOf="@id/categoryImageView" />
+
+        <ImageView
+            android:id="@+id/categoryImageView"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_margin="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_menu_bungeoppang_selected"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/categoryNameTextView"
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/gray70"
+            app:layout_constraintEnd_toEndOf="@id/categoryImageView"
+            app:layout_constraintStart_toStartOf="@id/categoryImageView"
+            app:layout_constraintTop_toBottomOf="@id/categoryImageView"
+            tools:text="붕어빵" />
+
+        <ImageView
+            android:id="@+id/newImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_new_badge"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/categoryImageView"
+            app:layout_constraintTop_toTopOf="@id/categoryImageView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
