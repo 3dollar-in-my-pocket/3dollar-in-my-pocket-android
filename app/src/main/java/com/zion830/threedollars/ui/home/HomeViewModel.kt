@@ -13,18 +13,26 @@ import com.zion830.threedollars.datasource.model.v2.request.PushInformationReque
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.Category
+import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: StoreDataSource,
+    private val storeDataSource: StoreDataSource,
     private val popupDataSource: PopupDataSource,
-    private val userDataSource: UserDataSource
+    private val userDataSource: UserDataSource,
 ) : BaseViewModel() {
 
     private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
@@ -34,11 +42,12 @@ class HomeViewModel @Inject constructor(
 
     val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()
 
-    val searchResultLocation: MutableLiveData<LatLng> = MutableLiveData()
-
     val addressText: MutableLiveData<String> = MutableLiveData()
 
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
+
+    private val _selectCategory = MutableStateFlow(CategoriesModel())
+    val selectCategory = _selectCategory.asStateFlow()
 
     fun getUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -47,14 +56,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateCurrentLocation(latlng: LatLng) {
-        searchResultLocation.value = latlng
         currentLocation.value = latlng
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
     fun getBossNearStore(location: LatLng, selectCategory: String = "All") {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val storeData = repository.getBossNearStore(
+            val storeData = storeDataSource.getBossNearStore(
                 latitude = location.latitude,
                 longitude = location.longitude
             )
@@ -90,7 +98,7 @@ class HomeViewModel @Inject constructor(
 
     fun requestHomeItem(location: LatLng, selectCategory: String = "All") {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val storeData = repository.getAllStore(location.latitude, location.longitude)
+            val storeData = storeDataSource.getAllStore(location.latitude, location.longitude)
             val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
             val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
             storeData.body()?.data?.let {
@@ -125,11 +133,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
+    private fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             if (userDataSource.putMarketingConsent(marketingConsentRequest).isSuccessful) {
                 getUserInfo()
             }
+        }
+    }
+
+    fun changeSelectCategory(categoriesModel: CategoriesModel) {
+        viewModelScope.launch {
+            _selectCategory.emit(categoriesModel)
         }
     }
 }
