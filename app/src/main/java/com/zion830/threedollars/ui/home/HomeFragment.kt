@@ -47,11 +47,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
-    private var isRoadFoodMode = true
-
-    private var selectRoadFood = "All"
-    private var selectFoodTruck = "All"
-
     override fun initView() {
         viewModel.getUserInfo()
         naverMapFragment = NearStoreNaverMapFragment {
@@ -67,14 +62,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
-        isRoadFoodMode = !isRoadFoodMode
         getNearStore()
 
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
-                SearchAddressFragment.newInstance(isRoadFoodMode),
+                SearchAddressFragment.newInstance(),
                 SearchAddressFragment::class.java.name
             )
         }
@@ -153,18 +147,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                             } else {
                                 adapter.focusedIndex = position
                             }
-                            if (isRoadFoodMode) {
-                                naverMapFragment.updateMarkerIcon(
-                                    R.drawable.ic_marker,
-                                    adapter.focusedIndex
-                                )
-                            } else {
-                                naverMapFragment.updateMarkerIcon(
-                                    if (adapter.isFoodTruckOpen(position)) R.drawable.ic_food_truck_clicked_off else R.drawable.ic_marker_green,
-                                    adapter.focusedIndex
-                                )
-
-                            }
+                            naverMapFragment.updateMarkerIcon(
+                                R.drawable.ic_marker,
+                                adapter.focusedIndex
+                            )
 
                             adapter.notifyDataSetChanged()
                             adapter.getItemLocation(position)
@@ -188,8 +174,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
             adapter.isAd = res?.find { it is Popups } != null
             adapter.submitList(res)
-            val list =
-                if (isRoadFoodMode) res?.filterIsInstance<StoreInfo>() else res?.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+            val list = res?.filterIsInstance<StoreInfo>()
             naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
                 onStoreClicked(it)
             }
@@ -202,9 +187,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED){
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.selectCategory.collect{
+                    viewModel.selectCategory.collect {
                         // TODO: 선택에 맞게 아래 카드뷰의 리스트가 바껴야함, 카드뷰 작업후 진행 예정
                     }
                 }
@@ -218,11 +203,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     }
 
     private fun getNearStore() {
-        if (isRoadFoodMode) {
-            viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng(), selectRoadFood)
-        } else {
-            viewModel.getBossNearStore(naverMapFragment.getMapCenterLatLng(), selectFoodTruck)
-        }
+        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
     }
 
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
@@ -230,10 +211,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         if (position >= 0) {
             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
             adapter.focusedIndex = position
-            naverMapFragment.updateMarkerIcon(
-                if (isRoadFoodMode) R.drawable.ic_marker else R.drawable.ic_marker_green,
-                adapter.focusedIndex
-            )
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is StoreInfo) {
                     LatLng(adAndStoreItem.latitude, adAndStoreItem.longitude)
@@ -277,11 +255,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun onResume() {
         super.onResume()
         naverMapFragment.getMapCenterLatLng().let {
-            if (isRoadFoodMode) {
-                viewModel.requestHomeItem(it, selectRoadFood)
-            } else {
-                viewModel.getBossNearStore(it, selectFoodTruck)
-            }
+            viewModel.requestHomeItem(it)
         }
     }
 }

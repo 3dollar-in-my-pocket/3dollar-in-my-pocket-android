@@ -14,16 +14,11 @@ import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.Category
-import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject

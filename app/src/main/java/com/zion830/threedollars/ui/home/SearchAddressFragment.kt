@@ -33,11 +33,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                if (arguments?.getBoolean(IS_ROAD_FOOD_MODE) == true) {
-                    viewModel.requestHomeItem(location)
-                } else {
-                    viewModel.getBossNearStore(location)
-                }
+                viewModel.requestHomeItem(location)
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -72,14 +68,6 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     }
 
     companion object {
-
-        const val IS_ROAD_FOOD_MODE = "IS_ROAD_FOOD_MODE"
-
-        fun newInstance(isRoadFoodMode: Boolean) =
-            SearchAddressFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean(IS_ROAD_FOOD_MODE, isRoadFoodMode)
-                }
-            }
+        fun newInstance() = SearchAddressFragment()
     }
 }
