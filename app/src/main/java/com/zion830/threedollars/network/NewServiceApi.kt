@@ -178,8 +178,8 @@ interface NewServiceApi {
         @Query("position") position: String
     ): Response<PopupsResponse>
 
-    @GET("/api/v1/boss/store/categories")
-    suspend fun getBossCategories(): Response<BossCategoriesResponse>
+    @GET("/api/v4/store/categories")
+    suspend fun getCategories(): Response<CategoriesResponse>
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(

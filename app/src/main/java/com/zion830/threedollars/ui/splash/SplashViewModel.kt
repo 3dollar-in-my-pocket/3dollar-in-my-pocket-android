@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.KakaoLoginDataSource
 import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
@@ -18,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.BaseViewModel
@@ -29,7 +31,7 @@ class SplashViewModel @Inject constructor(
     private val storeDataSource: StoreDataSource,
     private val userDataSource: UserDataSource,
     private val popupDataSource: PopupDataSource,
-    private val kakaoLoginDataSource: KakaoLoginDataSource
+    private val kakaoLoginDataSource: KakaoLoginDataSource,
 ) : BaseViewModel() {
 
     private val _loginResult: MutableStateFlow<ResultWrapper<SignUser?>?> = MutableStateFlow(null)
@@ -37,17 +39,13 @@ class SplashViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val result = storeDataSource.getCategories()
-            if (result.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    SharedPrefUtils.saveCategories(result.body()?.data ?: emptyList())
-                }
-            }
-
-            val bossCategory = storeDataSource.getBossCategory()
-            if (bossCategory.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    SharedPrefUtils.saveTruckCategories(bossCategory.body()?.data ?: emptyList())
+            storeDataSource.getCategories().collect { categories ->
+                if (categories.isSuccessful) {
+                    val categoriesModelList = categories.body()?.data ?: emptyList()
+                    SharedPrefUtils.saveCategories(categoriesModelList.filter { it.classification.description == "간식류" })
+                    SharedPrefUtils.saveTruckCategories(categoriesModelList.filter { it.classification.description == "식사류" })
+                } else {
+                    _msgTextId.postValue(R.string.connection_failed)
                 }
             }
 
@@ -61,9 +59,9 @@ class SplashViewModel @Inject constructor(
             }
 
             val storeMarkerAdvertisements = popupDataSource.getPopups("STORE_MARKER")
-            if(storeMarkerAdvertisements.isSuccessful){
+            if (storeMarkerAdvertisements.isSuccessful) {
                 val advertisements = storeMarkerAdvertisements.body()?.data.orEmpty()
-                if(advertisements.isNotEmpty()){
+                if (advertisements.isNotEmpty()) {
                     GlobalApplication.storeMarker = advertisements.first()
                 }
             }

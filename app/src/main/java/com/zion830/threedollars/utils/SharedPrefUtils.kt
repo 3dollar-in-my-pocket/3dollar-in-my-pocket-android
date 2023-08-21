@@ -6,9 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import java.lang.reflect.Type
 
 object SharedPrefUtils {
@@ -80,11 +79,11 @@ object SharedPrefUtils {
 
     fun getKakaoRefreshToken() = sharedPreferences.getString(KAKAO_REFRESH_TOKEN, null)
 
-    fun saveCategories(categoryInfo: List<CategoryInfo>) {
+    fun saveCategories(categoryInfo: List<CategoriesModel>) {
         saveList(categoryInfo, CATEGORY_LIST)
     }
 
-    fun saveTruckCategories(categoryInfo: List<BossCategoriesResponse.BossCategoriesModel>) {
+    fun saveTruckCategories(categoryInfo: List<CategoriesModel>) {
         saveList(categoryInfo, TRUCK_CATEGORY_LIST)
     }
 
@@ -106,22 +105,22 @@ object SharedPrefUtils {
 
     fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
 
-    fun getCategories(): List<CategoryInfo> {
+    fun getCategories(): List<CategoriesModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<CategoryInfo>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
         }
     }
 
-    fun getTruckCategories(): List<BossCategoriesResponse.BossCategoriesModel> {
+    fun getTruckCategories(): List<CategoriesModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(TRUCK_CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<BossCategoriesResponse.BossCategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()

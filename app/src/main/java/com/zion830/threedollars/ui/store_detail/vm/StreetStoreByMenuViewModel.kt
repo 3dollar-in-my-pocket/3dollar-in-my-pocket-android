@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -24,22 +24,18 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
     val sortType: LiveData<SortType>
         get() = _sortType
 
-    private val _category: MutableLiveData<CategoryInfo> = MutableLiveData(CategoryInfo())
-    val category: LiveData<CategoryInfo>
+    private val _category: MutableLiveData<CategoriesModel> = MutableLiveData(CategoriesModel())
+    val category: LiveData<CategoriesModel>
         get() = _category
 
-    private val _categories: MutableLiveData<List<CategoryInfo>> = MutableLiveData(SharedPrefUtils.getCategories())
-    val categories: LiveData<List<CategoryInfo>> = _categories
+    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getCategories())
+    val categories: LiveData<List<CategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<StoreInfo>>()
     val storeByRating = MutableLiveData<List<StoreInfo>>()
     val hasData = MutableLiveData<Boolean>()
 
-    fun changeCategory(menuType: CategoryInfo) {
-        _category.value = menuType
-    }
-
-    fun changeCategory(menuType: CategoryInfo, location: LatLng) {
+    fun changeCategory(menuType: CategoriesModel, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -67,11 +63,13 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
                     storeByDistance.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
+
                 SortType.RATING -> {
                     val data = storeDataSource.getCategoryByReview(_category.value?.category ?: "", location.latitude, location.longitude)
                     storeByRating.postValue(data.body()?.data)
                     hasData.postValue(data.body()?.data?.isNotEmpty())
                 }
+
                 else -> {
 
                 }
@@ -80,14 +78,14 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
     }
 
     fun loadCategories() {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = storeDataSource.getCategories()
-
-            if (response.isSuccessful) {
-                _categories.postValue(response.body()?.data ?: emptyList())
-                SharedPrefUtils.saveCategories(response.body()?.data ?: emptyList())
-            } else {
-                _msgTextId.postValue(R.string.connection_failed)
+        viewModelScope.launch(coroutineExceptionHandler) {
+            storeDataSource.getCategories().collect {
+                if (it.isSuccessful) {
+                    _categories.postValue(it.body()?.data ?: emptyList())
+                    SharedPrefUtils.saveCategories(it.body()?.data ?: emptyList())
+                } else {
+                    _msgTextId.postValue(R.string.connection_failed)
+                }
             }
         }
     }

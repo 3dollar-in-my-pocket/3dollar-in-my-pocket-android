@@ -8,8 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.datasource.model.MenuType
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 
 
 @BindingAdapter("bindMenuIcon")
@@ -32,7 +31,7 @@ fun ImageView.bindMenuIcons(category: List<String>? = emptyList(), isSelected: B
 }
 
 @BindingAdapter("bindMenuIntroTitle")
-fun TextView.bindMenuIntroTitle(menuType: CategoryInfo?) {
+fun TextView.bindMenuIntroTitle(menuType: CategoriesModel?) {
     if (menuType == null) {
         return
     }

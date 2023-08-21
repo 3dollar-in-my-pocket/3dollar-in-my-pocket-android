@@ -22,14 +22,11 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
     val sortType: LiveData<SortType>
         get() = _sortType
-    private val _category: MutableLiveData<BossCategoriesResponse.BossCategoriesModel> =
-        MutableLiveData(BossCategoriesResponse.BossCategoriesModel())
-    val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
-        get() = _category
+    private val _category: MutableLiveData<CategoriesModel> = MutableLiveData(CategoriesModel())
+    val category: LiveData<CategoriesModel> get() = _category
 
-    private val _categories: MutableLiveData<List<BossCategoriesResponse.BossCategoriesModel>> =
-        MutableLiveData(SharedPrefUtils.getTruckCategories())
-    val categories: LiveData<List<BossCategoriesResponse.BossCategoriesModel>> = _categories
+    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getTruckCategories())
+    val categories: LiveData<List<CategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
