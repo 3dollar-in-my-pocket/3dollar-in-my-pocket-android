@@ -11,7 +11,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
@@ -32,9 +31,6 @@ class TruckByMenuFragment :
     override val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 
     private val popupViewModel: PopupViewModel by viewModels()
-
-    private var menuType: BossCategoriesResponse.BossCategoriesModel =
-        BossCategoriesResponse.BossCategoriesModel()
 
     private val listener = object : OnItemClickListener<BossNearStoreResponse.BossNearStoreModel> {
         override fun onClick(item: BossNearStoreResponse.BossNearStoreModel) {
@@ -68,16 +64,6 @@ class TruckByMenuFragment :
         })
         parentFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
 
-        binding.categoryImageView.setOnClickListener {
-            val bottomSheetDialog = TruckSelectCategoryDialogFragment()
-            bottomSheetDialog.show(parentFragmentManager, "")
-        }
-        binding.btnMenu.setOnClickListener {
-            naverMapFragment.moveToCurrentLocation()
-            naverMapFragment.currentPosition?.let { currentPosition ->
-                viewModel.changeCategory(menuType, currentPosition)
-            }
-        }
         binding.btnSortByDistance.setOnClickListener {
             EventTracker.logEvent(Constants.ORDER_BY_DISTANCE_BTN_CLICKED)
             naverMapFragment.moveToCurrentLocation()

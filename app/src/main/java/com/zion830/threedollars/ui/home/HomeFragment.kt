@@ -1,12 +1,12 @@
 package com.zion830.threedollars.ui.home
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
@@ -21,15 +21,14 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
-import com.zion830.threedollars.ui.home.adapter.BossCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.home.adapter.NearStoreRecyclerAdapter
-import com.zion830.threedollars.ui.home.adapter.RoadFoodCategoriesRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.ext.addNewFragment
@@ -46,10 +45,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private lateinit var adapter: NearStoreRecyclerAdapter
 
-    private lateinit var bossCategoriesAdapter: BossCategoriesRecyclerAdapter
-
-    private lateinit var roadFoodCategoriesAdapter: RoadFoodCategoriesRecyclerAdapter
-
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
     private var isRoadFoodMode = true
@@ -57,19 +52,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private var selectRoadFood = "All"
     private var selectFoodTruck = "All"
 
-    fun getMapCenterLatLng() = try {
-        naverMapFragment.getMapCenterLatLng()
-    } catch (e: Exception) {
-        null
-    }
-
     override fun initView() {
-        if (SharedPrefUtils.getFoodTruckToolTip()) {
-            binding.foodTruckToolTipImageView.isVisible = true
-            binding.foodTruckToolTipTextView.isVisible = true
-        }
         viewModel.getUserInfo()
-        viewModel.getRoadFoodCategory()
         naverMapFragment = NearStoreNaverMapFragment {
             binding.tvRetrySearch.isVisible = true
         }
@@ -83,49 +67,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
-        binding.modeChangeTextView.setOnClickListener {
-            if (SharedPrefUtils.getFoodTruckToolTip()) {
-                SharedPrefUtils.saveFoodTruckToolTip(false)
-                binding.foodTruckToolTipImageView.isVisible = false
-                binding.foodTruckToolTipTextView.isVisible = false
-            }
-            isRoadFoodMode = !isRoadFoodMode
-            binding.modeChangeTextView.run {
-
-                if (isRoadFoodMode) {
-                    viewModel.getRoadFoodCategory()
-                    naverMapFragment.onActivityResult(
-                        Constants.MODE_ROAD_FOOD,
-                        Activity.RESULT_OK,
-                        null
-                    )
-                } else {
-                    viewModel.getBossCategory()
-                    naverMapFragment.onActivityResult(
-                        Constants.MODE_FOOD_TRUCK,
-                        Activity.RESULT_OK,
-                        null
-                    )
-                }
-                setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    if (isRoadFoodMode) R.drawable.ic_sync_pink else R.drawable.ic_sync_green,
-                    0,
-                    0,
-                    0
-                )
-                text =
-                    if (isRoadFoodMode) getString(R.string.road_food) else getString(R.string.food_truck)
-                setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (isRoadFoodMode) R.color.color_FFA1AA else R.color.green
-                    )
-                )
-            }
-            getNearStore()
-            binding.bossCategoryRecyclerView.isVisible = !isRoadFoodMode
-            binding.roadFoodCategoryRecyclerView.isVisible = isRoadFoodMode
-        }
+        isRoadFoodMode = !isRoadFoodMode
+        getNearStore()
 
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
@@ -134,6 +77,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 SearchAddressFragment.newInstance(isRoadFoodMode),
                 SearchAddressFragment::class.java.name
             )
+        }
+
+        binding.allMenuTextView.setOnClickListener {
+            showSelectCategoryDialog()
+        }
+
+        binding.filterTextView.setOnClickListener {
+            // TODO: 거리순 보기 기능 구현
+        }
+
+        binding.bossFilterTextView.setOnClickListener {
+            // TODO: 사장님 직영점만 기능 구현
+        }
+
+        binding.listViewTextView.setOnClickListener {
+            // TODO: 리스트뷰 기능 구현
         }
 
         adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
@@ -174,33 +133,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
             }
         }
-        bossCategoriesAdapter = BossCategoriesRecyclerAdapter {
-            selectFoodTruck = it.categoryId.toString()
-            getNearStore()
-        }
-        roadFoodCategoriesAdapter = RoadFoodCategoriesRecyclerAdapter {
-            selectRoadFood = it.category
-            getNearStore()
-        }
 
-        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            adapter.isAd = res?.find { it is Popups } != null
-            adapter.submitList(res)
-            val list =
-                if (isRoadFoodMode) res?.filterIsInstance<StoreInfo>() else res?.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
-            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
-                onStoreClicked(it)
-            }
-        }
-
-        viewModel.userInfo.observe(viewLifecycleOwner) {
-            if (it.data.marketingConsent == "UNVERIFIED") {
-                showMarketingDialog()
-            }
-        }
         binding.rvStore.adapter = adapter
-        binding.bossCategoryRecyclerView.adapter = bossCategoriesAdapter
-        binding.roadFoodCategoryRecyclerView.adapter = roadFoodCategoriesAdapter
 
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.rvStore)
@@ -247,16 +181,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
         naverMapFragment.moveToCurrentLocation(false)
 
-        lifecycleScope.launch {
-            viewModel.bossCategoryModelList.collect {
-                bossCategoriesAdapter.submitList(it)
+        initViewModel()
+    }
+
+    private fun initViewModel() {
+        viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
+            adapter.isAd = res?.find { it is Popups } != null
+            adapter.submitList(res)
+            val list =
+                if (isRoadFoodMode) res?.filterIsInstance<StoreInfo>() else res?.filterIsInstance<BossNearStoreResponse.BossNearStoreModel>()
+            naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
+                onStoreClicked(it)
             }
         }
-        lifecycleScope.launch {
-            viewModel.roadFoodCategoryModelList.collect {
-                roadFoodCategoriesAdapter.submitList(it)
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            if (it.data.marketingConsent == "UNVERIFIED") {
+                showMarketingDialog()
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED){
+                launch {
+                    viewModel.selectCategory.collect{
+                        // TODO: 선택에 맞게 아래 카드뷰의 리스트가 바껴야함, 카드뷰 작업후 진행 예정
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showSelectCategoryDialog() {
+        val dialog = SelectCategoryDialogFragment()
+        dialog.show(parentFragmentManager, "")
     }
 
     private fun getNearStore() {

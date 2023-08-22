@@ -20,56 +20,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-            <TextView
-                android:id="@+id/modeChangeTextView"
-                android:layout_width="94dp"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:layout_marginStart="24dp"
-                android:background="@drawable/rect_black_radius12"
-                android:elevation="6dp"
-                android:gravity="center"
-                android:maxWidth="280dp"
-                android:minHeight="48dp"
-                android:paddingHorizontal="8dp"
-                android:singleLine="true"
-                android:text="@string/road_food"
-                android:textColor="@color/color_FFA1AA"
-                android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_sync_pink"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="길거리음식" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/rect_white_radius_12"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="44dp"
+                android:background="@drawable/rect_white_radius_8"
                 android:elevation="6dp"
                 android:gravity="center"
                 android:minHeight="48dp"
                 android:orientation="horizontal"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingHorizontal="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/modeChangeTextView"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/tv_address"
+                    style="@style/apple_gothic_semi_bold.size_14sp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:maxWidth="280dp"
                     android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:textColor="@color/gray100"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/addressArrowImageView"
                     app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +55,7 @@
                     android:id="@+id/addressArrowImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="10dp"
                     android:src="@drawable/ic_gray_arrow"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -98,69 +73,94 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/categoryConstraintLayout"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/allMenuTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_address">
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_all_menu"
+                app:drawableStartCompat="@drawable/ic_category"
+                app:layout_constraintStart_toStartOf="@id/layout_address"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bossCategoryRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="16dp"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/item_home_boss_category" />
+            <TextView
+                android:id="@+id/filterTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_filter"
+                app:drawableStartCompat="@drawable/ic_change"
+                app:layout_constraintStart_toEndOf="@id/allMenuTextView"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/roadFoodCategoryRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/item_home_boss_category" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/bossFilterTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_boss_filter"
+                android:textColor="@color/gray40"
+                app:drawableStartCompat="@drawable/ic_uncheck"
+                app:layout_constraintStart_toEndOf="@id/filterTextView"
+                app:layout_constraintTop_toBottomOf="@id/layout_address" />
 
             <TextView
                 android:id="@+id/tv_retry_search"
+                style="@style/apple_gothic_bold.size_12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="13dp"
                 android:background="@drawable/ripple_translate"
                 android:clickable="true"
                 android:elevation="8dp"
                 android:focusable="true"
-                android:paddingHorizontal="24dp"
-                android:paddingVertical="12dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="@string/retry_search"
                 android:textColor="@android:color/white"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/categoryConstraintLayout" />
+                app:layout_constraintStart_toStartOf="@id/filterTextView"
+                app:layout_constraintTop_toBottomOf="@id/filterTextView" />
+
+            <TextView
+                android:id="@+id/listViewTextView"
+                style="@style/apple_gothic_bold.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rect_gray80_radius40"
+                android:drawablePadding="4dp"
+                android:padding="12dp"
+                android:text="@string/fragment_home_list_view"
+                android:textColor="@color/white"
+                app:drawableStartCompat="@drawable/ic_list"
+                app:layout_constraintBottom_toTopOf="@id/rv_store"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_store"
                 bindItem="@{viewModel.nearStoreInfo}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="72dp"
+                android:layout_marginBottom="15dp"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 android:overScrollMode="never"
@@ -171,32 +171,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:listitem="@layout/item_store_location" />
 
-            <TextView
-                android:id="@+id/foodTruckToolTipTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rect_gray80_radius8"
-                android:paddingVertical="12dp"
-                android:paddingStart="48dp"
-                android:paddingEnd="16dp"
-                android:text="@string/food_truck_tool_tip"
-                android:textColor="@color/white"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/categoryConstraintLayout" />
-
-            <ImageView
-                android:id="@+id/foodTruckToolTipImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_finger_arrow_up"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/foodTruckToolTipTextView"
-                app:layout_constraintStart_toStartOf="@id/foodTruckToolTipTextView"
-                app:layout_constraintTop_toBottomOf="@id/modeChangeTextView"
-                app:layout_constraintVertical_bias="0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

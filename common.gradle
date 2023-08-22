@@ -14,7 +14,7 @@ android {
         }
     }
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 57
         versionName "3.2.2"

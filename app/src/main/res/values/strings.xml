@@ -352,4 +352,8 @@
     <string name="delete">삭제</string>
     <string name="dialog_all_delete_favorite_title">나의 즐겨찾기 리스트를\n모두 삭제할까요?</string>
     <string name="privacy_policy">개인정보처리방침</string>
+    <string name="fragment_home_all_menu">전체 메뉴</string>
+    <string name="fragment_home_filter">거리순 보기</string>
+    <string name="fragment_home_boss_filter">사장님 직영점만</string>
+    <string name="fragment_home_list_view">리스트뷰</string>
 </resources>

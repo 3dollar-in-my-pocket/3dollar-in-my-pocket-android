@@ -12,7 +12,7 @@ import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.datasource.model.v2.response.store.Image
 import com.zion830.threedollars.datasource.model.v2.response.store.Menu
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
@@ -52,7 +52,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         }
         allMenu.map {
             val key = SharedPrefUtils.getCategories()
-                .find { categoryInfo -> categoryInfo.category == it.key } ?: CategoryInfo()
+                .find { categoryInfo -> categoryInfo.category == it.key } ?: CategoriesModel()
             Category(key, it.value)
         }
     }

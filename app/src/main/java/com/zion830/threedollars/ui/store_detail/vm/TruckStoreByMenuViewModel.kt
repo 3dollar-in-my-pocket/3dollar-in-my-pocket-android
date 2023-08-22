@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,24 +22,17 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
     val sortType: LiveData<SortType>
         get() = _sortType
-    private val _category: MutableLiveData<BossCategoriesResponse.BossCategoriesModel> =
-        MutableLiveData(BossCategoriesResponse.BossCategoriesModel())
-    val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
-        get() = _category
+    private val _category: MutableLiveData<CategoriesModel> = MutableLiveData(CategoriesModel())
+    val category: LiveData<CategoriesModel> get() = _category
 
-    private val _categories: MutableLiveData<List<BossCategoriesResponse.BossCategoriesModel>> =
-        MutableLiveData(SharedPrefUtils.getTruckCategories())
-    val categories: LiveData<List<BossCategoriesResponse.BossCategoriesModel>> = _categories
+    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getTruckCategories())
+    val categories: LiveData<List<CategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val hasData = MutableLiveData<Boolean>()
 
-    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel) {
-        _category.value = menuType
-    }
-
-    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel, location: LatLng) {
+    fun changeCategory(menuType: CategoriesModel, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -87,16 +80,4 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
         }
     }
 
-    fun loadCategories() {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = storeDataSource.getBossCategory()
-
-            if (response.isSuccessful) {
-                _categories.postValue(response.body()?.data ?: emptyList())
-                SharedPrefUtils.saveTruckCategories(response.body()?.data ?: emptyList())
-            } else {
-                _msgTextId.postValue(R.string.connection_failed)
-            }
-        }
-    }
 }

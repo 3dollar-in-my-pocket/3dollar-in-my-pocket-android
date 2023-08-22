@@ -3,36 +3,12 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+  <group>
+    <clip-path
+        android:pathData="M0,0h24v24h-24z"/>
     <path
-        android:fillColor="#00000000"
-        android:pathData="M12,12m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0"
-        android:strokeWidth="2"
-        android:strokeColor="#FF5C43" />
-    <path
-        android:fillColor="#FF5C43"
-        android:pathData="M12,12m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M12,3V7"
-        android:strokeWidth="2"
-        android:strokeColor="#FF5C43"
-        android:strokeLineCap="round" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M12,17V21"
-        android:strokeWidth="2"
-        android:strokeColor="#FF5C43"
-        android:strokeLineCap="round" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M21,12L17,12"
-        android:strokeWidth="2"
-        android:strokeColor="#FF5C43"
-        android:strokeLineCap="round" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M7,12L3,12"
-        android:strokeWidth="2"
-        android:strokeColor="#FF5C43"
-        android:strokeLineCap="round" />
+        android:pathData="M12,2.2C12.442,2.2 12.8,2.558 12.8,3V4.04C16.58,4.415 19.585,7.421 19.961,11.2H21C21.442,11.2 21.8,11.558 21.8,12C21.8,12.442 21.442,12.8 21,12.8H19.961C19.585,16.58 16.58,19.585 12.8,19.961V21C12.8,21.442 12.442,21.8 12,21.8C11.558,21.8 11.2,21.442 11.2,21V19.961C7.42,19.585 4.415,16.58 4.039,12.8H3C2.558,12.8 2.2,12.442 2.2,12C2.2,11.558 2.558,11.2 3,11.2H4.039C4.415,7.421 7.42,4.415 11.2,4.04V3C11.2,2.558 11.558,2.2 12,2.2ZM18.4,12C18.4,15.535 15.535,18.4 12,18.4C8.465,18.4 5.6,15.535 5.6,12C5.6,8.466 8.465,5.6 12,5.6C15.535,5.6 18.4,8.466 18.4,12ZM14.4,12C14.4,13.326 13.325,14.4 12,14.4C10.675,14.4 9.6,13.326 9.6,12C9.6,10.675 10.675,9.6 12,9.6C13.325,9.6 14.4,10.675 14.4,12ZM16,12C16,14.209 14.209,16 12,16C9.791,16 8,14.209 8,12C8,9.791 9.791,8 12,8C14.209,8 16,9.791 16,12Z"
+        android:fillColor="#5A5A5A"
+        android:fillType="evenOdd"/>
+  </group>
 </vector>

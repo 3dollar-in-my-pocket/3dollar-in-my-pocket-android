@@ -121,10 +121,6 @@ interface NewServiceApi {
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
 
-    // 카테고리
-    @GET("/api/v2/store/menu/categories")
-    suspend fun getCategories(): Response<CategoryResponse>
-
     // 사용자
     @DELETE("/api/v2/signout")
     suspend fun signOut(): Response<BaseResponse<String>>
@@ -178,8 +174,8 @@ interface NewServiceApi {
         @Query("position") position: String
     ): Response<PopupsResponse>
 
-    @GET("/api/v1/boss/store/categories")
-    suspend fun getBossCategories(): Response<BossCategoriesResponse>
+    @GET("/api/v4/store/categories")
+    suspend fun getCategories(): Response<CategoriesResponse>
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(
