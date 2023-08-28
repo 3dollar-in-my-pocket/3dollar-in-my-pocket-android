@@ -170,8 +170,8 @@ interface NewServiceApi {
 
     @GET("/api/v1/advertisements")
     suspend fun getPopups(
-        @Query("platform") platform: String = "AOS",
-        @Query("position") position: String
+        @Query("position") position: String,
+        @Query("size") size: Int? = null
     ): Response<PopupsResponse>
 
     @GET("/api/v4/store/categories")
