@@ -24,12 +24,14 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
@@ -99,7 +101,7 @@ class SelectCategoryDialogFragment :
     private fun initView() {
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-        popupViewModel.getPopups("MENU_CATEGORY_BANNER")
+        popupViewModel.getPopups(AdType.MENU_CATEGORY_BANNER, null)
         initViewModel()
 
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
@@ -126,27 +128,33 @@ class SelectCategoryDialogFragment :
 
     @SuppressLint("Range")
     private fun initViewModel() {
-        popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
-            if (popups.isNotEmpty()) {
-                val popup = popups[0]
-                binding.tvAdTitle.text = popup.title
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty()) {
+                            val popup = popups[0]
+                            binding.tvAdTitle.text = popup.title
 
-                binding.tvAdBody.text = popup.subTitle
+                            binding.tvAdBody.text = popup.subTitle
 
-                popup.fontColor?.let {
-                    binding.tvAdTitle.setTextColor(it.toColorInt())
-                    binding.tvAdBody.setTextColor(it.toColorInt())
-                }
-                popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
+                            popup.fontColor?.let {
+                                binding.tvAdTitle.setTextColor(it.toColorInt())
+                                binding.tvAdBody.setTextColor(it.toColorInt())
+                            }
+                            popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
 
-                binding.ivAdImage.loadUrlImg(popup.imageUrl)
+                            binding.ivAdImage.loadUrlImg(popup.imageUrl)
 
-                binding.cdAdCategory.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                    EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
+                            binding.cdAdCategory.setOnClickListener {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
+                                EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
+                            }
+                        }
+                        binding.cdAdCategory.isVisible = popups.isNotEmpty()
+                    }
                 }
             }
-            binding.cdAdCategory.isVisible = popups.isNotEmpty()
         }
     }
 }

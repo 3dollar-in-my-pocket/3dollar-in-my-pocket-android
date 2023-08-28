@@ -8,6 +8,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
@@ -19,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
@@ -61,59 +63,56 @@ class HomeViewModel @Inject constructor(
                 latitude = location.latitude,
                 longitude = location.longitude
             )
-            val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
-
-            val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-            storeData.body()?.data?.let {
-                if (selectCategory != "All") {
-                    resultList.addAll(it.filter { bossNearStoreModel ->
-                        bossNearStoreModel.categories.find { category ->
-                            category.categoryId == selectCategory
-                        } != null
-                    })
-                } else {
-                    resultList.addAll(it)
+            popupDataSource.getPopups(AdType.MAIN_PAGE_CARD, null).collect { adData ->
+                val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
+                storeData.body()?.data?.let {
+                    if (selectCategory != "All") {
+                        resultList.addAll(it.filter { bossNearStoreModel ->
+                            bossNearStoreModel.categories.find { category ->
+                                category.categoryId == selectCategory
+                            } != null
+                        })
+                    } else {
+                        resultList.addAll(it)
+                    }
                 }
-            }
-            if (resultList.isEmpty()) {
-                resultList.add(
-                    StoreEmptyResponse(
-                        emptyImage = R.drawable.img_truck,
-                        emptyTitle = R.string.recruit_boss_title,
-                        emptyBody = R.string.recruit_boss_body
+                if (resultList.isEmpty()) {
+                    resultList.add(
+                        StoreEmptyResponse(
+                            emptyImage = R.drawable.img_truck,
+                            emptyTitle = R.string.recruit_boss_title,
+                            emptyBody = R.string.recruit_boss_body
+                        )
                     )
-                )
+                }
+                adData.body()?.data?.firstOrNull()?.let { resultList.add(1, it) }
+                nearStoreInfo.postValue(resultList.toList())
             }
-            if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
-            }
-            nearStoreInfo.postValue(resultList.toList())
         }
     }
 
     fun requestHomeItem(location: LatLng, selectCategory: String = "All") {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val storeData = storeDataSource.getAllStore(location.latitude, location.longitude)
-            val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
-            val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-            storeData.body()?.data?.let {
-                if (selectCategory != "All") {
-                    resultList.addAll(it.filter { storeInfo ->
-                        storeInfo.categories.find { category -> category == selectCategory }
-                            ?.isNotEmpty() == true
-                    })
-                } else {
-                    resultList.addAll(it)
+            popupDataSource.getPopups(AdType.MAIN_PAGE_CARD, null).collect { adData ->
+                val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
+                storeData.body()?.data?.let {
+                    if (selectCategory != "All") {
+                        resultList.addAll(it.filter { storeInfo ->
+                            storeInfo.categories.find { category -> category == selectCategory }
+                                ?.isNotEmpty() == true
+                        })
+                    } else {
+                        resultList.addAll(it)
+                    }
                 }
-            }
 
-            if (resultList.isEmpty()) {
-                resultList.add(StoreEmptyResponse())
+                if (resultList.isEmpty()) {
+                    resultList.add(StoreEmptyResponse())
+                }
+                adData.body()?.data?.firstOrNull()?.let { resultList.add(1, it) }
+                nearStoreInfo.postValue(resultList.toList())
             }
-            if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
-            }
-            nearStoreInfo.postValue(resultList.toList())
         }
     }
 

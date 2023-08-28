@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +14,11 @@ import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MarkerClickViewModel @Inject constructor(private val userDataSource: UserDataSource,private val popupDataSource: PopupDataSource) : BaseViewModel() {
+class MarkerClickViewModel @Inject constructor(private val userDataSource: UserDataSource, private val popupDataSource: PopupDataSource) :
+    BaseViewModel() {
 
-    private val _popupsResponse : MutableLiveData<Popups> = MutableLiveData()
-    val popupsResponse : LiveData<Popups> get() = _popupsResponse
+    private val _popupsResponse: MutableLiveData<Popups> = MutableLiveData()
+    val popupsResponse: LiveData<Popups> get() = _popupsResponse
 
     fun eventClick(targetType: String, targetId: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -24,11 +26,12 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
         }
     }
 
-    fun getPopups(){
+    fun getPopups() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val popups = popupDataSource.getPopups("STORE_MARKER_POPUP")
-            if (popups.isSuccessful) {
-                _popupsResponse.value = popups.body()?.data?.first()
+            popupDataSource.getPopups(AdType.STORE_MARKER_POPUP, null).collect {
+                if (it.isSuccessful) {
+                    _popupsResponse.value = it.body()?.data?.first()
+                }
             }
         }
     }

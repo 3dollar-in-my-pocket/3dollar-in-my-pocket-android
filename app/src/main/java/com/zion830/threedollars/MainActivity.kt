@@ -10,11 +10,15 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.zion830.threedollars.databinding.ActivityHomeBinding
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
@@ -22,6 +26,8 @@ import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.showSnack
@@ -42,7 +48,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
 
     override fun initView() {
         requestPermissionFirst()
-        popupViewModel.getPopups(position = "SPLASH")
+        popupViewModel.getPopups(AdType.SPLASH, null)
         if (SharedPrefUtils.getCategories().isEmpty()) {
             streetStoreByMenuViewModel.loadCategories()
         }
@@ -53,16 +59,26 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         binding.navView.itemIconTintList = null
         binding.navView.setupWithNavController(navController)
 
+        initViewModel()
+        initNavController(navController)
+        initNavView()
+    }
+
+    private fun initViewModel() {
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
-        popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
-                binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
+                            binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
+                        }
+                    }
+                }
             }
         }
-        initNavController(navController)
-        initNavView()
     }
 
     private fun initNavView() {
@@ -72,14 +88,17 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
+
                 R.id.navigation_write -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
+
                 R.id.navigation_vote -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
+
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
                     binding.navView.itemBackgroundResource = android.R.color.black
@@ -130,7 +149,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (permissions.isEmpty()) return
@@ -170,7 +189,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     }
 
     companion object {
-
         fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
 }

@@ -12,6 +12,9 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.zion830.threedollars.Constants
@@ -20,7 +23,10 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.loadUrlImg
 import java.net.URISyntaxException
 
 @AndroidEntryPoint
@@ -70,6 +76,16 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                     databaseEnabled = true
                     setLayerType(View.LAYER_TYPE_HARDWARE, null)
                     mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                }
+            }
+
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.CREATED){
+                    launch {
+                        viewModel?.popups?.collect{
+                            ivPopup.loadUrlImg(it.firstOrNull()?.imageUrl)
+                        }
+                    }
                 }
             }
         }

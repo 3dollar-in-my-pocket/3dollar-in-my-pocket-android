@@ -10,6 +10,7 @@ import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
@@ -57,11 +58,12 @@ class SplashViewModel @Inject constructor(
                 }
             }
 
-            val storeMarkerAdvertisements = popupDataSource.getPopups("STORE_MARKER")
-            if (storeMarkerAdvertisements.isSuccessful) {
-                val advertisements = storeMarkerAdvertisements.body()?.data.orEmpty()
-                if (advertisements.isNotEmpty()) {
-                    GlobalApplication.storeMarker = advertisements.first()
+            popupDataSource.getPopups(AdType.STORE_MARKER, null).collect{
+                if (it.isSuccessful) {
+                    val advertisements = it.body()?.data.orEmpty()
+                    if (advertisements.isNotEmpty()) {
+                        GlobalApplication.storeMarker = advertisements.first()
+                    }
                 }
             }
         }

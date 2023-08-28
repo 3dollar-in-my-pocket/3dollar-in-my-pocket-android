@@ -5,11 +5,15 @@ import android.net.Uri
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
+import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
@@ -21,6 +25,8 @@ import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFra
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
@@ -92,35 +98,51 @@ class StreetByMenuFragment :
             )
         }
 
-        popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
-            if (popups.isNotEmpty()) {
-                binding.itemStoreListAd.run {
-                    tvAdTitle.text = popups[0].title.toString()
-                    popups[0].fontColor?.let {
-                        if (it.isNotEmpty()) {
-                            tvAdTitle.setTextColor(it.toColorInt())
-                            tvAdBody.setTextColor(it.toColorInt())
-                        }
-                    }
-                    tvAdBody.text = popups[0].subTitle
-
-                    popups[0].bgColor?.let {
-                        if (it.isNotEmpty()) {
-                            layoutItem.setBackgroundColor(it.toColorInt())
-                        }
-                    }
-
-                    ivAdImage.loadUrlImg(popups[0].imageUrl)
-
-                    tvDetail.setOnClickListener {
-                        EventTracker.logEvent(Constants.STORE_LIST_AD_BANNER_CLICKED)
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
-                    }
-                }
-                storeByDistanceAdapters.submitAdList(popups)
-                storeByRatingAdapters.submitAdList(popups)
+        initViewModel(naverMapFragment)
+        binding.cbCertification.setOnCheckedChangeListener { _, _ ->
+            naverMapFragment.currentPosition?.let {
+                viewModel.requestStoreInfo(it)
             }
         }
+    }
+
+    private fun initViewModel(naverMapFragment: StreetStoreByMenuNaverMapFragment) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty()) {
+                            binding.itemStoreListAd.run {
+                                tvAdTitle.text = popups[0].title
+                                popups[0].fontColor?.let {
+                                    if (it.isNotEmpty()) {
+                                        tvAdTitle.setTextColor(it.toColorInt())
+                                        tvAdBody.setTextColor(it.toColorInt())
+                                    }
+                                }
+                                tvAdBody.text = popups[0].subTitle
+
+                                popups[0].bgColor?.let {
+                                    if (it.isNotEmpty()) {
+                                        layoutItem.setBackgroundColor(it.toColorInt())
+                                    }
+                                }
+
+                                ivAdImage.loadUrlImg(popups[0].imageUrl)
+
+                                tvDetail.setOnClickListener {
+                                    EventTracker.logEvent(Constants.STORE_LIST_AD_BANNER_CLICKED)
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popups[0].linkUrl)))
+                                }
+                            }
+                            storeByDistanceAdapters.submitAdList(popups)
+                            storeByRatingAdapters.submitAdList(popups)
+                        }
+                    }
+                }
+            }
+        }
+
         viewModel.category.observe(viewLifecycleOwner) {
             naverMapFragment.currentPosition?.let { currentPosition ->
                 viewModel.requestStoreInfo(currentPosition)
@@ -133,7 +155,7 @@ class StreetByMenuFragment :
                 it
             }
             storeByRatingAdapters.submitList(storeInfoList)
-            popupViewModel.getPopups("STORE_CATEGORY_LIST")
+            popupViewModel.getPopups(AdType.STORE_CATEGORY_LIST, null)
         }
         viewModel.storeByDistance.observe(viewLifecycleOwner) {
             val storeInfoList = if (binding.cbCertification.isChecked) {
@@ -142,12 +164,7 @@ class StreetByMenuFragment :
                 it
             }
             storeByDistanceAdapters.submitList(storeInfoList)
-            popupViewModel.getPopups("STORE_CATEGORY_LIST")
-        }
-        binding.cbCertification.setOnCheckedChangeListener { _, _ ->
-            naverMapFragment.currentPosition?.let {
-                viewModel.requestStoreInfo(it)
-            }
+            popupViewModel.getPopups(AdType.STORE_CATEGORY_LIST, null)
         }
     }
 
