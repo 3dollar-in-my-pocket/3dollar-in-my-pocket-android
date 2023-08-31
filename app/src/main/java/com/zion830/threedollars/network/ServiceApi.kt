@@ -20,6 +20,8 @@ import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountRespon
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
+import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
+import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
 import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
@@ -186,7 +188,18 @@ interface ServiceApi {
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationRequest): Response<BaseResponse<String>>
 
-    
+    // 전체 메달 목록을 조회합니다.
+    @GET("/api/v1/medals")
+    suspend fun getMedals(): Response<BaseResponse<List<MedalResponse>>>
+
+    // 유저가 장착중인 메달을 수정한다.
+    @PUT("/api/v1/user/medal")
+    suspend fun updateMyMedals(@Body updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<UserInfoResponse>>
+
+    // 유저가 보유중인 메달들을 조회한다.
+    @GET("/api/v1/user/medals")
+    suspend fun getMyMedals(): Response<BaseResponse<List<MedalResponse>>>
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -292,15 +305,6 @@ interface ServiceApi {
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int,
     ): Response<MyVisitHistoryResponse>
-
-    @GET("/api/v1/medals")
-    suspend fun getMedals(): Response<BaseResponse<List<Medal>>>
-
-    @GET("/api/v1/user/medals")
-    suspend fun getMyMedals(): Response<BaseResponse<List<Medal>>>
-
-    @PUT("/api/v1/user/medal")
-    suspend fun updateMyMedals(@Body updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>>
 
     // faq
     @GET("/api/v2/faq/categories")

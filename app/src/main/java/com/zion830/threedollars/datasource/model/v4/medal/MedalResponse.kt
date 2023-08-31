@@ -1,9 +1,9 @@
-package com.zion830.threedollars.datasource.model.v4.user
+package com.zion830.threedollars.datasource.model.v4.medal
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Medal(
+data class MedalResponse(
     @SerializedName("acquisition")
     val acquisition: Acquisition = Acquisition(),
     @SerializedName("createdAt")

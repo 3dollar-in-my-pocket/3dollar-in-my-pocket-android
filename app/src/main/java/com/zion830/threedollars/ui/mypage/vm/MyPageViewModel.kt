@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
+import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData

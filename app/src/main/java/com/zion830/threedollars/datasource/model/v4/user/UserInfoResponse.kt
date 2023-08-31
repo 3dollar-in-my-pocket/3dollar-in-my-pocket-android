@@ -2,6 +2,7 @@ package com.zion830.threedollars.datasource.model.v4.user
 
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 
 data class UserInfoResponse(
     @SerializedName("createdAt")
@@ -11,7 +12,7 @@ data class UserInfoResponse(
     @SerializedName("marketingConsent")
     val marketingConsent: String = "",
     @SerializedName("medal")
-    val medal: Medal = Medal(),
+    val medal: MedalResponse = MedalResponse(),
     @SerializedName("name")
     val name: String = "",
     @SerializedName("socialType")
