@@ -234,6 +234,10 @@ interface ServiceApi {
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity() : Response<BaseResponse<UserActivityResponse>>
 
+    // 클릭 이벤트를 저장합니다.
+    @POST("/api/v1/event/click/{targetType}/{targetId}")
+    suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -372,9 +376,6 @@ interface ServiceApi {
         @Path("bossStoreId") bossStoreId: String,
         @Body feedbackTypes: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
-
-    @POST("/api/v1/event/click/{targetType}/{targetId}")
-    suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/favorite/{favoriteType}/folder")
     suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
