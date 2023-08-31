@@ -3,6 +3,8 @@ package com.zion830.threedollars.datasource
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
+import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response

@@ -1,19 +1,10 @@
-package com.zion830.threedollars.datasource.model.v2.response.store
+package com.zion830.threedollars.datasource.model.v4.categories
 
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class CategoriesResponse(
-    @SerializedName("data")
-    val data: List<CategoriesModel> = emptyList(),
-    @SerializedName("message")
-    val message: String = "",
-    @SerializedName("resultCode")
-    val resultCode: String = "",
-)
-
-data class CategoriesModel(
     @SerializedName("category")
     val category: String = "",
     @SerializedName("categoryId")
@@ -32,10 +23,3 @@ data class CategoriesModel(
     val isNew: Boolean = false,
     var isSelected: Boolean = false,
 ) : Serializable
-
-data class Classification(
-    @SerializedName("type")
-    val type: String = "",
-    @SerializedName("description")
-    val description: String = "",
-)

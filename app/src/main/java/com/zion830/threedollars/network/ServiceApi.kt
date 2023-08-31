@@ -11,6 +11,10 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
+import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
+import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -28,10 +32,42 @@ interface ServiceApi {
     @GET("/api/v1/regions/cities/districts")
     suspend fun getAllDistricts(): Response<BaseResponse<List<DistrictsResponse>>>
 
+
+    // 주변에 등록된 가게가 존재하는지 확인합니다.
+    @GET("/api/v1/stores/near/exists")
+    suspend fun getNearExists(
+        @Query("distance") distance: Double = 10.0,
+        @Query("mapLatitude") latitude: Double,
+        @Query("mapLongitude") longitude: Double,
+    ): Response<BaseResponse<NearExistResponse>>
+
+    // 가게 메뉴 전체 카테고리 목록을 조회합니다.
+    @GET("/api/v4/store/categories")
+    suspend fun getCategories(): Response<BaseResponse<List<CategoriesResponse>>>
+
+    // 주변의 가게 목록을 조회합니다.
+    /*
+        1. categoryIds가 null인 경우 모든 카테고리를 조회합니다.
+        2. targetStores를 넘기는 경우 해당하는 가게만 필터링되서 조회합니다(default 전체 가게 조회)
+        3. StoreAroundSortType Enum은 Enum API를 사용하는 경우 동적으로 관리할 수 있습니다
+     */
+    @GET("/api/v4/stores/around")
+    suspend fun getAroundStores(
+        @Query("distanceM") distance: Double = 10.0,
+        @Query("categoryIds") categoryIds: Array<String>? = null,
+        @Query("targetStores") targetStores : Array<String>,
+        @Query("sortType") sortType : String,
+        @Query("filterCertifiedStores") filterCertifiedStores : Boolean = false,
+        @Query("size") size : Int = 20,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("X-Device-Latitude") deviceLatitude : Double,
+        @Query("X-Device-Longitude") deviceLongitude : Double
+    ) : Response<BaseResponse<AroundStoreResponse>>
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
-        @Body editReviewRequest: EditReviewRequest
+        @Body editReviewRequest: EditReviewRequest,
     ): Response<NewReviewResponse>
 
     @DELETE("/api/v2/store/review/{reviewId}")
@@ -47,27 +83,20 @@ interface ServiceApi {
 
     @POST("/api/v2/store/visit")
     suspend fun addVisitHistory(
-        @Body newVisitHistory: NewVisitHistory
+        @Body newVisitHistory: NewVisitHistory,
     ): Response<BaseResponse<String>>
 
     @PUT("/api/v2/store/{storeId}")
     suspend fun editStore(
         @Path("storeId") storeId: Int,
-        @Body editStoreRequest: NewStoreRequest
+        @Body editStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
         @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT",
     ): Response<DeleteStoreResponse>
-
-    @GET("/api/v1/stores/near/exists")
-    suspend fun getNearExists(
-        @Query("distance") distance: Double = 10.0,
-        @Query("mapLatitude") latitude: Double,
-        @Query("mapLongitude") longitude: Double
-    ): Response<NearExistResponse>
 
     @DELETE("/api/v2/store/image/{imageId}")
     suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
@@ -76,7 +105,7 @@ interface ServiceApi {
     @Multipart
     suspend fun saveImages(
         @Part images: List<MultipartBody.Part>,
-        @Query("storeId") storeId: Int
+        @Query("storeId") storeId: Int,
     ): Response<AddImageResponse>
 
     // 가게 검색
@@ -85,7 +114,7 @@ interface ServiceApi {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("storeId") storeId: Int,
-        @Query("startDate") startDate: String?
+        @Query("startDate") startDate: String?,
     ): Response<StoreDetailResponse>
 
     @GET("/api/v2/stores/near")
@@ -96,7 +125,7 @@ interface ServiceApi {
         @Query("mapLongitude") mapLongitude: Double,
         @Query("distance") distance: Double = 100000.0,
         @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
-        @Query("category") category: String = ""
+        @Query("category") category: String = "",
     ): Response<NearStoreResponse>
 
     @GET("/api/v2/store/{storeId}/images")
@@ -141,7 +170,7 @@ interface ServiceApi {
     @GET("/api/v2/store/visits/me")
     suspend fun getMyVisitHistory(
         @Query("cursor") cursor: Int?,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ): Response<MyVisitHistoryResponse>
 
     @PUT("/api/v2/user/me")
@@ -169,11 +198,10 @@ interface ServiceApi {
     @GET("/api/v1/advertisements")
     suspend fun getPopups(
         @Query("position") position: String,
-        @Query("size") size: Int? = null
+        @Query("size") size: Int? = null,
     ): Response<PopupsResponse>
 
-    @GET("/api/v4/store/categories")
-    suspend fun getCategories(): Response<CategoriesResponse>
+
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(
@@ -200,12 +228,12 @@ interface ServiceApi {
     suspend fun getBossStoreDetail(
         @Path("bossStoreId") bossStoreId: String,
         @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double
+        @Query("longitude") longitude: Double,
     ): Response<BossStoreDetailResponse>
 
     @GET("/api/v1/boss/store/{bossStoreId}/feedbacks/full")
     suspend fun getBossStoreFeedbackFull(
-        @Path("bossStoreId") bossStoreId: String
+        @Path("bossStoreId") bossStoreId: String,
     ): Response<BossStoreFeedbackFullResponse>
 
     @GET("/api/v1/boss/store/feedback/types")
@@ -214,7 +242,7 @@ interface ServiceApi {
     @POST("/api/v1/boss/store/{bossStoreId}/feedback")
     suspend fun postBossStoreFeedback(
         @Path("bossStoreId") bossStoreId: String,
-        @Body feedbackTypes: BossStoreFeedbackRequest
+        @Body feedbackTypes: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
 
     @POST("/api/v1/device")
@@ -232,14 +260,14 @@ interface ServiceApi {
     @GET("/api/v1/favorite/store/folder/my")
     suspend fun getMyFavoriteFolder(
         @Query("cursor") cursor: String?,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
     suspend fun getFavoriteViewer(
         @Path("favoriteFolderId") id: String,
         @Query("cursor") cursor: String?,
-        @Query("size") size: Int = 20
+        @Query("size") size: Int = 20,
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
@@ -257,6 +285,6 @@ interface ServiceApi {
     @PUT("/api/v1/favorite/{favoriteType}/folder")
     suspend fun updateFavoriteInfo(
         @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
-        @Body favoriteInfoRequest: FavoriteInfoRequest
+        @Body favoriteInfoRequest: FavoriteInfoRequest,
     ): Response<BaseResponse<String>>
 }
