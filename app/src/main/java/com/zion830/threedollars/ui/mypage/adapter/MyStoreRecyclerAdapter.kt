@@ -6,22 +6,22 @@ import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyStoreBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class MyStoreRecyclerAdapter(
-    private val listener: OnItemClickListener<StoreInfo>
-) : PagingDataAdapter<StoreInfo, BaseViewHolder<ItemMyStoreBinding, StoreInfo>>(BaseDiffUtilCallback()) {
+    private val listener: OnItemClickListener<StoreResponse>
+) : PagingDataAdapter<StoreResponse, BaseViewHolder<ItemMyStoreBinding, StoreResponse>>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        object : BaseViewHolder<ItemMyStoreBinding, StoreInfo>(R.layout.item_my_store, parent) {}
+        object : BaseViewHolder<ItemMyStoreBinding, StoreResponse>(R.layout.item_my_store, parent) {}
 
-    override fun onBindViewHolder(holder: BaseViewHolder<ItemMyStoreBinding, StoreInfo>, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<ItemMyStoreBinding, StoreResponse>, position: Int) {
         val item = getItem(position)
-        holder.bind(getItem(position) ?: StoreInfo(), if (item?.isDeleted == false) listener else null)
+        holder.bind(getItem(position) ?: StoreResponse(), if (item?.isDeleted == false) listener else null)
         val rating = "${item?.rating ?: 0}점"
         val visitCount = ((item?.visitHistory?.existsCounts ?: 0) + (item?.visitHistory?.notExistsCounts ?: 0)).toString() + "명"
         val categoryInfo = SharedPrefUtils.getCategories()

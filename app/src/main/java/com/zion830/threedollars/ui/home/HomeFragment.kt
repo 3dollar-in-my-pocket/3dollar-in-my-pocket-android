@@ -18,7 +18,7 @@ import com.zion830.threedollars.datasource.model.v4.device.PushInformationReques
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
@@ -89,8 +89,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             // TODO: 리스트뷰 기능 구현
         }
 
-        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo?> {
-            override fun onClick(item: StoreInfo?) {
+        adapter = NearStoreRecyclerAdapter(object : OnItemClickListener<StoreResponse?> {
+            override fun onClick(item: StoreResponse?) {
                 if (item != null) {
                     EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
                     val intent =
@@ -174,7 +174,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
             adapter.isAd = res?.find { it is AdResponse } != null
             adapter.submitList(res)
-            val list = res?.filterIsInstance<StoreInfo>()
+            val list = res?.filterIsInstance<StoreResponse>()
             naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {
                 onStoreClicked(it)
             }
@@ -213,7 +213,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             adapter.focusedIndex = position
             naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(
-                if (adAndStoreItem is StoreInfo) {
+                if (adAndStoreItem is StoreResponse) {
                     LatLng(adAndStoreItem.latitude, adAndStoreItem.longitude)
                 } else {
                     val location =

@@ -13,7 +13,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.MyPageSettingFragment
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
@@ -44,8 +44,8 @@ class MyStoreFragment :
     }
 
     override fun initView() {
-        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
-            override fun onClick(item: StoreInfo) {
+        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreResponse> {
+            override fun onClick(item: StoreResponse) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }

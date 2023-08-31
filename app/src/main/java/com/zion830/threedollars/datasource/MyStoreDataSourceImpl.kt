@@ -2,18 +2,18 @@ package com.zion830.threedollars.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.di.NetworkModule
 import com.zion830.threedollars.network.ServiceApi
 
 class MyStoreDataSourceImpl :
-    PagingSource<Int, StoreInfo>() {
+    PagingSource<Int, StoreResponse>() {
 
     private val serviceApi: ServiceApi = NetworkModule.serviceApi
 
-    override fun getRefreshKey(state: PagingState<Int, StoreInfo>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, StoreResponse>): Int? = null
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StoreInfo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StoreResponse> {
         val cursor = params.key
         if (cursor == -1) {
             return LoadResult.Error(Exception())

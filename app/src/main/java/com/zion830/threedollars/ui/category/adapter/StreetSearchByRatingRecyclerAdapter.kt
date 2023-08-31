@@ -6,13 +6,13 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class StreetSearchByRatingRecyclerAdapter(
-    private val listener: OnItemClickListener<StoreInfo>,
+    private val listener: OnItemClickListener<StoreResponse>,
     private val adListener: OnItemClickListener<AdResponse>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = arrayListOf<AdAndStoreItem>()
@@ -24,7 +24,7 @@ class StreetSearchByRatingRecyclerAdapter(
             is AdResponse -> {
                 VIEW_TYPE_AD
             }
-            is StoreInfo -> {
+            is StoreResponse -> {
                 VIEW_TYPE_STORE
             }
             else -> {
@@ -48,7 +48,7 @@ class StreetSearchByRatingRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is StreetSearchByRatingViewHolder -> {
-                holder.bind(items[position] as StoreInfo, listener)
+                holder.bind(items[position] as StoreResponse, listener)
             }
             is SearchByAdViewHolder -> {
                 holder.bind(items[position] as AdResponse, adListener)
@@ -56,7 +56,7 @@ class StreetSearchByRatingRecyclerAdapter(
         }
     }
 
-    fun submitList(newItems: List<StoreInfo>) {
+    fun submitList(newItems: List<StoreResponse>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
@@ -66,7 +66,7 @@ class StreetSearchByRatingRecyclerAdapter(
         if (items.isEmpty()) {
             return
         }
-        val list = items.filterIsInstance<StoreInfo>()
+        val list = items.filterIsInstance<StoreResponse>()
         items.clear()
         items.addAll(list)
         items.add(1, newItems[0])
@@ -80,9 +80,9 @@ class StreetSearchByRatingRecyclerAdapter(
 }
 
 class StreetSearchByRatingViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemStoreByRatingBinding, StoreInfo>(R.layout.item_store_by_rating, parent) {
+    BaseViewHolder<ItemStoreByRatingBinding, StoreResponse>(R.layout.item_store_by_rating, parent) {
 
-    override fun bind(item: StoreInfo, listener: OnItemClickListener<StoreInfo>?) {
+    override fun bind(item: StoreResponse, listener: OnItemClickListener<StoreResponse>?) {
         super.bind(item, listener)
 
         val categoryInfo = SharedPrefUtils.getCategories()

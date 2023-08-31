@@ -7,6 +7,8 @@ import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
+import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.network.ServiceApi
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -81,13 +83,13 @@ class StoreDataSourceImpl @Inject constructor(private val newService: ServiceApi
     ) = newService.deleteImage(imageId)
 
     override suspend fun saveStore(
-        newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse> = newService.saveStore(newStoreRequest)
+        storeRequest: StoreRequest,
+    ): Response<NewStoreResponse> = newService.postStore(storeRequest)
 
     override suspend fun updateStore(
         storeId: Int,
-        newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse> = newService.editStore(storeId, newStoreRequest)
+        storeRequest: StoreRequest,
+    ): Response<NewStoreResponse> = newService.editStore(storeId, storeRequest)
 
     override suspend fun deleteStore(
         storeId: Int,

@@ -7,7 +7,7 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,8 +31,8 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
     private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getCategories())
     val categories: LiveData<List<CategoriesModel>> = _categories
 
-    val storeByDistance = MutableLiveData<List<StoreInfo>>()
-    val storeByRating = MutableLiveData<List<StoreInfo>>()
+    val storeByDistance = MutableLiveData<List<StoreResponse>>()
+    val storeByRating = MutableLiveData<List<StoreResponse>>()
     val hasData = MutableLiveData<Boolean>()
 
     fun changeCategory(menuType: CategoriesModel, location: LatLng) {

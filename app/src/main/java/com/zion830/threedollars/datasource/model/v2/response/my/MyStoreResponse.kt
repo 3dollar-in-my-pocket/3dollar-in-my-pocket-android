@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 
 data class MyStoreResponse(
     @SerializedName("data")
@@ -15,7 +15,7 @@ data class MyStoreResponse(
 
 data class MyStore(
     @SerializedName("contents")
-    val contents: List<StoreInfo> = listOf(),
+    val contents: List<StoreResponse> = listOf(),
     @SerializedName("nextCursor")
     val nextCursor: Int = 0,
     @SerializedName("totalElements")

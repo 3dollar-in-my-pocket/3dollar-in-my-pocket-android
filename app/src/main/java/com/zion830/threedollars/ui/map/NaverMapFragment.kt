@@ -25,7 +25,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -164,13 +164,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         val newMarkers = list.map { item ->
             Marker().apply {
 
-                this.position = if (item is StoreInfo) {
+                this.position = if (item is StoreResponse) {
                     LatLng(item.latitude, item.longitude)
                 } else {
                     val location = (item as BossNearStoreResponse.BossNearStoreModel).location
                     LatLng(location.latitude, location.longitude)
                 }
-                this.icon = if (item is StoreInfo) {
+                this.icon = if (item is StoreResponse) {
                     OverlayImage.fromResource(drawableRes)
                 } else {
                     if ((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED") {

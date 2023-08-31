@@ -18,7 +18,7 @@ import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
@@ -30,19 +30,19 @@ import zion830.com.common.listener.OnItemClickListener
 
 
 class NearStoreRecyclerAdapter(
-    private val clickListener: OnItemClickListener<StoreInfo?>,
+    private val clickListener: OnItemClickListener<StoreResponse?>,
     private val bossClickListener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel?>,
     private val adClickListener: OnItemClickListener<AdResponse>,
-    private val certificationClick: (StoreInfo?) -> Unit
+    private val certificationClick: (StoreResponse?) -> Unit
 ) : ListAdapter<AdAndStoreItem?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
     var isAd = false
 
     fun getItemLocation(position: Int) = when (getItem(position)) {
-        is StoreInfo -> {
+        is StoreResponse -> {
             LatLng(
-                (getItem(position) as StoreInfo).latitude,
-                (getItem(position) as StoreInfo).longitude
+                (getItem(position) as StoreResponse).latitude,
+                (getItem(position) as StoreResponse).longitude
             )
         }
         is BossNearStoreResponse.BossNearStoreModel -> {
@@ -69,7 +69,7 @@ class NearStoreRecyclerAdapter(
 
     fun getItemPosition(item: AdAndStoreItem) =
         currentList.indexOfFirst {
-            if (it is StoreInfo && item is StoreInfo) {
+            if (it is StoreResponse && item is StoreResponse) {
                 it.storeId == item.storeId
             } else if (it is BossNearStoreResponse.BossNearStoreModel && item is BossNearStoreResponse.BossNearStoreModel) {
                 it.bossStoreId == item.bossStoreId
@@ -79,7 +79,7 @@ class NearStoreRecyclerAdapter(
         }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
-        is StoreInfo -> {
+        is StoreResponse -> {
             VIEW_TYPE_ROAD_FOOD_STORE
         }
         is BossNearStoreResponse.BossNearStoreModel -> {
@@ -111,7 +111,7 @@ class NearStoreRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is NearStoreViewHolder -> {
-                holder.bind(getItem(position) as StoreInfo, listener = clickListener)
+                holder.bind(getItem(position) as StoreResponse, listener = clickListener)
                 if (isAd) {
                     holder.bindPosition(if (focusedIndex == 0) focusedIndex == position else focusedIndex + 1 == position)
                 } else {
@@ -185,9 +185,9 @@ class NearStoreAdViewHolder(parent: ViewGroup) :
 
 class NearStoreViewHolder(
     parent: ViewGroup?,
-    private val certificationClick: (StoreInfo?) -> Unit
+    private val certificationClick: (StoreResponse?) -> Unit
 ) :
-    BaseViewHolder<ItemStoreLocationBinding, StoreInfo?>(R.layout.item_store_location, parent) {
+    BaseViewHolder<ItemStoreLocationBinding, StoreResponse?>(R.layout.item_store_location, parent) {
 
     fun bindPosition(isSelected: Boolean) {
         binding.isSelectedItem = isSelected
@@ -205,7 +205,7 @@ class NearStoreViewHolder(
         )
     }
 
-    override fun bind(item: StoreInfo?, listener: OnItemClickListener<StoreInfo?>?) {
+    override fun bind(item: StoreResponse?, listener: OnItemClickListener<StoreResponse?>?) {
         super.bind(item, listener)
 
         if (item == null) {

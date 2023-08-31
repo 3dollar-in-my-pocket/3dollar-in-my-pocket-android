@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +56,7 @@ class EditStoreViewModel @Inject constructor(private val repository: StoreDataSo
 
     fun editStore(
         storeId: Int,
-        newStore: NewStoreRequest
+        newStore: StoreRequest
     ) {
         showLoading()
 

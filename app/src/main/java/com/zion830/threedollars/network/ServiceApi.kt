@@ -27,6 +27,11 @@ import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
+import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
+import com.zion830.threedollars.datasource.model.v4.store.StoreV4Response
+import com.zion830.threedollars.datasource.model.v4.store.UserAddStoreResponse
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.datasource.model.v4.user.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
 import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
@@ -232,11 +237,53 @@ interface ServiceApi {
 
     // 유저의 활동 정보를 조회합니다.
     @GET("/api/v1/user/activity")
-    suspend fun getUserActivity() : Response<BaseResponse<UserActivityResponse>>
+    suspend fun getUserActivity(): Response<BaseResponse<UserActivityResponse>>
 
     // 클릭 이벤트를 저장합니다.
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
+
+    // 가게를 등록합니다.
+    @POST("/api/v2/store")
+    suspend fun postStore(
+        @Body storeRequest: StoreRequest,
+    ): Response<BaseResponse<StoreResponse>>
+
+    // 가게를 수정합니다.
+    @PUT("/api/v2/store/{storeId}")
+    suspend fun editStore(
+        @Path("storeId") storeId: Int,
+        @Body editStoreRequest: StoreRequest,
+    ): Response<BaseResponse<StoreResponse>>
+
+    // 가게를 삭제 요청 합니다.
+    @DELETE("/api/v2/store/{storeId}")
+    suspend fun deleteStore(
+        @Path("storeId") storeId: Int,
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT",
+    ): Response<BaseResponse<DeleteStoreResponse>>
+
+    // 가게를 조회합니다.
+    // filterVisitStartDate : 특정 날짜부터 방문한 인증 이력들을 조회
+    @GET("/api/v4/store/{storeId}")
+    suspend fun getStore(
+        @Path("storeId") storeId: Int,
+        @Query("storeImagesCount") storeImagesCount: Int? = null,
+        @Query("reviewsCount") reviewsCount: Int? = null,
+        @Query("visitHistoriesCount") visitHistoriesCount: Int? = null,
+        @Query("filterVisitStartDate") filterVisitStartDate: String, // ex) 2023-08-31
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+    ): Response<BaseResponse<StoreV4Response>>
+
+    // 유저가 등록한 가게들을 조회합니다.
+    @GET("/api/v4/user/stores")
+    suspend fun getUserStore(
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+    ): Response<BaseResponse<UserAddStoreResponse>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
@@ -250,27 +297,12 @@ interface ServiceApi {
     ): Response<BaseResponse<String>>
 
     // 가게
-    @POST("/api/v2/store")
-    suspend fun saveStore(
-        @Body newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse>
+
 
     @POST("/api/v2/store/visit")
     suspend fun addVisitHistory(
         @Body newVisitHistory: NewVisitHistory,
     ): Response<BaseResponse<String>>
-
-    @PUT("/api/v2/store/{storeId}")
-    suspend fun editStore(
-        @Path("storeId") storeId: Int,
-        @Body editStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse>
-
-    @DELETE("/api/v2/store/{storeId}")
-    suspend fun deleteStore(
-        @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT",
-    ): Response<DeleteStoreResponse>
 
     @DELETE("/api/v2/store/image/{imageId}")
     suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>

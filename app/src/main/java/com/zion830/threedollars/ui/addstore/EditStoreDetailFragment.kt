@@ -16,7 +16,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
@@ -178,7 +178,7 @@ class EditStoreDetailFragment :
 
                 editStoreViewModel.editStore(
                     viewModel.storeInfo.value?.storeId ?: 0,
-                    NewStoreRequest(
+                    StoreRequest(
                         getAppearanceDays(),
                         storeTarget.latitude,
                         storeTarget.longitude,

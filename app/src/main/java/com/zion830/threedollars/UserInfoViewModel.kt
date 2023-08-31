@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,8 +43,8 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
 
     private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
 
-    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
-    val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
+    private val _isExistStoreResponse: MutableLiveData<Pair<StoreResponse, Boolean>> = MutableLiveData()
+    val isExistStoreResponse: LiveData<Pair<StoreResponse, Boolean>> get() = _isExistStoreResponse
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

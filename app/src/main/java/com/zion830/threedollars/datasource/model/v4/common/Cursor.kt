@@ -7,5 +7,7 @@ data class Cursor(
     @SerializedName("hasMore")
     val hasMore: Boolean = false,
     @SerializedName("nextCursor")
-    val nextCursor: String = ""
+    val nextCursor: String = "",
+    @SerializedName("totalCount")
+    val totalCount: Int = 0
 )

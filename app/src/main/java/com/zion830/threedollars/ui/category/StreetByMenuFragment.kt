@@ -15,7 +15,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
 import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByRatingRecyclerAdapter
@@ -38,8 +38,8 @@ class StreetByMenuFragment :
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private val listener = object : OnItemClickListener<StoreInfo> {
-        override fun onClick(item: StoreInfo) {
+    private val listener = object : OnItemClickListener<StoreResponse> {
+        override fun onClick(item: StoreResponse) {
             EventTracker.logEvent(Constants.STORE_LIST_ITEM_CLICKED)
             val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
             startActivity(intent)

@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 
 data class MyReviewResponse(
     @SerializedName("data")
@@ -25,7 +25,7 @@ data class ReviewDetail(
     @SerializedName("reviewId")
     val reviewId: Int = 0,
     @SerializedName("store")
-    val store: StoreInfo = StoreInfo(),
+    val store: StoreResponse = StoreResponse(),
     @SerializedName("storeName")
     val storeName: String = "",
     @SerializedName("updatedAt")

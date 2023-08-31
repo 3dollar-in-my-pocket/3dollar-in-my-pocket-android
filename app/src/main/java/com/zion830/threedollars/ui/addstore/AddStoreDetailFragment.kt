@@ -11,7 +11,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
@@ -97,7 +97,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         }
 
         viewModel.addNewStore(
-            NewStoreRequest(
+            StoreRequest(
                 getAppearanceDays(),
                 viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                 viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,

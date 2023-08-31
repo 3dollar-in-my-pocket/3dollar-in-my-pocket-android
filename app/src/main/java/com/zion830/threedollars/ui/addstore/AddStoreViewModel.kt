@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SharedPrefUtils
@@ -61,9 +61,9 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
         it.count { item -> item.isSelected }
     }
 
-    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
+    val nearStoreResponse: MutableLiveData<List<StoreResponse>?> = MutableLiveData()
 
-    fun addNewStore(newStore: NewStoreRequest) {
+    fun addNewStore(newStore: StoreRequest) {
         showLoading()
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -90,13 +90,13 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val data = repository.getAllStore(location.latitude, location.longitude)
             if (data.isSuccessful) {
-                nearStoreInfo.postValue(data.body()?.data)
+                nearStoreResponse.postValue(data.body()?.data)
                 _isNearStoreExist.postValue(hasStoreDistanceUnder10M(data.body()?.data))
             }
         }
     }
 
-    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) =
+    private fun hasStoreDistanceUnder10M(stores: List<StoreResponse>?) =
         stores?.find { store -> store.distance <= 10 } != null
 
     fun updateLocation(latLng: LatLng?) {

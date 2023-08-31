@@ -52,7 +52,7 @@ class NewAddressFragment :
 
     private fun initViewModel() {
         viewModel.run {
-            nearStoreInfo.observe(viewLifecycleOwner) { res ->
+            nearStoreResponse.observe(viewLifecycleOwner) { res ->
                 naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
             }
             selectedLocation.observe(viewLifecycleOwner) { latLng ->

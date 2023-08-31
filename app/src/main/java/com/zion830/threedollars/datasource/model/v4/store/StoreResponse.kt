@@ -1,11 +1,9 @@
-package com.zion830.threedollars.datasource.model.v2.response.store
+package com.zion830.threedollars.datasource.model.v4.store
 
 import com.google.gson.annotations.SerializedName
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 
-interface StoreByMenuItem
-
-data class StoreInfo(
+data class StoreResponse(
     @SerializedName("categories")
     val categories: List<String> = listOf(),
     @SerializedName("createdAt")

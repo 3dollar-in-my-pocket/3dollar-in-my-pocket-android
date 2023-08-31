@@ -6,14 +6,14 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByDistanceBinding
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
 
 class StreetSearchByDistanceRecyclerAdapter(
-    private val listener: OnItemClickListener<StoreInfo>,
+    private val listener: OnItemClickListener<StoreResponse>,
     private val adListener: OnItemClickListener<AdResponse>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = arrayListOf<AdAndStoreItem>()
@@ -27,7 +27,7 @@ class StreetSearchByDistanceRecyclerAdapter(
             is AdResponse -> {
                 VIEW_TYPE_AD
             }
-            is StoreInfo -> {
+            is StoreResponse -> {
                 VIEW_TYPE_STORE
             }
             else -> {
@@ -51,7 +51,7 @@ class StreetSearchByDistanceRecyclerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is StreetSearchByDistanceViewHolder -> {
-                holder.bind(items[position] as StoreInfo, listener)
+                holder.bind(items[position] as StoreResponse, listener)
             }
             is SearchByAdViewHolder -> {
                 holder.bind(items[position] as AdResponse, adListener)
@@ -69,7 +69,7 @@ class StreetSearchByDistanceRecyclerAdapter(
         if (items.isEmpty()) {
             return
         }
-        val list = items.filterIsInstance<StoreInfo>()
+        val list = items.filterIsInstance<StoreResponse>()
         items.clear()
         items.addAll(list)
         items.add(1, newItems[0])
@@ -85,9 +85,9 @@ class StreetSearchByDistanceRecyclerAdapter(
 
 
 class StreetSearchByDistanceViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemStoreByDistanceBinding, StoreInfo>(R.layout.item_store_by_distance, parent) {
+    BaseViewHolder<ItemStoreByDistanceBinding, StoreResponse>(R.layout.item_store_by_distance, parent) {
 
-    override fun bind(item: StoreInfo, listener: OnItemClickListener<StoreInfo>?) {
+    override fun bind(item: StoreResponse, listener: OnItemClickListener<StoreResponse>?) {
         super.bind(item, listener)
 
         val categoryInfo = SharedPrefUtils.getCategories()
