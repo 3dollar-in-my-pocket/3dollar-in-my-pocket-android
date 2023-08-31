@@ -16,7 +16,7 @@ import retrofit2.Response
 import retrofit2.http.*
 import zion830.com.common.base.BaseResponse
 
-interface NewServiceApi {
+interface ServiceApi {
 
     // 리뷰
     @POST("/api/v2/store/review")

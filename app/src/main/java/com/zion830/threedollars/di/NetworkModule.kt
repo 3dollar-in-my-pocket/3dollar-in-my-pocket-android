@@ -7,7 +7,7 @@ import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.R
 import com.zion830.threedollars.network.KakaoLoginApi
 import com.zion830.threedollars.network.KakaoMapApi
-import com.zion830.threedollars.network.NewServiceApi
+import com.zion830.threedollars.network.ServiceApi
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.Module
@@ -103,13 +103,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNewServiceApi(@OkhttpClient okHttpClient: OkHttpClient): NewServiceApi =
+    fun provideNewServiceApi(@OkhttpClient okHttpClient: OkHttpClient): ServiceApi =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
-            .create(NewServiceApi::class.java)
+            .create(ServiceApi::class.java)
 
     @Provides
     @Singleton
@@ -121,10 +121,10 @@ object NetworkModule {
             .build()
             .create(KakaoLoginApi::class.java)
 
-    val newServiceApi: NewServiceApi = Retrofit.Builder()
+    val serviceApi: ServiceApi = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(provideOkHttpClient(getLoggerInterceptor()))
         .build()
-        .create(NewServiceApi::class.java)
+        .create(ServiceApi::class.java)
 }

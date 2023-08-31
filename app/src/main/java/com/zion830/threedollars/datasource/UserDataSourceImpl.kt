@@ -6,12 +6,12 @@ import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
-import com.zion830.threedollars.network.NewServiceApi
+import com.zion830.threedollars.network.ServiceApi
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
-class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi) : UserDataSource {
+class UserDataSourceImpl @Inject constructor(private val service: ServiceApi) : UserDataSource {
 
     override suspend fun signOut(): Response<BaseResponse<String>> {
         return service.signOut()

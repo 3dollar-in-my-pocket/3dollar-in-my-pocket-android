@@ -4,12 +4,12 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.di.NetworkModule
-import com.zion830.threedollars.network.NewServiceApi
+import com.zion830.threedollars.network.ServiceApi
 
 class MyVisitHistoryDataSourceImpl :
     PagingSource<Int, VisitHistoryContent>() {
 
-    private val newServiceApi: NewServiceApi = NetworkModule.newServiceApi
+    private val serviceApi: ServiceApi = NetworkModule.serviceApi
 
     override fun getRefreshKey(state: PagingState<Int, VisitHistoryContent>): Int? = null
 
@@ -20,7 +20,7 @@ class MyVisitHistoryDataSourceImpl :
         }
 
         return try {
-            val response = newServiceApi.getMyVisitHistory(cursor, LOAD_SIZE)
+            val response = serviceApi.getMyVisitHistory(cursor, LOAD_SIZE)
 
             if (response.isSuccessful) {
                 LoadResult.Page(

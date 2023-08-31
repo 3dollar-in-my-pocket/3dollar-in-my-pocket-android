@@ -6,14 +6,14 @@ import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
-import com.zion830.threedollars.network.NewServiceApi
+import com.zion830.threedollars.network.ServiceApi
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
-class StoreDataSourceImpl @Inject constructor(private val newService: NewServiceApi) :
+class StoreDataSourceImpl @Inject constructor(private val newService: ServiceApi) :
     StoreDataSource {
 
     override suspend fun getAllStore(
