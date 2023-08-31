@@ -14,7 +14,10 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
+import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
+import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
+import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -99,7 +102,28 @@ interface ServiceApi {
         @Path("targetType") targetType: String,
         @Query("size") size: Int,
         @Query("cursor") cursor: String = "",
-    ) : Response<BaseResponse<UserStoreFeedbackResponse>>
+    ): Response<BaseResponse<UserStoreFeedbackResponse>>
+
+    // 대상에 피드백을 등록합니다.
+    @POST("/api/v1/feedback/{targetType}/target/{targetId}")
+    suspend fun postTargetFeedback(
+        @Path("targetType") targetType: String,
+        @Path("targetId") targetId: String,
+        @Body feedbackTypes: FeedbackTypes,
+    ): Response<BaseResponse<String>>
+
+    // 전체 기간동안의 대상에 등록된 피드백 갯수를 조회합니다.
+    @GET("/api/v1/feedback/{targetType}/target/{targetId}/full")
+    suspend fun getTargetFeedbackCount(
+        @Path("targetType") targetType: String,
+        @Path("targetId") targetId: String,
+    ): Response<BaseResponse<List<FeedbackCountResponse>>>
+
+    // 대상에 등록할 수 있는 피드백 종류를 조회합니다.
+    @GET("/api/v1/feedback/{targetType}/types")
+    suspend fun getTargetTypeFeedback(
+        @Path("targetType") targetType: String
+    ) : Response<BaseResponse<List<FeedbackTypeResponse>>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
