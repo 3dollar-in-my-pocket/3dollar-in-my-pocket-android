@@ -20,6 +20,7 @@ import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeRespons
 import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
+import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -140,6 +141,12 @@ interface ServiceApi {
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
     ): Response<BaseResponse<BossStoreResponse>>
+
+    // 신고 이유 목록을 조회합니다.
+    @GET("/api/v1/group/{group}/report/reasons")
+    suspend fun getReportReasons(
+        @Path("group") group: String,
+    ): Response<BaseResponse<ReportReasonResponse>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
