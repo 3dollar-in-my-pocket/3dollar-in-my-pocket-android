@@ -12,6 +12,7 @@ import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
+import com.zion830.threedollars.datasource.model.v4.boss.BossStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
@@ -131,6 +132,14 @@ interface ServiceApi {
         @Query("position") position: String,
         @Query("size") size: Int? = null,
     ): Response<BaseResponse<List<AdResponse>>>
+
+    // 사장님 가게를 조회합니다.
+    @GET("/api/v4/boss-store/{bossStoreId}")
+    suspend fun getSpecificBossStore(
+        @Path("bossStoreId") bossStoreId: String,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+    ): Response<BaseResponse<BossStoreResponse>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
