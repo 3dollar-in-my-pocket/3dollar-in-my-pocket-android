@@ -1,19 +1,10 @@
-package com.zion830.threedollars.datasource.model.v2.response
+package com.zion830.threedollars.datasource.model.v4.ad
 
 import com.google.gson.annotations.SerializedName
 
 interface AdAndStoreItem
 
-data class PopupsResponse(
-    @SerializedName("data")
-    val data: List<Popups> = listOf(),
-    @SerializedName("message")
-    val message: String = "",
-    @SerializedName("resultCode")
-    val resultCode: String = "",
-)
-
-data class Popups(
+data class AdResponse(
     @SerializedName("advertisementId")
     val advertisementId: Int = 0,
     @SerializedName("title")

@@ -4,8 +4,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.SharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
@@ -13,7 +13,7 @@ import zion830.com.common.listener.OnItemClickListener
 
 class StreetSearchByRatingRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>,
-    private val adListener: OnItemClickListener<Popups>
+    private val adListener: OnItemClickListener<AdResponse>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = arrayListOf<AdAndStoreItem>()
 
@@ -21,7 +21,7 @@ class StreetSearchByRatingRecyclerAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
-            is Popups -> {
+            is AdResponse -> {
                 VIEW_TYPE_AD
             }
             is StoreInfo -> {
@@ -51,7 +51,7 @@ class StreetSearchByRatingRecyclerAdapter(
                 holder.bind(items[position] as StoreInfo, listener)
             }
             is SearchByAdViewHolder -> {
-                holder.bind(items[position] as Popups, adListener)
+                holder.bind(items[position] as AdResponse, adListener)
             }
         }
     }

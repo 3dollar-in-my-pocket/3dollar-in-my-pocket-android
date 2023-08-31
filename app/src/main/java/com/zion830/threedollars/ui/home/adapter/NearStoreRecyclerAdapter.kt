@@ -14,8 +14,8 @@ import com.zion830.threedollars.databinding.ItemBossStoreLocationBinding
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
@@ -32,7 +32,7 @@ import zion830.com.common.listener.OnItemClickListener
 class NearStoreRecyclerAdapter(
     private val clickListener: OnItemClickListener<StoreInfo?>,
     private val bossClickListener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel?>,
-    private val adClickListener: OnItemClickListener<Popups>,
+    private val adClickListener: OnItemClickListener<AdResponse>,
     private val certificationClick: (StoreInfo?) -> Unit
 ) : ListAdapter<AdAndStoreItem?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
@@ -85,7 +85,7 @@ class NearStoreRecyclerAdapter(
         is BossNearStoreResponse.BossNearStoreModel -> {
             VIEW_TYPE_FOOD_TRUCK_STORE
         }
-        is Popups -> {
+        is AdResponse -> {
             VIEW_TYPE_AD
         }
         else -> {
@@ -119,7 +119,7 @@ class NearStoreRecyclerAdapter(
                 }
             }
             is NearStoreAdViewHolder -> {
-                holder.bind(getItem(position) as Popups, adClickListener)
+                holder.bind(getItem(position) as AdResponse, adClickListener)
             }
             is NearStoreEmptyViewHolder -> {
                 holder.bind(getItem(position) as StoreEmptyResponse, null)
@@ -166,10 +166,10 @@ class NearStoreEmptyViewHolder(parent: ViewGroup) :
 }
 
 class NearStoreAdViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemNearStoreAdBinding, Popups>(R.layout.item_near_store_ad, parent) {
+    BaseViewHolder<ItemNearStoreAdBinding, AdResponse>(R.layout.item_near_store_ad, parent) {
 
     @SuppressLint("Range")
-    override fun bind(item: Popups, listener: OnItemClickListener<Popups>?) {
+    override fun bind(item: AdResponse, listener: OnItemClickListener<AdResponse>?) {
         super.bind(item, listener)
         if (!item.fontColor.isNullOrEmpty()) {
             binding.tvAdTitle.setTextColor(item.fontColor.toColorInt())

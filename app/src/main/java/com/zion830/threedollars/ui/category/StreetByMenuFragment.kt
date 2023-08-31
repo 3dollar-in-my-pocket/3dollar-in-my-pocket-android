@@ -14,7 +14,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStreetByMenuBinding
 import com.zion830.threedollars.datasource.model.v2.AdType
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.category.adapter.StreetSearchByDistanceRecyclerAdapter
@@ -25,7 +25,6 @@ import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFra
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
@@ -46,8 +45,8 @@ class StreetByMenuFragment :
             startActivity(intent)
         }
     }
-    private val adListener = object : OnItemClickListener<Popups> {
-        override fun onClick(item: Popups) {
+    private val adListener = object : OnItemClickListener<AdResponse> {
+        override fun onClick(item: AdResponse) {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
         }
     }
@@ -110,7 +109,7 @@ class StreetByMenuFragment :
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    popupViewModel.popups.collect { popups ->
+                    popupViewModel.adResponse.collect { popups ->
                         if (popups.isNotEmpty()) {
                             binding.itemStoreListAd.run {
                                 tvAdTitle.text = popups[0].title

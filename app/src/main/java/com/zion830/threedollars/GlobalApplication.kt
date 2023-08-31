@@ -14,7 +14,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
 
@@ -47,7 +47,7 @@ class GlobalApplication : Application() {
         var loginPlatform: LoginType = LoginType.NONE
             private set
 
-        var storeMarker = Popups()
+        var storeMarker = AdResponse()
 
         @JvmStatic
         fun getContext(): Context {

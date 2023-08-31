@@ -1,7 +1,7 @@
 package com.zion830.threedollars.datasource.model.v4.favorite
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 
 data class MyFavoriteFolderResponse(
     @SerializedName("cursor")

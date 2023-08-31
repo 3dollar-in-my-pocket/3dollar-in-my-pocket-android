@@ -25,17 +25,14 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.datasource.model.v2.AdType
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class SelectCategoryDialogFragment :
@@ -131,7 +128,7 @@ class SelectCategoryDialogFragment :
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    popupViewModel.popups.collect { popups ->
+                    popupViewModel.adResponse.collect { popups ->
                         if (popups.isNotEmpty()) {
                             val popup = popups[0]
                             binding.tvAdTitle.text = popup.title

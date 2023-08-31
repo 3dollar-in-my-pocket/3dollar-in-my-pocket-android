@@ -6,7 +6,7 @@ import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
@@ -122,8 +122,15 @@ interface ServiceApi {
     // 대상에 등록할 수 있는 피드백 종류를 조회합니다.
     @GET("/api/v1/feedback/{targetType}/types")
     suspend fun getTargetTypeFeedback(
-        @Path("targetType") targetType: String
-    ) : Response<BaseResponse<List<FeedbackTypeResponse>>>
+        @Path("targetType") targetType: String,
+    ): Response<BaseResponse<List<FeedbackTypeResponse>>>
+
+    // User-Agent에서 디바이스 OS 정보를 읽어서 타게팅 광고를 노출 합니다.
+    @GET("/api/v1/advertisements")
+    suspend fun getAds(
+        @Query("position") position: String,
+        @Query("size") size: Int? = null,
+    ): Response<BaseResponse<List<AdResponse>>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
@@ -255,13 +262,6 @@ interface ServiceApi {
 
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
-
-    @GET("/api/v1/advertisements")
-    suspend fun getPopups(
-        @Query("position") position: String,
-        @Query("size") size: Int? = null,
-    ): Response<PopupsResponse>
-
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(

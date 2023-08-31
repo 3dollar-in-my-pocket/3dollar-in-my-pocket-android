@@ -23,7 +23,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseFragment
 import zion830.com.common.base.loadUrlImg
@@ -44,7 +43,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
-                viewModel?.popups?.value?.let { popup ->
+                viewModel?.adResponse?.value?.let { popup ->
                     SharedPrefUtils.setPopupUrl(popup[0].linkUrl!!)
                 }
                 it.findNavController().navigateUp()
@@ -54,7 +53,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
 
                 ivPopup.isVisible = false
                 webView.isVisible = true
-                viewModel?.popups?.value?.let { popups ->
+                viewModel?.adResponse?.value?.let { popups ->
                     webView.loadUrl(popups[0].linkUrl!!)
                 }
             }
@@ -82,7 +81,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layou
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.CREATED){
                     launch {
-                        viewModel?.popups?.collect{
+                        viewModel?.adResponse?.collect{
                             ivPopup.loadUrlImg(it.firstOrNull()?.imageUrl)
                         }
                     }

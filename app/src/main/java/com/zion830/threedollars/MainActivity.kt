@@ -26,7 +26,6 @@ import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.BaseActivity
 import zion830.com.common.ext.isNotNullOrEmpty
@@ -71,7 +70,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    popupViewModel.popups.collect { popups ->
+                    popupViewModel.adResponse.collect { popups ->
                         if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
                             binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
                         }

@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 class PopupDataSourceImpl @Inject constructor(private val newService: ServiceApi) :
     PopupDataSource {
-    override fun getPopups(position: AdType, size: Int?) = flow { emit(newService.getPopups(position = position.name, size)) }
+    override fun getPopups(position: AdType, size: Int?) = flow { emit(newService.getAds(position = position.name, size)) }
 }

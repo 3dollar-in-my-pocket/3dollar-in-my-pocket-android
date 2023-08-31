@@ -7,7 +7,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMypageEmptyBinding
 import com.zion830.threedollars.databinding.ItemMypageFavoriteBinding
 import com.zion830.threedollars.databinding.ItemRecentVisitHistoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent

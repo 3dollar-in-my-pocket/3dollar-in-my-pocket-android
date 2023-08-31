@@ -15,8 +15,8 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
+import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.MarketingDialog
@@ -115,8 +115,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 }
             }
         },
-            object : OnItemClickListener<Popups> {
-                override fun onClick(item: Popups) {
+            object : OnItemClickListener<AdResponse> {
+                override fun onClick(item: AdResponse) {
                     EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
                 }
@@ -172,7 +172,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private fun initViewModel() {
         viewModel.nearStoreInfo.observe(viewLifecycleOwner) { res ->
-            adapter.isAd = res?.find { it is Popups } != null
+            adapter.isAd = res?.find { it is AdResponse } != null
             adapter.submitList(res)
             val list = res?.filterIsInstance<StoreInfo>()
             naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list ?: listOf()) {

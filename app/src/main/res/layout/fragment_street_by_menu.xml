@@ -160,7 +160,7 @@
                         <include
                             android:id="@+id/itemStoreListAd"
                             layout="@layout/item_store_list_ad"
-                            visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.popups.empty}"
+                            visibleIf="@{!viewModel.hasData &amp;&amp; !popupViewModel.adResponse.empty}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="24dp"
