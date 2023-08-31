@@ -1,4 +1,4 @@
-package com.zion830.threedollars.datasource.model.v4.aroundStore
+package com.zion830.threedollars.datasource.model.v4.common
 
 
 import com.google.gson.annotations.SerializedName

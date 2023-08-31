@@ -14,6 +14,7 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
+import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -92,6 +93,13 @@ interface ServiceApi {
     @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
     suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
+    // 유저가 가게에 등록한 피드백 목록을 조회합니다
+    @GET("/api/v1/user/store/{targetType}/feedbacks")
+    suspend fun getUserStoreFeedback(
+        @Path("targetType") targetType: String,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String = "",
+    ) : Response<BaseResponse<UserStoreFeedbackResponse>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(

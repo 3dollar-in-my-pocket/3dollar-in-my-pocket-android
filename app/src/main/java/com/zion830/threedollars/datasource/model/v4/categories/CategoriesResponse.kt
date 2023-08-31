@@ -2,6 +2,7 @@ package com.zion830.threedollars.datasource.model.v4.categories
 
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.datasource.model.v4.common.Classification
 import java.io.Serializable
 
 data class CategoriesResponse(

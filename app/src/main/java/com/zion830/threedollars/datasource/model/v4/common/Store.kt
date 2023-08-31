@@ -1,7 +1,11 @@
-package com.zion830.threedollars.datasource.model.v4.aroundStore
+package com.zion830.threedollars.datasource.model.v4.common
 
 
 import com.google.gson.annotations.SerializedName
+import com.zion830.threedollars.datasource.model.v4.common.Account
+import com.zion830.threedollars.datasource.model.v4.common.Address
+import com.zion830.threedollars.datasource.model.v4.common.Category
+import com.zion830.threedollars.datasource.model.v4.common.Location
 
 data class Store(
     @SerializedName("account")
