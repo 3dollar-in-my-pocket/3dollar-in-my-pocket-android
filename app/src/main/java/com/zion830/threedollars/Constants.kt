@@ -100,4 +100,22 @@ object Constants {
     const val USER_STORE = "USER_STORE"
 
     const val FAVORITE_STORE = "FAVORITE_STORE"
+
+    // 지역 정보 Path (cityProvince)
+    const val SEOUL = "SEOUL"
+    const val GANGWON = "GANGWON"
+    const val GYEONGGI = "GYEONGGI"
+    const val GYEONGSANGNAM = "GYEONGSANGNAM"
+    const val GYEONGSANGBUK = "GYEONGSANGBUK"
+    const val GWANGJU = "GWANGJU"
+    const val DAEJEON = "DAEJEON"
+    const val BUSAN = "BUSAN"
+    const val SEJONG = "SEJONG"
+    const val ULSAN = "ULSAN"
+    const val INCHEON = "INCHEON"
+    const val JEOLLANAM = "JEOLLANAM"
+    const val JEOLLABUK = "JEOLLABUK"
+    const val JEJU = "JEJU"
+    const val CHUNGCHEONGNAM = "CHUNGCHEONGNAM"
+    const val CHUNGCHEONGBUK = "CHUNGCHEONGBUK"
 }

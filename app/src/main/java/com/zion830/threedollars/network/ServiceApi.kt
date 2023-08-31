@@ -18,17 +18,15 @@ import zion830.com.common.base.BaseResponse
 
 interface ServiceApi {
 
-    // 리뷰
-    @POST("/api/v2/store/review")
-    suspend fun saveReview(
-        @Body newReviewRequest: NewReviewRequest
-    ): Response<NewReviewResponse>
+    // 특정 시의 구 목록을 조회합니다.
+    @GET("/api/v1/regions/cities/{cityProvince}/districts")
+    suspend fun getSpecificDistricts(
+        @Path("cityProvince") cityProvince: String,
+    ): Response<BaseResponse<DistrictsResponse>>
 
-    @GET("/api/v3/store/reviews/me")
-    suspend fun getMyReviews(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int = 20,
-    ): Response<MyReviewResponse>
+    // 전체 시와 구 목록을 조회합니다.
+    @GET("/api/v1/regions/cities/districts")
+    suspend fun getAllDistricts(): Response<BaseResponse<List<DistrictsResponse>>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
