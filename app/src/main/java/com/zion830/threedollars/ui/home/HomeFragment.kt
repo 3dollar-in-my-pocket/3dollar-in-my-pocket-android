@@ -14,7 +14,7 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse

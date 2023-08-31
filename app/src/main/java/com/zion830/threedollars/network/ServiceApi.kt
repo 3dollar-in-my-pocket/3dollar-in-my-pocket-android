@@ -14,6 +14,7 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.boss.BossStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeResponse
@@ -173,6 +174,19 @@ interface ServiceApi {
     @GET("/api/v2/user/name/available")
     suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
 
+    // 유저 계정에 디바이스를 등록합니다.
+    @POST("/api/v1/device")
+    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    // 유저 계정의 디바이스 정보를 삭제합니다.
+    @DELETE("/api/v1/device")
+    suspend fun deletePushInformation(): Response<BaseResponse<String>>
+
+    // 유저 계정에 등록된 디바이스의 토큰을 갱신합니다. (해당 유저에 등록된 디바이스가 없는 경우 별도의 갱신 없이 200 OK가 반환됩니다.)
+    @PUT("/api/v1/device/token")
+    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -336,15 +350,6 @@ interface ServiceApi {
         @Path("bossStoreId") bossStoreId: String,
         @Body feedbackTypes: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
-
-    @POST("/api/v1/device")
-    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/device")
-    suspend fun deletePushInformation(): Response<BaseResponse<String>>
-
-    @PUT("/api/v1/device/token")
-    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>

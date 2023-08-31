@@ -10,7 +10,7 @@ import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.AdType
 import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel

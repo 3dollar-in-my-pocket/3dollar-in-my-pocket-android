@@ -16,7 +16,7 @@ import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
