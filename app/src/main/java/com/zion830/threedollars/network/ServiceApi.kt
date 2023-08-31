@@ -14,6 +14,9 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.boss.BossStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v4.certification.LoginResponse
+import com.zion830.threedollars.datasource.model.v4.certification.request.ConnectAccountRequest
+import com.zion830.threedollars.datasource.model.v4.certification.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
@@ -200,6 +203,32 @@ interface ServiceApi {
     @GET("/api/v1/user/medals")
     suspend fun getMyMedals(): Response<BaseResponse<List<MedalResponse>>>
 
+    // 익명 계정에 소셜 계정을 연결합니다.
+    @PUT("/api/v1/connect/account")
+    suspend fun putConnectAccount(
+        @Body connectAccountRequest: ConnectAccountRequest,
+    ): Response<BaseResponse<String>>
+
+    // 익명으로 회원가입을 요청합니다.
+    @POST("/api/v1/signup/anonymous")
+    suspend fun postSignUpAnonymous(): Response<BaseResponse<LoginResponse>>
+
+    // 로그인을 요청합니다.
+    @POST("/api/v2/login")
+    suspend fun login(@Body connectAccountRequest: ConnectAccountRequest): Response<BaseResponse<LoginResponse>>
+
+    // 로그아웃을 요청합니다.
+    @POST("/api/v2/logout")
+    suspend fun logout(): Response<BaseResponse<String>>
+
+    // 회원탈퇴를 요청합니다.
+    @DELETE("/api/v2/signout")
+    suspend fun signOut(): Response<BaseResponse<String>>
+
+    // 회원가입을 요청합니다.
+    @POST("/api/v2/signup")
+    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<LoginResponse>>
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -283,19 +312,6 @@ interface ServiceApi {
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
-
-    // 사용자
-    @DELETE("/api/v2/signout")
-    suspend fun signOut(): Response<BaseResponse<String>>
-
-    @POST("/api/v2/signup")
-    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
-
-    @POST("/api/v2/login")
-    suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
-
-    @POST("/api/v2/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
 
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity(): Response<UserActivityResponse>
