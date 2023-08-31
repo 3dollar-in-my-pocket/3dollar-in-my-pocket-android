@@ -21,6 +21,9 @@ import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackRe
 import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
+import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
+import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
+import com.zion830.threedollars.datasource.model.v4.user.request.UserInfoRequest
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -148,6 +151,28 @@ interface ServiceApi {
         @Path("group") group: String,
     ): Response<BaseResponse<ReportReasonResponse>>
 
+    // 유저의 마케팅 활용 여부를 수정합니다.
+    @PUT("/api/v1/user/me/marketing-consent")
+    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
+
+    // 유저의 계정 정보를 수정합니다. (일부분만 업데이트시)
+    // 중복된 닉네임의 경우 409, 사용 불가능한 닉네임의 경우 400을 반환
+    @PATCH("/api/v2/user")
+    suspend fun patchUserInfo(@Body userInfoRequest: UserInfoRequest): Response<BaseResponse<String>>
+
+    // 유저의 계정 정보를 조회합니다.
+    @GET("/api/v2/user/me")
+    suspend fun getUserInfo(): Response<BaseResponse<UserInfoResponse>>
+
+    // 유저의 닉네임 정보를 수정합니다.
+    @PUT("/api/v2/user/me")
+    suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<BaseResponse<UserInfoResponse>>
+
+    // 유저가 사용할 수 있는 닉네임인지 확인합니다.
+    // 중복된 닉네임의 경우 409, 사용 불가능한 닉네임의 경우 400을 반환
+    @GET("/api/v2/user/name/available")
+    suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -245,9 +270,6 @@ interface ServiceApi {
     @POST("/api/v2/logout")
     suspend fun logout(): Response<BaseResponse<String>>
 
-    @GET("/api/v2/user/me")
-    suspend fun getMyInfo(): Response<MyInfoResponse>
-
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity(): Response<UserActivityResponse>
 
@@ -256,12 +278,6 @@ interface ServiceApi {
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int,
     ): Response<MyVisitHistoryResponse>
-
-    @PUT("/api/v2/user/me")
-    suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
-
-    @GET("/api/v2/user/name/check")
-    suspend fun checkNickname(@Query("name") name: String): Response<BaseResponse<String>>
 
     @GET("/api/v1/medals")
     suspend fun getMedals(): Response<BaseResponse<List<Medal>>>
@@ -329,10 +345,6 @@ interface ServiceApi {
 
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
-
-    @PUT("/api/v1/user/me/marketing-consent")
-    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
-
 
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>

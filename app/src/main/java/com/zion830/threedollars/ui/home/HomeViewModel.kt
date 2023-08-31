@@ -13,7 +13,6 @@ import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequ
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.ad.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,9 +30,9 @@ class HomeViewModel @Inject constructor(
     private val userDataSource: UserDataSource,
 ) : BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: MutableLiveData<UserInfoResponse> = MutableLiveData()
 
-    val userInfo: LiveData<MyInfoResponse>
+    val userInfo: LiveData<UserInfoResponse>
         get() = _userInfo
 
     val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()

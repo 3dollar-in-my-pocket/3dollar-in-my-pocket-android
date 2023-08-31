@@ -19,9 +19,9 @@ interface UserDataSource {
 
     suspend fun logout(): Response<BaseResponse<String>>
 
-    suspend fun getMyInfo(): Response<MyInfoResponse>
+    suspend fun getMyInfo(): Response<UserInfoResponse>
 
-    suspend fun updateName(nickname: String): Response<MyInfoResponse>
+    suspend fun updateName(nickname: String): Response<UserInfoResponse>
 
     suspend fun checkName(nickname: String): Response<BaseResponse<String>>
 

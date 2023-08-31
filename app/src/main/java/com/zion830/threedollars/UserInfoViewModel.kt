@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,9 +18,9 @@ import javax.inject.Inject
 class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) :
     BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: MutableLiveData<UserInfoResponse> = MutableLiveData()
 
-    val userInfo: LiveData<MyInfoResponse>
+    val userInfo: LiveData<UserInfoResponse>
         get() = _userInfo
 
     private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()

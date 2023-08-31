@@ -6,6 +6,7 @@ import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
 import com.zion830.threedollars.network.ServiceApi
 import retrofit2.Response
 import zion830.com.common.base.BaseResponse
@@ -29,11 +30,11 @@ class UserDataSourceImpl @Inject constructor(private val service: ServiceApi) : 
         return service.logout()
     }
 
-    override suspend fun getMyInfo(): Response<MyInfoResponse> {
-        return service.getMyInfo()
+    override suspend fun getMyInfo(): Response<UserInfoResponse> {
+        return service.getUserInfo()
     }
 
-    override suspend fun updateName(nickname: String): Response<MyInfoResponse> {
+    override suspend fun updateName(nickname: String): Response<UserInfoResponse> {
         return service.editNickname(EditNameRequest(nickname))
     }
 

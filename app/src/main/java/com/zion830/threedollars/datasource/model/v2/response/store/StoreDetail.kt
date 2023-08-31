@@ -3,7 +3,6 @@ package com.zion830.threedollars.datasource.model.v2.response.store
 
 import com.google.gson.annotations.SerializedName
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
-import com.zion830.threedollars.datasource.model.v2.response.my.User
 
 data class StoreDetail(
     @SerializedName("appearanceDays")
