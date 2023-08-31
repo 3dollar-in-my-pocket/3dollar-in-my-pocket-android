@@ -14,13 +14,13 @@
    <fragment
         android:id="@+id/navigation_write"
         android:name="com.zion830.threedollars.ui.category.StreetByMenuFragment"
-        android:label="@string/road_food"
+        android:label="제보하기"
         tools:layout="@layout/fragment_street_by_menu" />
 
     <fragment
         android:id="@+id/navigation_vote"
         android:name="com.zion830.threedollars.ui.category.TruckByMenuFragment"
-        android:label="@string/food_truck"
+        android:label="투표하기"
         tools:layout="@layout/fragment_truck_by_menu" />
 
     <fragment

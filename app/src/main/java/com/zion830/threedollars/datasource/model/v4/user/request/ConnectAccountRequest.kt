@@ -1,4 +1,4 @@
-package com.zion830.threedollars.datasource.model.v4.certification.request
+package com.zion830.threedollars.datasource.model.v4.user.request
 
 data class ConnectAccountRequest(
     val token: String,

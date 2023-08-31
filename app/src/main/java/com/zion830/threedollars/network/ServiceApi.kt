@@ -14,9 +14,9 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.boss.BossStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v4.certification.LoginResponse
-import com.zion830.threedollars.datasource.model.v4.certification.request.ConnectAccountRequest
-import com.zion830.threedollars.datasource.model.v4.certification.request.SignUpRequest
+import com.zion830.threedollars.datasource.model.v4.user.LoginResponse
+import com.zion830.threedollars.datasource.model.v4.user.request.ConnectAccountRequest
+import com.zion830.threedollars.datasource.model.v4.user.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
@@ -27,6 +27,7 @@ import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
+import com.zion830.threedollars.datasource.model.v4.user.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
 import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v4.user.request.UserInfoRequest
@@ -229,6 +230,10 @@ interface ServiceApi {
     @POST("/api/v2/signup")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<LoginResponse>>
 
+    // 유저의 활동 정보를 조회합니다.
+    @GET("/api/v1/user/activity")
+    suspend fun getUserActivity() : Response<BaseResponse<UserActivityResponse>>
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -312,9 +317,6 @@ interface ServiceApi {
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
-
-    @GET("/api/v1/user/activity")
-    suspend fun getUserActivity(): Response<UserActivityResponse>
 
     @GET("/api/v2/store/visits/me")
     suspend fun getMyVisitHistory(
