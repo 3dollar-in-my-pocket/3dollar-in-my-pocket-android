@@ -11,7 +11,7 @@ import androidx.paging.LoadState
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint

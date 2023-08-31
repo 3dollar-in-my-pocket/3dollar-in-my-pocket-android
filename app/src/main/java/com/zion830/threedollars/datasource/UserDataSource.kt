@@ -3,7 +3,7 @@ package com.zion830.threedollars.datasource
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response

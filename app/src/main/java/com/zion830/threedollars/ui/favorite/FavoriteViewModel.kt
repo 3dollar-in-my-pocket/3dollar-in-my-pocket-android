@@ -16,7 +16,7 @@ import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.FavoriteMyFolderDataSourceImpl
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel

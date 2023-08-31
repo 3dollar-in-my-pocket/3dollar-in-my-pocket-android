@@ -9,7 +9,7 @@ import com.zion830.threedollars.databinding.ItemMypageFavoriteBinding
 import com.zion830.threedollars.databinding.ItemRecentVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils

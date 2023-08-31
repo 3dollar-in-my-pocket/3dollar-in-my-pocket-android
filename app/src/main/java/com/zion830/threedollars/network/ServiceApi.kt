@@ -7,7 +7,7 @@ import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryRespon
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
@@ -55,15 +55,44 @@ interface ServiceApi {
     suspend fun getAroundStores(
         @Query("distanceM") distance: Double = 10.0,
         @Query("categoryIds") categoryIds: Array<String>? = null,
-        @Query("targetStores") targetStores : Array<String>,
-        @Query("sortType") sortType : String,
-        @Query("filterCertifiedStores") filterCertifiedStores : Boolean = false,
-        @Query("size") size : Int = 20,
+        @Query("targetStores") targetStores: Array<String>,
+        @Query("sortType") sortType: String,
+        @Query("filterCertifiedStores") filterCertifiedStores: Boolean = false,
+        @Query("size") size: Int = 20,
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
-        @Query("X-Device-Latitude") deviceLatitude : Double,
-        @Query("X-Device-Longitude") deviceLongitude : Double
-    ) : Response<BaseResponse<AroundStoreResponse>>
+        @Query("X-Device-Latitude") deviceLatitude: Double,
+        @Query("X-Device-Longitude") deviceLongitude: Double,
+    ): Response<BaseResponse<AroundStoreResponse>>
+
+    // 유저의 가게 즐겨찾기 폴더를 조회합니다.
+    @GET("/api/v1/favorite/store/folder/my")
+    suspend fun getMyFavoriteFolder(
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int,
+    ): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    // 가게 즐겨찾기 폴더를 조회합니다.
+    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
+    suspend fun getFavoriteViewer(
+        @Path("favoriteFolderId") id: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20,
+    ): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    // 가게 즐겨찾기를 전체 취소합니다.
+    @DELETE("/api/v1/favorite/subscription/store/clear")
+    suspend fun deleteAllFavorite(): Response<BaseResponse<String>>
+
+    // 가게를 즐겨찾기로 등록합니다.
+    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
+    // 가게를 즐겨찾기에서 삭제 합니다.
+    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+
+
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
@@ -202,7 +231,6 @@ interface ServiceApi {
     ): Response<PopupsResponse>
 
 
-
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(
         @Query("latitude") latitude: Double,
@@ -257,24 +285,6 @@ interface ServiceApi {
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
-    @GET("/api/v1/favorite/store/folder/my")
-    suspend fun getMyFavoriteFolder(
-        @Query("cursor") cursor: String?,
-        @Query("size") size: Int,
-    ): Response<BaseResponse<MyFavoriteFolderResponse>>
-
-    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
-    suspend fun getFavoriteViewer(
-        @Path("favoriteFolderId") id: String,
-        @Query("cursor") cursor: String?,
-        @Query("size") size: Int = 20,
-    ): Response<BaseResponse<MyFavoriteFolderResponse>>
-
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
