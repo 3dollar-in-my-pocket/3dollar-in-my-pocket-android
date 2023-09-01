@@ -448,7 +448,7 @@ interface ServiceApi {
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun postCommentPoll(
         @Path("pollId") pollId: String,
-        @Body
+        @Body commentPollRequest: CommentPollRequest
     ): Response<BaseResponse<String>>
 
     // 투표에 등록한 댓글을 삭제합니다.
