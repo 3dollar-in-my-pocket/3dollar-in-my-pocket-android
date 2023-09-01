@@ -4,7 +4,7 @@ import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.datasource.model.v2.request.*
-import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
+import com.zion830.threedollars.datasource.model.v4.storeReview.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse

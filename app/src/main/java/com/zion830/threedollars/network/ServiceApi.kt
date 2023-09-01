@@ -5,7 +5,6 @@ import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
-import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
@@ -32,6 +31,10 @@ import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.StoreV4Response
 import com.zion830.threedollars.datasource.model.v4.store.UserAddStoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
+import com.zion830.threedollars.datasource.model.v4.storeReview.ReviewResponse
+import com.zion830.threedollars.datasource.model.v4.storeReview.StoreReviewResponse
+import com.zion830.threedollars.datasource.model.v4.storeReview.UserReviewResponse
+import com.zion830.threedollars.datasource.model.v4.storeReview.request.StoreReviewRequest
 import com.zion830.threedollars.datasource.model.v4.user.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
 import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
@@ -285,19 +288,47 @@ interface ServiceApi {
         @Header("X-Device-Longitude") deviceLongitude: Double,
     ): Response<BaseResponse<UserAddStoreResponse>>
 
+    // 가게에 리뷰를 추가합니다.
+    @POST("/api/v2/store/review")
+    suspend fun postStoreReview(
+        @Body storeReviewRequest: StoreReviewRequest,
+    ): Response<BaseResponse<ReviewResponse>>
+
+    // 리뷰를 수정합니다. (Full Update)
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
         @Path("reviewId") reviewId: Int,
         @Body editReviewRequest: EditReviewRequest,
-    ): Response<NewReviewResponse>
+    ): Response<BaseResponse<ReviewResponse>>
 
+    // 리뷰를 삭제합니다.
     @DELETE("/api/v2/store/review/{reviewId}")
     suspend fun deleteReview(
         @Path("reviewId") reviewId: Int,
     ): Response<BaseResponse<String>>
 
-    // 가게
+    // 리뷰를 수정합니다. (Partial Update)
+    @PATCH("/api/v2/store/review/{reviewId}")
+    suspend fun editPartialReview(
+        @Path("reviewId") reviewId: Int,
+        @Body editReviewRequest: EditReviewRequest,
+    ): Response<BaseResponse<String>>
 
+    // 가게에 등록된 리뷰들을 조회합니다.
+    @GET("/api/v4/store/{storeId}/reviews")
+    suspend fun getReview(
+        @Path("storeId") storeId: Int,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+        @Query("sort") sort: String,
+    ): Response<BaseResponse<StoreReviewResponse>>
+
+    // 유저가 작성한 리뷰들을 조회합니다.
+    @GET("/api/v4/user/reviews")
+    suspend fun getUserReview(
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<UserReviewResponse>>
 
     @POST("/api/v2/store/visit")
     suspend fun addVisitHistory(
