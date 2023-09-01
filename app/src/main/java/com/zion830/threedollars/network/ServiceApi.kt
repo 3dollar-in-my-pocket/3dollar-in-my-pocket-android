@@ -1,6 +1,5 @@
 package com.zion830.threedollars.network
 
-import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
@@ -9,7 +8,6 @@ import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.datasource.model.v4.aroundStore.AroundStoreResponse
 import com.zion830.threedollars.datasource.model.v4.boss.BossStoreResponse
 import com.zion830.threedollars.datasource.model.v4.categories.CategoriesResponse
@@ -18,11 +16,11 @@ import com.zion830.threedollars.datasource.model.v4.user.request.ConnectAccountR
 import com.zion830.threedollars.datasource.model.v4.user.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v4.device.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v4.districts.DistrictsResponse
+import com.zion830.threedollars.datasource.model.v4.favorite.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
-import com.zion830.threedollars.datasource.model.v4.image.AddImageResponse
 import com.zion830.threedollars.datasource.model.v4.image.ImageResponse
 import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
@@ -392,51 +390,30 @@ interface ServiceApi {
         @Query("cursor") cursor: String? = null,
     ): Response<BaseResponse<ImageResponse>>
 
-    // 가게 검색
-    @GET("/api/v2/store")
-    suspend fun getStoreInfo(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("storeId") storeId: Int,
-        @Query("startDate") startDate: String?,
-    ): Response<StoreDetailResponse>
+    // 유저의 즐겨찾기 폴더를 저장 & 갱신합니다.
+    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun updateFavoriteInfo(
+        @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
+        @Body favoriteInfoRequest: FavoriteInfoRequest,
+    ): Response<BaseResponse<String>>
 
-    @GET("/api/v2/stores/near")
-    suspend fun getNearStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-        @Query("distance") distance: Double = 100000.0,
-        @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
-        @Query("category") category: String = "",
-    ): Response<NearStoreResponse>
+    // 유저의 즐겨찾기 폴더를 삭제합니다.
+    @DELETE("/api/v1/favorite/{favoriteType}/folder")
+    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
 
-    @GET("/api/v2/store/{storeId}/images")
-    suspend fun getStoreImages(
-        @Query("storeId") storeId: Int,
-    ): Response<AddImageResponse>
+    // 즐겨찾기 폴더 공유 이력을 저장합니다.
+    @POST("/api/v1/favorite/{favoriteTargetType}/folder/{favoriteFolderId}/share")
+    suspend fun postFavoriteSharedHistory(
+        @Path("favoriteTargetType") favoriteTargetType: String,
+        @Path("favoriteFolderId") favoriteFolderId: String,
+    ): Response<BaseResponse<String>>
 
-    @GET("/api/v2/stores/me")
-    suspend fun getMyStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("cachingTotalElements") cachingTotalElements: Int,
-        @Query("cursor") cursor: Int,
-        @Query("size") size: Int = 100,
-    ): Response<MyStoreResponse>
-
-    @GET("/api/v3/stores/me")
-    suspend fun getMyStore(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int = 20,
-    ): Response<MyStoreResponse>
-
-    @GET("/api/v2/store/visits/me")
-    suspend fun getMyVisitHistory(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int,
-    ): Response<MyVisitHistoryResponse>
+    // 즐겨찾기 폴더 공유 이력을 삭제합니다.
+    @DELETE("/api/v1/favorite/{favoriteTargetType}/folder/{favoriteFolderId}/share")
+    suspend fun deleteFavoriteSharedHistory(
+        @Path("favoriteTargetType") favoriteTargetType: String,
+        @Path("favoriteFolderId") favoriteFolderId: String,
+    ): Response<BaseResponse<String>>
 
     // faq
     @GET("/api/v2/faq/categories")
@@ -445,54 +422,4 @@ interface ServiceApi {
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 
-    @GET("/api/v1/boss/stores/around")
-    suspend fun getBossNearStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-        @Query("distanceKm") distance: Double = 100000.0,
-        @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
-    ): Response<BossNearStoreResponse>
-
-    @GET("/api/v1/boss/stores/around")
-    suspend fun getCategoryIdBossNearStore(
-        @Query("categoryId") categoryId: String,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-        @Query("distanceKm") distance: Double = 100000.0,
-        @Query("orderType") orderType: String = Constants.DISTANCE_ASC,
-    ): Response<BossNearStoreResponse>
-
-    @GET("/api/v1/boss/store/{bossStoreId}")
-    suspend fun getBossStoreDetail(
-        @Path("bossStoreId") bossStoreId: String,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-    ): Response<BossStoreDetailResponse>
-
-    @GET("/api/v1/boss/store/{bossStoreId}/feedbacks/full")
-    suspend fun getBossStoreFeedbackFull(
-        @Path("bossStoreId") bossStoreId: String,
-    ): Response<BossStoreFeedbackFullResponse>
-
-    @GET("/api/v1/boss/store/feedback/types")
-    suspend fun getBossStoreFeedbackType(): Response<BossStoreFeedbackTypeResponse>
-
-    @POST("/api/v1/boss/store/{bossStoreId}/feedback")
-    suspend fun postBossStoreFeedback(
-        @Path("bossStoreId") bossStoreId: String,
-        @Body feedbackTypes: BossStoreFeedbackRequest,
-    ): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
-
-    @PUT("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun updateFavoriteInfo(
-        @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
-        @Body favoriteInfoRequest: FavoriteInfoRequest,
-    ): Response<BaseResponse<String>>
 }

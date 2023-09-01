@@ -8,7 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
-import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
+import com.zion830.threedollars.datasource.model.v4.favorite.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseActivity
 
