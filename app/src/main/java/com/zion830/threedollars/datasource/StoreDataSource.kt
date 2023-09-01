@@ -7,6 +7,7 @@ import com.zion830.threedollars.datasource.model.v4.categories.CategoriesRespons
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
+import com.zion830.threedollars.datasource.model.v4.visit.request.VisitRequest
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -109,7 +110,7 @@ interface StoreDataSource {
         bossStoreFeedbackRequest: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
 
-    suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>>
+    suspend fun addVisitHistory(visitRequest: VisitRequest): Response<BaseResponse<String>>
 
     suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
 

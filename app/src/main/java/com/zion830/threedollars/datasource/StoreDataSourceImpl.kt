@@ -9,6 +9,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
+import com.zion830.threedollars.datasource.model.v4.visit.request.VisitRequest
 import com.zion830.threedollars.network.ServiceApi
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -163,8 +164,8 @@ class StoreDataSourceImpl @Inject constructor(private val newService: ServiceApi
     ): Response<BaseResponse<String>> =
         newService.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
 
-    override suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>> =
-        newService.addVisitHistory(newVisitHistory)
+    override suspend fun addVisitHistory(visitRequest: VisitRequest): Response<BaseResponse<String>> =
+        newService.addVisitHistory(visitRequest)
 
     override suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
         newService.putFavorite(storeType, storeId)

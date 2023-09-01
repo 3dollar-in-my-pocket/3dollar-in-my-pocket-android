@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.request.NewVisitHistory
+import com.zion830.threedollars.datasource.model.v4.visit.request.VisitRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,7 +36,7 @@ class StoreCertificationViewModel @Inject constructor(private val storeDataSourc
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val result = storeDataSource.addVisitHistory(
-                NewVisitHistory(storeId, if (isExist) "EXISTS" else "NOT_EXISTS")
+                VisitRequest(storeId, if (isExist) "EXISTS" else "NOT_EXISTS")
             )
             _addVisitHistoryResult.postValue(result.code())
             hideLoading()

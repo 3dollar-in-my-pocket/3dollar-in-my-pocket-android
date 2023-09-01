@@ -34,11 +34,15 @@ import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
 import com.zion830.threedollars.datasource.model.v4.storeReview.ReviewResponse
 import com.zion830.threedollars.datasource.model.v4.storeReview.StoreReviewResponse
 import com.zion830.threedollars.datasource.model.v4.storeReview.UserReviewResponse
+import com.zion830.threedollars.datasource.model.v4.storeReview.request.StoreReviewReportRequest
 import com.zion830.threedollars.datasource.model.v4.storeReview.request.StoreReviewRequest
 import com.zion830.threedollars.datasource.model.v4.user.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v4.user.UserInfoResponse
 import com.zion830.threedollars.datasource.model.v4.user.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v4.user.request.UserInfoRequest
+import com.zion830.threedollars.datasource.model.v4.visit.StoreVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v4.visit.UserVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v4.visit.request.VisitRequest
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -330,10 +334,41 @@ interface ServiceApi {
         @Query("cursor") cursor: String? = null,
     ): Response<BaseResponse<UserReviewResponse>>
 
+    // 가게에 작성된 리뷰를 신고합니다.
+    @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
+    suspend fun postStoreReviewReport(
+        @Path("storeId") storeId: Int,
+        @Path("reviewId") reviewId: Int,
+        @Body storeReviewReportRequest: StoreReviewReportRequest,
+    ): Response<BaseResponse<String>>
+
+    // 가게에 방문 인증을 추가합니다.
     @POST("/api/v2/store/visit")
     suspend fun addVisitHistory(
-        @Body newVisitHistory: NewVisitHistory,
+        @Body visitRequest: VisitRequest,
     ): Response<BaseResponse<String>>
+
+    // 가게에 방문 인증을 삭제합니다.
+    @DELETE("/api/v2/store/visit/{visitId}")
+    suspend fun deleteVisitHistory(
+        @Path("visitId") visitId: String,
+    ): Response<BaseResponse<String>>
+
+    // 가게에 방문한 이력을 조회합니다.
+    @GET("/api/v4/store/{storeId}/visits")
+    suspend fun getStoreVisitHistory(
+        @Path("storeId") storeId: Int,
+        @Query("filterVisitStartDate") filterVisitStartDate: String, // ex) 2023-09-01
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String,
+    ): Response<BaseResponse<StoreVisitHistoryResponse>>
+
+    // 유저의 방문 이력을 조회합니다.
+    @GET("/api/v4/user/store/visits")
+    suspend fun getUserVisitHistory(
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String,
+    ): Response<BaseResponse<UserVisitHistoryResponse>>
 
     @DELETE("/api/v2/store/image/{imageId}")
     suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
