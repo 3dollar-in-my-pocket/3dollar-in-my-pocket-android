@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.zion830.threedollars.datasource.model.v2.response.FAQ
+import com.zion830.threedollars.datasource.model.v4.faq.FAQ
 
 
 @BindingAdapter("setDeleteAccountBtnVisibility")

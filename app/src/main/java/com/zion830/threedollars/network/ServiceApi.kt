@@ -2,8 +2,8 @@ package com.zion830.threedollars.network
 
 import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
-import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
-import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
+import com.zion830.threedollars.datasource.model.v4.faq.FAQByCategoryResponse
+import com.zion830.threedollars.datasource.model.v4.faq.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v4.ad.AdResponse
 import com.zion830.threedollars.datasource.model.v4.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
@@ -25,6 +25,11 @@ import com.zion830.threedollars.datasource.model.v4.image.ImageResponse
 import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
+import com.zion830.threedollars.datasource.model.v4.poll.CommentPollResponse
+import com.zion830.threedollars.datasource.model.v4.poll.PollPolicyResponse
+import com.zion830.threedollars.datasource.model.v4.poll.request.CommentPollRequest
+import com.zion830.threedollars.datasource.model.v4.poll.request.EnterPollRequest
+import com.zion830.threedollars.datasource.model.v4.poll.request.PollReportRequest
 import com.zion830.threedollars.datasource.model.v4.report.ReportReasonResponse
 import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.StoreResponse
@@ -415,11 +420,74 @@ interface ServiceApi {
         @Path("favoriteFolderId") favoriteFolderId: String,
     ): Response<BaseResponse<String>>
 
-    // faq
-    @GET("/api/v2/faq/categories")
-    suspend fun getFAQCategory(): Response<FAQCategoryResponse>
+    // 투표에 참여합니다.
+    @PUT("/api/v1/poll/{pollId}/choice")
+    suspend fun putEnterPoll(
+        @Path("pollId") pollId: String,
+        @Body enterPollRequest: EnterPollRequest,
+    ): Response<BaseResponse<String>>
 
+    // 투표 참여를 취소합니다.
+    @DELETE("/api/v1/poll/{pollId}/choice")
+    suspend fun deleteExitPoll(
+        @Path("pollId") pollId: String,
+    ): Response<BaseResponse<String>>
+
+    // 유저의 투표 정책을 조회합니다. (금일 투표 만들기 횟수)
+    @GET("/api/v1/user/poll/policy")
+    suspend fun getUserPollPolicy(): Response<BaseResponse<PollPolicyResponse>>
+
+    // 투표 게시판을 신고합니다.
+    @POST("/api/v1/poll/{pollId}/report")
+    suspend fun postReportPoll(
+        @Path("pollId") pollId: String,
+        @Body pollReportRequest: PollReportRequest,
+    ): Response<BaseResponse<String>>
+
+    // 투표에 새로운 댓글을 등록합니다.
+    @POST("/api/v1/poll/{pollId}/comment")
+    suspend fun postCommentPoll(
+        @Path("pollId") pollId: String,
+        @Body
+    ): Response<BaseResponse<String>>
+
+    // 투표에 등록한 댓글을 삭제합니다.
+    @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
+    suspend fun deleteCommentPoll(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+    ): Response<BaseResponse<String>>
+
+    // 투표에 등록한 댓글을 수정합니다.
+    @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
+    suspend fun patchCommentPoll(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body commentPollRequest: CommentPollRequest,
+    ): Response<BaseResponse<String>>
+
+    // 투표에 등록된 댓글 목록을 조회합니다.
+    @GET("/api/v1/poll/{pollId}/comments")
+    suspend fun getCommentsPoll(
+        @Path("pollId") pollId: String,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<CommentPollResponse>>
+
+    // 댓글을 신고합니다.
+    @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
+    suspend fun postReportCommentPoll(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body pollReportRequest: PollReportRequest,
+    ): Response<BaseResponse<String>>
+
+    // FAQ 카테고리 목록을 조회합니다.
+    @GET("/api/v2/faq/categories")
+    suspend fun getFAQCategory(): Response<BaseResponse<List<FAQCategoryResponse>>>
+
+    // FAQ 목록을 조회합니다.
     @GET("/api/v2/faqs")
-    suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
+    suspend fun getFAQByCategory(@Query("category") category: String): Response<BaseResponse<List<FAQByCategoryResponse>>>
 
 }
