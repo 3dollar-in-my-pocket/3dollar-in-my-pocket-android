@@ -22,6 +22,8 @@ import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackCountRespon
 import com.zion830.threedollars.datasource.model.v4.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.UserStoreFeedbackResponse
 import com.zion830.threedollars.datasource.model.v4.feedback.request.FeedbackTypes
+import com.zion830.threedollars.datasource.model.v4.image.AddImageResponse
+import com.zion830.threedollars.datasource.model.v4.image.ImageResponse
 import com.zion830.threedollars.datasource.model.v4.medal.MedalResponse
 import com.zion830.threedollars.datasource.model.v4.medal.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
@@ -370,15 +372,25 @@ interface ServiceApi {
         @Query("cursor") cursor: String,
     ): Response<BaseResponse<UserVisitHistoryResponse>>
 
-    @DELETE("/api/v2/store/image/{imageId}")
-    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
+    // 가게에 등록된 이미지를 삭제합니다.
+    @DELETE("/api/v2/store/image/{storeImageId}")
+    suspend fun deleteImage(@Path("storeImageId") storeImageId: Int): Response<BaseResponse<String>>
 
+    // 가게에 이미지들을 등록합니다.
     @POST("/api/v2/store/images")
     @Multipart
     suspend fun saveImages(
         @Part images: List<MultipartBody.Part>,
         @Query("storeId") storeId: Int,
-    ): Response<AddImageResponse>
+    ): Response<BaseResponse<Image>>
+
+    // 가게에 등록된 이미지들을 조회합니다.
+    @GET("/api/v4/store/{storeId}/images")
+    suspend fun getStoreImages(
+        @Path("storeId") storeId: Int,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<ImageResponse>>
 
     // 가게 검색
     @GET("/api/v2/store")

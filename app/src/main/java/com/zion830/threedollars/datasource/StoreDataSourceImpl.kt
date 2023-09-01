@@ -6,6 +6,7 @@ import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v4.storeReview.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
+import com.zion830.threedollars.datasource.model.v4.image.AddImageResponse
 import com.zion830.threedollars.datasource.model.v4.nearExists.NearExistResponse
 import com.zion830.threedollars.datasource.model.v4.store.DeleteStoreResponse
 import com.zion830.threedollars.datasource.model.v4.store.request.StoreRequest
