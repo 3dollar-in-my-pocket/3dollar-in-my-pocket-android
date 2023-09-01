@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.Category
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewReview

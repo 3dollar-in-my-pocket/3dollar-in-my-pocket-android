@@ -13,8 +13,6 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
