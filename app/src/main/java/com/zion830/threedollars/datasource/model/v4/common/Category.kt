@@ -4,8 +4,6 @@ package com.zion830.threedollars.datasource.model.v4.common
 import com.google.gson.annotations.SerializedName
 
 data class Category(
-    @SerializedName("category")
-    val category: String = "",
     @SerializedName("categoryId")
     val categoryId: String = "",
     @SerializedName("classification")
