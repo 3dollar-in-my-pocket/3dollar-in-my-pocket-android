@@ -15,7 +15,7 @@ import com.zion830.threedollars.datasource.model.v2.request.PushInformationReque
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
@@ -96,7 +96,7 @@ class MyPageSettingFragment :
 
         viewModel.logoutResult.observe(viewLifecycleOwner) {
             if (it) {
-                SharedPrefUtils.clearUserInfo()
+                LegacySharedPrefUtils.clearUserInfo()
                 showToast(R.string.logout_message)
                 startActivity(Intent(requireContext(), SplashActivity::class.java))
                 requireActivity().finish()
@@ -126,7 +126,7 @@ class MyPageSettingFragment :
         EventTracker.logEvent(Constants.SIGNOUT_WITHDRAW_BTN_CLICKED)
         viewModel.deleteUser {
             showToast(R.string.delete_account_success)
-            SharedPrefUtils.clearUserInfo()
+            LegacySharedPrefUtils.clearUserInfo()
             GlobalApplication.googleClient.signOut()
             requireActivity().finish()
         }

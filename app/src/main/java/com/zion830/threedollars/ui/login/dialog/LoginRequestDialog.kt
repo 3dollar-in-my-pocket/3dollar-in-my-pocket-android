@@ -28,7 +28,7 @@ import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.LoginViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -54,12 +54,12 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
             EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
-            SharedPrefUtils.saveLoginType(LoginType.KAKAO)
+            LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
             tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
             EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED)
-            SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+            LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }
         binding.closeImage.onSingleClick {
@@ -68,7 +68,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     }
 
     private fun tryLoginBySocialType() {
-        if (SharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
+        if (LegacySharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
             tryKakaoLogin()
         } else {
             tryGoogleLogin()
@@ -98,8 +98,8 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                         account?.account!!,
                         "oauth2:https://www.googleapis.com/auth/plus.me"
                     )
-                SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-                SharedPrefUtils.saveGoogleToken(token)
+                LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+                LegacySharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
@@ -132,7 +132,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     private fun tryLoginBySocialType(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
-                SharedPrefUtils.saveGoogleToken(token.accessToken)
+                LegacySharedPrefUtils.saveGoogleToken(token.accessToken)
                 viewModel.tryLogin(LoginType.KAKAO, token.accessToken)
             }
         }
@@ -145,8 +145,8 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                     viewModel.loginResult.collect {
                         when (it) {
                             is ResultWrapper.Success -> {
-                                SharedPrefUtils.saveUserId(it.value?.userId ?: 0)
-                                SharedPrefUtils.saveAccessToken(it.value?.token)
+                                LegacySharedPrefUtils.saveUserId(it.value?.userId ?: 0)
+                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
                                         viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
@@ -185,8 +185,8 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
             if (error != null) {
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
-                SharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                SharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
+                LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
+                LegacySharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 tryLoginBySocialType(token)
             }
         }

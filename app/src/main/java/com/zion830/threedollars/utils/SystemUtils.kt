@@ -73,7 +73,7 @@ fun showCustomBlackToast(text: String) {
 }
 
 fun Activity.requestPermissionFirst(permission: String = ACCESS_FINE_LOCATION) {
-    if (SharedPrefUtils.isFirstPermissionCheck()) {
+    if (LegacySharedPrefUtils.isFirstPermissionCheck()) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(this, arrayOf(permission, POST_NOTIFICATIONS), 0)
         } else {
@@ -89,7 +89,7 @@ fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION)
             ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
         }
         else -> {
-            if (SharedPrefUtils.isFirstPermissionCheck()) {
+            if (LegacySharedPrefUtils.isFirstPermissionCheck()) {
                 ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
             } else {
                 openPermissionSettingPage()

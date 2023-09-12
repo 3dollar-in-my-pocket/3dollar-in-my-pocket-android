@@ -11,7 +11,7 @@ import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
@@ -74,7 +74,7 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
         binding.run {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
             ivCategory.bindMenuIcons(item.store.categories)
-            val categoryInfo = SharedPrefUtils.getCategories()
+            val categoryInfo = LegacySharedPrefUtils.getCategories()
             val categories = item.store.categories.joinToString(" ") {
                 "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}"
             }

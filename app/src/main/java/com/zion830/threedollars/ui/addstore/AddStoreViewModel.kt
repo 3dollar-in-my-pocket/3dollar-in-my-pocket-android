@@ -11,7 +11,7 @@ import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,7 +48,7 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
         get() = _newStoreId
 
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
+        LegacySharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
 
     private val _isNearStoreExist: MutableLiveData<Boolean> = MutableLiveData()

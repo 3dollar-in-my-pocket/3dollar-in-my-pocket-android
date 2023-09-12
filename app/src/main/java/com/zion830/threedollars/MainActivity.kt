@@ -18,7 +18,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     override fun initView() {
         requestPermissionFirst()
         popupViewModel.getPopups(position = "SPLASH")
-        if (SharedPrefUtils.getCategories().isEmpty()) {
+        if (LegacySharedPrefUtils.getCategories().isEmpty()) {
             streetStoreByMenuViewModel.loadCategories()
         }
 
@@ -57,7 +57,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
         popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
+            if (popups.isNotEmpty() && popups[0].linkUrl != LegacySharedPrefUtils.getPopupUrl()) {
                 binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
             }
         }

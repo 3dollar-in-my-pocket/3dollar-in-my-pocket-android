@@ -59,6 +59,9 @@ android {
 
 dependencies {
     implementation project(':common')
+    implementation project(':core:network')
+    implementation project(':core:common')
+
     implementation 'com.google.firebase:firebase-config:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.0.5'
     implementation 'com.android.support:multidex:1.0.3'

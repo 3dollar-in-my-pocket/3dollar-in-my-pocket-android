@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource.model.v2.response.store
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 
 data class BossStoreFeedbackFullResponse(
     @SerializedName("data")
@@ -21,7 +21,7 @@ data class BossStoreFeedbackFullResponse(
         val ratio: Double
     ) {
         fun feedbackFullModelToReviewModel(): FoodTruckReviewModel {
-            val feedbackTypeList = SharedPrefUtils.getFeedbackType()
+            val feedbackTypeList = LegacySharedPrefUtils.getFeedbackType()
 
             val feedbackType = feedbackTypeList.find { feedbackType ->
                 feedbackType.feedbackType == this.feedbackType

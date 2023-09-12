@@ -13,7 +13,7 @@ import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragm
 import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
@@ -96,7 +96,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
     }
 
     private fun observeUiData() {
-        val categories = SharedPrefUtils.getCategories()
+        val categories = LegacySharedPrefUtils.getCategories()
         storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
             binding.tvStoreName.text = it?.storeName
             binding.ivCategory.bindMenuIcons(it?.categories)

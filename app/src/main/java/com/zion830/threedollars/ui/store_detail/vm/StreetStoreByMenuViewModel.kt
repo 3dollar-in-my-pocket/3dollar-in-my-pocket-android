@@ -9,7 +9,7 @@ import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.category.SortType
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
     val category: LiveData<CategoriesModel>
         get() = _category
 
-    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getCategories())
+    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(LegacySharedPrefUtils.getCategories())
     val categories: LiveData<List<CategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<StoreInfo>>()
@@ -82,7 +82,7 @@ class StreetStoreByMenuViewModel @Inject constructor(private val storeDataSource
             storeDataSource.getCategories().collect {
                 if (it.isSuccessful) {
                     _categories.postValue(it.body()?.data ?: emptyList())
-                    SharedPrefUtils.saveCategories(it.body()?.data ?: emptyList())
+                    LegacySharedPrefUtils.saveCategories(it.body()?.data ?: emptyList())
                 } else {
                     _msgTextId.postValue(R.string.connection_failed)
                 }

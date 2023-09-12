@@ -13,7 +13,7 @@ import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +41,8 @@ class SplashViewModel @Inject constructor(
             storeDataSource.getCategories().collect { categories ->
                 if (categories.isSuccessful) {
                     val categoriesModelList = categories.body()?.data ?: emptyList()
-                    SharedPrefUtils.saveCategories(categoriesModelList.filter { it.classification.description == "간식류" })
-                    SharedPrefUtils.saveTruckCategories(categoriesModelList.filter { it.classification.description == "식사류" })
+                    LegacySharedPrefUtils.saveCategories(categoriesModelList.filter { it.classification.description == "간식류" })
+                    LegacySharedPrefUtils.saveTruckCategories(categoriesModelList.filter { it.classification.description == "식사류" })
                 } else {
                     _msgTextId.postValue(R.string.connection_failed)
                 }
@@ -51,7 +51,7 @@ class SplashViewModel @Inject constructor(
             val bossStoreFeedbackTypeResponse = storeDataSource.getBossStoreFeedbackType()
             if (bossStoreFeedbackTypeResponse.isSuccessful) {
                 withContext(Dispatchers.Main) {
-                    SharedPrefUtils.saveFeedbackType(
+                    LegacySharedPrefUtils.saveFeedbackType(
                         bossStoreFeedbackTypeResponse.body()?.data ?: emptyList()
                     )
                 }
@@ -69,9 +69,9 @@ class SplashViewModel @Inject constructor(
 
     private fun tryLogin() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val loginType = SharedPrefUtils.getLoginType() ?: ""
+            val loginType = LegacySharedPrefUtils.getLoginType() ?: ""
             val token =
-                if (loginType == LoginType.KAKAO.socialName) SharedPrefUtils.getKakaoAccessToken() else SharedPrefUtils.getGoogleToken()
+                if (loginType == LoginType.KAKAO.socialName) LegacySharedPrefUtils.getKakaoAccessToken() else LegacySharedPrefUtils.getGoogleToken()
 
             if (token.isNullOrBlank()) {
                 _loginResult.value = ResultWrapper.GenericError(400)
@@ -90,19 +90,19 @@ class SplashViewModel @Inject constructor(
             account.account!!,
             "oauth2:https://www.googleapis.com/auth/plus.me"
         )
-        SharedPrefUtils.saveGoogleToken(token)
-        SharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+        LegacySharedPrefUtils.saveGoogleToken(token)
+        LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
         tryLogin()
     }
 
     fun refreshKakaoToken() {
         viewModelScope.launch(coroutineExceptionHandler) {
             val response =
-                kakaoLoginDataSource.refreshToken(SharedPrefUtils.getKakaoRefreshToken().toString())
+                kakaoLoginDataSource.refreshToken(LegacySharedPrefUtils.getKakaoRefreshToken().toString())
 
             if (response.isSuccessful && response.body() != null) {
-                SharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                SharedPrefUtils.saveKakaoToken(
+                LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
+                LegacySharedPrefUtils.saveKakaoToken(
                     response.body()?.accessToken ?: "",
                     response.body()?.refreshToken ?: ""
                 )

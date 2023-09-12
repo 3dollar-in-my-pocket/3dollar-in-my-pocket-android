@@ -39,7 +39,7 @@ object StringUtils {
             return getString(R.string.none)
         }
 
-        val categories = SharedPrefUtils.getCategories()
+        val categories = LegacySharedPrefUtils.getCategories()
         return categories.find { categoryInfo -> categoryInfo.category == category }?.category ?: ""
     }
 

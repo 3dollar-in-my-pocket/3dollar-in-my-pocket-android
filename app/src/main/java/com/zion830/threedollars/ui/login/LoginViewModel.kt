@@ -6,7 +6,7 @@ import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,14 +23,14 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
     private val _loginResult: MutableStateFlow<ResultWrapper<SignUser?>?> = MutableStateFlow(null)
     val loginResult: StateFlow<ResultWrapper<SignUser?>?> = _loginResult.asStateFlow()
 
-    private val latestSocialType: MutableStateFlow<LoginType> = MutableStateFlow(LoginType.of(SharedPrefUtils.getLoginType()))
+    private val latestSocialType: MutableStateFlow<LoginType> = MutableStateFlow(LoginType.of(LegacySharedPrefUtils.getLoginType()))
 
     private val _isNameUpdated: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isNameUpdated: StateFlow<Boolean> = _isNameUpdated.asStateFlow()
 
     fun tryLogin(socialType: LoginType, accessToken: String) {
         latestSocialType.value = socialType
-        SharedPrefUtils.saveLoginType(socialType)
+        LegacySharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val loginResult = userDataSource.login(LoginRequest(socialType.socialName, accessToken))
             _loginResult.value = (safeApiCall(loginResult))

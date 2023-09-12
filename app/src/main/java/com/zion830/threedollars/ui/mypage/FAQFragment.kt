@@ -11,7 +11,7 @@ import com.zion830.threedollars.databinding.FragmentFaqBinding
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.vm.FAQViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.BaseFragment
@@ -73,7 +73,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.frag
     private fun tryDeleteAccount() {
         userViewModel.deleteUser {
             showToast(R.string.delete_account_success)
-            SharedPrefUtils.clearUserInfo()
+            LegacySharedPrefUtils.clearUserInfo()
             requireActivity().finish()
         }
     }

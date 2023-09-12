@@ -6,7 +6,7 @@ import androidx.activity.viewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,7 +54,7 @@ class FoodTruckReviewActivity :
                 selectReviewSet.add(it.feedbackType)
             }
         }
-        foodTruckReviewSummitRecyclerAdapter.submitList(SharedPrefUtils.getFeedbackType())
+        foodTruckReviewSummitRecyclerAdapter.submitList(LegacySharedPrefUtils.getFeedbackType())
         binding.feedbackRecyclerView.adapter = foodTruckReviewSummitRecyclerAdapter
 
         viewModel.postFeedbackResponse.observe(this) {

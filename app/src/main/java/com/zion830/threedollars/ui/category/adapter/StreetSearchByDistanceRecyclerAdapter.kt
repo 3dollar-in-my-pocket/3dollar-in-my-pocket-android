@@ -7,7 +7,7 @@ import com.zion830.threedollars.databinding.ItemStoreByDistanceBinding
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.ext.toFormattedNumber
 import zion830.com.common.listener.OnItemClickListener
@@ -90,7 +90,7 @@ class StreetSearchByDistanceViewHolder(parent: ViewGroup) :
     override fun bind(item: StoreInfo, listener: OnItemClickListener<StoreInfo>?) {
         super.bind(item, listener)
 
-        val categoryInfo = SharedPrefUtils.getCategories()
+        val categoryInfo = LegacySharedPrefUtils.getCategories()
         val categories =
             item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
         val distanceString = "${item.distance.toString().toFormattedNumber()}m"

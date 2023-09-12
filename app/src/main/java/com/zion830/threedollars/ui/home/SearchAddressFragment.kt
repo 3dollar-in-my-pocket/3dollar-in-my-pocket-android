@@ -6,11 +6,11 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
-import com.zion830.threedollars.datasource.model.v2.response.kakao.Document
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast
