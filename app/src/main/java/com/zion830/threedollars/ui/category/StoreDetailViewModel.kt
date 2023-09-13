@@ -19,7 +19,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
@@ -51,14 +51,14 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
             allMenu[category.key] = category.value
         }
         allMenu.map {
-            val key = SharedPrefUtils.getCategories()
+            val key = LegacySharedPrefUtils.getCategories()
                 .find { categoryInfo -> categoryInfo.category == it.key } ?: CategoriesModel()
             Category(key, it.value)
         }
     }
 
     private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        SharedPrefUtils.getCategories().map { SelectedCategory(false, it) })
+        LegacySharedPrefUtils.getCategories().map { SelectedCategory(false, it) })
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
@@ -214,7 +214,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     }
 
     fun initSelectedCategory() {
-        _selectedCategory.value = SharedPrefUtils.getCategories().map { menu ->
+        _selectedCategory.value = LegacySharedPrefUtils.getCategories().map { menu ->
             val selectedCategory =
                 categoryInfo.value?.find { categoryInfo -> categoryInfo.category.category == menu.category }
             SelectedCategory(

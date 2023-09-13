@@ -8,7 +8,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class InputNameViewModel @Inject constructor(private val userDataSource: UserDat
 
     val userName: MutableLiveData<String> = MutableLiveData("")
     private val latestSocialType: MutableLiveData<LoginType> =
-        MutableLiveData(LoginType.of(SharedPrefUtils.getLoginType()))
+        MutableLiveData(LoginType.of(LegacySharedPrefUtils.getLoginType()))
     val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
         it.isNullOrBlank()
     }
@@ -47,9 +47,9 @@ class InputNameViewModel @Inject constructor(private val userDataSource: UserDat
         }
 
         val token = if (latestSocialType.value!!.socialName == LoginType.KAKAO.socialName) {
-            SharedPrefUtils.getKakaoAccessToken()
+            LegacySharedPrefUtils.getKakaoAccessToken()
         } else {
-            SharedPrefUtils.getGoogleToken()
+            LegacySharedPrefUtils.getGoogleToken()
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -60,7 +60,7 @@ class InputNameViewModel @Inject constructor(private val userDataSource: UserDat
             )
             val signUpResult = userDataSource.signUp(request)
             if (signUpResult.isSuccessful) {
-                SharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
+                LegacySharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
                 _isNameUpdated.postValue(true)
             } else {
                 when (signUpResult.code()) {

@@ -20,7 +20,7 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
@@ -216,7 +216,7 @@ class NearStoreViewHolder(
         binding.tvDest.setOnClickListener {
             certificationClick(item)
         }
-        val categoryInfo = SharedPrefUtils.getCategories()
+        val categoryInfo = LegacySharedPrefUtils.getCategories()
         val categories =
             item.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
         binding.tvDistance.text = if (item.distance < 1000) "${item.distance}m" else "1km+"

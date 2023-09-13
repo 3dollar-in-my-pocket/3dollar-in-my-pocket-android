@@ -24,7 +24,7 @@ import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
@@ -97,7 +97,7 @@ class SelectCategoryDialogFragment :
         initViewModel()
 
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
-            val categories = SharedPrefUtils.getCategories()
+            val categories = LegacySharedPrefUtils.getCategories()
             submitList(categories.map {
                 if (viewModel.selectCategory.value.name == it.name) {
                     it.copy(isSelected = true)
@@ -107,7 +107,7 @@ class SelectCategoryDialogFragment :
             })
         }
         binding.bossCategoryRecyclerView.adapter = bossCategoryAdapter.apply {
-            val categories = SharedPrefUtils.getTruckCategories()
+            val categories = LegacySharedPrefUtils.getTruckCategories()
             submitList(categories.map {
                 if (viewModel.selectCategory.value.name == it.name) {
                     it.copy(isSelected = true)

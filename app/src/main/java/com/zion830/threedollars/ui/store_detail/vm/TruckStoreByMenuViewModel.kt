@@ -8,7 +8,7 @@ import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.ui.category.SortType
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
     private val _category: MutableLiveData<CategoriesModel> = MutableLiveData(CategoriesModel())
     val category: LiveData<CategoriesModel> get() = _category
 
-    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(SharedPrefUtils.getTruckCategories())
+    private val _categories: MutableLiveData<List<CategoriesModel>> = MutableLiveData(LegacySharedPrefUtils.getTruckCategories())
     val categories: LiveData<List<CategoriesModel>> = _categories
 
     val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()

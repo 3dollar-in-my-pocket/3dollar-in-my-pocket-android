@@ -7,7 +7,7 @@ import androidx.paging.PagingDataAdapter
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyStoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
@@ -24,7 +24,7 @@ class MyStoreRecyclerAdapter(
         holder.bind(getItem(position) ?: StoreInfo(), if (item?.isDeleted == false) listener else null)
         val rating = "${item?.rating ?: 0}점"
         val visitCount = ((item?.visitHistory?.existsCounts ?: 0) + (item?.visitHistory?.notExistsCounts ?: 0)).toString() + "명"
-        val categoryInfo = SharedPrefUtils.getCategories()
+        val categoryInfo = LegacySharedPrefUtils.getCategories()
         val categories = item?.categories?.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
         holder.binding.apply {
             tvStoreName.text = if (item?.isDeleted == true) "없어진 가게에요 :(" else item?.storeName

@@ -2,9 +2,9 @@ package com.zion830.threedollars.ui.home.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemSearchByAddressBinding
-import com.zion830.threedollars.datasource.model.v2.response.kakao.Document
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener

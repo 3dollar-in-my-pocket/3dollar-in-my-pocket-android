@@ -22,7 +22,7 @@ import com.zion830.threedollars.ui.VersionUpdateDialog
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.login.LoginActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +52,7 @@ class SplashActivity :
                     VersionUpdateDialog.getInstance(minimum, current)
                         .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
                 }, {
-                    if (SharedPrefUtils.getLoginType().isNullOrBlank()) {
+                    if (LegacySharedPrefUtils.getLoginType().isNullOrBlank()) {
                         startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                         finish()
                     } else {
@@ -72,14 +72,16 @@ class SplashActivity :
                     try {
                         viewModel.refreshGoogleToken(account)
                     } catch (e: UserRecoverableAuthException) {
-                        startActivityForResult(e.intent, GOOGLE_LOGIN_ERROR_REQUEST_CODE)
+                        e.intent?.let {
+                            startActivityForResult(it, GOOGLE_LOGIN_ERROR_REQUEST_CODE)
+                        }
                     }
             }
         }
     }
 
     private fun tryServiceLogin() {
-        when (SharedPrefUtils.getLoginType()) {
+        when (LegacySharedPrefUtils.getLoginType()) {
             LoginType.KAKAO.socialName -> {
                 viewModel.refreshKakaoToken()
             }
@@ -92,7 +94,9 @@ class SplashActivity :
                         try {
                             viewModel.refreshGoogleToken(account)
                         } catch (e: UserRecoverableAuthException) {
-                            startActivityForResult(e.intent, 1001)
+                            e.intent?.let {
+                                startActivityForResult(it, 1001)
+                            }
                         }
                     } else {
                         withContext(Dispatchers.Main) {
@@ -115,7 +119,7 @@ class SplashActivity :
                     viewModel.loginResult.collect {
                         when (it) {
                             is ResultWrapper.Success -> {
-                                SharedPrefUtils.saveAccessToken(it.value?.token)
+                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
                                 val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
                                 when {
                                     deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
