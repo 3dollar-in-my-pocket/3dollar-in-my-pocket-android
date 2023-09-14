@@ -12,7 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import zion830.com.common.BR
 
-abstract class BaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
+abstract class LegacyBaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes private val layoutResId: Int
 ) : Fragment(layoutResId) {
 

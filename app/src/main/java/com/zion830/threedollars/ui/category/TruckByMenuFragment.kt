@@ -20,13 +20,13 @@ import com.zion830.threedollars.ui.store_detail.map.TruckStoreByMenuNaverMapFrag
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class TruckByMenuFragment :
-    BaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu) {
+    LegacyBaseFragment<FragmentTruckByMenuBinding, TruckStoreByMenuViewModel>(R.layout.fragment_truck_by_menu) {
 
     override val viewModel: TruckStoreByMenuViewModel by activityViewModels()
 

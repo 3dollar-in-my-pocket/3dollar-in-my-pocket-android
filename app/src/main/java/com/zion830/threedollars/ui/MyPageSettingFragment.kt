@@ -18,12 +18,12 @@ import com.zion830.threedollars.ui.splash.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
-    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
+    LegacyBaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 

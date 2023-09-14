@@ -10,13 +10,13 @@ import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.ext.addNewFragment
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class NewAddressFragment :
-    BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
+    LegacyBaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 

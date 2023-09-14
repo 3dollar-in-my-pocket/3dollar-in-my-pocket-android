@@ -1,9 +1,5 @@
 package zion830.com.common.base
 
-import android.app.ActivityManager
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -15,7 +11,7 @@ import androidx.databinding.ViewDataBinding
 import zion830.com.common.BR
 import zion830.com.common.ext.showSnack
 
-abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
+abstract class LegacyBaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes val layoutId: Int
 ) : AppCompatActivity() {
 
