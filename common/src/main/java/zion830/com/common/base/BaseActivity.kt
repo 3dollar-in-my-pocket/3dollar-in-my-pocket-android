@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import zion830.com.common.BR
+import androidx.viewbinding.ViewBinding
 import zion830.com.common.ext.showSnack
 
-abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
+abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
     val bindingFactory: (LayoutInflater) -> B
 ) : AppCompatActivity() {
 
@@ -24,7 +21,6 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
         super.onCreate(savedInstanceState)
 
         binding = bindingFactory(layoutInflater)
-        initBinding()
         initView()
 
         viewModel.msgTextId.observe(this) {
@@ -32,11 +28,6 @@ abstract class BaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
                 binding.root.showSnack(it)
             }
         }
-    }
-
-    open fun initBinding() {
-        binding.lifecycleOwner = this
-        binding.setVariable(BR.viewModel, viewModel)
     }
 
     abstract fun initView()
