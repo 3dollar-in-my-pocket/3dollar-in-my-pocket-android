@@ -11,7 +11,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseDialogFragment<B : ViewBinding>(@LayoutRes private val layoutId: Int) :
+abstract class BaseDialogFragment<B : ViewBinding> :
     DialogFragment() {
 
     protected lateinit var binding: B
