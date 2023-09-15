@@ -1,11 +1,4 @@
-package zion830.com.common.base
-
-import com.squareup.moshi.Moshi
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.HttpException
-import java.io.IOException
+package com.threedollar.common.base
 
 sealed class ResultWrapper<out T> {
     data class Success<out T>(val value: T) : ResultWrapper<T>()

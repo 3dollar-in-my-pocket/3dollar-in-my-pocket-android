@@ -8,7 +8,7 @@ import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.ui.addstore.adapter.MenuRecyclerAdapter
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class CategoryInfoRecyclerAdapter : BaseRecyclerView<ItemCategoryBinding, Category>(R.layout.item_category) {
 

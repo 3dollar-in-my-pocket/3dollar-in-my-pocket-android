@@ -26,7 +26,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.convertDpToPx
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 
 class NearStoreRecyclerAdapter(

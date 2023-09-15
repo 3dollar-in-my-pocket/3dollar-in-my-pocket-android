@@ -2,9 +2,9 @@ package com.zion830.threedollars.ui.mypage.vm
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.MyVisitHistoryDataSourceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

@@ -10,7 +10,7 @@ import com.zion830.threedollars.network.NewServiceApi
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
+import com.threedollar.common.base.BaseResponse
 import javax.inject.Inject
 
 class StoreDataSourceImpl @Inject constructor(private val newService: NewServiceApi) :

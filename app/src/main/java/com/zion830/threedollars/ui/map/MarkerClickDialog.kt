@@ -11,7 +11,7 @@ import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseDialogFragment
+import com.threedollar.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 

@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="zion830.com.common.base.BaseViewModel" />
+            type="com.threedollar.common.base.BaseViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

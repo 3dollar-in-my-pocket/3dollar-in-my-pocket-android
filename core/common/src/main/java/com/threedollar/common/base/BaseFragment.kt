@@ -1,4 +1,4 @@
-package zion830.com.common.base
+package com.threedollar.common.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

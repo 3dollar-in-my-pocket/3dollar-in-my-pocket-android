@@ -1,6 +1,6 @@
-package zion830.com.common.listener
+package com.threedollar.common.listener
 
-import zion830.com.common.ext.MIN_CLICK_DELAY_MS
+import com.threedollar.common.ext.MIN_CLICK_DELAY_MS
 
 abstract class OnSingleClickListener<T>(
     private val clickDelayMilliSeconds: Long = MIN_CLICK_DELAY_MS

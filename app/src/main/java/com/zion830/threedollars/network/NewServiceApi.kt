@@ -14,7 +14,7 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import zion830.com.common.base.BaseResponse
+import com.threedollar.common.base.BaseResponse
 
 interface NewServiceApi {
 

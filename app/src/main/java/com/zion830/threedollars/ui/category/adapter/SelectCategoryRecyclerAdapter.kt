@@ -10,7 +10,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesMod
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class SelectCategoryRecyclerAdapter(private val onClickListener: (CategoriesModel) -> Unit) :
     ListAdapter<CategoriesModel, CategoryViewHolder>(BaseDiffUtilCallback()) {

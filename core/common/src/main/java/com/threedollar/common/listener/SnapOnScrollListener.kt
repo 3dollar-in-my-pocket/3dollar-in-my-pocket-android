@@ -1,8 +1,8 @@
-package zion830.com.common.listener
+package com.threedollar.common.listener
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import zion830.com.common.ext.getSnapPosition
+import com.threedollar.common.ext.getSnapPosition
 
 class SnapOnScrollListener(
     private val snapHelper: SnapHelper,

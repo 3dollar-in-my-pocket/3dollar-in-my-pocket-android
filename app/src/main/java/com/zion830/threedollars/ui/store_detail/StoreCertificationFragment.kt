@@ -17,7 +17,7 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.addNewFragment
+import com.threedollar.common.ext.addNewFragment
 import zion830.com.common.ext.toFormattedNumber
 import kotlin.math.abs
 import kotlin.math.min

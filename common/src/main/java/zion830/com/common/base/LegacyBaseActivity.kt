@@ -8,6 +8,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.threedollar.common.base.BaseViewModel
 import zion830.com.common.BR
 import zion830.com.common.ext.showSnack
 

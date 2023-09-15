@@ -26,8 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
-import zion830.com.common.ext.addNewFragment
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {

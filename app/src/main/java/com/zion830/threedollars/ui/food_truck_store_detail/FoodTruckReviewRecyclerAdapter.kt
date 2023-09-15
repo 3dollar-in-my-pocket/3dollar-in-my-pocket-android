@@ -8,7 +8,7 @@ import com.zion830.threedollars.databinding.ItemFoodTruckReviewDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 
 class FoodTruckReviewRecyclerAdapter :

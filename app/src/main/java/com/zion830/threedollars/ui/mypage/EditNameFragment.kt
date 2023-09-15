@@ -13,7 +13,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.listener.OnBackPressedListener
+import com.threedollar.common.listener.OnBackPressedListener
 
 @AndroidEntryPoint
 class EditNameFragment : LegacyBaseFragment<FragmentEditNameBinding, UserInfoViewModel>(R.layout.fragment_edit_name), OnBackPressedListener {

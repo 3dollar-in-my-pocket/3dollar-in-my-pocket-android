@@ -12,8 +12,8 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.ext.disableDoubleClick
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.ext.disableDoubleClick
+import com.threedollar.common.listener.OnItemClickListener
 
 class ReviewRecyclerAdapter(
     private val reviewEditClickEvent: OnItemClickListener<Review>,

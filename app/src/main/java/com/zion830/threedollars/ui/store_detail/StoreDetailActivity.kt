@@ -47,10 +47,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
-import zion830.com.common.ext.addNewFragment
+import com.threedollar.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StoreDetailActivity :

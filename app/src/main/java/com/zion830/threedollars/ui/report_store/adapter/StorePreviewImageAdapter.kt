@@ -6,7 +6,7 @@ import com.zion830.threedollars.databinding.ItemPhotoPreviewBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 
 class StorePreviewImageAdapter(
