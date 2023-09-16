@@ -17,12 +17,12 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
-class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, FavoriteViewModel>(R.layout.activity_favorite_my_folder) {
+class FavoriteMyFolderActivity : LegacyBaseActivity<ActivityFavoriteMyFolderBinding, FavoriteViewModel>(R.layout.activity_favorite_my_folder) {
     override val viewModel: FavoriteViewModel by viewModels()
 
     private val adapter: FavoriteMyFolderRecyclerAdapter by lazy {

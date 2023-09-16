@@ -9,12 +9,12 @@ import com.zion830.threedollars.databinding.ActivityNewStoreBinding
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.NewAddressFragment
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.listener.OnBackPressedListener
 
 @AndroidEntryPoint
-class NewStoreActivity : BaseActivity<ActivityNewStoreBinding, AddStoreViewModel>(R.layout.activity_new_store), OnBackPressedListener {
+class NewStoreActivity : LegacyBaseActivity<ActivityNewStoreBinding, AddStoreViewModel>(R.layout.activity_new_store), OnBackPressedListener {
 
     override val viewModel: AddStoreViewModel by viewModels()
 

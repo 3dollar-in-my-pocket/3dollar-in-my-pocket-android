@@ -11,12 +11,12 @@ import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.ui.MedalInfoDialog
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.ext.showSnack
 
 @AndroidEntryPoint
-class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>(R.layout.fragment_my_medal) {
+class MyMedalFragment : LegacyBaseFragment<FragmentMyMedalBinding, MyPageViewModel>(R.layout.fragment_my_medal) {
 
     override val viewModel: MyPageViewModel by activityViewModels()
 

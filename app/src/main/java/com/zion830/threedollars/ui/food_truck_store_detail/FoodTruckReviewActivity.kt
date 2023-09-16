@@ -10,11 +10,11 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class FoodTruckReviewActivity :
-    BaseActivity<ActivityFoodTruckReviewBinding, FoodTruckStoreDetailViewModel>(
+    LegacyBaseActivity<ActivityFoodTruckReviewBinding, FoodTruckStoreDetailViewModel>(
         R.layout.activity_food_truck_review
     ) {
     override val viewModel: FoodTruckStoreDetailViewModel by viewModels()

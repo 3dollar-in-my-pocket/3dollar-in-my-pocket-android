@@ -9,11 +9,11 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.map.StoreEditNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
 class EditAddressFragment :
-    BaseFragment<FragmentEditAddressBinding, StoreDetailViewModel>(R.layout.fragment_edit_address) {
+    LegacyBaseFragment<FragmentEditAddressBinding, StoreDetailViewModel>(R.layout.fragment_edit_address) {
 
     private var isFirstOpen = true
 

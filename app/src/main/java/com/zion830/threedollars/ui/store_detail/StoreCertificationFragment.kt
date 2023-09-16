@@ -16,14 +16,14 @@ import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.toFormattedNumber
 import kotlin.math.abs
 import kotlin.math.min
 
 @AndroidEntryPoint
-class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>(R.layout.layout_certification) {
+class StoreCertificationFragment : LegacyBaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>(R.layout.layout_certification) {
 
     override val viewModel: StoreCertificationViewModel by viewModels()
 

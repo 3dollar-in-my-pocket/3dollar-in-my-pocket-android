@@ -30,12 +30,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.ResultWrapper
 
 @AndroidEntryPoint
 class SplashActivity :
-    BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
+    LegacyBaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
 
     override val viewModel: SplashViewModel by viewModels()
 

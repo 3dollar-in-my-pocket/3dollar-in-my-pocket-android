@@ -20,12 +20,12 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class MyReviewFragment :
-    BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(R.layout.fragment_my_review) {
+    LegacyBaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(R.layout.fragment_my_review) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 

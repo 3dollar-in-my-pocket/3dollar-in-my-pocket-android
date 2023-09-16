@@ -28,12 +28,12 @@ import com.zion830.threedollars.ui.store_detail.findStoreType
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.ext.replaceFragment
 
 @AndroidEntryPoint
 class EditStoreDetailFragment :
-    BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
+    LegacyBaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
 
     override val viewModel: StoreDetailViewModel by activityViewModels()
 

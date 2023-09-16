@@ -22,14 +22,14 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.showSnack
 import zion830.com.common.listener.OnBackPressedListener
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
+class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
     ActivityCompat.OnRequestPermissionsResultCallback {
 
     override val viewModel: UserInfoViewModel by viewModels()

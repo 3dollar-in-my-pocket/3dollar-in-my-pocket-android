@@ -21,13 +21,13 @@ import com.zion830.threedollars.ui.store_detail.map.StreetStoreByMenuNaverMapFra
 import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StreetByMenuFragment :
-    BaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu) {
+    LegacyBaseFragment<FragmentStreetByMenuBinding, StreetStoreByMenuViewModel>(R.layout.fragment_street_by_menu) {
 
     override val viewModel: StreetStoreByMenuViewModel by activityViewModels()
 

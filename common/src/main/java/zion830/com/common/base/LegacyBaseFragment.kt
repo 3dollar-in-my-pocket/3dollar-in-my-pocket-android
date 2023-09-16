@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.viewbinding.ViewBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import zion830.com.common.BR
 
-abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
+abstract class LegacyBaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
+    @LayoutRes private val layoutResId: Int
+) : Fragment(layoutResId) {
 
     protected lateinit var binding: B
 
@@ -24,17 +29,21 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = getFragmentBinding(inflater, container)
+        binding = DataBindingUtil.inflate(inflater, layoutResId, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initBinding()
         initView()
     }
 
-    abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
+    open fun initBinding() {
+        binding.lifecycleOwner = this
+        binding.setVariable(BR.viewModel, viewModel)
+    }
 
     abstract fun initView()
 }

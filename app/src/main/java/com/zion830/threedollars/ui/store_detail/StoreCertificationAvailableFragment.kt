@@ -15,11 +15,11 @@ import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
 class StoreCertificationAvailableFragment :
-    BaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>(R.layout.layout_certification_available) {
+    LegacyBaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>(R.layout.layout_certification_available) {
 
     override val viewModel: StoreCertificationViewModel by viewModels()
 

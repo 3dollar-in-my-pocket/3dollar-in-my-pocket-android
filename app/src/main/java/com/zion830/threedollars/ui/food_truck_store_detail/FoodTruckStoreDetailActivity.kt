@@ -19,14 +19,14 @@ import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDay
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.loadRoundUrlImg
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class FoodTruckStoreDetailActivity :
-    BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail) {
+    LegacyBaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail) {
 
     override val viewModel: FoodTruckStoreDetailViewModel by viewModels()
 

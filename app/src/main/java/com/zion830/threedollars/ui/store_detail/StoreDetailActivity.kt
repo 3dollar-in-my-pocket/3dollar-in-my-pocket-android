@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
@@ -54,7 +54,7 @@ import zion830.com.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StoreDetailActivity :
-    BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
+    LegacyBaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
 
     override val viewModel: StoreDetailViewModel by viewModels()
 

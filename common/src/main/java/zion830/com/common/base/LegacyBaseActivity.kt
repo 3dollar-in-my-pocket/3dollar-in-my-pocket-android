@@ -1,16 +1,18 @@
 package zion830.com.common.base
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewbinding.ViewBinding
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import zion830.com.common.BR
 import zion830.com.common.ext.showSnack
 
-abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
-    val bindingFactory: (LayoutInflater) -> B
+abstract class LegacyBaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
+    @LayoutRes val layoutId: Int
 ) : AppCompatActivity() {
 
     protected lateinit var binding: B
@@ -20,7 +22,8 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = bindingFactory(layoutInflater)
+        binding = DataBindingUtil.setContentView(this, layoutId)
+        initBinding()
         initView()
 
         viewModel.msgTextId.observe(this) {
@@ -28,6 +31,11 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
                 binding.root.showSnack(it)
             }
         }
+    }
+
+    open fun initBinding() {
+        binding.lifecycleOwner = this
+        binding.setVariable(BR.viewModel, viewModel)
     }
 
     abstract fun initView()
