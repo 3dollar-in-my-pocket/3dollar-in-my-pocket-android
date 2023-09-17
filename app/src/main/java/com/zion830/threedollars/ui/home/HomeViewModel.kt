@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
@@ -20,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

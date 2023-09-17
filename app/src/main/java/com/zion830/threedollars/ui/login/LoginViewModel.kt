@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.login
 
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
@@ -13,8 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
-import zion830.com.common.base.ResultWrapper
+import com.threedollar.common.base.ResultWrapper
 import javax.inject.Inject
 
 @HiltViewModel

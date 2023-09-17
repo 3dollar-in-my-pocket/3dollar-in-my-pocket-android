@@ -8,7 +8,7 @@ import com.zion830.threedollars.databinding.ItemStoreListAdBinding
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class SearchByAdViewHolder(parent: ViewGroup) :
     BaseViewHolder<ItemStoreListAdBinding, Popups>(R.layout.item_store_list_ad, parent) {

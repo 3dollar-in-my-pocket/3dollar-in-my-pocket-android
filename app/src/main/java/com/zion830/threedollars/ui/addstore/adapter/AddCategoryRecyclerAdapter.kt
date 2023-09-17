@@ -9,7 +9,7 @@ import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class AddCategoryRecyclerAdapter(
     private val showDialog: () -> Unit,

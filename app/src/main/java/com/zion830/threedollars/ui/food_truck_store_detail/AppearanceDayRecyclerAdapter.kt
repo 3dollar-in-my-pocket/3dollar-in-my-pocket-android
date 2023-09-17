@@ -12,7 +12,7 @@ import com.zion830.threedollars.databinding.ItemAppearanceDayBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(
     BaseDiffUtilCallback()

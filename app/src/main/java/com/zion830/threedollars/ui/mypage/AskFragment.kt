@@ -9,7 +9,7 @@ import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.addNewFragment
+import com.threedollar.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class AskFragment : LegacyBaseFragment<FragmentAskBinding, UserInfoViewModel>(R.layout.fragment_ask) {

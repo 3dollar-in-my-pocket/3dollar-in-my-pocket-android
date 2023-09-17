@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
@@ -13,7 +14,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

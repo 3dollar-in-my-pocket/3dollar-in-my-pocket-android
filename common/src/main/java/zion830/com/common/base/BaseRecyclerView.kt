@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
-import zion830.com.common.ext.disableDoubleClick
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.ext.disableDoubleClick
+import com.threedollar.common.listener.OnItemClickListener
 
 abstract class BaseRecyclerView<B : ViewDataBinding, T : Any>(
     @LayoutRes private val layoutResId: Int

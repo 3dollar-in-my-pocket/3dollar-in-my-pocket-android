@@ -7,7 +7,7 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
+import com.threedollar.common.base.BaseResponse
 
 interface UserDataSource {
 

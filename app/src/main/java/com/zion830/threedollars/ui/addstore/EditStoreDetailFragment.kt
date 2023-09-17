@@ -29,7 +29,7 @@ import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.replaceFragment
+import com.threedollar.common.ext.replaceFragment
 
 @AndroidEntryPoint
 class EditStoreDetailFragment :

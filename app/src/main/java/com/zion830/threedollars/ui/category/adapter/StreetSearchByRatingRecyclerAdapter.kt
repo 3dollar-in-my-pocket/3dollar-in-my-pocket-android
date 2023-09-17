@@ -9,7 +9,7 @@ import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class StreetSearchByRatingRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>,

@@ -13,7 +13,7 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.utils.StringUtils.textPartTypeface
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class TruckSearchByReviewRecyclerAdapter(
     private val listener: OnItemClickListener<BossNearStoreResponse.BossNearStoreModel>,

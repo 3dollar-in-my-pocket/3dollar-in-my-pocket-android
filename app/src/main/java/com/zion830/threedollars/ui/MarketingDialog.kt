@@ -5,14 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseDialogFragment
+import com.threedollar.common.base.BaseDialogFragment
 
 @AndroidEntryPoint
-class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dialog_marketing) {
+class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
 
     private var check1 = false
     private var check2 = false
@@ -31,6 +33,8 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>(R.layout.dial
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext(), R.style.TransparentDialog)
     }
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarketingBinding = DialogMarketingBinding.inflate(inflater,container,false)
 
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)

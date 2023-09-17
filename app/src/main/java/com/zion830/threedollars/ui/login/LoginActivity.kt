@@ -29,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.LegacyBaseActivity
-import zion830.com.common.base.ResultWrapper
+import com.threedollar.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint

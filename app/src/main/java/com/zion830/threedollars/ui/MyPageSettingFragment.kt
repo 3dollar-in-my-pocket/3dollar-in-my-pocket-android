@@ -19,7 +19,7 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.addNewFragment
+import com.threedollar.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class MyPageSettingFragment :

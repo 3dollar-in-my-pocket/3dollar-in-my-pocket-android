@@ -5,19 +5,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseDialogFragment
+import com.threedollar.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 
 
 @AndroidEntryPoint
-class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>(R.layout.dialog_marker_click) {
+class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarkerClickBinding =
+        DialogMarkerClickBinding.inflate(inflater, container, false)
 
     private val viewModel: MarkerClickViewModel by viewModels()
 
@@ -26,7 +30,6 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>(R.layout.
     }
 
     override fun initViews() {
-        binding.viewModel = viewModel
         dialog?.window?.setGravity(Gravity.BOTTOM)
         viewModel.getPopups()
 

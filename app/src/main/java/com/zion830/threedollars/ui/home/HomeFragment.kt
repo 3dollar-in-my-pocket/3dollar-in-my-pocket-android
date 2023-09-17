@@ -30,10 +30,10 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.addNewFragment
-import zion830.com.common.listener.OnItemClickListener
-import zion830.com.common.listener.OnSnapPositionChangeListener
-import zion830.com.common.listener.SnapOnScrollListener
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnSnapPositionChangeListener
+import com.threedollar.common.listener.SnapOnScrollListener
 
 @AndroidEntryPoint
 class HomeFragment : LegacyBaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.fragment_home) {

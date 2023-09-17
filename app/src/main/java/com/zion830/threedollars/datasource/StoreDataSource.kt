@@ -6,7 +6,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
+import com.threedollar.common.base.BaseResponse
 
 interface StoreDataSource {
 

@@ -3,14 +3,18 @@ package com.zion830.threedollars.ui.favorite
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAllDeleteFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseDialogFragment
+import com.threedollar.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
-class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBinding>(R.layout.dialog_all_delete_favorite) {
+class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBinding>() {
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAllDeleteFavoriteBinding =
+        DialogAllDeleteFavoriteBinding.inflate(inflater, container, false)
 
     private var listener: DialogListener? = null
 

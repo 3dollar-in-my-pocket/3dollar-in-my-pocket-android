@@ -14,8 +14,8 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
-import zion830.com.common.base.BaseViewModel
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

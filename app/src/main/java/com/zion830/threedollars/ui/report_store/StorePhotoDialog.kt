@@ -18,9 +18,9 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.listener.OnItemClickListener
-import zion830.com.common.listener.OnSnapPositionChangeListener
-import zion830.com.common.listener.SnapOnScrollListener
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnSnapPositionChangeListener
+import com.threedollar.common.listener.SnapOnScrollListener
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {

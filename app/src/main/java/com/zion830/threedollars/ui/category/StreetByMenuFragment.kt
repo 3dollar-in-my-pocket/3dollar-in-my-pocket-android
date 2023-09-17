@@ -23,7 +23,7 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StreetByMenuFragment :

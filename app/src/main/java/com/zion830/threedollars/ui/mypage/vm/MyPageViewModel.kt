@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
@@ -17,13 +18,11 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import zion830.com.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource) :
-    BaseViewModel() {
+class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
 
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity

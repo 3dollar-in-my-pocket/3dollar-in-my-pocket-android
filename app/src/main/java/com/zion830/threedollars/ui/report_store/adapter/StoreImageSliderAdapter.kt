@@ -7,7 +7,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.Image
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 
 class StoreImageSliderAdapter : BaseRecyclerView<ItemImageSliderBinding, Image>(R.layout.item_image_slider) {

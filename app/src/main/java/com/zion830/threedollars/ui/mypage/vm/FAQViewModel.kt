@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
@@ -11,7 +12,6 @@ import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

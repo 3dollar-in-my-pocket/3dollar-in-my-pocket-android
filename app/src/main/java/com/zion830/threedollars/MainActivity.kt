@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.showSnack
-import zion830.com.common.listener.OnBackPressedListener
+import com.threedollar.common.listener.OnBackPressedListener
 
 
 @AndroidEntryPoint

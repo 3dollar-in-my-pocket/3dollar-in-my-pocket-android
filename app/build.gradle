@@ -55,6 +55,9 @@ android {
             excludes += ['META-INF/common_release.kotlin_module']
         }
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {

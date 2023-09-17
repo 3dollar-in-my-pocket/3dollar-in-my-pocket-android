@@ -12,7 +12,7 @@ import com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnItemClickListener
 
 class MyReviewRecyclerAdapter(
     private val listener: OnItemClickListener<ReviewDetail>,

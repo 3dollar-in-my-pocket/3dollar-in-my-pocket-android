@@ -10,6 +10,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.threedollar.common.base.BaseViewModel
 import zion830.com.common.BR
 
 abstract class LegacyBaseFragment<B : ViewDataBinding, VM : BaseViewModel>(
