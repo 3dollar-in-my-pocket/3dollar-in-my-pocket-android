@@ -15,6 +15,8 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PushInformationRequest
 
 interface NewServiceApi {
 
