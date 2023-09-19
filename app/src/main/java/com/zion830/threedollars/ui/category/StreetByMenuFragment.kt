@@ -6,6 +6,7 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.gms.ads.AdRequest
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -23,7 +24,6 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StreetByMenuFragment :

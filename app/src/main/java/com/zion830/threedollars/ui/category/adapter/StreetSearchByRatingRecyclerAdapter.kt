@@ -2,14 +2,14 @@ package com.zion830.threedollars.ui.category.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemStoreByRatingBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class StreetSearchByRatingRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>,

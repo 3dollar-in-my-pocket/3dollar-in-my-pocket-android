@@ -2,8 +2,6 @@ package com.home.data.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
-import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.user.UserModel
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.user.UserResponse

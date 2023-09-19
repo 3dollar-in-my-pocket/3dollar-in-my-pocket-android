@@ -8,10 +8,11 @@ import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.*
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.ui.mypage.AskFragment
 import com.zion830.threedollars.ui.mypage.EditNameFragment
 import com.zion830.threedollars.ui.splash.SplashActivity
@@ -19,7 +20,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class MyPageSettingFragment :

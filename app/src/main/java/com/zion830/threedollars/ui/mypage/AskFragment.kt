@@ -3,13 +3,13 @@ package com.zion830.threedollars.ui.mypage
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
+import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.ext.addNewFragment
 
 @AndroidEntryPoint
 class AskFragment : LegacyBaseFragment<FragmentAskBinding, UserInfoViewModel>(R.layout.fragment_ask) {

@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemAppearanceDayBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(
     BaseDiffUtilCallback()

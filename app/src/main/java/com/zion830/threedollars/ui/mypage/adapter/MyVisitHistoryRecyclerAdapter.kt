@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
@@ -10,7 +11,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class MyVisitHistoryRecyclerAdapter(
     private val listener: OnItemClickListener<VisitHistoryContent>,

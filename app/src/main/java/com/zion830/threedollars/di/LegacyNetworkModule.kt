@@ -2,8 +2,6 @@ package com.zion830.threedollars.di
 
 import android.os.Build
 import com.threedollar.network.BuildConfig
-import com.threedollar.network.api.KakaoLoginApi
-import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.di.NetworkModule.getLoggerInterceptor
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.utils.LegacySharedPrefUtils

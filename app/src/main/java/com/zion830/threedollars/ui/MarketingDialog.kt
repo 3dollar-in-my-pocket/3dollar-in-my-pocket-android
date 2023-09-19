@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
 import dagger.hilt.android.AndroidEntryPoint
-import com.threedollar.common.base.BaseDialogFragment
 
 @AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {

@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
@@ -25,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.ext.isNotNullOrEmpty
 import zion830.com.common.ext.showSnack
-import com.threedollar.common.listener.OnBackPressedListener
 
 
 @AndroidEntryPoint

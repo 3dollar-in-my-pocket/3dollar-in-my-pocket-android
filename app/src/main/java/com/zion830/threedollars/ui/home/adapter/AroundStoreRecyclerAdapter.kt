@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +15,16 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.listener.OnItemClickListener
+import com.zion830.threedollars.Constants.USER_STORE
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
-import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.loadUrlImg
-import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants.USER_STORE
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.StringUtils
+import zion830.com.common.base.BaseDiffUtilCallback
 
 
 class AroundStoreRecyclerAdapter(

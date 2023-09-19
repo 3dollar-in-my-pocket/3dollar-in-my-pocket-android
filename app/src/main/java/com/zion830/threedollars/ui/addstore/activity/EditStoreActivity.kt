@@ -1,14 +1,14 @@
 package com.zion830.threedollars.ui.addstore.activity
 
 import androidx.activity.viewModels
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityNewStoreBinding
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.NewAddressFragment
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
-import com.threedollar.common.ext.addNewFragment
-import com.threedollar.common.listener.OnBackPressedListener
 
 @AndroidEntryPoint
 class EditStoreActivity : LegacyBaseActivity<ActivityNewStoreBinding, AddStoreViewModel>(R.layout.activity_new_store), OnBackPressedListener {

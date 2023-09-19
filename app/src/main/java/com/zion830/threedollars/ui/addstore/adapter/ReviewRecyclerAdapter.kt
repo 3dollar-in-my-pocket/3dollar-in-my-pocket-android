@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.ListAdapter
+import com.threedollar.common.ext.disableDoubleClick
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemReviewBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
@@ -12,8 +14,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.ext.disableDoubleClick
-import com.threedollar.common.listener.OnItemClickListener
 
 class ReviewRecyclerAdapter(
     private val reviewEditClickEvent: OnItemClickListener<Review>,

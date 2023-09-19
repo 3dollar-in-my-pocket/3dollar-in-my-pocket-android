@@ -6,13 +6,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
@@ -26,8 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
-import com.threedollar.common.ext.addNewFragment
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {

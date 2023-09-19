@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class FavoriteMyFolderActivity : LegacyBaseActivity<ActivityFavoriteMyFolderBinding, FavoriteViewModel>(R.layout.activity_favorite_my_folder) {

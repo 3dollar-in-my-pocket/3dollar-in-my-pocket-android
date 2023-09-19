@@ -11,6 +11,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnSnapPositionChangeListener
+import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
@@ -18,9 +21,6 @@ import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
 import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.listener.OnSnapPositionChangeListener
-import com.threedollar.common.listener.SnapOnScrollListener
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {

@@ -3,12 +3,12 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 
 class FoodTruckReviewRecyclerAdapter :

@@ -3,6 +3,8 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
@@ -14,8 +16,6 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import com.threedollar.common.base.BaseResponse
-import com.threedollar.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel

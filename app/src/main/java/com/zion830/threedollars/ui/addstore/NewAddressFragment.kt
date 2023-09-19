@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.addstore
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
@@ -11,7 +12,6 @@ import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.ext.addNewFragment
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -53,7 +53,7 @@ class NewAddressFragment :
     private fun initViewModel() {
         viewModel.run {
             nearStoreInfo.observe(viewLifecycleOwner) { res ->
-                naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
+//                naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
             }
             selectedLocation.observe(viewLifecycleOwner) { latLng ->
                 if (latLng != null) {

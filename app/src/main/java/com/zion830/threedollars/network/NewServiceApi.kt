@@ -1,5 +1,8 @@
 package com.zion830.threedollars.network
 
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
@@ -14,9 +17,6 @@ import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVis
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PushInformationRequest
 
 interface NewServiceApi {
 

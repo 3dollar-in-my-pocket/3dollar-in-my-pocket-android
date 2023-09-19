@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.home
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -18,11 +17,17 @@ import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.listener.OnSnapPositionChangeListener
+import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.datasource.model.v2.response.Popups
+import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
@@ -31,13 +36,6 @@ import com.zion830.threedollars.ui.home.adapter.AroundStoreRecyclerAdapter
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.threedollar.common.ext.addNewFragment
-import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.listener.OnSnapPositionChangeListener
-import com.threedollar.common.listener.SnapOnScrollListener
-import com.zion830.threedollars.Constants.BOSS_STORE
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {

@@ -20,6 +20,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
@@ -47,10 +49,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
-import com.threedollar.common.ext.addNewFragment
 import zion830.com.common.ext.showSnack
 import zion830.com.common.ext.toFormattedNumber
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class StoreDetailActivity :
