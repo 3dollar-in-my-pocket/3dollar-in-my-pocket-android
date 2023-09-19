@@ -15,6 +15,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -23,9 +24,6 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -151,8 +149,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     fun addStoreMarkers(
         @DrawableRes drawableRes: Int,
-        list: List<AdAndStoreItem>,
-        onClick: (marker: AdAndStoreItem) -> Unit = {}
+        list: List<ContentModel>,
+        onClick: (marker: ContentModel) -> Unit = {}
     ) {
         if (naverMap == null) {
             return
@@ -163,27 +161,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
         val newMarkers = list.map { item ->
             Marker().apply {
-
-                this.position = if (item is StoreInfo) {
-                    LatLng(item.latitude, item.longitude)
-                } else {
-                    val location = (item as BossNearStoreResponse.BossNearStoreModel).location
-                    LatLng(location.latitude, location.longitude)
-                }
-                this.icon = if (item is StoreInfo) {
-                    OverlayImage.fromResource(drawableRes)
-                } else {
-                    if ((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED") {
-                        OverlayImage.fromResource(R.drawable.ic_food_truck_off)
-                    } else {
-                        OverlayImage.fromResource(drawableRes)
+                    this.position = LatLng(item.storeModel.locationModel.latitude, item.storeModel.locationModel.longitude)
+                    this.icon = OverlayImage.fromResource(drawableRes)
+                    this.map = naverMap
+                    setOnClickListener {
+                        onClick(item)
+                        true
                     }
-                }
-                this.map = naverMap
-                setOnClickListener {
-                    onClick(item)
-                    true
-                }
             }
         }
         markers.addAll(newMarkers)
