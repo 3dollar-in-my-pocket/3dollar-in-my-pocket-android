@@ -3,30 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="246dp"
-    android:paddingHorizontal="12dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="12dp">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnReport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_report"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/twPollUserCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:drawableStart="@drawable/ic_fire"
+        android:drawablePadding="2dp"
+        android:textColor="@color/gray100"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        tools:text="401명 투표" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/twPollUserCount"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/twPollUserCount"
+        android:text="오늘 마감"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/gray50"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/twPollTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_marginTop="10dp"
         android:textColor="@color/gray80"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twPollUserCount"
         tools:text="내가 정상 님들이 비정상" />
 
     <LinearLayout
         android:id="@+id/llPollUser"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@id/twPollTitle"
         app:layout_constraintStart_toStartOf="@id/twPollTitle"
@@ -75,6 +117,7 @@
         android:background="@drawable/rect_poll_default"
         android:gravity="center"
         android:textColor="@color/gray100"
+        android:layout_marginHorizontal="20dp"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,6 +128,7 @@
         android:id="@+id/twPollSecondChoice"
         android:layout_width="0dp"
         android:layout_height="44dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rect_poll_default"
         android:gravity="center"
@@ -94,52 +138,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/twPollFirstChoice"
         tools:text="슈붕 비정상 팥붕 정상" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/twPollSecondChoice"
-        app:layout_constraintVertical_bias="1">
-
-        <TextView
-            android:id="@+id/twPollComment"
-            android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:layout_marginEnd="12dp"
-            android:drawableStart="@drawable/ic_poll_comment"
-            android:drawablePadding="2dp"
-            android:gravity="center"
-            android:textColor="@color/gray50"
-            android:textSize="12sp"
-            tools:text="23" />
-
-        <TextView
-            android:id="@+id/twPollVote"
-            android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:drawableStart="@drawable/ic_fire_line"
-            android:drawablePadding="2dp"
-            android:gravity="center"
-            android:textColor="@color/gray50"
-            android:textSize="12sp"
-            tools:text="400명 투표" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/twPollEndDate"
-            android:layout_width="wrap_content"
-            android:layout_height="18dp"
-            android:gravity="center"
-            android:textColor="@color/gray50"
-            android:textSize="12sp"
-            tools:text="오늘 마감" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
