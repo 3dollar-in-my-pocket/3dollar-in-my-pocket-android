@@ -164,6 +164,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.selectCategory.collect {
+                        val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
+                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
+                        val background =
+                            if (it.categoryId.isEmpty()) R.drawable.rect_white_radius10_stroke_gray30 else R.drawable.rect_white_radius10_stroke_black_fill_black
+
+                        binding.run {
+                            allMenuTextView.text = text
+                            allMenuTextView.setTextColor(resources.getColor(textColor, null))
+                            allMenuTextView.setBackgroundResource(background)
+                            if (it.imageUrl.isEmpty()) {
+                                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                                )
+                            } else {
+                                loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
+                                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                                }
+                            }
+                        }
                         getNearStore()
                     }
                 }
@@ -194,7 +213,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                         val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
                         val drawableStart = ContextCompat.getDrawable(
-                            GlobalApplication.getContext(),
+                            requireContext(),
                             if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
                         )
                         binding.run {
@@ -210,6 +229,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }
+    }
+
+    private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {
+        Glide.with(requireContext())
+            .load(imageUri)
+            .override(64)
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    callback(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    callback(null)
+                }
+            })
     }
 
     private fun showSelectCategoryDialog() {
