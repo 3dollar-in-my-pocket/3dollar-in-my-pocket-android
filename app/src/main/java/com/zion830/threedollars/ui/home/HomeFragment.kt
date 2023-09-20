@@ -161,7 +161,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.selectCategory.collect {
-                        // TODO: 선택에 맞게 아래 카드뷰의 리스트가 바껴야함, 카드뷰 작업후 진행 예정
+                        getNearStore()
                     }
                 }
                 launch {
@@ -216,8 +216,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun getNearStore() {
         viewModel.requestHomeItem(
-            naverMapFragment.getMapCenterLatLng(),
-            selectCategoryId = selectRoadFood
+            naverMapFragment.getMapCenterLatLng()
         )
     }
 
