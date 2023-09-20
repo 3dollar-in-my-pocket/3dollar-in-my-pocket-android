@@ -54,8 +54,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
-    private var selectRoadFood = "All"
-
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
 
