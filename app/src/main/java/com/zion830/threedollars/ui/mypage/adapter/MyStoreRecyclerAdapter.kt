@@ -4,13 +4,13 @@ import android.content.res.ColorStateList
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyStoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class MyStoreRecyclerAdapter(
     private val listener: OnItemClickListener<StoreInfo>

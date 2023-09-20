@@ -3,12 +3,12 @@ package com.zion830.threedollars.ui.favorite
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFavoritePageBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class FavoriteMyFolderRecyclerAdapter(
     private val listener: OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>,

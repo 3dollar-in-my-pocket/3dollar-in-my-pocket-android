@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
+import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import dagger.hilt.android.AndroidEntryPoint
-import com.threedollar.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 

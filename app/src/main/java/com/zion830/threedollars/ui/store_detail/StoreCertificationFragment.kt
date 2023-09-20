@@ -5,6 +5,7 @@ import androidx.core.text.buildSpannedString
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
@@ -12,12 +13,11 @@ import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
-import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.ext.addNewFragment
 import zion830.com.common.ext.toFormattedNumber
 import kotlin.math.abs
 import kotlin.math.min

@@ -1,41 +1,33 @@
 package com.zion830.threedollars.ui.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.user.UserModel
+import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.R
-import com.zion830.threedollars.datasource.PopupDataSource
-import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.MarketingConsentRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
+import com.threedollar.common.data.AdAndStoreItem
+import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val storeDataSource: StoreDataSource,
-    private val popupDataSource: PopupDataSource,
-    private val userDataSource: UserDataSource,
-) : BaseViewModel() {
+class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
+    private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
 
-    val userInfo: LiveData<MyInfoResponse>
-        get() = _userInfo
+    val userInfo: StateFlow<UserModel> get() = _userInfo
 
-    val nearStoreInfo: MutableLiveData<List<AdAndStoreItem>?> = MutableLiveData()
+    private val _aroundStoreModels: MutableStateFlow<List<AdAndStoreItem>> = MutableStateFlow(listOf())
+    val aroundStoreModels: StateFlow<List<AdAndStoreItem>> get() = _aroundStoreModels
 
     val addressText: MutableLiveData<String> = MutableLiveData()
 
@@ -44,9 +36,18 @@ class HomeViewModel @Inject constructor(
     private val _selectCategory = MutableStateFlow(CategoriesModel())
     val selectCategory = _selectCategory.asStateFlow()
 
+    private val _advertisementModel: MutableStateFlow<AdvertisementModel?> = MutableStateFlow(null)
+    val advertisementModel: StateFlow<AdvertisementModel?> get() = _advertisementModel
+
+    init {
+        getAdvertisement()
+    }
+
     fun getUserInfo() {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _userInfo.postValue(userDataSource.getMyInfo().body())
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getMyInfo().collect {
+                _userInfo.value = it.data
+            }
         }
     }
 
@@ -55,83 +56,37 @@ class HomeViewModel @Inject constructor(
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun getBossNearStore(location: LatLng, selectCategory: String = "All") {
+    fun requestHomeItem(location: LatLng, targetStores: Array<String>? = null, selectCategoryId: String? = null) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val storeData = storeDataSource.getBossNearStore(
-                latitude = location.latitude,
-                longitude = location.longitude
-            )
-            val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
-
-            val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-            storeData.body()?.data?.let {
-                if (selectCategory != "All") {
-                    resultList.addAll(it.filter { bossNearStoreModel ->
-                        bossNearStoreModel.categories.find { category ->
-                            category.categoryId == selectCategory
-                        } != null
-                    })
+            homeRepository.getAroundStores(
+                categoryIds = null,
+                targetStores = targetStores,
+                sortType = DISTANCE_ASC,
+                filterCertifiedStores = false,
+                mapLatitude = location.latitude,
+                mapLongitude = location.longitude,
+                deviceLatitude = location.latitude,
+                deviceLongitude = location.longitude
+            ).collect {
+                val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
+                if (it.data.contentModels.isEmpty()) {
+                    resultList.add(StoreEmptyResponse())
                 } else {
-                    resultList.addAll(it)
+                    resultList.addAll(it.data.contentModels)
+                    advertisementModel.value?.let { advertisementModel ->
+                        resultList.add(1, advertisementModel)
+                    }
                 }
+                _aroundStoreModels.value = resultList
             }
-            if (resultList.isEmpty()) {
-                resultList.add(
-                    StoreEmptyResponse(
-                        emptyImage = R.drawable.img_truck,
-                        emptyTitle = R.string.recruit_boss_title,
-                        emptyBody = R.string.recruit_boss_body
-                    )
-                )
-            }
-            if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
-            }
-            nearStoreInfo.postValue(resultList.toList())
-        }
-    }
-
-    fun requestHomeItem(location: LatLng, selectCategory: String = "All") {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val storeData = storeDataSource.getAllStore(location.latitude, location.longitude)
-            val adData = popupDataSource.getPopups("MAIN_PAGE_CARD").body()?.data
-            val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-            storeData.body()?.data?.let {
-                if (selectCategory != "All") {
-                    resultList.addAll(it.filter { storeInfo ->
-                        storeInfo.categories.find { category -> category == selectCategory }
-                            ?.isNotEmpty() == true
-                    })
-                } else {
-                    resultList.addAll(it)
-                }
-            }
-
-            if (resultList.isEmpty()) {
-                resultList.add(StoreEmptyResponse())
-            }
-            if (adData != null) {
-                adData.firstOrNull()?.let { resultList.add(1, it) }
-            }
-            nearStoreInfo.postValue(resultList.toList())
         }
     }
 
 
-    fun postPushInformation(informationRequest: PushInformationRequest, isMarketing: Boolean) {
+    fun postPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            if (userDataSource.postPushInformation(informationRequest).isSuccessful) {
-                putMarketingConsent(
-                    (MarketingConsentRequest(if (isMarketing) "APPROVE" else "DENY"))
-                )
-            }
-        }
-    }
-
-    private fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            if (userDataSource.putMarketingConsent(marketingConsentRequest).isSuccessful) {
-                getUserInfo()
+            homeRepository.postPushInformation(pushToken).collect {
+                putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
             }
         }
     }
@@ -139,6 +94,22 @@ class HomeViewModel @Inject constructor(
     fun changeSelectCategory(categoriesModel: CategoriesModel) {
         viewModelScope.launch {
             _selectCategory.emit(categoriesModel)
+        }
+    }
+
+    private fun getAdvertisement() {
+        viewModelScope.launch {
+            homeRepository.getAdvertisements("MAIN_PAGE_CARD").collect {
+                _advertisementModel.value = it.data.firstOrNull()
+            }
+        }
+    }
+
+    private fun putMarketingConsent(marketingConsent: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putMarketingConsent(marketingConsent).collect {
+                getUserInfo()
+            }
         }
     }
 }

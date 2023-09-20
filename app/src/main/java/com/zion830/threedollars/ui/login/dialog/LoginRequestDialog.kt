@@ -20,6 +20,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.threedollar.common.base.ResultWrapper
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
@@ -34,7 +35,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.threedollar.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 
 

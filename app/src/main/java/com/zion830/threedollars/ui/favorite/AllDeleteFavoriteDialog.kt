@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAllDeleteFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
-import com.threedollar.common.base.BaseDialogFragment
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint

@@ -6,8 +6,8 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import zion830.com.common.BR
 import com.threedollar.common.listener.OnItemClickListener
+import zion830.com.common.BR
 
 abstract class BaseViewHolder<B : ViewDataBinding, T>(
     @LayoutRes layoutResId: Int,

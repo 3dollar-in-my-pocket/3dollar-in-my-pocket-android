@@ -7,7 +7,6 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 

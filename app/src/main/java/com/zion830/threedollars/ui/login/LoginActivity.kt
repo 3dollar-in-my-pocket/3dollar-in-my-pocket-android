@@ -16,6 +16,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.threedollar.common.base.ResultWrapper
 import com.zion830.threedollars.*
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.databinding.ActivityLoginBinding
@@ -29,7 +30,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.LegacyBaseActivity
-import com.threedollar.common.base.ResultWrapper
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint

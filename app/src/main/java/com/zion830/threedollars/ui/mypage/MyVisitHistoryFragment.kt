@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -20,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class MyVisitHistoryFragment :

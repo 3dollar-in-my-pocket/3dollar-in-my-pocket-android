@@ -1,64 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardCornerRadius="20dp"
+    app:cardUseCompatPadding="true">
 
-    <data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-        <variable
-            name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse" />
-    </data>
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        app:cardCornerRadius="16dp"
-        app:cardUseCompatPadding="true">
+        <ImageView
+            android:id="@+id/emptyImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="14dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_no_store" />
 
         <LinearLayout
-            android:id="@+id/layout_empty"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="28dp"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/storeImageView"
-                loadImage="@{item.emptyImage}"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginEnd="8dp"
-                android:scaleType="fitCenter" />
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/emptyTitleTextView"
+                style="@style/apple_gothic_bold.size_16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
+                android:text="@string/empty_store"
+                android:textColor="@color/white" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/apple_gothic_bold"
-                    android:text="@{item.emptyTitle}"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="@string/empty_store" />
-
-                <TextView
-                    android:id="@+id/emptyBodyTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@{item.emptyBody}"
-                    android:textSize="12sp"
-                    tools:text="@string/empty_store_msg" />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/emptyBodyTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/empty_store_msg"
+                android:textColor="@color/gray50" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</layout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

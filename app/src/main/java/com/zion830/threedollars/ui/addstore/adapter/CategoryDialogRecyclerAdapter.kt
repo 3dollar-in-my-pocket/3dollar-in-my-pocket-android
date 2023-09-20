@@ -3,11 +3,11 @@ package com.zion830.threedollars.ui.addstore.adapter
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseViewHolder
-import com.threedollar.common.listener.OnItemClickListener
 
 class CategoryDialogRecyclerAdapter(
     private val onClicked: (Int) -> Unit

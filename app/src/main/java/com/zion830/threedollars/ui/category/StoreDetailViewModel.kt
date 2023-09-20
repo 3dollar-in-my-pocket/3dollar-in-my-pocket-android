@@ -19,8 +19,8 @@ import com.zion830.threedollars.datasource.model.v2.response.store.Menu
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
-import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast

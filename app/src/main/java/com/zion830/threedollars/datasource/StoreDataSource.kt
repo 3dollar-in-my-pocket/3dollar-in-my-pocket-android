@@ -1,12 +1,12 @@
 package com.zion830.threedollars.datasource
 
+import com.threedollar.common.base.BaseResponse
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
-import com.threedollar.common.base.BaseResponse
 
 interface StoreDataSource {
 

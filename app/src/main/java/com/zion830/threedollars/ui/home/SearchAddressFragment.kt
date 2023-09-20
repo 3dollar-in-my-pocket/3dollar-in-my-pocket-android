@@ -1,11 +1,11 @@
 package com.zion830.threedollars.ui.home
 
-import android.os.Bundle
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
@@ -16,7 +16,6 @@ import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import com.threedollar.common.listener.OnItemClickListener
 
 @AndroidEntryPoint
 class SearchAddressFragment : LegacyBaseFragment<FragmentSearchByAddressBinding, HomeViewModel>(R.layout.fragment_search_by_address) {
@@ -33,11 +32,7 @@ class SearchAddressFragment : LegacyBaseFragment<FragmentSearchByAddressBinding,
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                if (arguments?.getBoolean(IS_ROAD_FOOD_MODE) == true) {
-                    viewModel.requestHomeItem(location)
-                } else {
-                    viewModel.getBossNearStore(location)
-                }
+                viewModel.requestHomeItem(location)
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -72,14 +67,6 @@ class SearchAddressFragment : LegacyBaseFragment<FragmentSearchByAddressBinding,
     }
 
     companion object {
-
-        const val IS_ROAD_FOOD_MODE = "IS_ROAD_FOOD_MODE"
-
-        fun newInstance(isRoadFoodMode: Boolean) =
-            SearchAddressFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean(IS_ROAD_FOOD_MODE, isRoadFoodMode)
-                }
-            }
+        fun newInstance() = SearchAddressFragment()
     }
 }
