@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun requestHomeItem(location: LatLng, selectCategoryId: String? = null) {
+    fun requestHomeItem(location: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val targetStores = when (homeFilterEvent.value.homeStoreType) {
                 HomeStoreType.ALL -> {
@@ -75,8 +75,10 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     arrayOf(homeFilterEvent.value.homeStoreType.name)
                 }
             }
+            val categoryIds = if (selectCategory.value.categoryId.isEmpty()) null else arrayOf(selectCategory.value.categoryId)
+
             homeRepository.getAroundStores(
-                categoryIds = null,
+                categoryIds = categoryIds,
                 targetStores = targetStores,
                 sortType = homeFilterEvent.value.homeSortType.name,
                 filterCertifiedStores = false,
@@ -110,7 +112,14 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun changeSelectCategory(categoriesModel: CategoriesModel) {
         viewModelScope.launch {
-            _selectCategory.emit(categoriesModel)
+            _selectCategory.emit(
+                if (selectCategory.value.categoryId == categoriesModel.categoryId) {
+                    CategoriesModel()
+                } else {
+                    categoriesModel
+                }
+            )
+
         }
     }
 
