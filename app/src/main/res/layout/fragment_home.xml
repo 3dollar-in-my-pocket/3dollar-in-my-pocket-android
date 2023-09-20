@@ -90,7 +90,7 @@
             android:drawablePadding="4dp"
             android:paddingHorizontal="10dp"
             android:paddingVertical="8dp"
-            android:text="@string/fragment_home_filter"
+            android:text="@string/fragment_home_filter_distance"
             app:drawableStartCompat="@drawable/ic_change"
             app:layout_constraintStart_toEndOf="@id/allMenuTextView"
             app:layout_constraintTop_toBottomOf="@id/layout_address" />
