@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.presentation.data.HomeFilterEvent
+import com.home.presentation.data.HomeSortType
+import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
-import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -16,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +42,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _advertisementModel: MutableStateFlow<AdvertisementModel?> = MutableStateFlow(null)
     val advertisementModel: StateFlow<AdvertisementModel?> get() = _advertisementModel
 
+    private val _homeFilterEvent: MutableStateFlow<HomeFilterEvent> = MutableStateFlow(HomeFilterEvent())
+    val homeFilterEvent: StateFlow<HomeFilterEvent> get() = _homeFilterEvent
+
     init {
         getAdvertisement()
     }
@@ -56,12 +62,23 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun requestHomeItem(location: LatLng, targetStores: Array<String>? = null, selectCategoryId: String? = null) {
+    fun requestHomeItem(location: LatLng, selectCategoryId: String? = null) {
         viewModelScope.launch(coroutineExceptionHandler) {
+            val targetStores = when (homeFilterEvent.value.homeStoreType) {
+                HomeStoreType.ALL -> {
+                    null
+                }
+
+                HomeStoreType.USER_STORE,
+                HomeStoreType.BOSS_STORE,
+                -> {
+                    arrayOf(homeFilterEvent.value.homeStoreType.name)
+                }
+            }
             homeRepository.getAroundStores(
                 categoryIds = null,
                 targetStores = targetStores,
-                sortType = DISTANCE_ASC,
+                sortType = homeFilterEvent.value.homeSortType.name,
                 filterCertifiedStores = false,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
@@ -94,6 +111,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     fun changeSelectCategory(categoriesModel: CategoriesModel) {
         viewModelScope.launch {
             _selectCategory.emit(categoriesModel)
+        }
+    }
+
+    fun updateHomeFilterEvent(homeSortType: HomeSortType? = null, homeStoreType: HomeStoreType? = null) {
+        viewModelScope.launch {
+            _homeFilterEvent.update {
+                if (homeSortType != null) {
+                    it.copy(homeSortType = homeSortType)
+                } else if (homeStoreType != null) {
+                    it.copy(homeStoreType = homeStoreType)
+                } else {
+                    it
+                }
+            }
         }
     }
 

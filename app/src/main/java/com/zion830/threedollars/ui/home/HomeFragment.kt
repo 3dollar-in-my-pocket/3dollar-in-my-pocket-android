@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.ContentModel
+import com.home.presentation.data.HomeSortType
+import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
@@ -22,7 +24,6 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
@@ -50,7 +51,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var selectRoadFood = "All"
 
-    private var isOnlyBossStore = false
+    private var homeStoreType = HomeStoreType.ALL
+    private var homeSortType = HomeSortType.DISTANCE_ASC
 
     override fun initView() {
         viewModel.getUserInfo()
@@ -83,17 +85,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.filterTextView.setOnClickListener {
-            // TODO: 거리순 보기 기능 구현
+            homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
+                HomeSortType.LATEST
+            } else {
+                HomeSortType.DISTANCE_ASC
+            }
+            viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.setOnClickListener {
-            isOnlyBossStore = !isOnlyBossStore
-            val textColor = resources.getColor(if (isOnlyBossStore) R.color.gray70 else R.color.gray40, null)
-            val drawableStart =
-                ContextCompat.getDrawable(GlobalApplication.getContext(), if (isOnlyBossStore) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck)
-            binding.bossFilterTextView.setTextColor(textColor)
-            binding.bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-            getNearStore()
+            homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
+            viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
         binding.listViewTextView.setOnClickListener {
@@ -183,6 +185,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                     }
                 }
+                launch {
+                    viewModel.homeFilterEvent.collect {
+                        getNearStore()
+
+                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
+                        val drawableStart = ContextCompat.getDrawable(
+                            GlobalApplication.getContext(),
+                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
+                        )
+                        binding.run {
+                            bossFilterTextView.setTextColor(textColor)
+                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+                            filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
+                                getString(R.string.fragment_home_filter_latest)
+                            } else {
+                                getString(R.string.fragment_home_filter_distance)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -195,7 +217,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun getNearStore() {
         viewModel.requestHomeItem(
             naverMapFragment.getMapCenterLatLng(),
-            targetStores = if (isOnlyBossStore) arrayOf(BOSS_STORE) else null,
             selectCategoryId = selectRoadFood
         )
     }
