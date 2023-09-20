@@ -27,7 +27,7 @@ import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 
 
-class AroundStoreRecyclerAdapter(
+class AroundStoreMapViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val adClickListener: OnItemClickListener<AdvertisementModel>,
     private val certificationClick: (ContentModel) -> Unit
@@ -68,31 +68,31 @@ class AroundStoreRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_AD -> {
-            NearStoreAdViewHolder(
+            NearStoreAdMapViewViewHolder(
                 binding = ItemNearStoreAdBinding.inflate(LayoutInflater.from(parent.context), parent, false), adClickListener = adClickListener
             )
         }
         VIEW_TYPE_STORE -> {
-            NearStoreViewHolder(
+            NearStoreMapViewViewHolder(
                 binding = ItemStoreLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 certificationClick = certificationClick,
                 clickListener = clickListener
             )
         }
         else -> {
-            NearStoreEmptyViewHolder(ItemHomeEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            NearStoreEmptyMapViewViewHolder(ItemHomeEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
-            is NearStoreViewHolder -> {
+            is NearStoreMapViewViewHolder -> {
                 holder.bind(getItem(position) as ContentModel)
             }
-            is NearStoreAdViewHolder -> {
+            is NearStoreAdMapViewViewHolder -> {
                 holder.bind(getItem(position) as AdvertisementModel)
             }
-            is NearStoreEmptyViewHolder -> {
+            is NearStoreEmptyMapViewViewHolder -> {
                 holder.bind(getItem(position) as StoreEmptyResponse)
             }
         }
@@ -105,7 +105,7 @@ class AroundStoreRecyclerAdapter(
     }
 }
 
-class NearStoreEmptyViewHolder(private val binding: ItemHomeEmptyBinding) : ViewHolder(binding.root) {
+class NearStoreEmptyMapViewViewHolder(private val binding: ItemHomeEmptyBinding) : ViewHolder(binding.root) {
     fun bind(item: StoreEmptyResponse) {
         setEmptyUi(item)
     }
@@ -119,7 +119,7 @@ class NearStoreEmptyViewHolder(private val binding: ItemHomeEmptyBinding) : View
     }
 }
 
-class NearStoreAdViewHolder(private val binding: ItemNearStoreAdBinding, private val adClickListener: OnItemClickListener<AdvertisementModel>) :
+class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, private val adClickListener: OnItemClickListener<AdvertisementModel>) :
     ViewHolder(binding.root) {
     @SuppressLint("Range")
     fun bind(item: AdvertisementModel) {
@@ -160,7 +160,7 @@ class NearStoreAdViewHolder(private val binding: ItemNearStoreAdBinding, private
     }
 }
 
-class NearStoreViewHolder(
+class NearStoreMapViewViewHolder(
     private val binding: ItemStoreLocationBinding,
     private val certificationClick: (ContentModel) -> Unit,
     private val clickListener: OnItemClickListener<ContentModel>
@@ -199,7 +199,7 @@ class NearStoreViewHolder(
             clickListener.onClick(item)
         }
         visitButton.setOnClickListener {
-            this@NearStoreViewHolder.certificationClick(item)
+            this@NearStoreMapViewViewHolder.certificationClick(item)
         }
     }
 

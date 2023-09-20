@@ -37,7 +37,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
-import com.zion830.threedollars.ui.home.adapter.AroundStoreRecyclerAdapter
+import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +50,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
-    private lateinit var adapter: AroundStoreRecyclerAdapter
+    private lateinit var adapter: AroundStoreMapViewRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
@@ -105,7 +105,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             // TODO: 리스트뷰 기능 구현
         }
 
-        adapter = AroundStoreRecyclerAdapter(object : OnItemClickListener<ContentModel> {
+        adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
 //                if (item != null) {
 //                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
