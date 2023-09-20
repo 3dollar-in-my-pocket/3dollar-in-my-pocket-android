@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/allMenuTextView"
+        style="@style/apple_gothic_medium.size_12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/rect_white_radius10_stroke_gray30"
+        android:drawablePadding="4dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:text="@string/fragment_home_all_menu"
+        app:drawableStartCompat="@drawable/ic_category"
+        app:layout_constraintEnd_toStartOf="@id/filterTextView"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/filterTextView"
+        style="@style/apple_gothic_medium.size_12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/rect_white_radius10_stroke_gray30"
+        android:drawablePadding="4dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:text="@string/fragment_home_filter_distance"
+        app:drawableStartCompat="@drawable/ic_change"
+        app:layout_constraintEnd_toStartOf="@id/bossFilterTextView"
+        app:layout_constraintStart_toEndOf="@id/allMenuTextView"
+        app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
+
+    <TextView
+        android:id="@+id/bossFilterTextView"
+        style="@style/apple_gothic_medium.size_12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/rect_white_radius10_stroke_gray30"
+        android:drawablePadding="4dp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp"
+        android:text="@string/fragment_home_boss_filter"
+        android:textColor="@color/gray40"
+        app:drawableStartCompat="@drawable/ic_uncheck"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/filterTextView"
+        app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
+
+    <TextView
+        style="@style/apple_gothic_semi_bold.size_20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/fragment_home_all_menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
+
+    <TextView
+        android:id="@+id/mapViewTextView"
+        style="@style/apple_gothic_bold.size_12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rect_gray80_radius40"
+        android:drawablePadding="4dp"
+        android:padding="12dp"
+        android:text="@string/fragment_home_map_view"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/ic_map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -102,7 +103,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.listViewTextView.setOnClickListener {
-            // TODO: 리스트뷰 기능 구현
+            it.findNavController().navigate(R.id.action_home_to_home_list_view)
         }
 
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
@@ -250,9 +251,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun getNearStore() {
-        viewModel.requestHomeItem(
-            naverMapFragment.getMapCenterLatLng()
-        )
+        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
     }
 
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
