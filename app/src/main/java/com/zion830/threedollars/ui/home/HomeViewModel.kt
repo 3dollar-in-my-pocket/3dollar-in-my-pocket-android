@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun requestHomeItem(location: LatLng) {
+    fun requestHomeItem(location: LatLng, filterCertifiedStores : Boolean = false) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val targetStores = when (homeFilterEvent.value.homeStoreType) {
                 HomeStoreType.ALL -> {
@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 categoryIds = categoryIds,
                 targetStores = targetStores,
                 sortType = homeFilterEvent.value.homeSortType.name,
-                filterCertifiedStores = false,
+                filterCertifiedStores = filterCertifiedStores,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
                 deviceLatitude = location.latitude,

@@ -57,6 +57,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
+
+        binding.certifiedStoreTextView.setOnClickListener {
+            isFilterCertifiedStores = !isFilterCertifiedStores
+            val drawableStart = ContextCompat.getDrawable(requireContext(), if(isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off)
+            binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+            getNearStore()
+        }
     }
 
     private fun initViewModel() {
