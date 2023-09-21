@@ -7,14 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemHomeBossCategoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.listener.OnItemClickListener
 
 class BossCategoriesRecyclerAdapter(
-    private val clickListener: (BossCategoriesResponse.BossCategoriesModel) -> Unit
-) : ListAdapter<BossCategoriesResponse.BossCategoriesModel, BossCategoriesViewHolder>(
+    private val clickListener: (PlatformStoreFoodCategoryResponse.Data) -> Unit
+) : ListAdapter<PlatformStoreFoodCategoryResponse.Data, BossCategoriesViewHolder>(
     BaseDiffUtilCallback()
 ) {
 
@@ -40,14 +41,14 @@ class BossCategoriesRecyclerAdapter(
 }
 
 class BossCategoriesViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemHomeBossCategoryBinding, BossCategoriesResponse.BossCategoriesModel>(
+    BaseViewHolder<ItemHomeBossCategoryBinding, PlatformStoreFoodCategoryResponse.Data>(
         R.layout.item_home_boss_category,
         parent
     ) {
     @SuppressLint("Range")
     override fun bind(
-        item: BossCategoriesResponse.BossCategoriesModel,
-        listener: OnItemClickListener<BossCategoriesResponse.BossCategoriesModel>?
+        item: PlatformStoreFoodCategoryResponse.Data,
+        listener: OnItemClickListener<PlatformStoreFoodCategoryResponse.Data>?
     ) {
         super.bind(item, listener)
     }

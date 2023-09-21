@@ -46,7 +46,7 @@ class SplashViewModel @Inject constructor(
                 }
             }
 
-            val bossCategory = storeDataSource.getBossCategory()
+            val bossCategory = storeDataSource.getStoreCategories()
             if (bossCategory.isSuccessful) {
                 withContext(Dispatchers.Main) {
                     SharedPrefUtils.saveTruckCategories(bossCategory.body()?.data ?: emptyList())

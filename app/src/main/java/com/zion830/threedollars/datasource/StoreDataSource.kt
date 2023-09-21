@@ -77,6 +77,8 @@ interface StoreDataSource {
 
     suspend fun getBossCategory(): Response<BossCategoriesResponse>
 
+    suspend fun getStoreCategories(): Response<PlatformStoreFoodCategoryResponse>
+
     suspend fun getBossNearStore(
         latitude: Double,
         longitude: Double

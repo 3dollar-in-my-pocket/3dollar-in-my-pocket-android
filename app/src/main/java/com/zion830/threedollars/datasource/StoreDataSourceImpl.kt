@@ -103,6 +103,8 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     override suspend fun getBossCategory(): Response<BossCategoriesResponse> =
         newService.getBossCategories()
 
+    override suspend fun getStoreCategories(): Response<PlatformStoreFoodCategoryResponse> =
+        newService.getStoreCategories()
     override suspend fun getBossNearStore(
         latitude: Double,
         longitude: Double

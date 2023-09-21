@@ -11,8 +11,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentTruckByMenuBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.Popups
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByDistanceRecyclerAdapter
 import com.zion830.threedollars.ui.category.adapter.TruckSearchByReviewRecyclerAdapter
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
@@ -33,8 +34,8 @@ class TruckByMenuFragment :
 
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private var menuType: BossCategoriesResponse.BossCategoriesModel =
-        BossCategoriesResponse.BossCategoriesModel()
+    private var menuType: PlatformStoreFoodCategoryResponse.Data =
+        PlatformStoreFoodCategoryResponse.Data()
 
     private val listener = object : OnItemClickListener<BossNearStoreResponse.BossNearStoreModel> {
         override fun onClick(item: BossNearStoreResponse.BossNearStoreModel) {

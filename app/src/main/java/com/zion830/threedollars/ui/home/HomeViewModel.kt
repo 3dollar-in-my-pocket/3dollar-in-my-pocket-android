@@ -11,8 +11,9 @@ import com.zion830.threedollars.datasource.model.v2.request.PushInformationReque
 import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +31,8 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _bossCategoryModelList =
-        MutableSharedFlow<List<BossCategoriesResponse.BossCategoriesModel>>()
-    val bossCategoryModelList: SharedFlow<List<BossCategoriesResponse.BossCategoriesModel>> get() = _bossCategoryModelList
+        MutableSharedFlow<List<PlatformStoreFoodCategoryResponse.Data>>()
+    val bossCategoryModelList: SharedFlow<List<PlatformStoreFoodCategoryResponse.Data>> get() = _bossCategoryModelList
 
     private val _roadFoodCategoryModelList =
         MutableSharedFlow<List<CategoryInfo>>()
@@ -127,10 +128,10 @@ class HomeViewModel @Inject constructor(
 
     fun getBossCategory() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            repository.getBossCategory().body()?.data?.let {
+            repository.getStoreCategories().body()?.data?.let {
                 _bossCategoryModelList.emit(
                     listOf(
-                        BossCategoriesResponse.BossCategoriesModel(
+                        PlatformStoreFoodCategoryResponse.Data(
                             categoryId = "All",
                             name = "전체"
                         )

@@ -7,8 +7,9 @@ import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.StoreDataSourceImpl
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import com.zion830.threedollars.ui.category.SortType
 import com.zion830.threedollars.utils.SharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,24 +24,24 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
     private val _sortType: MutableLiveData<SortType> = MutableLiveData(SortType.DISTANCE)
     val sortType: LiveData<SortType>
         get() = _sortType
-    private val _category: MutableLiveData<BossCategoriesResponse.BossCategoriesModel> =
-        MutableLiveData(BossCategoriesResponse.BossCategoriesModel())
-    val category: LiveData<BossCategoriesResponse.BossCategoriesModel>
+    private val _category: MutableLiveData<PlatformStoreFoodCategoryResponse.Data> =
+        MutableLiveData(PlatformStoreFoodCategoryResponse.Data())
+    val category: LiveData<PlatformStoreFoodCategoryResponse.Data>
         get() = _category
 
-    private val _categories: MutableLiveData<List<BossCategoriesResponse.BossCategoriesModel>> =
+    private val _categories: MutableLiveData<List<PlatformStoreFoodCategoryResponse.Data>> =
         MutableLiveData(SharedPrefUtils.getTruckCategories())
-    val categories: LiveData<List<BossCategoriesResponse.BossCategoriesModel>> = _categories
+    val categories: LiveData<List<PlatformStoreFoodCategoryResponse.Data>> = _categories
 
     val storeByDistance = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val storeByReview = MutableLiveData<List<BossNearStoreResponse.BossNearStoreModel>>()
     val hasData = MutableLiveData<Boolean>()
 
-    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel) {
+    fun changeCategory(menuType: PlatformStoreFoodCategoryResponse.Data) {
         _category.value = menuType
     }
 
-    fun changeCategory(menuType: BossCategoriesResponse.BossCategoriesModel, location: LatLng) {
+    fun changeCategory(menuType: PlatformStoreFoodCategoryResponse.Data, location: LatLng) {
         if (_category.value != menuType) {
             _category.value = menuType
             requestStoreInfo(location)
@@ -90,7 +91,7 @@ class TruckStoreByMenuViewModel @Inject constructor(private val storeDataSource:
 
     fun loadCategories() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = storeDataSource.getBossCategory()
+            val response = storeDataSource.getStoreCategories()
 
             if (response.isSuccessful) {
                 _categories.postValue(response.body()?.data ?: emptyList())

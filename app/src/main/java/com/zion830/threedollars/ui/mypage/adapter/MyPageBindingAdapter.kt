@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.datasource.model.MenuType
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
+import zion830.com.common.ext.toStringDefault
 
 
 @BindingAdapter("bindMenuIcon")
@@ -51,12 +53,12 @@ fun TextView.bindMenuIntroTitle(menuType: CategoryInfo?) {
 }
 
 @BindingAdapter("bindMenuIntroTitle")
-fun TextView.bindMenuIntroTitle(menuType: BossCategoriesResponse.BossCategoriesModel?) {
+fun TextView.bindMenuIntroTitle(menuType: PlatformStoreFoodCategoryResponse.Data?) {
     if (menuType == null) {
         return
     }
-    val menuName = menuType.name
-    val index = menuType.description.indexOf(menuName)
+    val menuName = menuType.name.toStringDefault()
+    val index = menuType.description.toStringDefault().indexOf(menuName)
     text = if (index != -1) {
         val spannableString = SpannableStringBuilder(menuType.description).apply {
             setSpan(

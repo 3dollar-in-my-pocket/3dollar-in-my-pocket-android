@@ -8,7 +8,8 @@ import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.map.NaverMapFragment
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
@@ -52,7 +53,7 @@ class TruckStoreByMenuNaverMapFragment() : NaverMapFragment() {
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
         viewModel.changeCategory(
-            viewModel.category.value ?: BossCategoriesResponse.BossCategoriesModel(), position
+            viewModel.category.value ?: PlatformStoreFoodCategoryResponse.Data(), position
         )
         viewModel.requestStoreInfo(position)
     }

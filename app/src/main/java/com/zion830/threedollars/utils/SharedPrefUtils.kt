@@ -6,9 +6,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoryInfo
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import java.lang.reflect.Type
 
 object SharedPrefUtils {
@@ -84,7 +85,7 @@ object SharedPrefUtils {
         saveList(categoryInfo, CATEGORY_LIST)
     }
 
-    fun saveTruckCategories(categoryInfo: List<BossCategoriesResponse.BossCategoriesModel>) {
+    fun saveTruckCategories(categoryInfo: List<PlatformStoreFoodCategoryResponse.Data>) {
         saveList(categoryInfo, TRUCK_CATEGORY_LIST)
     }
 
@@ -117,11 +118,11 @@ object SharedPrefUtils {
         }
     }
 
-    fun getTruckCategories(): List<BossCategoriesResponse.BossCategoriesModel> {
+    fun getTruckCategories(): List<PlatformStoreFoodCategoryResponse.Data> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(TRUCK_CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<BossCategoriesResponse.BossCategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<PlatformStoreFoodCategoryResponse.Data>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()

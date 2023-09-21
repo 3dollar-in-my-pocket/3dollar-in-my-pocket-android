@@ -181,6 +181,9 @@ interface NewServiceApi {
     @GET("/api/v1/boss/store/categories")
     suspend fun getBossCategories(): Response<BossCategoriesResponse>
 
+    @GET("/api/v4/store/categories")
+    suspend fun getStoreCategories(): Response<PlatformStoreFoodCategoryResponse>
+
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(
         @Query("latitude") latitude: Double,

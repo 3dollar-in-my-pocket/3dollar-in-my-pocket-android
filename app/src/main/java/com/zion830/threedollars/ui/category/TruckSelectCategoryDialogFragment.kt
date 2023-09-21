@@ -24,7 +24,8 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomTruckSelectCategoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.BossCategoriesResponse
+
+import com.zion830.threedollars.datasource.model.v2.response.store.PlatformStoreFoodCategoryResponse
 import com.zion830.threedollars.ui.category.adapter.TruckSelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.store_detail.vm.TruckStoreByMenuViewModel
@@ -92,8 +93,8 @@ class TruckSelectCategoryDialogFragment :
         }
 
         val categoryAdapter =
-            TruckSelectCategoryRecyclerAdapter(object : OnItemClickListener<BossCategoriesResponse.BossCategoriesModel> {
-                override fun onClick(item: BossCategoriesResponse.BossCategoriesModel) {
+            TruckSelectCategoryRecyclerAdapter(object : OnItemClickListener<PlatformStoreFoodCategoryResponse.Data> {
+                override fun onClick(item: PlatformStoreFoodCategoryResponse.Data) {
                     EventTracker.logEvent(item.name + Constants.CATEGORY_BTN_CLICKED_FORMAT)
                     viewModel.changeCategory(menuType = item)
                     dismiss()
