@@ -14,12 +14,16 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.listener.OnItemClickListener
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,12 +34,23 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private var homeStoreType: HomeStoreType = HomeStoreType.ALL
     private var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC
+    private var isFilterCertifiedStores = false
+
+    private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
+        AroundStoreListViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
+            override fun onClick(item: ContentModel) {
+                // TODO: 상세화면으로 이동
+            }
+        })
+    }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeListViewBinding =
         FragmentHomeListViewBinding.inflate(inflater, container, false)
 
     override fun initView() {
         initViewModel()
+        binding.listRecyclerView.adapter = adapter
+
         binding.mapViewTextView.setOnClickListener {
             it.findNavController().popBackStack()
         }
@@ -95,10 +110,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                 }
 
                 launch {
-//                    viewModel.aroundStoreModels.collect { adAndStoreItems ->
-//                        if (adAndStoreItems.isEmpty()) {
-//                            adapter.submitList(listOf(StoreEmptyResponse()))
-//                        } else {
+                    viewModel.aroundStoreModels.collect { adAndStoreItems ->
+                        binding.listTitleTextView.text = viewModel.selectCategory.value.description.ifEmpty {
+                            getString(R.string.fragment_home_all_menu)
+                        }
+
                         adapter.submitList(adAndStoreItems.filterIsInstance<ContentModel>())
                         delay(200L)
                         binding.listRecyclerView.scrollToPosition(0)
@@ -135,7 +151,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getNearStore() {
         viewModel.currentLocation.value?.let {
-            viewModel.requestHomeItem(it)
+            viewModel.requestHomeItem(location = it, filterCertifiedStores = isFilterCertifiedStores)
         }
     }
 
