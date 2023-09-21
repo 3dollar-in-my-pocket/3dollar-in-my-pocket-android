@@ -33,7 +33,6 @@ import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
@@ -42,6 +41,7 @@ import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapte
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -195,15 +195,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        if (adAndStoreItems.isEmpty()) {
-                            adapter.submitList(listOf(StoreEmptyResponse()))
-                        } else {
-                            adapter.submitList(adAndStoreItems)
-                        }
+                        adapter.submitList(adAndStoreItems)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)
                         }
+                        delay(200L)
+                        binding.aroundStoreRecyclerView.scrollToPosition(0)
                     }
                 }
                 launch {
@@ -295,11 +293,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (requestCode == Constants.GET_LOCATION_PERMISSION) {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getNearStore()
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =

@@ -21,6 +21,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -91,9 +92,10 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 //                        if (adAndStoreItems.isEmpty()) {
 //                            adapter.submitList(listOf(StoreEmptyResponse()))
 //                        } else {
-//                            adapter.submitList(adAndStoreItems)
-//                        }
-//                    }
+                        adapter.submitList(adAndStoreItems.filterIsInstance<ContentModel>())
+                        delay(200L)
+                        binding.listRecyclerView.scrollToPosition(0)
+                    }
                 }
                 launch {
                     viewModel.homeFilterEvent.collect {
