@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/gray0">
 
     <TextView
         android:id="@+id/allMenuTextView"
@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="22dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/rect_white_radius10_stroke_gray30"
         android:drawablePadding="4dp"
         android:paddingHorizontal="10dp"
@@ -58,6 +58,7 @@
         app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
 
     <TextView
+        android:id="@+id/listTitleTextView"
         style="@style/apple_gothic_semi_bold.size_20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,6 +67,32 @@
         android:text="@string/fragment_home_all_menu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
+
+    <TextView
+        android:id="@+id/certifiedStoreTextView"
+        style="@style/apple_gothic_regular.size_14sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/visit_certified_store"
+        android:drawablePadding="4dp"
+        android:textColor="@color/gray60"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/allMenuTextView"
+        app:drawableStartCompat="@drawable/ic_certification_check_off" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/listTitleTextView" />
 
     <TextView
         android:id="@+id/mapViewTextView"
