@@ -1,19 +1,27 @@
 package com.zion830.threedollars.ui.home
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.ContentModel
+import com.home.presentation.data.HomeSortType
+import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
@@ -22,19 +30,18 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
-import com.zion830.threedollars.ui.home.adapter.AroundStoreRecyclerAdapter
+import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
+import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -44,13 +51,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
-    private lateinit var adapter: AroundStoreRecyclerAdapter
+    private lateinit var adapter: AroundStoreMapViewRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
-    private var selectRoadFood = "All"
-
-    private var isOnlyBossStore = false
+    private var homeStoreType = HomeStoreType.ALL
+    private var homeSortType = HomeSortType.DISTANCE_ASC
 
     override fun initView() {
         viewModel.getUserInfo()
@@ -83,24 +89,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.filterTextView.setOnClickListener {
-            // TODO: 거리순 보기 기능 구현
+            homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
+                HomeSortType.LATEST
+            } else {
+                HomeSortType.DISTANCE_ASC
+            }
+            viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.setOnClickListener {
-            isOnlyBossStore = !isOnlyBossStore
-            val textColor = resources.getColor(if (isOnlyBossStore) R.color.gray70 else R.color.gray40, null)
-            val drawableStart =
-                ContextCompat.getDrawable(GlobalApplication.getContext(), if (isOnlyBossStore) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck)
-            binding.bossFilterTextView.setTextColor(textColor)
-            binding.bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-            getNearStore()
+            homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
+            viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
         binding.listViewTextView.setOnClickListener {
-            // TODO: 리스트뷰 기능 구현
+            it.findNavController().navigate(R.id.action_home_to_home_list_view)
         }
 
-        adapter = AroundStoreRecyclerAdapter(object : OnItemClickListener<ContentModel> {
+        adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
 //                if (item != null) {
 //                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
@@ -118,10 +124,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
         }) { item ->
-//            if (item != null) {
-//                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId, true)
-//                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-//            }
+            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
+            startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
 
         binding.aroundStoreRecyclerView.adapter = adapter
@@ -159,7 +163,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.selectCategory.collect {
-                        // TODO: 선택에 맞게 아래 카드뷰의 리스트가 바껴야함, 카드뷰 작업후 진행 예정
+                        val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
+                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
+                        val background =
+                            if (it.categoryId.isEmpty()) R.drawable.rect_white_radius10_stroke_gray30 else R.drawable.rect_white_radius10_stroke_black_fill_black
+
+                        binding.run {
+                            allMenuTextView.text = text
+                            allMenuTextView.setTextColor(resources.getColor(textColor, null))
+                            allMenuTextView.setBackgroundResource(background)
+                            if (it.imageUrl.isEmpty()) {
+                                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
+                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                                )
+                            } else {
+                                loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
+                                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                                }
+                            }
+                        }
+                        getNearStore()
                     }
                 }
                 launch {
@@ -172,19 +195,52 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        if (adAndStoreItems.isEmpty()) {
-                            adapter.submitList(listOf(StoreEmptyResponse()))
-                        } else {
-                            adapter.submitList(adAndStoreItems)
-                        }
+                        adapter.submitList(adAndStoreItems)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)
+                        }
+                        delay(200L)
+                        binding.aroundStoreRecyclerView.scrollToPosition(0)
+                    }
+                }
+                launch {
+                    viewModel.homeFilterEvent.collect {
+                        getNearStore()
+
+                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
+                        val drawableStart = ContextCompat.getDrawable(
+                            requireContext(),
+                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
+                        )
+                        binding.run {
+                            bossFilterTextView.setTextColor(textColor)
+                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+                            filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
+                                getString(R.string.fragment_home_filter_latest)
+                            } else {
+                                getString(R.string.fragment_home_filter_distance)
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {
+        Glide.with(requireContext())
+            .load(imageUri)
+            .override(64)
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    callback(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    callback(null)
+                }
+            })
     }
 
     private fun showSelectCategoryDialog() {
@@ -193,11 +249,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun getNearStore() {
-        viewModel.requestHomeItem(
-            naverMapFragment.getMapCenterLatLng(),
-            targetStores = if (isOnlyBossStore) arrayOf(BOSS_STORE) else null,
-            selectCategoryId = selectRoadFood
-        )
+        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
     }
 
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
@@ -241,11 +293,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (requestCode == Constants.GET_LOCATION_PERMISSION) {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getNearStore()
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =
