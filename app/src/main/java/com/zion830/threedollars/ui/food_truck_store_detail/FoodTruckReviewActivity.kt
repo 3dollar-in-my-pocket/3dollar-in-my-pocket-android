@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -30,7 +31,9 @@ class FoodTruckReviewActivity :
     private var selectReviewSet = mutableSetOf<String>()
 
     private var storeId = ""
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     override fun initView() {
 
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
@@ -75,6 +78,10 @@ class FoodTruckReviewActivity :
                 }
             }
         }
+    }
+
+    override fun finish() {
+        super.finish()
     }
 
     companion object {
