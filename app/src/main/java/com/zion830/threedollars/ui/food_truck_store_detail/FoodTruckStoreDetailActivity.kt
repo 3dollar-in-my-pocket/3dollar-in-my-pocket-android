@@ -193,9 +193,9 @@ class FoodTruckStoreDetailActivity :
     }
 
     private fun moveFoodTruckReviewActivity() {
+        finish()
         val intent = FoodTruckReviewActivity.getIntent(this, storeId)
         startActivity(intent)
-        finish()
     }
 
     private fun clickFavoriteButton() {
