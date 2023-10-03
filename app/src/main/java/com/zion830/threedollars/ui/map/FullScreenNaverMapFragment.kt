@@ -1,0 +1,28 @@
+package com.zion830.threedollars.ui.map
+
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.NaverMap
+import com.zion830.threedollars.R
+import com.zion830.threedollars.utils.SizeUtils
+
+class FullScreenNaverMapFragment : NaverMapFragment() {
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    override fun onMapReady(map: NaverMap) {
+        super.onMapReady(map)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        binding.btnFindLocation.isVisible = true
+        map.uiSettings.setLogoMargin(0, SizeUtils.dpToPx(300f), SizeUtils.dpToPx(300f), 0) // 로고 가려지도록
+        val params = binding.btnFindLocation.layoutParams as ViewGroup.MarginLayoutParams
+        params.setMargins(0, 0, 0, SizeUtils.dpToPx(32f))
+        binding.btnFindLocation.layoutParams = params
+    }
+
+    fun initMap(latLng: LatLng, isClosed: Boolean) {
+        moveCamera(latLng)
+        addMarker(if (isClosed) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
+    }
+}
