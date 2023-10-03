@@ -162,10 +162,4 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
 
     override suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>> =
         newService.addVisitHistory(newVisitHistory)
-
-    override suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        newService.putFavorite(storeType, storeId)
-
-    override suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        newService.deleteFavorite(storeType, storeId)
 }

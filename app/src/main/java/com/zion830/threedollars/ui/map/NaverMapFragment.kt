@@ -56,8 +56,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     ): View? {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_naver_map, container, false)
-        binding.lifecycleOwner = this
+        binding = FragmentNaverMapBinding.inflate(inflater, container, false)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragment_map) as? MapFragment?
             ?: MapFragment.newInstance().also {
@@ -131,13 +130,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             this.icon = OverlayImage.fromResource(drawableRes)
             this.map = naverMap
         })
-    }
-
-    fun removeAllMarker() {
-        markers.forEach {
-            it.map = null
-        }
-        markers.clear()
     }
 
     fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int) {

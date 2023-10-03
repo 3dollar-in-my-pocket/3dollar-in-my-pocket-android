@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.home.domain.data.store.BossStoreDetailItem
 import com.home.domain.data.store.MenuModel
+import com.threedollar.common.ext.toFormattedNumber
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
@@ -15,7 +16,6 @@ import com.zion830.threedollars.databinding.ItemFoodTruckMenuMoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
 import zion830.com.common.base.BaseDiffUtilCallback
-import com.threedollar.common.ext.toFormattedNumber
 
 
 class FoodTruckMenuRecyclerAdapter(private val clickListener: () -> Unit) :

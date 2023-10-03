@@ -13,8 +13,8 @@ import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.ext.isNotNullOrEmpty
-import zion830.com.common.ext.toStringDefault
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.toStringDefault
 
 @AndroidEntryPoint
 class DynamicLinkActivity : AppCompatActivity() {

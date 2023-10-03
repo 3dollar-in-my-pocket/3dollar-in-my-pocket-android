@@ -1,6 +1,5 @@
 package com.home.data
 
-import android.util.Log
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.AcquisitionModel

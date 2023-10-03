@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
-    fun requestHomeItem(location: LatLng, filterCertifiedStores : Boolean = false) {
+    fun requestHomeItem(location: LatLng, filterCertifiedStores: Boolean = false) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val targetStores = when (homeFilterEvent.value.homeStoreType) {
                 HomeStoreType.ALL -> {
@@ -111,7 +111,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun changeSelectCategory(categoriesModel: CategoriesModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             _selectCategory.emit(
                 if (selectCategory.value.categoryId == categoriesModel.categoryId) {
                     CategoriesModel()
@@ -124,7 +124,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun updateHomeFilterEvent(homeSortType: HomeSortType? = null, homeStoreType: HomeStoreType? = null) {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             _homeFilterEvent.update {
                 if (homeSortType != null) {
                     it.copy(homeSortType = homeSortType)
@@ -138,9 +138,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     private fun getAdvertisement() {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getAdvertisements("MAIN_PAGE_CARD").collect {
-                _advertisementModel.value = it.data.firstOrNull()
+                _advertisementModel.value = it.data?.firstOrNull()
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.food_truck_store_detail
 
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat

@@ -18,7 +18,7 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import zion830.com.common.ext.toStringDefault
+import com.threedollar.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel

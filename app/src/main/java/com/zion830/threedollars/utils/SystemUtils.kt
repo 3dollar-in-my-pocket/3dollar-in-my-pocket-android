@@ -67,7 +67,7 @@ fun showCustomBlackToast(text: String) {
     Toast(GlobalApplication.getContext()).apply {
         setGravity(Gravity.BOTTOM or Gravity.CENTER, 0, 0)
         setMargin(0f, 0.1f)
-        duration = Toast.LENGTH_LONG
+        duration = Toast.LENGTH_SHORT
         view = binding.root
     }.show()
 }

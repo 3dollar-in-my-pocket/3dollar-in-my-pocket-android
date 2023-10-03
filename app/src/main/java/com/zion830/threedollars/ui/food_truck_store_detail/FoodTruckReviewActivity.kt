@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,15 +11,10 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
-import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
-import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.migration.CustomInjection.inject
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint

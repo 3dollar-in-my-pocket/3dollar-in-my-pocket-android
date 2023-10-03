@@ -126,7 +126,6 @@ class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, 
         binding.run {
             setOnclick(item)
             setText(item)
-            setColor(item)
             setImage(item)
         }
     }
@@ -142,17 +141,6 @@ class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, 
             .load(item.imageUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(ivAdImage)
-
-    private fun ItemNearStoreAdBinding.setColor(item: AdvertisementModel) {
-        item.fontColor?.let {
-            titleTextView.setTextColor(it.toColorInt())
-            bodyTextView.setTextColor(it.toColorInt())
-        }
-
-        item.bgColor?.let {
-            rootConstraintLayout.setBackgroundColor(it.toColorInt())
-        }
-    }
 
     private fun ItemNearStoreAdBinding.setText(item: AdvertisementModel) {
         titleTextView.text = item.title

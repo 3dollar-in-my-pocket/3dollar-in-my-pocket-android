@@ -18,7 +18,7 @@ import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import zion830.com.common.ext.toStringDefault
+import com.threedollar.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,8 +56,8 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userDataSource.deleteFavorite(storeType, storeId)
-            _isRefresh.value = response.isSuccessful
+//            val response = userDataSource.deleteFavorite(storeType, storeId)
+//            _isRefresh.value = response.isSuccessful
         }
     }
 
