@@ -1,7 +1,11 @@
-package zion830.com.common.ext
+package com.threedollar.common.ext
 
+import android.content.Context
 import android.util.Base64
+import com.threedollar.common.R
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun String.base64Encoding(): String = Base64.encodeToString(toByteArray(), Base64.NO_WRAP)
 
@@ -9,8 +13,20 @@ fun String?.isNotNullOrBlank() = !isNullOrBlank()
 
 fun String?.isNotNullOrEmpty() = !isNullOrEmpty()
 
-fun String?.toStringDefault(default:String = "") = this ?: default
+fun String?.toStringDefault(default: String = "") = this ?: default
 
-fun String?.toFormattedNumber() = if (this.isNullOrBlank()) "" else DecimalFormat("#,###").format(this.toLong())
+fun String?.toFormattedNumber(): String = if (this.isNullOrBlank()) "" else DecimalFormat("#,###").format(this.toLong())
 
-fun Int.toFormattedNumber() = DecimalFormat("#,###").format(this.toLong())
+fun Int.toFormattedNumber(): String = DecimalFormat("#,###").format(this.toLong())
+
+fun String.convertUpdateAt(context: Context): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    return try {
+        val date = inputFormat.parse(this)
+        val formattedDateStr = outputFormat.format(date)
+        context.getString(R.string.update_at, formattedDateStr)
+    } catch (e: Exception) {
+        ""
+    }
+}
