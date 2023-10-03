@@ -1,57 +1,44 @@
 package com.zion830.threedollars.ui.food_truck_store_detail
 
-import android.annotation.SuppressLint
 import android.graphics.Typeface
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
-import com.threedollar.common.listener.OnItemClickListener
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.home.domain.data.store.AppearanceDayModel
+import com.home.domain.data.store.DayOfTheWeekType
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemAppearanceDayBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseViewHolder
 
-class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(
-    BaseDiffUtilCallback()
-) {
+class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        AppearanceDayViewHolder(parent)
+        AppearanceDayViewHolder(ItemAppearanceDayBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: AppearanceDayViewHolder, position: Int) {
-        holder.bind(getItem(position), listener = null)
+        holder.bind(getItem(position))
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
+    override fun getItemViewType(position: Int): Int = position
 }
 
-class AppearanceDayViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemAppearanceDayBinding, AppearanceDayModel>(
-        R.layout.item_appearance_day,
-        parent
-    ) {
-    @SuppressLint("Range")
-    override fun bind(
-        item: AppearanceDayModel,
-        listener: OnItemClickListener<AppearanceDayModel>?
-    ) {
-        super.bind(item, listener)
-        if (item.openingHours == "휴무") {
-            binding.timeTextView.setTypeface(binding.timeTextView.typeface, Typeface.BOLD)
-            binding.timeTextView.setTextColor(
-                ContextCompat.getColor(
-                    GlobalApplication.getContext(),
-                    R.color.color_FF5C43
-                )
-            )
+class AppearanceDayViewHolder(private val binding: ItemAppearanceDayBinding) : ViewHolder(binding.root) {
+    fun bind(item: AppearanceDayModel) {
+        binding.dayTextView.text = item.dayOfTheWeek.dayString
+        if (item.openingHoursModel == null) {
+            binding.timeTextView.text = "휴무"
+            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray50))
+        } else {
+            binding.timeTextView.text = item.openingHoursModel!!.toConvert()
+            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray70))
         }
-        if (item.dayOfTheWeek == "일요일") {
-            binding.view1.isVisible = false
+        binding.locationTextView.text = item.locationDescription
+        if (item.dayOfTheWeek == DayOfTheWeekType.SUNDAY) {
+            binding.view.isVisible = false
         }
     }
 }
