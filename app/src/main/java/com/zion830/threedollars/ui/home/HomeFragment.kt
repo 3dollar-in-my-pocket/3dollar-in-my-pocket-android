@@ -30,6 +30,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -37,6 +38,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.ui.MarketingDialog
 import com.zion830.threedollars.ui.addstore.view.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -108,21 +110,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
-//                if (item != null) {
-//                    EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
-//                    val intent =
-//                        StoreDetailActivity.getIntent(requireContext(), item.storeId, false)
-//                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-//                } else {
-//                    showToast(R.string.exist_store_error)
-//                }
+                EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
+                if(item.storeModel.storeType == BOSS_STORE){
+                    val intent =
+                        FoodTruckStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                }
+                else{
+                    val intent =
+                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                }
+
             }
         }, object : OnItemClickListener<AdvertisementModel> {
             override fun onClick(item: AdvertisementModel) {
                 EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
             }
-
         }) { item ->
             val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
@@ -140,7 +145,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         if (adapter.getItemLocation(position) != null) {
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
                             adapter.focusedIndex = position
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
 
                             adapter.getItemLocation(position)?.let {
                                 naverMapFragment.moveCameraWithAnim(it)
