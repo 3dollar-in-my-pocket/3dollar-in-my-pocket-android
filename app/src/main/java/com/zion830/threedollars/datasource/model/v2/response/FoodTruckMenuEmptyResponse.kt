@@ -1,7 +1,7 @@
 package com.zion830.threedollars.datasource.model.v2.response
 
+import com.home.domain.data.store.BossStoreDetailItem
 import com.zion830.threedollars.R
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailItem
 
 data class FoodTruckMenuEmptyResponse(
     val emptyImage: Int = R.drawable.ic_food_truck_menu_empty,

@@ -1,8 +1,5 @@
 package com.zion830.threedollars.datasource.model.v2.response
 
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailItem
+import com.home.domain.data.store.BossStoreDetailItem
 
-data class FoodTruckMenuMoreResponse(
-    val moreImage: String?,
-    val moreTitle: String?,
-) : BossStoreDetailItem
+data class FoodTruckMenuMoreResponse(val moreTitle: String?) : BossStoreDetailItem

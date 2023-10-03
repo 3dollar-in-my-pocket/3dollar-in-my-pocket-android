@@ -1,5 +1,6 @@
 package com.home.data
 
+import android.util.Log
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.AcquisitionModel
@@ -7,6 +8,8 @@ import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
 import com.threedollar.network.data.advertisement.AdvertisementResponse
+import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
@@ -129,3 +132,134 @@ fun VisitCounts.asModel() = VisitCountsModel(
     isCertified = isCertified,
     notExistsCounts = notExistsCounts
 )
+
+fun AppearanceDay.asModel() = AppearanceDayModel(
+    dayOfTheWeek = dayOfTheWeek.asDayOfTheWeekType(),
+    locationDescription = locationDescription,
+    openingHoursModel = openingHours.asModel()
+)
+
+fun OpeningHours.asModel() = OpeningHoursModel(
+    endTime = endTime,
+    startTime = startTime
+)
+
+fun BossStore.asModel() = BossStoreModel(
+    address = address.asModel(),
+    appearanceDayModels = appearanceDays.map { it.asModel() },
+    categories = categories.map { it.asModel() },
+    createdAt = createdAt,
+    imageUrl = imageUrl,
+    introduction = introduction,
+    location = location?.asModel(),
+    menuModels = menus.map { it.asModel() },
+    name = name,
+    snsUrl = snsUrl,
+    storeId = storeId,
+    updatedAt = updatedAt
+)
+
+fun Menu.asModel() = MenuModel(
+    imageUrl = imageUrl,
+    name = name,
+    price = price
+)
+
+fun BossStoreResponse.asModel() = BossStoreDetailModel(
+    distanceM = distanceM,
+    favoriteModel = favorite.asModel(),
+    feedbackModels = feedbacks.map { it.asModel() },
+    openStatusModel = openStatus.asModel(),
+    store = store.asModel(),
+    tags = tags.asModel()
+)
+
+fun Favorite.asModel() = FavoriteModel(
+    isFavorite = isFavorite,
+    totalSubscribersCount = totalSubscribersCount
+)
+
+fun Feedback.asModel() = FeedbackModel(
+    count = count,
+    feedbackType = feedbackType.asFeedbackType(),
+    ratio = ratio
+)
+
+fun OpenStatus.asModel() = OpenStatusModel(
+    openStartDateTime = openStartDateTime,
+    status = status.asStatusType()
+)
+
+fun String.asDayOfTheWeekType() = when (this) {
+    "MONDAY" -> {
+        DayOfTheWeekType.MONDAY
+    }
+    "TUESDAY" -> {
+        DayOfTheWeekType.TUESDAY
+    }
+    "WEDNESDAY" -> {
+        DayOfTheWeekType.WEDNESDAY
+    }
+    "THURSDAY" -> {
+        DayOfTheWeekType.THURSDAY
+    }
+    "FRIDAY" -> {
+        DayOfTheWeekType.FRIDAY
+    }
+    "SATURDAY" -> {
+        DayOfTheWeekType.SATURDAY
+    }
+    else -> {
+        DayOfTheWeekType.SUNDAY
+    }
+}
+
+fun String.asFeedbackType() = when (this) {
+    "HANDS_ARE_FAST" -> {
+        FeedbackType.HANDS_ARE_FAST
+    }
+    "FOOD_IS_DELICIOUS" -> {
+        FeedbackType.FOOD_IS_DELICIOUS
+    }
+    "HYGIENE_IS_CLEAN" -> {
+        FeedbackType.HYGIENE_IS_CLEAN
+    }
+    "BOSS_IS_KIND" -> {
+        FeedbackType.BOSS_IS_KIND
+    }
+    "CAN_PAY_BY_CARD" -> {
+        FeedbackType.CAN_PAY_BY_CARD
+    }
+    "GOOD_VALUE_FOR_MONEY" -> {
+        FeedbackType.GOOD_VALUE_FOR_MONEY
+    }
+    "GOOD_TO_EAT_IN_ONE_BITE" -> {
+        FeedbackType.GOOD_TO_EAT_IN_ONE_BITE
+    }
+    else -> {
+        FeedbackType.GOT_A_BONUS
+    }
+}
+
+fun String.asStatusType() = when (this) {
+    "OPEN" -> {
+        StatusType.OPEN
+    }
+    else -> {
+        StatusType.CLOSED
+    }
+}
+
+fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeResponse>): FoodTruckReviewModel {
+
+    val feedbackType = feedbackTypeResponseList.find { type ->
+        (type as? FeedbackTypeResponse)?.feedbackType == this.feedbackType
+    }
+    return FoodTruckReviewModel(
+        count = count,
+        feedbackType = this.feedbackType,
+        ratio = ratio,
+        description = feedbackType?.description,
+        emoji = feedbackType?.emoji
+    )
+}
