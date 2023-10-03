@@ -157,6 +157,10 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="apple_gothic_medium.size_16sp">
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <!--- semi bold font styles -->
     <style name="apple_gothic_semi_bold.size_14sp">
         <item name="android:textSize">14sp</item>
