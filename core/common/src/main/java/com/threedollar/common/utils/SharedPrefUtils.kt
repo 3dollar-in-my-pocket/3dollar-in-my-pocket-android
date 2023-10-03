@@ -1,8 +1,10 @@
 package com.threedollar.common.utils
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.reflect.Type
@@ -10,7 +12,7 @@ import javax.inject.Inject
 
 class SharedPrefUtils @Inject constructor(@ApplicationContext private val context: Context) {
 
-    private val sharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
     fun getPopupUrl() = sharedPreferences.getString(POPUP_URL, "")
 
@@ -23,13 +25,6 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         putString(ACCESS_TOKEN_KEY, accessToken)
         commit()
     }
-
-    fun changeServerStatus() = sharedPreferences.edit {
-        putBoolean("test", !isTestServer())
-        commit()
-    }
-
-    fun isTestServer() = sharedPreferences.getBoolean("test", true) // true일때 개발서버
 
     fun isFirstPermissionCheck(): Boolean {
         val isFirst = sharedPreferences.getBoolean(FIRST_PERMISSION_CHECK, true)
@@ -77,7 +72,7 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
 
     fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
 
-    fun <T> getList(key: String): List<T> {
+    inline fun <reified T> getList(key: String): List<T> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(key, null)
@@ -123,5 +118,6 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         private const val GOOGLE_TOKEN = "google_token"
         private const val POPUP_URL = "popup_url"
         private const val FOOD_TRUCK_TOOL_TIP = "food_truck_tool_tip"
+        val BOSS_FEED_BACK_LIST = "boss_feed_back_list"
     }
 }
