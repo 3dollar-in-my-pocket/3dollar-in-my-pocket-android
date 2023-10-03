@@ -2,24 +2,45 @@ package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
+import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.migration.CustomInjection.inject
+import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseActivity
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FoodTruckReviewActivity :
-    LegacyBaseActivity<ActivityFoodTruckReviewBinding, FoodTruckStoreDetailViewModel>(
-        R.layout.activity_food_truck_review
-    ) {
+    BaseActivity<ActivityFoodTruckReviewBinding, FoodTruckStoreDetailViewModel>({ ActivityFoodTruckReviewBinding.inflate(it) }) {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
+
     override val viewModel: FoodTruckStoreDetailViewModel by viewModels()
 
-    private lateinit var foodTruckReviewSummitRecyclerAdapter: FoodTruckReviewSummitRecyclerAdapter
+    private val foodTruckReviewSummitRecyclerAdapter: FoodTruckReviewSummitRecyclerAdapter by lazy {
+        FoodTruckReviewSummitRecyclerAdapter {
+            if (selectReviewSet.contains(it.feedbackType)) {
+                selectReviewSet.remove(it.feedbackType)
+            } else {
+                selectReviewSet.add(it.feedbackType)
+            }
+        }
+    }
 
     private var selectReviewSet = mutableSetOf<String>()
 
@@ -39,33 +60,32 @@ class FoodTruckReviewActivity :
             if (selectReviewSet.isEmpty()) {
                 showToast("리뷰를 선택해주세요.")
             } else {
-                viewModel.postBossStoreFeedback(
-                    bossStoreId = storeId,
-                    bossStoreFeedbackRequest = BossStoreFeedbackRequest(selectReviewSet.toList())
-                )
+                viewModel.postBossStoreFeedback(bossStoreId = storeId, bossStoreFeedbackRequest = selectReviewSet.toList())
             }
         }
-        foodTruckReviewSummitRecyclerAdapter = FoodTruckReviewSummitRecyclerAdapter {
-            if (it.feedbackType == null) return@FoodTruckReviewSummitRecyclerAdapter
-
-            if (selectReviewSet.contains(it.feedbackType)) {
-                selectReviewSet.remove(it.feedbackType)
-            } else {
-                selectReviewSet.add(it.feedbackType)
-            }
-        }
-        foodTruckReviewSummitRecyclerAdapter.submitList(LegacySharedPrefUtils.getFeedbackType())
+        foodTruckReviewSummitRecyclerAdapter.submitList(sharedPrefUtils.getList<FeedbackTypeResponse>(SharedPrefUtils.BOSS_FEED_BACK_LIST))
         binding.feedbackRecyclerView.adapter = foodTruckReviewSummitRecyclerAdapter
 
-        viewModel.postFeedbackResponse.observe(this) {
-            if (it.isSuccessful) {
-                showCustomBlackToast(getString(R.string.review_toast))
-                val intent = FoodTruckStoreDetailActivity.getIntent(this, storeId)
-                startActivity(intent)
-                finish()
-            } else {
-                if (it.code() == 409) {
-                    showToast("오늘 이미 피드백을 추가한 가게입니다.\n내일 다시 인증해주세요 :)")
+        iniFlows()
+    }
+
+    private fun iniFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.postFeedback.collect {
+                        if (it?.ok == true) {
+                            showCustomBlackToast(getString(R.string.review_toast))
+                            val intent = FoodTruckStoreDetailActivity.getIntent(this@FoodTruckReviewActivity, storeId)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.serverError.collect {
+                        showToast(it)
+                    }
                 }
             }
         }
