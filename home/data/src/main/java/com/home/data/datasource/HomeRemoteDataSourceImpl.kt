@@ -3,9 +3,12 @@ package com.home.data.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.advertisement.AdvertisementResponse
+import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,6 +39,17 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         )
     }
 
+    override fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreResponse>> =
+        flow {
+            emit(
+                serverApi.getBossStoreDetail(
+                    bossStoreId = bossStoreId,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude
+                )
+            )
+        }
+
     override fun getMyInfo(): Flow<BaseResponse<UserResponse>> = flow {
         emit(serverApi.getMyInfo())
     }
@@ -52,4 +66,19 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(serverApi.getAdvertisements(position))
     }
 
+    override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.putFavorite(storeType, storeId))
+    }
+
+    override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.deleteFavorite(storeType, storeId))
+    }
+
+    override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>> = flow {
+        emit(serverApi.getFeedbackFull(targetType, targetId))
+    }
+
+    override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.postFeedback(targetType, targetId, postFeedbackRequest))
+    }
 }
