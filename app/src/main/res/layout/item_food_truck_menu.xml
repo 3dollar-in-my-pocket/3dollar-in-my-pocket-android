@@ -1,58 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp">
 
-    <data>
 
-        <variable
-            name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel.Menu" />
-    </data>
+    <ImageView
+        android:id="@+id/menuImageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_launcher_round" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/menuLayout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/menuNameTextView"
+        style="@style/apple_gothic_semi_bold.size_14sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/rect_white_radius16"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="18dp">
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/gray100"
+        app:layout_constraintStart_toEndOf="@id/menuImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="아저씨 못난이 핫도그" />
 
-        <TextView
-            android:id="@+id/menuNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{item.name}"
-            android:textColor="@color/gray95"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="아저씨 못난이 핫도그" />
+    <TextView
+        android:id="@+id/priceTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray60"
+        style="@style/apple_gothic_medium.size_12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/menuNameTextView"
+        app:layout_constraintTop_toBottomOf="@id/menuNameTextView"
+        tools:text="5000원" />
 
-        <TextView
-            android:id="@+id/priceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{@string/food_truck_price(item.price)}"
-            android:textColor="@color/gray95"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/menuNameTextView"
-            app:layout_constraintTop_toBottomOf="@id/menuNameTextView"
-            tools:text="5000원" />
-
-        <ImageView
-            android:id="@+id/menuImageView"
-            loadCircleImage="@{item.imageUrl}"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_launcher_round" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

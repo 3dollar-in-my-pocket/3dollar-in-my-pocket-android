@@ -1,30 +1,29 @@
 package com.zion830.threedollars.ui.food_truck_store_detail
 
-import android.annotation.SuppressLint
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.threedollar.common.listener.OnItemClickListener
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
+import com.home.domain.data.store.BossStoreDetailItem
+import com.home.domain.data.store.MenuModel
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuMoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailItem
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseViewHolder
+import com.threedollar.common.ext.toFormattedNumber
 
 
-class FoodTruckMenuRecyclerAdapter(
-    private val clickListener: () -> Unit
-) :
-    ListAdapter<BossStoreDetailItem?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
+class FoodTruckMenuRecyclerAdapter(private val clickListener: () -> Unit) :
+    ListAdapter<BossStoreDetailItem?, ViewHolder>(BaseDiffUtilCallback()) {
 
     fun getItemPosition(item: BossStoreDetailItem) =
         currentList.indexOfFirst {
-            if (it is BossStoreDetailModel.Menu && item is BossStoreDetailModel.Menu) {
+            if (it is MenuModel && item is MenuModel) {
                 it.imageUrl == item.imageUrl
             } else {
                 false
@@ -32,7 +31,7 @@ class FoodTruckMenuRecyclerAdapter(
         }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
-        is BossStoreDetailModel.Menu -> {
+        is MenuModel -> {
             VIEW_TYPE_MENU
         }
         is FoodTruckMenuMoreResponse -> {
@@ -45,27 +44,29 @@ class FoodTruckMenuRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_MENU -> {
-            FoodTruckMenuViewHolder(parent)
+            FoodTruckMenuViewHolder(ItemFoodTruckMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
         VIEW_TYPE_FOOTER -> {
-            FoodTruckMenuMoreViewHolder(parent)
+            FoodTruckMenuMoreViewHolder(
+                binding = ItemFoodTruckMenuMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                clickListener = clickListener
+            )
         }
         else -> {
-            FoodTruckMenuEmptyViewHolder(parent)
+            FoodTruckMenuEmptyViewHolder(ItemFoodTruckMenuEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is FoodTruckMenuViewHolder -> {
-                holder.bind(getItem(position) as BossStoreDetailModel.Menu, null)
+                holder.bind(getItem(position) as MenuModel)
             }
             is FoodTruckMenuEmptyViewHolder -> {
-                holder.bind(getItem(position) as FoodTruckMenuEmptyResponse, null)
+                holder.bind(getItem(position) as FoodTruckMenuEmptyResponse)
             }
             is FoodTruckMenuMoreViewHolder -> {
-                holder.bind(getItem(position) as FoodTruckMenuMoreResponse, null)
-                holder.itemView.setOnClickListener { clickListener() }
+                holder.bind(getItem(position) as FoodTruckMenuMoreResponse)
             }
         }
     }
@@ -77,46 +78,37 @@ class FoodTruckMenuRecyclerAdapter(
     }
 }
 
-class FoodTruckMenuEmptyViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemFoodTruckMenuEmptyBinding, FoodTruckMenuEmptyResponse>(
-        R.layout.item_food_truck_menu_empty,
-        parent
-    ) {
-    @SuppressLint("Range")
-    override fun bind(
-        item: FoodTruckMenuEmptyResponse,
-        listener: OnItemClickListener<FoodTruckMenuEmptyResponse>?
-    ) {
-        super.bind(item, listener)
+class FoodTruckMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding) : ViewHolder(binding.root) {
+    fun bind(item: FoodTruckMenuEmptyResponse) {
+        binding.menuNameTextView.text = GlobalApplication.getContext().getString(item.emptyTitle)
+        Glide.with(binding.menuImageView)
+            .load(item.emptyImage)
+            .circleCrop()
+            .into(binding.menuImageView)
     }
 }
 
-class FoodTruckMenuMoreViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemFoodTruckMenuMoreBinding, FoodTruckMenuMoreResponse>(
-        R.layout.item_food_truck_menu_more,
-        parent
-    ) {
-
-    @SuppressLint("Range")
-    override fun bind(
-        item: FoodTruckMenuMoreResponse,
-        listener: OnItemClickListener<FoodTruckMenuMoreResponse>?
-    ) {
-        super.bind(item, listener)
+class FoodTruckMenuMoreViewHolder(
+    private val binding: ItemFoodTruckMenuMoreBinding,
+    private val clickListener: () -> Unit,
+) : ViewHolder(binding.root) {
+    fun bind(item: FoodTruckMenuMoreResponse) {
+        binding.menuLayout.setOnClickListener {
+            clickListener()
+        }
+        binding.menuNameTextView.text = item.moreTitle
     }
 }
 
-class FoodTruckMenuViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemFoodTruckMenuBinding, BossStoreDetailModel.Menu>(
-        R.layout.item_food_truck_menu,
-        parent
-    ) {
+class FoodTruckMenuViewHolder(private val binding: ItemFoodTruckMenuBinding) :
+    ViewHolder(binding.root) {
 
-    @SuppressLint("Range")
-    override fun bind(
-        item: BossStoreDetailModel.Menu,
-        listener: OnItemClickListener<BossStoreDetailModel.Menu>?
-    ) {
-        super.bind(item, listener)
+    fun bind(item: MenuModel) {
+        binding.menuNameTextView.text = item.name
+        binding.priceTextView.text = GlobalApplication.getContext().getString(R.string.food_truck_price, item.price.toFormattedNumber())
+        Glide.with(binding.menuImageView)
+            .load(item.imageUrl)
+            .circleCrop()
+            .into(binding.menuImageView)
     }
 }
