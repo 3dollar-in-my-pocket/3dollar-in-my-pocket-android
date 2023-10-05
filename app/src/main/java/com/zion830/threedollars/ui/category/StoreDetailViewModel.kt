@@ -259,25 +259,25 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
 
     fun putFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = repository.putFavorite(storeType, storeId)
-            if (response.isSuccessful) {
-                showCustomBlackToast(getString(R.string.toast_favorite_add))
-            } else {
-                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-            }
-            _isFavorite.value = response.isSuccessful
+//            val response = repository.putFavorite(storeType, storeId)
+//            if (response.isSuccessful) {
+//                showCustomBlackToast(getString(R.string.toast_favorite_add))
+//            } else {
+//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+//            }
+//            _isFavorite.value = response.isSuccessful
         }
     }
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = repository.deleteFavorite(storeType, storeId)
-            if (response.isSuccessful) {
-                showCustomBlackToast(getString(R.string.toast_favorite_delete))
-            } else {
-                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-            }
-            _isFavorite.value = !response.isSuccessful
+//            val response = repository.deleteFavorite(storeType, storeId)
+//            if (response.isSuccessful) {
+//                showCustomBlackToast(getString(R.string.toast_favorite_delete))
+//            } else {
+//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+//            }
+//            _isFavorite.value = !response.isSuccessful
         }
     }
 

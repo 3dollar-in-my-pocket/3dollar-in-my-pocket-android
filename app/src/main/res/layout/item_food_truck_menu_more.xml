@@ -1,65 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginTop="16dp">
 
-    <data>
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/gray20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <variable
-            name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/menuLayout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/menuNameTextView"
+        style="@style/apple_gothic_medium.size_12sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/rect_gray_radius16"
-        android:padding="16dp">
+        android:textColor="@color/gray60"
+        android:layout_marginVertical="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view"
+        tools:text="메뉴 3개 더보기" />
 
-        <TextView
-            android:id="@+id/menuNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="10dp"
-            android:text="@{item.moreTitle}"
-            android:textColor="@color/gray30"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:drawableStartCompat="@drawable/ic_arrow_down"
-            app:drawableTint="@color/gray40"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="n개의 메뉴가 더 있습니다." />
-
-        <ImageView
-            android:id="@+id/menuImageView1"
-            loadCircleImage="@{item.moreImage}"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/menuImageView2"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_launcher_round" />
-        <ImageView
-            android:id="@+id/menuImageView2"
-            loadCircleImage="@{item.moreImage}"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/menuImageView3"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_launcher_round" />
-        <ImageView
-            android:id="@+id/menuImageView3"
-            loadCircleImage="@{item.moreImage}"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_launcher_round" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,6 +21,7 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         super.onCreate(savedInstanceState)
 
         binding = bindingFactory(layoutInflater)
+        setContentView(binding.root)
         initView()
 
         viewModel.msgTextId.observe(this) {

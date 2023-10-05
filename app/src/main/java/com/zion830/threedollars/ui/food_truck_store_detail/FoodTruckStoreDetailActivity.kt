@@ -1,49 +1,70 @@
 package com.zion830.threedollars.ui.food_truck_store_detail
 
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.home.domain.data.store.AppearanceDayModel
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.ext.convertUpdateAt
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.AppearanceDayModel
+import com.zion830.threedollars.ui.DirectionBottomDialog
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseActivity
-import zion830.com.common.base.loadRoundUrlImg
-import zion830.com.common.base.loadUrlImg
+import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import java.util.*
+
 
 @AndroidEntryPoint
 class FoodTruckStoreDetailActivity :
-    LegacyBaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>(R.layout.activity_food_truck_store_detail) {
+    BaseActivity<ActivityFoodTruckStoreDetailBinding, FoodTruckStoreDetailViewModel>({ ActivityFoodTruckStoreDetailBinding.inflate(it) }) {
 
     override val viewModel: FoodTruckStoreDetailViewModel by viewModels()
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private lateinit var foodTruckCategoriesAdapter: FoodTruckCategoriesRecyclerAdapter
-    private lateinit var foodTruckMenuAdapter: FoodTruckMenuRecyclerAdapter
-    private lateinit var foodTruckReviewRecyclerAdapter: FoodTruckReviewRecyclerAdapter
-    private lateinit var appearanceDayAdapter: AppearanceDayRecyclerAdapter
-
+    private val foodTruckMenuAdapter: FoodTruckMenuRecyclerAdapter by lazy {
+        FoodTruckMenuRecyclerAdapter {
+            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menuModels)
+        }
+    }
+    private val appearanceDayAdapter: AppearanceDayRecyclerAdapter by lazy {
+        AppearanceDayRecyclerAdapter()
+    }
+    private val foodTruckReviewRecyclerAdapter: FoodTruckReviewRecyclerAdapter by lazy {
+        FoodTruckReviewRecyclerAdapter()
+    }
 
     private var storeId = ""
     private var latitude = 0.0
     private var longitude = 0.0
 
-    private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment =
+    private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment by lazy {
         FoodTruckStoreDetailNaverMapFragment()
+    }
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -51,11 +72,33 @@ class FoodTruckStoreDetailActivity :
             finish()
         }
     }
+    private val appearanceDayModels = listOf(
+        AppearanceDayModel(DayOfTheWeekType.MONDAY),
+        AppearanceDayModel(DayOfTheWeekType.TUESDAY),
+        AppearanceDayModel(DayOfTheWeekType.WEDNESDAY),
+        AppearanceDayModel(DayOfTheWeekType.THURSDAY),
+        AppearanceDayModel(DayOfTheWeekType.FRIDAY),
+        AppearanceDayModel(DayOfTheWeekType.SATURDAY),
+        AppearanceDayModel(DayOfTheWeekType.SUNDAY)
+    )
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
-        EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
+        initMap()
+        initViewModels()
+        initButton()
+        initFlows()
+        initAdapter()
+    }
+
+    private fun initAdapter() {
+        binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
+        binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
+        binding.foodTruckReviewRecyclerView.adapter = foodTruckReviewRecyclerAdapter
+    }
+
+    private fun initMap() {
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
                 // 지도 스크롤 이벤트 구분용
@@ -63,7 +106,9 @@ class FoodTruckStoreDetailActivity :
             }
         })
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+    }
 
+    private fun initViewModels() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getStringExtra(STORE_ID).toString()
         if (isLocationAvailable() && isGpsAvailable()) {
@@ -80,27 +125,12 @@ class FoodTruckStoreDetailActivity :
         }
 
         viewModel.getBossStoreFeedbackFull(bossStoreId = storeId)
+    }
 
-        foodTruckCategoriesAdapter = FoodTruckCategoriesRecyclerAdapter()
-        binding.foodTruckCategoryRecyclerView.adapter = foodTruckCategoriesAdapter
-
-        foodTruckMenuAdapter = FoodTruckMenuRecyclerAdapter {
-            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value?.menus)
-        }
-        binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
-
-        foodTruckReviewRecyclerAdapter = FoodTruckReviewRecyclerAdapter()
-        binding.foodTruckReviewRecyclerView.adapter = foodTruckReviewRecyclerAdapter
-
-        appearanceDayAdapter = AppearanceDayRecyclerAdapter()
-        binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
-
+    private fun initButton() {
         binding.btnBack.setOnClickListener {
             setResult(RESULT_OK)
             finish()
-        }
-        binding.topReviewTextView.setOnClickListener {
-            moveFoodTruckReviewActivity()
         }
         binding.bottomReviewTextView.setOnClickListener {
             moveFoodTruckReviewActivity()
@@ -108,113 +138,161 @@ class FoodTruckStoreDetailActivity :
         binding.feedbackReviewTextView.setOnClickListener {
             moveFoodTruckReviewActivity()
         }
-        binding.btnShare.setOnClickListener {
-            EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
-            val shareFormat = ShareFormat(
-                getString(R.string.kakao_map_format),
-                binding.tvStoreName.text.toString(),
-                LatLng(latitude, longitude)
-            )
-            shareWithKakao(
-                shareFormat = shareFormat,
-                title = getString(
-                    R.string.share_kakao_food_truck_title,
-                    viewModel.bossStoreDetailModel.value?.name
-                ),
-                description = getString(
-                    R.string.share_kakao_food_truck,
-                    viewModel.bossStoreDetailModel.value?.name
-                ),
-                imageUrl = viewModel.bossStoreDetailModel.value?.imageUrl,
-                storeId = storeId,
-                type = getString(R.string.scheme_host_kakao_link_food_truck_type)
-            )
+        binding.shareButton.setOnClickListener {
+            initShared()
         }
 
-        binding.snsTextView.setOnClickListener {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(viewModel.bossStoreDetailModel.value?.snsUrl)
-                )
-            )
+        binding.snsButton.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
         }
+        binding.snsTextView.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
+        }
+        binding.directionsButton.setOnClickListener {
+            showDirectionBottomDialog()
+        }
+
         binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
         }
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        viewModel.bossStoreDetailModel.observe(this@FoodTruckStoreDetailActivity) { bossStoreDetailModel ->
-            foodTruckCategoriesAdapter.submitList(bossStoreDetailModel.categories)
-            val isClosed = bossStoreDetailModel.openStatus?.status == "CLOSED"
+        binding.addressTextView.setOnClickListener {
+            val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+            manager.text = binding.addressTextView.text
+            showToast("주소가 복사됐습니다.")
+        }
+        binding.fullScreenButton.setOnClickListener {
+            moveFullScreenMap()
+        }
+    }
 
-            if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
+    private fun moveFullScreenMap() {
+        val intent = FullScreenMapActivity.getIntent(this, storeId)
+        startActivity(intent)
+    }
 
-            val appearanceDayDefaultModelList = resources.getStringArray(R.array.day_name)
-                .map { AppearanceDayModel(dayOfTheWeek = it) }
-            val appearanceDayModelList = bossStoreDetailModel.appearanceDays?.map { it.toModel() }
+    private fun showDirectionBottomDialog() {
+        val store = viewModel.bossStoreDetailModel.value.store
+        DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
+    }
 
-            appearanceDayAdapter.submitList(appearanceDayDefaultModelList.map {
-                appearanceDayModelList?.find { item -> it.dayOfTheWeek == item.dayOfTheWeek } ?: it
-            })
-            if (bossStoreDetailModel.menus.isNullOrEmpty()) {
-                foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
-            } else if (bossStoreDetailModel.menus.size > 5) {
-                val sublist = bossStoreDetailModel.menus.subList(0, 5)
-                val foodTruckMenuMoreResponse = FoodTruckMenuMoreResponse(
-                    moreTitle = getString(
-                        R.string.food_truck_menu_more,
-                        bossStoreDetailModel.menus.size - 5
-                    ), moreImage = bossStoreDetailModel.menus[5].imageUrl
-                )
-                foodTruckMenuAdapter.submitList(sublist + foodTruckMenuMoreResponse)
-            } else {
-                foodTruckMenuAdapter.submitList(bossStoreDetailModel.menus)
+    private fun initFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.bossStoreDetailModel.collect { bossStoreDetailModel ->
+
+                        val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
+
+                        if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
+
+                        if (bossStoreDetailModel.store.location != null) {
+                            val latLng = LatLng(bossStoreDetailModel.store.location!!.latitude, bossStoreDetailModel.store.location!!.longitude)
+                            naverMapFragment.initMap(latLng, isClosed)
+                        }
+
+                        appearanceDayAdapter.submitList(appearanceDayModels.map { appearanceDayModel ->
+                            bossStoreDetailModel.store.appearanceDayModels.find {
+                                appearanceDayModel.dayOfTheWeek == it.dayOfTheWeek
+                            } ?: appearanceDayModel
+                        })
+
+                        if (bossStoreDetailModel.store.menuModels.isEmpty()) {
+                            foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
+                        } else if (bossStoreDetailModel.store.menuModels.size > 5) {
+                            val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
+                            val foodTruckMenuMoreResponse = FoodTruckMenuMoreResponse(
+                                moreTitle = getString(R.string.food_truck_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
+                            )
+                            foodTruckMenuAdapter.submitList(sublist + foodTruckMenuMoreResponse)
+                        } else {
+                            foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menuModels)
+                        }
+
+                        binding.run {
+                            if (bossStoreDetailModel.store.categories.isNotEmpty()) {
+                                Glide.with(binding.menuIconImageView)
+                                    .load(bossStoreDetailModel.store.categories.first().imageUrl)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
+                                    .into(binding.menuIconImageView)
+                            }
+                            Glide.with(binding.storeImageView)
+                                .load(bossStoreDetailModel.store.imageUrl)
+                                .transform(FitCenter(), RoundedCorners(12))
+                                .into(binding.storeImageView)
+
+                            tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
+                            distanceTextView.text =
+                                if (bossStoreDetailModel.distanceM < 1000) "${bossStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+                            storeNameTextView.text = bossStoreDetailModel.store.name
+                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            snsTextView.text = bossStoreDetailModel.store.snsUrl
+                            ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
+                            feedbackCountTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            storeInfoUpdateAtTextView.text =
+                                bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@FoodTruckStoreDetailActivity)
+                            addressTextView.text = bossStoreDetailModel.store.address.fullAddress
+                        }
+                    }
+                }
+                launch {
+                    viewModel.favoriteModel.collect {
+                        setFavoriteIcon(it.isFavorite)
+                        binding.favoriteButton.text = it.totalSubscribersCount.toString()
+                    }
+                }
+                launch {
+                    viewModel.foodTruckReviewModelList.collect { foodTruckReviewModelList ->
+                        foodTruckReviewRecyclerAdapter.submitList(foodTruckReviewModelList)
+                    }
+                }
             }
+        }
+    }
 
-            binding.run {
-                ivStoreType.loadUrlImg(bossStoreDetailModel.categories?.firstOrNull()?.imageUrl)
-                tvStoreName.text = bossStoreDetailModel.name
-                tvDistance.text = "${bossStoreDetailModel.distance}m"
-                ownerOneWordTextView.text = bossStoreDetailModel.introduction
-                storeImageView.loadRoundUrlImg(bossStoreDetailModel.imageUrl)
-            }
-        }
 
-        viewModel.bossStoreFeedbackFullModelList.observe(this) { bossStoreFeedbackFullModeList ->
-            binding.reviewCountTextView.text =
-                "${bossStoreFeedbackFullModeList.sumOf { it.count }}개"
-            foodTruckReviewRecyclerAdapter.submitList(bossStoreFeedbackFullModeList.map { it.feedbackFullModelToReviewModel() })
-        }
-        viewModel.isFavorite.observe(this) {
-            setFavoriteIcon(it)
-        }
+    private fun initShared() {
+        EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
+        val shareFormat = ShareFormat(
+            getString(R.string.kakao_map_format),
+            binding.storeNameTextView.text.toString(),
+            LatLng(latitude, longitude)
+        )
+        shareWithKakao(
+            shareFormat = shareFormat,
+            title = getString(
+                R.string.share_kakao_food_truck_title,
+                viewModel.bossStoreDetailModel.value.store.name
+            ),
+            description = getString(
+                R.string.share_kakao_food_truck,
+                viewModel.bossStoreDetailModel.value.store.name
+            ),
+            imageUrl = viewModel.bossStoreDetailModel.value.store.imageUrl,
+            storeId = storeId,
+            type = getString(R.string.scheme_host_kakao_link_food_truck_type)
+        )
     }
 
     private fun moveFoodTruckReviewActivity() {
         val intent = FoodTruckReviewActivity.getIntent(this, storeId)
         startActivity(intent)
-        finish()
     }
 
     private fun clickFavoriteButton() {
-        if (viewModel.isFavorite.value == true) {
+        if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
         } else {
             viewModel.putFavorite(Constants.BOSS_STORE, storeId)
         }
     }
 
-    private fun setFavoriteIcon(isFavorite: Boolean?) {
-        if (isFavorite == null) {
-            showToast(R.string.connection_failed)
-            return
-        }
-
+    private fun setFavoriteIcon(isFavorite: Boolean) {
         val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
 
-        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
@@ -225,7 +303,6 @@ class FoodTruckStoreDetailActivity :
 
     companion object {
         const val STORE_ID = "storeId"
-
         fun getIntent(context: Context, storeId: String? = null, deepLinkStoreId: String? = null) =
             Intent(context, FoodTruckStoreDetailActivity::class.java).apply {
                 storeId?.let {

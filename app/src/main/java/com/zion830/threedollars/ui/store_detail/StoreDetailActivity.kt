@@ -50,7 +50,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.showSnack
-import zion830.com.common.ext.toFormattedNumber
+import com.threedollar.common.ext.toFormattedNumber
 
 @AndroidEntryPoint
 class StoreDetailActivity :

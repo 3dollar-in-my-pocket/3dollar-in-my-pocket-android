@@ -17,7 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.ext.isNotNullOrBlank
+import com.threedollar.common.ext.isNotNullOrBlank
 import javax.inject.Inject
 
 @HiltViewModel

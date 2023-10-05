@@ -67,6 +67,8 @@ dependencies {
     implementation project(':home:domain')
     implementation project(':home:data')
     implementation project(':home:presentation')
+    implementation project(':login:domain')
+    implementation project(':login:data')
 
     implementation 'com.google.firebase:firebase-config:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.0.5'

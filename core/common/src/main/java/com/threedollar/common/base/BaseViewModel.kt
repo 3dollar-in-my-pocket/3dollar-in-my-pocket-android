@@ -4,21 +4,15 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.threedollar.common.R
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import retrofit2.Response
 
 open class BaseViewModel : ViewModel() {
-
-    protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
-        t.printStackTrace()
-        handleError(t)
-        FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
-    }
 
     protected val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -26,8 +20,15 @@ open class BaseViewModel : ViewModel() {
     protected val _msgTextId = MutableLiveData<Int>()
     val msgTextId: LiveData<Int> get() = _msgTextId
 
-    protected val _serverError = MutableLiveData<Boolean>()
-    val serverError: LiveData<Boolean> get() = _serverError
+    private val _serverError = MutableSharedFlow<String>()
+    val serverError: SharedFlow<String> get() = _serverError
+
+    protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
+        viewModelScope.launch {
+            _serverError.emit(t.localizedMessage.toString())
+            FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
+        }
+    }
 
     fun showLoading() {
         _isLoading.postValue(true)
@@ -48,16 +49,10 @@ open class BaseViewModel : ViewModel() {
     ): ResultWrapper<T?> {
         return withContext(dispatcher) {
             try {
-                val result = apiCall
-
-                if (result.code() == 503) {
-                    _serverError.postValue(true)
-                }
-
-                if (result.isSuccessful) {
-                    handleSuccessEvent(result)
+                if (apiCall.isSuccessful) {
+                    handleSuccessEvent(apiCall)
                 } else {
-                    ResultWrapper.GenericError(result.code(), result.message())
+                    ResultWrapper.GenericError(apiCall.code(), apiCall.message())
                 }
             } catch (throwable: Throwable) {
                 ResultWrapper.NetworkError

@@ -246,12 +246,6 @@ interface NewServiceApi {
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
-
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 

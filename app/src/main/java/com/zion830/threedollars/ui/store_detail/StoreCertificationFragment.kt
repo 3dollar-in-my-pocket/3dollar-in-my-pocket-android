@@ -18,7 +18,7 @@ import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
-import zion830.com.common.ext.toFormattedNumber
+import com.threedollar.common.ext.toFormattedNumber
 import kotlin.math.abs
 import kotlin.math.min
 

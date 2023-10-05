@@ -18,7 +18,7 @@ import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
-import zion830.com.common.ext.toStringDefault
+import com.threedollar.common.ext.toStringDefault
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {

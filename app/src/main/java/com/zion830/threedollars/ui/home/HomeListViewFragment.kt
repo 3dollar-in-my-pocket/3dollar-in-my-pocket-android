@@ -19,7 +19,6 @@ import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
