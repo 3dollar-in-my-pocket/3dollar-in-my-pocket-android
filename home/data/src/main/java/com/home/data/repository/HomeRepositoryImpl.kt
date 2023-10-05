@@ -6,6 +6,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseResponse
@@ -29,7 +30,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
-        deviceLongitude: Double
+        deviceLongitude: Double,
     ): Flow<BaseResponse<AroundStoreModel>> = homeRemoteDataSource.getAroundStores(
         categoryIds = categoryIds,
         targetStores = targetStores,
@@ -41,7 +42,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         deviceLongitude = deviceLongitude
     ).map {
         BaseResponse(
-            data = it.data?.asModel(),
+            data = it.data.asModel(),
             message = it.message,
             resultCode = it.resultCode
         )
@@ -50,7 +51,33 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
     override fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreDetailModel>> =
         homeRemoteDataSource.getBossStoreDetail(bossStoreId, deviceLatitude, deviceLongitude).map {
             BaseResponse(
-                data = it.data?.asModel(),
+                data = it.data.asModel(),
+                message = it.message,
+                resultCode = it.resultCode
+            )
+        }
+
+    override fun getUserStoreDetail(
+        storeId: Int,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+        storeImagesCount: Int?,
+        reviewsCount: Int?,
+        visitHistoriesCount: Int?,
+        filterVisitStartDate: String,
+    ): Flow<BaseResponse<UserStoreDetailModel>> =
+        homeRemoteDataSource.getUserStoreDetail(
+            storeId = storeId,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude,
+            storeImagesCount = storeImagesCount,
+            reviewsCount = reviewsCount,
+            visitHistoriesCount = visitHistoriesCount,
+            filterVisitStartDate = filterVisitStartDate
+        ).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data.asModel(),
                 message = it.message,
                 resultCode = it.resultCode
             )
@@ -58,7 +85,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
 
     override fun getMyInfo(): Flow<BaseResponse<UserModel>> = homeRemoteDataSource.getMyInfo().map {
         BaseResponse(
-            data = it.data?.asModel(),
+            data = it.data.asModel(),
             message = it.message,
             resultCode = it.resultCode
         )
@@ -73,7 +100,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
     override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModel>>> =
         homeRemoteDataSource.getAdvertisements(position).map {
             BaseResponse(
-                data = it.data?.map { response -> response.asModel() },
+                data = it.data.map { response -> response.asModel() },
                 message = it.message,
                 resultCode = it.resultCode
             )
@@ -88,7 +115,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         val feedbackTypeResponseList = sharedPrefUtils.getList<FeedbackTypeResponse>(BOSS_FEED_BACK_LIST)
         return homeRemoteDataSource.getFeedbackFull(targetType, targetId).map {
             BaseResponse(
-                data = it.data?.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
+                data = it.data.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
                 message = it.message,
                 resultCode = it.resultCode
             )

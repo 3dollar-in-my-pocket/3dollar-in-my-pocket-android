@@ -6,6 +6,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -42,6 +43,16 @@ interface ServerApi {
         @Header("X-Device-Longitude") deviceLongitude: Double,
     ): BaseResponse<BossStoreResponse>
 
+    @GET("/api/v4/store/{storeId}")
+    suspend fun getUserStoreDetail(
+        @Path("storeId") storeId: Int,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Query("storeImagesCount") storeImagesCount : Int?,
+        @Query("reviewsCount") reviewsCount : Int?,
+        @Query("visitHistoriesCount") visitHistoriesCount : Int?,
+        @Query("filterVisitStartDate") filterVisitStartDate : String
+    ) : BaseResponse<UserStoreResponse>
     // Device
     @POST("/api/v1/device")
     suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): BaseResponse<String>

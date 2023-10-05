@@ -193,21 +193,27 @@ fun String.asDayOfTheWeekType() = when (this) {
     "MONDAY" -> {
         DayOfTheWeekType.MONDAY
     }
+
     "TUESDAY" -> {
         DayOfTheWeekType.TUESDAY
     }
+
     "WEDNESDAY" -> {
         DayOfTheWeekType.WEDNESDAY
     }
+
     "THURSDAY" -> {
         DayOfTheWeekType.THURSDAY
     }
+
     "FRIDAY" -> {
         DayOfTheWeekType.FRIDAY
     }
+
     "SATURDAY" -> {
         DayOfTheWeekType.SATURDAY
     }
+
     else -> {
         DayOfTheWeekType.SUNDAY
     }
@@ -217,24 +223,31 @@ fun String.asFeedbackType() = when (this) {
     "HANDS_ARE_FAST" -> {
         FeedbackType.HANDS_ARE_FAST
     }
+
     "FOOD_IS_DELICIOUS" -> {
         FeedbackType.FOOD_IS_DELICIOUS
     }
+
     "HYGIENE_IS_CLEAN" -> {
         FeedbackType.HYGIENE_IS_CLEAN
     }
+
     "BOSS_IS_KIND" -> {
         FeedbackType.BOSS_IS_KIND
     }
+
     "CAN_PAY_BY_CARD" -> {
         FeedbackType.CAN_PAY_BY_CARD
     }
+
     "GOOD_VALUE_FOR_MONEY" -> {
         FeedbackType.GOOD_VALUE_FOR_MONEY
     }
+
     "GOOD_TO_EAT_IN_ONE_BITE" -> {
         FeedbackType.GOOD_TO_EAT_IN_ONE_BITE
     }
+
     else -> {
         FeedbackType.GOT_A_BONUS
     }
@@ -244,6 +257,7 @@ fun String.asStatusType() = when (this) {
     "OPEN" -> {
         StatusType.OPEN
     }
+
     else -> {
         StatusType.CLOSED
     }
@@ -262,3 +276,123 @@ fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeRes
         emoji = feedbackType?.emoji
     )
 }
+
+fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
+    creator = creator?.asModel(),
+    distanceM = distanceM,
+    favorite = favorite?.asModel(),
+    images = images?.asModel(),
+    reviews = reviews?.asModel(),
+    store = store?.asModel(),
+    tags = tags?.asModel(),
+    visits = visits?.asModel()
+
+)
+
+fun Creator.asModel(): CreatorModel = CreatorModel(
+    medal = medal.asModel(),
+    name = name,
+    socialType = socialType,
+    userId = userId
+)
+
+fun Images.asModel(): ImagesModel = ImagesModel(
+    contents = contents.map { it.asModel() },
+    cursor = cursor.asModel()
+)
+
+fun ImageContent.asModel() = ImageContentModel(
+    createdAt = createdAt,
+    imageId = imageId,
+    updatedAt = updatedAt,
+    url = url
+)
+
+fun Reviews.asModel() = ReviewsModel(
+    contents = contents.map { it.asModel() }
+)
+
+fun ReviewContent.asModel() = ReviewContentModel(
+    review = review.asModel(),
+    reviewReport = reviewReport.asModel(),
+    reviewWriter = reviewWriter.asModel()
+
+)
+
+fun Review.asModel() = ReviewModel(
+    contents = contents,
+    createdAt = createdAt,
+    rating = rating,
+    reviewId = reviewId,
+    status = status,
+    updatedAt = updatedAt
+)
+
+fun ReviewReport.asModel() = ReviewReportModel(
+    reportedByMe = reportedByMe
+)
+
+fun ReviewWriter.asModel() = ReviewWriterModel(
+    medal = medal.asModel(),
+    name = name,
+    socialType = socialType,
+    userId = userId
+)
+
+fun UserStore.asModel() = UserStoreModel(
+    address = address.asModel(),
+    appearanceDays = appearanceDays,
+    categories = categories.map { it.asModel() },
+    createdAt = createdAt,
+    location = location.asModel(),
+    menus = menus.map { it.asModel() },
+    name = name,
+    paymentMethods = paymentMethods,
+    rating = rating,
+    salesType = salesType,
+    storeId = storeId,
+    updatedAt = updatedAt
+)
+
+fun UserStoreMenu.asModel() = UserStoreMenuModel(
+    category = category.asModel(),
+    menuId = menuId,
+    name = name,
+    price = price
+)
+
+fun Visits.asModel() = VisitsModel(
+    counts = counts.asModel(),
+    histories = histories.asModel()
+)
+
+fun Counts.asModel() = CountsModel(
+    existsCounts = existsCounts,
+    isCertified = isCertified,
+    notExistsCounts = notExistsCounts
+)
+
+fun Histories.asModel() = HistoriesModel(
+    contents = contents.map { it.asModel() },
+    cursor = cursor.asModel()
+)
+
+fun HistoriesContent.asModel() = HistoriesContentModel(
+    visit = visit.asModel(),
+    visitor = visitor.asModel()
+)
+
+fun Visit.asModel() = VisitModel(
+    createdAt = createdAt,
+    type = type,
+    updatedAt = updatedAt,
+    visitDate = visitDate,
+    visitId = visitId
+)
+
+fun Visitor.asModel() = VisitorModel(
+    medal = medal.asModel(),
+    name = name,
+    socialType = socialType,
+    userId = userId
+)

@@ -4,6 +4,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,15 @@ interface HomeRepository {
     ): Flow<BaseResponse<AroundStoreModel>>
 
     fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreDetailModel>>
+    fun getUserStoreDetail(
+        storeId: Int,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+        storeImagesCount: Int?,
+        reviewsCount: Int?,
+        visitHistoriesCount: Int?,
+        filterVisitStartDate: String,
+    ): Flow<BaseResponse<UserStoreDetailModel>>
 
     fun getMyInfo(): Flow<BaseResponse<UserModel>>
 
@@ -38,5 +48,6 @@ interface HomeRepository {
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>>
 
     fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: List<String>): Flow<BaseResponse<String>>
+
 
 }
