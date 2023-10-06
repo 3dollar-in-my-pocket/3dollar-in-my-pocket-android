@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -56,6 +57,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
+import com.threedollar.common.ext.textPartTypeface
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -331,7 +333,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews?.contents?.size)
         binding.favoriteButton.text = userStoreDetailModel.favorite?.totalSubscribersCount.toString()
         binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits?.counts?.existsCounts)
-        binding.bossTextView.changeTextPartBold(userStoreDetailModel.visits?.counts?.existsCounts.toString())
+        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits?.counts?.existsCounts.toString(),Typeface.BOLD)
     }
 
     private fun clickFavoriteButton() {

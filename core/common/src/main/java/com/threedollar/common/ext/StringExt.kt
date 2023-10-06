@@ -30,3 +30,11 @@ fun String.convertUpdateAt(context: Context): String {
         ""
     }
 }
+
+fun getMonthFirstDate(): String {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
+    return dateFormat.format(calendar.time)
+}
