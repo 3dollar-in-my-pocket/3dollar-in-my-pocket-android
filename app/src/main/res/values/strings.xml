@@ -70,7 +70,7 @@
     <string name="card">카드</string>
     <string name="banking">계좌이체</string>
 
-    <string name="editor">님의 제보</string>
+    <string name="creator">%s님 제보</string>
     <string name="share">공유하기</string>
     <string name="update_available">업데이트가 필요합니다!</string>
     <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
@@ -286,4 +286,5 @@
     <string name="directions">길 안내</string>
     <string name="directions_view">길 안내보기</string>
     <string name="map_view">지도 보기</string>
+    <string name="last_visit">최근 한달 %d명이 방문 성공</string>
 </resources>
