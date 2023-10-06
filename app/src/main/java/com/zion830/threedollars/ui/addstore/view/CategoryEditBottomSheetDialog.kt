@@ -33,17 +33,17 @@ class CategoryEditBottomSheetDialog : BottomSheetDialogFragment() {
         binding.lifecycleOwner = this
         binding.rvCategory.adapter = adapter
         binding.btnSubmit.text = getString(R.string.select).format(0)
-        binding.btnSubmit.setOnClickListener {
-            viewModel.updateCategory(adapter.items)
-            dismiss()
-        }
-        viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            adapter.setItems(viewModel.selectedCategory.value ?: listOf())
-            val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
-            binding.btnSubmit.text = getString(R.string.select).format(count)
-            binding.btnSubmit.isEnabled = count > 0
-            binding.rvCategory.bindItems(it)
-        }
+//        binding.btnSubmit.setOnClickListener {
+//            viewModel.updateCategory(adapter.items)
+//            dismiss()
+//        }
+//        viewModel.selectedCategory.observe(viewLifecycleOwner) {
+//            adapter.setItems(viewModel.selectedCategory.value ?: listOf())
+//            val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
+//            binding.btnSubmit.text = getString(R.string.select).format(count)
+//            binding.btnSubmit.isEnabled = count > 0
+//            binding.rvCategory.bindItems(it)
+//        }
         return binding.root
     }
 }

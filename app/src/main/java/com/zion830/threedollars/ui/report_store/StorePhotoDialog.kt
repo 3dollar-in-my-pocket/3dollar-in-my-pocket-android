@@ -71,18 +71,18 @@ class StorePhotoDialog : DialogFragment() {
                 })
         )
 
-        viewModel.storeInfo.observe(this) {
-            it?.let {
-                adapter.submitList(it.images)
-                indicatorAdapter.submitList(it.images.mapIndexed { index, value ->
-                    StoreImage(
-                        index,
-                        null,
-                        value.url
-                    )
-                })
-            }
-        }
+//        viewModel.storeInfo.observe(this) {
+//            it?.let {
+//                adapter.submitList(it.images)
+//                indicatorAdapter.submitList(it.images.mapIndexed { index, value ->
+//                    StoreImage(
+//                        index,
+//                        null,
+//                        value.url
+//                    )
+//                })
+//            }
+//        }
         binding.ibTrash.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->

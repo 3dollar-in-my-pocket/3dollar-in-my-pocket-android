@@ -41,12 +41,12 @@ class StoreCertificationAvailableFragment :
             bold { append("방문을 인증") }
             append("해보세요!")
         }
-        binding.layoutSuccess.setOnClickListener {
-            viewModel.addVisitHistory(storeDetailViewModel.storeInfo.value?.storeId ?: -1, true)
-        }
-        binding.layoutFail.setOnClickListener {
-            viewModel.addVisitHistory(storeDetailViewModel.storeInfo.value?.storeId ?: -1, false)
-        }
+//        binding.layoutSuccess.setOnClickListener {
+//            viewModel.addVisitHistory(storeDetailViewModel.storeInfo.value?.storeId ?: -1, true)
+//        }
+//        binding.layoutFail.setOnClickListener {
+//            viewModel.addVisitHistory(storeDetailViewModel.storeInfo.value?.storeId ?: -1, false)
+//        }
 
         observeUiData()
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
@@ -54,13 +54,13 @@ class StoreCertificationAvailableFragment :
 
     private fun observeUiData() {
         val categories = LegacySharedPrefUtils.getCategories()
-        storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
-            binding.tvStoreName.text = it?.storeName
-            binding.ivCategory.bindMenuIcons(it?.categories)
-            binding.tvStoreCategory.text = it?.categories?.joinToString(" ") { category ->
-                "#${categories.find { categoryInfo -> categoryInfo.category == category }?.name}"
-            }
-        }
+//        storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
+//            binding.tvStoreName.text = it?.storeName
+//            binding.ivCategory.bindMenuIcons(it?.categories)
+//            binding.tvStoreCategory.text = it?.categories?.joinToString(" ") { category ->
+//                "#${categories.find { categoryInfo -> categoryInfo.category == category }?.name}"
+//            }
+//        }
         viewModel.addVisitHistoryResult.observe(viewLifecycleOwner) {
             when (it) {
                 in 200..299 -> {

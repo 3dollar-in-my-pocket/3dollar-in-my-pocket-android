@@ -38,7 +38,7 @@ open class StoreEditNaverMapFragment(private val onMapUpdated: (LatLng?) -> Unit
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(58f))
         binding.btnFindLocation.layoutParams = params
 
-        viewModel.storeLocation.value?.let { moveCamera(it) }
+//        viewModel.storeLocation.value?.let { moveCamera(it) }
     }
 
     override fun onMyLocationLoaded(position: LatLng) {

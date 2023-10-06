@@ -59,31 +59,31 @@ class StoreCertificationFragment : LegacyBaseFragment<LayoutCertificationBinding
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
 
         naverMapFragment.updateMyLatestLocation {
-            bindDistance(it)
+//            bindDistance(it)
         }
 
         viewModel.needUpdate.observe(viewLifecycleOwner) {
             naverMapFragment.updateMyLatestLocation {
-                val distance = bindDistance(it)
+//                val distance = bindDistance(it)
                 val temp = progress
                 binding.ivProgress.x = min(minX, binding.ivProgress.x + (maxWidth * ((temp - progress) / 100.0)).toInt())
             }
         }
     }
 
-    private fun bindDistance(it: LatLng?): Float {
-        val distance = NaverMapUtils.calculateDistance(it, storeDetailViewModel.storeLocation.value)
-        if (distance <= MIN_DISTANCE) {
-            startCertification()
-        }
-        binding.tvDistance.text = buildSpannedString {
-            append("인증까지 ")
-            bold { append("${(distance - MIN_DISTANCE).toInt().toFormattedNumber()}m") }
-        }
-        progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
-        binding.progressIndicator.progress = progress
-        return distance
-    }
+//    private fun bindDistance(it: LatLng?): Float {
+//        val distance = NaverMapUtils.calculateDistance(it, storeDetailViewModel.storeLocation.value)
+//        if (distance <= MIN_DISTANCE) {
+//            startCertification()
+//        }
+//        binding.tvDistance.text = buildSpannedString {
+//            append("인증까지 ")
+//            bold { append("${(distance - MIN_DISTANCE).toInt().toFormattedNumber()}m") }
+//        }
+//        progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
+//        binding.progressIndicator.progress = progress
+//        return distance
+//    }
 
     private fun startCertification() {
         requireActivity().supportFragmentManager.popBackStack()
@@ -97,13 +97,13 @@ class StoreCertificationFragment : LegacyBaseFragment<LayoutCertificationBinding
 
     private fun observeUiData() {
         val categories = LegacySharedPrefUtils.getCategories()
-        storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
-            binding.tvStoreName.text = it?.storeName
-            binding.ivCategory.bindMenuIcons(it?.categories)
-            binding.ivEnd.bindMenuIcons(it?.categories)
-            binding.tvStoreCategory.text = it?.categories?.joinToString(" ") { category ->
-                "#${categories.find { categoryInfo -> categoryInfo.category == category }?.name}"
-            }
-        }
+//        storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
+//            binding.tvStoreName.text = it?.storeName
+//            binding.ivCategory.bindMenuIcons(it?.categories)
+//            binding.ivEnd.bindMenuIcons(it?.categories)
+//            binding.tvStoreCategory.text = it?.categories?.joinToString(" ") { category ->
+//                "#${categories.find { categoryInfo -> categoryInfo.category == category }?.name}"
+//            }
+//        }
     }
 }
