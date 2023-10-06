@@ -1,33 +1,9 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.graphics.Rect
-import android.os.Handler
-import android.util.Log
-import android.view.View
-import android.widget.EditText
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.naver.maps.geometry.LatLng
-import com.threedollar.common.ext.replaceFragment
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.datasource.model.v2.request.MyMenu
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
-import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
-import com.zion830.threedollars.ui.addstore.view.EditCategoryBottomSheetDialog
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.ui.map.NaverMapFragment
-import com.zion830.threedollars.ui.store_detail.findStoreType
-import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 

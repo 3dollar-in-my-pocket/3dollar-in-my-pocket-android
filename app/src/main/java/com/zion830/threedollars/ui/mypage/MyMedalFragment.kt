@@ -13,7 +13,7 @@ import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
-import zion830.com.common.ext.showSnack
+import com.threedollar.common.ext.showSnack
 
 @AndroidEntryPoint
 class MyMedalFragment : LegacyBaseFragment<FragmentMyMedalBinding, MyPageViewModel>(R.layout.fragment_my_medal) {
