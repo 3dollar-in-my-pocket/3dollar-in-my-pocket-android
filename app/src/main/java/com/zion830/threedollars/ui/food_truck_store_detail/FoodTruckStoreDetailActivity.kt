@@ -30,7 +30,7 @@ import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyR
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
-import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,8 +62,8 @@ class FoodTruckStoreDetailActivity :
     private var latitude = 0.0
     private var longitude = 0.0
 
-    private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment by lazy {
-        FoodTruckStoreDetailNaverMapFragment()
+    private val naverMapFragment: StoreDetailNaverMapFragment by lazy {
+        StoreDetailNaverMapFragment()
     }
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
