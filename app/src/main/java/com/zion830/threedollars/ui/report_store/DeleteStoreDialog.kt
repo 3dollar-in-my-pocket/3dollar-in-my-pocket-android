@@ -37,7 +37,7 @@ class DeleteStoreDialog(private val storeId: Int) : DialogFragment() {
         }
         binding.btnFinish.setOnClickListener {
             EventTracker.logEvent(Constants.DELETE_REQUEST_SUBMIT_BTN_CLICKED)
-            viewModel.deleteStore(storeId)
+            viewModel.deleteStore()
             dismiss()
         }
         binding.rgReason.setOnCheckedChangeListener { _, checkedId ->
