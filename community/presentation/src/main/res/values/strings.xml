@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="str_poll_list_title"><![CDATA[맛짱 투표 >]]></string>
+    <string name="str_report">신고</string>
+    <string name="str_comment_blind">규정 위반으로 블라이드 처리되었습니다.</string>
 </resources>

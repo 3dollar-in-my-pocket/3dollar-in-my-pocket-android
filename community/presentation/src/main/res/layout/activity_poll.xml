@@ -12,7 +12,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:textColor="@color/gray100"
-        android:textSize="16sp"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
