@@ -150,10 +150,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 finish()
             }
         }
-
-        viewModel.isFavorite.observe(this) {
-            setFavoriteIcon(it)
-        }
     }
 
     private fun initAd() {
@@ -234,31 +230,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         }
         binding.shareButton.setOnClickListener {
-            EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
-            val userStoreModel = viewModel.userStoreDetailModel.value.store
-
-            userStoreModel?.let {
-                val shareFormat = ShareFormat(
-                    getString(R.string.kakao_map_format),
-                    binding.storeNameTextView.text.toString(),
-                    LatLng(it.location.latitude, it.location.longitude)
-                )
-                shareWithKakao(
-                    shareFormat = shareFormat,
-                    title = getString(
-                        R.string.share_kakao_road_food_title,
-                        userStoreModel.name
-                    ),
-                    description = getString(
-                        R.string.share_kakao_road_food,
-                        userStoreModel.name
-                    ),
-                    imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
-                    storeId = storeId.toString(),
-                    type = getString(R.string.scheme_host_kakao_link_road_food_type)
-                )
-            }
-
+            initShared()
         }
         binding.btnAddReview.setOnClickListener {
             AddReviewDialog.getInstance()
@@ -296,6 +268,33 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
+    private fun initShared() {
+        EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
+        val userStoreModel = viewModel.userStoreDetailModel.value.store
+
+        userStoreModel?.let {
+            val shareFormat = ShareFormat(
+                getString(R.string.kakao_map_format),
+                binding.storeNameTextView.text.toString(),
+                LatLng(it.location.latitude, it.location.longitude)
+            )
+            shareWithKakao(
+                shareFormat = shareFormat,
+                title = getString(
+                    R.string.share_kakao_road_food_title,
+                    userStoreModel.name
+                ),
+                description = getString(
+                    R.string.share_kakao_road_food,
+                    userStoreModel.name
+                ),
+                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+                storeId = storeId.toString(),
+                type = getString(R.string.scheme_host_kakao_link_road_food_type)
+            )
+        }
+    }
+
     private fun initFlows() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -322,6 +321,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         }
                         initImageView(it)
                         initTextView(it)
+                    }
+                }
+                launch {
+                    viewModel.favoriteModel.collect {
+                        setFavoriteIcon(it.isFavorite)
+                        binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
                 }
             }
@@ -352,22 +357,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun clickFavoriteButton() {
-        if (viewModel.isFavorite.value == true) {
+        if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(USER_STORE, storeId.toString())
         } else {
             viewModel.putFavorite(USER_STORE, storeId.toString())
         }
     }
 
-    private fun setFavoriteIcon(isFavorite: Boolean?) {
-        if (isFavorite == null) {
-            showToast(R.string.connection_failed)
-            return
-        }
+    private fun setFavoriteIcon(isFavorite: Boolean) {
+        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
 
-        val favoriteIcon = if (isFavorite) R.drawable.ic_road_food_favorite_on else R.drawable.ic_road_food_favorite_off
-
-        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 

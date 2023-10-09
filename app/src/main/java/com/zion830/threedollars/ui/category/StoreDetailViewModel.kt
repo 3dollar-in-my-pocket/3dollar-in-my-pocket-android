@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
@@ -18,11 +19,14 @@ import com.zion830.threedollars.datasource.model.v2.response.store.Image
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.StringUtils
+import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -67,9 +71,8 @@ class StoreDetailViewModel @Inject constructor(
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
 
-    // TODO: SingleLiveData로 수정 필요
-    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
-    val isFavorite: LiveData<Boolean> get() = _isFavorite
+    private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
+    val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -193,25 +196,31 @@ class StoreDetailViewModel @Inject constructor(
 
     fun putFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-//            val response = repository.putFavorite(storeType, storeId)
-//            if (response.isSuccessful) {
-//                showCustomBlackToast(getString(R.string.toast_favorite_add))
-//            } else {
-//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-//            }
-//            _isFavorite.value = response.isSuccessful
+            homeRepository.putFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_add))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = true, totalSubscribersCount = it.totalSubscribersCount + 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
+            }
         }
     }
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-//            val response = repository.deleteFavorite(storeType, storeId)
-//            if (response.isSuccessful) {
-//                showCustomBlackToast(getString(R.string.toast_favorite_delete))
-//            } else {
-//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-//            }
-//            _isFavorite.value = !response.isSuccessful
+            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_delete))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = false, totalSubscribersCount = it.totalSubscribersCount - 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
+            }
         }
     }
 
