@@ -20,6 +20,7 @@ import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailV
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -38,7 +39,6 @@ class FullScreenMapActivity :
 
     override fun initView() {
         initIntent()
-        initMap()
         initButton()
     }
 
@@ -47,12 +47,16 @@ class FullScreenMapActivity :
         longitude = intent.getDoubleExtra(LONGITUDE, 0.0)
         name = intent.getStringExtra(NAME).toString()
         isClosed = intent.getBooleanExtra(IS_CLOSED, true)
+        initMap()
     }
 
     private fun initMap() {
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
-        val latLng = LatLng(latitude, longitude)
-        naverMapFragment.initMap(latLng, isClosed)
+        lifecycleScope.launch {
+            delay(500L)
+            val latLng = LatLng(latitude, longitude)
+            naverMapFragment.initMap(latLng, isClosed)
+        }
     }
 
     private fun initButton() {
