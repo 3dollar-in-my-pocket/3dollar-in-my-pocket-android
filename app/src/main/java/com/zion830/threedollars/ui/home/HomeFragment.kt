@@ -61,11 +61,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var homeSortType = HomeSortType.DISTANCE_ASC
 
     override fun initView() {
-        viewModel.getUserInfo()
-        naverMapFragment = NearStoreNaverMapFragment {
-            binding.tvRetrySearch.isVisible = true
-        }
-        childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        initMap()
+        initAdapter()
+        initViewModel()
+        initFlow()
+        initButton()
+        initScroll()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
             binding.tvAddress.text = it ?: getString(R.string.location_no_address)
@@ -75,8 +76,71 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             binding.tvAddress.text =
                 getCurrentLocationName(it) ?: getString(R.string.location_no_address)
         }
-        getNearStore()
+    }
 
+    private fun initScroll() {
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.aroundStoreRecyclerView)
+        binding.aroundStoreRecyclerView.addOnScrollListener(
+            SnapOnScrollListener(
+                snapHelper,
+                onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
+                    override fun onSnapPositionChange(position: Int) {
+                        if (adapter.getItemLocation(position) != null) {
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+                            adapter.focusedIndex = position
+                            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
+
+                            adapter.getItemLocation(position)?.let {
+                                naverMapFragment.moveCameraWithAnim(it)
+                            }
+                        }
+                    }
+                })
+        )
+    }
+
+    private fun initViewModel() {
+        viewModel.getUserInfo()
+        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+    }
+
+    private fun initAdapter() {
+        adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
+            override fun onClick(item: ContentModel) {
+                EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
+                if (item.storeModel.storeType == BOSS_STORE) {
+                    val intent =
+                        FoodTruckStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                } else {
+                    val intent =
+                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                }
+
+            }
+        }, object : OnItemClickListener<AdvertisementModel> {
+            override fun onClick(item: AdvertisementModel) {
+                EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+            }
+        }) { item ->
+            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
+            startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+        }
+        binding.aroundStoreRecyclerView.adapter = adapter
+    }
+
+    private fun initMap() {
+        naverMapFragment = NearStoreNaverMapFragment {
+            binding.tvRetrySearch.isVisible = true
+        }
+        childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        naverMapFragment.moveToCurrentLocation(false)
+    }
+
+    private fun initButton() {
         binding.layoutAddress.setOnClickListener {
             EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
             requireActivity().supportFragmentManager.addNewFragment(
@@ -107,63 +171,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.listViewTextView.setOnClickListener {
             it.findNavController().navigate(R.id.action_home_to_home_list_view)
         }
-
-        adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
-            override fun onClick(item: ContentModel) {
-                EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
-                if(item.storeModel.storeType == BOSS_STORE){
-                    val intent =
-                        FoodTruckStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                }
-                else{
-                    val intent =
-                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                }
-
-            }
-        }, object : OnItemClickListener<AdvertisementModel> {
-            override fun onClick(item: AdvertisementModel) {
-                EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
-            }
-        }) { item ->
-            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
-            startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-        }
-
-        binding.aroundStoreRecyclerView.adapter = adapter
-
-        val snapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(binding.aroundStoreRecyclerView)
-        binding.aroundStoreRecyclerView.addOnScrollListener(
-            SnapOnScrollListener(
-                snapHelper,
-                onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
-                    override fun onSnapPositionChange(position: Int) {
-                        if (adapter.getItemLocation(position) != null) {
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
-                            adapter.focusedIndex = position
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
-
-                            adapter.getItemLocation(position)?.let {
-                                naverMapFragment.moveCameraWithAnim(it)
-                            }
-                        }
-                    }
-                })
-        )
         binding.tvRetrySearch.setOnClickListener {
-            getNearStore()
+            viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
-        naverMapFragment.moveToCurrentLocation(false)
-
-        initViewModel()
     }
 
-    private fun initViewModel() {
+    private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
@@ -187,7 +201,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 }
                             }
                         }
-                        getNearStore()
+                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
                     }
                 }
                 launch {
@@ -211,7 +225,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     viewModel.homeFilterEvent.collect {
-                        getNearStore()
+                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
 
                         val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
                         val drawableStart = ContextCompat.getDrawable(
@@ -251,10 +265,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun showSelectCategoryDialog() {
         val dialog = SelectCategoryDialogFragment()
         dialog.show(parentFragmentManager, "")
-    }
-
-    private fun getNearStore() {
-        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
     }
 
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
