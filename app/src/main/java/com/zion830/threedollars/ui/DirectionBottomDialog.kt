@@ -111,12 +111,12 @@ class DirectionBottomDialog : BottomSheetDialogFragment() {
         fun getInstance(
             latitude: Double?,
             longitude: Double?,
-            storeName: String
+            storeName: String?
         ) = DirectionBottomDialog().apply {
             arguments = Bundle().apply {
                 latitude?.let { putDouble(LATITUDE, it) }
                 longitude?.let { putDouble(LONGITUDE, it) }
-                putString(STORE_NAME, storeName)
+                storeName?.let { putString(STORE_NAME, it) }
             }
         }
     }

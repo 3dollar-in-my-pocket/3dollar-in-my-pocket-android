@@ -169,7 +169,14 @@ class FoodTruckStoreDetailActivity :
     }
 
     private fun moveFullScreenMap() {
-        val intent = FullScreenMapActivity.getIntent(this, storeId)
+        val store = viewModel.bossStoreDetailModel.value.store
+        val intent = FullScreenMapActivity.getIntent(
+            context = this,
+            latitude = store.location?.latitude,
+            longitude = store.location?.longitude,
+            name = store.name,
+            isClosed = viewModel.bossStoreDetailModel.value.openStatusModel.status == StatusType.CLOSED
+        )
         startActivity(intent)
     }
 

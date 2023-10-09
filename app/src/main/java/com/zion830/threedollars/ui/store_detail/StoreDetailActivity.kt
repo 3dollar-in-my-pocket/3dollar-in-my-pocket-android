@@ -372,6 +372,21 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             )
         }
     }
+    private fun showDirectionBottomDialog() {
+        val store = viewModel.userStoreDetailModel.value.store
+        DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
+    }
+
+    private fun moveFullScreenMap() {
+        val store = viewModel.userStoreDetailModel.value.store
+        val intent = FullScreenMapActivity.getIntent(
+            context = this,
+            latitude = store?.location?.latitude,
+            longitude = store?.location?.longitude,
+            name = store?.name,
+        )
+        startActivity(intent)
+    }
 
 //    private fun initWeekdays(it: StoreDetail?) {
 //        binding.layoutBtnDayOfWeek.tbMon.isChecked =
