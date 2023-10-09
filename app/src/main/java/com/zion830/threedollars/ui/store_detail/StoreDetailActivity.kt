@@ -29,8 +29,7 @@ import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.ext.addNewFragment
-import com.threedollar.common.ext.getMonthFirstDate
+import com.threedollar.common.ext.*
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
@@ -57,8 +56,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
-import com.threedollar.common.ext.showSnack
-import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
@@ -110,8 +107,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
             viewModel.getUserStoreDetail(
                 storeId = storeId,
-                deviceLatitude = viewModel.userStoreDetailModel.value.store?.location?.latitude,
-                deviceLongitude = viewModel.userStoreDetailModel.value.store?.location?.longitude,
+                deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
+                deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
                 filterVisitStartDate = getMonthFirstDate()
             )
         }
@@ -124,8 +121,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             if (it) {
                 viewModel.getUserStoreDetail(
                     storeId = storeId,
-                    deviceLatitude = viewModel.userStoreDetailModel.value.store?.location?.latitude,
-                    deviceLongitude = viewModel.userStoreDetailModel.value.store?.location?.longitude,
+                    deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
+                    deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
                     filterVisitStartDate = getMonthFirstDate()
                 )
             } else {
@@ -268,11 +265,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
         val userStoreModel = viewModel.userStoreDetailModel.value.store
 
-        userStoreModel?.let {
             val shareFormat = ShareFormat(
                 getString(R.string.kakao_map_format),
                 binding.storeNameTextView.text.toString(),
-                LatLng(it.location.latitude, it.location.longitude)
+                LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
             )
             shareWithKakao(
                 shareFormat = shareFormat,
@@ -288,7 +284,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 storeId = storeId.toString(),
                 type = getString(R.string.scheme_host_kakao_link_road_food_type)
             )
-        }
     }
 
     private fun initFlows() {
@@ -367,26 +362,27 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initImageView(userStoreDetailModel: UserStoreDetailModel) {
-        if (userStoreDetailModel.store?.categories?.isNotNullOrEmpty() == true) {
+        if (userStoreDetailModel.store.categories.isNotNullOrEmpty()) {
             Glide.with(binding.menuIconImageView)
-                .load(userStoreDetailModel.store!!.categories.first().imageUrl)
+                .load(userStoreDetailModel.store.categories.first().imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.menuIconImageView)
         }
 
-        binding.newImageView.isVisible = userStoreDetailModel.tags?.isNew ?: false
+        binding.newImageView.isVisible = userStoreDetailModel.tags.isNew
     }
 
     private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
-        binding.storeNameTextView.text = userStoreDetailModel.store?.name
-        binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator?.name)
+        binding.storeNameTextView.text = userStoreDetailModel.store.name
+        binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator.name)
         binding.distanceTextView.text =
-            if (userStoreDetailModel.distanceM!! < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
-        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews?.contents?.size)
-        binding.favoriteButton.text = userStoreDetailModel.favorite?.totalSubscribersCount.toString()
-        binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits?.counts?.existsCounts)
-        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits?.counts?.existsCounts.toString(), Typeface.BOLD)
-        binding.addressTextView.text = userStoreDetailModel.store?.address?.fullAddress
+            if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.contents.size)
+        binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
+        binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
+        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
+        binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
+        binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
     }
 
     private fun clickFavoriteButton() {
@@ -407,7 +403,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun startCertification() {
         val userStoreModel = viewModel.userStoreDetailModel.value.store
 
-        userStoreModel?.let {
             val distance = NaverMapUtils.calculateDistance(
                 naverMapFragment.currentPosition,
                 LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
@@ -418,21 +413,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 StoreCertificationAvailableFragment::class.java.name,
                 false
             )
-        }
     }
 
     private fun showDirectionBottomDialog() {
         val store = viewModel.userStoreDetailModel.value.store
-        DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
+        DirectionBottomDialog.getInstance(store.location.latitude, store.location.longitude, store.name).show(supportFragmentManager, "")
     }
 
     private fun moveFullScreenMap() {
         val store = viewModel.userStoreDetailModel.value.store
         val intent = FullScreenMapActivity.getIntent(
             context = this,
-            latitude = store?.location?.latitude,
-            longitude = store?.location?.longitude,
-            name = store?.name,
+            latitude = store.location.latitude,
+            longitude = store.location.longitude,
+            name = store.name,
         )
         startActivity(intent)
     }

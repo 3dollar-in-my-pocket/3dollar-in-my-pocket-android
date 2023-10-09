@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class BossStore(
     @SerializedName("address")
-    val address: Address = Address(),
+    val address: Address? = Address(),
     @SerializedName("appearanceDays")
-    val appearanceDays: List<AppearanceDay>,
+    val appearanceDays: List<AppearanceDay>? = listOf(),
     @SerializedName("categories")
-    val categories: List<Category> = listOf(),
+    val categories: List<Category>? = listOf(),
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("imageUrl")
     val imageUrl: String? = "",
     @SerializedName("introduction")
@@ -18,13 +18,13 @@ data class BossStore(
     @SerializedName("location")
     val location: Location? = Location(),
     @SerializedName("menus")
-    val menus: List<Menu> = listOf(),
+    val menus: List<Menu>? = listOf(),
     @SerializedName("name")
-    val name: String = "",
+    val name: String? = "",
     @SerializedName("snsUrl")
     val snsUrl: String? = "",
     @SerializedName("storeId")
-    val storeId: String = "",
+    val storeId: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = ""
+    val updatedAt: String? = ""
 )

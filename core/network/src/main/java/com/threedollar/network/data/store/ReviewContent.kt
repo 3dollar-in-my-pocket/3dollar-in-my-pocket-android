@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class ReviewContent(
     @SerializedName("review")
-    val review: Review = Review(),
+    val review: Review? = Review(),
     @SerializedName("reviewReport")
-    val reviewReport: ReviewReport = ReviewReport(),
+    val reviewReport: ReviewReport? = ReviewReport(),
     @SerializedName("reviewWriter")
-    val reviewWriter: ReviewWriter = ReviewWriter(),
+    val reviewWriter: ReviewWriter? = ReviewWriter(),
 )

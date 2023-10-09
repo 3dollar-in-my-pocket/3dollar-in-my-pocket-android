@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class ReviewReport(
     @SerializedName("reportedByMe")
-    val reportedByMe: Boolean = false,
+    val reportedByMe: Boolean? = false,
 )

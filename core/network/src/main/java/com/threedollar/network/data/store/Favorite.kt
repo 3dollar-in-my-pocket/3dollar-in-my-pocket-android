@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Favorite(
     @SerializedName("isFavorite")
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean? = false,
     @SerializedName("totalSubscribersCount")
-    val totalSubscribersCount: Int = 0
+    val totalSubscribersCount: Int? = 0
 )

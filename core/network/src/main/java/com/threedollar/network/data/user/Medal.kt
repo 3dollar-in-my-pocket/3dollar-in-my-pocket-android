@@ -4,19 +4,19 @@ import com.google.gson.annotations.SerializedName
 
 data class Medal(
     @SerializedName("acquisition")
-    val acquisition: Acquisition = Acquisition(),
+    val acquisition: Acquisition? = Acquisition(),
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("disableIconUrl")
-    val disableIconUrl: String = "",
+    val disableIconUrl: String? = "",
     @SerializedName("iconUrl")
-    val iconUrl: String = "",
+    val iconUrl: String? = "",
     @SerializedName("introduction")
-    val introduction: String = "",
+    val introduction: String? = "",
     @SerializedName("medalId")
-    val medalId: Int = 0,
+    val medalId: Int? = 0,
     @SerializedName("name")
-    val name: String = "",
+    val name: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = ""
+    val updatedAt: String? = ""
 )

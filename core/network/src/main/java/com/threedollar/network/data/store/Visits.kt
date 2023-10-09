@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Visits(
     @SerializedName("counts")
-    val counts: Counts = Counts(),
+    val counts: Counts? = Counts(),
     @SerializedName("histories")
-    val histories: Histories = Histories()
+    val histories: Histories? = Histories()
 )

@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 
 data class Visit(
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("type")
-    val type: String = "",
+    val type: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = "",
+    val updatedAt: String? = "",
     @SerializedName("visitDate")
-    val visitDate: String = "",
+    val visitDate: String? = "",
     @SerializedName("visitId")
-    val visitId: String = "",
+    val visitId: String? = "",
 )

@@ -6,5 +6,5 @@ data class OpenStatus(
     @SerializedName("openStartDateTime")
     val openStartDateTime: String? = "",
     @SerializedName("status")
-    val status: String = ""
+    val status: String? = ""
 )

@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Content(
     @SerializedName("distanceM")
-    val distanceM: Int = 0,
+    val distanceM: Int? = 0,
     @SerializedName("extra")
-    val extra: Extra = Extra(),
+    val extra: Extra? = Extra(),
     @SerializedName("store")
-    val store: Store = Store()
+    val store: Store? = Store()
 )

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Histories(
     @SerializedName("contents")
-    val contents: List<HistoriesContent> = listOf(),
+    val contents: List<HistoriesContent>? = listOf(),
     @SerializedName("cursor")
-    val cursor: Cursor = Cursor()
+    val cursor: Cursor? = Cursor()
 )

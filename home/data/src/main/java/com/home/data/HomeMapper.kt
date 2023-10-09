@@ -43,7 +43,7 @@ fun Device.asModel() = DeviceModel(
 )
 
 fun Medal.asModel() = MedalModel(
-    acquisitionModel = acquisition.asModel(),
+    acquisitionModel = acquisition?.asModel(),
     createdAt = createdAt,
     disableIconUrl = disableIconUrl,
     iconUrl = iconUrl,
@@ -58,135 +58,135 @@ fun Acquisition.asModel() = AcquisitionModel(
 )
 
 fun Account.asModel() = AccountModel(
-    accountId = accountId,
-    accountType = accountType
+    accountId = accountId ?: "",
+    accountType = accountType ?: ""
 )
 
 fun Address.asModel() = AddressModel(
-    fullAddress = fullAddress
+    fullAddress = fullAddress ?: ""
 )
 
 fun AroundStoreResponse.asModel() = AroundStoreModel(
-    contentModels = contents.map { it.asModel() },
-    cursorModel = cursor.asModel()
+    contentModels = contents?.map { it.asModel() } ?: listOf(),
+    cursorModel = cursor?.asModel() ?: CursorModel()
 )
 
 fun Category.asModel() = CategoryModel(
-    categoryId = categoryId,
-    classificationModel = classification.asModel(),
-    description = description,
-    disableImageUrl = disableImageUrl,
-    imageUrl = imageUrl,
-    isNew = isNew,
-    name = name,
+    categoryId = categoryId ?: "",
+    classificationModel = classification?.asModel() ?: ClassificationModel(),
+    description = description ?: "",
+    disableImageUrl = disableImageUrl ?: "",
+    imageUrl = imageUrl ?: "",
+    isNew = isNew ?: false,
+    name = name ?: "",
 )
 
 fun Classification.asModel() = ClassificationModel(
-    description = description,
-    type = type
+    description = description ?: "",
+    type = type ?: ""
 )
 
 fun Content.asModel() = ContentModel(
-    distanceM = distanceM,
-    extraModel = extra.asModel(),
-    storeModel = store.asModel()
+    distanceM = distanceM ?: 0,
+    extraModel = extra?.asModel() ?: ExtraModel(),
+    storeModel = store?.asModel() ?: StoreModel()
 )
 
 fun Cursor.asModel() = CursorModel(
-    hasMore = hasMore,
+    hasMore = hasMore ?: false,
     nextCursor = nextCursor
 )
 
 fun Extra.asModel() = ExtraModel(
-    rating = rating,
-    reviewsCount = reviewsCount,
-    tagsModel = tags.asModel(),
-    visitCountsModel = visitCounts?.asModel(),
+    rating = rating ?: 0,
+    reviewsCount = reviewsCount ?: 0,
+    tagsModel = tags?.asModel() ?: TagsModel(),
+    visitCountsModel = visitCounts?.asModel() ?: VisitCountsModel(),
 )
 
 fun Location.asModel() = LocationModel(
-    latitude = latitude,
-    longitude = longitude
+    latitude = latitude ?: 0.0,
+    longitude = longitude ?: 0.0
 )
 
 fun Store.asModel() = StoreModel(
-    accountModel = account.asModel(),
-    addressModel = address.asModel(),
-    categories = categories.map { it.asModel() },
-    createdAt = createdAt,
-    isDeleted = isDeleted,
-    locationModel = location.asModel(),
-    storeId = storeId,
-    storeName = storeName,
-    storeType = storeType,
-    updatedAt = updatedAt,
+    accountModel = account?.asModel() ?: AccountModel(),
+    addressModel = address?.asModel() ?: AddressModel(),
+    categories = categories?.map { it.asModel() } ?: listOf(),
+    createdAt = createdAt ?: "",
+    isDeleted = isDeleted ?: false,
+    locationModel = location?.asModel() ?: LocationModel(),
+    storeId = storeId ?: "",
+    storeName = storeName ?: "",
+    storeType = storeType ?: "",
+    updatedAt = updatedAt ?: "",
 )
 
 fun Tags.asModel() = TagsModel(
-    isNew = isNew
+    isNew = isNew ?: false
 )
 
 fun VisitCounts.asModel() = VisitCountsModel(
-    existsCounts = existsCounts,
-    isCertified = isCertified,
-    notExistsCounts = notExistsCounts
+    existsCounts = existsCounts ?: 0,
+    isCertified = isCertified ?: false,
+    notExistsCounts = notExistsCounts ?: 0
 )
 
 fun AppearanceDay.asModel() = AppearanceDayModel(
-    dayOfTheWeek = dayOfTheWeek.asDayOfTheWeekType(),
-    locationDescription = locationDescription,
-    openingHoursModel = openingHours.asModel()
+    dayOfTheWeek = dayOfTheWeek?.asDayOfTheWeekType() ?: DayOfTheWeekType.SUNDAY,
+    locationDescription = locationDescription ?: "",
+    openingHoursModel = openingHours?.asModel() ?: OpeningHoursModel()
 )
 
 fun OpeningHours.asModel() = OpeningHoursModel(
-    endTime = endTime,
-    startTime = startTime
+    endTime = endTime ?: "",
+    startTime = startTime ?: ""
 )
 
 fun BossStore.asModel() = BossStoreModel(
-    address = address.asModel(),
-    appearanceDayModels = appearanceDays.map { it.asModel() },
-    categories = categories.map { it.asModel() },
-    createdAt = createdAt,
+    address = address?.asModel() ?: AddressModel(),
+    appearanceDayModels = appearanceDays?.map { it.asModel() } ?: listOf(),
+    categories = categories?.map { it.asModel() } ?: listOf(),
+    createdAt = createdAt ?: "",
     imageUrl = imageUrl,
     introduction = introduction,
     location = location?.asModel(),
-    menuModels = menus.map { it.asModel() },
-    name = name,
+    menuModels = menus?.map { it.asModel() } ?: listOf(),
+    name = name ?: "",
     snsUrl = snsUrl,
-    storeId = storeId,
-    updatedAt = updatedAt
+    storeId = storeId ?: "",
+    updatedAt = updatedAt ?: ""
 )
 
 fun Menu.asModel() = MenuModel(
     imageUrl = imageUrl,
-    name = name,
-    price = price
+    name = name ?: "",
+    price = price ?: 0
 )
 
 fun BossStoreResponse.asModel() = BossStoreDetailModel(
-    distanceM = distanceM,
-    favoriteModel = favorite.asModel(),
-    feedbackModels = feedbacks.map { it.asModel() },
-    openStatusModel = openStatus.asModel(),
-    store = store.asModel(),
-    tags = tags.asModel()
+    distanceM = distanceM ?: 0,
+    favoriteModel = favorite?.asModel() ?: FavoriteModel(),
+    feedbackModels = feedbacks?.map { it.asModel() } ?: listOf(),
+    openStatusModel = openStatus?.asModel() ?: OpenStatusModel(),
+    store = store?.asModel() ?: BossStoreModel(),
+    tags = tags?.asModel() ?: TagsModel()
 )
 
 fun Favorite.asModel() = FavoriteModel(
-    isFavorite = isFavorite,
-    totalSubscribersCount = totalSubscribersCount
+    isFavorite = isFavorite ?: false,
+    totalSubscribersCount = totalSubscribersCount ?: 0
 )
 
 fun Feedback.asModel() = FeedbackModel(
-    count = count,
-    feedbackType = feedbackType.asFeedbackType(),
-    ratio = ratio
+    count = count ?: 0,
+    feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
+    ratio = ratio ?: 0
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
     openStartDateTime = openStartDateTime,
-    status = status.asStatusType()
+    status = status?.asStatusType() ?: StatusType.OPEN
 )
 
 fun String.asDayOfTheWeekType() = when (this) {
@@ -278,121 +278,121 @@ fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeRes
 }
 
 fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
-    creator = creator?.asModel(),
-    distanceM = distanceM,
-    favorite = favorite?.asModel(),
-    images = images?.asModel(),
-    reviews = reviews?.asModel(),
-    store = store?.asModel(),
-    tags = tags?.asModel(),
-    visits = visits?.asModel()
+    creator = creator?.asModel() ?: CreatorModel(),
+    distanceM = distanceM ?: 0,
+    favorite = favorite?.asModel() ?: FavoriteModel(),
+    images = images?.asModel() ?: ImagesModel(),
+    reviews = reviews?.asModel() ?: ReviewsModel(),
+    store = store?.asModel() ?: UserStoreModel(),
+    tags = tags?.asModel() ?: TagsModel(),
+    visits = visits?.asModel() ?: VisitsModel()
 
 )
 
 fun Creator.asModel(): CreatorModel = CreatorModel(
-    medal = medal.asModel(),
-    name = name,
+    medal = medal?.asModel() ?: MedalModel(),
+    name = name ?: "",
     socialType = socialType,
     userId = userId
 )
 
 fun Images.asModel(): ImagesModel = ImagesModel(
-    contents = contents.map { it.asModel() },
-    cursor = cursor.asModel()
+    contents = contents?.map { it.asModel() } ?: listOf(),
+    cursor = cursor?.asModel() ?: CursorModel()
 )
 
 fun ImageContent.asModel() = ImageContentModel(
-    createdAt = createdAt,
-    imageId = imageId,
-    updatedAt = updatedAt,
-    url = url
+    createdAt = createdAt ?: "",
+    imageId = imageId ?: 0,
+    updatedAt = updatedAt ?: "",
+    url = url ?: ""
 )
 
 fun Reviews.asModel() = ReviewsModel(
-    contents = contents.map { it.asModel() }
+    contents = contents?.map { it.asModel() } ?: listOf()
 )
 
 fun ReviewContent.asModel() = ReviewContentModel(
-    review = review.asModel(),
-    reviewReport = reviewReport.asModel(),
-    reviewWriter = reviewWriter.asModel()
+    review = review?.asModel() ?: ReviewModel(),
+    reviewReport = reviewReport?.asModel() ?: ReviewReportModel(),
+    reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel()
 
 )
 
 fun Review.asModel() = ReviewModel(
     contents = contents,
-    createdAt = createdAt,
-    rating = rating,
-    reviewId = reviewId,
-    status = status,
-    updatedAt = updatedAt
+    createdAt = createdAt ?: "",
+    rating = rating ?: 0,
+    reviewId = reviewId ?: 0,
+    status = status ?: "",
+    updatedAt = updatedAt ?: ""
 )
 
 fun ReviewReport.asModel() = ReviewReportModel(
-    reportedByMe = reportedByMe
+    reportedByMe = reportedByMe ?: false
 )
 
 fun ReviewWriter.asModel() = ReviewWriterModel(
-    medal = medal.asModel(),
-    name = name,
+    medal = medal?.asModel() ?: MedalModel(),
+    name = name ?: "",
     socialType = socialType,
     userId = userId
 )
 
 fun UserStore.asModel() = UserStoreModel(
-    address = address.asModel(),
-    appearanceDays = appearanceDays,
-    categories = categories.map { it.asModel() },
-    createdAt = createdAt,
-    location = location.asModel(),
-    menus = menus.map { it.asModel() },
-    name = name,
-    paymentMethods = paymentMethods,
-    rating = rating,
+    address = address?.asModel() ?: AddressModel(),
+    appearanceDays = appearanceDays ?: listOf(),
+    categories = categories?.map { it.asModel() } ?: listOf(),
+    createdAt = createdAt ?: "",
+    location = location?.asModel() ?: LocationModel(),
+    menus = menus?.map { it.asModel() } ?: listOf(),
+    name = name ?: "",
+    paymentMethods = paymentMethods ?: listOf(),
+    rating = rating ?: 0,
     salesType = salesType,
-    storeId = storeId,
-    updatedAt = updatedAt
+    storeId = storeId ?: 0,
+    updatedAt = updatedAt ?: ""
 )
 
 fun UserStoreMenu.asModel() = UserStoreMenuModel(
-    category = category.asModel(),
-    menuId = menuId,
+    category = category?.asModel() ?: CategoryModel(),
+    menuId = menuId ?: 0,
     name = name,
     price = price
 )
 
 fun Visits.asModel() = VisitsModel(
-    counts = counts.asModel(),
-    histories = histories.asModel()
+    counts = counts?.asModel() ?: CountsModel(),
+    histories = histories?.asModel() ?: HistoriesModel()
 )
 
 fun Counts.asModel() = CountsModel(
-    existsCounts = existsCounts,
-    isCertified = isCertified,
-    notExistsCounts = notExistsCounts
+    existsCounts = existsCounts ?: 0,
+    isCertified = isCertified ?: false,
+    notExistsCounts = notExistsCounts ?: 0
 )
 
 fun Histories.asModel() = HistoriesModel(
-    contents = contents.map { it.asModel() },
-    cursor = cursor.asModel()
+    contents = contents?.map { it.asModel() } ?: listOf(),
+    cursor = cursor?.asModel() ?: CursorModel()
 )
 
 fun HistoriesContent.asModel() = HistoriesContentModel(
-    visit = visit.asModel(),
-    visitor = visitor.asModel()
+    visit = visit?.asModel() ?: VisitModel(),
+    visitor = visitor?.asModel() ?: VisitorModel()
 )
 
 fun Visit.asModel() = VisitModel(
-    createdAt = createdAt,
-    type = type,
-    updatedAt = updatedAt,
-    visitDate = visitDate,
-    visitId = visitId
+    createdAt = createdAt ?: "",
+    type = type ?: "",
+    updatedAt = updatedAt ?: "",
+    visitDate = visitDate ?: "",
+    visitId = visitId ?: ""
 )
 
 fun Visitor.asModel() = VisitorModel(
-    medal = medal.asModel(),
-    name = name,
+    medal = medal?.asModel() ?: MedalModel(),
+    name = name ?: "",
     socialType = socialType,
     userId = userId
 )

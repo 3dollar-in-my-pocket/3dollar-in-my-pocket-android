@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Counts(
     @SerializedName("existsCounts")
-    val existsCounts: Int = 0,
+    val existsCounts: Int? = 0,
     @SerializedName("isCertified")
-    val isCertified: Boolean = false,
+    val isCertified: Boolean? = false,
     @SerializedName("notExistsCounts")
-    val notExistsCounts: Int = 0
+    val notExistsCounts: Int? = 0
 )

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class OpeningHours(
     @SerializedName("endTime")
-    val endTime: String = "",
+    val endTime: String? = "",
     @SerializedName("startTime")
-    val startTime: String = ""
+    val startTime: String? = ""
 )

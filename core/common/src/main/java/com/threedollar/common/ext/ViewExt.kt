@@ -2,12 +2,14 @@ package com.threedollar.common.ext
 
 import android.graphics.Typeface
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
@@ -42,7 +44,7 @@ fun View.showSnack(
     @ColorRes color: Int = android.R.color.white
 ) {
     Snackbar.make(this, message, length).run {
-        color?.let { setActionTextColor(ContextCompat.getColor(context, color)) }
+        setActionTextColor(ContextCompat.getColor(context, color))
         setAction(context.getString(android.R.string.ok)) { dismiss() }
         show()
     }

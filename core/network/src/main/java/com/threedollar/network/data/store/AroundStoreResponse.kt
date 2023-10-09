@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AroundStoreResponse(
     @SerializedName("contents")
-    val contents: List<Content> = listOf(),
+    val contents: List<Content>? = listOf(),
     @SerializedName("cursor")
-    val cursor: Cursor
+    val cursor: Cursor?
 )

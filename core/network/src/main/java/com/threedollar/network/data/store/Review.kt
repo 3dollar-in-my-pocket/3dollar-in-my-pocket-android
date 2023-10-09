@@ -7,13 +7,13 @@ data class Review(
     @SerializedName("contents")
     val contents: String? = null,
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("rating")
-    val rating: Int = 0,
+    val rating: Int? = 0,
     @SerializedName("reviewId")
-    val reviewId: Int = 0,
+    val reviewId: Int? = 0,
     @SerializedName("status")
-    val status: String = "",
+    val status: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = "",
+    val updatedAt: String? = "",
 )

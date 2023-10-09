@@ -6,9 +6,9 @@ import com.threedollar.network.data.user.Medal
 
 data class Visitor(
     @SerializedName("medal")
-    val medal: Medal = Medal(),
+    val medal: Medal? = Medal(),
     @SerializedName("name")
-    val name: String = "",
+    val name: String? = "",
     @SerializedName("socialType")
     val socialType: String? = null,
     @SerializedName("userId")

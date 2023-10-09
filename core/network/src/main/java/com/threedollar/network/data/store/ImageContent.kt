@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class ImageContent(
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("imageId")
-    val imageId: Int = 0,
+    val imageId: Int? = 0,
     @SerializedName("updatedAt")
-    val updatedAt: String = "",
+    val updatedAt: String? = "",
     @SerializedName("url")
-    val url: String = "",
+    val url: String? = "",
 )
