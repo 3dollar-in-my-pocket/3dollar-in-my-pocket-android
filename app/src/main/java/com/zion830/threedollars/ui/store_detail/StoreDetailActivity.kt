@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.store_detail
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
@@ -23,11 +24,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.home.domain.data.store.StatusType
 import com.home.domain.data.store.UserStoreDetailModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
-import com.threedollar.common.ext.changeTextPartBold
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
@@ -58,6 +59,8 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.ext.textPartTypeface
+import com.zion830.threedollars.ui.DirectionBottomDialog
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -280,6 +283,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
+        binding.fullScreenButton.setOnClickListener {
+            moveFullScreenMap()
+        }
+        binding.addressTextView.setOnClickListener {
+            val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+            manager.text = binding.addressTextView.text
+            showToast("주소가 복사됐습니다.")
+        }
+        binding.directionsButton.setOnClickListener {
+            showDirectionBottomDialog()
+        }
     }
 
     private fun initFlows() {
@@ -334,6 +348,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.favoriteButton.text = userStoreDetailModel.favorite?.totalSubscribersCount.toString()
         binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits?.counts?.existsCounts)
         binding.bossTextView.textPartTypeface(userStoreDetailModel.visits?.counts?.existsCounts.toString(),Typeface.BOLD)
+        binding.addressTextView.text = userStoreDetailModel.store?.address?.fullAddress
     }
 
     private fun clickFavoriteButton() {
@@ -502,7 +517,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == EDIT_STORE_INFO && resultCode == RESULT_OK) {
             refreshStoreInfo()
         }
     }
