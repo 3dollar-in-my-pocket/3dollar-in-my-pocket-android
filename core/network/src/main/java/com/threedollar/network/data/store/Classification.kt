@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Classification(
     @SerializedName("description")
-    val description: String = "",
+    val description: String? = "",
     @SerializedName("type")
-    val type: String = ""
+    val type: String? = ""
 )

@@ -30,3 +30,26 @@ fun String.convertUpdateAt(context: Context): String {
         ""
     }
 }
+
+fun String.convertCreatedAt(): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+    return try {
+        val date = inputFormat.parse(this)
+        if (date != null) {
+            outputFormat.format(date)
+        } else {
+            this
+        }
+    } catch (e: Exception) {
+        ""
+    }
+}
+
+fun getMonthFirstDate(): String {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+
+    return dateFormat.format(calendar.time)
+}

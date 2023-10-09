@@ -27,10 +27,10 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
-import com.zion830.threedollars.ui.store_detail.map.FoodTruckStoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,8 +62,8 @@ class FoodTruckStoreDetailActivity :
     private var latitude = 0.0
     private var longitude = 0.0
 
-    private val naverMapFragment: FoodTruckStoreDetailNaverMapFragment by lazy {
-        FoodTruckStoreDetailNaverMapFragment()
+    private val naverMapFragment: StoreDetailNaverMapFragment by lazy {
+        StoreDetailNaverMapFragment()
     }
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
@@ -169,7 +169,14 @@ class FoodTruckStoreDetailActivity :
     }
 
     private fun moveFullScreenMap() {
-        val intent = FullScreenMapActivity.getIntent(this, storeId)
+        val store = viewModel.bossStoreDetailModel.value.store
+        val intent = FullScreenMapActivity.getIntent(
+            context = this,
+            latitude = store.location?.latitude,
+            longitude = store.location?.longitude,
+            name = store.name,
+            isClosed = viewModel.bossStoreDetailModel.value.openStatusModel.status == StatusType.CLOSED
+        )
         startActivity(intent)
     }
 
@@ -203,10 +210,10 @@ class FoodTruckStoreDetailActivity :
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
                         } else if (bossStoreDetailModel.store.menuModels.size > 5) {
                             val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
-                            val foodTruckMenuMoreResponse = FoodTruckMenuMoreResponse(
-                                moreTitle = getString(R.string.food_truck_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
+                            val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
+                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
                             )
-                            foodTruckMenuAdapter.submitList(sublist + foodTruckMenuMoreResponse)
+                            foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
                             foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menuModels)
                         }

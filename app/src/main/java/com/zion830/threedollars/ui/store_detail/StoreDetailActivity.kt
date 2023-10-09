@@ -1,26 +1,32 @@
 package com.zion830.threedollars.ui.store_detail
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.ads.AdRequest
+import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.threedollar.common.ext.addNewFragment
+import com.home.domain.data.store.*
+import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.ext.*
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.USER_STORE
@@ -28,39 +34,40 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
-import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
-import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
-import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
-import zion830.com.common.ext.showSnack
-import com.threedollar.common.ext.toFormattedNumber
+import zion830.com.common.ext.isNotNullOrEmpty
+import com.zion830.threedollars.ui.DirectionBottomDialog
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
+import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
+import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 
 @AndroidEntryPoint
-class StoreDetailActivity :
-    LegacyBaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>(R.layout.activity_store_info) {
+class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
 
     override val viewModel: StoreDetailViewModel by viewModels()
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private val categoryAdapter = CategoryInfoRecyclerAdapter()
+    private val userStoreMenuAdapter: UserStoreMenuAdapter by lazy {
+        UserStoreMenuAdapter {
+            val menuGroup = viewModel.userStoreDetailModel.value.store.menus.groupBy { it.category.name }
+            userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
+        }
+    }
 
     private var storeId = 0
 
@@ -72,7 +79,9 @@ class StoreDetailActivity :
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
-    private val visitHistoryAdapter = VisitHistoryAdapter()
+    private val visitHistoryAdapter: VisitHistoryAdapter by lazy {
+        VisitHistoryAdapter()
+    }
 
     private var progressDialog: AlertDialog? = null
 
@@ -86,142 +95,33 @@ class StoreDetailActivity :
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
-
-        EventTracker.logEvent(Constants.STORE_DELETE_BTN_CLICKED)
-        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
-            override fun onTouch() {
-                // 지도 스크롤 이벤트 구분용
-                binding.scroll.requestDisallowInterceptTouchEvent(true)
-            }
-        })
-        supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
-        val adRequest: AdRequest = AdRequest.Builder().build()
-        binding.admob.loadAd(adRequest)
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getIntExtra(STORE_ID, 0)
-        reviewAdapter = ReviewRecyclerAdapter(
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
-                    AddReviewDialog.getInstance(item)
-                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
-                }
-            },
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
-                    viewModel.deleteReview(item.reviewId)
-                }
-            },
-        )
-        photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
-            override fun onClick(item: StoreImage) {
-                StorePhotoDialog.getInstance(item.index)
-                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
-            }
-        })
-        binding.rvVisitHistory.adapter = visitHistoryAdapter
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        binding.btnBack.setOnClickListener {
-            setResult(RESULT_OK)
-            finish()
-        }
-        binding.deleteTextView.setOnClickListener {
-            DeleteStoreDialog.getInstance(storeId)
-                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-        }
-        binding.btnAddPhoto.setOnClickListener {
-            TedImagePicker.with(this).zoomIndicator(false).errorListener {
-                if (it.message?.startsWith("permission") == true) {
-                    AlertDialog.Builder(this)
-                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
-                            goToPermissionSetting()
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setTitle(getString(R.string.request_permission))
-                        .setMessage(getString(R.string.request_permission_msg))
-                        .create()
-                        .show()
-                }
-            }.startMultiImage { uriData ->
-                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
-                lifecycleScope.launch {
-                    val images = getImageFiles(uriData)
-                    if (images != null) {
-                        viewModel.saveImages(images)
-                    }
-                }
-            }
-        }
-        binding.btnShare.setOnClickListener {
-            EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
-            val shareFormat = ShareFormat(
-                getString(R.string.kakao_map_format),
-                binding.tvStoreName.text.toString(),
-                viewModel.selectedLocation.value ?: viewModel.storeLocation.value
-            )
-            shareWithKakao(
-                shareFormat = shareFormat,
-                title = getString(
-                    R.string.share_kakao_road_food_title,
-                    viewModel.storeInfo.value?.storeName
-                ),
-                description = getString(
-                    R.string.share_kakao_road_food,
-                    viewModel.storeInfo.value?.storeName
-                ),
-                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
-                storeId = storeId.toString(),
-                type = getString(R.string.scheme_host_kakao_link_road_food_type)
-            )
-        }
-        binding.rvPhoto.adapter = photoAdapter
-        binding.rvCategory.adapter = categoryAdapter
-        binding.rvReview.adapter = reviewAdapter
-        binding.btnAddReview.setOnClickListener {
-            AddReviewDialog.getInstance()
-                .show(supportFragmentManager, AddReviewDialog::class.java.name)
-        }
-        binding.btnAddStoreInfo.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
-            supportFragmentManager.addNewFragment(
-                R.id.container,
-                EditStoreDetailFragment(),
-                EditStoreDetailFragment::class.java.name,
-                false
-            )
-        }
-        binding.btnCertification.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
-            startCertification()
-        }
-        binding.favoriteButton.onSingleClick {
-            clickFavoriteButton()
-        }
-        binding.bottomFavoriteButton.onSingleClick {
-            clickFavoriteButton()
-        }
+        initMap()
+        initButton()
+        initAdapter()
+        initFlows()
+
         viewModel.addReviewResult.observe(this) {
             EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
-            viewModel.requestStoreInfo(
-                storeId,
-                viewModel.storeInfo.value?.latitude,
-                viewModel.storeInfo.value?.longitude
+            viewModel.getUserStoreDetail(
+                storeId = storeId,
+                deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
+                deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
+                filterVisitStartDate = getMonthFirstDate()
             )
-        }
-        viewModel.closeActivity.observe(this) {
-            if (it) {
-                finish()
-            }
         }
         viewModel.photoDeleted.observe(this) {
             if (it) {
-                viewModel.requestStoreInfo(
-                    storeId,
-                    viewModel.storeLocation.value?.latitude,
-                    viewModel.storeLocation.value?.latitude
+                viewModel.getUserStoreDetail(
+                    storeId = storeId,
+                    deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
+                    deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
+                    filterVisitStartDate = getMonthFirstDate()
                 )
             } else {
-                binding.layoutTitle.showSnack(getString(R.string.delete_photo_failed))
+                binding.root.showSnack(getString(R.string.delete_photo_failed))
             }
         }
         viewModel.uploadImageStatus.observe(this) {
@@ -245,173 +145,363 @@ class StoreDetailActivity :
                 finish()
             }
         }
-        viewModel.storeInfo.observe(this) {
-            initStoreInfo(it)
-            updateVisitHistory(it)
+    }
 
-            reviewAdapter.submitList(it?.reviews)
-            photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
-                StoreImage(index, null, image.url)
-            }?.toMutableList())
-            initWeekdays(it)
-
-            startCertificationExactly = if (startCertificationExactly != null) {
-                intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
-            } else {
-                null
+    private fun initAdapter() {
+        reviewAdapter = ReviewRecyclerAdapter(
+            object : OnItemClickListener<Review> {
+                override fun onClick(item: Review) {
+                    AddReviewDialog.getInstance(item)
+                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
+                }
+            },
+            object : OnItemClickListener<Review> {
+                override fun onClick(item: Review) {
+                    viewModel.deleteReview(item.reviewId)
+                }
+            },
+        )
+        photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
+            override fun onClick(item: StoreImage) {
+                StorePhotoDialog.getInstance(item.index)
+                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
 
-            if (startCertificationExactly == true) {
-                lifecycleScope.launch {
-                    startCertification()
-                    startCertificationExactly = null
+        })
+        binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
+        binding.menuRecyclerView.adapter = userStoreMenuAdapter
+
+//        binding.rvPhoto.adapter = photoAdapter
+//        binding.rvReview.adapter = reviewAdapter
+    }
+
+    private fun initMap() {
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
+        supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+    }
+
+    private fun initButton() {
+        binding.btnBack.setOnClickListener {
+            setResult(RESULT_OK)
+            finish()
+        }
+        binding.deleteButton.setOnClickListener {
+            DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+        }
+//        binding.btnAddPhoto.setOnClickListener {
+//            TedImagePicker.with(this).zoomIndicator(false).errorListener {
+//                if (it.message?.startsWith("permission") == true) {
+//                    AlertDialog.Builder(this)
+//                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+//                            goToPermissionSetting()
+//                        }
+//                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+//                        .setTitle(getString(R.string.request_permission))
+//                        .setMessage(getString(R.string.request_permission_msg))
+//                        .create()
+//                        .show()
+//                }
+//            }.startMultiImage { uriData ->
+//                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
+//                lifecycleScope.launch {
+//                    val images = getImageFiles(uriData)
+//                    if (images != null) {
+//                        viewModel.saveImages(images)
+//                    }
+//                }
+//            }
+//        }
+        binding.shareButton.setOnClickListener {
+            initShared()
+        }
+//        binding.btnAddReview.setOnClickListener {
+//            AddReviewDialog.getInstance()
+//                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+//        }
+        binding.editStoreInfoButton.setOnClickListener {
+            // TODO: 정보 수정 기능 구현
+//            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
+//            supportFragmentManager.addNewFragment(
+//                R.id.container,
+//                EditStoreDetailFragment(),
+//                EditStoreDetailFragment::class.java.name,
+//                false
+//            )
+        }
+        binding.addCertificationButton.setOnClickListener {
+            EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
+            startCertification()
+        }
+        binding.favoriteButton.onSingleClick {
+            clickFavoriteButton()
+        }
+        binding.bottomFavoriteButton.onSingleClick {
+            clickFavoriteButton()
+        }
+        binding.fullScreenButton.setOnClickListener {
+            moveFullScreenMap()
+        }
+        binding.addressTextView.setOnClickListener {
+            val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+            manager.text = binding.addressTextView.text
+            showToast("주소가 복사됐습니다.")
+        }
+        binding.directionsButton.setOnClickListener {
+            showDirectionBottomDialog()
+        }
+    }
+
+    private fun initShared() {
+        EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
+        val userStoreModel = viewModel.userStoreDetailModel.value.store
+
+        val shareFormat = ShareFormat(
+            getString(R.string.kakao_map_format),
+            binding.storeNameTextView.text.toString(),
+            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+        )
+        shareWithKakao(
+            shareFormat = shareFormat,
+            title = getString(
+                R.string.share_kakao_road_food_title,
+                userStoreModel.name
+            ),
+            description = getString(
+                R.string.share_kakao_road_food,
+                userStoreModel.name
+            ),
+            imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+            storeId = storeId.toString(),
+            type = getString(R.string.scheme_host_kakao_link_road_food_type)
+        )
+    }
+
+    private fun initFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.userStoreDetailModel.collect {
+//                        reviewAdapter.submitList(it?.reviews)
+//                        photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
+//                            StoreImage(index, null, image.url)
+//                        }?.toMutableList())
+                        val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
+                        naverMapFragment.initMap(latLng)
+                        startCertificationExactly = if (startCertificationExactly != null) {
+                            intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
+                        } else {
+                            null
+                        }
+                        if (startCertificationExactly == true) {
+                            lifecycleScope.launch {
+                                startCertification()
+                                startCertificationExactly = null
+                            }
+                        }
+                        initImageView(it)
+                        initTextView(it)
+                        initVisitHistory(it.visits)
+                        initMenu(it.store.menus)
+                    }
+                }
+                launch {
+                    viewModel.favoriteModel.collect {
+                        setFavoriteIcon(it.isFavorite)
+                        binding.favoriteButton.text = it.totalSubscribersCount.toString()
+                    }
                 }
             }
         }
-        viewModel.categoryInfo.observe(this) {
-            categoryAdapter.submitList(it)
+    }
+
+    private fun initMenu(menuModel: List<UserStoreMenuModel>) {
+        val menuGroup = menuModel.groupBy { it.category.name }
+        if (menuGroup.size < 3) {
+            userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
+        } else {
+            val subKeys = menuGroup.keys.take(2)
+            val subMenuGroup = menuGroup.getValue(subKeys[0]) + menuGroup.getValue(subKeys[1])
+            val userStoreMenuMoreResponse = UserStoreMenuMoreResponse(
+                moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2)
+            )
+            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMenuMoreResponse)
         }
-        viewModel.isFavorite.observe(this) {
-            setFavoriteIcon(it)
+    }
+
+    private fun initVisitHistory(visits: VisitsModel?) {
+        if (visits == null) {
+            binding.visitHistoryTitleTextView.text = getString(R.string.visit_history_empty_title)
+            binding.smileTextView.apply {
+                text = getString(R.string.visit_history_success, 0)
+                textPartTypeface("0명", Typeface.BOLD)
+            }
+            binding.sadTextView.apply {
+                text = getString(R.string.visit_history_fail, 0)
+                textPartTypeface("0명", Typeface.BOLD)
+            }
+        } else {
+            binding.visitHistoryTitleTextView.text =
+                if (visits.counts.isCertified) getString(R.string.visit_history_title) else getString(R.string.visit_history_empty_title)
+            binding.smileTextView.apply {
+                text = getString(R.string.visit_history_success, visits.counts.existsCounts)
+                textPartTypeface("${visits.counts.existsCounts}명", Typeface.BOLD)
+            }
+            binding.sadTextView.apply {
+                text = getString(R.string.visit_history_fail, visits.counts.notExistsCounts)
+                textPartTypeface("${visits.counts.notExistsCounts}명", Typeface.BOLD)
+            }
+            val historiesContentModelList = visits.histories.contents
+            if (historiesContentModelList.isNotNullOrEmpty()) {
+                if (historiesContentModelList.size > 5) {
+                    visitHistoryAdapter.submitList(historiesContentModelList.subList(0, 5))
+                    binding.visitExtraTextView.apply {
+                        isVisible = true
+                        text = getString(R.string.visit_extra, visits.counts.existsCounts + visits.counts.notExistsCounts - 5)
+                    }
+                } else {
+                    visitHistoryAdapter.submitList(historiesContentModelList)
+                }
+                binding.visitHistoryCardView.isVisible = true
+            }
+        }
+    }
+
+    private fun initImageView(userStoreDetailModel: UserStoreDetailModel) {
+        if (userStoreDetailModel.store.categories.isNotNullOrEmpty()) {
+            Glide.with(binding.menuIconImageView)
+                .load(userStoreDetailModel.store.categories.first().imageUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(binding.menuIconImageView)
+        }
+
+        binding.newImageView.isVisible = userStoreDetailModel.tags.isNew
+    }
+
+    private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
+        binding.storeNameTextView.text = userStoreDetailModel.store.name
+        binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator.name)
+        binding.distanceTextView.text =
+            if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.contents.size)
+        binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
+        binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
+        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
+        binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
+        binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
+        binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
+        initPayments(userStoreDetailModel.store.paymentMethods)
+        initAppearanceDays(userStoreDetailModel.store.appearanceDays)
+    }
+
+    private fun initPayments(paymentTypeList: List<PaymentType>) {
+        paymentTypeList.forEach {
+            when (it) {
+                PaymentType.CARD -> {
+                    initPayment(binding.cardTextView)
+                }
+                PaymentType.CASH -> {
+                    initPayment(binding.cashTextView)
+                }
+                PaymentType.ACCOUNT_TRANSFER -> {
+                    initPayment(binding.bankingTextView)
+                }
+            }
+        }
+    }
+
+    private fun initPayment(textView: TextView) {
+        textView.apply {
+            setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(this@StoreDetailActivity, R.drawable.circle_gray70_4dp), null, null, null
+            )
+            setTextColor(getColor(R.color.gray70))
+        }
+    }
+
+    private fun initAppearanceDays(dayOfTheWeekTypeList: List<DayOfTheWeekType>) {
+        dayOfTheWeekTypeList.forEach {
+            when (it) {
+                DayOfTheWeekType.MONDAY -> {
+                    initAppearanceDay(binding.mondayTextView)
+                }
+                DayOfTheWeekType.TUESDAY -> {
+                    initAppearanceDay(binding.tuesdayTextView)
+                }
+                DayOfTheWeekType.WEDNESDAY -> {
+                    initAppearanceDay(binding.wednesdayTextView)
+                }
+                DayOfTheWeekType.THURSDAY -> {
+                    initAppearanceDay(binding.thursdayTextView)
+                }
+                DayOfTheWeekType.FRIDAY -> {
+                    initAppearanceDay(binding.fridayTextView)
+                }
+                DayOfTheWeekType.SATURDAY -> {
+                    initAppearanceDay(binding.saturdayTextView)
+                }
+                DayOfTheWeekType.SUNDAY -> {
+                    initAppearanceDay(binding.sundayTextView)
+                }
+            }
+        }
+    }
+
+    private fun initAppearanceDay(textView: TextView) {
+        textView.apply {
+            setBackgroundResource(R.drawable.circle_gray70_24dp)
+            setTextColor(getColor(R.color.white))
         }
     }
 
     private fun clickFavoriteButton() {
-        if (viewModel.isFavorite.value == true) {
+        if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(USER_STORE, storeId.toString())
         } else {
             viewModel.putFavorite(USER_STORE, storeId.toString())
         }
     }
 
-    private fun setFavoriteIcon(isFavorite: Boolean?) {
-        if (isFavorite == null) {
-            showToast(R.string.connection_failed)
-            return
-        }
+    private fun setFavoriteIcon(isFavorite: Boolean) {
+        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
 
-        val favoriteIcon = if (isFavorite) R.drawable.ic_road_food_favorite_on else R.drawable.ic_road_food_favorite_off
-
-        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+        binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
     }
 
     private fun startCertification() {
-        naverMapFragment.updateCurrentLocation {
-            if (it == null) {
-                return@updateCurrentLocation
-            }
-            val distance = NaverMapUtils.calculateDistance(
-                naverMapFragment.currentPosition,
-                viewModel.storeLocation.value
-            )
-            supportFragmentManager.addNewFragment(
-                R.id.container,
-                if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
-                StoreCertificationAvailableFragment::class.java.name,
-                false
-            )
-        }
+        val userStoreModel = viewModel.userStoreDetailModel.value.store
+
+        val distance = NaverMapUtils.calculateDistance(
+            naverMapFragment.currentPosition,
+            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+        )
+        supportFragmentManager.addNewFragment(
+            R.id.container,
+            if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
+            StoreCertificationAvailableFragment::class.java.name,
+            false
+        )
     }
 
-    private fun initWeekdays(it: StoreDetail?) {
-        binding.layoutBtnDayOfWeek.tbMon.isChecked =
-            it?.appearanceDays?.contains("MONDAY") == true
-        binding.layoutBtnDayOfWeek.tbTue.isChecked =
-            it?.appearanceDays?.contains("TUESDAY") == true
-        binding.layoutBtnDayOfWeek.tbWen.isChecked =
-            it?.appearanceDays?.contains("WEDNESDAY") == true
-        binding.layoutBtnDayOfWeek.tbThur.isChecked =
-            it?.appearanceDays?.contains("THURSDAY") == true
-        binding.layoutBtnDayOfWeek.tbFri.isChecked =
-            it?.appearanceDays?.contains("FRIDAY") == true
-        binding.layoutBtnDayOfWeek.tbSat.isChecked =
-            it?.appearanceDays?.contains("SATURDAY") == true
-        binding.layoutBtnDayOfWeek.tbSun.isChecked =
-            it?.appearanceDays?.contains("SUNDAY") == true
+    private fun showDirectionBottomDialog() {
+        val store = viewModel.userStoreDetailModel.value.store
+        DirectionBottomDialog.getInstance(store.location.latitude, store.location.longitude, store.name).show(supportFragmentManager, "")
     }
 
-    private fun updateVisitHistory(it: StoreDetail?) {
-        val isExist = it?.visitHistories?.count { history -> history.isExist() } ?: 0
-        val isNotExist = it?.visitHistories?.size?.minus(isExist) ?: 0
-        val hasCertification = isExist + isNotExist > 0
-
-        binding.tvVisitHistory.text = buildSpannedString {
-            append("이번 달 ")
-            bold {
-                if (hasCertification) {
-                    append((isExist + isNotExist).toString())
-                    append("명")
-                } else {
-                    append("방문 인증")
-                }
-            }
-            append(if (hasCertification) "이 다녀간 가게에요!" else " 내역이 없어요 :(")
-        }
-        binding.tvGood.text = "${isExist}명"
-        binding.tvGood.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (isExist > 0) R.color.green else R.color.gray30
-            )
+    private fun moveFullScreenMap() {
+        val store = viewModel.userStoreDetailModel.value.store
+        val intent = FullScreenMapActivity.getIntent(
+            context = this,
+            latitude = store.location.latitude,
+            longitude = store.location.longitude,
+            name = store.name,
         )
-        binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(
-                this,
-                if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off
-            ),
-            null,
-            null,
-            null
-        )
-        binding.tvBad.text = "${isNotExist}명"
-        binding.tvBad.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (isNotExist > 0) R.color.color_main_red else R.color.gray30
-            )
-        )
-        binding.tvBad.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(
-                this,
-                if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off
-            ),
-            null,
-            null,
-            null
-        )
-        visitHistoryAdapter.submitList(it?.visitHistories)
-
-        binding.ibPlus.setOnClickListener {
-            if (binding.rvVisitHistory.isVisible) {
-                binding.rvVisitHistory.isVisible = false
-                return@setOnClickListener
-            }
-
-            if (visitHistoryAdapter.itemCount > 0) {
-                binding.rvVisitHistory.isVisible = true
-            } else {
-                binding.root.showSnack("아직 인증 내역이 없어요!")
-            }
-        }
-    }
-
-    private fun initStoreInfo(it: StoreDetail?) {
-        if (it != null) {
-            val distance = it.distance
-            val updatedAt = "${
-                StringUtils.getTimeString(
-                    it.updatedAt,
-                    "yy.MM.dd"
-                )
-            } ${getString(R.string.updated_at)}"
-
-            binding.tvDistance.text = "${distance.toString().toFormattedNumber()}m"
-            binding.tvStoreType.isVisible = true
-            binding.tvEmptyStoreType.isVisible = false
-            binding.tvUpdatedAt.isVisible = !it.updatedAt.isNullOrBlank()
-            binding.tvUpdatedAt.text = updatedAt
-        }
+        startActivity(intent)
     }
 
     fun refreshStoreInfo() {
@@ -422,7 +512,12 @@ class StoreDetailActivity :
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        viewModel.requestStoreInfo(storeId, it.latitude, it.longitude)
+                        viewModel.getUserStoreDetail(
+                            storeId = storeId,
+                            deviceLatitude = it.latitude,
+                            deviceLongitude = it.longitude,
+                            filterVisitStartDate = getMonthFirstDate()
+                        )
                     } else {
                         showToast(getString(R.string.exist_location_error))
                         finish()
@@ -441,7 +536,7 @@ class StoreDetailActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EDIT_STORE_INFO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == EDIT_STORE_INFO && resultCode == RESULT_OK) {
             refreshStoreInfo()
         }
     }
@@ -471,7 +566,7 @@ class StoreDetailActivity :
         val imageList = ArrayList<MultipartBody.Part>()
         data.forEach {
             if (!FileUtils.isAvailable(it)) {
-                binding.tvStoreName.showSnack(R.string.error_file_size)
+                binding.root.showSnack(R.string.error_file_size)
                 return null
             }
 
@@ -497,7 +592,7 @@ class StoreDetailActivity :
             context: Context,
             storeId: Int? = null,
             startCertification: Boolean = false,
-            deepLinkStoreId: String? = null
+            deepLinkStoreId: String? = null,
         ) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 storeId?.let {

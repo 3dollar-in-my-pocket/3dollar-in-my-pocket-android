@@ -50,12 +50,12 @@
     <string name="store_distance"> 이내에 위치한\n음식점입니다.</string>
     <string name="store_distance_long">1km+에 위치한\n음식점입니다.</string>
     <string name="add_review">리뷰쓰기</string>
-    <string name="request_delete">삭제요청</string>
-    <string name="request_delete_title">삭제하시는\n이유가 궁금해요!</string>
-    <string name="request_delete_description">3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다</string>
+    <string name="request_delete">신고하기</string>
+    <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>
+    <string name="request_delete_description">3건 이상의 요청이 들어오면 자동 삭제됩니다</string>
     <string name="request_delete_reason1">없어진 가게예요</string>
     <string name="request_delete_reason2">허위 제보로 요청된 가게에요</string>
-    <string name="request_delete_reason3">중복 제보된 가게예요</string>
+    <string name="request_delete_reason3">가게가 중복으로 등록되어 있어요.</string>
     <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
     <string name="title_mypage">마이페이지</string>
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
@@ -70,7 +70,7 @@
     <string name="card">카드</string>
     <string name="banking">계좌이체</string>
 
-    <string name="editor">님의 제보</string>
+    <string name="creator">%s님 제보</string>
     <string name="share">공유하기</string>
     <string name="update_available">업데이트가 필요합니다!</string>
     <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
@@ -235,7 +235,7 @@
     <string name="menu_info">메뉴 정보</string>
     <string name="food_truck_price">%s원</string>
     <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
-    <string name="food_truck_menu_more">메뉴 %d개 더보기</string>
+    <string name="store_detail_menu_more">메뉴 %d개 더보기</string>
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
@@ -286,4 +286,10 @@
     <string name="directions">길 안내</string>
     <string name="directions_view">길 안내보기</string>
     <string name="map_view">지도 보기</string>
+    <string name="last_visit">최근 한달 %d명이 방문 성공</string>
+    <string name="visit_history_title">이번 달 방문 인증 내역</string>
+    <string name="visit_history_empty_title">아직 방문 인증 내역이 없어요 :(</string>
+    <string name="visit_history_success">방문 성공 %d명</string>
+    <string name="visit_history_fail">방문 실패 %d명</string>
+    <string name="visit_extra">+ 그 외 %d명이 다녀갔어요!</string>
 </resources>

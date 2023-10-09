@@ -12,9 +12,9 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
-import com.zion830.threedollars.databinding.ItemFoodTruckMenuMoreBinding
+import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 
 
@@ -34,7 +34,7 @@ class FoodTruckMenuRecyclerAdapter(private val clickListener: () -> Unit) :
         is MenuModel -> {
             VIEW_TYPE_MENU
         }
-        is FoodTruckMenuMoreResponse -> {
+        is BossStoreMenuMoreResponse -> {
             VIEW_TYPE_FOOTER
         }
         else -> {
@@ -48,7 +48,7 @@ class FoodTruckMenuRecyclerAdapter(private val clickListener: () -> Unit) :
         }
         VIEW_TYPE_FOOTER -> {
             FoodTruckMenuMoreViewHolder(
-                binding = ItemFoodTruckMenuMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                binding = ItemStoreDetailMenuMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 clickListener = clickListener
             )
         }
@@ -66,7 +66,7 @@ class FoodTruckMenuRecyclerAdapter(private val clickListener: () -> Unit) :
                 holder.bind(getItem(position) as FoodTruckMenuEmptyResponse)
             }
             is FoodTruckMenuMoreViewHolder -> {
-                holder.bind(getItem(position) as FoodTruckMenuMoreResponse)
+                holder.bind(getItem(position) as BossStoreMenuMoreResponse)
             }
         }
     }
@@ -89,10 +89,10 @@ class FoodTruckMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBi
 }
 
 class FoodTruckMenuMoreViewHolder(
-    private val binding: ItemFoodTruckMenuMoreBinding,
+    private val binding: ItemStoreDetailMenuMoreBinding,
     private val clickListener: () -> Unit,
 ) : ViewHolder(binding.root) {
-    fun bind(item: FoodTruckMenuMoreResponse) {
+    fun bind(item: BossStoreMenuMoreResponse) {
         binding.menuLayout.setOnClickListener {
             clickListener()
         }

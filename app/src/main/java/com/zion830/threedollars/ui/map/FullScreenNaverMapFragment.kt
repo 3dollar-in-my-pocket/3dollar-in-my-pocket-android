@@ -10,10 +10,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.SizeUtils
 
 class FullScreenNaverMapFragment : NaverMapFragment() {
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding.btnFindLocation.isVisible = true
         map.uiSettings.setLogoMargin(0, SizeUtils.dpToPx(300f), SizeUtils.dpToPx(300f), 0) // 로고 가려지도록
         val params = binding.btnFindLocation.layoutParams as ViewGroup.MarginLayoutParams

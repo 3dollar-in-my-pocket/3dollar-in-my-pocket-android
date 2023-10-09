@@ -23,20 +23,20 @@ class EditAddressFragment :
 
     override fun initView() {
         initMap()
-        binding.btnBack.setOnClickListener {
-            viewModel.updateLocation(viewModel.storeLocation.value)
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        binding.btnFinish.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        viewModel.storeInfo.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            viewModel.updateLocation(viewModel.storeLocation.value)
-            requireActivity().supportFragmentManager.popBackStack()
-        }
+//        binding.btnBack.setOnClickListener {
+//            viewModel.updateLocation(viewModel.storeLocation.value)
+//            requireActivity().supportFragmentManager.popBackStack()
+//        }
+//        binding.btnFinish.setOnClickListener {
+//            requireActivity().supportFragmentManager.popBackStack()
+//        }
+//        viewModel.storeInfo.observe(viewLifecycleOwner) {
+//            binding.tvAddress.text = getCurrentLocationName(LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0))
+//        }
+//        requireActivity().onBackPressedDispatcher.addCallback(this) {
+//            viewModel.updateLocation(viewModel.storeLocation.value)
+//            requireActivity().supportFragmentManager.popBackStack()
+//        }
     }
 
     private fun initMap() {
@@ -47,9 +47,9 @@ class EditAddressFragment :
 
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
 
-        if (isFirstOpen) {
-            viewModel.updateLocation(viewModel.storeLocation.value) // 최초 맵 위치
-            isFirstOpen = false
-        }
+//        if (isFirstOpen) {
+//            viewModel.updateLocation(viewModel.storeLocation.value) // 최초 맵 위치
+//            isFirstOpen = false
+//        }
     }
 }

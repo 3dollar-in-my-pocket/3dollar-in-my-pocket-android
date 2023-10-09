@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Address(
     @SerializedName("fullAddress")
-    val fullAddress: String = ""
+    val fullAddress: String? = ""
 )

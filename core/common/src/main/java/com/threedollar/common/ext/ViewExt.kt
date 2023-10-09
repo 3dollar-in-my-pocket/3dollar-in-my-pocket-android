@@ -1,8 +1,16 @@
-package zion830.com.common.ext
+package com.threedollar.common.ext
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.View
+import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
+import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +45,7 @@ fun View.showSnack(
     @ColorRes color: Int = android.R.color.white
 ) {
     Snackbar.make(this, message, length).run {
-        color?.let { setActionTextColor(ContextCompat.getColor(context, color)) }
+        setActionTextColor(ContextCompat.getColor(context, color))
         setAction(context.getString(android.R.string.ok)) { dismiss() }
         show()
     }
@@ -71,4 +79,46 @@ fun View.isExpanded() = try {
 } catch (e: IllegalArgumentException) {
     e.printStackTrace()
     false
+}
+
+fun TextView.textPartTypeface(changeText: String?, @StyleRes style: Int, isLast: Boolean = false) {
+    if (changeText == null)
+        return
+    val index = if (isLast) {
+        text.toString().lastIndexOf(changeText)
+    } else {
+        text.toString().indexOf(changeText)
+    }
+    if (index != -1) {
+        val spannableString = SpannableString(text)
+
+        spannableString.setSpan(
+            StyleSpan(style),
+            index,
+            index + changeText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text = spannableString
+    }
+}
+
+fun TextView.textPartColor(changeText: String?, color: Int, isLast: Boolean = false) {
+    if (changeText == null)
+        return
+    val index = if (isLast) {
+        text.toString().lastIndexOf(changeText)
+    } else {
+        text.toString().indexOf(changeText)
+    }
+    if (index != -1) {
+        val spannableString = SpannableString(text)
+
+        spannableString.setSpan(
+            ForegroundColorSpan(color),
+            index,
+            index + changeText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text = spannableString
+    }
 }

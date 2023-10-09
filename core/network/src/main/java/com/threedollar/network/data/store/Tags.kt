@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class Tags(
     @SerializedName("isNew")
-    val isNew: Boolean = false
+    val isNew: Boolean? = false
 )

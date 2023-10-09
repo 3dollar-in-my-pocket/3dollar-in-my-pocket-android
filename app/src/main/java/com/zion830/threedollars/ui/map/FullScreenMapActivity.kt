@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFullScreenMapBinding
 import com.zion830.threedollars.ui.DirectionBottomDialog
@@ -19,47 +20,43 @@ import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailV
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FullScreenMapActivity :
-    BaseActivity<ActivityFullScreenMapBinding, FoodTruckStoreDetailViewModel>({ ActivityFullScreenMapBinding.inflate(it) }) {
+    BaseActivity<ActivityFullScreenMapBinding, BaseViewModel>({ ActivityFullScreenMapBinding.inflate(it) }) {
 
-    override val viewModel: FoodTruckStoreDetailViewModel by viewModels()
+    override val viewModel: BaseViewModel by viewModels()
 
     private val naverMapFragment: FullScreenNaverMapFragment by lazy {
         FullScreenNaverMapFragment()
     }
-    private var storeId = ""
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
+    private var latitude = 0.0
+    private var longitude = 0.0
+    private var name = ""
+    private var isClosed = false
 
     override fun initView() {
-        initViewModels()
-        initMap()
+        initIntent()
         initButton()
-        initFlows()
     }
 
-    private fun initViewModels() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        storeId = intent.getStringExtra(STORE_ID).toString()
-        if (isLocationAvailable() && isGpsAvailable()) {
-            val locationResult = fusedLocationProviderClient.lastLocation
-            locationResult.addOnSuccessListener {
-                if (it != null) {
-                    viewModel.getFoodTruckStoreDetail(
-                        bossStoreId = storeId,
-                        latitude = it.latitude,
-                        longitude = it.longitude
-                    )
-                }
-            }
-        }
+    private fun initIntent() {
+        latitude = intent.getDoubleExtra(LATITUDE, 0.0)
+        longitude = intent.getDoubleExtra(LONGITUDE, 0.0)
+        name = intent.getStringExtra(NAME).toString()
+        isClosed = intent.getBooleanExtra(IS_CLOSED, true)
+        initMap()
     }
 
     private fun initMap() {
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        lifecycleScope.launch {
+            delay(500L)
+            val latLng = LatLng(latitude, longitude)
+            naverMapFragment.initMap(latLng, isClosed)
+        }
     }
 
     private fun initButton() {
@@ -71,38 +68,30 @@ class FullScreenMapActivity :
         }
     }
 
-    private fun initFlows() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch {
-                    viewModel.bossStoreDetailModel.collect { bossStoreDetailModel ->
-
-                        val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
-
-                        Log.e("asdasd",bossStoreDetailModel.store.location!!.latitude.toString())
-                        Log.e("asdasd",bossStoreDetailModel.store.location!!.longitude.toString())
-                        if (bossStoreDetailModel.store.location != null) {
-                            val latLng = LatLng(bossStoreDetailModel.store.location!!.latitude, bossStoreDetailModel.store.location!!.longitude)
-                            naverMapFragment.initMap(latLng, isClosed)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun showDirectionBottomDialog() {
-        val store = viewModel.bossStoreDetailModel.value.store
-        DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
+        DirectionBottomDialog.getInstance(latitude, longitude, name).show(supportFragmentManager, "")
     }
 
     companion object {
-        const val STORE_ID = "storeId"
+        const val LATITUDE = "latitude"
+        const val LONGITUDE = "longitude"
+        const val NAME = "name"
+        const val IS_CLOSED = "isClosed"
 
-        fun getIntent(context: Context, storeId: String? = null) = Intent(context, FullScreenMapActivity::class.java).apply {
-            storeId?.let {
-                putExtra(STORE_ID, it)
+        fun getIntent(context: Context, latitude: Double?, longitude: Double?, name: String?, isClosed: Boolean? = true) =
+            Intent(context, FullScreenMapActivity::class.java).apply {
+                latitude?.let {
+                    putExtra(LATITUDE, it)
+                }
+                longitude?.let {
+                    putExtra(LONGITUDE, it)
+                }
+                name?.let {
+                    putExtra(NAME, it)
+                }
+                isClosed?.let {
+                    putExtra(IS_CLOSED, it)
+                }
             }
-        }
     }
 }

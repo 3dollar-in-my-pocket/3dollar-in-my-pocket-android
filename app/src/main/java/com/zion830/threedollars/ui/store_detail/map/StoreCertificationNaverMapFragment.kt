@@ -25,12 +25,12 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
-        viewModel.storeLocation.observe(this) {
-            it?.let {
-                addMarker(R.drawable.ic_marker, LatLng(it.latitude, it.longitude))
-                addCircle(LatLng(it.latitude, it.longitude), MIN_DISTANCE.toDouble())
-            }
-        }
+//        viewModel.storeLocation.observe(this) {
+//            it?.let {
+//                addMarker(R.drawable.ic_marker, LatLng(it.latitude, it.longitude))
+//                addCircle(LatLng(it.latitude, it.longitude), MIN_DISTANCE.toDouble())
+//            }
+//        }
 
         initFindLocationButton()
         map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, 0) // 로고 가려지도록
@@ -60,11 +60,11 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestStoreInfo(
-            viewModel.storeInfo.value?.storeId ?: 0 - 1,
-            position.latitude,
-            position.longitude
-        )
+//        viewModel.requestStoreInfo(
+//            viewModel.storeInfo.value?.storeId ?: 0 - 1,
+//            position.latitude,
+//            position.longitude
+//        )
         moveCamera(position)
     }
 }

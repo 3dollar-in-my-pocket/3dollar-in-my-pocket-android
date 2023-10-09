@@ -88,10 +88,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.editStore(storeId, newStoreRequest)
 
-    override suspend fun deleteStore(
-        storeId: Int,
-        deleteReasonType: String,
-    ): Response<DeleteStoreResponse> = newService.deleteStore(storeId, deleteReasonType)
 
     override suspend fun getNearExist(
         latitude: Double,

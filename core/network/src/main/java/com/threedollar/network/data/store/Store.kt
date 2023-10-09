@@ -4,23 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 data class Store(
     @SerializedName("account")
-    val account: Account = Account(),
+    val account: Account? = Account(),
     @SerializedName("address")
-    val address: Address = Address(),
+    val address: Address? = Address(),
     @SerializedName("categories")
-    val categories: List<Category> = listOf(),
+    val categories: List<Category>? = listOf(),
     @SerializedName("createdAt")
-    val createdAt: String = "",
+    val createdAt: String? = "",
     @SerializedName("isDeleted")
-    val isDeleted: Boolean = false,
+    val isDeleted: Boolean? = false,
     @SerializedName("location")
-    val location: Location = Location(),
+    val location: Location? = Location(),
     @SerializedName("storeId")
-    val storeId: String = "",
+    val storeId: String? = "",
     @SerializedName("storeName")
-    val storeName: String = "",
+    val storeName: String? = "",
     @SerializedName("storeType")
-    val storeType: String = "",
+    val storeType: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String = ""
+    val updatedAt: String? = ""
 )

@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import zion830.com.common.ext.showSnack
+import com.threedollar.common.ext.showSnack
 
 abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
     val bindingFactory: (LayoutInflater) -> B

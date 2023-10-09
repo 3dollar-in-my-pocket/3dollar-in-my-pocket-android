@@ -6,7 +6,7 @@ data class Menu(
     @SerializedName("imageUrl")
     val imageUrl: String? = "",
     @SerializedName("name")
-    val name: String = "",
+    val name: String? = "",
     @SerializedName("price")
-    val price: Int = 0
+    val price: Int? = 0
 )

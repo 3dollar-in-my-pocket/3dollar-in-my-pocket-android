@@ -6,6 +6,8 @@ import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -23,7 +25,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
-        deviceLongitude: Double
+        deviceLongitude: Double,
     ): Flow<BaseResponse<AroundStoreResponse>> = flow {
         emit(
             serverApi.getAroundStores(
@@ -49,6 +51,28 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
                 )
             )
         }
+
+    override fun getUserStoreDetail(
+        storeId: Int,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+        storeImagesCount: Int?,
+        reviewsCount: Int?,
+        visitHistoriesCount: Int?,
+        filterVisitStartDate: String,
+    ): Flow<BaseResponse<UserStoreResponse>> = flow {
+        emit(
+            serverApi.getUserStoreDetail(
+                storeId = storeId,
+                deviceLatitude = deviceLatitude,
+                deviceLongitude = deviceLongitude,
+                storeImagesCount = storeImagesCount,
+                reviewsCount = reviewsCount,
+                visitHistoriesCount = visitHistoriesCount,
+                filterVisitStartDate = filterVisitStartDate
+            )
+        )
+    }
 
     override fun getMyInfo(): Flow<BaseResponse<UserResponse>> = flow {
         emit(serverApi.getMyInfo())
@@ -80,5 +104,9 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>> = flow {
         emit(serverApi.postFeedback(targetType, targetId, postFeedbackRequest))
+    }
+
+    override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultResponse>> = flow {
+        emit(serverApi.deleteStore(storeId, deleteReasonType))
     }
 }

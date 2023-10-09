@@ -5,6 +5,8 @@ import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -46,4 +48,18 @@ interface HomeRemoteDataSource {
 
     fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>>
 
+    fun getUserStoreDetail(
+        storeId: Int,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+        storeImagesCount: Int?,
+        reviewsCount: Int?,
+        visitHistoriesCount: Int?,
+        filterVisitStartDate: String,
+    ): Flow<BaseResponse<UserStoreResponse>>
+
+    fun deleteStore(
+        storeId: Int,
+        deleteReasonType: String
+    ): Flow<BaseResponse<DeleteResultResponse>>
 }

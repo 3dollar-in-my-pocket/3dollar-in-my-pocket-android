@@ -4,7 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Cursor(
     @SerializedName("hasMore")
-    val hasMore: Boolean = false,
+    val hasMore: Boolean? = false,
     @SerializedName("nextCursor")
-    val nextCursor: String? = null
+    val nextCursor: String? = null,
+    @SerializedName("totalCount")
+    val totalCount: Int? = null
 )

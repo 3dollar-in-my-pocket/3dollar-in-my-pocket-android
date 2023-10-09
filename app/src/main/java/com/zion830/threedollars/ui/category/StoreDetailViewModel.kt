@@ -1,100 +1,52 @@
 package com.zion830.threedollars.ui.category
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.Category
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.datasource.model.v2.response.store.Image
-import com.zion830.threedollars.datasource.model.v2.response.store.Menu
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
-import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.StringUtils.getString
-import com.zion830.threedollars.utils.getErrorMessage
+import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
-class StoreDetailViewModel @Inject constructor(private val repository: StoreDataSource) : BaseViewModel() {
+class StoreDetailViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val repository: StoreDataSource,
+) :
+    BaseViewModel() {
 
-    private val _storeInfo: MutableLiveData<StoreDetail?> = MutableLiveData()
-    val storeInfo: LiveData<StoreDetail?>
-        get() = _storeInfo
-
-    val categoryInfo: LiveData<List<Category>> = Transformations.map(_storeInfo) { store ->
-        val categoryHasMenu = store?.menus?.groupBy { it.category }
-        val allMenu: HashMap<String, List<Menu>> = hashMapOf()
-        store?.categories?.forEach {
-            allMenu[it] = emptyList()
-        }
-        categoryHasMenu?.forEach { category ->
-            allMenu[category.key] = category.value
-        }
-        allMenu.map {
-            val key = LegacySharedPrefUtils.getCategories()
-                .find { categoryInfo -> categoryInfo.category == it.key } ?: CategoriesModel()
-            Category(key, it.value)
-        }
-    }
-
-    private val _selectedCategory: MutableLiveData<List<SelectedCategory>> = MutableLiveData(
-        LegacySharedPrefUtils.getCategories().map { SelectedCategory(false, it) })
-    val selectedCategory: LiveData<List<SelectedCategory>>
-        get() = _selectedCategory
-
-    val categoryCount: LiveData<Int> = Transformations.map(categoryInfo) {
-        it.sumOf { category ->
-            category.menu?.count() ?: 0
-        } + it.count { category -> category.menu?.isEmpty() == true }
-    }
-
-    val storeLocation: LiveData<LatLng?> = Transformations.map(_storeInfo) {
-        if (it != null) {
-            LatLng(it.latitude, it.longitude)
-        } else {
-            null
-        }
-    }
+    private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel> = MutableStateFlow(UserStoreDetailModel())
+    val userStoreDetailModel: StateFlow<UserStoreDetailModel> get() = _userStoreDetailModel
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation
 
-    private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val deleteStoreResult: LiveData<Boolean>
-        get() = _deleteStoreResult
-
     private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
     val uploadImageStatus: LiveData<Boolean>
         get() = _uploadImageStatus
-
-    private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val closeActivity: LiveData<Boolean>
-        get() = _closeActivity
-
-    private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NONE)
-    val deleteType: LiveData<DeleteType>
-        get() = _deleteType
 
     private val _addReviewResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val addReviewResult: LiveData<Boolean>
@@ -107,25 +59,36 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
 
-    // TODO: SingleLiveData로 수정 필요
-    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
-    val isFavorite: LiveData<Boolean> get() = _isFavorite
+    private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
+    val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
 
-    fun requestStoreInfo(storeId: Int, latitude: Double?, longitude: Double?) {
-        showLoading()
+    fun getUserStoreDetail(
+        storeId: Int,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+        storeImagesCount: Int? = null,
+        reviewsCount: Int? = null,
+        visitHistoriesCount: Int? = null,
+        filterVisitStartDate: String,
+    ) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val startDate = LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-            val data = repository.getStoreDetail(
-                storeId,
-                latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                startDate
-            )
-            _storeInfo.value = data.body()?.data
-            _isFavorite.value = data.body()?.data?.favorite?.isFavorite
-            _isExistStoreInfo.value = storeId to (data.code() == 200)
-            hideLoading()
+            if (deviceLatitude != null && deviceLongitude != null) {
+                homeRepository.getUserStoreDetail(
+                    storeId = storeId,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                    storeImagesCount = storeImagesCount,
+                    reviewsCount = reviewsCount,
+                    visitHistoriesCount = visitHistoriesCount,
+                    filterVisitStartDate = filterVisitStartDate
+                ).collect {
+                    if (it.ok) {
+                        _userStoreDetailModel.value = it.data
+                    }
+                }
+            } else {
+                // TODO: 위도 경도 확인하게하는 토스트 메시지
+            }
         }
     }
 
@@ -135,8 +98,8 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request = NewReviewRequest(content, rating, _storeInfo.value?.storeId ?: -1)
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value.store?.storeId ?: -1)
             val response = repository.addReview(request)
             if (response.isSuccessful) {
                 _msgTextId.postValue(R.string.success_add_review)
@@ -147,27 +110,18 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         }
     }
 
-    fun deleteStore(storeId: Int) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val requestStoreId = if (storeInfo.value == null) storeId else storeInfo.value!!.storeId
-            val result = repository.deleteStore(requestStoreId, deleteType.value!!.key)
-
-            _deleteStoreResult.postValue(result.isSuccessful)
-            if (result.body()?.data?.isDeleted == true) {
-                _closeActivity.postValue(result.body()?.data?.isDeleted)
+    fun deleteStore(deleteType: DeleteType) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect{
+//                _msgTextId.postValue(
+//                    when (it.code()) {
+//                        in 200..299 -> R.string.success_delete_store
+//                        in 400..499 -> R.string.already_request_delete
+//                        else -> R.string.failed_delete_store
+//                    }
+//                )
             }
-            _msgTextId.postValue(
-                when (result.code()) {
-                    in 200..299 -> R.string.success_delete_store
-                    in 400..499 -> R.string.already_request_delete
-                    else -> R.string.failed_delete_store
-                }
-            )
         }
-    }
-
-    fun changeDeleteType(type: DeleteType) {
-        _deleteType.value = type
     }
 
     fun editReview(reviewId: Int, newReview: NewReview) {
@@ -176,7 +130,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val request = EditReviewRequest(newReview.contents, newReview.rating)
             repository.editReview(reviewId, request)
             _msgTextId.postValue(R.string.success_edit_review)
@@ -185,7 +139,7 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
     }
 
     fun deleteReview(reviewId: Int) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             repository.deleteReview(reviewId)
             _msgTextId.postValue(R.string.success_delete_review)
             _addReviewResult.postValue(true)
@@ -199,13 +153,9 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
             return
         }
 
-        if (storeInfo.value?.storeId == null) {
-            return
-        }
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val responses = async(Dispatchers.IO + coroutineExceptionHandler) {
-                repository.saveImage(storeInfo.value?.storeId ?: -1, images)
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val responses = async(coroutineExceptionHandler) {
+                repository.saveImage(_userStoreDetailModel.value.store?.storeId ?: -1, images)
             }
 
             responses.await()
@@ -213,45 +163,12 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
         }
     }
 
-    fun initSelectedCategory() {
-        _selectedCategory.value = LegacySharedPrefUtils.getCategories().map { menu ->
-            val selectedCategory =
-                categoryInfo.value?.find { categoryInfo -> categoryInfo.category.category == menu.category }
-            SelectedCategory(
-                selectedCategory != null,
-                menu,
-                selectedCategory?.menu?.map { MyMenu(it.category, it.name, it.price) })
-        }
-    }
-
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
     }
 
-    fun updateCategory(list: List<SelectedCategory>) {
-        _selectedCategory.value = list.toList()
-    }
-
-    fun removeCategory(item: SelectedCategory) {
-        val newList = _selectedCategory.value?.map {
-            SelectedCategory(
-                if (item.menuType == it.menuType) false else it.isSelected,
-                it.menuType,
-                it.menuDetail
-            )
-        } ?: emptyList()
-        _selectedCategory.value = newList
-    }
-
-    fun removeAllCategory() {
-        val newList = _selectedCategory.value?.map {
-            SelectedCategory(false, it.menuType)
-        } ?: emptyList()
-        _selectedCategory.value = newList
-    }
-
     fun deletePhoto(selectedImage: Image) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val data = repository.deleteImage(selectedImage.imageId)
             _photoDeleted.postValue(data.isSuccessful)
         }
@@ -259,25 +176,31 @@ class StoreDetailViewModel @Inject constructor(private val repository: StoreData
 
     fun putFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-//            val response = repository.putFavorite(storeType, storeId)
-//            if (response.isSuccessful) {
-//                showCustomBlackToast(getString(R.string.toast_favorite_add))
-//            } else {
-//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-//            }
-//            _isFavorite.value = response.isSuccessful
+            homeRepository.putFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_add))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = true, totalSubscribersCount = it.totalSubscribersCount + 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
+            }
         }
     }
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-//            val response = repository.deleteFavorite(storeType, storeId)
-//            if (response.isSuccessful) {
-//                showCustomBlackToast(getString(R.string.toast_favorite_delete))
-//            } else {
-//                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
-//            }
-//            _isFavorite.value = !response.isSuccessful
+            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_delete))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = false, totalSubscribersCount = it.totalSubscribersCount - 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
+            }
         }
     }
 

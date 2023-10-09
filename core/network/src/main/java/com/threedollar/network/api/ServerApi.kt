@@ -6,10 +6,13 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PushInformationRequest
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ServerApi {
@@ -41,6 +44,23 @@ interface ServerApi {
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
     ): BaseResponse<BossStoreResponse>
+
+    @GET("/api/v4/store/{storeId}")
+    suspend fun getUserStoreDetail(
+        @Path("storeId") storeId: Int,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Query("storeImagesCount") storeImagesCount: Int?,
+        @Query("reviewsCount") reviewsCount: Int?,
+        @Query("visitHistoriesCount") visitHistoriesCount: Int?,
+        @Query("filterVisitStartDate") filterVisitStartDate: String
+    ): BaseResponse<UserStoreResponse>
+
+    @DELETE("/api/v2/store/{storeId}")
+    suspend fun deleteStore(
+        @Path("storeId") storeId: Int,
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
+    ): BaseResponse<DeleteResultResponse>
 
     // Device
     @POST("/api/v1/device")
