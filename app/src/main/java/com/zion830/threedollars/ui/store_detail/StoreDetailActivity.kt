@@ -26,6 +26,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.StatusType
 import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
@@ -50,7 +51,6 @@ import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
-import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -59,6 +59,7 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.ext.textPartTypeface
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 
@@ -81,7 +82,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
-    private val visitHistoryAdapter = VisitHistoryAdapter()
+    private val visitHistoryAdapter: VisitHistoryAdapter by lazy {
+        VisitHistoryAdapter()
+    }
 
     private var progressDialog: AlertDialog? = null
 
@@ -96,9 +99,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         storeId = intent.getIntExtra(STORE_ID, 0)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         initMap()
-        initAd()
         initButton()
         initAdapter()
         initFlows()
@@ -152,13 +155,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
-    private fun initAd() {
-        val adRequest: AdRequest = AdRequest.Builder().build()
-        binding.admob.loadAd(adRequest)
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-    }
-
     private fun initAdapter() {
         reviewAdapter = ReviewRecyclerAdapter(
             object : OnItemClickListener<Review> {
@@ -180,11 +176,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
 
         })
-        binding.rvVisitHistory.adapter = visitHistoryAdapter
+        binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
 
-        binding.rvPhoto.adapter = photoAdapter
-        binding.rvCategory.adapter = categoryAdapter
-        binding.rvReview.adapter = reviewAdapter
+//        binding.rvPhoto.adapter = photoAdapter
+//        binding.rvCategory.adapter = categoryAdapter
+//        binding.rvReview.adapter = reviewAdapter
     }
 
     private fun initMap() {
@@ -202,49 +198,49 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             setResult(RESULT_OK)
             finish()
         }
-        binding.deleteTextView.setOnClickListener {
-            DeleteStoreDialog.getInstance(storeId)
-                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-        }
-        binding.btnAddPhoto.setOnClickListener {
-            TedImagePicker.with(this).zoomIndicator(false).errorListener {
-                if (it.message?.startsWith("permission") == true) {
-                    AlertDialog.Builder(this)
-                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
-                            goToPermissionSetting()
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setTitle(getString(R.string.request_permission))
-                        .setMessage(getString(R.string.request_permission_msg))
-                        .create()
-                        .show()
-                }
-            }.startMultiImage { uriData ->
-                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
-                lifecycleScope.launch {
-                    val images = getImageFiles(uriData)
-                    if (images != null) {
-                        viewModel.saveImages(images)
-                    }
-                }
-            }
-        }
+//        binding.deleteTextView.setOnClickListener {
+//            DeleteStoreDialog.getInstance(storeId)
+//                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+//        }
+//        binding.btnAddPhoto.setOnClickListener {
+//            TedImagePicker.with(this).zoomIndicator(false).errorListener {
+//                if (it.message?.startsWith("permission") == true) {
+//                    AlertDialog.Builder(this)
+//                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+//                            goToPermissionSetting()
+//                        }
+//                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+//                        .setTitle(getString(R.string.request_permission))
+//                        .setMessage(getString(R.string.request_permission_msg))
+//                        .create()
+//                        .show()
+//                }
+//            }.startMultiImage { uriData ->
+//                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
+//                lifecycleScope.launch {
+//                    val images = getImageFiles(uriData)
+//                    if (images != null) {
+//                        viewModel.saveImages(images)
+//                    }
+//                }
+//            }
+//        }
         binding.shareButton.setOnClickListener {
             initShared()
         }
-        binding.btnAddReview.setOnClickListener {
-            AddReviewDialog.getInstance()
-                .show(supportFragmentManager, AddReviewDialog::class.java.name)
-        }
-        binding.btnAddStoreInfo.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
-            supportFragmentManager.addNewFragment(
-                R.id.container,
-                EditStoreDetailFragment(),
-                EditStoreDetailFragment::class.java.name,
-                false
-            )
-        }
+//        binding.btnAddReview.setOnClickListener {
+//            AddReviewDialog.getInstance()
+//                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+//        }
+//        binding.btnAddStoreInfo.setOnClickListener {
+//            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
+//            supportFragmentManager.addNewFragment(
+//                R.id.container,
+//                EditStoreDetailFragment(),
+//                EditStoreDetailFragment::class.java.name,
+//                false
+//            )
+//        }
         binding.addCertificationButton.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
@@ -300,7 +296,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.userStoreDetailModel.collect {
-//                        updateVisitHistory(it)
 //                        reviewAdapter.submitList(it?.reviews)
 //                        photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
 //                            StoreImage(index, null, image.url)
@@ -312,7 +307,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         } else {
                             null
                         }
-
                         if (startCertificationExactly == true) {
                             lifecycleScope.launch {
                                 startCertification()
@@ -321,6 +315,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         }
                         initImageView(it)
                         initTextView(it)
+                        initVisitHistory(it.visits)
                     }
                 }
                 launch {
@@ -329,6 +324,44 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
                 }
+            }
+        }
+    }
+
+    private fun initVisitHistory(visits: VisitsModel?) {
+        if (visits == null) {
+            binding.visitHistoryTitleTextView.text = getString(R.string.visit_history_empty_title)
+            binding.smileTextView.apply {
+                text = getString(R.string.visit_history_success, 0)
+                textPartTypeface("0명", Typeface.BOLD)
+            }
+            binding.sadTextView.apply {
+                text = getString(R.string.visit_history_fail, 0)
+                textPartTypeface("0명", Typeface.BOLD)
+            }
+        } else {
+            binding.visitHistoryTitleTextView.text =
+                if (visits.counts.isCertified) getString(R.string.visit_history_title) else getString(R.string.visit_history_empty_title)
+            binding.smileTextView.apply {
+                text = getString(R.string.visit_history_success, visits.counts.existsCounts)
+                textPartTypeface("${visits.counts.existsCounts}명", Typeface.BOLD)
+            }
+            binding.sadTextView.apply {
+                text = getString(R.string.visit_history_fail, visits.counts.notExistsCounts)
+                textPartTypeface("${visits.counts.notExistsCounts}명", Typeface.BOLD)
+            }
+            val historiesContentModelList = visits.histories.contents
+            if (historiesContentModelList.isNotNullOrEmpty()) {
+                if (historiesContentModelList.size > 5) {
+                    visitHistoryAdapter.submitList(historiesContentModelList.subList(0, 5))
+                    binding.visitExtraTextView.apply {
+                        isVisible = true
+                        text = getString(R.string.visit_extra, visits.counts.existsCounts + visits.counts.notExistsCounts - 5)
+                    }
+                } else {
+                    visitHistoryAdapter.submitList(historiesContentModelList)
+                }
+                binding.visitHistoryCardView.isVisible = true
             }
         }
     }
@@ -352,7 +385,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews?.contents?.size)
         binding.favoriteButton.text = userStoreDetailModel.favorite?.totalSubscribersCount.toString()
         binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits?.counts?.existsCounts)
-        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits?.counts?.existsCounts.toString(),Typeface.BOLD)
+        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits?.counts?.existsCounts.toString(), Typeface.BOLD)
         binding.addressTextView.text = userStoreDetailModel.store?.address?.fullAddress
     }
 
@@ -387,6 +420,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             )
         }
     }
+
     private fun showDirectionBottomDialog() {
         val store = viewModel.userStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
@@ -420,70 +454,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //            it?.appearanceDays?.contains("SUNDAY") == true
 //    }
 
-//    private fun updateVisitHistory(it: StoreDetail?) {
-//        val isExist = it?.visitHistories?.count { history -> history.isExist() } ?: 0
-//        val isNotExist = it?.visitHistories?.size?.minus(isExist) ?: 0
-//        val hasCertification = isExist + isNotExist > 0
-//
-//        binding.tvVisitHistory.text = buildSpannedString {
-//            append("이번 달 ")
-//            bold {
-//                if (hasCertification) {
-//                    append((isExist + isNotExist).toString())
-//                    append("명")
-//                } else {
-//                    append("방문 인증")
-//                }
-//            }
-//            append(if (hasCertification) "이 다녀간 가게에요!" else " 내역이 없어요 :(")
-//        }
-//        binding.tvGood.text = "${isExist}명"
-//        binding.tvGood.setTextColor(
-//            ContextCompat.getColor(
-//                this,
-//                if (isExist > 0) R.color.green else R.color.gray30
-//            )
-//        )
-//        binding.tvGood.setCompoundDrawablesWithIntrinsicBounds(
-//            ContextCompat.getDrawable(
-//                this,
-//                if (isExist > 0) R.drawable.ic_good else R.drawable.ic_good_off
-//            ),
-//            null,
-//            null,
-//            null
-//        )
-//        binding.tvBad.text = "${isNotExist}명"
-//        binding.tvBad.setTextColor(
-//            ContextCompat.getColor(
-//                this,
-//                if (isNotExist > 0) R.color.color_main_red else R.color.gray30
-//            )
-//        )
-//        binding.tvBad.setCompoundDrawablesWithIntrinsicBounds(
-//            ContextCompat.getDrawable(
-//                this,
-//                if (isNotExist > 0) R.drawable.ic_bad else R.drawable.ic_bad_off
-//            ),
-//            null,
-//            null,
-//            null
-//        )
-//        visitHistoryAdapter.submitList(it?.visitHistories)
-//
-//        binding.ibPlus.setOnClickListener {
-//            if (binding.rvVisitHistory.isVisible) {
-//                binding.rvVisitHistory.isVisible = false
-//                return@setOnClickListener
-//            }
-//
-//            if (visitHistoryAdapter.itemCount > 0) {
-//                binding.rvVisitHistory.isVisible = true
-//            } else {
-//                binding.root.showSnack("아직 인증 내역이 없어요!")
-//            }
-//        }
-//    }
 
     fun refreshStoreInfo() {
         val storeId = intent.getIntExtra(STORE_ID, 0)
