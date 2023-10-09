@@ -286,6 +286,7 @@
                 app:layout_constraintEnd_toEndOf="@id/map" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/visitHistoryLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
@@ -347,8 +348,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="1dp"
-                    android:visibility="gone"
                     android:layout_marginTop="8dp"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/gray0"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
@@ -389,160 +390,244 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="20dp"-->
-            <!--            android:layout_marginTop="30dp"-->
-            <!--            android:layout_marginBottom="20dp">-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/storeInfoLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/visitHistoryLayout">
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/tv_store_info"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                android:text="@string/store_info"-->
-            <!--                android:textColor="@color/color_black"-->
-            <!--                android:textSize="16sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent" />-->
+                <TextView
+                    android:id="@+id/storeInfoTitleTextView"
+                    style="@style/apple_gothic_bold.size_16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/store_info"
+                    android:textColor="@color/gray100"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/tv_updated_at"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginStart="8dp"-->
-            <!--                android:layout_marginBottom="2dp"-->
-            <!--                android:textColor="@color/color_999999"-->
-            <!--                android:textSize="12sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="@id/tv_store_info"-->
-            <!--                app:layout_constraintStart_toEndOf="@+id/tv_store_info"-->
-            <!--                tools:text="12.22.22 업데이트" />-->
+                <TextView
+                    android:id="@+id/storeInfoUpdatedAtTextView"
+                    style="@style/apple_gothic_medium.size_12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/gray60"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storeInfoTitleTextView"
+                    tools:text="2023.02.04 업데이트" />
 
-            <!--            <Button-->
-            <!--                android:id="@+id/btn_add_store_info"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="30dp"-->
-            <!--                android:background="@drawable/ripple_translate"-->
-            <!--                android:backgroundTint="@color/color_sub_red_hint"-->
-            <!--                android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                android:text="@string/edit_info"-->
-            <!--                android:textColor="@color/color_main_red"-->
-            <!--                android:textSize="12sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintEnd_toEndOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent" />-->
-            <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+                <TextView
+                    android:id="@+id/editStoreInfoButton"
+                    style="@style/apple_gothic_bold.size_12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_info"
+                    android:textColor="@color/pink"
+                    app:layout_constraintBottom_toBottomOf="@id/storeInfoUpdatedAtTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/storeInfoUpdatedAtTextView" />
 
-            <!--        <TableLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="24dp"-->
-            <!--            android:layout_marginBottom="12dp"-->
-            <!--            android:background="@drawable/rect_white_radius_12"-->
-            <!--            android:gravity="center_vertical"-->
-            <!--            android:paddingHorizontal="16dp"-->
-            <!--            android:paddingVertical="20dp">-->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/storeInfoCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="1dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/gray0"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storeInfoUpdatedAtTextView"
+                    tools:ignore="UnusedAttribute">
 
-            <!--            <TableRow>-->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp">
 
-            <!--                <TextView-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_weight="1"-->
-            <!--                    android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                    android:text="@string/store_type"-->
-            <!--                    android:textColor="@color/color_black"-->
-            <!--                    android:textStyle="bold" />-->
+                        <TextView
+                            android:id="@+id/storeTypeTitleTextView"
+                            style="@style/apple_gothic_bold.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/store_type"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            <!--                        <TextView-->
-            <!--                            android:id="@+id/tv_store_type"-->
-            <!--                            storeType="@{viewModel.storeInfo.storeType}"-->
-            <!--                            visibleIf="@{viewModel.storeInfo.storeType != null}"-->
-            <!--                            android:layout_width="match_parent"-->
-            <!--                            android:layout_height="wrap_content"-->
-            <!--                            android:layout_weight="3"-->
-            <!--                            android:gravity="end"-->
-            <!--                            android:textColor="@color/color_sub_red"-->
-            <!--                            tools:text="길거리" />-->
-            <!--            </TableRow>-->
+                        <TextView
+                            android:id="@+id/storeTypeTextView"
+                            style="@style/apple_gothic_medium.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gray70"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            <!--            <TableRow-->
-            <!--                android:layout_marginTop="19dp"-->
-            <!--                android:gravity="center_vertical">-->
+                        <TextView
+                            android:id="@+id/showTypeTitleTextView"
+                            style="@style/apple_gothic_bold.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="11dp"
+                            android:text="@string/show_type"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/storeTypeTitleTextView" />
 
-            <!--                <TextView-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_weight="1"-->
-            <!--                    android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                    android:text="@string/show_type"-->
-            <!--                    android:textColor="@color/color_black"-->
-            <!--                    android:textStyle="bold" />-->
+                        <LinearLayout
+                            android:id="@+id/showTypeLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="9dp"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/storeTypeTextView">
 
-            <!--                        <include-->
-            <!--                            android:id="@+id/layout_btn_day_of_week"-->
-            <!--                            clickable="@{false}"-->
-            <!--                            layout="@layout/btns_day_of_week"-->
-            <!--                            visibleIf="@{viewModel.storeInfo.appearanceDays.size() > 0}" />-->
-            <!--            </TableRow>-->
+                            <TextView
+                                android:id="@+id/mondayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/monday"
+                                android:textColor="@color/gray40" />
 
-            <!--            <TableRow-->
-            <!--                android:layout_marginTop="19dp"-->
-            <!--                android:gravity="center_vertical">-->
+                            <TextView
+                                android:id="@+id/tuesdayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/tuesday"
+                                android:textColor="@color/gray40" />
 
-            <!--                <TextView-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_weight="1"-->
-            <!--                    android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                    android:text="@string/payment_type"-->
-            <!--                    android:textColor="@color/color_black"-->
-            <!--                    android:textStyle="bold" />-->
+                            <TextView
+                                android:id="@+id/wednesdayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/wednesday"
+                                android:textColor="@color/gray40" />
 
-            <!--                        <LinearLayout-->
-            <!--                            android:id="@+id/layout_payments"-->
-            <!--                            visibleIf="@{viewModel.storeInfo.paymentMethods.size > 0}"-->
-            <!--                            android:layout_width="match_parent"-->
-            <!--                            android:layout_height="wrap_content"-->
-            <!--                            android:gravity="end|center_vertical"-->
-            <!--                            android:orientation="horizontal">-->
+                            <TextView
+                                android:id="@+id/thursdayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/thursday"
+                                android:textColor="@color/gray40" />
 
-            <!--                            <TextView-->
-            <!--                                android:id="@+id/tv_cash"-->
-            <!--                                android:layout_width="wrap_content"-->
-            <!--                                android:layout_height="wrap_content"-->
-            <!--                                android:layout_marginEnd="10dp"-->
-            <!--                                android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`CASH`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"-->
-            <!--                                android:drawablePadding="6dp"-->
-            <!--                                android:text="@string/cash"-->
-            <!--                                android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`CASH`) ? @color/color_sub_red : @color/color_gray1}"-->
-            <!--                                tools:ignore="UseCompatTextViewDrawableXml" />-->
+                            <TextView
+                                android:id="@+id/fridayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/friday"
+                                android:textColor="@color/gray40" />
 
-            <!--                            <TextView-->
-            <!--                                android:id="@+id/tv_banking"-->
-            <!--                                android:layout_width="wrap_content"-->
-            <!--                                android:layout_height="wrap_content"-->
-            <!--                                android:layout_marginEnd="10dp"-->
-            <!--                                android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`ACCOUNT_TRANSFER`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"-->
-            <!--                                android:drawablePadding="6dp"-->
-            <!--                                android:text="@string/banking"-->
-            <!--                                android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`ACCOUNT_TRANSFER`) ? @color/color_sub_red : @color/color_gray1}"-->
-            <!--                                tools:ignore="UseCompatTextViewDrawableXml" />-->
+                            <TextView
+                                android:id="@+id/saturdayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/saturday"
+                                android:textColor="@color/gray40" />
 
-            <!--                            <TextView-->
-            <!--                                android:id="@+id/tv_card"-->
-            <!--                                android:layout_width="wrap_content"-->
-            <!--                                android:layout_height="wrap_content"-->
-            <!--                                android:drawableStart="@{viewModel.storeInfo.paymentMethods.contains(`CARD`) ? @drawable/circle_sub_red_8dp : @drawable/circle_gray_8dp }"-->
-            <!--                                android:drawablePadding="6dp"-->
-            <!--                                android:text="@string/card"-->
-            <!--                                android:textColor="@{viewModel.storeInfo.paymentMethods.contains(`CARD`) ? @color/color_sub_red : @color/color_gray1}"-->
-            <!--                                tools:ignore="UseCompatTextViewDrawableXml" />-->
-            <!--                        </LinearLayout>-->
-            <!--            </TableRow>-->
-            <!--        </TableLayout>-->
+                            <TextView
+                                android:id="@+id/sundayTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="1dp"
+                                android:background="@drawable/circle_gray10_24dp"
+                                android:gravity="center"
+                                android:text="@string/sunday"
+                                android:textColor="@color/gray40" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/paymentTypeTitleTextView"
+                            style="@style/apple_gothic_bold.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="11dp"
+                            android:text="@string/payment_type"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/showTypeTitleTextView" />
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="9dp"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/showTypeLayout">
+
+                            <TextView
+                                android:id="@+id/cashTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:drawablePadding="4dp"
+                                android:gravity="center"
+                                android:text="@string/cash"
+                                android:textColor="@color/gray40"
+                                app:drawableStartCompat="@drawable/circle_gray30_4dp" />
+
+                            <TextView
+                                android:id="@+id/cardTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:drawablePadding="4dp"
+                                android:gravity="center"
+                                android:text="@string/card"
+                                android:textColor="@color/gray40"
+                                app:drawableStartCompat="@drawable/circle_gray30_4dp" />
+
+                            <TextView
+                                android:id="@+id/bankingTextView"
+                                style="@style/apple_gothic_medium.size_12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="4dp"
+                                android:drawablePadding="4dp"
+                                android:gravity="center"
+                                android:text="@string/banking"
+                                android:textColor="@color/gray40"
+                                app:drawableStartCompat="@drawable/circle_gray30_4dp" />
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <!--        <TableLayout-->
             <!--            android:layout_width="match_parent"-->

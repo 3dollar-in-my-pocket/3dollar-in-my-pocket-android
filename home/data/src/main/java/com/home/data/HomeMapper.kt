@@ -341,18 +341,39 @@ fun ReviewWriter.asModel() = ReviewWriterModel(
 
 fun UserStore.asModel() = UserStoreModel(
     address = address?.asModel() ?: AddressModel(),
-    appearanceDays = appearanceDays ?: listOf(),
+    appearanceDays = appearanceDays?.map { it.asDayOfTheWeekType() } ?: listOf(),
     categories = categories?.map { it.asModel() } ?: listOf(),
     createdAt = createdAt ?: "",
     location = location?.asModel() ?: LocationModel(),
     menus = menus?.map { it.asModel() } ?: listOf(),
     name = name ?: "",
-    paymentMethods = paymentMethods ?: listOf(),
+    paymentMethods = paymentMethods?.map { it.asPaymentType() } ?: listOf(),
     rating = rating ?: 0,
-    salesType = salesType,
+    salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: ""
 )
+
+fun String.asPaymentType() = when (this) {
+    "CARD" -> PaymentType.CARD
+    "ACCOUNT_TRANSFER" -> PaymentType.ACCOUNT_TRANSFER
+    else -> PaymentType.CASH
+}
+
+fun String.asSalesType() = when (this) {
+    "ROAD" -> {
+        SalesType.ROAD
+    }
+    "STORE" -> {
+        SalesType.STORE
+    }
+    "CONVENIENCE_STORE " -> {
+        SalesType.CONVENIENCE_STORE
+    }
+    else -> {
+        SalesType.NONE
+    }
+}
 
 fun UserStoreMenu.asModel() = UserStoreMenuModel(
     category = category?.asModel() ?: CategoryModel(),

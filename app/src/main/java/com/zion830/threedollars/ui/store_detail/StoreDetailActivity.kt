@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.store_detail
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipboardManager
 import android.content.Context
@@ -12,6 +11,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -21,10 +21,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.StatusType
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.PaymentType
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
@@ -37,13 +37,11 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
-import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
-import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
@@ -56,7 +54,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 
@@ -229,7 +226,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //            AddReviewDialog.getInstance()
 //                .show(supportFragmentManager, AddReviewDialog::class.java.name)
 //        }
-//        binding.btnAddStoreInfo.setOnClickListener {
+        binding.editStoreInfoButton.setOnClickListener {
+            // TODO: 정보 수정 기능 구현
 //            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
 //            supportFragmentManager.addNewFragment(
 //                R.id.container,
@@ -237,7 +235,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //                EditStoreDetailFragment::class.java.name,
 //                false
 //            )
-//        }
+        }
         binding.addCertificationButton.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
             startCertification()
@@ -265,25 +263,25 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
         val userStoreModel = viewModel.userStoreDetailModel.value.store
 
-            val shareFormat = ShareFormat(
-                getString(R.string.kakao_map_format),
-                binding.storeNameTextView.text.toString(),
-                LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
-            )
-            shareWithKakao(
-                shareFormat = shareFormat,
-                title = getString(
-                    R.string.share_kakao_road_food_title,
-                    userStoreModel.name
-                ),
-                description = getString(
-                    R.string.share_kakao_road_food,
-                    userStoreModel.name
-                ),
-                imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
-                storeId = storeId.toString(),
-                type = getString(R.string.scheme_host_kakao_link_road_food_type)
-            )
+        val shareFormat = ShareFormat(
+            getString(R.string.kakao_map_format),
+            binding.storeNameTextView.text.toString(),
+            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+        )
+        shareWithKakao(
+            shareFormat = shareFormat,
+            title = getString(
+                R.string.share_kakao_road_food_title,
+                userStoreModel.name
+            ),
+            description = getString(
+                R.string.share_kakao_road_food,
+                userStoreModel.name
+            ),
+            imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+            storeId = storeId.toString(),
+            type = getString(R.string.scheme_host_kakao_link_road_food_type)
+        )
     }
 
     private fun initFlows() {
@@ -383,6 +381,69 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.bossTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
         binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
         binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
+        binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
+        initPayments(userStoreDetailModel.store.paymentMethods)
+        initAppearanceDays(userStoreDetailModel.store.appearanceDays)
+    }
+
+    private fun initPayments(paymentTypeList: List<PaymentType>) {
+        paymentTypeList.forEach {
+            when (it) {
+                PaymentType.CARD -> {
+                    initPayment(binding.cardTextView)
+                }
+                PaymentType.CASH -> {
+                    initPayment(binding.cashTextView)
+                }
+                PaymentType.ACCOUNT_TRANSFER -> {
+                    initPayment(binding.bankingTextView)
+                }
+            }
+        }
+    }
+
+    private fun initPayment(textView: TextView) {
+        textView.apply {
+            setCompoundDrawablesWithIntrinsicBounds(
+                ContextCompat.getDrawable(this@StoreDetailActivity, R.drawable.circle_gray70_4dp), null, null, null
+            )
+            setTextColor(getColor(R.color.gray70))
+        }
+    }
+
+    private fun initAppearanceDays(dayOfTheWeekTypeList: List<DayOfTheWeekType>) {
+        dayOfTheWeekTypeList.forEach {
+            when (it) {
+                DayOfTheWeekType.MONDAY -> {
+                    initAppearanceDay(binding.mondayTextView)
+                }
+                DayOfTheWeekType.TUESDAY -> {
+                    initAppearanceDay(binding.tuesdayTextView)
+                }
+                DayOfTheWeekType.WEDNESDAY -> {
+                    initAppearanceDay(binding.wednesdayTextView)
+                }
+                DayOfTheWeekType.THURSDAY -> {
+                    initAppearanceDay(binding.thursdayTextView)
+                }
+                DayOfTheWeekType.FRIDAY -> {
+                    initAppearanceDay(binding.fridayTextView)
+                }
+                DayOfTheWeekType.SATURDAY -> {
+                    initAppearanceDay(binding.saturdayTextView)
+                }
+                DayOfTheWeekType.SUNDAY -> {
+                    initAppearanceDay(binding.sundayTextView)
+                }
+            }
+        }
+    }
+
+    private fun initAppearanceDay(textView: TextView) {
+        textView.apply {
+            setBackgroundResource(R.drawable.circle_gray70_24dp)
+            setTextColor(getColor(R.color.white))
+        }
     }
 
     private fun clickFavoriteButton() {
@@ -403,16 +464,16 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun startCertification() {
         val userStoreModel = viewModel.userStoreDetailModel.value.store
 
-            val distance = NaverMapUtils.calculateDistance(
-                naverMapFragment.currentPosition,
-                LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
-            )
-            supportFragmentManager.addNewFragment(
-                R.id.container,
-                if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
-                StoreCertificationAvailableFragment::class.java.name,
-                false
-            )
+        val distance = NaverMapUtils.calculateDistance(
+            naverMapFragment.currentPosition,
+            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+        )
+        supportFragmentManager.addNewFragment(
+            R.id.container,
+            if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
+            StoreCertificationAvailableFragment::class.java.name,
+            false
+        )
     }
 
     private fun showDirectionBottomDialog() {
@@ -430,24 +491,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         )
         startActivity(intent)
     }
-
-//    private fun initWeekdays(it: StoreDetail?) {
-//        binding.layoutBtnDayOfWeek.tbMon.isChecked =
-//            it?.appearanceDays?.contains("MONDAY") == true
-//        binding.layoutBtnDayOfWeek.tbTue.isChecked =
-//            it?.appearanceDays?.contains("TUESDAY") == true
-//        binding.layoutBtnDayOfWeek.tbWen.isChecked =
-//            it?.appearanceDays?.contains("WEDNESDAY") == true
-//        binding.layoutBtnDayOfWeek.tbThur.isChecked =
-//            it?.appearanceDays?.contains("THURSDAY") == true
-//        binding.layoutBtnDayOfWeek.tbFri.isChecked =
-//            it?.appearanceDays?.contains("FRIDAY") == true
-//        binding.layoutBtnDayOfWeek.tbSat.isChecked =
-//            it?.appearanceDays?.contains("SATURDAY") == true
-//        binding.layoutBtnDayOfWeek.tbSun.isChecked =
-//            it?.appearanceDays?.contains("SUNDAY") == true
-//    }
-
 
     fun refreshStoreInfo() {
         val storeId = intent.getIntExtra(STORE_ID, 0)
