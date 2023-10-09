@@ -626,145 +626,41 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/storeMenuCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="1dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/gray0"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/storeInfoCardView"
+                    tools:ignore="UnusedAttribute">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="16dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/menuRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:listitem="@layout/item_visit_history" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <!--        <TableLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="24dp"-->
-            <!--            android:layout_marginBottom="40dp"-->
-            <!--            android:background="@drawable/rect_white_radius_12"-->
-            <!--            android:paddingHorizontal="16dp"-->
-            <!--            android:paddingTop="24dp"-->
-            <!--            android:paddingBottom="10dp">-->
-
-            <!--            <TextView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:fontFamily="@font/apple_gothic_bold"-->
-            <!--                android:text="@{@string/category_menu(viewModel.categoryCount)}"-->
-            <!--                android:textColor="@color/color_black"-->
-            <!--                android:textSize="16sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent"-->
-            <!--                tools:text="가게사진 20개" />-->
-
-            <!--            <androidx.recyclerview.widget.RecyclerView-->
-            <!--                android:id="@+id/rv_category"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:nestedScrollingEnabled="false"-->
-            <!--                android:overScrollMode="never"-->
-            <!--                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-            <!--                tools:itemCount="1"-->
-            <!--                tools:listitem="@layout/item_category" />-->
-            <!--        </TableLayout>-->
-
-            <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="20dp"-->
-            <!--            android:layout_marginBottom="20dp">-->
-
-            <!--            <TextView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="@{@string/photo_count(viewModel.storeInfo.images.size())}"-->
-            <!--                android:textColor="@color/color_black"-->
-            <!--                android:textSize="16sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent"-->
-            <!--                tools:text="가게사진 20개" />-->
-
-            <!--            <Button-->
-            <!--                android:id="@+id/btn_add_photo"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="30dp"-->
-            <!--                android:background="@drawable/ripple_translate"-->
-            <!--                android:backgroundTint="@color/color_sub_red_hint"-->
-            <!--                android:text="@string/add_photo"-->
-            <!--                android:textColor="@color/color_main_red"-->
-            <!--                android:textSize="12sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintEnd_toEndOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent" />-->
-            <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-            <!--        <androidx.recyclerview.widget.RecyclerView-->
-            <!--            android:id="@+id/rv_photo"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="20dp"-->
-            <!--            android:layout_marginBottom="40dp"-->
-            <!--            android:orientation="horizontal"-->
-            <!--            android:overScrollMode="never"-->
-            <!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-            <!--            tools:listitem="@layout/item_photo">-->
-
-            <!--        </androidx.recyclerview.widget.RecyclerView>-->
-
-            <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="20dp"-->
-            <!--            android:layout_marginBottom="20dp">-->
-
-            <!--            <TextView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="@{@string/review_count(viewModel.storeInfo.reviews.size())}"-->
-            <!--                android:textColor="@color/color_black"-->
-            <!--                android:textSize="16sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent"-->
-            <!--                tools:text="리뷰 20개" />-->
-
-            <!--            <Button-->
-            <!--                android:id="@+id/btn_add_review"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="30dp"-->
-            <!--                android:background="@drawable/ripple_translate"-->
-            <!--                android:backgroundTint="@color/color_sub_red_hint"-->
-            <!--                android:text="@string/add_review"-->
-            <!--                android:textColor="@color/color_main_red"-->
-            <!--                android:textSize="12sp"-->
-            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--                app:layout_constraintEnd_toEndOf="parent"-->
-            <!--                app:layout_constraintTop_toTopOf="parent" />-->
-            <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-            <!--        <com.google.android.gms.ads.AdView-->
-            <!--            android:id="@+id/admob"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="24dp"-->
-            <!--            android:layout_marginTop="8dp"-->
-            <!--            android:background="@drawable/rect_gray"-->
-            <!--            app:adSize="BANNER"-->
-            <!--            app:adUnitId="@string/admob_unit_id"-->
-            <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--            app:layout_constraintEnd_toEndOf="parent"-->
-            <!--            app:layout_constraintStart_toStartOf="parent" />-->
-
-            <!--        <androidx.recyclerview.widget.RecyclerView-->
-            <!--            android:id="@+id/rv_review"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginHorizontal="24dp"-->
-            <!--            android:layout_marginTop="16dp"-->
-            <!--            android:layout_marginBottom="120dp"-->
-            <!--            android:nestedScrollingEnabled="false"-->
-            <!--            android:overScrollMode="never"-->
-            <!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-            <!--            tools:itemCount="2"-->
-            <!--            tools:listitem="@layout/item_review" />-->
-
-            <!--    </LinearLayout>-->
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

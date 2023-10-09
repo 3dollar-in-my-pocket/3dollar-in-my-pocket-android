@@ -235,7 +235,7 @@
     <string name="menu_info">메뉴 정보</string>
     <string name="food_truck_price">%s원</string>
     <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
-    <string name="food_truck_menu_more">메뉴 %d개 더보기</string>
+    <string name="store_detail_menu_more">메뉴 %d개 더보기</string>
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>

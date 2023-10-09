@@ -27,7 +27,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
@@ -210,10 +210,10 @@ class FoodTruckStoreDetailActivity :
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
                         } else if (bossStoreDetailModel.store.menuModels.size > 5) {
                             val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
-                            val foodTruckMenuMoreResponse = FoodTruckMenuMoreResponse(
-                                moreTitle = getString(R.string.food_truck_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
+                            val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
+                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
                             )
-                            foodTruckMenuAdapter.submitList(sublist + foodTruckMenuMoreResponse)
+                            foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
                             foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menuModels)
                         }

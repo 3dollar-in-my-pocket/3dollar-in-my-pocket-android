@@ -23,10 +23,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.PaymentType
-import com.home.domain.data.store.UserStoreDetailModel
-import com.home.domain.data.store.VisitsModel
+import com.home.domain.data.store.*
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.*
@@ -43,7 +40,6 @@ import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
-import com.zion830.threedollars.ui.store_detail.adapter.CategoryInfoRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
@@ -56,6 +52,7 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
+import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -64,7 +61,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private val categoryAdapter = CategoryInfoRecyclerAdapter()
+    private val userStoreMenuAdapter: UserStoreMenuAdapter by lazy {
+        UserStoreMenuAdapter {
+            val menuGroup = viewModel.userStoreDetailModel.value.store.menus.groupBy { it.category.name }
+            userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
+        }
+    }
 
     private var storeId = 0
 
@@ -171,9 +173,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
         })
         binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
+        binding.menuRecyclerView.adapter = userStoreMenuAdapter
 
 //        binding.rvPhoto.adapter = photoAdapter
-//        binding.rvCategory.adapter = categoryAdapter
 //        binding.rvReview.adapter = reviewAdapter
     }
 
@@ -294,7 +296,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //                            StoreImage(index, null, image.url)
 //                        }?.toMutableList())
 //                        initWeekdays(it)
-
+                        val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
+                        naverMapFragment.initMap(latLng)
                         startCertificationExactly = if (startCertificationExactly != null) {
                             intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
                         } else {
@@ -309,6 +312,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         initImageView(it)
                         initTextView(it)
                         initVisitHistory(it.visits)
+                        initMenu(it.store.menus)
                     }
                 }
                 launch {
@@ -318,6 +322,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     }
                 }
             }
+        }
+    }
+
+    private fun initMenu(menuModel: List<UserStoreMenuModel>) {
+        val menuGroup = menuModel.groupBy { it.category.name }
+        if (menuGroup.size < 3) {
+            userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
+        } else {
+            val subKeys = menuGroup.keys.take(2)
+            val subMenuGroup = menuGroup.getValue(subKeys[0]) + menuGroup.getValue(subKeys[1])
+            val userStoreMenuMoreResponse = UserStoreMenuMoreResponse(
+                moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2)
+            )
+            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMenuMoreResponse)
         }
     }
 

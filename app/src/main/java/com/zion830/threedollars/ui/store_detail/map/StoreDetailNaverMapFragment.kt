@@ -21,8 +21,8 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
         map.uiSettings.setLogoMargin(0, SizeUtils.dpToPx(300f), 0, 0) // 로고 가려지도록
     }
 
-    fun initMap(latLng: LatLng, isClosed: Boolean) {
+    fun initMap(latLng: LatLng, isClosed: Boolean? = null) {
         moveCamera(latLng)
-        addMarker(if (isClosed) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
+        addMarker(if (isClosed == true) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
     }
 }
