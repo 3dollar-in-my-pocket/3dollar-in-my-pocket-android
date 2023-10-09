@@ -60,12 +60,6 @@ interface NewServiceApi {
         @Body editStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
 
-    @DELETE("/api/v2/store/{storeId}")
-    suspend fun deleteStore(
-        @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
-    ): Response<DeleteStoreResponse>
-
     @GET("/api/v1/stores/near/exists")
     suspend fun getNearExists(
         @Query("distance") distance: Double = 10.0,

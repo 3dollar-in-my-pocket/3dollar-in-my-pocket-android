@@ -417,3 +417,7 @@ fun Visitor.asModel() = VisitorModel(
     socialType = socialType,
     userId = userId
 )
+
+fun DeleteResultResponse.asModel() = DeleteResultModel(
+    isDeleted = isDeleted ?: false
+)

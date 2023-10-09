@@ -52,6 +52,7 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
+import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 
 @AndroidEntryPoint
@@ -110,11 +111,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
                 filterVisitStartDate = getMonthFirstDate()
             )
-        }
-        viewModel.closeActivity.observe(this) {
-            if (it) {
-                finish()
-            }
         }
         viewModel.photoDeleted.observe(this) {
             if (it) {
@@ -194,10 +190,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             setResult(RESULT_OK)
             finish()
         }
-//        binding.deleteTextView.setOnClickListener {
-//            DeleteStoreDialog.getInstance(storeId)
-//                .show(supportFragmentManager, DeleteStoreDialog::class.java.name)
-//        }
+        binding.deleteButton.setOnClickListener {
+            DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
+        }
 //        binding.btnAddPhoto.setOnClickListener {
 //            TedImagePicker.with(this).zoomIndicator(false).errorListener {
 //                if (it.message?.startsWith("permission") == true) {
@@ -295,7 +290,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //                        photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
 //                            StoreImage(index, null, image.url)
 //                        }?.toMutableList())
-//                        initWeekdays(it)
                         val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
                         naverMapFragment.initMap(latLng)
                         startCertificationExactly = if (startCertificationExactly != null) {

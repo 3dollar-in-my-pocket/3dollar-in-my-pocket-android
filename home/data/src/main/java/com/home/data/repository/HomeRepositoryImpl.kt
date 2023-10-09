@@ -3,10 +3,7 @@ package com.home.data.repository
 import com.home.data.asModel
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseResponse
@@ -128,4 +125,14 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
             targetId = targetId,
             postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest)
         )
+
+    override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>> =
+        homeRemoteDataSource.deleteStore(storeId, deleteReasonType).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data.asModel(),
+                message = it.message,
+                resultCode = it.resultCode
+            )
+        }
 }

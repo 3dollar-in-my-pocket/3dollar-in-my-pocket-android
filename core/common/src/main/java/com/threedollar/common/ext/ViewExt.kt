@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
 import android.widget.TextView
@@ -93,6 +94,27 @@ fun TextView.textPartTypeface(changeText: String?, @StyleRes style: Int, isLast:
 
         spannableString.setSpan(
             StyleSpan(style),
+            index,
+            index + changeText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text = spannableString
+    }
+}
+
+fun TextView.textPartColor(changeText: String?, color: Int, isLast: Boolean = false) {
+    if (changeText == null)
+        return
+    val index = if (isLast) {
+        text.toString().lastIndexOf(changeText)
+    } else {
+        text.toString().indexOf(changeText)
+    }
+    if (index != -1) {
+        val spannableString = SpannableString(text)
+
+        spannableString.setSpan(
+            ForegroundColorSpan(color),
             index,
             index + changeText.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

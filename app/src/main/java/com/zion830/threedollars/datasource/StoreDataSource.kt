@@ -63,11 +63,6 @@ interface StoreDataSource {
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
 
-    suspend fun deleteStore(
-        storeId: Int,
-        deleteReasonType: String,
-    ): Response<DeleteStoreResponse>
-
     suspend fun getNearExist(
         latitude: Double,
         longitude: Double,

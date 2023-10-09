@@ -50,12 +50,12 @@
     <string name="store_distance"> 이내에 위치한\n음식점입니다.</string>
     <string name="store_distance_long">1km+에 위치한\n음식점입니다.</string>
     <string name="add_review">리뷰쓰기</string>
-    <string name="request_delete">삭제요청</string>
-    <string name="request_delete_title">삭제하시는\n이유가 궁금해요!</string>
-    <string name="request_delete_description">3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다</string>
+    <string name="request_delete">신고하기</string>
+    <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>
+    <string name="request_delete_description">3건 이상의 요청이 들어오면 자동 삭제됩니다</string>
     <string name="request_delete_reason1">없어진 가게예요</string>
     <string name="request_delete_reason2">허위 제보로 요청된 가게에요</string>
-    <string name="request_delete_reason3">중복 제보된 가게예요</string>
+    <string name="request_delete_reason3">가게가 중복으로 등록되어 있어요.</string>
     <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
     <string name="title_mypage">마이페이지</string>
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>

@@ -24,9 +24,7 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -46,19 +44,9 @@ class StoreDetailViewModel @Inject constructor(
     val selectedLocation: LiveData<LatLng?>
         get() = _selectedLocation
 
-    private val _deleteStoreResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-
     private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
     val uploadImageStatus: LiveData<Boolean>
         get() = _uploadImageStatus
-
-    private val _closeActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val closeActivity: LiveData<Boolean>
-        get() = _closeActivity
-
-    private val _deleteType: MutableLiveData<DeleteType> = MutableLiveData(DeleteType.NONE)
-    val deleteType: LiveData<DeleteType>
-        get() = _deleteType
 
     private val _addReviewResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val addReviewResult: LiveData<Boolean>
@@ -122,26 +110,18 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun deleteStore() {
+    fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val result = repository.deleteStore(_userStoreDetailModel.value.store?.storeId ?: -1, deleteType.value!!.key)
-
-            _deleteStoreResult.postValue(result.isSuccessful)
-            if (result.body()?.data?.isDeleted == true) {
-                _closeActivity.postValue(result.body()?.data?.isDeleted)
+            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect{
+//                _msgTextId.postValue(
+//                    when (it.code()) {
+//                        in 200..299 -> R.string.success_delete_store
+//                        in 400..499 -> R.string.already_request_delete
+//                        else -> R.string.failed_delete_store
+//                    }
+//                )
             }
-            _msgTextId.postValue(
-                when (result.code()) {
-                    in 200..299 -> R.string.success_delete_store
-                    in 400..499 -> R.string.already_request_delete
-                    else -> R.string.failed_delete_store
-                }
-            )
         }
-    }
-
-    fun changeDeleteType(type: DeleteType) {
-        _deleteType.value = type
     }
 
     fun editReview(reviewId: Int, newReview: NewReview) {

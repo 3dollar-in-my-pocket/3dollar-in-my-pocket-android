@@ -6,6 +6,7 @@ import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
@@ -103,5 +104,9 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>> = flow {
         emit(serverApi.postFeedback(targetType, targetId, postFeedbackRequest))
+    }
+
+    override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultResponse>> = flow {
+        emit(serverApi.deleteStore(storeId, deleteReasonType))
     }
 }
