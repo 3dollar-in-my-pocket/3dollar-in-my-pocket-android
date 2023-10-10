@@ -42,8 +42,10 @@ import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailA
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -240,6 +242,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             } else {
                                 getString(R.string.fragment_home_filter_distance)
                             }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
                         }
                     }
                 }

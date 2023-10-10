@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -19,7 +22,10 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DeleteStoreDialog : BottomSheetDialogFragment() {
@@ -48,7 +54,7 @@ class DeleteStoreDialog : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = DialogDeleteBinding.inflate(inflater, container, false)
         return binding.root
@@ -58,6 +64,25 @@ class DeleteStoreDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(R.color.gray80))
 
+        initButton()
+        initFlow()
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initButton() {
         binding.ibClose.setOnClickListener {
             EventTracker.logEvent(Constants.DELETE_POPUP_CLOSE_BTN_CLICKED)
             dismiss()
@@ -77,6 +102,7 @@ class DeleteStoreDialog : BottomSheetDialogFragment() {
                     binding.btnReason3.setTextColor(requireContext().getColor(R.color.gray40))
                     deleteType = DeleteType.NOSTORE
                 }
+
                 R.id.btn_reason2 -> {
                     binding.btnFinish.isEnabled = true
                     binding.btnReason1.setTextColor(requireContext().getColor(R.color.gray40))
@@ -84,6 +110,7 @@ class DeleteStoreDialog : BottomSheetDialogFragment() {
                     binding.btnReason3.setTextColor(requireContext().getColor(R.color.gray40))
                     deleteType = DeleteType.WRONGNOPOSITION
                 }
+
                 R.id.btn_reason3 -> {
                     binding.btnFinish.isEnabled = true
                     binding.btnReason1.setTextColor(requireContext().getColor(R.color.gray40))
@@ -92,7 +119,6 @@ class DeleteStoreDialog : BottomSheetDialogFragment() {
                     deleteType = DeleteType.OVERLAPSTORE
                 }
             }
-
         }
     }
 

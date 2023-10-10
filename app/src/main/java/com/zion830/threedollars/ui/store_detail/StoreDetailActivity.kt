@@ -315,6 +315,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
                 }
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
             }
         }
     }
@@ -404,9 +411,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 PaymentType.CARD -> {
                     initPayment(binding.cardTextView)
                 }
+
                 PaymentType.CASH -> {
                     initPayment(binding.cashTextView)
                 }
+
                 PaymentType.ACCOUNT_TRANSFER -> {
                     initPayment(binding.bankingTextView)
                 }
@@ -429,21 +438,27 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 DayOfTheWeekType.MONDAY -> {
                     initAppearanceDay(binding.mondayTextView)
                 }
+
                 DayOfTheWeekType.TUESDAY -> {
                     initAppearanceDay(binding.tuesdayTextView)
                 }
+
                 DayOfTheWeekType.WEDNESDAY -> {
                     initAppearanceDay(binding.wednesdayTextView)
                 }
+
                 DayOfTheWeekType.THURSDAY -> {
                     initAppearanceDay(binding.thursdayTextView)
                 }
+
                 DayOfTheWeekType.FRIDAY -> {
                     initAppearanceDay(binding.fridayTextView)
                 }
+
                 DayOfTheWeekType.SATURDAY -> {
                     initAppearanceDay(binding.saturdayTextView)
                 }
+
                 DayOfTheWeekType.SUNDAY -> {
                     initAppearanceDay(binding.sundayTextView)
                 }

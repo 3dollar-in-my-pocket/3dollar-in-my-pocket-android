@@ -40,18 +40,22 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         deviceLongitude = deviceLongitude
     ).map {
         BaseResponse(
-            data = it.data.asModel(),
+            ok = it.ok,
+            data = it.data?.asModel(),
             message = it.message,
-            resultCode = it.resultCode
+            resultCode = it.resultCode,
+            error = it.error
         )
     }
 
     override fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreDetailModel>> =
         homeRemoteDataSource.getBossStoreDetail(bossStoreId, deviceLatitude, deviceLongitude).map {
             BaseResponse(
-                data = it.data.asModel(),
+                ok = it.ok,
+                data = it.data?.asModel(),
                 message = it.message,
-                resultCode = it.resultCode
+                resultCode = it.resultCode,
+                error = it.error
             )
         }
 
@@ -75,17 +79,20 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         ).map {
             BaseResponse(
                 ok = it.ok,
-                data = it.data.asModel(),
+                data = it.data?.asModel(),
                 message = it.message,
-                resultCode = it.resultCode
+                resultCode = it.resultCode,
+                error = it.error
             )
         }
 
     override fun getMyInfo(): Flow<BaseResponse<UserModel>> = homeRemoteDataSource.getMyInfo().map {
         BaseResponse(
-            data = it.data.asModel(),
+            ok = it.ok,
+            data = it.data?.asModel(),
             message = it.message,
-            resultCode = it.resultCode
+            resultCode = it.resultCode,
+            error = it.error
         )
     }
 
@@ -98,9 +105,11 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
     override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModel>>> =
         homeRemoteDataSource.getAdvertisements(position).map {
             BaseResponse(
-                data = it.data.map { response -> response.asModel() },
+                ok = it.ok,
+                data = it.data?.map { response -> response.asModel() },
                 message = it.message,
-                resultCode = it.resultCode
+                resultCode = it.resultCode,
+                error = it.error
             )
         }
 
@@ -113,9 +122,11 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         val feedbackTypeResponseList = sharedPrefUtils.getList<FeedbackTypeResponse>(BOSS_FEED_BACK_LIST)
         return homeRemoteDataSource.getFeedbackFull(targetType, targetId).map {
             BaseResponse(
-                data = it.data.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
+                ok = it.ok,
+                data = it.data?.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
                 message = it.message,
-                resultCode = it.resultCode
+                resultCode = it.resultCode,
+                error = it.error
             )
         }
     }
@@ -131,9 +142,10 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         homeRemoteDataSource.deleteStore(storeId, deleteReasonType).map {
             BaseResponse(
                 ok = it.ok,
-                data = it.data.asModel(),
+                data = it.data?.asModel(),
                 message = it.message,
-                resultCode = it.resultCode
+                resultCode = it.resultCode,
+                error = it.error
             )
         }
 

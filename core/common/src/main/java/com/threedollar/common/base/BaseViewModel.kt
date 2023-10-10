@@ -20,14 +20,11 @@ open class BaseViewModel : ViewModel() {
     protected val _msgTextId = MutableLiveData<Int>()
     val msgTextId: LiveData<Int> get() = _msgTextId
 
-    private val _serverError = MutableSharedFlow<String>()
-    val serverError: SharedFlow<String> get() = _serverError
+    protected val _serverError = MutableSharedFlow<String?>()
+    val serverError: SharedFlow<String?> get() = _serverError
 
     protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
-        viewModelScope.launch {
-            _serverError.emit(t.localizedMessage.toString())
-            FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
-        }
+        FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
     }
 
     fun showLoading() {
@@ -45,7 +42,7 @@ open class BaseViewModel : ViewModel() {
 
     protected suspend fun <T> safeApiCall(
         apiCall: Response<BaseResponse<T>>,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ): ResultWrapper<T?> {
         return withContext(dispatcher) {
             try {
@@ -64,9 +61,11 @@ open class BaseViewModel : ViewModel() {
         result.body()?.resultCode.isNullOrEmpty() -> {
             ResultWrapper.Success(result.body()?.data)
         }
+
         result.body()?.resultCode?.isDigitsOnly() == true -> {
             ResultWrapper.GenericError(result.body()?.resultCode?.toInt(), result.body()?.message)
         }
+
         else -> {
             ResultWrapper.GenericError(null, result.body()?.message)
         }

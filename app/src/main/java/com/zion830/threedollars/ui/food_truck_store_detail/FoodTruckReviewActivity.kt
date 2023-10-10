@@ -78,7 +78,9 @@ class FoodTruckReviewActivity :
                 }
                 launch {
                     viewModel.serverError.collect {
-                        showToast(it)
+                        it?.let {
+                            showToast(it)
+                        }
                     }
                 }
             }

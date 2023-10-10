@@ -7,9 +7,11 @@ data class BaseResponse<T>(
     @SerializedName("ok")
     val ok : Boolean = false,
     @SerializedName("data")
-    val data: T,
+    val data: T?,
     @SerializedName("message")
     val message: String? = "",
     @SerializedName("resultCode")
-    val resultCode: String? = ""
+    val resultCode: String? = "",
+    @SerializedName("error")
+    val error: String? = ""
 )

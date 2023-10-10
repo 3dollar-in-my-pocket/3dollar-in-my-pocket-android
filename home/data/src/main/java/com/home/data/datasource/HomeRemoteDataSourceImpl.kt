@@ -13,6 +13,7 @@ import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -29,15 +30,17 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         deviceLongitude: Double,
     ): Flow<BaseResponse<AroundStoreResponse>> = flow {
         emit(
-            serverApi.getAroundStores(
-                categoryIds = categoryIds,
-                targetStores = targetStores,
-                sortType = sortType,
-                filterCertifiedStores = filterCertifiedStores,
-                mapLatitude = mapLatitude,
-                mapLongitude = mapLongitude,
-                deviceLatitude = deviceLatitude,
-                deviceLongitude = deviceLongitude,
+            apiResult(
+                serverApi.getAroundStores(
+                    categoryIds = categoryIds,
+                    targetStores = targetStores,
+                    sortType = sortType,
+                    filterCertifiedStores = filterCertifiedStores,
+                    mapLatitude = mapLatitude,
+                    mapLongitude = mapLongitude,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                )
             )
         )
     }
@@ -45,10 +48,12 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
     override fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreResponse>> =
         flow {
             emit(
-                serverApi.getBossStoreDetail(
-                    bossStoreId = bossStoreId,
-                    deviceLatitude = deviceLatitude,
-                    deviceLongitude = deviceLongitude
+                apiResult(
+                    serverApi.getBossStoreDetail(
+                        bossStoreId = bossStoreId,
+                        deviceLatitude = deviceLatitude,
+                        deviceLongitude = deviceLongitude
+                    )
                 )
             )
         }
@@ -63,55 +68,58 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         filterVisitStartDate: String,
     ): Flow<BaseResponse<UserStoreResponse>> = flow {
         emit(
-            serverApi.getUserStoreDetail(
-                storeId = storeId,
-                deviceLatitude = deviceLatitude,
-                deviceLongitude = deviceLongitude,
-                storeImagesCount = storeImagesCount,
-                reviewsCount = reviewsCount,
-                visitHistoriesCount = visitHistoriesCount,
-                filterVisitStartDate = filterVisitStartDate
+            apiResult(
+                serverApi.getUserStoreDetail(
+                    storeId = storeId,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                    storeImagesCount = storeImagesCount,
+                    reviewsCount = reviewsCount,
+                    visitHistoriesCount = visitHistoriesCount,
+                    filterVisitStartDate = filterVisitStartDate
+                )
             )
         )
     }
 
     override fun getMyInfo(): Flow<BaseResponse<UserResponse>> = flow {
-        emit(serverApi.getMyInfo())
+        emit(apiResult(serverApi.getMyInfo()))
     }
 
     override fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.putMarketingConsent(marketingConsentRequest))
+        emit(apiResult(serverApi.putMarketingConsent(marketingConsentRequest)))
     }
 
     override fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.postPushInformation(informationRequest))
+        emit(apiResult(serverApi.postPushInformation(informationRequest)))
     }
 
     override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementResponse>>> = flow {
-        emit(serverApi.getAdvertisements(position))
+        emit(apiResult(serverApi.getAdvertisements(position)))
     }
 
     override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.putFavorite(storeType, storeId))
+        emit(apiResult(serverApi.putFavorite(storeType, storeId)))
     }
 
     override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.deleteFavorite(storeType, storeId))
+        emit(apiResult(serverApi.deleteFavorite(storeType, storeId)))
     }
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>> = flow {
-        emit(serverApi.getFeedbackFull(targetType, targetId))
+        emit(apiResult(serverApi.getFeedbackFull(targetType, targetId)))
     }
 
     override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.postFeedback(targetType, targetId, postFeedbackRequest))
+        emit(apiResult(serverApi.postFeedback(targetType, targetId, postFeedbackRequest)))
     }
 
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultResponse>> = flow {
-        emit(serverApi.deleteStore(storeId, deleteReasonType))
+        emit(apiResult(serverApi.deleteStore(storeId, deleteReasonType)))
     }
 
     override fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.postStoreVisit(postStoreVisitRequest))
+        emit(apiResult(serverApi.postStoreVisit(postStoreVisitRequest)))
     }
+
 }
