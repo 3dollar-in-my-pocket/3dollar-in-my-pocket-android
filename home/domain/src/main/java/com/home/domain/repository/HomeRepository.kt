@@ -47,4 +47,6 @@ interface HomeRepository {
     fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: List<String>): Flow<BaseResponse<String>>
 
     fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>>
+
+    fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>>
 }

@@ -12,6 +12,7 @@ import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIS
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -135,4 +136,7 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
                 resultCode = it.resultCode
             )
         }
+
+    override fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.postStoreVisit(PostStoreVisitRequest(storeId = storeId, type = visitType))
 }

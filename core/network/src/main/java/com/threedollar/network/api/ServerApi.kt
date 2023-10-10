@@ -11,6 +11,7 @@ import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import retrofit2.Response
 import retrofit2.http.*
@@ -53,14 +54,18 @@ interface ServerApi {
         @Query("storeImagesCount") storeImagesCount: Int?,
         @Query("reviewsCount") reviewsCount: Int?,
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
-        @Query("filterVisitStartDate") filterVisitStartDate: String
+        @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): BaseResponse<UserStoreResponse>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
         @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT",
     ): BaseResponse<DeleteResultResponse>
+
+    @POST("/api/v2/store/visit")
+    suspend fun postStoreVisit(@Body postStoreVisitRequest: PostStoreVisitRequest): BaseResponse<String>
+
 
     // Device
     @POST("/api/v1/device")
@@ -82,7 +87,7 @@ interface ServerApi {
     suspend fun postFeedback(
         @Path("targetType") targetType: String,
         @Path("targetId") targetId: String,
-        @Body postFeedbackRequest: PostFeedbackRequest
+        @Body postFeedbackRequest: PostFeedbackRequest,
     ): BaseResponse<String>
 
     @GET("/api/v1/feedback/{targetType}/target/{targetId}/full")

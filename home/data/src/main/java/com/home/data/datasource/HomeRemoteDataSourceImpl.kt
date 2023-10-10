@@ -11,6 +11,7 @@ import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -108,5 +109,9 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultResponse>> = flow {
         emit(serverApi.deleteStore(storeId, deleteReasonType))
+    }
+
+    override fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.postStoreVisit(postStoreVisitRequest))
     }
 }
