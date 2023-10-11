@@ -11,6 +11,7 @@ import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import retrofit2.Response
 import retrofit2.http.*
@@ -19,10 +20,10 @@ interface ServerApi {
 
     // User
     @GET("/api/v2/user/me")
-    suspend fun getMyInfo(): BaseResponse<UserResponse>
+    suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>
 
     @PUT("/api/v1/user/me/marketing-consent")
-    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): BaseResponse<String>
+    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
     // Store
     @GET("/api/v4/stores/around")
@@ -36,14 +37,14 @@ interface ServerApi {
         @Query("mapLongitude") mapLongitude: Double,
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
-    ): BaseResponse<AroundStoreResponse>
+    ): Response<BaseResponse<AroundStoreResponse>>
 
     @GET("/api/v4/boss-store/{bossStoreId}")
     suspend fun getBossStoreDetail(
         @Path("bossStoreId") bossStoreId: String,
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
-    ): BaseResponse<BossStoreResponse>
+    ): Response<BaseResponse<BossStoreResponse>>
 
     @GET("/api/v4/store/{storeId}")
     suspend fun getUserStoreDetail(
@@ -54,28 +55,32 @@ interface ServerApi {
         @Query("reviewsCount") reviewsCount: Int?,
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
         @Query("filterVisitStartDate") filterVisitStartDate: String
-    ): BaseResponse<UserStoreResponse>
+    ): Response<BaseResponse<UserStoreResponse>>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
         @Path("storeId") storeId: Int,
         @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
-    ): BaseResponse<DeleteResultResponse>
+    ): Response<BaseResponse<DeleteResultResponse>>
+
+    @POST("/api/v2/store/visit")
+    suspend fun postStoreVisit(@Body postStoreVisitRequest: PostStoreVisitRequest): Response<BaseResponse<String>>
+
 
     // Device
     @POST("/api/v1/device")
-    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): BaseResponse<String>
+    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     // advertisement
     @GET("/api/v1/advertisements")
-    suspend fun getAdvertisements(@Query("position") position: String): BaseResponse<List<AdvertisementResponse>>
+    suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<List<AdvertisementResponse>>>
 
     // favorite
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): BaseResponse<String>
+    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): BaseResponse<String>
+    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     // feedback
     @POST("/api/v1/feedback/{targetType}/target/{targetId}")
@@ -83,12 +88,12 @@ interface ServerApi {
         @Path("targetType") targetType: String,
         @Path("targetId") targetId: String,
         @Body postFeedbackRequest: PostFeedbackRequest
-    ): BaseResponse<String>
+    ): Response<BaseResponse<String>>
 
     @GET("/api/v1/feedback/{targetType}/target/{targetId}/full")
-    suspend fun getFeedbackFull(@Path("targetType") targetType: String, @Path("targetId") targetId: String): BaseResponse<List<FeedbackCountResponse>>
+    suspend fun getFeedbackFull(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<List<FeedbackCountResponse>>>
 
     @GET("/api/v1/feedback/{targetType}/types")
-    suspend fun getFeedbackTypes(@Path("targetType") targetType: String): BaseResponse<List<FeedbackTypeResponse>>
+    suspend fun getFeedbackTypes(@Path("targetType") targetType: String): Response<BaseResponse<List<FeedbackTypeResponse>>>
 
 }

@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.home.domain.repository.HomeRepository
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
@@ -59,6 +58,8 @@ class SplashViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         sharedPrefUtils.saveList(it.data, BOSS_FEED_BACK_LIST)
                     }
+                } else {
+                    _serverError.emit(it.message)
                 }
             }
 

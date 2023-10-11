@@ -83,7 +83,11 @@ class StoreDetailViewModel @Inject constructor(
                     filterVisitStartDate = filterVisitStartDate
                 ).collect {
                     if (it.ok) {
-                        _userStoreDetailModel.value = it.data
+                        it.data?.let { data ->
+                            _userStoreDetailModel.value = data
+                        }
+                    } else {
+                        _serverError.emit(it.message)
                     }
                 }
             } else {
@@ -112,14 +116,10 @@ class StoreDetailViewModel @Inject constructor(
 
     fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect{
-//                _msgTextId.postValue(
-//                    when (it.code()) {
-//                        in 200..299 -> R.string.success_delete_store
-//                        in 400..499 -> R.string.already_request_delete
-//                        else -> R.string.failed_delete_store
-//                    }
-//                )
+            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect {
+                if (!it.ok) {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }

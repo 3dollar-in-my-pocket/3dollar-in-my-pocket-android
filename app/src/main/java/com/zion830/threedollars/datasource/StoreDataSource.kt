@@ -1,6 +1,7 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
@@ -99,7 +100,5 @@ interface StoreDataSource {
         bossStoreId: String,
         bossStoreFeedbackRequest: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
-
-    suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>>
 
 }

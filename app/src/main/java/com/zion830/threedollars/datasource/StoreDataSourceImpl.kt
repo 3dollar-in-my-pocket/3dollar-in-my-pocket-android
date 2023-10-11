@@ -1,6 +1,7 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
@@ -156,6 +157,4 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     ): Response<BaseResponse<String>> =
         newService.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
 
-    override suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>> =
-        newService.addVisitHistory(newVisitHistory)
 }

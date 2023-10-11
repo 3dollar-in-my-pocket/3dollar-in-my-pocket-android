@@ -23,6 +23,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,9 +48,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         FragmentHomeListViewBinding.inflate(inflater, container, false)
 
     override fun initView() {
-        initViewModel()
+        initFlow()
+        initButton()
         binding.listRecyclerView.adapter = adapter
 
+    }
+
+    private fun initButton() {
         binding.mapViewTextView.setOnClickListener {
             it.findNavController().popBackStack()
         }
@@ -74,13 +79,16 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
         binding.certifiedStoreTextView.setOnClickListener {
             isFilterCertifiedStores = !isFilterCertifiedStores
-            val drawableStart = ContextCompat.getDrawable(requireContext(), if(isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off)
+            val drawableStart = ContextCompat.getDrawable(
+                requireContext(),
+                if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
+            )
             binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
             getNearStore()
         }
     }
 
-    private fun initViewModel() {
+    private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
@@ -136,6 +144,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                             } else {
                                 getString(R.string.fragment_home_filter_distance)
                             }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
                         }
                     }
                 }

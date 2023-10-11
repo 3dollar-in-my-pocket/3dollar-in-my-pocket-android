@@ -44,12 +44,16 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val homeReposito
     fun getFoodTruckStoreDetail(
         bossStoreId: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getBossStoreDetail(bossStoreId = bossStoreId, deviceLatitude = latitude, deviceLongitude = longitude).collect {
-                _bossStoreDetailModel.value = it.data
-                _favoriteModel.value = it.data.favoriteModel
+                if (it.ok) {
+                    _bossStoreDetailModel.value = it.data!!
+                    _favoriteModel.value = it.data!!.favoriteModel
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
@@ -57,7 +61,11 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val homeReposito
     fun getBossStoreFeedbackFull(bossStoreId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getFeedbackFull(targetType = BOSS_STORE, targetId = bossStoreId).collect {
-                _foodTruckReviewModelList.value = it.data
+                if(it.ok) {
+                    _foodTruckReviewModelList.value = it.data!!
+                }else{
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
@@ -65,7 +73,11 @@ class FoodTruckStoreDetailViewModel @Inject constructor(private val homeReposito
     fun postBossStoreFeedback(bossStoreId: String, bossStoreFeedbackRequest: List<String>) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.postFeedback(BOSS_STORE, bossStoreId, bossStoreFeedbackRequest).collect {
-                _postFeedback.value = it
+                if(it.ok) {
+                    _postFeedback.value = it
+                }else{
+                    _serverError.emit(it.message)
+                }
             }
         }
     }

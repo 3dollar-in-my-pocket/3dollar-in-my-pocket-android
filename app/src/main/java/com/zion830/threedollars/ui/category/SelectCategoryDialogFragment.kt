@@ -13,6 +13,9 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -25,7 +28,9 @@ import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapte
 import com.zion830.threedollars.ui.home.HomeViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 
@@ -88,6 +93,7 @@ class SelectCategoryDialogFragment :
         binding.lifecycleOwner = this
         binding.setVariable(BR.viewModel, viewModel)
         initView()
+        initFlow()
     }
 
     private fun initView() {
@@ -141,6 +147,20 @@ class SelectCategoryDialogFragment :
                 }
             }
             binding.cdAdCategory.isVisible = popups.isNotEmpty()
+        }
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
         }
     }
 }

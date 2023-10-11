@@ -10,6 +10,7 @@ import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 
@@ -62,4 +63,6 @@ interface HomeRemoteDataSource {
         storeId: Int,
         deleteReasonType: String
     ): Flow<BaseResponse<DeleteResultResponse>>
+
+    fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>>
 }

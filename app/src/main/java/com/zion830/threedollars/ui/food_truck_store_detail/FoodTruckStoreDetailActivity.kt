@@ -255,6 +255,13 @@ class FoodTruckStoreDetailActivity :
                         foodTruckReviewRecyclerAdapter.submitList(foodTruckReviewModelList)
                     }
                 }
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
             }
         }
     }

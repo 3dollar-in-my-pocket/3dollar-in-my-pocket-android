@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.splash
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -59,6 +60,22 @@ class SplashActivity :
                         tryServiceLogin()
                     }
                 })
+        }
+
+        initFlow()
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
         }
     }
 

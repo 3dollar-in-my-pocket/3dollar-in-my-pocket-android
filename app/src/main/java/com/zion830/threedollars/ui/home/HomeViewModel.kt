@@ -52,7 +52,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     fun getUserInfo() {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getMyInfo().collect {
-                _userInfo.value = it.data
+                if (it.ok) {
+                    _userInfo.value = it.data!!
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
@@ -88,15 +92,19 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 deviceLongitude = location.longitude
             ).collect {
                 val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-                if (it.data.contentModels.isEmpty()) {
-                    resultList.add(StoreEmptyResponse())
-                } else {
-                    resultList.addAll(it.data.contentModels)
-                    advertisementModel.value?.let { advertisementModel ->
-                        resultList.add(1, advertisementModel)
+                if (it.ok) {
+                    if (it.data?.contentModels?.isEmpty() == true) {
+                        resultList.add(StoreEmptyResponse())
+                    } else {
+                        it.data?.let { it1 -> resultList.addAll(it1.contentModels) }
+                        advertisementModel.value?.let { advertisementModel ->
+                            resultList.add(1, advertisementModel)
+                        }
                     }
+                    _aroundStoreModels.value = resultList
+                } else {
+                    _serverError.emit(it.message)
                 }
-                _aroundStoreModels.value = resultList
             }
         }
     }
@@ -105,7 +113,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     fun postPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.postPushInformation(pushToken).collect {
-                putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
+                if (it.ok) {
+                    putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
@@ -140,7 +152,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private fun getAdvertisement() {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getAdvertisements("MAIN_PAGE_CARD").collect {
-                _advertisementModel.value = it.data?.firstOrNull()
+                if (it.ok) {
+                    _advertisementModel.value = it.data?.firstOrNull()
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
@@ -148,7 +164,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private fun putMarketingConsent(marketingConsent: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putMarketingConsent(marketingConsent).collect {
-                getUserInfo()
+                if (it.ok) {
+                    getUserInfo()
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
