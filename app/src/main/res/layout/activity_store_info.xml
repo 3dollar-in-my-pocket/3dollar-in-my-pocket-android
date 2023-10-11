@@ -93,7 +93,7 @@
                 app:layout_constraintTop_toTopOf="@id/storeNameTextView" />
 
             <TextView
-                android:id="@+id/bossTextView"
+                android:id="@+id/visitTextView"
                 style="@style/apple_gothic_medium.size_12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,9 +113,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="@id/bossTextView"
+                app:layout_constraintBottom_toBottomOf="@id/visitTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/bossTextView">
+                app:layout_constraintTop_toTopOf="@id/visitTextView">
 
                 <TextView
                     android:id="@+id/reviewTextView"
