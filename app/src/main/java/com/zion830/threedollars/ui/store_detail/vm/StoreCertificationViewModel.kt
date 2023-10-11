@@ -3,20 +3,26 @@ package com.zion830.threedollars.ui.store_detail.vm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.threedollar.network.request.PostStoreVisitRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreCertificationViewModel @Inject constructor(private val storeDataSource: StoreDataSource) : BaseViewModel() {
+class StoreCertificationViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
 
-    private val _addVisitHistoryResult = MutableLiveData<Int>()
-    val addVisitHistoryResult: LiveData<Int> get() = _addVisitHistoryResult
+    private val _storeVisitResult = MutableSharedFlow<Boolean>()
+    val storeVisitResult: SharedFlow<Boolean> get() = _storeVisitResult
 
     private val _needUpdate = MutableLiveData<Boolean>()
     val needUpdate: LiveData<Boolean> get() = _needUpdate
@@ -30,20 +36,14 @@ class StoreCertificationViewModel @Inject constructor(private val storeDataSourc
         }
     }
 
-    fun addVisitHistory(storeId: Int, isExist: Boolean) {
+    fun postStoreVisit(storeId: Int, isExist: Boolean) {
         showLoading()
-
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-//            val result = storeDataSource.addVisitHistory(
-//                PostStoreVisitRequest(storeId, if (isExist) "EXISTS" else "NOT_EXISTS")
-//            )
-//            _addVisitHistoryResult.postValue(result.code())
-            hideLoading()
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.postStoreVisit(storeId, if (isExist) "EXISTS" else "NOT_EXISTS").collect {
+                _storeVisitResult.emit(it.ok)
+                if (!it.ok) _serverError.emit(it.message)
+                hideLoading()
+            }
         }
-    }
-
-    override fun handleError(t: Throwable) {
-        super.handleError(t)
-        _addVisitHistoryResult.postValue(499)
     }
 }

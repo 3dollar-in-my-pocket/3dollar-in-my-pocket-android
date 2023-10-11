@@ -37,8 +37,8 @@ class StoreDetailViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
-    private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel> = MutableStateFlow(UserStoreDetailModel())
-    val userStoreDetailModel: StateFlow<UserStoreDetailModel> get() = _userStoreDetailModel
+    private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel?> = MutableStateFlow(null)
+    val userStoreDetailModel: StateFlow<UserStoreDetailModel?> get() = _userStoreDetailModel
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
     val selectedLocation: LiveData<LatLng?>
@@ -103,7 +103,7 @@ class StoreDetailViewModel @Inject constructor(
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value.store?.storeId ?: -1)
+            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value?.store?.storeId ?: -1)
             val response = repository.addReview(request)
             if (response.isSuccessful) {
                 _msgTextId.postValue(R.string.success_add_review)
@@ -116,7 +116,7 @@ class StoreDetailViewModel @Inject constructor(
 
     fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect {
+            homeRepository.deleteStore(userStoreDetailModel.value?.store?.storeId ?: -1, deleteType.key).collect {
                 if (!it.ok) {
                     _serverError.emit(it.message)
                 }
@@ -155,7 +155,7 @@ class StoreDetailViewModel @Inject constructor(
 
         viewModelScope.launch(coroutineExceptionHandler) {
             val responses = async(coroutineExceptionHandler) {
-                repository.saveImage(_userStoreDetailModel.value.store?.storeId ?: -1, images)
+                repository.saveImage(_userStoreDetailModel.value?.store?.storeId ?: -1, images)
             }
 
             responses.await()
