@@ -2,23 +2,14 @@ package com.zion830.threedollars.ui.map
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFullScreenMapBinding
 import com.zion830.threedollars.ui.DirectionBottomDialog
-import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailViewModel
-import com.zion830.threedollars.utils.isGpsAvailable
-import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

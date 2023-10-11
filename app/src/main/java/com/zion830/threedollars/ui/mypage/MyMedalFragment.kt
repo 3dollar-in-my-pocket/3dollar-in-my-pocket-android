@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.activityViewModels
+import com.threedollar.common.ext.showSnack
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
@@ -13,7 +14,6 @@ import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
-import com.threedollar.common.ext.showSnack
 
 @AndroidEntryPoint
 class MyMedalFragment : LegacyBaseFragment<FragmentMyMedalBinding, MyPageViewModel>(R.layout.fragment_my_medal) {

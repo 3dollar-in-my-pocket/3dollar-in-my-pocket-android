@@ -17,8 +17,12 @@ import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.ResultWrapper
-import com.zion830.threedollars.*
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
+import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.MainActivity
+import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest

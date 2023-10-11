@@ -14,13 +14,13 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.LayoutCertificationBinding
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
-import com.zion830.threedollars.databinding.LayoutCertificationBinding
 import zion830.com.common.ext.isNotNullOrEmpty
 import kotlin.math.abs
 import kotlin.math.min

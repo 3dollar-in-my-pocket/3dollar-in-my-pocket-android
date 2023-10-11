@@ -2,8 +2,6 @@ package com.zion830.threedollars.ui.map
 
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.R

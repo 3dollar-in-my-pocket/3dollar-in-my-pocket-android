@@ -1,9 +1,7 @@
 package com.threedollar.common.ext
 
-import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View

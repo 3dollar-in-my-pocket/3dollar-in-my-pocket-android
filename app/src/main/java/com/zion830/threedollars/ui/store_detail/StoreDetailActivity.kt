@@ -34,12 +34,16 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
+import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
+import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
+import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
@@ -50,10 +54,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
-import com.zion830.threedollars.ui.DirectionBottomDialog
-import com.zion830.threedollars.ui.map.FullScreenMapActivity
-import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
-import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {

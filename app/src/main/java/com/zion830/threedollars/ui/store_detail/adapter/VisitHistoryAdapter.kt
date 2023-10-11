@@ -9,8 +9,6 @@ import com.threedollar.common.ext.convertCreatedAt
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemVisitHistoryBinding
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseRecyclerView
-import zion830.com.common.base.BaseViewHolder
 
 class VisitHistoryAdapter : ListAdapter<HistoriesContentModel, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 

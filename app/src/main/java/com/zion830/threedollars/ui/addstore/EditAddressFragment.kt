@@ -1,8 +1,6 @@
 package com.zion830.threedollars.ui.addstore
 
-import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
-import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditAddressBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BR
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.GlobalApplication
@@ -18,7 +19,6 @@ import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
-import com.threedollar.common.ext.toStringDefault
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {

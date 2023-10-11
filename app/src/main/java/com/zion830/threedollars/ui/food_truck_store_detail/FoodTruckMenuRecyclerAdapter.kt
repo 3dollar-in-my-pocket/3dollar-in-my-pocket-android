@@ -13,8 +13,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
-import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 
 

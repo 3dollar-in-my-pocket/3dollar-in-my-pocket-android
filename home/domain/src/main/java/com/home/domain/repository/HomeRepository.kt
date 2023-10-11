@@ -1,7 +1,11 @@
 package com.home.domain.repository
 
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.*
+import com.home.domain.data.store.AroundStoreModel
+import com.home.domain.data.store.BossStoreDetailModel
+import com.home.domain.data.store.DeleteResultModel
+import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow

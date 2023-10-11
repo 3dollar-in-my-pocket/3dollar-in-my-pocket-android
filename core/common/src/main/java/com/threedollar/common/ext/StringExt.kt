@@ -5,7 +5,8 @@ import android.util.Base64
 import com.threedollar.common.R
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 fun String.base64Encoding(): String = Base64.encodeToString(toByteArray(), Base64.NO_WRAP)
 
