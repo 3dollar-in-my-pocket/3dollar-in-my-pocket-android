@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.store_detail.map
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -15,9 +16,7 @@ import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class StoreCertificationNaverMapFragment : NaverMapFragment() {
-
-    private val viewModel: StoreDetailViewModel by activityViewModels()
+class StoreCertificationNaverMapFragment(private val latLng: LatLng) : NaverMapFragment() {
 
     private var circleOverlay: CircleOverlay? = null
     private var isOverlayExist = false
@@ -25,12 +24,8 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
-//        viewModel.storeLocation.observe(this) {
-//            it?.let {
-//                addMarker(R.drawable.ic_marker, LatLng(it.latitude, it.longitude))
-//                addCircle(LatLng(it.latitude, it.longitude), MIN_DISTANCE.toDouble())
-//            }
-//        }
+        addMarker(R.drawable.ic_mappin_focused_on, latLng)
+        addCircle(latLng, MIN_DISTANCE.toDouble())
 
         initFindLocationButton()
         map.uiSettings.setLogoMargin(SizeUtils.dpToPx(30f), 0, 0, 0) // 로고 가려지도록
