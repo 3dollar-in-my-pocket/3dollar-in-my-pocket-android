@@ -64,8 +64,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val userStoreMenuAdapter: UserStoreMenuAdapter by lazy {
         UserStoreMenuAdapter {
-            val menuGroup = viewModel.userStoreDetailModel.value.store.menus.groupBy { it.category.name }
-            userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
+            val menuGroup = viewModel.userStoreDetailModel.value?.store?.menus?.groupBy { it.category.name }
+            userStoreMenuAdapter.submitList(menuGroup?.flatMap { it.value })
         }
     }
 
@@ -107,8 +107,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
             viewModel.getUserStoreDetail(
                 storeId = storeId,
-                deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
-                deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
+                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
                 filterVisitStartDate = getMonthFirstDate()
             )
         }
@@ -116,8 +116,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             if (it) {
                 viewModel.getUserStoreDetail(
                     storeId = storeId,
-                    deviceLatitude = viewModel.userStoreDetailModel.value.store.location.latitude,
-                    deviceLongitude = viewModel.userStoreDetailModel.value.store.location.longitude,
+                    deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                    deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
                     filterVisitStartDate = getMonthFirstDate()
                 )
             } else {
@@ -258,22 +258,22 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initShared() {
         EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
-        val userStoreModel = viewModel.userStoreDetailModel.value.store
+        val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val shareFormat = ShareFormat(
             getString(R.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
-            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+            LatLng(userStoreModel?.location?.latitude ?: 0.0, userStoreModel?.location?.longitude ?: 0.0)
         )
         shareWithKakao(
             shareFormat = shareFormat,
             title = getString(
                 R.string.share_kakao_road_food_title,
-                userStoreModel.name
+                userStoreModel?.name
             ),
             description = getString(
                 R.string.share_kakao_road_food,
-                userStoreModel.name
+                userStoreModel?.name
             ),
             imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
             storeId = storeId.toString(),
@@ -286,27 +286,27 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.userStoreDetailModel.collect {
+                        it?.let {
 //                        reviewAdapter.submitList(it?.reviews)
 //                        photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
 //                            StoreImage(index, null, image.url)
 //                        }?.toMutableList())
-                        val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
-                        naverMapFragment.initMap(latLng)
-                        startCertificationExactly = if (startCertificationExactly != null) {
-                            intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
-                        } else {
-                            null
-                        }
-                        if (startCertificationExactly == true) {
-                            lifecycleScope.launch {
+                            val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
+                            naverMapFragment.initMap(latLng)
+                            startCertificationExactly = if (startCertificationExactly != null) {
+                                intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
+                            } else {
+                                null
+                            }
+                            if (startCertificationExactly == true) {
                                 startCertification()
                                 startCertificationExactly = null
                             }
+                            initImageView(it)
+                            initTextView(it)
+                            initVisitHistory(it.visits)
+                            initMenu(it.store.menus)
                         }
-                        initImageView(it)
-                        initTextView(it)
-                        initVisitHistory(it.visits)
-                        initMenu(it.store.menus)
                     }
                 }
                 launch {
@@ -396,8 +396,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
         binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.contents.size)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
-        binding.bossTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
-        binding.bossTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
+        binding.visitTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
+        binding.visitTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
         binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
         binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
         binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
@@ -489,32 +489,34 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun startCertification() {
-        val userStoreModel = viewModel.userStoreDetailModel.value.store
+        val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val distance = NaverMapUtils.calculateDistance(
             naverMapFragment.currentPosition,
-            LatLng(userStoreModel.location.latitude, userStoreModel.location.longitude)
+            LatLng(userStoreModel?.location?.latitude ?: 0.0, userStoreModel?.location?.longitude ?: 0.0)
         )
         supportFragmentManager.addNewFragment(
             R.id.container,
-            if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment() else StoreCertificationAvailableFragment(),
+            if (distance > StoreCertificationAvailableFragment.MIN_DISTANCE) StoreCertificationFragment.getInstance(userStoreModel) else StoreCertificationAvailableFragment.getInstance(
+                userStoreModel
+            ),
             StoreCertificationAvailableFragment::class.java.name,
             false
         )
     }
 
     private fun showDirectionBottomDialog() {
-        val store = viewModel.userStoreDetailModel.value.store
-        DirectionBottomDialog.getInstance(store.location.latitude, store.location.longitude, store.name).show(supportFragmentManager, "")
+        val store = viewModel.userStoreDetailModel.value?.store
+        DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
     }
 
     private fun moveFullScreenMap() {
-        val store = viewModel.userStoreDetailModel.value.store
+        val store = viewModel.userStoreDetailModel.value?.store
         val intent = FullScreenMapActivity.getIntent(
             context = this,
-            latitude = store.location.latitude,
-            longitude = store.location.longitude,
-            name = store.name,
+            latitude = store?.location?.latitude,
+            longitude = store?.location?.longitude,
+            name = store?.name,
         )
         startActivity(intent)
     }
