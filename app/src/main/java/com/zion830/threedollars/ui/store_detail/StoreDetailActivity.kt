@@ -19,8 +19,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.*
@@ -73,7 +71,15 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private var startCertificationExactly: Boolean? = false
 
-    private lateinit var photoAdapter: PhotoRecyclerAdapter
+    private val photoAdapter: PhotoRecyclerAdapter by lazy {
+        PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
+            override fun onClick(item: StoreImage) {
+                StorePhotoDialog.getInstance(item.index)
+                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
+            }
+
+        })
+    }
 
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
 
@@ -161,17 +167,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
             },
         )
-        photoAdapter = PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
-            override fun onClick(item: StoreImage) {
-                StorePhotoDialog.getInstance(item.index)
-                    .show(supportFragmentManager, StorePhotoDialog::class.java.name)
-            }
-
-        })
         binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
         binding.menuRecyclerView.adapter = userStoreMenuAdapter
+        binding.photoRecyclerView.adapter = photoAdapter
 
-//        binding.rvPhoto.adapter = photoAdapter
 //        binding.rvReview.adapter = reviewAdapter
     }
 
@@ -288,20 +287,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     viewModel.userStoreDetailModel.collect {
                         it?.let {
 //                        reviewAdapter.submitList(it?.reviews)
-//                        photoAdapter.submitList(it?.images?.mapIndexed { index, image ->
-//                            StoreImage(index, null, image.url)
-//                        }?.toMutableList())
-                            val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
-                            naverMapFragment.initMap(latLng)
-                            startCertificationExactly = if (startCertificationExactly != null) {
-                                intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
-                            } else {
-                                null
-                            }
-                            if (startCertificationExactly == true) {
-                                startCertification()
-                                startCertificationExactly = null
-                            }
+                            initPhotoLayout(it)
+                            initMap(it)
+                            isStartCertification()
                             initImageView(it)
                             initTextView(it)
                             initVisitHistory(it.visits)
@@ -323,6 +311,29 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     }
                 }
             }
+        }
+    }
+
+    private fun initPhotoLayout(it: UserStoreDetailModel) {
+        photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
+            StoreImage(index, null, image.url)
+        }.toMutableList())
+    }
+
+    private fun initMap(it: UserStoreDetailModel) {
+        val latLng = LatLng(it.store.location.latitude, it.store.location.longitude)
+        naverMapFragment.initMap(latLng)
+    }
+
+    private fun isStartCertification() {
+        startCertificationExactly = if (startCertificationExactly != null) {
+            intent.getBooleanExtra(KEY_START_CERTIFICATION, false)
+        } else {
+            null
+        }
+        if (startCertificationExactly == true) {
+            startCertification()
+            startCertificationExactly = null
         }
     }
 

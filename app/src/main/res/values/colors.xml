@@ -36,6 +36,8 @@
 
     <color name="red">#FF5C43</color>
 
+    <color name="black_op50">#80000000</color>
+
     <color name="green">#00C667</color>
     <color name="green_500">#00753D</color>
     <color name="green_400">#00A455</color>
