@@ -21,7 +21,7 @@ data class UserStore(
     @SerializedName("paymentMethods")
     val paymentMethods: List<String>? = listOf(),
     @SerializedName("rating")
-    val rating: Int? = 0,
+    val rating: Double? = 0.0,
     @SerializedName("salesType")
     val salesType: String? = null,
     @SerializedName("storeId")

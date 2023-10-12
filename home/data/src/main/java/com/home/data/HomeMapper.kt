@@ -178,7 +178,7 @@ fun Cursor.asModel() = CursorModel(
 )
 
 fun Extra.asModel() = ExtraModel(
-    rating = rating ?: 0,
+    rating = rating ?: 0.0,
     reviewsCount = reviewsCount ?: 0,
     tagsModel = tags?.asModel() ?: TagsModel(),
     visitCountsModel = visitCounts?.asModel() ?: VisitCountsModel(),
@@ -261,7 +261,7 @@ fun Favorite.asModel() = FavoriteModel(
 fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
-    ratio = ratio ?: 0
+    ratio = ratio ?: 0.0
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
@@ -428,7 +428,7 @@ fun UserStore.asModel() = UserStoreModel(
     menus = menus?.map { it.asModel() } ?: listOf(),
     name = name ?: "",
     paymentMethods = paymentMethods?.map { it.asPaymentType() } ?: listOf(),
-    rating = rating ?: 0,
+    rating = rating ?: 0.0,
     salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: ""
@@ -444,12 +444,15 @@ fun String.asSalesType() = when (this) {
     "ROAD" -> {
         SalesType.ROAD
     }
+
     "STORE" -> {
         SalesType.STORE
     }
+
     "CONVENIENCE_STORE " -> {
         SalesType.CONVENIENCE_STORE
     }
+
     else -> {
         SalesType.NONE
     }

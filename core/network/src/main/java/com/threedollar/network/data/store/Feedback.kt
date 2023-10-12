@@ -8,5 +8,5 @@ data class Feedback(
     @SerializedName("feedbackType")
     val feedbackType: String? = "",
     @SerializedName("ratio")
-    val ratio: Int? = 0
+    val ratio: Double? = 0.0
 )

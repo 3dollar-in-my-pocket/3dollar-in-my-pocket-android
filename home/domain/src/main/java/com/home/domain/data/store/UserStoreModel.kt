@@ -12,7 +12,7 @@ data class UserStoreModel(
     val menus: List<UserStoreMenuModel> = listOf(),
     val name: String = "",
     val paymentMethods: List<PaymentType> = listOf(),
-    val rating: Int = 0,
+    val rating: Double = 0.0,
     val salesType: SalesType = SalesType.NONE,
     val storeId: Int = 0,
     val updatedAt: String = "",
