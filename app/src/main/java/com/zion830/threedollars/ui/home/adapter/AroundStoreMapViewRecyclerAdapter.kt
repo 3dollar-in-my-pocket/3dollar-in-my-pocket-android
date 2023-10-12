@@ -14,6 +14,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.GlobalApplication
@@ -29,7 +30,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 class AroundStoreMapViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val adClickListener: OnItemClickListener<AdvertisementModel>,
-    private val certificationClick: (ContentModel) -> Unit
+    private val certificationClick: (ContentModel) -> Unit,
 ) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
 
@@ -40,6 +41,7 @@ class AroundStoreMapViewRecyclerAdapter(
                 (getItem(position) as ContentModel).storeModel.locationModel.longitude
             )
         }
+
         else -> {
             null
         }
@@ -57,9 +59,11 @@ class AroundStoreMapViewRecyclerAdapter(
         is ContentModel -> {
             VIEW_TYPE_STORE
         }
+
         is AdvertisementModel -> {
             VIEW_TYPE_AD
         }
+
         else -> {
             VIEW_TYPE_EMPTY
         }
@@ -71,6 +75,7 @@ class AroundStoreMapViewRecyclerAdapter(
                 binding = ItemNearStoreAdBinding.inflate(LayoutInflater.from(parent.context), parent, false), adClickListener = adClickListener
             )
         }
+
         VIEW_TYPE_STORE -> {
             NearStoreMapViewViewHolder(
                 binding = ItemStoreLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false),
@@ -78,6 +83,7 @@ class AroundStoreMapViewRecyclerAdapter(
                 clickListener = clickListener
             )
         }
+
         else -> {
             NearStoreEmptyMapViewViewHolder(ItemHomeEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
@@ -88,9 +94,11 @@ class AroundStoreMapViewRecyclerAdapter(
             is NearStoreMapViewViewHolder -> {
                 holder.bind(getItem(position) as ContentModel)
             }
+
             is NearStoreAdMapViewViewHolder -> {
                 holder.bind(getItem(position) as AdvertisementModel)
             }
+
             is NearStoreEmptyMapViewViewHolder -> {
                 holder.bind(getItem(position) as StoreEmptyResponse)
             }
@@ -118,7 +126,10 @@ class NearStoreEmptyMapViewViewHolder(private val binding: ItemHomeEmptyBinding)
     }
 }
 
-class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, private val adClickListener: OnItemClickListener<AdvertisementModel>) :
+class NearStoreAdMapViewViewHolder(
+    private val binding: ItemNearStoreAdBinding,
+    private val adClickListener: OnItemClickListener<AdvertisementModel>,
+) :
     ViewHolder(binding.root) {
     @SuppressLint("Range")
     fun bind(item: AdvertisementModel) {
@@ -135,11 +146,7 @@ class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, 
         }
     }
 
-    private fun ItemNearStoreAdBinding.setImage(item: AdvertisementModel) =
-        Glide.with(ivAdImage)
-            .load(item.imageUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(ivAdImage)
+    private fun ItemNearStoreAdBinding.setImage(item: AdvertisementModel) = binding.ivAdImage.loadImage(item.imageUrl)
 
     private fun ItemNearStoreAdBinding.setText(item: AdvertisementModel) {
         titleTextView.text = item.title
@@ -150,7 +157,7 @@ class NearStoreAdMapViewViewHolder(private val binding: ItemNearStoreAdBinding, 
 class NearStoreMapViewViewHolder(
     private val binding: ItemStoreLocationBinding,
     private val certificationClick: (ContentModel) -> Unit,
-    private val clickListener: OnItemClickListener<ContentModel>
+    private val clickListener: OnItemClickListener<ContentModel>,
 ) : ViewHolder(binding.root) {
 
     fun bind(item: ContentModel) {
@@ -190,10 +197,7 @@ class NearStoreMapViewViewHolder(
         }
     }
 
-    private fun setImage(item: ContentModel) = Glide.with(binding.menuIconImageView)
-        .load(item.storeModel.categories.first().imageUrl)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(binding.menuIconImageView)
+    private fun setImage(item: ContentModel) = binding.menuIconImageView.loadImage(item.storeModel.categories.first().imageUrl)
 
     private fun ItemStoreLocationBinding.setVisible(item: ContentModel) {
         visitButton.visibility = if (item.storeModel.storeType == USER_STORE) View.VISIBLE else View.INVISIBLE

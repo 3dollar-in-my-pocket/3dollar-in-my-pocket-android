@@ -12,6 +12,7 @@ import com.home.domain.data.store.UserStoreModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationBinding
@@ -114,14 +115,8 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
 
     private fun initImageView() {
         if (userStoreModel?.categories.isNotNullOrEmpty()) {
-            Glide.with(binding.ivCategory)
-                .load(userStoreModel?.categories?.first()?.imageUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.ivCategory)
-            Glide.with(binding.ivEnd)
-                .load(userStoreModel?.categories?.first()?.imageUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.ivEnd)
+            binding.ivCategory.loadImage(userStoreModel?.categories?.first()?.imageUrl)
+            binding.ivEnd.loadImage(userStoreModel?.categories?.first()?.imageUrl)
         }
     }
 

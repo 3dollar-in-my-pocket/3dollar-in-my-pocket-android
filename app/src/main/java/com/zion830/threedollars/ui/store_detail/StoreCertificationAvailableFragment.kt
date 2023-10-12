@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.home.domain.data.store.UserStoreModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationAvailableBinding
@@ -56,10 +57,7 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
 
     private fun initImageView() {
         if (userStoreModel?.categories.isNotNullOrEmpty()) {
-            Glide.with(binding.ivCategory)
-                .load(userStoreModel?.categories?.first()?.imageUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.ivCategory)
+            binding.ivCategory.loadImage(userStoreModel?.categories?.first()?.imageUrl)
         }
     }
 

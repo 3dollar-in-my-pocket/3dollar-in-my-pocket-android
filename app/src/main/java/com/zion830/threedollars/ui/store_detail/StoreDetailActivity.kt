@@ -380,10 +380,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initImageView(userStoreDetailModel: UserStoreDetailModel) {
         if (userStoreDetailModel.store.categories.isNotNullOrEmpty()) {
-            Glide.with(binding.menuIconImageView)
-                .load(userStoreDetailModel.store.categories.first().imageUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.menuIconImageView)
+            binding.menuIconImageView.loadImage(userStoreDetailModel.store.categories.first().imageUrl)
         }
 
         binding.newImageView.isVisible = userStoreDetailModel.tags.isNew

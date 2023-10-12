@@ -5,11 +5,14 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 
@@ -32,7 +35,7 @@ fun View.isVisible(): Boolean = visibility == View.VISIBLE
 fun View.showSnack(
     @StringRes resId: Int,
     length: Int = Snackbar.LENGTH_LONG,
-    @ColorRes color: Int = android.R.color.white
+    @ColorRes color: Int = android.R.color.white,
 ) {
     showSnack(context.getString(resId), length, color)
 }
@@ -40,7 +43,7 @@ fun View.showSnack(
 fun View.showSnack(
     message: String,
     length: Int = Snackbar.LENGTH_LONG,
-    @ColorRes color: Int = android.R.color.white
+    @ColorRes color: Int = android.R.color.white,
 ) {
     Snackbar.make(this, message, length).run {
         setActionTextColor(ContextCompat.getColor(context, color))
@@ -118,5 +121,40 @@ fun TextView.textPartColor(changeText: String?, color: Int, isLast: Boolean = fa
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         text = spannableString
+    }
+}
+
+fun ImageView.loadImage(imageUrl: String?) {
+    imageUrl?.let {
+        Glide.with(this)
+            .load(it)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+    }
+}
+fun ImageView.loadImage(imageRes: Int?) {
+    imageRes?.let {
+        Glide.with(this)
+            .load(it)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(this)
+    }
+}
+
+fun ImageView.loadCircleImage(imageUrl: String?) {
+    imageUrl?.let {
+        Glide.with(this)
+            .load(it)
+            .circleCrop()
+            .into(this)
+    }
+}
+
+fun ImageView.loadCircleImage(imageRes: Int?) {
+    imageRes?.let {
+        Glide.with(this)
+            .load(it)
+            .circleCrop()
+            .into(this)
     }
 }

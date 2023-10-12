@@ -22,6 +22,7 @@ import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
+import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -220,10 +221,7 @@ class FoodTruckStoreDetailActivity :
 
                         binding.run {
                             if (bossStoreDetailModel.store.categories.isNotEmpty()) {
-                                Glide.with(binding.menuIconImageView)
-                                    .load(bossStoreDetailModel.store.categories.first().imageUrl)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(binding.menuIconImageView)
+                                binding.menuIconImageView.loadImage(bossStoreDetailModel.store.categories.first().imageUrl)
                             }
                             Glide.with(binding.storeImageView)
                                 .load(bossStoreDetailModel.store.imageUrl)

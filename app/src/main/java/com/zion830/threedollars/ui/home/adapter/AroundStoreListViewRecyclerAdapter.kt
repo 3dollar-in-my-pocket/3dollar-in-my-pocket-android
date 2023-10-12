@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.home.domain.data.store.ContentModel
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.GlobalApplication
@@ -106,10 +107,7 @@ class NearStoreListViewViewHolder(
         }
     }
 
-    private fun setImage(item: ContentModel) = Glide.with(binding.menuIconImageView)
-        .load(item.storeModel.categories.first().imageUrl)
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .into(binding.menuIconImageView)
+    private fun setImage(item: ContentModel) = binding.menuIconImageView.loadImage(item.storeModel.categories.first().imageUrl)
 
     private fun ItemListViewBinding.setVisible(item: ContentModel) {
         newImageView.isVisible = item.extraModel.tagsModel.isNew
