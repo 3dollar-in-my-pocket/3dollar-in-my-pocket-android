@@ -35,6 +35,7 @@ import com.home.domain.data.store.ReviewReportModel
 import com.home.domain.data.store.ReviewWriterModel
 import com.home.domain.data.store.ReviewsModel
 import com.home.domain.data.store.SalesType
+import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StatusType
 import com.home.domain.data.store.StoreModel
 import com.home.domain.data.store.TagsModel
@@ -81,6 +82,7 @@ import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.ReviewReport
 import com.threedollar.network.data.store.ReviewWriter
 import com.threedollar.network.data.store.Reviews
+import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.Store
 import com.threedollar.network.data.store.Tags
 import com.threedollar.network.data.store.UserStore
@@ -503,4 +505,11 @@ fun Visitor.asModel() = VisitorModel(
 
 fun DeleteResultResponse.asModel() = DeleteResultModel(
     isDeleted = isDeleted ?: false
+)
+
+fun SaveImagesResponse.asModel() = SaveImagesModel(
+    createdAt = createdAt ?: "",
+    imageId = imageId ?: 0,
+    updatedAt = updatedAt ?: "",
+    url = url ?: ""
 )

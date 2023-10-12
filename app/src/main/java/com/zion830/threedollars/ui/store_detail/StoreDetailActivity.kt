@@ -46,6 +46,7 @@ import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -103,7 +104,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         storeId = intent.getIntExtra(STORE_ID, 0)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
+        refreshStoreInfo()
         initMap()
         initButton()
         initAdapter()
@@ -119,20 +120,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             )
         }
 
-        viewModel.uploadImageStatus.observe(this) {
-            if (it) {
-                if (progressDialog == null) {
-                    progressDialog = AlertDialog.Builder(this)
-                        .setCancelable(false)
-                        .setView(R.layout.layout_image_upload_progress)
-                        .create()
-                }
-                progressDialog?.show()
-            } else {
-                progressDialog?.dismiss()
-                refreshStoreInfo()
-            }
-        }
         viewModel.isExistStoreInfo.observe(this) { isExistStore ->
             val isExist = isExistStore.second
             if (!isExist) {
@@ -181,29 +168,29 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.deleteButton.setOnClickListener {
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
-//        binding.btnAddPhoto.setOnClickListener {
-//            TedImagePicker.with(this).zoomIndicator(false).errorListener {
-//                if (it.message?.startsWith("permission") == true) {
-//                    AlertDialog.Builder(this)
-//                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
-//                            goToPermissionSetting()
-//                        }
-//                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-//                        .setTitle(getString(R.string.request_permission))
-//                        .setMessage(getString(R.string.request_permission_msg))
-//                        .create()
-//                        .show()
-//                }
-//            }.startMultiImage { uriData ->
-//                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
-//                lifecycleScope.launch {
-//                    val images = getImageFiles(uriData)
-//                    if (images != null) {
-//                        viewModel.saveImages(images)
-//                    }
-//                }
-//            }
-//        }
+        binding.photoSummitTextView.setOnClickListener {
+            TedImagePicker.with(this).zoomIndicator(false).errorListener {
+                if (it.message?.startsWith("permission") == true) {
+                    AlertDialog.Builder(this)
+                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+                            goToPermissionSetting()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                        .setTitle(getString(R.string.request_permission))
+                        .setMessage(getString(R.string.request_permission_msg))
+                        .create()
+                        .show()
+                }
+            }.startMultiImage { uriData ->
+                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
+                lifecycleScope.launch {
+                    val images = getImageFiles(uriData)
+                    if (images != null) {
+                        viewModel.saveImages(images)
+                    }
+                }
+            }
+        }
         binding.shareButton.setOnClickListener {
             initShared()
         }
@@ -311,6 +298,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             )
                         } else {
                             binding.root.showSnack(getString(R.string.delete_photo_failed))
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.uploadImageStatus.collect {
+                        if (it) {
+                            if (progressDialog == null) {
+                                progressDialog = AlertDialog.Builder(this@StoreDetailActivity)
+                                    .setCancelable(false)
+                                    .setView(R.layout.layout_image_upload_progress)
+                                    .create()
+                            }
+                            progressDialog?.show()
+                        } else {
+                            progressDialog?.dismiss()
+                            refreshStoreInfo()
                         }
                     }
                 }
@@ -533,7 +537,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         startActivity(intent)
     }
 
-    fun refreshStoreInfo() {
+    private fun refreshStoreInfo() {
         val storeId = intent.getIntExtra(STORE_ID, 0)
 
         try {

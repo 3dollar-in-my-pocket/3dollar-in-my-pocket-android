@@ -62,13 +62,6 @@ interface NewServiceApi {
         @Query("mapLongitude") longitude: Double
     ): Response<NearExistResponse>
 
-    @POST("/api/v2/store/images")
-    @Multipart
-    suspend fun saveImages(
-        @Part images: List<MultipartBody.Part>,
-        @Query("storeId") storeId: Int
-    ): Response<AddImageResponse>
-
     // 가게 검색
     @GET("/api/v2/store")
     suspend fun getStoreInfo(

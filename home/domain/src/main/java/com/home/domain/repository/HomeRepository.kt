@@ -5,10 +5,12 @@ import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 
 interface HomeRepository {
 
@@ -55,4 +57,6 @@ interface HomeRepository {
     fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>>
 
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
+
+    fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
 }

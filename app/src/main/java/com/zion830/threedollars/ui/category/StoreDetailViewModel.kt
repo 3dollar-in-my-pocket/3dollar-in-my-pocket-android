@@ -43,9 +43,8 @@ class StoreDetailViewModel @Inject constructor(
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
 
-    private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
-    val uploadImageStatus: LiveData<Boolean>
-        get() = _uploadImageStatus
+    private val _uploadImageStatus: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val uploadImageStatus: SharedFlow<Boolean> get() = _uploadImageStatus
 
     private val _addReviewResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val addReviewResult: LiveData<Boolean>
@@ -149,19 +148,15 @@ class StoreDetailViewModel @Inject constructor(
     }
 
     fun saveImages(images: List<MultipartBody.Part>) {
-        _uploadImageStatus.value = true
-
         if (images.isEmpty()) {
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val responses = async(coroutineExceptionHandler) {
-                repository.saveImage(_userStoreDetailModel.value?.store?.storeId ?: -1, images)
+            _uploadImageStatus.emit(true)
+            homeRepository.saveImages(images, _userStoreDetailModel.value?.store?.storeId ?: -1).collect {
+                _uploadImageStatus.emit(false)
             }
-
-            responses.await()
-            _uploadImageStatus.postValue(false)
         }
     }
 
@@ -171,7 +166,7 @@ class StoreDetailViewModel @Inject constructor(
 
     fun deletePhoto(selectedImage: ImageContentModel) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteImage(selectedImage.imageId).collect{ _photoDeleted.emit(it.ok) }
+            homeRepository.deleteImage(selectedImage.imageId).collect { _photoDeleted.emit(it.ok) }
         }
     }
 

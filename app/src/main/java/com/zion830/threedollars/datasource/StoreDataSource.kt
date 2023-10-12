@@ -59,11 +59,6 @@ interface StoreDataSource {
         reviewId: Int,
     ): Response<BaseResponse<String>>
 
-    suspend fun saveImage(
-        storeId: Int,
-        images: List<MultipartBody.Part>,
-    ): Response<AddImageResponse>
-
     suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>

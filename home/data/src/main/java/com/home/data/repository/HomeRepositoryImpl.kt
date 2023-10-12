@@ -7,6 +7,7 @@ import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
@@ -20,6 +21,7 @@ import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: HomeRemoteDataSource, private val sharedPrefUtils: SharedPrefUtils) :
@@ -157,4 +159,15 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
         homeRemoteDataSource.postStoreVisit(PostStoreVisitRequest(storeId = storeId, type = visitType))
 
     override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = homeRemoteDataSource.deleteImage(imageId)
+
+    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>> =
+        homeRemoteDataSource.saveImages(images, storeId).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.map { response -> response.asModel() },
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
 }
