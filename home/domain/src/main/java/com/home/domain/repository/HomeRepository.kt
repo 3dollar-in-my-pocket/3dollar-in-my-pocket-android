@@ -53,4 +53,6 @@ interface HomeRepository {
     fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>>
 
     fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>>
+
+    fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 }

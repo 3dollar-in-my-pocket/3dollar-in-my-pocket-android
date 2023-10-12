@@ -64,8 +64,6 @@ interface StoreDataSource {
         images: List<MultipartBody.Part>,
     ): Response<AddImageResponse>
 
-    suspend fun deleteImage(imageId: Int): Response<BaseResponse<String>>
-
     suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>

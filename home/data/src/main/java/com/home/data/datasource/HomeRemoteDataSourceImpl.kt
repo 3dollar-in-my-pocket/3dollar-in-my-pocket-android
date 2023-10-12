@@ -16,6 +16,7 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.Response
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
@@ -122,4 +123,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.postStoreVisit(postStoreVisitRequest)))
     }
 
+    override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deleteImage(imageId)))
+    }
 }

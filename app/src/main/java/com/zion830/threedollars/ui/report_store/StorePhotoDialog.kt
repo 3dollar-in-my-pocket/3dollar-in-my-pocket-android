@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,21 +12,21 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
-import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
-import com.zion830.threedollars.ui.report_store.adapter.StorePreviewImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
+    private lateinit var binding: FragmentStorePhotoBinding
+    private var currentPosition = 0
+    private val adapter: StoreImageSliderAdapter by lazy { StoreImageSliderAdapter() }
     override fun onStart() {
         super.onStart()
         if (dialog != null) {
@@ -38,52 +39,59 @@ class StorePhotoDialog : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val binding = FragmentStorePhotoBinding.inflate(inflater)
-        binding.viewModel = viewModel
+        binding = FragmentStorePhotoBinding.inflate(inflater)
+        return binding.root
+    }
 
-        val startIndex = arguments?.getInt(KEY_START_INDEX) ?: 0
-        val adapter = StoreImageSliderAdapter()
-        val indicatorAdapter = StorePreviewImageAdapter(object : OnItemClickListener<StoreImage> {
-            override fun onClick(item: StoreImage) {
-                binding.slider.smoothScrollToPosition(item.index)
-            }
-        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        currentPosition = arguments?.getInt(KEY_START_INDEX) ?: 0
 
-        if (startIndex > 0) {
-            indicatorAdapter.updateFocusedIndex(startIndex)
-            binding.slider.scrollToPosition(startIndex)
+        initAdapter()
+        initButton()
+    }
+
+    private fun initAdapter() {
+        binding.slider.adapter = adapter.apply {
+            submitList(viewModel.imageContentModelList.value)
         }
-
-        binding.slider.adapter = adapter
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.slider)
-        binding.rvIndicator.adapter = indicatorAdapter
-        binding.slider.addOnScrollListener(
-            SnapOnScrollListener(
-                snapHelper,
-                onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
-                    override fun onSnapPositionChange(position: Int) {
-                        indicatorAdapter.updateFocusedIndex(position)
-                    }
-                })
-        )
+        binding.slider.addOnScrollListener(SnapOnScrollListener(snapHelper, onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
+            override fun onSnapPositionChange(position: Int) {
+                currentPosition = position
+            }
+        }))
 
-//        viewModel.storeInfo.observe(this) {
-//            it?.let {
-//                adapter.submitList(it.images)
-//                indicatorAdapter.submitList(it.images.mapIndexed { index, value ->
-//                    StoreImage(
-//                        index,
-//                        null,
-//                        value.url
-//                    )
-//                })
-//            }
-//        }
-        binding.ibTrash.setOnClickListener {
+        if (currentPosition > 0) {
+            binding.slider.scrollToPosition(currentPosition)
+        }
+    }
+
+    private fun initButton() {
+        binding.leftButton.setOnClickListener {
+            if (currentPosition > 0) {
+                currentPosition -= 1
+                binding.slider.smoothScrollToPosition(currentPosition)
+            } else {
+                currentPosition = adapter.itemCount - 1
+                binding.slider.scrollToPosition(currentPosition)
+            }
+        }
+
+        binding.rightButton.setOnClickListener {
+            if (currentPosition < adapter.itemCount - 1) {
+                currentPosition += 1
+                binding.slider.smoothScrollToPosition(currentPosition)
+            } else {
+                currentPosition = 0
+                binding.slider.scrollToPosition(currentPosition)
+            }
+        }
+        binding.deleteButton.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->
                     val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
@@ -96,14 +104,11 @@ class StorePhotoDialog : DialogFragment() {
                 .create()
                 .show()
         }
-        binding.btnBack.setOnClickListener { dismiss() }
-
-        return binding.root
+        binding.backButton.setOnClickListener { dismiss() }
     }
 
     companion object {
         private const val KEY_START_INDEX = "start_index"
-
         fun getInstance(startIndex: Int) = StorePhotoDialog().apply {
             val bundle = Bundle()
             bundle.putInt(KEY_START_INDEX, startIndex)

@@ -155,4 +155,6 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
 
     override fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.postStoreVisit(PostStoreVisitRequest(storeId = storeId, type = visitType))
+
+    override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = homeRemoteDataSource.deleteImage(imageId)
 }

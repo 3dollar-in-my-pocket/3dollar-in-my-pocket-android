@@ -63,6 +63,9 @@ interface ServerApi {
         @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
     ): Response<BaseResponse<DeleteResultResponse>>
 
+    @DELETE("/api/v2/store/image/{storeImageId}")
+    suspend fun deleteImage(@Path("storeImageId") imageId: Int): Response<BaseResponse<String>>
+
     @POST("/api/v2/store/visit")
     suspend fun postStoreVisit(@Body postStoreVisitRequest: PostStoreVisitRequest): Response<BaseResponse<String>>
 

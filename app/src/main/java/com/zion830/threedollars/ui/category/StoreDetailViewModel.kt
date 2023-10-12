@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
@@ -19,8 +20,11 @@ import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -38,8 +42,6 @@ class StoreDetailViewModel @Inject constructor(
     val userStoreDetailModel: StateFlow<UserStoreDetailModel?> get() = _userStoreDetailModel
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
-    val selectedLocation: LiveData<LatLng?>
-        get() = _selectedLocation
 
     private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
     val uploadImageStatus: LiveData<Boolean>
@@ -49,15 +51,17 @@ class StoreDetailViewModel @Inject constructor(
     val addReviewResult: LiveData<Boolean>
         get() = _addReviewResult
 
-    private val _photoDeleted: MutableLiveData<Boolean> = MutableLiveData()
-    val photoDeleted: LiveData<Boolean>
-        get() = _photoDeleted
+    private val _photoDeleted: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val photoDeleted: SharedFlow<Boolean> get() = _photoDeleted
 
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
 
     private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
     val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
+
+    private val _imageContentModelList: MutableStateFlow<List<ImageContentModel>> = MutableStateFlow(listOf())
+    val imageContentModelList: StateFlow<List<ImageContentModel>> get() = _imageContentModelList
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -82,6 +86,7 @@ class StoreDetailViewModel @Inject constructor(
                     if (it.ok) {
                         it.data?.let { data ->
                             _userStoreDetailModel.value = data
+                            _imageContentModelList.value = data.images.contents
                         }
                     } else {
                         _serverError.emit(it.message)
@@ -164,10 +169,9 @@ class StoreDetailViewModel @Inject constructor(
         _selectedLocation.value = latLng
     }
 
-    fun deletePhoto(selectedImage: Image) {
+    fun deletePhoto(selectedImage: ImageContentModel) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val data = repository.deleteImage(selectedImage.imageId)
-            _photoDeleted.postValue(data.isSuccessful)
+            homeRepository.deleteImage(selectedImage.imageId).collect{ _photoDeleted.emit(it.ok) }
         }
     }
 

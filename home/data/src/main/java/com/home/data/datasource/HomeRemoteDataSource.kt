@@ -13,6 +13,9 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
+import retrofit2.http.DELETE
+import retrofit2.http.Path
 
 interface HomeRemoteDataSource {
 
@@ -61,8 +64,10 @@ interface HomeRemoteDataSource {
 
     fun deleteStore(
         storeId: Int,
-        deleteReasonType: String
+        deleteReasonType: String,
     ): Flow<BaseResponse<DeleteResultResponse>>
 
     fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>>
+
+    fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 }

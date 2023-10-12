@@ -86,10 +86,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         images: List<MultipartBody.Part>,
     ): Response<AddImageResponse> = newService.saveImages(images, storeId)
 
-    override suspend fun deleteImage(
-        imageId: Int,
-    ) = newService.deleteImage(imageId)
-
     override suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.saveStore(newStoreRequest)

@@ -118,18 +118,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 filterVisitStartDate = getMonthFirstDate()
             )
         }
-        viewModel.photoDeleted.observe(this) {
-            if (it) {
-                viewModel.getUserStoreDetail(
-                    storeId = storeId,
-                    deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
-                    deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
-                    filterVisitStartDate = getMonthFirstDate()
-                )
-            } else {
-                binding.root.showSnack(getString(R.string.delete_photo_failed))
-            }
-        }
+
         viewModel.uploadImageStatus.observe(this) {
             if (it) {
                 if (progressDialog == null) {
@@ -307,6 +296,21 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.photoDeleted.collect {
+                        if (it) {
+                            viewModel.getUserStoreDetail(
+                                storeId = storeId,
+                                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                                filterVisitStartDate = getMonthFirstDate()
+                            )
+                        } else {
+                            binding.root.showSnack(getString(R.string.delete_photo_failed))
                         }
                     }
                 }

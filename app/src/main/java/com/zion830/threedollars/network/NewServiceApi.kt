@@ -62,9 +62,6 @@ interface NewServiceApi {
         @Query("mapLongitude") longitude: Double
     ): Response<NearExistResponse>
 
-    @DELETE("/api/v2/store/image/{imageId}")
-    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
-
     @POST("/api/v2/store/images")
     @Multipart
     suspend fun saveImages(
