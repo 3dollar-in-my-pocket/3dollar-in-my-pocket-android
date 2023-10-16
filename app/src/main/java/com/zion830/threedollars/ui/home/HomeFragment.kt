@@ -45,7 +45,6 @@ import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -282,7 +281,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (position >= 0) {
             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
             adapter.focusedIndex = position
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_marker, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is ContentModel) {
                     LatLng(adAndStoreItem.storeModel.locationModel.latitude, adAndStoreItem.storeModel.locationModel.longitude)

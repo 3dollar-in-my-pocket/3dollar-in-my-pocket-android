@@ -14,7 +14,6 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -61,16 +60,6 @@ interface NewServiceApi {
         @Query("mapLatitude") latitude: Double,
         @Query("mapLongitude") longitude: Double
     ): Response<NearExistResponse>
-
-    @DELETE("/api/v2/store/image/{imageId}")
-    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
-
-    @POST("/api/v2/store/images")
-    @Multipart
-    suspend fun saveImages(
-        @Part images: List<MultipartBody.Part>,
-        @Query("storeId") storeId: Int
-    ): Response<AddImageResponse>
 
     // 가게 검색
     @GET("/api/v2/store")

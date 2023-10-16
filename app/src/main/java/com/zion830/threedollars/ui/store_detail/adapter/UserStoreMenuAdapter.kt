@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.store_detail.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -10,11 +9,8 @@ import com.bumptech.glide.Glide
 import com.home.domain.data.store.UserStoreDetailItem
 import com.home.domain.data.store.UserStoreMenuModel
 import com.home.domain.data.store.UserStoreMenuMoreResponse
-import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
-import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
-import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckMenuEmptyViewHolder
 import zion830.com.common.base.BaseDiffUtilCallback
 
 class UserStoreMenuAdapter(private val clickListener: () -> Unit) :

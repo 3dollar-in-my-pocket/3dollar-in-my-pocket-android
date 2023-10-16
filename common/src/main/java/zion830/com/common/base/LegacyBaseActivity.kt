@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.threedollar.common.base.BaseViewModel
-import zion830.com.common.BR
 import com.threedollar.common.ext.showSnack
+import zion830.com.common.BR
 
 abstract class LegacyBaseActivity<B : ViewDataBinding, VM : BaseViewModel>(
     @LayoutRes val layoutId: Int

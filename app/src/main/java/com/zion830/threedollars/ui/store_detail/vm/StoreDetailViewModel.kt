@@ -1,10 +1,12 @@
-package com.zion830.threedollars.ui.category
+package com.zion830.threedollars.ui.store_detail.vm
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
@@ -12,19 +14,17 @@ import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
-import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.Image
-import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.ui.report_store.DeleteType
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -37,30 +37,29 @@ class StoreDetailViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
-    private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel> = MutableStateFlow(UserStoreDetailModel())
-    val userStoreDetailModel: StateFlow<UserStoreDetailModel> get() = _userStoreDetailModel
+    private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel?> = MutableStateFlow(null)
+    val userStoreDetailModel: StateFlow<UserStoreDetailModel?> get() = _userStoreDetailModel
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
-    val selectedLocation: LiveData<LatLng?>
-        get() = _selectedLocation
 
-    private val _uploadImageStatus: MutableLiveData<Boolean> = MutableLiveData(false)
-    val uploadImageStatus: LiveData<Boolean>
-        get() = _uploadImageStatus
+    private val _uploadImageStatus: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val uploadImageStatus: SharedFlow<Boolean> get() = _uploadImageStatus
 
     private val _addReviewResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     val addReviewResult: LiveData<Boolean>
         get() = _addReviewResult
 
-    private val _photoDeleted: MutableLiveData<Boolean> = MutableLiveData()
-    val photoDeleted: LiveData<Boolean>
-        get() = _photoDeleted
+    private val _photoDeleted: MutableSharedFlow<Boolean> = MutableSharedFlow()
+    val photoDeleted: SharedFlow<Boolean> get() = _photoDeleted
 
     private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
     val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
 
     private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
     val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
+
+    private val _imagePagingData = MutableStateFlow<PagingData<ImageContentModel>?>(null)
+    val imagePagingData get() = _imagePagingData
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -103,7 +102,7 @@ class StoreDetailViewModel @Inject constructor(
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value.store?.storeId ?: -1)
+            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value?.store?.storeId ?: -1)
             val response = repository.addReview(request)
             if (response.isSuccessful) {
                 _msgTextId.postValue(R.string.success_add_review)
@@ -116,7 +115,7 @@ class StoreDetailViewModel @Inject constructor(
 
     fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteStore(userStoreDetailModel.value.store.storeId, deleteType.key).collect {
+            homeRepository.deleteStore(userStoreDetailModel.value?.store?.storeId ?: -1, deleteType.key).collect {
                 if (!it.ok) {
                     _serverError.emit(it.message)
                 }
@@ -146,20 +145,16 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun saveImages(images: List<MultipartBody.Part>) {
-        _uploadImageStatus.value = true
-
+    fun saveImages(images: List<MultipartBody.Part>, storeId: Int) {
         if (images.isEmpty()) {
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val responses = async(coroutineExceptionHandler) {
-                repository.saveImage(_userStoreDetailModel.value.store?.storeId ?: -1, images)
+            _uploadImageStatus.emit(true)
+            homeRepository.saveImages(images, storeId).collect {
+                _uploadImageStatus.emit(false)
             }
-
-            responses.await()
-            _uploadImageStatus.postValue(false)
         }
     }
 
@@ -167,10 +162,11 @@ class StoreDetailViewModel @Inject constructor(
         _selectedLocation.value = latLng
     }
 
-    fun deletePhoto(selectedImage: Image) {
+    fun deletePhoto(selectedImage: ImageContentModel?) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val data = repository.deleteImage(selectedImage.imageId)
-            _photoDeleted.postValue(data.isSuccessful)
+            selectedImage?.let {
+                homeRepository.deleteImage(selectedImage.imageId).collect { _photoDeleted.emit(it.ok) }
+            }
         }
     }
 
@@ -203,6 +199,15 @@ class StoreDetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun getImage(storeId: Int) {
+        viewModelScope.launch {
+            homeRepository.getStoreImages(storeId).cachedIn(viewModelScope).collect {
+                _imagePagingData.value = it
+            }
+        }
+    }
+
 
     override fun handleError(t: Throwable) {
         super.handleError(t)

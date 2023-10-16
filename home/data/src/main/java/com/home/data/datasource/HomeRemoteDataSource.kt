@@ -6,6 +6,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
@@ -13,6 +14,7 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 
 interface HomeRemoteDataSource {
 
@@ -61,8 +63,12 @@ interface HomeRemoteDataSource {
 
     fun deleteStore(
         storeId: Int,
-        deleteReasonType: String
+        deleteReasonType: String,
     ): Flow<BaseResponse<DeleteResultResponse>>
 
     fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>>
+
+    fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
+
+    fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>>
 }

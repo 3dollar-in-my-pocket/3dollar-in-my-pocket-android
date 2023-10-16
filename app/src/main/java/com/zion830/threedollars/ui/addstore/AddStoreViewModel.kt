@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.isNotNullOrBlank
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
@@ -17,7 +18,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.threedollar.common.ext.isNotNullOrBlank
 import javax.inject.Inject
 
 @HiltViewModel

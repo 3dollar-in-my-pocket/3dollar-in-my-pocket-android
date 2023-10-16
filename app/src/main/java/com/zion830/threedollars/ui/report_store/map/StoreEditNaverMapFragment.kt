@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.map.NaverMapFragment
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 

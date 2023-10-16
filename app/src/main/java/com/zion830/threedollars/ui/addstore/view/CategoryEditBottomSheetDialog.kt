@@ -9,9 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.bindItems
 
 // 가게 수정 화면에서 띄울 다이얼로그
 @AndroidEntryPoint

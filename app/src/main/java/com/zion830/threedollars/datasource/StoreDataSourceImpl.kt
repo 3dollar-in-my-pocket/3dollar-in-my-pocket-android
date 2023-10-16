@@ -1,16 +1,24 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PostStoreVisitRequest
 import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.*
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import com.zion830.threedollars.network.NewServiceApi
 import kotlinx.coroutines.flow.flow
-import okhttp3.MultipartBody
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -70,15 +78,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     override suspend fun deleteReview(
         reviewId: Int,
     ): Response<BaseResponse<String>> = newService.deleteReview(reviewId)
-
-    override suspend fun saveImage(
-        storeId: Int,
-        images: List<MultipartBody.Part>,
-    ): Response<AddImageResponse> = newService.saveImages(images, storeId)
-
-    override suspend fun deleteImage(
-        imageId: Int,
-    ) = newService.deleteImage(imageId)
 
     override suspend fun saveStore(
         newStoreRequest: NewStoreRequest,

@@ -1,5 +1,7 @@
 package com.home.domain.data.store
 
+import java.io.Serializable
+
 
 data class UserStoreModel(
     val address: AddressModel = AddressModel(),
@@ -10,8 +12,8 @@ data class UserStoreModel(
     val menus: List<UserStoreMenuModel> = listOf(),
     val name: String = "",
     val paymentMethods: List<PaymentType> = listOf(),
-    val rating: Int = 0,
+    val rating: Double = 0.0,
     val salesType: SalesType = SalesType.NONE,
     val storeId: Int = 0,
-    val updatedAt: String = ""
-)
+    val updatedAt: String = "",
+) : Serializable

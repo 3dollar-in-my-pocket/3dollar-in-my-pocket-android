@@ -14,18 +14,17 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
-import com.threedollar.common.ext.isNotNullOrEmpty
-import com.threedollar.common.ext.showSnack
 
 
 @AndroidEntryPoint
@@ -36,16 +35,12 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
     private val myPageViewModel: MyPageViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private val streetStoreByMenuViewModel: StreetStoreByMenuViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 
     override fun initView() {
         requestPermissionFirst()
         popupViewModel.getPopups(position = "SPLASH")
-        if (LegacySharedPrefUtils.getCategories().isEmpty()) {
-            streetStoreByMenuViewModel.loadCategories()
-        }
 
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

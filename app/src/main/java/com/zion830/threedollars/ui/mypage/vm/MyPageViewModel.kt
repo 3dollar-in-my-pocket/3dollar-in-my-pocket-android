@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
@@ -18,7 +19,6 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.threedollar.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel

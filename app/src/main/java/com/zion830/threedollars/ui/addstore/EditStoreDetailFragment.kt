@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.addstore
 import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 

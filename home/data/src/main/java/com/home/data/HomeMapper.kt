@@ -1,7 +1,51 @@
 package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.*
+import com.home.domain.data.store.AccountModel
+import com.home.domain.data.store.AddressModel
+import com.home.domain.data.store.AppearanceDayModel
+import com.home.domain.data.store.AroundStoreModel
+import com.home.domain.data.store.BossStoreDetailModel
+import com.home.domain.data.store.BossStoreModel
+import com.home.domain.data.store.CategoryModel
+import com.home.domain.data.store.ClassificationModel
+import com.home.domain.data.store.ContentModel
+import com.home.domain.data.store.CountsModel
+import com.home.domain.data.store.CreatorModel
+import com.home.domain.data.store.CursorModel
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.DeleteResultModel
+import com.home.domain.data.store.ExtraModel
+import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.FeedbackModel
+import com.home.domain.data.store.FeedbackType
+import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.HistoriesContentModel
+import com.home.domain.data.store.HistoriesModel
+import com.home.domain.data.store.ImageContentModel
+import com.home.domain.data.store.ImagesModel
+import com.home.domain.data.store.LocationModel
+import com.home.domain.data.store.MenuModel
+import com.home.domain.data.store.OpenStatusModel
+import com.home.domain.data.store.OpeningHoursModel
+import com.home.domain.data.store.PaymentType
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.ReviewModel
+import com.home.domain.data.store.ReviewReportModel
+import com.home.domain.data.store.ReviewWriterModel
+import com.home.domain.data.store.ReviewsModel
+import com.home.domain.data.store.SalesType
+import com.home.domain.data.store.SaveImagesModel
+import com.home.domain.data.store.StatusType
+import com.home.domain.data.store.StoreModel
+import com.home.domain.data.store.TagsModel
+import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.UserStoreMenuModel
+import com.home.domain.data.store.UserStoreModel
+import com.home.domain.data.store.VisitCountsModel
+import com.home.domain.data.store.VisitModel
+import com.home.domain.data.store.VisitorModel
+import com.home.domain.data.store.VisitsModel
 import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
@@ -9,7 +53,45 @@ import com.home.domain.data.user.UserModel
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.threedollar.network.data.store.*
+import com.threedollar.network.data.store.Account
+import com.threedollar.network.data.store.Address
+import com.threedollar.network.data.store.AppearanceDay
+import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.BossStore
+import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.Category
+import com.threedollar.network.data.store.Classification
+import com.threedollar.network.data.store.Content
+import com.threedollar.network.data.store.Counts
+import com.threedollar.network.data.store.Creator
+import com.threedollar.network.data.store.Cursor
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.Extra
+import com.threedollar.network.data.store.Favorite
+import com.threedollar.network.data.store.Feedback
+import com.threedollar.network.data.store.Histories
+import com.threedollar.network.data.store.HistoriesContent
+import com.threedollar.network.data.store.Image
+import com.threedollar.network.data.store.Images
+import com.threedollar.network.data.store.Location
+import com.threedollar.network.data.store.Menu
+import com.threedollar.network.data.store.OpenStatus
+import com.threedollar.network.data.store.OpeningHours
+import com.threedollar.network.data.store.Review
+import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.ReviewReport
+import com.threedollar.network.data.store.ReviewWriter
+import com.threedollar.network.data.store.Reviews
+import com.threedollar.network.data.store.SaveImagesResponse
+import com.threedollar.network.data.store.Store
+import com.threedollar.network.data.store.Tags
+import com.threedollar.network.data.store.UserStore
+import com.threedollar.network.data.store.UserStoreMenu
+import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.store.Visit
+import com.threedollar.network.data.store.VisitCounts
+import com.threedollar.network.data.store.Visitor
+import com.threedollar.network.data.store.Visits
 import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
@@ -98,7 +180,7 @@ fun Cursor.asModel() = CursorModel(
 )
 
 fun Extra.asModel() = ExtraModel(
-    rating = rating ?: 0,
+    rating = rating ?: 0.0,
     reviewsCount = reviewsCount ?: 0,
     tagsModel = tags?.asModel() ?: TagsModel(),
     visitCountsModel = visitCounts?.asModel() ?: VisitCountsModel(),
@@ -181,7 +263,7 @@ fun Favorite.asModel() = FavoriteModel(
 fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
-    ratio = ratio ?: 0
+    ratio = ratio ?: 0.0
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
@@ -300,8 +382,7 @@ fun Images.asModel(): ImagesModel = ImagesModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
     cursor = cursor?.asModel() ?: CursorModel()
 )
-
-fun ImageContent.asModel() = ImageContentModel(
+fun Image.asModel() = ImageContentModel(
     createdAt = createdAt ?: "",
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
@@ -348,7 +429,7 @@ fun UserStore.asModel() = UserStoreModel(
     menus = menus?.map { it.asModel() } ?: listOf(),
     name = name ?: "",
     paymentMethods = paymentMethods?.map { it.asPaymentType() } ?: listOf(),
-    rating = rating ?: 0,
+    rating = rating ?: 0.0,
     salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: ""
@@ -364,12 +445,15 @@ fun String.asSalesType() = when (this) {
     "ROAD" -> {
         SalesType.ROAD
     }
+
     "STORE" -> {
         SalesType.STORE
     }
+
     "CONVENIENCE_STORE " -> {
         SalesType.CONVENIENCE_STORE
     }
+
     else -> {
         SalesType.NONE
     }
@@ -420,4 +504,11 @@ fun Visitor.asModel() = VisitorModel(
 
 fun DeleteResultResponse.asModel() = DeleteResultModel(
     isDeleted = isDeleted ?: false
+)
+
+fun SaveImagesResponse.asModel() = SaveImagesModel(
+    createdAt = createdAt ?: "",
+    imageId = imageId ?: 0,
+    updatedAt = updatedAt ?: "",
+    url = url ?: ""
 )

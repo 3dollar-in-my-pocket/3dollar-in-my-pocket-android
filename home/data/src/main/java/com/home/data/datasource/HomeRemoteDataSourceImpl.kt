@@ -7,6 +7,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
@@ -16,6 +17,7 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
@@ -122,4 +124,11 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.postStoreVisit(postStoreVisitRequest)))
     }
 
+    override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deleteImage(imageId)))
+    }
+
+    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>> = flow {
+            emit(apiResult(serverApi.saveImages(images, storeId)))
+    }
 }

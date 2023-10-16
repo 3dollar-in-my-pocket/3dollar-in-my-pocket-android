@@ -292,4 +292,11 @@
     <string name="visit_history_success">방문 성공 %d명</string>
     <string name="visit_history_fail">방문 실패 %d명</string>
     <string name="visit_extra">+ 그 외 %d명이 다녀갔어요!</string>
+    <string name="certification_title">가게 근처에서\n 방문을 인증할 수 있어요</string>
+    <string name="certification_distance">인증까지 %dm</string>
+    <string name="certification_available_title">가게 근처에서\n 방문을 인증할 수 있어요</string>
+    <string name="store_photo">가게 사진</string>
+    <string name="photo_summit">사진 제보</string>
+    <string name="photo">사진</string>
+    <string name="photo_submit">사진 제보하기</string>
 </resources>

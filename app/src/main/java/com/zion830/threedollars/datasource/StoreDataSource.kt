@@ -1,12 +1,21 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.*
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface StoreDataSource {
@@ -47,13 +56,6 @@ interface StoreDataSource {
     suspend fun deleteReview(
         reviewId: Int,
     ): Response<BaseResponse<String>>
-
-    suspend fun saveImage(
-        storeId: Int,
-        images: List<MultipartBody.Part>,
-    ): Response<AddImageResponse>
-
-    suspend fun deleteImage(imageId: Int): Response<BaseResponse<String>>
 
     suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
