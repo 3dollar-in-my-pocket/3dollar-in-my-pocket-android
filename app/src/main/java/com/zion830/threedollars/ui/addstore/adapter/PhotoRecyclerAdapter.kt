@@ -14,11 +14,11 @@ import zion830.com.common.base.BaseDiffUtilCallback
 
 
 class PhotoRecyclerAdapter(
-    private val photoClickListener: OnItemClickListener<StoreImage>,
+    private val photoClickListener: OnItemClickListener<StoreImage>, private val moreClickListener: () -> Unit,
 ) : ListAdapter<StoreImage, PhotoRecyclerAdapter.PhotoViewHolder>(BaseDiffUtilCallback()) {
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(position, getItem(position), photoClickListener)
+        holder.bind(position, getItem(position), photoClickListener, moreClickListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder =
@@ -31,7 +31,12 @@ class PhotoRecyclerAdapter(
 
     class PhotoViewHolder(private val binding: ItemPhotoBinding, private val size: Int = 0) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(position: Int, item: StoreImage, photoClickListener: OnItemClickListener<StoreImage>?) {
+        fun bind(
+            position: Int,
+            item: StoreImage,
+            photoClickListener: OnItemClickListener<StoreImage>?,
+            moreClickListener: () -> Unit?,
+        ) {
             binding.photoImageView.loadImage(item.url)
             when {
                 position < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
@@ -41,8 +46,7 @@ class PhotoRecyclerAdapter(
 
                 (position == MAX_COUNT - 1) -> {
                     binding.tvMoreCount.text = "+${size - MAX_COUNT}"
-                    binding.root.setOnClickListener { // TODO: 더보기 페이지로 이동
-                    }
+                    binding.root.setOnClickListener { moreClickListener() }
                 }
 
                 else -> {

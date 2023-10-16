@@ -10,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.threedollar.common.listener.OnSnapPositionChangeListener
@@ -18,7 +21,11 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentStorePhotoBinding
 import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.report_store.adapter.StoreImageSliderAdapter
+import com.zion830.threedollars.ui.store_detail.MoreImageActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {
@@ -26,6 +33,7 @@ class StorePhotoDialog : DialogFragment() {
 
     private lateinit var binding: FragmentStorePhotoBinding
     private var currentPosition = 0
+    private val storeId: Int by lazy { arguments?.getInt(STORE_ID, -1) ?: -1 }
     private val adapter: StoreImageSliderAdapter by lazy { StoreImageSliderAdapter() }
     override fun onStart() {
         super.onStart()
@@ -49,15 +57,18 @@ class StorePhotoDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         currentPosition = arguments?.getInt(KEY_START_INDEX) ?: 0
-
         initAdapter()
         initButton()
+        initViewModel()
+        initFlow()
+    }
+
+    private fun initViewModel() {
+        viewModel.getImage(storeId)
     }
 
     private fun initAdapter() {
-        binding.slider.adapter = adapter.apply {
-            submitList(viewModel.imageContentModelList.value)
-        }
+        binding.slider.adapter = adapter
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.slider)
         binding.slider.addOnScrollListener(SnapOnScrollListener(snapHelper, onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
@@ -65,10 +76,6 @@ class StorePhotoDialog : DialogFragment() {
                 currentPosition = position
             }
         }))
-
-        if (currentPosition > 0) {
-            binding.slider.scrollToPosition(currentPosition)
-        }
     }
 
     private fun initButton() {
@@ -95,7 +102,7 @@ class StorePhotoDialog : DialogFragment() {
             AlertDialog.Builder(requireContext())
                 .setPositiveButton(R.string.ok) { _, _ ->
                     val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
-                    viewModel.deletePhoto(adapter.getItems()[selectedPosition])
+                    viewModel.deletePhoto(adapter.peek(selectedPosition))
                     dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
@@ -107,11 +114,32 @@ class StorePhotoDialog : DialogFragment() {
         binding.backButton.setOnClickListener { dismiss() }
     }
 
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.imagePagingData.collect {
+                        it?.let { data ->
+                            adapter.submitData(data)
+                            binding.slider.post {
+                                if (currentPosition > 0) {
+                                    binding.slider.scrollToPosition(currentPosition)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         private const val KEY_START_INDEX = "start_index"
-        fun getInstance(startIndex: Int) = StorePhotoDialog().apply {
+        private const val STORE_ID = "store_id"
+        fun getInstance(startIndex: Int, storeId: Int) = StorePhotoDialog().apply {
             val bundle = Bundle()
             bundle.putInt(KEY_START_INDEX, startIndex)
+            bundle.putInt(STORE_ID, storeId)
             arguments = bundle
         }
     }

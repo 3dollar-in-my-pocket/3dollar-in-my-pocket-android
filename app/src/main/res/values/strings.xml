@@ -297,4 +297,6 @@
     <string name="certification_available_title">가게 근처에서\n 방문을 인증할 수 있어요</string>
     <string name="store_photo">가게 사진</string>
     <string name="photo_summit">사진 제보</string>
+    <string name="photo">사진</string>
+    <string name="photo_submit">사진 제보하기</string>
 </resources>

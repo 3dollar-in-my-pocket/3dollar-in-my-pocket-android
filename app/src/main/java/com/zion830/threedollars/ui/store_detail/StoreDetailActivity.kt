@@ -68,18 +68,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
-    private var storeId = 0
+    private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
 
     private var startCertificationExactly: Boolean? = false
 
     private val photoAdapter: PhotoRecyclerAdapter by lazy {
         PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
             override fun onClick(item: StoreImage) {
-                StorePhotoDialog.getInstance(item.index)
+                StorePhotoDialog.getInstance(item.index, storeId)
                     .show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
-
-        })
+        }) {
+            moveMoreImageActivity()
+        }
     }
 
     private lateinit var reviewAdapter: ReviewRecyclerAdapter
@@ -102,7 +103,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
-        storeId = intent.getIntExtra(STORE_ID, 0)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         refreshStoreInfo()
         initMap()
@@ -186,7 +186,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
-                        viewModel.saveImages(images)
+                        viewModel.saveImages(images, storeId)
                     }
                 }
             }
@@ -537,9 +537,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         startActivity(intent)
     }
 
-    private fun refreshStoreInfo() {
-        val storeId = intent.getIntExtra(STORE_ID, 0)
+    private fun moveMoreImageActivity() {
+        val intent = MoreImageActivity.getIntent(this, storeId)
+        startActivity(intent)
+    }
 
+    private fun refreshStoreInfo() {
         try {
             if (isLocationAvailable() && isGpsAvailable()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
