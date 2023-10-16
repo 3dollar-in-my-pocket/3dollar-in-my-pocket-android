@@ -7,6 +7,8 @@ import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
@@ -56,13 +58,13 @@ interface ServerApi {
         @Query("storeImagesCount") storeImagesCount: Int?,
         @Query("reviewsCount") reviewsCount: Int?,
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
-        @Query("filterVisitStartDate") filterVisitStartDate: String
+        @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
         @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
+        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT",
     ): Response<BaseResponse<DeleteResultResponse>>
 
     @DELETE("/api/v2/store/image/{storeImageId}")
@@ -92,11 +94,14 @@ interface ServerApi {
     suspend fun postFeedback(
         @Path("targetType") targetType: String,
         @Path("targetId") targetId: String,
-        @Body postFeedbackRequest: PostFeedbackRequest
+        @Body postFeedbackRequest: PostFeedbackRequest,
     ): Response<BaseResponse<String>>
 
     @GET("/api/v1/feedback/{targetType}/target/{targetId}/full")
-    suspend fun getFeedbackFull(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<List<FeedbackCountResponse>>>
+    suspend fun getFeedbackFull(
+        @Path("targetType") targetType: String,
+        @Path("targetId") targetId: String,
+    ): Response<BaseResponse<List<FeedbackCountResponse>>>
 
     @GET("/api/v1/feedback/{targetType}/types")
     suspend fun getFeedbackTypes(@Path("targetType") targetType: String): Response<BaseResponse<List<FeedbackTypeResponse>>>
@@ -104,5 +109,12 @@ interface ServerApi {
     @POST("/api/v2/store/images")
     @Multipart
     suspend fun saveImages(@Part images: List<MultipartBody.Part>, @Query("storeId") storeId: Int): Response<BaseResponse<List<SaveImagesResponse>>>
+
+    @GET("/api/v4/store/{storeId}/images")
+    suspend fun getStoreImages(
+        @Path("storeId") storeId: Int,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String?,
+    ): Response<BaseResponse<ImageResponse>>
 
 }

@@ -71,7 +71,7 @@ import com.threedollar.network.data.store.Favorite
 import com.threedollar.network.data.store.Feedback
 import com.threedollar.network.data.store.Histories
 import com.threedollar.network.data.store.HistoriesContent
-import com.threedollar.network.data.store.ImageContent
+import com.threedollar.network.data.store.Image
 import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.Location
 import com.threedollar.network.data.store.Menu
@@ -382,8 +382,7 @@ fun Images.asModel(): ImagesModel = ImagesModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
     cursor = cursor?.asModel() ?: CursorModel()
 )
-
-fun ImageContent.asModel() = ImageContentModel(
+fun Image.asModel() = ImageContentModel(
     createdAt = createdAt ?: "",
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
