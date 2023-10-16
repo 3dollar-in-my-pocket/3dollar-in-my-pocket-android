@@ -1,16 +1,22 @@
 package com.home.domain.repository
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.ImageContentModel
+import com.home.domain.data.store.ImagesModel
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface HomeRepository {
 
@@ -59,4 +65,6 @@ interface HomeRepository {
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
+
+    fun getStoreImages(storeId: Int, ): Flow<PagingData<ImageContentModel>>
 }

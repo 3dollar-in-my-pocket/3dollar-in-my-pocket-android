@@ -1,12 +1,17 @@
 package com.home.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.home.data.asModel
 import com.home.data.datasource.HomeRemoteDataSource
+import com.home.data.datasource.ImagePagingDataSource
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
@@ -14,6 +19,7 @@ import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
+import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -24,7 +30,11 @@ import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
-class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: HomeRemoteDataSource, private val sharedPrefUtils: SharedPrefUtils) :
+class HomeRepositoryImpl @Inject constructor(
+    private val serverApi: ServerApi,
+    private val homeRemoteDataSource: HomeRemoteDataSource,
+    private val sharedPrefUtils: SharedPrefUtils,
+) :
     HomeRepository {
     override fun getAroundStores(
         categoryIds: Array<String>?,
@@ -170,4 +180,8 @@ class HomeRepositoryImpl @Inject constructor(private val homeRemoteDataSource: H
                 error = it.error
             )
         }
+
+    override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
+        ImagePagingDataSource(storeId, serverApi)
+    }.flow
 }

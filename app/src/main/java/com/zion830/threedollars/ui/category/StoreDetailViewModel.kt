@@ -3,6 +3,10 @@ package com.zion830.threedollars.ui.category
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.flatMap
+import androidx.paging.map
 import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.UserStoreDetailModel
@@ -59,8 +63,8 @@ class StoreDetailViewModel @Inject constructor(
     private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
     val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
 
-    private val _imageContentModelList: MutableStateFlow<List<ImageContentModel>> = MutableStateFlow(listOf())
-    val imageContentModelList: StateFlow<List<ImageContentModel>> get() = _imageContentModelList
+    private val _imagePagingData = MutableStateFlow<PagingData<ImageContentModel>?>(null)
+    val imagePagingData get() = _imagePagingData
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -85,7 +89,6 @@ class StoreDetailViewModel @Inject constructor(
                     if (it.ok) {
                         it.data?.let { data ->
                             _userStoreDetailModel.value = data
-                            _imageContentModelList.value = data.images.contents
                         }
                     } else {
                         _serverError.emit(it.message)
@@ -147,14 +150,14 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun saveImages(images: List<MultipartBody.Part>) {
+    fun saveImages(images: List<MultipartBody.Part>, storeId: Int) {
         if (images.isEmpty()) {
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
             _uploadImageStatus.emit(true)
-            homeRepository.saveImages(images, _userStoreDetailModel.value?.store?.storeId ?: -1).collect {
+            homeRepository.saveImages(images, storeId).collect {
                 _uploadImageStatus.emit(false)
             }
         }
@@ -164,9 +167,11 @@ class StoreDetailViewModel @Inject constructor(
         _selectedLocation.value = latLng
     }
 
-    fun deletePhoto(selectedImage: ImageContentModel) {
+    fun deletePhoto(selectedImage: ImageContentModel?) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteImage(selectedImage.imageId).collect { _photoDeleted.emit(it.ok) }
+            selectedImage?.let {
+                homeRepository.deleteImage(selectedImage.imageId).collect { _photoDeleted.emit(it.ok) }
+            }
         }
     }
 
@@ -199,6 +204,15 @@ class StoreDetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun getImage(storeId: Int) {
+        viewModelScope.launch {
+            homeRepository.getStoreImages(storeId).cachedIn(viewModelScope).collect {
+                _imagePagingData.value = it
+            }
+        }
+    }
+
 
     override fun handleError(t: Throwable) {
         super.handleError(t)

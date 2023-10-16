@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.report_store.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.ImageContentModel
@@ -19,14 +20,7 @@ import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
 
 
-class StoreImageSliderAdapter : ListAdapter<ImageContentModel, SliderAdapterHolder>(BaseDiffUtilCallback()) {
-
-    fun getItems(): List<ImageContentModel> = currentList
-
-    override fun submitList(list: List<ImageContentModel>?) {
-        super.submitList(null)
-        super.submitList(list)
-    }
+class StoreImageSliderAdapter : PagingDataAdapter<ImageContentModel, SliderAdapterHolder>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         SliderAdapterHolder(ItemImageSliderBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -37,7 +31,7 @@ class StoreImageSliderAdapter : ListAdapter<ImageContentModel, SliderAdapterHold
 }
 
 class SliderAdapterHolder(private val binding: ItemImageSliderBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: ImageContentModel) {
-        binding.ivContent.loadImage(item.url)
+    fun bind(item: ImageContentModel?) {
+        binding.ivContent.loadImage(item?.url)
     }
 }
