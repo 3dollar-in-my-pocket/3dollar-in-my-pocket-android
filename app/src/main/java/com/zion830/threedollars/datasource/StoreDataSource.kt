@@ -6,7 +6,6 @@ import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.AddImageResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
@@ -17,7 +16,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResp
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface StoreDataSource {

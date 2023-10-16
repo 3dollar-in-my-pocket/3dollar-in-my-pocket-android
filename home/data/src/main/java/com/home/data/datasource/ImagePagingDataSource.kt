@@ -1,12 +1,10 @@
 package com.home.data.datasource
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.home.data.asModel
 import com.home.domain.data.store.ImageContentModel
 import com.threedollar.network.api.ServerApi
-import javax.inject.Inject
 
 class ImagePagingDataSource(private val storeId: Int, private val serverApi: ServerApi) :
     PagingSource<String, ImageContentModel>() {

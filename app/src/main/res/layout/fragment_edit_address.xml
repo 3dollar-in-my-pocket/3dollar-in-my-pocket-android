@@ -7,7 +7,7 @@
         
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.category.StoreDetailViewModel" />
+            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
         
         <import type="android.view.View" />
     </data>

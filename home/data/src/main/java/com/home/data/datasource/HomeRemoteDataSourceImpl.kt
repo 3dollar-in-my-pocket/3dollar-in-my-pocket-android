@@ -1,6 +1,5 @@
 package com.home.data.datasource
 
-import android.util.Log
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.advertisement.AdvertisementResponse
@@ -19,7 +18,6 @@ import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
-import retrofit2.Response
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {

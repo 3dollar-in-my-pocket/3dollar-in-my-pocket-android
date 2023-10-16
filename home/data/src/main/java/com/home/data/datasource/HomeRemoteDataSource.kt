@@ -15,11 +15,6 @@ import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.Response
-import retrofit2.http.DELETE
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface HomeRemoteDataSource {
 

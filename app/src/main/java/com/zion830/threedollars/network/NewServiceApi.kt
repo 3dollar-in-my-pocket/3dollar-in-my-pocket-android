@@ -14,7 +14,6 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 

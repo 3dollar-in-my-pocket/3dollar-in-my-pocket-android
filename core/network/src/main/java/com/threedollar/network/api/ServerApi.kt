@@ -8,7 +8,6 @@ import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.ImageResponse
-import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse

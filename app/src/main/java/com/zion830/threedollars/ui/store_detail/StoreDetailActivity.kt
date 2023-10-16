@@ -36,7 +36,6 @@ import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
@@ -44,6 +43,7 @@ import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker

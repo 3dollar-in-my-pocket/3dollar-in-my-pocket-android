@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.bumptech.glide.Glide
 import com.home.domain.data.store.BossStoreDetailItem
 import com.home.domain.data.store.MenuModel
 import com.threedollar.common.ext.loadCircleImage

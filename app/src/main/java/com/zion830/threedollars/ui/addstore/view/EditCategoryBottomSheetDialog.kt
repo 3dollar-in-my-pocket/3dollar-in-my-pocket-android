@@ -9,7 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogSelectCategoryBinding
 import com.zion830.threedollars.ui.addstore.adapter.CategoryDialogRecyclerAdapter
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

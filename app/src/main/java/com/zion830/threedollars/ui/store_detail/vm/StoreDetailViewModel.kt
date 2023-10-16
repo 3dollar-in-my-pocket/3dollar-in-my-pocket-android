@@ -1,12 +1,10 @@
-package com.zion830.threedollars.ui.category
+package com.zion830.threedollars.ui.store_detail.vm
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.flatMap
-import androidx.paging.map
 import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.UserStoreDetailModel
@@ -18,17 +16,14 @@ import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.Image
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
