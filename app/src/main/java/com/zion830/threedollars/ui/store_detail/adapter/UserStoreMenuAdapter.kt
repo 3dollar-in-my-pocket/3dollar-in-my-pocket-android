@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.home.domain.data.store.UserStoreDetailItem
 import com.home.domain.data.store.UserStoreMenuModel
-import com.home.domain.data.store.UserStoreMenuMoreResponse
+import com.home.domain.data.store.UserStoreMoreResponse
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -33,7 +33,7 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
                 holder.bind(getItem(position) as UserStoreMenuModel)
             }
             is UserStoreMenuMoreViewHolder -> {
-                holder.bind(getItem(position) as UserStoreMenuMoreResponse)
+                holder.bind(getItem(position) as UserStoreMoreResponse)
             }
         }
     }
@@ -82,7 +82,7 @@ class UserStoreMenuMoreViewHolder(
     private val binding: ItemStoreDetailMenuMoreBinding,
     private val clickListener: () -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: UserStoreMenuMoreResponse) {
+    fun bind(item: UserStoreMoreResponse) {
         binding.menuLayout.setOnClickListener {
             clickListener()
         }

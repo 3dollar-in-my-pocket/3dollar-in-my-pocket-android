@@ -31,7 +31,6 @@ import com.zion830.threedollars.Constants.USER_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
-import com.zion830.threedollars.datasource.model.v2.response.my.Review
 import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
@@ -83,7 +82,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
-    private lateinit var reviewAdapter: ReviewRecyclerAdapter
+    private val reviewAdapter: ReviewRecyclerAdapter by lazy {
+        ReviewRecyclerAdapter(
+            object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+//                    AddReviewDialog.getInstance(item)
+//                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
+                }
+            },
+            object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+//                    viewModel.deleteReview(item.reviewId)
+                }
+            }
+        ) {
+            reviewAdapter.submitList(viewModel.userStoreDetailModel.value?.reviews?.contents)
+        }
+    }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
@@ -130,24 +145,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initAdapter() {
-        reviewAdapter = ReviewRecyclerAdapter(
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
-                    AddReviewDialog.getInstance(item)
-                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
-                }
-            },
-            object : OnItemClickListener<Review> {
-                override fun onClick(item: Review) {
-                    viewModel.deleteReview(item.reviewId)
-                }
-            },
-        )
+        binding.reviewRecyclerView.adapter = reviewAdapter
         binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
         binding.menuRecyclerView.adapter = userStoreMenuAdapter
         binding.photoRecyclerView.adapter = photoAdapter
-
-//        binding.rvReview.adapter = reviewAdapter
     }
 
     private fun initMap() {
@@ -194,10 +195,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.shareButton.setOnClickListener {
             initShared()
         }
-//        binding.btnAddReview.setOnClickListener {
-//            AddReviewDialog.getInstance()
-//                .show(supportFragmentManager, AddReviewDialog::class.java.name)
-//        }
+        binding.writeReviewTextView.setOnClickListener {
+            AddReviewDialog.getInstance()
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+        }
         binding.editStoreInfoButton.setOnClickListener {
             // TODO: 정보 수정 기능 구현
 //            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
@@ -262,7 +263,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 launch {
                     viewModel.userStoreDetailModel.collect {
                         it?.let {
-//                        reviewAdapter.submitList(it?.reviews)
+                            initReviewLayout(it)
                             initPhotoLayout(it)
                             initMap(it)
                             isStartCertification()
@@ -322,6 +323,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
+    private fun initReviewLayout(it: UserStoreDetailModel) {
+        val reviewContentModelList = it.reviews.contents
+        if (reviewContentModelList.size < 4) {
+            reviewAdapter.submitList(reviewContentModelList)
+        } else {
+            val subList = reviewContentModelList.take(2)
+            val userStoreMoreResponse = UserStoreMoreResponse(
+                moreTitle = getString(R.string.store_detail_review_more, reviewContentModelList.size - 3)
+            )
+            reviewAdapter.submitList(subList + userStoreMoreResponse)
+        }
+    }
+
     private fun initPhotoLayout(it: UserStoreDetailModel) {
         photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
             StoreImage(index, null, image.url)
@@ -352,10 +366,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         } else {
             val subKeys = menuGroup.keys.take(2)
             val subMenuGroup = menuGroup.getValue(subKeys[0]) + menuGroup.getValue(subKeys[1])
-            val userStoreMenuMoreResponse = UserStoreMenuMoreResponse(
+            val userStoreMoreResponse = UserStoreMoreResponse(
                 moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2)
             )
-            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMenuMoreResponse)
+            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMoreResponse)
         }
     }
 
@@ -417,6 +431,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
         binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
         binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
+        binding.reviewTitleTextView.text = getString(R.string.review_count, userStoreDetailModel.reviews.contents.size)
+        binding.reviewTitleTextView.textPartTypeface("${userStoreDetailModel.reviews.contents.size}개", Typeface.NORMAL)
+        binding.reviewRatingAvgTextView.text = getString(R.string.score, userStoreDetailModel.store.rating)
+        binding.reviewRatingBar.rating = userStoreDetailModel.store.rating.toFloat()
         initPayments(userStoreDetailModel.store.paymentMethods)
         initAppearanceDays(userStoreDetailModel.store.appearanceDays)
     }

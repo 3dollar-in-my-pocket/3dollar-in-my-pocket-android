@@ -5,4 +5,4 @@ data class ReviewContentModel(
     val review: ReviewModel = ReviewModel(),
     val reviewReport: ReviewReportModel = ReviewReportModel(),
     val reviewWriter: ReviewWriterModel = ReviewWriterModel(),
-)
+) : UserStoreDetailItem

@@ -718,6 +718,118 @@
                     tools:listitem="@layout/item_visit_history" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/reviewLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photoLayout">
+
+                <TextView
+                    android:id="@+id/reviewTitleTextView"
+                    style="@style/apple_gothic_bold.size_16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray100"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="리뷰 26개" />
+
+                <TextView
+                    android:id="@+id/writeReviewTextView"
+                    style="@style/apple_gothic_bold.size_12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/review_write"
+                    android:textColor="@color/pink"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/reviewRatingCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="76dp"
+                    android:layout_marginHorizontal="1dp"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/pink_100"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/writeReviewTextView"
+                    tools:ignore="UnusedAttribute">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/pink_100"
+                        android:paddingVertical="16dp">
+
+                        <TextView
+                            android:id="@+id/reviewRatingAvgTitleTextView"
+                            style="@style/apple_gothic_medium.size_10sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/rating_avg"
+                            android:textColor="@color/gray50"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.willy.ratingbar.ScaleRatingBar
+                            android:id="@+id/reviewRatingBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/reviewRatingAvgTitleTextView"
+                            app:srb_clickable="false"
+                            app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_24"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintHorizontal_bias="0.33"
+                            app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
+                            app:srb_isIndicator="false"
+                            app:srb_numStars="5"
+                            app:srb_starHeight="24dp"
+                            app:srb_starPadding="2dp"
+                            app:srb_starWidth="24dp"
+                            tools:ignore="UnusedAttribute" />
+
+                        <TextView
+                            android:id="@+id/reviewRatingAvgTextView"
+                            style="@style/apple_gothic_semi_bold.size_20sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/gray80"
+                            app:layout_constraintBottom_toBottomOf="@id/reviewRatingBar"
+                            app:layout_constraintStart_toEndOf="@id/reviewRatingBar"
+                            app:layout_constraintTop_toTopOf="@id/reviewRatingBar"
+                            tools:text="4.9점" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/reviewRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/white"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/reviewRatingCardView"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_review" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
