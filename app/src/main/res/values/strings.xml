@@ -108,7 +108,6 @@
     <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
     <string name="add_certification_success">방문 인증이 완료되었습니다. 감사합니다!</string>
     <string name="photo_count">가게사진 %d개</string>
-    <string name="review_count">리뷰 %d개</string>
     <string name="hint_menu_name">ex) 슈크림</string>
     <string name="hint_menu_price">ex) 3개 2천원</string>
     <string name="hint_menu_location">ex) 강남역 2번 출구 </string>
@@ -236,6 +235,7 @@
     <string name="food_truck_price">%s원</string>
     <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
     <string name="store_detail_menu_more">메뉴 %d개 더보기</string>
+    <string name="store_detail_review_more">리뷰 %d개 더보기</string>
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
@@ -299,4 +299,7 @@
     <string name="photo_summit">사진 제보</string>
     <string name="photo">사진</string>
     <string name="photo_submit">사진 제보하기</string>
+    <string name="review_count">리뷰 %d개</string>
+    <string name="review_write">리뷰 쓰기</string>
+    <string name="rating_avg">평균 별점</string>
 </resources>
