@@ -94,6 +94,22 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
             binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_white)
             binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
         }
+
+        if (item.review.isOwner) {
+            binding.reportAndEditTextView.apply {
+                text = GlobalApplication.getContext().getString(R.string.review_edit)
+                setOnClickListener {
+                    reviewEditClickEvent.onClick(item)
+                }
+            }
+        } else {
+            binding.reportAndEditTextView.apply {
+                text = GlobalApplication.getContext().getString(R.string.review_report)
+                setOnClickListener {
+                    reviewDeleteClickEvent.onClick(item)
+                }
+            }
+        }
     }
 }
 

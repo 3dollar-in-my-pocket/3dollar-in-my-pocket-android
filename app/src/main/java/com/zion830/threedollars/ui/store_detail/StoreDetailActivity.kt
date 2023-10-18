@@ -230,6 +230,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.directionsButton.setOnClickListener {
             showDirectionBottomDialog()
         }
+        binding.writeReviewTextView.setOnClickListener {
+            AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
+        }
     }
 
     private fun initShared() {

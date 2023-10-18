@@ -382,6 +382,7 @@ fun Images.asModel(): ImagesModel = ImagesModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
     cursor = cursor?.asModel() ?: CursorModel()
 )
+
 fun Image.asModel() = ImageContentModel(
     createdAt = createdAt ?: "",
     imageId = imageId ?: 0,
@@ -406,7 +407,8 @@ fun Review.asModel() = ReviewModel(
     rating = rating ?: 0,
     reviewId = reviewId ?: 0,
     status = status ?: "",
-    updatedAt = updatedAt ?: ""
+    updatedAt = updatedAt ?: "",
+    isOwner = isOwner ?: false
 )
 
 fun ReviewReport.asModel() = ReviewReportModel(

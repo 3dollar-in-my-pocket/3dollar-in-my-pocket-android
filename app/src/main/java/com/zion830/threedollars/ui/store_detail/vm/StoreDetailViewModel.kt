@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -204,6 +205,19 @@ class StoreDetailViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.getStoreImages(storeId).cachedIn(viewModelScope).collect {
                 _imagePagingData.value = it
+            }
+        }
+    }
+
+    fun postStoreReview(content: String, rating: Int, storeId: Int?) {
+        viewModelScope.launch {
+            storeId?.let {
+                homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
+                    if (it.ok) {
+                    } else {
+                        _serverError.emit(it.error)
+                    }
+                }
             }
         }
     }

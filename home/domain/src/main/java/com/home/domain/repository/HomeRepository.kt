@@ -7,6 +7,7 @@ import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
+import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
@@ -62,5 +63,7 @@ interface HomeRepository {
 
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
 
-    fun getStoreImages(storeId: Int, ): Flow<PagingData<ImageContentModel>>
+    fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
+
+    fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
 }

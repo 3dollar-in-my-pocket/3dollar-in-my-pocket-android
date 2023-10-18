@@ -141,7 +141,7 @@
     <string name="category_select">카테고리 선택</string>
 
     <string name="recommend_store">이 가게를\n추천하시나요?</string>
-    <string name="recommend_store_hint">리뷰를 남겨주세요!</string>
+    <string name="recommend_store_hint">리뷰를 남겨주세요!(100자 이내)</string>
     <string name="recommend_store_finish">리뷰 등록하기</string>
     <string name="edit_review">리뷰 수정</string>
     <string name="delete_review">리뷰 삭제</string>
@@ -302,4 +302,6 @@
     <string name="review_count">리뷰 %d개</string>
     <string name="review_write">리뷰 쓰기</string>
     <string name="rating_avg">평균 별점</string>
+    <string name="review_edit">수정</string>
+    <string name="review_report">신고</string>
 </resources>

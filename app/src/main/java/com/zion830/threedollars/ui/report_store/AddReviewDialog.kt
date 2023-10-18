@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.report_store
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
@@ -12,44 +13,71 @@ import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
+import com.zion830.threedollars.databinding.DialogBottomDirectionBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.datasource.model.v2.response.my.Review
+import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddReviewDialog(
-    private val content: Review?
-) : DialogFragment() {
+    private val content: Review?,
+) : BottomSheetDialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+    private lateinit var binding: DialogAddReviewBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener {
+            val bottomSheetDialog = it as BottomSheetDialog
+            setupRatio(bottomSheetDialog)
+        }
+        return dialog
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DialogAddReviewBinding.inflate(inflater)
+    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+        val behavior = BottomSheetBehavior.from<View>(bottomSheet)
+        behavior.maxHeight = 100
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = DialogAddReviewBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-
-        binding.ibClose.setOnClickListener {
-            EventTracker.logEvent(Constants.REVIEW_WRITE_CLOSE_BTN_CLICKED)
-            dismiss()
-        }
+        initButton()
 
         if (content != null) {
             binding.rating.rating = content.rating
             binding.etContent.setText(content.contents)
         }
+    }
 
+    private fun initButton() {
+        binding.closeImageButton.setOnClickListener {
+            EventTracker.logEvent(Constants.REVIEW_WRITE_CLOSE_BTN_CLICKED)
+            dismiss()
+        }
         binding.btnFinish.setOnClickListener {
             EventTracker.logEvent(Constants.REVIEW_REGISTER_BTN_CLICKED)
             if (binding.rating.rating == 0f) {
@@ -58,7 +86,11 @@ class AddReviewDialog(
             }
 
             if (content == null) {
-                viewModel.addReview(binding.etContent.text.toString(), binding.rating.rating)
+                viewModel.postStoreReview(
+                    binding.etContent.text.toString(),
+                    binding.rating.rating.toInt(),
+                    viewModel.userStoreDetailModel.value?.store?.storeId
+                )
                 dismiss()
             } else {
                 val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
@@ -72,24 +104,9 @@ class AddReviewDialog(
         binding.etContent.addTextChangedListener {
             binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()
         }
-        return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display = windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-
-        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
-        val deviceWidth = size.x
-        params?.width = (deviceWidth * 0.9).toInt()
-        dialog?.window?.attributes = params as WindowManager.LayoutParams
     }
 
     companion object {
-
         fun getInstance(content: Review? = null) = AddReviewDialog(content)
     }
 }

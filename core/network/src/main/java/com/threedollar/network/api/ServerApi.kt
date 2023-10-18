@@ -8,6 +8,7 @@ import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
@@ -15,6 +16,7 @@ import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.StoreReviewRequest
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -115,5 +117,8 @@ interface ServerApi {
         @Query("size") size: Int,
         @Query("cursor") cursor: String?,
     ): Response<BaseResponse<ImageResponse>>
+
+    @POST("/api/v3/store/review")
+    suspend fun postStoreReview(@Body storeReviewRequest: StoreReviewRequest): Response<BaseResponse<ReviewContent>>
 
 }

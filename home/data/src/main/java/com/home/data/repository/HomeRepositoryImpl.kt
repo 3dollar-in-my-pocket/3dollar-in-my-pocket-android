@@ -25,6 +25,7 @@ import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.StoreReviewRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -184,4 +185,15 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
         ImagePagingDataSource(storeId, serverApi)
     }.flow
+
+    override fun postStoreReview(contents: String, rating: Int?, storeId: Int) =
+        homeRemoteDataSource.postStoreReview(StoreReviewRequest(contents, rating, storeId)).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
 }

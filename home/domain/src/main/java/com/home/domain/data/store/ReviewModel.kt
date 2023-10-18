@@ -8,4 +8,5 @@ data class ReviewModel(
     val reviewId: Int = 0,
     val status: String = "",
     val updatedAt: String = "",
+    val isOwner : Boolean = false
 )
