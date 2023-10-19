@@ -15,6 +15,7 @@ import com.home.domain.data.store.CreatorModel
 import com.home.domain.data.store.CursorModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.DeleteResultModel
+import com.home.domain.data.store.EditStoreReviewModel
 import com.home.domain.data.store.ExtraModel
 import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.FeedbackModel
@@ -66,6 +67,7 @@ import com.threedollar.network.data.store.Counts
 import com.threedollar.network.data.store.Creator
 import com.threedollar.network.data.store.Cursor
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.Extra
 import com.threedollar.network.data.store.Favorite
 import com.threedollar.network.data.store.Feedback
@@ -513,4 +515,15 @@ fun SaveImagesResponse.asModel() = SaveImagesModel(
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
     url = url ?: ""
+)
+
+fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
+    contents = contents ?: "",
+    createdAt = createdAt ?: "",
+    rating = rating ?: 0,
+    reviewId = reviewId ?: 0,
+    status = status ?: "",
+    storeId = storeId ?: 0,
+    updatedAt = updatedAt ?: "",
+    userId = userId ?: 0,
 )

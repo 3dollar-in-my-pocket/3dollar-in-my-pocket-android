@@ -7,6 +7,7 @@ import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ImageResponse
 import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.SaveImagesResponse
@@ -120,5 +121,11 @@ interface ServerApi {
 
     @POST("/api/v3/store/review")
     suspend fun postStoreReview(@Body storeReviewRequest: StoreReviewRequest): Response<BaseResponse<ReviewContent>>
+
+    @PUT("/api/v2/store/review/{reviewId}")
+    suspend fun putStoreReview(
+        @Path("reviewId") reviewId: Int,
+        @Body storeReviewRequest: StoreReviewRequest,
+    ): Response<BaseResponse<EditStoreReviewResponse>>
 
 }

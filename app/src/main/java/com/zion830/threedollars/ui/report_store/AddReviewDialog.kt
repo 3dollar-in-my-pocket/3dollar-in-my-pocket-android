@@ -1,37 +1,28 @@
 package com.zion830.threedollars.ui.report_store
 
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
-import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.home.domain.data.store.ReviewContentModel
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
-import com.zion830.threedollars.databinding.DialogBottomDirectionBinding
-import com.zion830.threedollars.datasource.model.v2.request.NewReview
-import com.zion830.threedollars.datasource.model.v2.response.my.Review
-import com.zion830.threedollars.ui.DirectionBottomDialog
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddReviewDialog(
-    private val content: Review?,
-) : BottomSheetDialogFragment() {
+class AddReviewDialog(private val content: ReviewContentModel?) : BottomSheetDialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
     private lateinit var binding: DialogAddReviewBinding
 
@@ -68,8 +59,8 @@ class AddReviewDialog(
         initButton()
 
         if (content != null) {
-            binding.rating.rating = content.rating
-            binding.etContent.setText(content.contents)
+            binding.rating.rating = content.review.rating.toFloat()
+            binding.etContent.setText(content.review.contents)
         }
     }
 
@@ -93,8 +84,7 @@ class AddReviewDialog(
                 )
                 dismiss()
             } else {
-                val newReview = NewReview(binding.etContent.text.toString(), binding.rating.rating)
-                viewModel.editReview(content.reviewId, newReview)
+                viewModel.putStoreReview(content.review.reviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
                 dismiss()
             }
         }
@@ -107,6 +97,6 @@ class AddReviewDialog(
     }
 
     companion object {
-        fun getInstance(content: Review? = null) = AddReviewDialog(content)
+        fun getInstance(content: ReviewContentModel? = null) = AddReviewDialog(content)
     }
 }

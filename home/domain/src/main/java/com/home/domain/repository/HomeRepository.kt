@@ -5,6 +5,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
+import com.home.domain.data.store.EditStoreReviewModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.ReviewContentModel
@@ -66,4 +67,6 @@ interface HomeRepository {
     fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
 
     fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
+
+    fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
 }

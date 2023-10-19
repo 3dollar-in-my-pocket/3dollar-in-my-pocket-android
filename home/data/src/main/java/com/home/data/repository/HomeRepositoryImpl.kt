@@ -10,6 +10,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
+import com.home.domain.data.store.EditStoreReviewModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.SaveImagesModel
@@ -188,6 +189,17 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun postStoreReview(contents: String, rating: Int?, storeId: Int) =
         homeRemoteDataSource.postStoreReview(StoreReviewRequest(contents, rating, storeId)).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
+        homeRemoteDataSource.putStoreReview(reviewId, StoreReviewRequest(contents = contents, rating = rating)).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),

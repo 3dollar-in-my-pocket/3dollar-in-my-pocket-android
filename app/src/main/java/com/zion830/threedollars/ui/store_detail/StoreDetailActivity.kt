@@ -86,16 +86,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         ReviewRecyclerAdapter(
             object : OnItemClickListener<ReviewContentModel> {
                 override fun onClick(item: ReviewContentModel) {
-//                    AddReviewDialog.getInstance(item)
-//                        .show(supportFragmentManager, AddReviewDialog::class.java.name)
-                }
-            },
-            object : OnItemClickListener<ReviewContentModel> {
-                override fun onClick(item: ReviewContentModel) {
+                    if (item.review.isOwner) {
+                        AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                    } else {
 //                    viewModel.deleteReview(item.reviewId)
+                    }
                 }
-            }
-        ) {
+            }) {
             reviewAdapter.submitList(viewModel.userStoreDetailModel.value?.reviews?.contents)
         }
     }

@@ -6,6 +6,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UserStoreResponse
@@ -74,5 +75,7 @@ interface HomeRemoteDataSource {
 
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>>
 
-    fun postStoreReview(storeReviewRequest: StoreReviewRequest) : Flow<BaseResponse<ReviewContent>>
+    fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>>
+
+    fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 }

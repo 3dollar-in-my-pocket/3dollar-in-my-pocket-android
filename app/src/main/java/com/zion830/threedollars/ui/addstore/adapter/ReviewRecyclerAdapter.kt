@@ -23,8 +23,7 @@ import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 
 class ReviewRecyclerAdapter(
-    private val reviewEditClickEvent: OnItemClickListener<ReviewContentModel>,
-    private val reviewDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
+    private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
     private val moreClickListener: () -> Unit,
 ) : ListAdapter<UserStoreDetailItem, ViewHolder>(BaseDiffUtilCallback()) {
 
@@ -55,7 +54,7 @@ class ReviewRecyclerAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ReviewViewHolder -> {
-                holder.bind(getItem(position) as ReviewContentModel, reviewEditClickEvent, reviewDeleteClickEvent, position)
+                holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, position)
             }
 
             is UserStoreReviewMoreViewHolder -> {
@@ -74,8 +73,7 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
 
     fun bind(
         item: ReviewContentModel,
-        reviewEditClickEvent: OnItemClickListener<ReviewContentModel>,
-        reviewDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
+        reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
         position: Int,
     ) {
         binding.reviewTextView.text = item.review.contents
@@ -95,21 +93,10 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
             binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
         }
 
-        if (item.review.isOwner) {
-            binding.reportAndEditTextView.apply {
-                text = GlobalApplication.getContext().getString(R.string.review_edit)
-                setOnClickListener {
-                    reviewEditClickEvent.onClick(item)
-                }
-            }
-        } else {
-            binding.reportAndEditTextView.apply {
-                text = GlobalApplication.getContext().getString(R.string.review_report)
-                setOnClickListener {
-                    reviewDeleteClickEvent.onClick(item)
-                }
-            }
-        }
+        binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
+        binding.reportAndEditTextView.text =
+            if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
+                .getString(R.string.review_report)
     }
 }
 

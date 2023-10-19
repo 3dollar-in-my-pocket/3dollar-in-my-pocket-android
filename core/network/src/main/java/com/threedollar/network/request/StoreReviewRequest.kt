@@ -9,5 +9,5 @@ data class StoreReviewRequest(
     @SerializedName("rating")
     val rating: Int? = null,
     @SerializedName("storeId")
-    val storeId: Int
+    val storeId: Int? = null,
 )

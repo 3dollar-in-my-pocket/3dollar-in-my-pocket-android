@@ -96,24 +96,6 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun addReview(content: String, rating: Float) {
-        if (content.isBlank()) {
-            _addReviewResult.postValue(false)
-            return
-        }
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value?.store?.storeId ?: -1)
-            val response = repository.addReview(request)
-            if (response.isSuccessful) {
-                _msgTextId.postValue(R.string.success_add_review)
-                _addReviewResult.postValue(true)
-            } else {
-                _addReviewResult.postValue(false)
-            }
-        }
-    }
-
     fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.deleteStore(userStoreDetailModel.value?.store?.storeId ?: -1, deleteType.key).collect {
@@ -124,17 +106,21 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun editReview(reviewId: Int, newReview: NewReview) {
-        if (newReview.contents.isBlank()) {
+    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+        if (content.isBlank()) {
             _addReviewResult.postValue(false)
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val request = EditReviewRequest(newReview.contents, newReview.rating)
-            repository.editReview(reviewId, request)
-            _msgTextId.postValue(R.string.success_edit_review)
-            _addReviewResult.postValue(true)
+            homeRepository.putStoreReview(reviewId, content, rating).collect {
+                if (it.ok) {
+                    _msgTextId.postValue(R.string.success_edit_review)
+                    _addReviewResult.postValue(true)
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
         }
     }
 
