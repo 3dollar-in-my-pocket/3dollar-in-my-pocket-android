@@ -62,7 +62,7 @@
         app:srb_clickable="false"
         app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_24"
         app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
-        app:srb_isIndicator="false"
+        app:srb_isIndicator="true"
         app:srb_numStars="5"
         app:srb_starHeight="12dp"
         app:srb_starPadding="2dp"

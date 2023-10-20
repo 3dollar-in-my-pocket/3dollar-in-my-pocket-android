@@ -22,7 +22,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddReviewDialog(private val content: ReviewContentModel?) : BottomSheetDialogFragment() {
+class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BottomSheetDialogFragment() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
     private lateinit var binding: DialogAddReviewBinding
 
@@ -80,7 +80,7 @@ class AddReviewDialog(private val content: ReviewContentModel?) : BottomSheetDia
                 viewModel.postStoreReview(
                     binding.etContent.text.toString(),
                     binding.rating.rating.toInt(),
-                    viewModel.userStoreDetailModel.value?.store?.storeId
+                    storeId
                 )
                 dismiss()
             } else {
@@ -97,6 +97,6 @@ class AddReviewDialog(private val content: ReviewContentModel?) : BottomSheetDia
     }
 
     companion object {
-        fun getInstance(content: ReviewContentModel? = null) = AddReviewDialog(content)
+        fun getInstance(content: ReviewContentModel? = null, storeId : Int? = null) = AddReviewDialog(content, storeId)
     }
 }

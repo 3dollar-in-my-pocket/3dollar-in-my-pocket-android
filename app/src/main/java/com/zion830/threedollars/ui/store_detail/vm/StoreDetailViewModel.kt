@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
@@ -61,6 +59,9 @@ class StoreDetailViewModel @Inject constructor(
 
     private val _imagePagingData = MutableStateFlow<PagingData<ImageContentModel>?>(null)
     val imagePagingData get() = _imagePagingData
+
+    private val _reviewPagingData = MutableStateFlow<PagingData<ReviewContentModel>?>(null)
+    val reviewPagingData get() = _reviewPagingData
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -204,6 +205,14 @@ class StoreDetailViewModel @Inject constructor(
                         _serverError.emit(it.error)
                     }
                 }
+            }
+        }
+    }
+
+    fun getReview(storeId: Int, sortType: ReviewSortType) {
+        viewModelScope.launch {
+            homeRepository.getStoreReview(storeId, sortType).cachedIn(viewModelScope).collect {
+                _reviewPagingData.value = it
             }
         }
     }

@@ -25,6 +25,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 class ReviewRecyclerAdapter(
     private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
     private val moreClickListener: () -> Unit,
+    private val reviewClickListener: () -> Unit,
 ) : ListAdapter<UserStoreDetailItem, ViewHolder>(BaseDiffUtilCallback()) {
 
 
@@ -54,7 +55,7 @@ class ReviewRecyclerAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ReviewViewHolder -> {
-                holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, position)
+                holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, reviewClickListener, position)
             }
 
             is UserStoreReviewMoreViewHolder -> {
@@ -74,8 +75,10 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
     fun bind(
         item: ReviewContentModel,
         reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
+        reviewClickListener: () -> Unit,
         position: Int,
     ) {
+        binding.root.setOnClickListener { reviewClickListener() }
         binding.reviewTextView.text = item.review.contents
         binding.nameTextView.text = item.reviewWriter.name
         binding.medalTextView.text = item.reviewWriter.medal.name

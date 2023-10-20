@@ -92,9 +92,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //                    viewModel.deleteReview(item.reviewId)
                     }
                 }
-            }) {
-            reviewAdapter.submitList(viewModel.userStoreDetailModel.value?.reviews?.contents)
-        }
+            }, moreClickListener = {
+                reviewAdapter.submitList(viewModel.userStoreDetailModel.value?.reviews?.contents)
+            }, reviewClickListener = {
+                startActivity(StoreReviewDetailActivity.getInstance(this, storeId))
+            })
     }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
@@ -193,7 +195,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             initShared()
         }
         binding.writeReviewTextView.setOnClickListener {
-            AddReviewDialog.getInstance()
+            AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.editStoreInfoButton.setOnClickListener {
@@ -328,7 +330,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (reviewContentModelList.size < 4) {
             reviewAdapter.submitList(reviewContentModelList)
         } else {
-            val subList = reviewContentModelList.take(2)
+            val subList = reviewContentModelList.take(3)
             val userStoreMoreResponse = UserStoreMoreResponse(
                 moreTitle = getString(R.string.store_detail_review_more, reviewContentModelList.size - 3)
             )

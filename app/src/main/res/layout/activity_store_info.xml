@@ -791,7 +791,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintHorizontal_bias="0.33"
                             app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
-                            app:srb_isIndicator="false"
+                            app:srb_isIndicator="true"
                             app:srb_numStars="5"
                             app:srb_starHeight="24dp"
                             app:srb_starPadding="2dp"

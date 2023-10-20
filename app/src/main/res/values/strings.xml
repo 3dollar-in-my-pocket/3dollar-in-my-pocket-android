@@ -304,4 +304,10 @@
     <string name="rating_avg">평균 별점</string>
     <string name="review_edit">수정</string>
     <string name="review_report">신고</string>
+    <string name="review">리뷰</string>
+    <string name="review_sort_latest">최신순</string>
+    <string name="review_sort_highest_rating">별점 높은순</string>
+    <string name="review_sort_lowest_rating">별점 낮은순</string>
+    <string name="review_blind">규정 위반으로 블라이드 처리되었습니다.</string>
+    <string name="review_more_write">리뷰 작성하기</string>
 </resources>
