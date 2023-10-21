@@ -6,15 +6,9 @@ import androidx.paging.PagingData
 import com.home.data.asModel
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
+import com.home.data.datasource.ReviewPagingDataSource
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DeleteResultModel
-import com.home.domain.data.store.EditStoreReviewModel
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseResponse
@@ -208,4 +202,8 @@ class HomeRepositoryImpl @Inject constructor(
                 error = it.error
             )
         }
+
+    override fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>> = Pager(PagingConfig(20)) {
+        ReviewPagingDataSource(storeId = storeId, sort = reviewSortType.name, serverApi = serverApi)
+    }.flow
 }

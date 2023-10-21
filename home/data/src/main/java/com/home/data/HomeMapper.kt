@@ -1,52 +1,7 @@
 package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AccountModel
-import com.home.domain.data.store.AddressModel
-import com.home.domain.data.store.AppearanceDayModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.BossStoreModel
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ClassificationModel
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.store.CountsModel
-import com.home.domain.data.store.CreatorModel
-import com.home.domain.data.store.CursorModel
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.DeleteResultModel
-import com.home.domain.data.store.EditStoreReviewModel
-import com.home.domain.data.store.ExtraModel
-import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.FeedbackModel
-import com.home.domain.data.store.FeedbackType
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.HistoriesContentModel
-import com.home.domain.data.store.HistoriesModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.ImagesModel
-import com.home.domain.data.store.LocationModel
-import com.home.domain.data.store.MenuModel
-import com.home.domain.data.store.OpenStatusModel
-import com.home.domain.data.store.OpeningHoursModel
-import com.home.domain.data.store.PaymentType
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.ReviewModel
-import com.home.domain.data.store.ReviewReportModel
-import com.home.domain.data.store.ReviewWriterModel
-import com.home.domain.data.store.ReviewsModel
-import com.home.domain.data.store.SalesType
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.StatusType
-import com.home.domain.data.store.StoreModel
-import com.home.domain.data.store.TagsModel
-import com.home.domain.data.store.UserStoreDetailModel
-import com.home.domain.data.store.UserStoreMenuModel
-import com.home.domain.data.store.UserStoreModel
-import com.home.domain.data.store.VisitCountsModel
-import com.home.domain.data.store.VisitModel
-import com.home.domain.data.store.VisitorModel
-import com.home.domain.data.store.VisitsModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
@@ -347,6 +302,18 @@ fun String.asStatusType() = when (this) {
     }
 }
 
+fun String.asReviewStatusType() = when (this) {
+    "POSTED" -> {
+        ReviewStatusType.POSTED
+    }
+    "FILTERED" -> {
+        ReviewStatusType.FILTERED
+    }
+    else -> {
+        ReviewStatusType.DELETED
+    }
+}
+
 fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeResponse>): FoodTruckReviewModel {
 
     val feedbackType = feedbackTypeResponseList.find { type ->
@@ -408,7 +375,7 @@ fun Review.asModel() = ReviewModel(
     createdAt = createdAt ?: "",
     rating = rating ?: 0,
     reviewId = reviewId ?: 0,
-    status = status ?: "",
+    status = status?.asReviewStatusType() ?: ReviewStatusType.POSTED,
     updatedAt = updatedAt ?: "",
     isOwner = isOwner ?: false
 )

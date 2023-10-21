@@ -6,7 +6,7 @@ data class ReviewModel(
     val createdAt: String = "",
     val rating: Int = 0,
     val reviewId: Int = 0,
-    val status: String = "",
+    val status: ReviewStatusType = ReviewStatusType.POSTED,
     val updatedAt: String = "",
     val isOwner : Boolean = false
 )

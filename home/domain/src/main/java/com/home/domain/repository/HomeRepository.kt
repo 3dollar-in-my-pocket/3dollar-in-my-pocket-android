@@ -2,15 +2,7 @@ package com.home.domain.repository
 
 import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DeleteResultModel
-import com.home.domain.data.store.EditStoreReviewModel
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
@@ -69,4 +61,7 @@ interface HomeRepository {
     fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
 
     fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
+
+    fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
+
 }

@@ -4,14 +4,7 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.threedollar.network.data.store.AroundStoreResponse
-import com.threedollar.network.data.store.BossStoreResponse
-import com.threedollar.network.data.store.DeleteResultResponse
-import com.threedollar.network.data.store.EditStoreReviewResponse
-import com.threedollar.network.data.store.ImageResponse
-import com.threedollar.network.data.store.ReviewContent
-import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -128,4 +121,11 @@ interface ServerApi {
         @Body storeReviewRequest: StoreReviewRequest,
     ): Response<BaseResponse<EditStoreReviewResponse>>
 
+    @GET("/api/v4/store/{storeId}/reviews")
+    suspend fun getStoreReview(
+        @Path("storeId") storeId: Int,
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?,
+        @Query("sort") sort: String,
+    ): Response<BaseResponse<Reviews>>
 }
