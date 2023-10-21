@@ -342,9 +342,14 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initPhotoLayout(it: UserStoreDetailModel) {
-        photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
-            StoreImage(index, null, image.url)
-        }.toMutableList())
+        val imageContentModelList = it.images.contents
+        if (imageContentModelList.isEmpty()) {
+            photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.photo_empty))))
+        } else {
+            photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
+                StoreImage(index, null, image.url)
+            }.toList())
+        }
     }
 
     private fun initMap(it: UserStoreDetailModel) {

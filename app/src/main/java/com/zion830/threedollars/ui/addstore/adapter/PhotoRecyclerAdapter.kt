@@ -6,27 +6,61 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.UserStoreDetailEmptyItem
+import com.home.domain.data.store.UserStoreDetailItem
+import com.home.domain.data.store.UserStoreMoreResponse
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ItemPhotoBinding
+import com.zion830.threedollars.databinding.ItemReviewBinding
+import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
+import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import zion830.com.common.base.BaseDiffUtilCallback
 
 
 class PhotoRecyclerAdapter(
     private val photoClickListener: OnItemClickListener<StoreImage>, private val moreClickListener: () -> Unit,
-) : ListAdapter<StoreImage, PhotoRecyclerAdapter.PhotoViewHolder>(BaseDiffUtilCallback()) {
+) : ListAdapter<UserStoreDetailItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
-    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.bind(position, getItem(position), photoClickListener, moreClickListener)
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is StoreImage -> {
+            VIEW_TYPE_PHOTO
+        }
+        else -> {
+            VIEW_TYPE_EMPTY
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder =
-        PhotoViewHolder(ItemPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false), itemCount)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
+        VIEW_TYPE_PHOTO -> {
+            PhotoViewHolder(ItemPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false), itemCount)
+        }
 
-    override fun submitList(list: MutableList<StoreImage>?) {
-        super.submitList(null)
-        super.submitList(list)
+        else -> {
+            UserStorePhotoEmptyViewHolder(
+                binding = ItemUserStoreEmptyPhotoReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is PhotoViewHolder -> {
+                holder.bind(position, getItem(position) as StoreImage, photoClickListener, moreClickListener)
+            }
+
+            is UserStorePhotoEmptyViewHolder -> {
+                holder.bind(getItem(position) as UserStoreDetailEmptyItem)
+            }
+        }
+    }
+
+    companion object {
+        private const val VIEW_TYPE_PHOTO = 1
+        private const val VIEW_TYPE_EMPTY = 2
+        private const val MAX_COUNT = 4
     }
 
     class PhotoViewHolder(private val binding: ItemPhotoBinding, private val size: Int = 0) : RecyclerView.ViewHolder(binding.root) {
@@ -57,7 +91,11 @@ class PhotoRecyclerAdapter(
         }
     }
 
-    companion object {
-        private const val MAX_COUNT = 4
+    class UserStorePhotoEmptyViewHolder(
+        private val binding: ItemUserStoreEmptyPhotoReviewBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: UserStoreDetailEmptyItem) {
+            binding.emptyTextView.text = item.text
+        }
     }
 }
