@@ -327,7 +327,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initReviewLayout(it: UserStoreDetailModel) {
         val reviewContentModelList = it.reviews.contents
-        if (reviewContentModelList.size < 4) {
+
+        if (reviewContentModelList.isEmpty()) {
+            reviewAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.review_empty))))
+        } else if (reviewContentModelList.size < 4) {
             reviewAdapter.submitList(reviewContentModelList)
         } else {
             val subList = reviewContentModelList.take(3)

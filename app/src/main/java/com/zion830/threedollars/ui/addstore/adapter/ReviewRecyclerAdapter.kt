@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.UserStoreDetailItem
-import com.home.domain.data.store.UserStoreMenuModel
-import com.home.domain.data.store.UserStoreMoreResponse
+import com.home.domain.data.store.*
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
@@ -16,6 +13,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemReviewBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
+import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
 import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuMoreViewHolder
@@ -33,7 +31,9 @@ class ReviewRecyclerAdapter(
         is ReviewContentModel -> {
             VIEW_TYPE_REVIEW
         }
-
+        is UserStoreDetailEmptyItem -> {
+            VIEW_TYPE_EMPTY
+        }
         else -> {
             VIEW_TYPE_FOOTER
         }
@@ -44,6 +44,11 @@ class ReviewRecyclerAdapter(
             ReviewViewHolder(ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
 
+        VIEW_TYPE_EMPTY -> {
+            UserStoreReviewEmptyViewHolder(
+                binding = ItemUserStoreEmptyPhotoReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
         else -> {
             UserStoreReviewMoreViewHolder(
                 binding = ItemStoreDetailReviewMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
@@ -58,6 +63,10 @@ class ReviewRecyclerAdapter(
                 holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, reviewClickListener, position)
             }
 
+            is UserStoreReviewEmptyViewHolder -> {
+                holder.bind(getItem(position) as UserStoreDetailEmptyItem)
+            }
+
             is UserStoreReviewMoreViewHolder -> {
                 holder.bind(getItem(position) as UserStoreMoreResponse)
             }
@@ -67,6 +76,7 @@ class ReviewRecyclerAdapter(
     companion object {
         private const val VIEW_TYPE_REVIEW = 1
         private const val VIEW_TYPE_FOOTER = 2
+        private const val VIEW_TYPE_EMPTY = 3
     }
 }
 
@@ -112,5 +122,13 @@ class UserStoreReviewMoreViewHolder(
             clickListener()
         }
         binding.menuNameTextView.text = item.moreTitle
+    }
+}
+
+class UserStoreReviewEmptyViewHolder(
+    private val binding: ItemUserStoreEmptyPhotoReviewBinding
+) : ViewHolder(binding.root) {
+    fun bind(item: UserStoreDetailEmptyItem) {
+        binding.emptyTextView.text = item.text
     }
 }
