@@ -4,9 +4,11 @@ import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.CreatePolicy
 import com.threedollar.domain.data.DefaultResponse
+import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItem
 import com.threedollar.domain.repository.CommunityRepository
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
@@ -46,5 +48,9 @@ class CommunityRepositoryImpl @Inject constructor(private val communityRepositor
         communityRepository.reportPollComment(pollId, commentId)
 
     override fun getPollCommentList(id: String, cursor: Int?): Flow<List<PollComment>> = communityRepository.getPollCommentList(id, cursor)
+    override fun getNeighborhoods(): Flow<Neighborhoods> = communityRepository.getNeighborhoods()
+
+    override fun getPopularStores(criteria: String, district: String, cursor: String, size: Int): Flow<PopularStores> =
+        communityRepository.getPopularStores(criteria, district, cursor, size)
 
 }

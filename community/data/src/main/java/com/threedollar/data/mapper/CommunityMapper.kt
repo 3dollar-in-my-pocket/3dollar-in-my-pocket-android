@@ -1,18 +1,24 @@
 package com.threedollar.data.mapper
 
 import com.threedollar.common.utils.toDefaultInt
+import com.threedollar.data.mapper.GetPollCommentListResponseMapper.toMapper
 import com.threedollar.data.mapper.GetPollListResponseMapper.toMapper
 import com.threedollar.data.mapper.GetPollResponseMapper.toMapper
+import com.threedollar.data.mapper.GetPopularStoresResponseMapper.toMapper
 import com.threedollar.data.mapper.GetUserPollListResponseMapper.toMapper
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.CreatePolicy
 import com.threedollar.domain.data.DefaultResponse
+import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
+import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
+import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -61,6 +67,18 @@ fun PollCommentCreateApiResponse?.toMapper(): CommentId {
     return CommentId(this?.id.orEmpty())
 }
 
-fun GetPollCommentListResponse?.toMapper(): PollCommentList {
-    return this.toMapper()
+fun GetPollCommentListResponse.toMapper(): PollCommentList {
+    return PollCommentList(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
+}
+
+fun GetPopularStoresResponse.toMapper(): PopularStores {
+    return PopularStores(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
+}
+
+fun GetNeighborhoodsResponse.toMapper(): Neighborhoods {
+    return Neighborhoods(this.neighborhoods.orEmpty().map { neighborhood ->
+        Neighborhoods.Neighborhood(neighborhood.description.orEmpty(), neighborhood.districts.orEmpty().map {
+            Neighborhoods.Neighborhood.District(it.description.orEmpty(), it.district.orEmpty())
+        }, neighborhood.province.orEmpty())
+    })
 }

@@ -1,6 +1,8 @@
 package com.threedollar.data.datasource
 
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -72,5 +74,13 @@ class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : Commun
 
     override fun getPollCommentList(id: String, cursor: Int?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
         emit(serverApi.getPollCommentList(id, cursor, size))
+    }
+
+    override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {
+        emit(serverApi.getNeighborhoods())
+    }
+
+    override fun getPopularStores(criteria: String, district: String, cursor: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
+        emit(serverApi.getPopularStores(criteria, district, cursor, size))
     }
 }

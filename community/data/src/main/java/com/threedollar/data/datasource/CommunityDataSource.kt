@@ -1,5 +1,7 @@
 package com.threedollar.data.datasource
 
+import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -28,4 +30,7 @@ interface CommunityDataSource {
     fun editPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
     fun reportPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
     fun getPollCommentList(id: String, cursor: Int?, size: Int = 20): Flow<BaseResponse<GetPollCommentListResponse>>
+
+    fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
+    fun getPopularStores(criteria: String, district: String, cursor: String, size: Int = 20): Flow<BaseResponse<GetPopularStoresResponse>>
 }

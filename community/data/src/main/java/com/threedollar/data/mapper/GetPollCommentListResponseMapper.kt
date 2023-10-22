@@ -3,16 +3,11 @@ package com.threedollar.data.mapper
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.data.Cursor
 import com.threedollar.domain.data.PollComment
-import com.threedollar.domain.data.PollCommentList
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 
 object GetPollCommentListResponseMapper {
 
-    fun GetPollCommentListResponse.toMapper(): PollCommentList {
-        return PollCommentList(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
-    }
-
-    private fun GetPollCommentListResponse.Content.toMapper(): PollComment {
+    fun GetPollCommentListResponse.Content.toMapper(): PollComment {
         return PollComment(this.current.toMapper())
     }
 
@@ -74,7 +69,7 @@ object GetPollCommentListResponseMapper {
         return PollComment.Current.Poll.SelectedOption(name = this?.name.orEmpty(), optionId = this?.optionId.orEmpty())
     }
 
-    private fun GetPollCommentListResponse.Cursor?.toMapper(): Cursor {
+    fun GetPollCommentListResponse.Cursor?.toMapper(): Cursor {
         return Cursor(this?.nextCursor.orEmpty(), this?.hasMore ?: false)
     }
 

@@ -4,9 +4,11 @@ import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.CreatePolicy
 import com.threedollar.domain.data.DefaultResponse
+import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItem
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -28,5 +30,6 @@ interface CommunityRepository {
     fun editPollComment(pollId: String, commentId: String): Flow<DefaultResponse>
     fun reportPollComment(pollId: String, commentId: String): Flow<DefaultResponse>
     fun getPollCommentList(id: String, cursor: Int?): Flow<List<PollComment>>
-
+    fun getNeighborhoods(): Flow<Neighborhoods>
+    fun getPopularStores(criteria: String, district: String, cursor: String, size: Int): Flow<PopularStores>
 }

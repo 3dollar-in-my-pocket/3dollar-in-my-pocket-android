@@ -1,5 +1,7 @@
 package com.threedollar.network.api
 
+import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -10,6 +12,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -46,7 +49,7 @@ interface ServerApi {
         @Query("sortType") sortType: String?,
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
-    ): BaseResponse<GetPollListResponse>
+    ): Response<BaseResponse<GetPollListResponse>>
 
     @GET("/v1/user/poll/policy")
     suspend fun getPollPolicy(): BaseResponse<PollPolicyApiResponse>
@@ -75,4 +78,15 @@ interface ServerApi {
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
     ): BaseResponse<GetPollCommentListResponse>
+
+    @GET("/v1/neighborhood/popular-store/neighborhoods")
+    suspend fun getNeighborhoods(): BaseResponse<GetNeighborhoodsResponse>
+
+    @GET("/v1/neighborhood/popular-stores")
+    suspend fun getPopularStores(
+        @Path("criteria") criteria: String,
+        @Path("district") district: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20,
+    ): Response<BaseResponse<GetPopularStoresResponse>>
 }
