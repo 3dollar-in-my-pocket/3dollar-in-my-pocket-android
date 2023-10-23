@@ -17,7 +17,7 @@
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/slide_out_down"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down"/>
+            app:popExitAnim="@anim/slide_out_down" />
 
     </fragment>
 
@@ -42,5 +42,6 @@
 
     <fragment
         android:id="@+id/navigation_review"
+        android:name="com.zion830.threedollars.ui.addstore.NewAddressFragment"
         android:label="@string/title_add_store" />
 </navigation>

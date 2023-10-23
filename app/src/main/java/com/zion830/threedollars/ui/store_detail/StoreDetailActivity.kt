@@ -92,8 +92,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 //                    viewModel.deleteReview(item.reviewId)
                     }
                 }
-            }, moreClickListener = {
-                reviewAdapter.submitList(viewModel.userStoreDetailModel.value?.reviews?.contents)
             }, reviewClickListener = {
                 startActivity(StoreReviewDetailActivity.getInstance(this, storeId))
             })
@@ -195,6 +193,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             initShared()
         }
         binding.writeReviewTextView.setOnClickListener {
+            AddReviewDialog.getInstance(storeId = storeId)
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+        }
+
+        binding.reviewButton.setOnClickListener {
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }

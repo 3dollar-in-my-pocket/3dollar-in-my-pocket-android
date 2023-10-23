@@ -239,18 +239,18 @@
                         android:layout_marginVertical="21dp"
                         android:background="@color/gray10"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/snsButton"
+                        app:layout_constraintEnd_toStartOf="@id/reviewButton"
                         app:layout_constraintStart_toEndOf="@id/directionsButton"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
-                        android:id="@+id/snsButton"
+                        android:id="@+id/reviewButton"
                         style="@style/apple_gothic_medium.size_12sp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:drawableTop="@drawable/ic_sns_20_black"
-                        android:text="@string/sns"
+                        android:drawableTop="@drawable/ic_write_review_black_20"
+                        android:text="@string/review_write"
                         android:textColor="@color/gray100"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

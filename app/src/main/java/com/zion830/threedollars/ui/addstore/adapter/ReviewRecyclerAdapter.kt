@@ -22,7 +22,6 @@ import zion830.com.common.base.BaseDiffUtilCallback
 
 class ReviewRecyclerAdapter(
     private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
-    private val moreClickListener: () -> Unit,
     private val reviewClickListener: () -> Unit,
 ) : ListAdapter<UserStoreDetailItem, ViewHolder>(BaseDiffUtilCallback()) {
 
@@ -52,7 +51,7 @@ class ReviewRecyclerAdapter(
         else -> {
             UserStoreReviewMoreViewHolder(
                 binding = ItemStoreDetailReviewMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-                clickListener = moreClickListener
+                clickListener = reviewClickListener
             )
         }
     }
