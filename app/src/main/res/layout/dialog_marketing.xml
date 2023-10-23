@@ -103,7 +103,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="@drawable/selector_btn_radius48"
+            android:background="@drawable/selector_button_pink_gray30"
             android:enabled="false"
             android:gravity="center"
             android:paddingVertical="14dp"
