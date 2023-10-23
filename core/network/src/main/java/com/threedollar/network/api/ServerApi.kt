@@ -6,11 +6,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.threedollar.network.request.PushInformationRequest
-import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -135,4 +131,7 @@ interface ServerApi {
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
     ): Response<BaseResponse<StoreNearExistResponse>>
+
+    @POST("/api/v2/store")
+    suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 }

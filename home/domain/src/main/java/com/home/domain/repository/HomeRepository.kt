@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -65,4 +66,6 @@ interface HomeRepository {
     fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
 
     fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>>
+
+    fun postUserStore(userStoreModelRequest: UserStoreModelRequest): Flow<BaseResponse<PostUserStoreModel>>
 }

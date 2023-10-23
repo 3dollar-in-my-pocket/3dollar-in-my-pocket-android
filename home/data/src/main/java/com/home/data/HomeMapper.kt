@@ -6,6 +6,8 @@ import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
@@ -14,6 +16,8 @@ import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.MenuRequest
+import com.threedollar.network.request.UserStoreRequest
 
 fun AdvertisementResponse.asModel() = AdvertisementModel(
     advertisementId = advertisementId,
@@ -458,4 +462,35 @@ fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
 
 fun StoreNearExistResponse.asModel() = StoreNearExistsModel(
     isExists = isExists
+)
+
+fun UserStoreModelRequest.asRequest() = UserStoreRequest(
+    appearanceDays = appearanceDays.map { it.name },
+    latitude = latitude,
+    longitude = longitude,
+    menuRequests = menuRequests.map { it.asRequest() },
+    paymentMethods = paymentMethods.map { it.name },
+    storeName = storeName,
+    storeType = storeType
+)
+
+fun MenuModelRequest.asRequest() = MenuRequest(
+    category = category,
+    name = name,
+    price = price
+)
+
+fun PostUserStoreResponse.asModel() = PostUserStoreModel(
+    address = address.asModel(),
+    categories = categories,
+    createdAt = createdAt ?: "",
+    isDeleted = isDeleted ?: false,
+    latitude = latitude ?: 0.0,
+    longitude = longitude ?: 0.0,
+    rating = rating ?: 0.0,
+    salesType = salesType?.asSalesType() ?: SalesType.NONE,
+    storeId = storeId ?: 0,
+    storeName = storeName ?: "",
+    updatedAt = updatedAt ?: "",
+    userId = userId ?: 0
 )

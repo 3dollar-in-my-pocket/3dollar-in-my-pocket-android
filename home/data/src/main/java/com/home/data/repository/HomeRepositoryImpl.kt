@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.home.data.asModel
+import com.home.data.asRequest
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
 import com.home.data.datasource.ReviewPagingDataSource
@@ -11,6 +12,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
@@ -209,6 +211,17 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>> =
         homeRemoteDataSource.getStoreNearExists(distance, mapLatitude, mapLongitude).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun postUserStore(userStoreModelRequest: UserStoreModelRequest): Flow<BaseResponse<PostUserStoreModel>> =
+        homeRemoteDataSource.postUserStore(userStoreModelRequest.asRequest()).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),

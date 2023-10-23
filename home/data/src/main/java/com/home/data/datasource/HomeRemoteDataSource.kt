@@ -5,14 +5,11 @@ import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.threedollar.network.request.PushInformationRequest
-import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.Query
 
 interface HomeRemoteDataSource {
@@ -75,7 +72,7 @@ interface HomeRemoteDataSource {
 
     fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 
-    fun getStoreNearExists(
-        distance: Double, mapLatitude: Double, mapLongitude: Double,
-    ): Flow<BaseResponse<StoreNearExistResponse>>
+    fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>>
+
+    fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>>
 }
