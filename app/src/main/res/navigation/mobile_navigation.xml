@@ -41,7 +41,8 @@
         tools:layout="@layout/fragment_popup" />
 
     <fragment
-        android:id="@+id/navigation_review"
+        android:id="@+id/navigation_write"
         android:name="com.zion830.threedollars.ui.addstore.NewAddressFragment"
-        android:label="@string/title_add_store" />
+        android:label="@string/title_add_store"
+        tools:layout="@layout/fragment_new_address" />
 </navigation>
