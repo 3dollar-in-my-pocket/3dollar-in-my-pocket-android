@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface HomeRemoteDataSource {
@@ -75,4 +76,7 @@ interface HomeRemoteDataSource {
     fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>>
 
     fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>>
+
+    fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int) : Flow<BaseResponse<PostUserStoreResponse>>
+
 }

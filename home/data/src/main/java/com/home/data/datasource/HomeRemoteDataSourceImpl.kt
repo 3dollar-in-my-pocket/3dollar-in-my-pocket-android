@@ -140,4 +140,8 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
     override fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>> = flow {
         emit(apiResult(serverApi.postUserStore(userStoreRequest)))
     }
+
+    override fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>> = flow {
+        emit(apiResult(serverApi.putUserStore(userStoreRequest = userStoreRequest, storeId = storeId)))
+    }
 }

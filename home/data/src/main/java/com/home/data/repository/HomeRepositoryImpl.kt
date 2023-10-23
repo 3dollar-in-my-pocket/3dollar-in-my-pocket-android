@@ -230,4 +230,15 @@ class HomeRepositoryImpl @Inject constructor(
                 error = it.error
             )
         }
+
+    override fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>> =
+        homeRemoteDataSource.putUserStore(userStoreRequest = userStoreModelRequest.asRequest(), storeId = storeId).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
 }

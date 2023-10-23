@@ -134,4 +134,7 @@ interface ServerApi {
 
     @POST("/api/v2/store")
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
+
+    @PUT("/api/v2/store/{storeId}")
+    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int) : Response<BaseResponse<PostUserStoreResponse>>
 }
