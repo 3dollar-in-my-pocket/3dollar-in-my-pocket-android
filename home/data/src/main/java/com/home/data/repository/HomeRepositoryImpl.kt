@@ -206,4 +206,15 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>> = Pager(PagingConfig(20)) {
         ReviewPagingDataSource(storeId = storeId, sort = reviewSortType.name, serverApi = serverApi)
     }.flow
+
+    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>> =
+        homeRemoteDataSource.getStoreNearExists(distance, mapLatitude, mapLongitude).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
 }
