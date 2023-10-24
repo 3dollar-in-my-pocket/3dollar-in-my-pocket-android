@@ -2,14 +2,18 @@ package com.zion830.threedollars.ui.addstore
 
 import android.graphics.Rect
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
+import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
@@ -23,7 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
-class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
+class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>() {
+
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 
@@ -34,15 +39,15 @@ class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddSt
     private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter
 
     override fun initView() {
-        binding.btnBack.setOnClickListener {
+        binding.backButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        binding.btnEditAddress.setOnClickListener {
+        binding.editAddressTextView.setOnClickListener {
             EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
             requireActivity().supportFragmentManager.popBackStack()
         }
         viewModel.selectedLocation.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = getCurrentLocationName(it)
+            binding.addressTextView.text = getCurrentLocationName(it)
         }
         viewModel.selectedCategory.observe(viewLifecycleOwner) {
             addCategoryRecyclerAdapter.submitList(it.filter { category -> category.isSelected })
@@ -71,7 +76,7 @@ class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddSt
         binding.rvCategory.itemAnimator = null
         binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
         binding.rvMenu.itemAnimator = null
-        binding.btnSubmit.setOnClickListener {
+        binding.submitButton.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_REGISTER_SUBMIT_BTN_CLICKED)
             saveStore()
         }
@@ -175,25 +180,25 @@ class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddSt
     private fun getAppearanceDays(): List<String> {
         val result = arrayListOf<String>()
         val const = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
-        if (binding.layoutBtnDayOfWeek.tbMon.isChecked) {
+        if (binding.tbMon.isChecked) {
             result.add(const[0])
         }
-        if (binding.layoutBtnDayOfWeek.tbTue.isChecked) {
+        if (binding.tbTue.isChecked) {
             result.add(const[1])
         }
-        if (binding.layoutBtnDayOfWeek.tbWen.isChecked) {
+        if (binding.tbWen.isChecked) {
             result.add(const[2])
         }
-        if (binding.layoutBtnDayOfWeek.tbThur.isChecked) {
+        if (binding.tbThur.isChecked) {
             result.add(const[3])
         }
-        if (binding.layoutBtnDayOfWeek.tbFri.isChecked) {
+        if (binding.tbFri.isChecked) {
             result.add(const[4])
         }
-        if (binding.layoutBtnDayOfWeek.tbSat.isChecked) {
+        if (binding.tbSat.isChecked) {
             result.add(const[5])
         }
-        if (binding.layoutBtnDayOfWeek.tbSun.isChecked) {
+        if (binding.tbSun.isChecked) {
             result.add(const[6])
         }
         return result
@@ -214,13 +219,11 @@ class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddSt
             }
 
             if (keypadHeight > screenHeight * 0.15) {
-                binding.btnSubmit.visibility = View.GONE
-                binding.viewSubmitBack.visibility = View.GONE
+                binding.submitButton.visibility = View.GONE
             } else {
                 Handler().postDelayed({
                     if (!isFirstOpen) {
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        binding.viewSubmitBack.visibility = View.VISIBLE
+                        binding.submitButton.visibility = View.VISIBLE
                     }
                 }, 50)
             }
@@ -228,4 +231,7 @@ class AddStoreDetailFragment : LegacyBaseFragment<FragmentAddStoreBinding, AddSt
 
         isFirstOpen = false
     }
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAddStoreBinding =
+        FragmentAddStoreBinding.inflate(inflater, container, false)
 }

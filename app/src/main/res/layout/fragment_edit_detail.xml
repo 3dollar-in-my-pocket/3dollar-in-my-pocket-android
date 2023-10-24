@@ -341,11 +341,6 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
 
-                        <include
-                            android:id="@+id/layout_btn_day_of_week"
-                            clickable="@{true}"
-                            layout="@layout/btns_day_of_week_big" />
-
                     </LinearLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout

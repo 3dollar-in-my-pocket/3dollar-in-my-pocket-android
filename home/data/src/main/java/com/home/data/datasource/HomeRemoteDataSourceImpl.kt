@@ -4,19 +4,9 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.store.AroundStoreResponse
-import com.threedollar.network.data.store.BossStoreResponse
-import com.threedollar.network.data.store.DeleteResultResponse
-import com.threedollar.network.data.store.EditStoreReviewResponse
-import com.threedollar.network.data.store.ReviewContent
-import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.threedollar.network.request.PushInformationRequest
-import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.*
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -141,5 +131,17 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>> = flow {
         emit(apiResult(serverApi.putStoreReview(reviewId, storeReviewRequest)))
+    }
+
+    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>> = flow {
+        emit(apiResult(serverApi.getStoreNearExists(distance, mapLatitude, mapLongitude)))
+    }
+
+    override fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>> = flow {
+        emit(apiResult(serverApi.postUserStore(userStoreRequest)))
+    }
+
+    override fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>> = flow {
+        emit(apiResult(serverApi.putUserStore(userStoreRequest = userStoreRequest, storeId = storeId)))
     }
 }

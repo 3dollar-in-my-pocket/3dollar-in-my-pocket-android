@@ -6,53 +6,18 @@ import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.threedollar.network.data.store.Account
-import com.threedollar.network.data.store.Address
-import com.threedollar.network.data.store.AppearanceDay
-import com.threedollar.network.data.store.AroundStoreResponse
-import com.threedollar.network.data.store.BossStore
-import com.threedollar.network.data.store.BossStoreResponse
-import com.threedollar.network.data.store.Category
-import com.threedollar.network.data.store.Classification
-import com.threedollar.network.data.store.Content
-import com.threedollar.network.data.store.Counts
-import com.threedollar.network.data.store.Creator
-import com.threedollar.network.data.store.Cursor
-import com.threedollar.network.data.store.DeleteResultResponse
-import com.threedollar.network.data.store.EditStoreReviewResponse
-import com.threedollar.network.data.store.Extra
-import com.threedollar.network.data.store.Favorite
-import com.threedollar.network.data.store.Feedback
-import com.threedollar.network.data.store.Histories
-import com.threedollar.network.data.store.HistoriesContent
-import com.threedollar.network.data.store.Image
-import com.threedollar.network.data.store.Images
-import com.threedollar.network.data.store.Location
-import com.threedollar.network.data.store.Menu
-import com.threedollar.network.data.store.OpenStatus
-import com.threedollar.network.data.store.OpeningHours
-import com.threedollar.network.data.store.Review
-import com.threedollar.network.data.store.ReviewContent
-import com.threedollar.network.data.store.ReviewReport
-import com.threedollar.network.data.store.ReviewWriter
-import com.threedollar.network.data.store.Reviews
-import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.Store
-import com.threedollar.network.data.store.Tags
-import com.threedollar.network.data.store.UserStore
-import com.threedollar.network.data.store.UserStoreMenu
-import com.threedollar.network.data.store.UserStoreResponse
-import com.threedollar.network.data.store.Visit
-import com.threedollar.network.data.store.VisitCounts
-import com.threedollar.network.data.store.Visitor
-import com.threedollar.network.data.store.Visits
+import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.MenuRequest
+import com.threedollar.network.request.UserStoreRequest
 
 fun AdvertisementResponse.asModel() = AdvertisementModel(
     advertisementId = advertisementId,
@@ -493,4 +458,39 @@ fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: "",
     userId = userId ?: 0,
+)
+
+fun StoreNearExistResponse.asModel() = StoreNearExistsModel(
+    isExists = isExists
+)
+
+fun UserStoreModelRequest.asRequest() = UserStoreRequest(
+    appearanceDays = appearanceDays.map { it.name },
+    latitude = latitude,
+    longitude = longitude,
+    menuRequests = menuRequests.map { it.asRequest() },
+    paymentMethods = paymentMethods.map { it.name },
+    storeName = storeName,
+    storeType = storeType
+)
+
+fun MenuModelRequest.asRequest() = MenuRequest(
+    category = category,
+    name = name,
+    price = price
+)
+
+fun PostUserStoreResponse.asModel() = PostUserStoreModel(
+    address = address.asModel(),
+    categories = categories,
+    createdAt = createdAt ?: "",
+    isDeleted = isDeleted ?: false,
+    latitude = latitude ?: 0.0,
+    longitude = longitude ?: 0.0,
+    rating = rating ?: 0.0,
+    salesType = salesType?.asSalesType() ?: SalesType.NONE,
+    storeId = storeId ?: 0,
+    storeName = storeName ?: "",
+    updatedAt = updatedAt ?: "",
+    userId = userId ?: 0
 )
