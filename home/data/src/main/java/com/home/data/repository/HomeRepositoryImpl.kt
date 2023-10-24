@@ -4,18 +4,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.home.data.asModel
+import com.home.data.asRequest
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
+import com.home.data.datasource.ReviewPagingDataSource
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DeleteResultModel
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
@@ -25,6 +22,7 @@ import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.StoreReviewRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -184,4 +182,63 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
         ImagePagingDataSource(storeId, serverApi)
     }.flow
+
+    override fun postStoreReview(contents: String, rating: Int?, storeId: Int) =
+        homeRemoteDataSource.postStoreReview(StoreReviewRequest(contents, rating, storeId)).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
+        homeRemoteDataSource.putStoreReview(reviewId, StoreReviewRequest(contents = contents, rating = rating)).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>> = Pager(PagingConfig(20)) {
+        ReviewPagingDataSource(storeId = storeId, sort = reviewSortType.name, serverApi = serverApi)
+    }.flow
+
+    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>> =
+        homeRemoteDataSource.getStoreNearExists(distance, mapLatitude, mapLongitude).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun postUserStore(userStoreModelRequest: UserStoreModelRequest): Flow<BaseResponse<PostUserStoreModel>> =
+        homeRemoteDataSource.postUserStore(userStoreModelRequest.asRequest()).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>> =
+        homeRemoteDataSource.putUserStore(userStoreRequest = userStoreModelRequest.asRequest(), storeId = storeId).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
 }

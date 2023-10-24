@@ -1,10 +1,14 @@
 package com.zion830.threedollars.ui.addstore
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
@@ -15,8 +19,7 @@ import zion830.com.common.base.LegacyBaseFragment
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
-class NewAddressFragment :
-    LegacyBaseFragment<FragmentNewAddressBinding, AddStoreViewModel>(R.layout.fragment_new_address) {
+class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 
@@ -31,11 +34,14 @@ class NewAddressFragment :
 
         initMap()
         initViewModel()
+        initButton()
+    }
 
-        binding.btnBack.setOnClickListener {
+    private fun initButton() {
+        binding.backButton.setOnClickListener {
             requireActivity().onBackPressed()
         }
-        binding.btnFinish.setOnClickListener {
+        binding.finishButton.setOnClickListener {
             if (viewModel.isNearStoreExist.value == true) {
                 showNearExistDialog()
             } else {
@@ -46,8 +52,7 @@ class NewAddressFragment :
 
     private fun initMap() {
         naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
-        activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.map_container, naverMapFragment)?.commit()
+        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()
     }
 
     private fun initViewModel() {
@@ -57,8 +62,7 @@ class NewAddressFragment :
             }
             selectedLocation.observe(viewLifecycleOwner) { latLng ->
                 if (latLng != null) {
-                    binding.tvAddress.text =
-                        getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                    binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
                     requestStoreInfo(latLng)
                     latitude = latLng.latitude
                     longitude = latLng.longitude
@@ -86,6 +90,9 @@ class NewAddressFragment :
             false
         )
     }
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentNewAddressBinding =
+        FragmentNewAddressBinding.inflate(inflater, container, false)
 
     companion object {
         fun getInstance(latLng: LatLng?) = NewAddressFragment().apply {

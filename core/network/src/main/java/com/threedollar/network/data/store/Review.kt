@@ -16,4 +16,6 @@ data class Review(
     val status: String? = "",
     @SerializedName("updatedAt")
     val updatedAt: String? = "",
+    @SerializedName("isOwner")
+    val isOwner: Boolean? = false,
 )

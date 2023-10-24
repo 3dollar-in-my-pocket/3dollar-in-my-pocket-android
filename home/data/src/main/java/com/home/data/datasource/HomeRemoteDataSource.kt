@@ -3,18 +3,15 @@ package com.home.data.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.store.AroundStoreResponse
-import com.threedollar.network.data.store.BossStoreResponse
-import com.threedollar.network.data.store.DeleteResultResponse
-import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface HomeRemoteDataSource {
 
@@ -71,4 +68,15 @@ interface HomeRemoteDataSource {
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>>
+
+    fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>>
+
+    fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
+
+    fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>>
+
+    fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>>
+
+    fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int) : Flow<BaseResponse<PostUserStoreResponse>>
+
 }

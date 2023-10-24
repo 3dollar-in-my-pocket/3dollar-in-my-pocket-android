@@ -4,17 +4,9 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.threedollar.network.data.store.AroundStoreResponse
-import com.threedollar.network.data.store.BossStoreResponse
-import com.threedollar.network.data.store.DeleteResultResponse
-import com.threedollar.network.data.store.ImageResponse
-import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
-import com.threedollar.network.request.PostStoreVisitRequest
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.*
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -116,4 +108,33 @@ interface ServerApi {
         @Query("cursor") cursor: String?,
     ): Response<BaseResponse<ImageResponse>>
 
+    @POST("/api/v3/store/review")
+    suspend fun postStoreReview(@Body storeReviewRequest: StoreReviewRequest): Response<BaseResponse<ReviewContent>>
+
+    @PUT("/api/v2/store/review/{reviewId}")
+    suspend fun putStoreReview(
+        @Path("reviewId") reviewId: Int,
+        @Body storeReviewRequest: StoreReviewRequest,
+    ): Response<BaseResponse<EditStoreReviewResponse>>
+
+    @GET("/api/v4/store/{storeId}/reviews")
+    suspend fun getStoreReview(
+        @Path("storeId") storeId: Int,
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?,
+        @Query("sort") sort: String,
+    ): Response<BaseResponse<Reviews>>
+
+    @GET("/api/v1/stores/near/exists")
+    suspend fun getStoreNearExists(
+        @Query("distance") distance: Double,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+    ): Response<BaseResponse<StoreNearExistResponse>>
+
+    @POST("/api/v2/store")
+    suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
+
+    @PUT("/api/v2/store/{storeId}")
+    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int) : Response<BaseResponse<PostUserStoreResponse>>
 }

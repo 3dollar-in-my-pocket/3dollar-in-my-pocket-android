@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
@@ -24,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -61,6 +60,9 @@ class StoreDetailViewModel @Inject constructor(
     private val _imagePagingData = MutableStateFlow<PagingData<ImageContentModel>?>(null)
     val imagePagingData get() = _imagePagingData
 
+    private val _reviewPagingData = MutableStateFlow<PagingData<ReviewContentModel>?>(null)
+    val reviewPagingData get() = _reviewPagingData
+
     fun getUserStoreDetail(
         storeId: Int,
         deviceLatitude: Double?,
@@ -95,24 +97,6 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun addReview(content: String, rating: Float) {
-        if (content.isBlank()) {
-            _addReviewResult.postValue(false)
-            return
-        }
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            val request = NewReviewRequest(content, rating, _userStoreDetailModel.value?.store?.storeId ?: -1)
-            val response = repository.addReview(request)
-            if (response.isSuccessful) {
-                _msgTextId.postValue(R.string.success_add_review)
-                _addReviewResult.postValue(true)
-            } else {
-                _addReviewResult.postValue(false)
-            }
-        }
-    }
-
     fun deleteStore(deleteType: DeleteType) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.deleteStore(userStoreDetailModel.value?.store?.storeId ?: -1, deleteType.key).collect {
@@ -123,17 +107,21 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun editReview(reviewId: Int, newReview: NewReview) {
-        if (newReview.contents.isBlank()) {
+    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+        if (content.isBlank()) {
             _addReviewResult.postValue(false)
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            val request = EditReviewRequest(newReview.contents, newReview.rating)
-            repository.editReview(reviewId, request)
-            _msgTextId.postValue(R.string.success_edit_review)
-            _addReviewResult.postValue(true)
+            homeRepository.putStoreReview(reviewId, content, rating).collect {
+                if (it.ok) {
+                    _msgTextId.postValue(R.string.success_edit_review)
+                    _addReviewResult.postValue(true)
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
         }
     }
 
@@ -204,6 +192,27 @@ class StoreDetailViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.getStoreImages(storeId).cachedIn(viewModelScope).collect {
                 _imagePagingData.value = it
+            }
+        }
+    }
+
+    fun postStoreReview(content: String, rating: Int, storeId: Int?) {
+        viewModelScope.launch {
+            storeId?.let {
+                homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
+                    if (it.ok) {
+                    } else {
+                        _serverError.emit(it.error)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getReview(storeId: Int, sortType: ReviewSortType) {
+        viewModelScope.launch {
+            homeRepository.getStoreReview(storeId, sortType).cachedIn(viewModelScope).collect {
+                _reviewPagingData.value = it
             }
         }
     }

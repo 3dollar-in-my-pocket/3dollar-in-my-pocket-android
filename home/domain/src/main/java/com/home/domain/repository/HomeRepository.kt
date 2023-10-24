@@ -2,14 +2,9 @@ package com.home.domain.repository
 
 import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModel
-import com.home.domain.data.store.AroundStoreModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DeleteResultModel
-import com.home.domain.data.store.FoodTruckReviewModel
-import com.home.domain.data.store.ImageContentModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -62,5 +57,18 @@ interface HomeRepository {
 
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
 
-    fun getStoreImages(storeId: Int, ): Flow<PagingData<ImageContentModel>>
+    fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
+
+    fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
+
+    fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
+
+    fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
+
+    fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>>
+
+    fun postUserStore(userStoreModelRequest: UserStoreModelRequest): Flow<BaseResponse<PostUserStoreModel>>
+
+    fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>>
+
 }
