@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ActivityFullScreenMapBinding
 import com.zion830.threedollars.databinding.ActivityNewStoreBinding
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
 import com.zion830.threedollars.ui.addstore.NewAddressFragment
@@ -14,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
-class NewStoreActivity : LegacyBaseActivity<ActivityNewStoreBinding, AddStoreViewModel>(R.layout.activity_new_store), OnBackPressedListener {
+class NewStoreActivity : BaseActivity<ActivityNewStoreBinding, AddStoreViewModel>({ ActivityNewStoreBinding.inflate(it) }), OnBackPressedListener {
 
     override val viewModel: AddStoreViewModel by viewModels()
 

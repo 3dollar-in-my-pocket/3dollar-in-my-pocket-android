@@ -215,7 +215,7 @@
     <string name="popup">팝업</string>
     <string name="dialog_near_exist_title">10m이내에 이미 제보된\n가게가 있어요!</string>
     <string name="dialog_near_exist_subtitle">중복된 가게 제보인지 확인해 주세요</string>
-    <string name="dialog_near_exist_button_finish">이 위치가 맞아요!</string>
+    <string name="dialog_near_exist_button_finish">여기가 확실해요</string>
     <string name="ad">광고</string>
     <string name="detail"><![CDATA[자세히 보기 >]]></string>
     <string name="evaluation">리뷰 남기기</string>

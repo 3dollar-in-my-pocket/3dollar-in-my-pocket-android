@@ -4,8 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.store.ContentModel
+import com.home.domain.repository.HomeRepository
+import com.home.presentation.data.HomeSortType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.isNotNullOrBlank
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
@@ -16,12 +20,17 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AddStoreViewModel @Inject constructor(private val repository: StoreDataSource) :
+class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepository, private val repository: StoreDataSource) :
     BaseViewModel() {
 
 
@@ -30,10 +39,6 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
     val isFinished: LiveData<Boolean> = Transformations.map(storeName) {
         it.isNotNullOrBlank()
     }
-
-    private val _isMapUpdated: MutableLiveData<Unit> = MutableLiveData()
-    val isMapUpdated: LiveData<Unit>
-        get() = _isMapUpdated
 
     private val _selectedLocation: MutableLiveData<LatLng?> = MutableLiveData()
     val selectedLocation: LiveData<LatLng?>
@@ -51,9 +56,6 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
         LegacySharedPrefUtils.getCategories().map { SelectedCategory(false, it) }
     )
 
-    private val _isNearStoreExist: MutableLiveData<Boolean> = MutableLiveData()
-    val isNearStoreExist: LiveData<Boolean> get() = _isNearStoreExist
-
     val selectedCategory: LiveData<List<SelectedCategory>>
         get() = _selectedCategory
 
@@ -61,7 +63,11 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
         it.count { item -> item.isSelected }
     }
 
-    val nearStoreInfo: MutableLiveData<List<StoreInfo>?> = MutableLiveData()
+    private val _isNearStoreExist = MutableSharedFlow<Boolean>()
+    val isNearStoreExist: SharedFlow<Boolean> get() = _isNearStoreExist
+
+    private val _aroundStoreModels: MutableStateFlow<List<ContentModel>?> = MutableStateFlow(null)
+    val aroundStoreModels: StateFlow<List<ContentModel>?> get() = _aroundStoreModels
 
     fun addNewStore(newStore: NewStoreRequest) {
         showLoading()
@@ -87,17 +93,37 @@ class AddStoreViewModel @Inject constructor(private val repository: StoreDataSou
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val data = repository.getAllStore(location.latitude, location.longitude)
-            if (data.isSuccessful) {
-                nearStoreInfo.postValue(data.body()?.data)
-                _isNearStoreExist.postValue(hasStoreDistanceUnder10M(data.body()?.data))
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getAroundStores(
+                categoryIds = null,
+                targetStores = null,
+                sortType = HomeSortType.DISTANCE_ASC.name,
+                filterCertifiedStores = false,
+                mapLatitude = location.latitude,
+                mapLongitude = location.longitude,
+                deviceLatitude = location.latitude,
+                deviceLongitude = location.longitude
+            ).collect {
+                if (it.ok) {
+                    _aroundStoreModels.value = it.data?.contentModels
+                } else {
+                    _serverError.emit(it.error)
+                }
             }
         }
     }
 
-    private fun hasStoreDistanceUnder10M(stores: List<StoreInfo>?) =
-        stores?.find { store -> store.distance <= 10 } != null
+    fun getStoreNearExists(location: LatLng) {
+        viewModelScope.launch {
+            homeRepository.getStoreNearExists(distance = 10.0, mapLatitude = location.latitude, mapLongitude = location.longitude).collect {
+                if (it.ok) {
+                    _isNearStoreExist.emit(it.data?.isExists ?: false)
+                } else {
+                    _serverError.emit(it.error)
+                }
+            }
+        }
+    }
 
     fun updateLocation(latLng: LatLng?) {
         _selectedLocation.value = latLng
