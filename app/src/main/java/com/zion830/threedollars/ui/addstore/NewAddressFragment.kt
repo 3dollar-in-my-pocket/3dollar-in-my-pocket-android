@@ -11,7 +11,6 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
@@ -19,7 +18,6 @@ import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseFragment
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -38,7 +36,6 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
 
         initMap()
         initFlows()
-        initViewModel()
         initButton()
     }
 
@@ -54,19 +51,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
     private fun initMap() {
         naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()
-    }
-
-    private fun initViewModel() {
-        viewModel.run {
-            selectedLocation.observe(viewLifecycleOwner) { latLng ->
-                if (latLng != null) {
-                    binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
-                    requestStoreInfo(latLng)
-                    latitude = latLng.latitude
-                    longitude = latLng.longitude
-                }
-            }
-        }
+        naverMapFragment.setIsShowOverlay(false)
     }
 
     private fun initFlows() {
@@ -83,6 +68,16 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                             showNearExistDialog()
                         } else {
                             moveAddStoreDetailFragment()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.selectedLocation.collect { latLng ->
+                        if (latLng != null) {
+                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                            viewModel.requestStoreInfo(latLng)
+                            latitude = latLng.latitude
+                            longitude = latLng.longitude
                         }
                     }
                 }

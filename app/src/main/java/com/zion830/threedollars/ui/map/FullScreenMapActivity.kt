@@ -43,6 +43,7 @@ class FullScreenMapActivity :
 
     private fun initMap() {
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        naverMapFragment.setIsShowOverlay(false)
         lifecycleScope.launch {
             delay(500L)
             val latLng = LatLng(latitude, longitude)
@@ -69,7 +70,7 @@ class FullScreenMapActivity :
         const val NAME = "name"
         const val IS_CLOSED = "isClosed"
 
-        fun getIntent(context: Context, latitude: Double?, longitude: Double?, name: String?, isClosed: Boolean? = true) =
+        fun getIntent(context: Context, latitude: Double?, longitude: Double?, name: String?, isClosed: Boolean? = false) =
             Intent(context, FullScreenMapActivity::class.java).apply {
                 latitude?.let {
                     putExtra(LATITUDE, it)

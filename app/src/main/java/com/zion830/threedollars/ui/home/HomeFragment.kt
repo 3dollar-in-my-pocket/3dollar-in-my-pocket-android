@@ -138,7 +138,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             binding.tvRetrySearch.isVisible = true
         }
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
-        naverMapFragment.moveToCurrentLocation(false)
+        lifecycleScope.launch {
+            delay(500L)
+            naverMapFragment.moveToCurrentLocation(false)
+        }
     }
 
     private fun initButton() {

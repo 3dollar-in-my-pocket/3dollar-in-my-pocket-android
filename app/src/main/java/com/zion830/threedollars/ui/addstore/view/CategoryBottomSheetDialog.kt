@@ -42,12 +42,12 @@ class CategoryBottomSheetDialog(
             viewModel.updateCategory(adapter.items)
             dismiss()
         }
-        viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            adapter.setItems(viewModel.selectedCategory.value ?: listOf())
-            val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
-            binding.btnSubmit.text = getString(R.string.select).format(count)
-            binding.btnSubmit.isEnabled = count > 0
-        }
+//        viewModel.selectedCategory.observe(viewLifecycleOwner) {
+//            adapter.setItems(viewModel.selectedCategory.value ?: listOf())
+//            val count = viewModel.selectedCategory.value?.count { it.isSelected } ?: 0
+//            binding.btnSubmit.text = getString(R.string.select).format(count)
+//            binding.btnSubmit.isEnabled = count > 0
+//        }
         return binding.root
     }
 }

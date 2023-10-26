@@ -113,6 +113,7 @@
     <string name="hint_menu_location">ex) 강남역 2번 출구 </string>
     <string name="select_store_location">맛집 위치는 바로 여기!</string>
     <string name="finish_select_store_location">이 위치로 하기</string>
+    <string name="finish_select_store_menu_category">카테고리 선택 완료</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
     <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
     <string name="input_content">내용을 입력해주세요.</string>
