@@ -184,7 +184,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <RadioGroup
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
@@ -193,33 +193,51 @@
 
                         <RadioButton
                             android:id="@+id/rb_type1"
-                            android:layout_width="100dp"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/road" />
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/road"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
                         <RadioButton
                             android:id="@+id/rb_type2"
-                            android:layout_width="100dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/store" />
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/store"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
                         <RadioButton
                             android:id="@+id/rb_type3"
-                            android:layout_width="100dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/convenience_store" />
+                            android:paddingHorizontal="24dp"
+                            android:maxLines="1"
+                            android:paddingVertical="8dp"
+                            android:text="@string/convenience_store"
+                            android:textColor="@color/selector_type_radio_text_color" />
                     </RadioGroup>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
