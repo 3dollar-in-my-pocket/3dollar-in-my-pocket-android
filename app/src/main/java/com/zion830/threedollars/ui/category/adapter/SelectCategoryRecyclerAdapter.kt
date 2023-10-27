@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.category.adapter
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
+import com.home.domain.data.store.CategoryModel
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
@@ -12,17 +13,17 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
 
-class SelectCategoryRecyclerAdapter(private val onClickListener: (CategoriesModel) -> Unit) :
-    ListAdapter<CategoriesModel, CategoryViewHolder>(BaseDiffUtilCallback()) {
+class SelectCategoryRecyclerAdapter(private val onClickListener: (CategoryModel) -> Unit) :
+    ListAdapter<CategoryModel, CategoryViewHolder>(BaseDiffUtilCallback()) {
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) = holder.bind(getItem(position), listener = null)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CategoryViewHolder(parent, onClickListener)
 }
 
-class CategoryViewHolder(parent: ViewGroup, private val onClickListener: (CategoriesModel) -> Unit) :
-    BaseViewHolder<ItemCategoryBtnBinding, CategoriesModel>(R.layout.item_category_btn, parent) {
+class CategoryViewHolder(parent: ViewGroup, private val onClickListener: (CategoryModel) -> Unit) :
+    BaseViewHolder<ItemCategoryBtnBinding, CategoryModel>(R.layout.item_category_btn, parent) {
 
-    override fun bind(item: CategoriesModel, listener: OnItemClickListener<CategoriesModel>?) {
+    override fun bind(item: CategoryModel, listener: OnItemClickListener<CategoryModel>?) {
         binding.run {
             root.setOnClickListener { onClickListener(item.copy(isSelected = !item.isSelected)) }
             categoryImageView.loadUrlImg(item.imageUrl)

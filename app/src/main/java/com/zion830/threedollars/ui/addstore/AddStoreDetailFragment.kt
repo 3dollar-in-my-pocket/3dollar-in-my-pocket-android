@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import com.home.domain.data.store.AddCategoryModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.PaymentType
 import com.home.domain.request.MenuModelRequest
@@ -56,9 +57,9 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         )
     }
 
-    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
-        EditCategoryMenuRecyclerAdapter { viewModel.removeCategory(it) }
-    }
+//    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
+//        EditCategoryMenuRecyclerAdapter { viewModel.removeCategory(it) }
+//    }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
@@ -101,7 +102,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 }
                 launch {
                     viewModel.selectCategoryList.collect {
-                        //            addCategoryRecyclerAdapter.submitList(it.filter { category -> category.isSelected })
+                        addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(it.size < 3)) + it)
 //            editCategoryMenuRecyclerAdapter.setItems(it.filter { category -> category.isSelected })
                     }
                 }
@@ -125,8 +126,8 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.btnClearCategory.setOnClickListener {
-            editCategoryMenuRecyclerAdapter.clear()
-            addCategoryRecyclerAdapter.clear()
+//            editCategoryMenuRecyclerAdapter.clear()
+            addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
             viewModel.removeAllCategory()
         }
 
@@ -151,10 +152,10 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     }
 
     private fun saveStore() {
-        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
-            showToast(R.string.no_category_msg)
-            return
-        }
+//        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
+//            showToast(R.string.no_category_msg)
+//            return
+//        }
         if (getMenuList().isEmpty()) {
             showToast(R.string.no_menu_msg)
             return
@@ -215,7 +216,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private fun getMenuList(): List<MenuModelRequest> {
         val menuList = arrayListOf<MenuModelRequest>()
 
-        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
+//        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
 //            binding.rvMenu.getChildAt(i)?.let {
 //                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
 //                val editMenuRecyclerView = (view as RecyclerView)
@@ -242,7 +243,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 //                    menuList.add(MenuModelRequest(category, "", ""))
 //                }
 //            }
-        }
+//        }
 
         return menuList
     }

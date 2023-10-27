@@ -48,7 +48,7 @@ class SelectCategoryDialogFragment :
 
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             dismiss()
         }
@@ -56,7 +56,7 @@ class SelectCategoryDialogFragment :
 
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             dismiss()
         }

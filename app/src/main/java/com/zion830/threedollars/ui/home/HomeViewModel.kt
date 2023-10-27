@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.home.presentation.data.HomeFilterEvent
@@ -36,7 +37,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
 
-    private val _selectCategory = MutableStateFlow(CategoriesModel())
+    private val _selectCategory = MutableStateFlow(CategoryModel())
     val selectCategory = _selectCategory.asStateFlow()
 
     private val _advertisementModel: MutableStateFlow<AdvertisementModel?> = MutableStateFlow(null)
@@ -122,13 +123,13 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(categoriesModel: CategoriesModel) {
+    fun changeSelectCategory(categoryModel: CategoryModel) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _selectCategory.emit(
-                if (selectCategory.value.categoryId == categoriesModel.categoryId) {
-                    CategoriesModel()
+                if (selectCategory.value.categoryId == categoryModel.categoryId) {
+                    CategoryModel()
                 } else {
-                    categoriesModel
+                    categoryModel
                 }
             )
 

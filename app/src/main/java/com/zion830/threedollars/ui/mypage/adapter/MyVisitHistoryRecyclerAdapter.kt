@@ -25,7 +25,7 @@ class MyVisitHistoryRecyclerAdapter(
 
         val beforeItem = if (position > 0) getItem(position - 1) else null
         val categoryInfo = LegacySharedPrefUtils.getCategories()
-        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
+        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}" }
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd")

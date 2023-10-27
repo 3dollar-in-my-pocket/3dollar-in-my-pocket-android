@@ -76,7 +76,7 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
             ivCategory.bindMenuIcons(item.store.categories)
             val categoryInfo = LegacySharedPrefUtils.getCategories()
             val categories = item.store.categories.joinToString(" ") {
-                "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}"
+                "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}"
             }
             tvCategories.text = categories
             layoutItem.setOnClickListener {

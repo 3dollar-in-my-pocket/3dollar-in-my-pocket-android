@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.PostUserStoreModel
 import com.home.domain.repository.HomeRepository
@@ -15,7 +16,6 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.isNotNullOrBlank
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -52,8 +51,8 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _postUserStoreModel: MutableStateFlow<PostUserStoreModel?> = MutableStateFlow(null)
     val postUserStoreModel: StateFlow<PostUserStoreModel?> get() = _postUserStoreModel
 
-    private val _selectCategoryList: MutableStateFlow<List<CategoriesModel>> = MutableStateFlow(listOf())
-    val selectCategoryList: StateFlow<List<CategoriesModel>> get() = _selectCategoryList.asStateFlow()
+    private val _selectCategoryList: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(listOf())
+    val selectCategoryList: StateFlow<List<CategoryModel>> get() = _selectCategoryList.asStateFlow()
 
 
     private val _isNearStoreExist = MutableSharedFlow<Boolean>()
@@ -124,27 +123,23 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 //        _selectedCategory.value = list.toList()
     }
 
-    fun removeCategory(item: SelectedCategory) {
-//        val newList = _selectedCategory.value?.map {
-//            SelectedCategory(
-//                if (item.menuType == it.menuType) false else it.isSelected,
-//                it.menuType
-//            )
-//        } ?: emptyList()
-//        _selectedCategory.value = newList
+    fun removeCategory(categoryModel: CategoryModel) {
+        _selectCategoryList.update { list ->
+            list.filter { it.name != categoryModel.name }
+        }
     }
 
     fun removeAllCategory() {
         _selectCategoryList.value = listOf()
     }
 
-    fun changeSelectCategory(categoriesModel: CategoriesModel) {
+    fun changeSelectCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
-            if (!categoriesModel.isSelected) {
-                list.filter { it.name != categoriesModel.name }
+            if (!categoryModel.isSelected) {
+                list.filter { it.name != categoryModel.name }
             } else {
                 if (list.size < 3) {
-                    list + categoriesModel
+                    list + categoryModel
                 } else {
                     list
                 }

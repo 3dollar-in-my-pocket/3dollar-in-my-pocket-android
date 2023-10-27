@@ -514,9 +514,11 @@
                         android:layout_width="0dp"
                         android:layout_height="102dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="50dp"
                         app:cardBackgroundColor="@color/white"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/categoryTitleTextView">
@@ -525,12 +527,13 @@
                             android:id="@+id/rv_category"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="12dp"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="8dp"
                             android:background="@color/white"
                             android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
                             android:overScrollMode="never"
-                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                            app:spanCount="5"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_selected_category" />
                     </androidx.cardview.widget.CardView>
                     <!--                    <androidx.recyclerview.widget.RecyclerView-->

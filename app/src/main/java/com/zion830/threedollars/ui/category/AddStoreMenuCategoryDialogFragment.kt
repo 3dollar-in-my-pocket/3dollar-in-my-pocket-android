@@ -38,7 +38,7 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
 
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             initStreetAdapterSubmit()
 
@@ -47,7 +47,7 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
 
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             initTruckAdapterSubmit()
 
