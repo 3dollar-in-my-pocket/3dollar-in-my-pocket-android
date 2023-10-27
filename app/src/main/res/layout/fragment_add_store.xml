@@ -209,6 +209,7 @@
 
                         <RadioButton
                             android:id="@+id/rb_type2"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -225,6 +226,7 @@
 
                         <RadioButton
                             android:id="@+id/rb_type3"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -478,79 +480,69 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="28dp"
+                    android:background="@color/gray0"
+                    android:paddingHorizontal="20dp">
 
                     <TextView
+                        android:id="@+id/categoryTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:paddingVertical="16dp"
+                        android:layout_marginTop="24dp"
                         android:text="@string/category"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp"
+                        android:textColor="@color/gray100"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/btn_clear_category"
+                        style="@style/apple_gothic_bold.size_12sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="16dp"
+                        android:layout_marginTop="25dp"
+                        android:drawablePadding="4dp"
                         android:text="@string/category_delete_all"
-                        android:textColor="@color/color_main_red"
+                        android:textColor="@color/red"
+                        app:drawableStartCompat="@drawable/ic_delete_12"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/categoryCardView"
+                        android:layout_width="0dp"
+                        android:layout_height="102dp"
+                        android:layout_marginTop="16dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryTitleTextView">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_category"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="12dp"
+                            android:background="@color/white"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            app:spanCount="5"
+                            tools:listitem="@layout/item_selected_category" />
+                    </androidx.cardview.widget.CardView>
+                    <!--                    <androidx.recyclerview.widget.RecyclerView-->
+                    <!--                        android:id="@+id/rv_menu"-->
+                    <!--                        bindItem="@{viewModel.selectedCategory}"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_marginBottom="120dp"-->
+                    <!--                        android:overScrollMode="never"-->
+                    <!--                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+                    <!--                        tools:listitem="@layout/item_edit_category_menu" />-->
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="24dp"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="5"
-                    tools:listitem="@layout/item_selected_category" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/apple_gothic_bold"
-                        android:text="@string/menu_detail"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/option"
-                        android:textColor="@color/color_gray1" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_menu"
-                    bindItem="@{viewModel.selectedCategory}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="120dp"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_edit_category_menu" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

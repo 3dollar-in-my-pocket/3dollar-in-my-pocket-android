@@ -24,13 +24,15 @@ class CategoryViewHolder(parent: ViewGroup, private val onClickListener: (Catego
 
     override fun bind(item: CategoriesModel, listener: OnItemClickListener<CategoriesModel>?) {
         binding.run {
-            root.setOnClickListener { onClickListener(item) }
+            root.setOnClickListener { onClickListener(item.copy(isSelected = !item.isSelected)) }
             categoryImageView.loadUrlImg(item.imageUrl)
             categoryNameTextView.text = item.name
             newImageView.isVisible = item.isNew
             selectCircleImageView.isVisible = item.isSelected
             if (item.isSelected) {
                 categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.pink))
+            } else {
+                categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray70))
             }
         }
     }

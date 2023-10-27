@@ -32,6 +32,10 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+    private val streetCategories by lazy { LegacySharedPrefUtils.getCategories() }
+
+    private val truckCategories by lazy { LegacySharedPrefUtils.getTruckCategories() }
+
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
             EventTracker.logEvent(item.category + Constants.CATEGORY_BTN_CLICKED_FORMAT)
@@ -96,23 +100,25 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun initStreetAdapterSubmit() {
-        val categories = LegacySharedPrefUtils.getCategories()
-        streetCategoryAdapter.submitList(categories.map {
-            if (viewModel.selectCategoryList.value.contains(it)) {
-                it.copy(isSelected = true)
+        val list = viewModel.selectCategoryList.value
+        streetCategoryAdapter.submitList(streetCategories.map { item ->
+            val sameItem = list.find { it.name == item.name }
+            if (sameItem == null) {
+                item.copy(isSelected = false)
             } else {
-                it
+                item.copy(isSelected = true)
             }
         })
     }
 
     private fun initTruckAdapterSubmit() {
-        val categories = LegacySharedPrefUtils.getTruckCategories()
-        bossCategoryAdapter.submitList(categories.map {
-            if (viewModel.selectCategoryList.value.contains(it)) {
-                it.copy(isSelected = true)
+        val list = viewModel.selectCategoryList.value
+        bossCategoryAdapter.submitList(truckCategories.map { item ->
+            val sameItem = list.find { it.name == item.name }
+            if (sameItem == null) {
+                item.copy(isSelected = false)
             } else {
-                it
+                item.copy(isSelected = true)
             }
         })
     }

@@ -112,8 +112,8 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private fun initAdapter() {
         binding.rvCategory.adapter = addCategoryRecyclerAdapter
         binding.rvCategory.itemAnimator = null
-        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
-        binding.rvMenu.itemAnimator = null
+//        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
+//        binding.rvMenu.itemAnimator = null
     }
 
     private fun initButton() {
@@ -216,32 +216,32 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         val menuList = arrayListOf<MenuModelRequest>()
 
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
-            binding.rvMenu.getChildAt(i)?.let {
-                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
-                val editMenuRecyclerView = (view as RecyclerView)
-                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
-                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
-                } else {
-                    ""
-                }
-
-                var isEmptyCategory = true
-                repeat(menuSize) { index ->
-                    val menuRow = editMenuRecyclerView.getChildAt(index)
-                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
-                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
-
-                    if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MenuModelRequest(category, name, price))
-                        isEmptyCategory = false
-                    }
-                }
-
-                if (isEmptyCategory) {
-                    menuList.add(MenuModelRequest(category, "", ""))
-                }
-            }
+//            binding.rvMenu.getChildAt(i)?.let {
+//                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
+//                val editMenuRecyclerView = (view as RecyclerView)
+//                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
+//                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
+//                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
+//                } else {
+//                    ""
+//                }
+//
+//                var isEmptyCategory = true
+//                repeat(menuSize) { index ->
+//                    val menuRow = editMenuRecyclerView.getChildAt(index)
+//                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
+//                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
+//
+//                    if (name.isNotEmpty() || price.isNotEmpty()) {
+//                        menuList.add(MenuModelRequest(category, name, price))
+//                        isEmptyCategory = false
+//                    }
+//                }
+//
+//                if (isEmptyCategory) {
+//                    menuList.add(MenuModelRequest(category, "", ""))
+//                }
+//            }
         }
 
         return menuList

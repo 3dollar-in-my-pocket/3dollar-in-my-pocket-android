@@ -12,15 +12,11 @@ import com.home.domain.request.UserStoreModelRequest
 import com.home.presentation.data.HomeSortType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.isNotNullOrBlank
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -143,17 +139,16 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     }
 
     fun changeSelectCategory(categoriesModel: CategoriesModel) {
-        _selectCategoryList.update {
-            if (it.contains(categoriesModel)) {
-                it.drop(it.indexOf(categoriesModel))
+        _selectCategoryList.update { list ->
+            if (!categoriesModel.isSelected) {
+                list.filter { it.name != categoriesModel.name }
             } else {
-                if (it.size < 4) {
-                    it + categoriesModel
+                if (list.size < 3) {
+                    list + categoriesModel
                 } else {
-                    it
+                    list
                 }
             }
         }
-        Log.e("sadasdasd",_selectCategoryList.value.map { (it.name to ) })
     }
 }
