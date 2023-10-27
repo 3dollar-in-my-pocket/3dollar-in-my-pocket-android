@@ -18,6 +18,7 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.databinding.ActivityHomeBinding
+import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
@@ -68,7 +69,8 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_write -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
+                    startActivity(NewStoreActivity.getInstance(this, null))
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
                 }
                 R.id.navigation_vote -> {

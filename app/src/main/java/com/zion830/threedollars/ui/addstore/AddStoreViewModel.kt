@@ -35,12 +35,6 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     BaseViewModel() {
 
 
-    val storeName: MutableLiveData<String> = MutableLiveData<String>()
-
-    val isFinished: LiveData<Boolean> = Transformations.map(storeName) {
-        it.isNotNullOrBlank()
-    }
-
     private val _selectedLocation: MutableStateFlow<LatLng?> = MutableStateFlow(null)
     val selectedLocation: StateFlow<LatLng?> get() = _selectedLocation
 

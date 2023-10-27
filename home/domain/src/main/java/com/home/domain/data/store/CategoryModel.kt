@@ -12,4 +12,8 @@ data class CategoryModel(
     val isSelected: Boolean = false
 ) : CategoryItem
 
+data class SelectCategoryModel(
+    val menuType: CategoryModel = CategoryModel(),
+    val menuDetail: List<UserStoreMenuModel>? = listOf()
+) : CategoryItem
 data class AddCategoryModel(val isEnabled : Boolean = true) : CategoryItem

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.AddCategoryModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.PaymentType
+import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
@@ -43,8 +44,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 
-    private var isFirstOpen = true
-
     private val addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter by lazy {
         AddCategoryRecyclerAdapter({
             AddStoreMenuCategoryDialogFragment().show(
@@ -57,9 +56,9 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         )
     }
 
-//    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
-//        EditCategoryMenuRecyclerAdapter { viewModel.removeCategory(it) }
-//    }
+    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
+        EditCategoryMenuRecyclerAdapter { viewModel.removeCategory(it) }
+    }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
@@ -67,7 +66,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         initMap()
         initButton()
         initAdapter()
-        initKeyboard()
         initFlows()
     }
 
@@ -103,7 +101,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 launch {
                     viewModel.selectCategoryList.collect {
                         addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(it.size < 3)) + it)
-//            editCategoryMenuRecyclerAdapter.setItems(it.filter { category -> category.isSelected })
+                        editCategoryMenuRecyclerAdapter.setItems(it.map { model -> SelectCategoryModel(menuType = model) })
                     }
                 }
             }
@@ -113,8 +111,8 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private fun initAdapter() {
         binding.rvCategory.adapter = addCategoryRecyclerAdapter
         binding.rvCategory.itemAnimator = null
-//        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
-//        binding.rvMenu.itemAnimator = null
+        binding.menuRecyclerView.adapter = editCategoryMenuRecyclerAdapter
+        binding.menuRecyclerView.itemAnimator = null
     }
 
     private fun initButton() {
@@ -126,7 +124,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.btnClearCategory.setOnClickListener {
-//            editCategoryMenuRecyclerAdapter.clear()
             addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
             viewModel.removeAllCategory()
         }
@@ -152,10 +149,10 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     }
 
     private fun saveStore() {
-//        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
-//            showToast(R.string.no_category_msg)
-//            return
-//        }
+        if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
+            showToast(R.string.no_category_msg)
+            return
+        }
         if (getMenuList().isEmpty()) {
             showToast(R.string.no_menu_msg)
             return
@@ -168,7 +165,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
                 getMenuList().reversed(),
                 getPaymentMethod(),
-                viewModel.storeName.value ?: "이름 없음",
+                binding.storeNameEditTextView.text.toString(),
                 storeType = getStoreType()
             )
         )
@@ -216,34 +213,34 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private fun getMenuList(): List<MenuModelRequest> {
         val menuList = arrayListOf<MenuModelRequest>()
 
-//        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
-//            binding.rvMenu.getChildAt(i)?.let {
-//                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
-//                val editMenuRecyclerView = (view as RecyclerView)
-//                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
-//                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-//                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
-//                } else {
-//                    ""
-//                }
-//
-//                var isEmptyCategory = true
-//                repeat(menuSize) { index ->
-//                    val menuRow = editMenuRecyclerView.getChildAt(index)
-//                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
-//                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
-//
-//                    if (name.isNotEmpty() || price.isNotEmpty()) {
-//                        menuList.add(MenuModelRequest(category, name, price))
-//                        isEmptyCategory = false
-//                    }
-//                }
-//
-//                if (isEmptyCategory) {
-//                    menuList.add(MenuModelRequest(category, "", ""))
-//                }
-//            }
-//        }
+        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
+            binding.menuRecyclerView.getChildAt(i)?.let {
+                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
+                val editMenuRecyclerView = (view as RecyclerView)
+                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
+                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
+                    editCategoryMenuRecyclerAdapter.items[i].menuType.categoryId
+                } else {
+                    ""
+                }
+
+                var isEmptyCategory = true
+                repeat(menuSize) { index ->
+                    val menuRow = editMenuRecyclerView.getChildAt(index)
+                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
+                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
+
+                    if (name.isNotEmpty() || price.isNotEmpty()) {
+                        menuList.add(MenuModelRequest(category, name, price))
+                        isEmptyCategory = false
+                    }
+                }
+
+                if (isEmptyCategory) {
+                    menuList.add(MenuModelRequest(category, "", ""))
+                }
+            }
+        }
 
         return menuList
     }
@@ -281,34 +278,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             result.add(const[6])
         }
         return result
-    }
-
-    private fun initKeyboard() {
-        var keypadBaseHeight = 0
-
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect(); // 키보드 위로 보여지는 공간
-            binding.root.getWindowVisibleDisplayFrame(r)
-            val screenHeight = binding.root.rootView.height
-
-            val keypadHeight = screenHeight - r.bottom
-
-            if (keypadBaseHeight == 0) {
-                keypadBaseHeight = keypadHeight
-            }
-
-            if (keypadHeight > screenHeight * 0.15) {
-                binding.submitButton.visibility = View.GONE
-            } else {
-                Handler().postDelayed({
-                    if (!isFirstOpen) {
-                        binding.submitButton.visibility = View.VISIBLE
-                    }
-                }, 50)
-            }
-        }
-
-        isFirstOpen = false
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAddStoreBinding =

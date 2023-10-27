@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toTopOf="@id/submitButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView">
@@ -514,11 +514,11 @@
                         android:layout_width="0dp"
                         android:layout_height="102dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginBottom="50dp"
+                        android:layout_marginBottom="12dp"
                         app:cardBackgroundColor="@color/white"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/menuRecyclerView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/categoryTitleTextView">
@@ -536,34 +536,36 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/item_selected_category" />
                     </androidx.cardview.widget.CardView>
-                    <!--                    <androidx.recyclerview.widget.RecyclerView-->
-                    <!--                        android:id="@+id/rv_menu"-->
-                    <!--                        bindItem="@{viewModel.selectedCategory}"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:layout_marginBottom="120dp"-->
-                    <!--                        android:overScrollMode="never"-->
-                    <!--                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-                    <!--                        tools:listitem="@layout/item_edit_category_menu" />-->
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/menuRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/gray0"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryCardView"
+                        tools:listitem="@layout/item_edit_category_menu" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/submitButton"
+                    style="@style/apple_gothic_bold.size_16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/selector_button_pink_gray30"
+                    android:paddingVertical="20dp"
+                    android:text="@string/add_store_finish"
+                    android:textColor="@color/white"
+                    tools:ignore="UnusedAttribute" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/submitButton"
-        style="@style/apple_gothic_bold.size_16sp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/selector_button_pink_gray30"
-        android:padding="16dp"
-        android:text="@string/add_store_finish"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="UnusedAttribute" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
