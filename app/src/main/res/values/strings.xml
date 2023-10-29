@@ -100,7 +100,8 @@
     <string name="option">(선택)</string>
     <string name="enable_multi_select">*다중선택 가능</string>
     <string name="add_store_finish">가게 등록하기</string>
-    <string name="edit_store_finish">가게 정보 수정하기</string>
+    <string name="edit_store_finish">수정하기</string>
+    <string name="edit_store_success">수정 완료!</string>
     <string name="certification">방문 인증</string>
     <string name="add_certification">방문 인증하기</string>
     <string name="visit_success">방문 성공</string>
@@ -313,4 +314,6 @@
     <string name="review_more_write">리뷰 작성하기</string>
     <string name="review_empty">리뷰를 작성해주세요.</string>
     <string name="photo_empty">사진을 제보해주세요!</string>
+    <string name="naver_map">네이버 지도</string>
+    <string name="kakao_map">카카오 지도</string>
 </resources>
