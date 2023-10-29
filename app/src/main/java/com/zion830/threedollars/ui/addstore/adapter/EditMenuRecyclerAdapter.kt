@@ -1,32 +1,34 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.home.domain.data.store.CategoryModel
+import com.home.domain.data.store.UserStoreMenuModel
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import com.zion830.threedollars.databinding.ItemMenuEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.MyMenu
+import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 
 
-class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEditBinding, MyMenu>>() {
-    private val items = arrayListOf<MyMenu>()
+class EditMenuRecyclerAdapter : ListAdapter<UserStoreMenuModel, MenuEditViewHolder>((BaseDiffUtilCallback())) {
+    private val items = arrayListOf<UserStoreMenuModel>()
 
     init {
         addNewRow()
     }
 
     fun addNewRow() {
-        items.add(MyMenu())
+        items.add(UserStoreMenuModel(name = "", price = ""))
         notifyItemInserted(items.size - 1)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemMenuEditBinding, MyMenu> =
-        object : BaseViewHolder<ItemMenuEditBinding, MyMenu>(R.layout.item_menu_edit, parent) {}
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: BaseViewHolder<ItemMenuEditBinding, MyMenu>, position: Int) {
-        holder.bind(items[position], null)
+    override fun onBindViewHolder(holder: MenuEditViewHolder, position: Int) {
+        holder.bind(items[position])
         holder.binding.etPrice.setOnFocusChangeListener { view, focused ->
             if (focused && position == items.size - 1) {
                 addNewRow()
@@ -34,9 +36,16 @@ class EditMenuRecyclerAdapter : RecyclerView.Adapter<BaseViewHolder<ItemMenuEdit
         }
     }
 
-    fun submitList(newItems: List<MyMenu>?) {
-        items.clear()
-        items.addAll(if (newItems.isNullOrEmpty()) listOf(MyMenu()) else newItems)
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuEditViewHolder =
+        MenuEditViewHolder(binding = ItemMenuEditBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    override fun getItemCount(): Int = items.size
+
+}
+
+class MenuEditViewHolder(val binding: ItemMenuEditBinding) : ViewHolder(binding.root) {
+    fun bind(item: UserStoreMenuModel) {
+        binding.etName.setText(item.name)
+        binding.etPrice.setText(item.price)
     }
 }

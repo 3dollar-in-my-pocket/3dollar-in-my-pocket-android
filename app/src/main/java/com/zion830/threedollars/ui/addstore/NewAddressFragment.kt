@@ -4,18 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -33,7 +35,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
         longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
 
         initMap()
-        initViewModel()
+        initFlows()
         initButton()
     }
 
@@ -42,30 +44,42 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
             requireActivity().onBackPressed()
         }
         binding.finishButton.setOnClickListener {
-            if (viewModel.isNearStoreExist.value == true) {
-                showNearExistDialog()
-            } else {
-                moveAddStoreDetailFragment()
-            }
+            viewModel.getStoreNearExists(LatLng(latitude, longitude))
         }
     }
 
     private fun initMap() {
         naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()
+        naverMapFragment.setIsShowOverlay(false)
     }
 
-    private fun initViewModel() {
-        viewModel.run {
-            nearStoreInfo.observe(viewLifecycleOwner) { res ->
-//                naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, res ?: listOf())
-            }
-            selectedLocation.observe(viewLifecycleOwner) { latLng ->
-                if (latLng != null) {
-                    binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
-                    requestStoreInfo(latLng)
-                    latitude = latLng.latitude
-                    longitude = latLng.longitude
+    private fun initFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.aroundStoreModels.collect { res ->
+                        naverMapFragment.addStoreMarkers(R.drawable.ic_mappin_focused_off, res ?: listOf())
+                    }
+                }
+                launch {
+                    viewModel.isNearStoreExist.collect {
+                        if (it) {
+                            showNearExistDialog()
+                        } else {
+                            moveAddStoreDetailFragment()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.selectedLocation.collect { latLng ->
+                        if (latLng != null) {
+                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                            viewModel.requestStoreInfo(latLng)
+                            latitude = latLng.latitude
+                            longitude = latLng.longitude
+                        }
+                    }
                 }
             }
         }

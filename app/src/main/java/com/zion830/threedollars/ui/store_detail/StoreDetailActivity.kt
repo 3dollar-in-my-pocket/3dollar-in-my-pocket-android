@@ -156,6 +156,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         })
         supportFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        naverMapFragment.setIsShowOverlay(false)
     }
 
     private fun initButton() {

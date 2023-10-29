@@ -1,74 +1,55 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.threedollar.common.listener.OnItemClickListener
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.home.domain.data.store.AddCategoryModel
+import com.home.domain.data.store.CategoryItem
+import com.home.domain.data.store.CategoryModel
+import com.threedollar.common.ext.loadImage
+import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
-import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseViewHolder
 
 class AddCategoryRecyclerAdapter(
     private val showDialog: () -> Unit,
-    private val onDeleted: (SelectedCategory) -> Unit
-) : ListAdapter<SelectedCategory?, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
+    private val onDeleted: (CategoryModel) -> Unit
+) : ListAdapter<CategoryItem?, ViewHolder>(BaseDiffUtilCallback()) {
 
-    init {
-        submitList(listOf())
-    }
-
-    fun getCategory(position: Int) = currentList[position]
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
-            VIEW_TYPE_ADD -> AddCategoryViewHolder(parent)
-            else -> DeleteCategoryViewHolder(parent)
+            VIEW_TYPE_ADD -> AddCategoryViewHolder(
+                binding = ItemCategoryAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickListener = showDialog
+            )
+            else -> DeleteCategoryViewHolder(
+                binding = ItemSelectedCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onClickListener = onDeleted
+            )
         }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is AddCategoryViewHolder -> {
-                holder.bind("", object : OnItemClickListener<String> {
-                    override fun onClick(item: String) {
-                        showDialog()
-                    }
-                })
+                holder.bind(getItem(position) as AddCategoryModel)
             }
             is DeleteCategoryViewHolder -> {
-                holder.bind(
-                    getItem(position) ?: SelectedCategory(),
-                    object : OnItemClickListener<SelectedCategory> {
-                        override fun onClick(item: SelectedCategory) {
-                            if (item.isSelected) {
-                                onDeleted(item)
-                            }
-                        }
-                    })
+                holder.bind(getItem(position) as CategoryModel)
             }
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (position == 0) VIEW_TYPE_ADD else VIEW_TYPE_DELETE
-    }
-
-    override fun submitList(list: List<SelectedCategory?>?) {
-        if (list.isNullOrEmpty()) {
-            super.submitList(listOf(null))
-        } else {
-            super.submitList(listOf(null) + list)
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is CategoryModel -> {
+            VIEW_TYPE_DELETE
         }
-    }
 
-    fun clear() {
-        submitList(listOf())
-    }
-
-    fun getSelectedItems(): List<String> {
-        return currentList.filter { it?.isSelected == true }.map { it?.menuType?.category ?: "BUNGEOPPANG" }
+        else -> {
+            VIEW_TYPE_ADD
+        }
     }
 
     companion object {
@@ -77,14 +58,26 @@ class AddCategoryRecyclerAdapter(
     }
 }
 
-class AddCategoryViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemCategoryAddBinding, String>(R.layout.item_category_add, parent) {
-
+class AddCategoryViewHolder(private val binding: ItemCategoryAddBinding, private val onClickListener: () -> Unit) : ViewHolder(binding.root) {
+    fun bind(item: AddCategoryModel) {
+        if (item.isEnabled) {
+            binding.addImageView.setBackgroundResource(R.drawable.circle_gray100)
+            binding.addImageView.setImageResource(R.drawable.ic_plus)
+            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray80))
+            binding.btnAddNew.setOnClickListener { onClickListener() }
+        } else {
+            binding.addImageView.setBackgroundResource(R.drawable.circle_solid_gray30)
+            binding.addImageView.setImageResource(R.drawable.ic_plus_gray10)
+            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray40))
+        }
+    }
 }
 
-class DeleteCategoryViewHolder(parent: ViewGroup) :
-    BaseViewHolder<ItemSelectedCategoryBinding, SelectedCategory>(
-        R.layout.item_selected_category,
-        parent
-    ) {
+class DeleteCategoryViewHolder(private val binding: ItemSelectedCategoryBinding, private val onClickListener: (CategoryModel) -> Unit) :
+    ViewHolder(binding.root) {
+    fun bind(item: CategoryModel) {
+        binding.menuNameTextView.text = item.name
+        binding.menuImageView.loadImage(item.imageUrl)
+        binding.ibDeleteCategory.setOnClickListener { onClickListener(item) }
+    }
 }

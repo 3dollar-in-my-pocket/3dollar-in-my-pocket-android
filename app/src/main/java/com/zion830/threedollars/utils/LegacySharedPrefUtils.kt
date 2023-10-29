@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.home.domain.data.store.CategoryModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
@@ -93,22 +94,22 @@ object LegacySharedPrefUtils {
 
     fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
 
-    fun getCategories(): List<CategoriesModel> {
+    fun getCategories(): List<CategoryModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoryModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
         }
     }
 
-    fun getTruckCategories(): List<CategoriesModel> {
+    fun getTruckCategories(): List<CategoryModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(TRUCK_CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoryModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()

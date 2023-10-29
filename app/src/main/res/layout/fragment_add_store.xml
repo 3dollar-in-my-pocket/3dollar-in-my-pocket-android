@@ -5,6 +5,7 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:clickable="true"
     android:focusable="true">
 
@@ -36,8 +37,8 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="50dp"
-        app:layout_constraintBottom_toTopOf="@id/submitButton"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleTextView">
@@ -46,19 +47,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/map"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/fullScreenButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/circle_white_stroke_gray20"
+                android:elevation="8dp"
+                android:src="@drawable/ic_zoom"
+                app:layout_constraintBottom_toBottomOf="@id/map"
+                app:layout_constraintEnd_toEndOf="@id/map" />
+
             <LinearLayout
                 android:id="@+id/layout_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/map">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
                     android:paddingHorizontal="20dp">
 
                     <TextView
@@ -160,7 +184,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <RadioGroup
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
@@ -169,33 +193,53 @@
 
                         <RadioButton
                             android:id="@+id/rb_type1"
-                            android:layout_width="100dp"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/road" />
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/road"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
                         <RadioButton
                             android:id="@+id/rb_type2"
-                            android:layout_width="100dp"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/store" />
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/store"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
                         <RadioButton
                             android:id="@+id/rb_type3"
-                            android:layout_width="100dp"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
                             android:button="@null"
                             android:drawableStart="@drawable/selector_type_radio"
                             android:drawablePadding="8dp"
-                            android:text="@string/convenience_store" />
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/convenience_store"
+                            android:textColor="@color/selector_type_radio_text_color" />
                     </RadioGroup>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -238,42 +282,59 @@
 
                     <CheckBox
                         android:id="@+id/cb_type1"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/selector_type_radio_background"
                         android:button="@null"
                         android:drawableStart="@drawable/selector_type_checkbox"
-                        android:drawablePadding="8dp"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/cash"
+                        android:textColor="@color/selector_type_radio_text_color"
                         app:layout_constraintEnd_toStartOf="@id/cb_type2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
 
                     <CheckBox
                         android:id="@+id/cb_type2"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="12dp"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/selector_type_radio_background"
                         android:button="@null"
                         android:drawableStart="@drawable/selector_type_checkbox"
-                        android:drawablePadding="8dp"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/card"
+                        android:textColor="@color/selector_type_radio_text_color"
                         app:layout_constraintEnd_toStartOf="@id/cb_type3"
                         app:layout_constraintStart_toEndOf="@id/cb_type1"
                         app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
 
                     <CheckBox
                         android:id="@+id/cb_type3"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="12dp"
-                        android:background="@android:color/transparent"
+                        android:background="@drawable/selector_type_radio_background"
                         android:button="@null"
                         android:drawableStart="@drawable/selector_type_checkbox"
-                        android:drawablePadding="8dp"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="8dp"
                         android:text="@string/banking"
+                        android:textColor="@color/selector_type_radio_text_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/cb_type2"
                         app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
@@ -327,90 +388,90 @@
 
                         <ToggleButton
                             android:id="@+id/tb_mon"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginEnd="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/monday"
                             android:textOn="@string/monday" />
 
                         <ToggleButton
                             android:id="@+id/tb_tue"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/tuesday"
                             android:textOn="@string/tuesday" />
 
                         <ToggleButton
                             android:id="@+id/tb_wen"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/wednesday"
                             android:textOn="@string/wednesday" />
 
                         <ToggleButton
                             android:id="@+id/tb_thur"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/thursday"
                             android:textOn="@string/thursday" />
 
                         <ToggleButton
                             android:id="@+id/tb_fri"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/friday"
                             android:textOn="@string/friday" />
 
                         <ToggleButton
                             android:id="@+id/tb_sat"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/saturday"
                             android:textOn="@string/saturday" />
 
                         <ToggleButton
                             android:id="@+id/tb_sun"
-                            style="@style/ToggleButton"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginStart="5dp"
                             android:layout_weight="1"
-                            android:background="@drawable/btn_toggle_black"
-                            android:textColor="@color/color_sub_red"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
                             android:textOff="@string/sunday"
                             android:textOn="@string/sunday" />
                     </LinearLayout>
@@ -419,97 +480,92 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="28dp"
+                    android:background="@color/gray0"
+                    android:paddingHorizontal="20dp">
 
                     <TextView
+                        android:id="@+id/categoryTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:paddingVertical="16dp"
+                        android:layout_marginTop="24dp"
                         android:text="@string/category"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp"
+                        android:textColor="@color/gray100"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/btn_clear_category"
+                        style="@style/apple_gothic_bold.size_12sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="16dp"
+                        android:layout_marginTop="25dp"
+                        android:drawablePadding="4dp"
                         android:text="@string/category_delete_all"
-                        android:textColor="@color/color_main_red"
+                        android:textColor="@color/red"
+                        app:drawableStartCompat="@drawable/ic_delete_12"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/categoryCardView"
+                        android:layout_width="0dp"
+                        android:layout_height="102dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toTopOf="@+id/menuRecyclerView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryTitleTextView">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_category"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="8dp"
+                            android:background="@color/white"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_selected_category" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/menuRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/gray0"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryCardView"
+                        tools:listitem="@layout/item_edit_category_menu" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_category"
+                <Button
+                    android:id="@+id/submitButton"
+                    style="@style/apple_gothic_bold.size_16sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="24dp"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="5"
-                    tools:listitem="@layout/item_selected_category" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/apple_gothic_bold"
-                        android:text="@string/menu_detail"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/option"
-                        android:textColor="@color/color_gray1" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_menu"
-                    bindItem="@{viewModel.selectedCategory}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="120dp"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_edit_category_menu" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/selector_button_pink_gray30"
+                    android:paddingVertical="20dp"
+                    android:text="@string/add_store_finish"
+                    android:textColor="@color/white"
+                    tools:ignore="UnusedAttribute" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/submitButton"
-        style="@style/apple_gothic_bold.size_16sp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/selector_button_pink_gray30"
-        android:padding="16dp"
-        android:text="@string/add_store_finish"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="UnusedAttribute" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

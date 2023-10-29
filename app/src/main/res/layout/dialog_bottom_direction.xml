@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/buttonOpenKakaoMap"
+    <TextView
+        android:id="@+id/kakaoMapTextView"
+        style="@style/apple_gothic_medium.size_16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/ic_kakao_map" />
+        android:text="카카오 지도" />
 
-    <ImageButton
-        android:id="@+id/buttonOpenNaverMap"
+    <TextView
+        android:id="@+id/naverMapTextView"
+        style="@style/apple_gothic_medium.size_16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/ic_naver_map" />
+        android:text="네이버 지도" />
 </LinearLayout>
