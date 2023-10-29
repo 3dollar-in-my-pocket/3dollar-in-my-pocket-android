@@ -3,16 +3,10 @@ package com.zion830.threedollars.ui.addstore.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.UserStoreMenuModel
-import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import com.zion830.threedollars.databinding.ItemMenuEditBinding
-import com.zion830.threedollars.datasource.model.v2.request.MyMenu
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseViewHolder
 
 
 class EditMenuRecyclerAdapter : ListAdapter<UserStoreMenuModel, MenuEditViewHolder>((BaseDiffUtilCallback())) {

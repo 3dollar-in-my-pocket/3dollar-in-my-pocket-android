@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -27,7 +26,10 @@ import com.zion830.threedollars.ui.category.AddStoreMenuCategoryDialogFragment
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

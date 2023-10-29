@@ -8,7 +8,6 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemCategoryBtnBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg

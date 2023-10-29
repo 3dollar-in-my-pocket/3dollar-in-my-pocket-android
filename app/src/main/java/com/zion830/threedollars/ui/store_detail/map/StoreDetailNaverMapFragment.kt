@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.store_detail.map
 
-import android.util.Log
 import androidx.core.view.isVisible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices

@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.addCallback
@@ -10,12 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
-import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
-import com.zion830.threedollars.ui.report_store.map.StoreEditNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

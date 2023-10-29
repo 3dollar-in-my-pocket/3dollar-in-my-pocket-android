@@ -1,9 +1,6 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.graphics.Rect
-import android.os.Handler
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
@@ -14,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.AddCategoryModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.PaymentType
-import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
@@ -26,7 +22,6 @@ import com.zion830.threedollars.databinding.FragmentAddStoreBinding
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
 import com.zion830.threedollars.ui.category.AddStoreMenuCategoryDialogFragment
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
