@@ -40,19 +40,6 @@ class EditStoreViewModel @Inject constructor(private val repository: StoreDataSo
         }
     }
 
-    fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _storeInfo.postValue(
-                repository.getStoreDetail(
-                    storeId,
-                    latitude,
-                    longitude,
-                    LocalDateTime.now().minusMonths(1)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                ).body()?.data
-            )
-        }
-    }
 
     fun editStore(
         storeId: Int,

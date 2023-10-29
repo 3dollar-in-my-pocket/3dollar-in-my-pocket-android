@@ -42,7 +42,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     private val adapter: MoreImageAdapter by lazy {
         MoreImageAdapter(object : OnItemClickListener<Int> {
             override fun onClick(item: Int) {
-                Log.e("333333",item.toString())
                 StorePhotoDialog.getInstance(item, storeId).show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })

@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.addstore.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -48,7 +49,12 @@ class EditCategoryMenuViewHolder(private val binding: ItemEditCategoryMenuBindin
         binding.ivMenuIcon.loadImage(item.menuType.imageUrl)
         binding.tvMenu.text = item.menuType.name
         binding.rvMenuEdit.adapter = EditMenuRecyclerAdapter().apply {
-            submitList(item.menuDetail)
+            if(item.menuDetail?.isEmpty() == true){
+                submitList(listOf(UserStoreMenuModel(name = "", price = "")))
+            }
+            else{
+                submitList(item.menuDetail)
+            }
         }
     }
 }

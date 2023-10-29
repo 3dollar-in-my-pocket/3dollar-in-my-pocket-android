@@ -48,7 +48,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         AddCategoryRecyclerAdapter({
             AddStoreMenuCategoryDialogFragment().show(
                 parentFragmentManager,
-                CategoryBottomSheetDialog::class.java.name
+                AddStoreMenuCategoryDialogFragment::class.java.name
             )
         }, {
             viewModel.removeCategory(it)
@@ -100,8 +100,8 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 }
                 launch {
                     viewModel.selectCategoryList.collect {
-                        addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(it.size < 3)) + it)
-                        editCategoryMenuRecyclerAdapter.setItems(it.map { model -> SelectCategoryModel(menuType = model) })
+                        addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(it.size < 3)) + it.map { model -> model.menuType })
+                        editCategoryMenuRecyclerAdapter.setItems(it)
                     }
                 }
             }

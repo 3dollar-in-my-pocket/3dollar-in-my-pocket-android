@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.store_detail.map
 
+import android.util.Log
 import androidx.core.view.isVisible
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -23,6 +24,7 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
 
     fun initMap(latLng: LatLng, isClosed: Boolean? = null) {
         moveCamera(latLng)
+        clearMarker()
         addMarker(if (isClosed == true) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
     }
 }

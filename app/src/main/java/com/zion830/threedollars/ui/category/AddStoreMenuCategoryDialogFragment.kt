@@ -102,7 +102,7 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
     private fun initStreetAdapterSubmit() {
         val list = viewModel.selectCategoryList.value
         streetCategoryAdapter.submitList(streetCategories.map { item ->
-            val sameItem = list.find { it.name == item.name }
+            val sameItem = list.find { it.menuType.name == item.name }
             if (sameItem == null) {
                 item.copy(isSelected = false)
             } else {
@@ -114,7 +114,7 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
     private fun initTruckAdapterSubmit() {
         val list = viewModel.selectCategoryList.value
         bossCategoryAdapter.submitList(truckCategories.map { item ->
-            val sameItem = list.find { it.name == item.name }
+            val sameItem = list.find { it.menuType.name == item.name }
             if (sameItem == null) {
                 item.copy(isSelected = false)
             } else {
