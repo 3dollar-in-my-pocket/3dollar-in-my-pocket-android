@@ -2,11 +2,10 @@ package com.threedollar.data.datasource
 
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
-import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
-import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
 import com.threedollar.network.data.poll.response.GetUserPollListResponse
 import com.threedollar.network.data.poll.response.PollCategoryApiResponse
@@ -27,8 +26,8 @@ class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : Commun
         emit(serverApi.getPollId(id))
     }
 
-    override fun putPollChoice(id: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.putPollChoice(id))
+    override fun putPollChoice(id: String, pollChoiceApiRequest: PollChoiceApiRequest): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.putPollChoice(id, pollChoiceApiRequest))
     }
 
     override fun deletePollChoice(id: String): Flow<BaseResponse<String>> = flow {
@@ -41,10 +40,6 @@ class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : Commun
 
     override fun getPollCategories(): Flow<BaseResponse<PollCategoryApiResponse>> = flow {
         emit(serverApi.getPollCategories())
-    }
-
-    override fun getPollList(categoryId: String, sortType: String?, cursor: Int?, size: Int): Flow<BaseResponse<GetPollListResponse>> = flow {
-        emit(serverApi.getPollList(categoryId, sortType, cursor, size))
     }
 
     override fun getPollPolicy(): Flow<BaseResponse<PollPolicyApiResponse>> = flow {
@@ -78,9 +73,5 @@ class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : Commun
 
     override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {
         emit(serverApi.getNeighborhoods())
-    }
-
-    override fun getPopularStores(criteria: String, district: String, cursor: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
-        emit(serverApi.getPopularStores(criteria, district, cursor, size))
     }
 }

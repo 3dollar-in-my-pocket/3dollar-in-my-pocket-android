@@ -48,15 +48,14 @@
             app:layout_constraintStart_toStartOf="@id/twPollTitle"
             app:layout_constraintTop_toBottomOf="@id/twPollTitle" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPoll"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerPoll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:clipToPadding="false"
             android:orientation="horizontal"
-            android:paddingHorizontal="4dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:paddingHorizontal="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/twPollListTitle" />
@@ -70,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rvPoll" />
+            app:layout_constraintTop_toBottomOf="@id/viewPagerPoll" />
 
         <TextView
             android:id="@+id/twCommunityContentsTitle"
@@ -125,5 +124,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpPopularStore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tabComminityContent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

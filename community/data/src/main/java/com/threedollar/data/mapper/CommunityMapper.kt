@@ -67,16 +67,16 @@ fun PollCommentCreateApiResponse?.toMapper(): CommentId {
     return CommentId(this?.id.orEmpty())
 }
 
-fun GetPollCommentListResponse.toMapper(): PollCommentList {
-    return PollCommentList(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
+fun GetPollCommentListResponse?.toMapper(): PollCommentList {
+    return PollCommentList(this?.contents.orEmpty().map { it.toMapper() }, this?.cursor.toMapper())
 }
 
 fun GetPopularStoresResponse.toMapper(): PopularStores {
     return PopularStores(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
 }
 
-fun GetNeighborhoodsResponse.toMapper(): Neighborhoods {
-    return Neighborhoods(this.neighborhoods.orEmpty().map { neighborhood ->
+fun GetNeighborhoodsResponse?.toMapper(): Neighborhoods {
+    return Neighborhoods(this?.neighborhoods.orEmpty().map { neighborhood ->
         Neighborhoods.Neighborhood(neighborhood.description.orEmpty(), neighborhood.districts.orEmpty().map {
             Neighborhoods.Neighborhood.District(it.description.orEmpty(), it.district.orEmpty())
         }, neighborhood.province.orEmpty())

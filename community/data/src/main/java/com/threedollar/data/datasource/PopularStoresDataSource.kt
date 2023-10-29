@@ -3,33 +3,33 @@ package com.threedollar.data.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.threedollar.data.mapper.toMapper
-import com.threedollar.domain.data.Cursor
 import com.threedollar.domain.data.PopularStore
 import com.threedollar.network.api.ServerApi
-import javax.inject.Inject
 
-class PopularStoresDataSource(private val cursor: Cursor, private val criteria: String, private val district: String) :
-    PagingSource<Cursor, PopularStore>() {
+class PopularStoresDataSource(private val criteria: String, private val district: String, private val serverApi: ServerApi) :
+    PagingSource<String, PopularStore>() {
+    override fun getRefreshKey(state: PagingState<String, PopularStore>): String? {
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey ?: anchorPage?.nextKey
+        }
+    }
 
-    @Inject
-    lateinit var serverApi: ServerApi
-    override fun getRefreshKey(state: PagingState<Cursor, PopularStore>): Cursor? = null
-
-    override suspend fun load(params: LoadParams<Cursor>): LoadResult<Cursor, PopularStore> {
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, PopularStore> {
         val cursor = params.key
-        if (cursor == null || cursor.nextCursor == "") {
+        if (cursor == null || cursor == "") {
             return LoadResult.Error(Exception())
         }
         return try {
-            val response = serverApi.getPopularStores(criteria, district, cursor.nextCursor)
+            val response = serverApi.getPopularStores(criteria, district, cursor)
 
             if (response.isSuccessful) {
-                val response = response.body()?.data ?: return LoadResult.Error(NullPointerException())
-                val popularStores = response.toMapper()
+                val responseData = response.body()?.data ?: return LoadResult.Error(NullPointerException())
+                val popularStores = responseData.toMapper()
                 LoadResult.Page(
                     data = popularStores.content,
                     null,
-                    popularStores.cursor
+                    popularStores.cursor.nextCursor
                 )
             } else {
                 LoadResult.Error(Exception(response.message()))

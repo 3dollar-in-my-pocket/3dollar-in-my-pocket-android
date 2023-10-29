@@ -2,6 +2,7 @@ package com.threedollar.network.api
 
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -32,7 +33,7 @@ interface ServerApi {
     suspend fun getPollId(@Path("pollId") id: String): BaseResponse<GetPollResponse>
 
     @PUT("/v1/poll/{pollId}/choice")
-    suspend fun putPollChoice(@Path("pollId") id: String): BaseResponse<String>
+    suspend fun putPollChoice(@Path("pollId") id: String, @Body pollChoiceApiRequest: PollChoiceApiRequest): BaseResponse<String>
 
     @DELETE("/v1/poll/{pollId}/choice")
     suspend fun deletePollChoice(@Path("pollId") id: String): BaseResponse<String>
