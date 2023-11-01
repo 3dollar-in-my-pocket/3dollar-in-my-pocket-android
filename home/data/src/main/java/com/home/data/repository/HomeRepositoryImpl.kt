@@ -12,6 +12,7 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.SharedPrefUtils
@@ -241,4 +242,7 @@ class HomeRepositoryImpl @Inject constructor(
                 error = it.error
             )
         }
+
+    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.reportStoreReview(storeId, reviewId, reportReviewModelRequest.asRequest())
 }

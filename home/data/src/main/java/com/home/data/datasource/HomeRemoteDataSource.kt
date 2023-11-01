@@ -77,6 +77,7 @@ interface HomeRemoteDataSource {
 
     fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>>
 
-    fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int) : Flow<BaseResponse<PostUserStoreResponse>>
+    fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>>
 
+    fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
 }
