@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
@@ -74,4 +75,6 @@ interface HomeRepository {
 
 
     fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
+
+    fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
 }

@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.home.domain.data.store.*
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
@@ -16,6 +17,7 @@ import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.ui.report_store.DeleteType
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -53,6 +55,13 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
 
     private val _reviewPagingData = MutableStateFlow<PagingData<ReviewContentModel>?>(null)
     val reviewPagingData get() = _reviewPagingData
+
+    private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
+    val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
+
+    init {
+        getReportReasons()
+    }
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -204,9 +213,22 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {
-                    Log.e("asdsad", it.data.toString())
+                    getReview(storeId, ReviewSortType.LATEST)
+                    showToast("신고 완료!")
                 } else {
-                    _serverError.emit(it.error)
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    private fun getReportReasons() {
+        viewModelScope.launch {
+            homeRepository.getReportReasons(ReportReasonsGroupType.REVIEW).collect {
+                if (it.ok) {
+                    _reportReasons.value = it.data?.reasonModels
+                } else {
+                    _serverError.emit(it.message)
                 }
             }
         }

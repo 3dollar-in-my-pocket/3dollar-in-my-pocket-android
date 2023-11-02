@@ -1,6 +1,7 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
@@ -144,4 +145,7 @@ interface ServerApi {
         @Path("reviewId") reviewId: Int,
         @Body reportReviewRequest: ReportReviewRequest,
     ): Response<BaseResponse<String>>
+
+    @GET("/api/v1/report/group/{group}/reasons")
+    suspend fun getReportReasons(@Path("group") group: String) : Response<BaseResponse<ReportReasonsResponse>>
 }

@@ -9,6 +9,8 @@ import com.home.domain.data.user.UserModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
+import com.threedollar.network.data.Reason
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
@@ -502,4 +504,14 @@ fun PostUserStoreResponse.asModel() = PostUserStoreModel(
 fun ReportReviewModelRequest.asRequest() = ReportReviewRequest(
     reason = reason,
     reasonDetail = reasonDetail
+)
+
+fun ReportReasonsResponse.asModel() = ReportReasonsModel(
+    reasonModels = reasons?.map { it.asModel() } ?: listOf()
+)
+
+fun Reason.asModel() = ReasonModel(
+    description = description ?: "",
+    hasReasonDetail = hasReasonDetail ?: false,
+    type = type ?: ""
 )

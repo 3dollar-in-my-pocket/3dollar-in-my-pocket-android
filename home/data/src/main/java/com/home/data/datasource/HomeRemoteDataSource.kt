@@ -1,6 +1,8 @@
 package com.home.data.datasource
 
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.*
@@ -8,10 +10,6 @@ import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface HomeRemoteDataSource {
 
@@ -80,4 +78,6 @@ interface HomeRemoteDataSource {
     fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>>
 
     fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
+
+    fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
 }
