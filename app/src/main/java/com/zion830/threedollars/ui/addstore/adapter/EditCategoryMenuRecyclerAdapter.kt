@@ -2,21 +2,14 @@ package com.zion830.threedollars.ui.addstore.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.data.store.UserStoreMenuModel
 import com.threedollar.common.ext.loadImage
-import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
-import com.zion830.threedollars.generated.callback.OnClickListener
-import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import zion830.com.common.base.BaseDiffUtilCallback
-import zion830.com.common.base.BaseViewHolder
 
 class EditCategoryMenuRecyclerAdapter(private val delete: (CategoryModel) -> Unit) :
     ListAdapter<SelectCategoryModel, EditCategoryMenuViewHolder>((BaseDiffUtilCallback())) {
@@ -48,7 +41,12 @@ class EditCategoryMenuViewHolder(private val binding: ItemEditCategoryMenuBindin
         binding.ivMenuIcon.loadImage(item.menuType.imageUrl)
         binding.tvMenu.text = item.menuType.name
         binding.rvMenuEdit.adapter = EditMenuRecyclerAdapter().apply {
-            submitList(item.menuDetail)
+            if(item.menuDetail?.isEmpty() == true){
+                submitList(listOf(UserStoreMenuModel(name = "", price = "")))
+            }
+            else{
+                submitList(item.menuDetail)
+            }
         }
     }
 }

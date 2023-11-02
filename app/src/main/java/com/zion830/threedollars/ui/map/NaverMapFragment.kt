@@ -126,12 +126,18 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         if (naverMap == null) {
             return
         }
-
         markers.add(Marker().apply {
             this.position = position
             this.icon = OverlayImage.fromResource(drawableRes)
             this.map = naverMap
         })
+    }
+
+    fun clearMarker() {
+        markers.forEach {
+            it.map = null
+        }
+        markers.clear()
     }
 
     fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int) {

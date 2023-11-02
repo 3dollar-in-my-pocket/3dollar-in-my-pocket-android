@@ -5,18 +5,13 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.*
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.ReviewStatusType
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.ItemMorePhotoBinding
 import com.zion830.threedollars.databinding.ItemMoreReviewBinding
-import com.zion830.threedollars.databinding.ItemReviewBinding
-import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
-import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.adapter.ReviewViewHolder
-import com.zion830.threedollars.ui.addstore.adapter.UserStoreReviewMoreViewHolder
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 

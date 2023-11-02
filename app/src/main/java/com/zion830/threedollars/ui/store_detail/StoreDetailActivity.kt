@@ -32,6 +32,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.DirectionBottomDialog
+import com.zion830.threedollars.ui.addstore.EditStoreDetailFragment
 import com.zion830.threedollars.ui.addstore.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
@@ -203,14 +204,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.editStoreInfoButton.setOnClickListener {
-            // TODO: 정보 수정 기능 구현
-//            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
-//            supportFragmentManager.addNewFragment(
-//                R.id.container,
-//                EditStoreDetailFragment(),
-//                EditStoreDetailFragment::class.java.name,
-//                false
-//            )
+            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
+            supportFragmentManager.addNewFragment(
+                R.id.container,
+                EditStoreDetailFragment(),
+                EditStoreDetailFragment::class.java.name,
+                false
+            )
         }
         binding.addCertificationButton.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)

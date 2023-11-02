@@ -6,15 +6,7 @@ import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.*
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 

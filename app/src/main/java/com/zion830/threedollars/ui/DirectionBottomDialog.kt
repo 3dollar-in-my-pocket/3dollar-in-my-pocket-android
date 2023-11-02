@@ -54,6 +54,10 @@ class DirectionBottomDialog : BottomSheetDialogFragment() {
             longitude = getDouble(LONGITUDE)
             storeName = getString(STORE_NAME, "")
         }
+        initButton()
+    }
+
+    private fun initButton() {
         binding.kakaoMapTextView.setOnClickListener {
             openKakaoMap()
             dismiss()
@@ -61,6 +65,9 @@ class DirectionBottomDialog : BottomSheetDialogFragment() {
 
         binding.naverMapTextView.setOnClickListener {
             openNaverMap()
+            dismiss()
+        }
+        binding.closeTextView.setOnClickListener {
             dismiss()
         }
     }

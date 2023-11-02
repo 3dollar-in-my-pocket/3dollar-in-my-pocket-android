@@ -6,15 +6,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.UserStoreDetailEmptyItem
 import com.home.domain.data.store.UserStoreDetailItem
-import com.home.domain.data.store.UserStoreMoreResponse
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ItemPhotoBinding
-import com.zion830.threedollars.databinding.ItemReviewBinding
-import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
 import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import zion830.com.common.base.BaseDiffUtilCallback

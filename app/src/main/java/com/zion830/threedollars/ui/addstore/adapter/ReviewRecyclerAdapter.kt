@@ -3,20 +3,18 @@ package com.zion830.threedollars.ui.addstore.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.*
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.UserStoreDetailEmptyItem
+import com.home.domain.data.store.UserStoreDetailItem
+import com.home.domain.data.store.UserStoreMoreResponse
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemReviewBinding
-import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
-import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
-import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
-import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuMoreViewHolder
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 

@@ -1,31 +1,24 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.PostUserStoreModel
+import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.UserStoreModelRequest
 import com.home.presentation.data.HomeSortType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.common.ext.isNotNullOrBlank
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
 import com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -42,11 +35,11 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     val category: LiveData<MenuType>
         get() = _category
 
-    private val _postUserStoreModel: MutableStateFlow<PostUserStoreModel?> = MutableStateFlow(null)
-    val postUserStoreModel: StateFlow<PostUserStoreModel?> get() = _postUserStoreModel
+    private val _postUserStoreModel: MutableSharedFlow<PostUserStoreModel?> = MutableSharedFlow()
+    val postUserStoreModel: SharedFlow<PostUserStoreModel?> get() = _postUserStoreModel
 
-    private val _selectCategoryList: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(listOf())
-    val selectCategoryList: StateFlow<List<CategoryModel>> get() = _selectCategoryList.asStateFlow()
+    private val _selectCategoryList: MutableStateFlow<List<SelectCategoryModel>> = MutableStateFlow(listOf())
+    val selectCategoryList: StateFlow<List<SelectCategoryModel>> get() = _selectCategoryList.asStateFlow()
 
 
     private val _isNearStoreExist = MutableSharedFlow<Boolean>()
@@ -61,7 +54,24 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.postUserStore(userStoreModelRequest).collect {
                 if (it.ok) {
-                    _postUserStoreModel.value = it.data
+                    _postUserStoreModel.emit(it.data)
+                } else {
+                    _serverError.emit(it.error)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                hideLoading()
+            }
+        }
+    }
+
+    fun editStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int) {
+        showLoading()
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putUserStore(userStoreModelRequest, storeId).collect {
+                if (it.ok) {
+                    _postUserStoreModel.emit(it.data)
                 } else {
                     _serverError.emit(it.error)
                 }
@@ -119,7 +129,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     fun removeCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
-            list.filter { it.name != categoryModel.name }
+            list.filter { it.menuType.name != categoryModel.name }
         }
     }
 
@@ -130,14 +140,18 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun changeSelectCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
             if (!categoryModel.isSelected) {
-                list.filter { it.name != categoryModel.name }
+                list.filter { it.menuType.name != categoryModel.name }
             } else {
                 if (list.size < 3) {
-                    list + categoryModel
+                    list + SelectCategoryModel(menuType = categoryModel)
                 } else {
                     list
                 }
             }
         }
+    }
+
+    fun setSelectCategoryModelList(selectCategoryModelList: List<SelectCategoryModel>) {
+        _selectCategoryList.value = selectCategoryModelList
     }
 }

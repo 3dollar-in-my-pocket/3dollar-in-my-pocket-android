@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.store_detail
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,17 +9,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.tabs.TabLayout
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
-import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
-import com.zion830.threedollars.ui.addstore.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.store_detail.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

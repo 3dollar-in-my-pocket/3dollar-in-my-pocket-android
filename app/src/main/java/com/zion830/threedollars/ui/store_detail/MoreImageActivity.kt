@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -42,7 +41,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     private val adapter: MoreImageAdapter by lazy {
         MoreImageAdapter(object : OnItemClickListener<Int> {
             override fun onClick(item: Int) {
-                Log.e("333333",item.toString())
                 StorePhotoDialog.getInstance(item, storeId).show(supportFragmentManager, StorePhotoDialog::class.java.name)
             }
         })

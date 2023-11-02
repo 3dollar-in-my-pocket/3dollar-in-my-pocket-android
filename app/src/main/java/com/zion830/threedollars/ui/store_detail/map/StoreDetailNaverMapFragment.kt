@@ -23,6 +23,7 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
 
     fun initMap(latLng: LatLng, isClosed: Boolean? = null) {
         moveCamera(latLng)
+        clearMarker()
         addMarker(if (isClosed == true) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
     }
 }

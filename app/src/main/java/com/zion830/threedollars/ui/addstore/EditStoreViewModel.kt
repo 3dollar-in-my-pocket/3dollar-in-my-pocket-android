@@ -12,8 +12,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,19 +38,6 @@ class EditStoreViewModel @Inject constructor(private val repository: StoreDataSo
         }
     }
 
-    fun requestStoreInfo(storeId: Int, latitude: Double, longitude: Double) {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _storeInfo.postValue(
-                repository.getStoreDetail(
-                    storeId,
-                    latitude,
-                    longitude,
-                    LocalDateTime.now().minusMonths(1)
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                ).body()?.data
-            )
-        }
-    }
 
     fun editStore(
         storeId: Int,

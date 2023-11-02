@@ -1,469 +1,571 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true">
 
-    <data>
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@null"
+        android:foreground="?actionBarItemBackground"
+        android:src="@drawable/ic_close_gray100_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <variable
-            name="viewModel"
-            type="com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel" />
+    <TextView
+        android:id="@+id/titleTextView"
+        style="@style/apple_gothic_bold.size_16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/edit_store"
+        android:textColor="@color/gray100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <import type="android.view.View" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/color_gray3"
-        android:clickable="true"
-        android:focusable="true">
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rect_white_bottom_corner"
-            android:elevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:layout_marginStart="24dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="@null"
-                android:foreground="?actionBarItemBackground"
-                android:src="@drawable/ic_arrow_left"
-                app:layout_constraintBottom_toBottomOf="@id/layout_title"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/map"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/fullScreenButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/circle_white_stroke_gray20"
+                android:elevation="8dp"
+                android:src="@drawable/ic_zoom"
+                app:layout_constraintBottom_toBottomOf="@id/map"
+                app:layout_constraintEnd_toEndOf="@id/map" />
+
+            <LinearLayout
+                android:id="@+id/layout_info"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_store"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_back" />
+                app:layout_constraintTop_toBottomOf="@id/map">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/scroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_title">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/map"
-                    android:layout_width="0dp"
-                    android:layout_height="264dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="49dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="24dp"
-                    android:padding="4dp"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="16dp"
-                    app:cardBackgroundColor="@color/color_white"
-                    app:cardCornerRadius="16dp"
-                    app:cardUseCompatPadding="true"
-                    app:layout_constraintBottom_toBottomOf="@id/map"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="24dp"
-                        android:paddingVertical="16dp">
-
-                        <TextView
-                            android:id="@+id/tv_address"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/color_black"
-                            android:textSize="18sp"
-                            android:fontFamily="@font/apple_gothic_bold"
-                            android:textStyle="bold"
-                            android:gravity="center_vertical"
-                            app:layout_constraintEnd_toStartOf="@id/ib_write"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="서울시\n관악구" />
-
-                        <ImageButton
-                            android:id="@+id/ib_write"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@android:color/transparent"
-                            android:src="@drawable/ic_write"
-                            android:tint="@color/color_sub_red"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
-
-                <LinearLayout
-                    android:id="@+id/layout_info"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="24dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/map">
+                    android:paddingHorizontal="20dp">
 
                     <TextView
+                        android:id="@+id/addressTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:paddingHorizontal="24dp"
-                        android:text="@string/store_info"
-                        android:textColor="@color/color_black"
-                        android:textSize="16sp" />
+                        android:text="@string/store_location"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/addressTextView"
+                        style="@style/apple_gothic_regular.size_14sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/color_white"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="24dp"
-                        android:paddingVertical="32dp">
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/rect_gray10_radius8"
+                        android:padding="12dp"
+                        android:textColor="@color/gray50"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/addressTitleTextView"
+                        tools:text="서울시" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
-                            android:text="@string/store_name"
-                            android:textColor="@color/color_black"
-                            android:fontFamily="@font/apple_gothic_bold"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/editAddressTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:text="@string/edit"
+                        android:textColor="@color/pink"
+                        app:layout_constraintBottom_toBottomOf="@id/addressTextView"
+                        app:layout_constraintEnd_toEndOf="@id/addressTextView"
+                        app:layout_constraintTop_toTopOf="@id/addressTextView" />
 
-                        <EditText
-                            android:id="@+id/et_name"
-                            android:layout_width="match_parent"
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:paddingHorizontal="20dp">
+
+                    <TextView
+                        android:id="@+id/storeNameTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/store_name"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/storeNameEditTextView"
+                        style="@style/apple_gothic_regular.size_14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/rect_gray10_radius8"
+                        android:hint="@string/hint_menu_location"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:padding="12dp"
+                        android:singleLine="true"
+                        android:textColor="@color/gray100"
+                        android:textColorHint="@color/gray50"
+                        app:layout_constraintTop_toBottomOf="@id/storeNameTextView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:paddingHorizontal="20dp">
+
+                    <TextView
+                        android:id="@+id/storeTypeTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/store_type"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/storeTypeSubTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/option"
+                        android:textColor="@color/gray40"
+                        app:layout_constraintStart_toEndOf="@id/storeTypeTitleTextView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/storeTypeTitleTextView">
+
+                        <RadioButton
+                            android:id="@+id/rb_type1"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/selector_edittext"
-                            android:hint="@string/hint_menu_location"
-                            android:imeOptions="actionDone"
-                            android:inputType="text"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
+                            android:button="@null"
+                            android:drawableStart="@drawable/selector_type_radio"
+                            android:drawablePadding="8dp"
                             android:maxLines="1"
-                            android:padding="16dp"
-                            android:singleLine="true"
-                            android:textColor="@color/color_black"
-                            android:textColorHint="@color/color_gray1"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/apple_gothic_bold"
-                            android:textStyle="bold" />
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/road"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
+                        <RadioButton
+                            android:id="@+id/rb_type2"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
-                            android:layout_marginBottom="16dp"
-                            android:orientation="horizontal">
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
+                            android:button="@null"
+                            android:drawableStart="@drawable/selector_type_radio"
+                            android:drawablePadding="8dp"
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/store"
+                            android:textColor="@color/selector_type_radio_text_color" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/store_type"
-                                android:textColor="@color/color_black"
-                                android:fontFamily="@font/apple_gothic_bold"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="@string/option"
-                                android:textColor="@color/color_gray1" />
-                        </LinearLayout>
-
-                        <RadioGroup
-                            android:layout_width="wrap_content"
+                        <RadioButton
+                            android:id="@+id/rb_type3"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_type_radio_background"
+                            android:button="@null"
+                            android:drawableStart="@drawable/selector_type_radio"
+                            android:drawablePadding="8dp"
+                            android:maxLines="1"
+                            android:paddingHorizontal="24dp"
+                            android:paddingVertical="8dp"
+                            android:text="@string/convenience_store"
+                            android:textColor="@color/selector_type_radio_text_color" />
+                    </RadioGroup>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                            <RadioButton
-                                android:id="@+id/rb_type1"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_radio"
-                                android:drawablePadding="8dp"
-                                android:text="@string/road" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:paddingHorizontal="20dp">
 
-                            <RadioButton
-                                android:id="@+id/rb_type2"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_radio"
-                                android:drawablePadding="8dp"
-                                android:text="@string/store" />
-
-                            <RadioButton
-                                android:id="@+id/rb_type3"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_radio"
-                                android:drawablePadding="8dp"
-                                android:text="@string/convenience_store" />
-                        </RadioGroup>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
-                            android:layout_marginBottom="16dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/payment_type"
-                                android:textColor="@color/color_black"
-                                android:fontFamily="@font/apple_gothic_bold"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="@string/option"
-                                android:textColor="@color/color_gray1" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:text="@string/enable_multi_select"
-                                android:textColor="@color/color_sub_red"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <CheckBox
-                                android:id="@+id/cb_type1"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_checkbox"
-                                android:drawablePadding="8dp"
-                                android:text="@string/cash" />
-
-                            <CheckBox
-                                android:id="@+id/cb_type2"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_checkbox"
-                                android:drawablePadding="8dp"
-                                android:text="@string/card" />
-
-                            <CheckBox
-                                android:id="@+id/cb_type3"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="@android:color/transparent"
-                                android:button="@null"
-                                android:drawableStart="@drawable/selector_type_checkbox"
-                                android:drawablePadding="8dp"
-                                android:text="@string/banking" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
-                            android:layout_marginBottom="16dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/show_type"
-                                android:textColor="@color/color_black"
-                                android:fontFamily="@font/apple_gothic_bold"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="4dp"
-                                android:text="@string/option"
-                                android:textColor="@color/color_gray1" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:text="@string/enable_multi_select"
-                                android:textColor="@color/color_sub_red"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/paymentsTypeTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="16dp">
+                        android:text="@string/payment_type"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:paddingVertical="16dp"
-                            android:text="@string/category"
-                            android:textColor="@color/color_black"
-                            android:textSize="16sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/btn_clear_category"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingVertical="16dp"
-                            android:text="@string/category_delete_all"
-                            android:textColor="@color/color_main_red"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_category"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/paymentsTypeSubTitleTextView"
+                        style="@style/apple_gothic_regular.size_14sp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/option"
+                        android:textColor="@color/gray40"
+                        app:layout_constraintStart_toEndOf="@id/paymentsTypeTitleTextView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/apple_gothic_bold.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/enable_multi_select"
+                        android:textColor="@color/pink"
+                        app:layout_constraintStart_toEndOf="@id/paymentsTypeSubTitleTextView"
+                        app:layout_constraintTop_toTopOf="@id/paymentsTypeSubTitleTextView" />
+
+                    <CheckBox
+                        android:id="@+id/cb_type1"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/selector_type_radio_background"
+                        android:button="@null"
+                        android:drawableStart="@drawable/selector_type_checkbox"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
                         android:paddingHorizontal="24dp"
-                        android:paddingVertical="24dp"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        app:spanCount="5"
-                        tools:listitem="@layout/item_selected_category" />
+                        android:paddingVertical="8dp"
+                        android:text="@string/cash"
+                        android:textColor="@color/selector_type_radio_text_color"
+                        app:layout_constraintEnd_toStartOf="@id/cb_type2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
+
+                    <CheckBox
+                        android:id="@+id/cb_type2"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/selector_type_radio_background"
+                        android:button="@null"
+                        android:drawableStart="@drawable/selector_type_checkbox"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingHorizontal="24dp"
+                        android:paddingVertical="8dp"
+                        android:text="@string/card"
+                        android:textColor="@color/selector_type_radio_text_color"
+                        app:layout_constraintEnd_toStartOf="@id/cb_type3"
+                        app:layout_constraintStart_toEndOf="@id/cb_type1"
+                        app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
+
+                    <CheckBox
+                        android:id="@+id/cb_type3"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/selector_type_radio_background"
+                        android:button="@null"
+                        android:drawableStart="@drawable/selector_type_checkbox"
+                        android:drawablePadding="4dp"
+                        android:maxLines="1"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="8dp"
+                        android:text="@string/banking"
+                        android:textColor="@color/selector_type_radio_text_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/cb_type2"
+                        app:layout_constraintTop_toBottomOf="@id/paymentsTypeTitleTextView" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:paddingHorizontal="20dp">
+
+                    <TextView
+                        android:id="@+id/appearanceDayTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_type"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/appearanceDaySubTitleTextView"
+                        style="@style/apple_gothic_regular.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/option"
+                        android:textColor="@color/gray40"
+                        app:layout_constraintStart_toEndOf="@id/appearanceDayTitleTextView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/apple_gothic_bold.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/enable_multi_select"
+                        android:textColor="@color/pink"
+                        app:layout_constraintStart_toEndOf="@id/appearanceDaySubTitleTextView"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="24dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginBottom="16dp"
-                        android:orientation="horizontal">
+                        android:layout_height="36dp"
+                        android:layout_marginTop="12dp"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/appearanceDayTitleTextView">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/menu_detail"
-                            android:textColor="@color/color_black"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/apple_gothic_bold"
-                            android:textStyle="bold" />
+                        <ToggleButton
+                            android:id="@+id/tb_mon"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/monday"
+                            android:textOn="@string/monday" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="@string/option"
-                            android:textColor="@color/color_gray1" />
+                        <ToggleButton
+                            android:id="@+id/tb_tue"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/tuesday"
+                            android:textOn="@string/tuesday" />
+
+                        <ToggleButton
+                            android:id="@+id/tb_wen"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/wednesday"
+                            android:textOn="@string/wednesday" />
+
+                        <ToggleButton
+                            android:id="@+id/tb_thur"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/thursday"
+                            android:textOn="@string/thursday" />
+
+                        <ToggleButton
+                            android:id="@+id/tb_fri"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/friday"
+                            android:textOn="@string/friday" />
+
+                        <ToggleButton
+                            android:id="@+id/tb_sat"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/saturday"
+                            android:textOn="@string/saturday" />
+
+                        <ToggleButton
+                            android:id="@+id/tb_sun"
+                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/btn_toggle_pink"
+                            android:textColor="@color/selector_type_radio_text_color"
+                            android:textOff="@string/sunday"
+                            android:textOn="@string/sunday" />
                     </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:background="@color/gray0"
+                    android:paddingHorizontal="20dp">
+
+                    <TextView
+                        android:id="@+id/categoryTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/category"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/btn_clear_category"
+                        style="@style/apple_gothic_bold.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:drawablePadding="4dp"
+                        android:text="@string/category_delete_all"
+                        android:textColor="@color/red"
+                        app:drawableStartCompat="@drawable/ic_delete_12"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/categoryCardView"
+                        android:layout_width="0dp"
+                        android:layout_height="102dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="12dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toTopOf="@+id/menuRecyclerView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryTitleTextView">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_category"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="8dp"
+                            android:background="@color/white"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_selected_category" />
+                    </androidx.cardview.widget.CardView>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_menu"
+                        android:id="@+id/menuRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="120dp"
+                        android:background="@color/gray0"
                         android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryCardView"
                         tools:listitem="@layout/item_edit_category_menu" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.core.widget.NestedScrollView>
+                <Button
+                    android:id="@+id/submitButton"
+                    style="@style/apple_gothic_bold.size_16sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/selector_button_pink_gray30"
+                    android:paddingVertical="20dp"
+                    android:text="@string/edit_store_finish"
+                    android:textColor="@color/white"
+                    tools:ignore="UnusedAttribute" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
-            android:id="@+id/view_submit_back"
-            android:layout_width="232dp"
-            android:layout_height="72dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/back_navigation"
-            android:elevation="3dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.core.widget.NestedScrollView>
 
-        <Button
-            android:id="@+id/btn_submit"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="@drawable/ripple_translate"
-            android:elevation="4dp"
-            android:text="@string/edit_store_finish"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:fontFamily="@font/apple_gothic_bold"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/view_submit_back"
-            app:layout_constraintEnd_toEndOf="@id/view_submit_back"
-            app:layout_constraintStart_toStartOf="@id/view_submit_back"
-            app:layout_constraintTop_toTopOf="@id/view_submit_back"
-            tools:ignore="UnusedAttribute" />
-
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:elevation="10dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
