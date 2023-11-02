@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.store_detail.vm
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.home.domain.data.store.*
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
@@ -22,10 +24,7 @@ import javax.inject.Inject
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
-class StoreDetailViewModel @Inject constructor(
-    private val homeRepository: HomeRepository,
-    private val repository: StoreDataSource,
-) :
+class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeRepository) :
     BaseViewModel() {
 
     private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel?> = MutableStateFlow(null)
@@ -117,14 +116,6 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun deleteReview(reviewId: Int) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            repository.deleteReview(reviewId)
-            _msgTextId.postValue(R.string.success_delete_review)
-            _addReviewResult.postValue(true)
-        }
-    }
-
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int) {
         if (images.isEmpty()) {
             return
@@ -205,6 +196,18 @@ class StoreDetailViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.getStoreReview(storeId, sortType).cachedIn(viewModelScope).collect {
                 _reviewPagingData.value = it
+            }
+        }
+    }
+
+    fun reportReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest) {
+        viewModelScope.launch {
+            homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
+                if (it.ok) {
+                    Log.e("asdsad", it.data.toString())
+                } else {
+                    _serverError.emit(it.error)
+                }
             }
         }
     }

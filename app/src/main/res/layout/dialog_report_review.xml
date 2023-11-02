@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="24dp">
+
+    <ImageButton
+        android:id="@+id/closeImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        style="@style/apple_gothic_semi_bold.size_20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="신고 사유"
+        android:textColor="@color/gray100"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/reasonRadioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView">
+
+        <RadioButton
+            android:id="@+id/reasonButton1"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="@drawable/selector_radio"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checked_icon"
+            android:layoutDirection="rtl"
+            android:padding="12dp"
+            android:text="욕설, 비방, 혐오조장"
+            android:textAlignment="textStart"
+            android:textColor="@color/selector_report_reason_radio_text_color" />
+
+        <RadioButton
+            android:id="@+id/reasonButton2"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/selector_radio"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checked_icon"
+            android:layoutDirection="rtl"
+            android:padding="12dp"
+            android:text="홍보, 영리목적"
+            android:textAlignment="textStart"
+            android:textColor="@color/selector_report_reason_radio_text_color" />
+
+        <RadioButton
+            android:id="@+id/reasonButton3"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/selector_radio"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checked_icon"
+            android:layoutDirection="rtl"
+            android:padding="12dp"
+            android:text="도배, 스팸"
+            android:textAlignment="textStart"
+            android:textColor="@color/selector_report_reason_radio_text_color" />
+
+        <RadioButton
+            android:id="@+id/reasonButton4"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/selector_radio"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checked_icon"
+            android:layoutDirection="rtl"
+            android:padding="12dp"
+            android:text="불법 정보"
+            android:textAlignment="textStart"
+            android:textColor="@color/selector_report_reason_radio_text_color" />
+
+        <RadioButton
+            android:id="@+id/reasonButton5"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/selector_radio"
+            android:button="@null"
+            android:drawableStart="@drawable/selector_checked_icon"
+            android:layoutDirection="rtl"
+            android:padding="12dp"
+            android:text="기타"
+            android:textAlignment="textStart"
+            android:textColor="@color/selector_report_reason_radio_text_color" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/etcEditTextView"
+        style="@style/apple_gothic_regular.size_14sp"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/selector_edittext"
+        android:gravity="top"
+        android:hint="신고 사유 직접 입력"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLength="100"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/gray100"
+        android:textColorHint="@color/gray40"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reasonRadioGroup" />
+
+    <Button
+        android:id="@+id/finishButton"
+        style="@style/apple_gothic_semi_bold.size_14sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/selector_rect_radius_12_red"
+        android:elevation="@null"
+        android:enabled="false"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:text="@string/request_delete"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etcEditTextView"
+        tools:ignore="UnusedAttribute" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,6 +39,7 @@ import com.zion830.threedollars.ui.addstore.ui_model.StoreImage
 import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
 import com.zion830.threedollars.ui.report_store.DeleteStoreDialog
+import com.zion830.threedollars.ui.report_store.ReportReviewDialog
 import com.zion830.threedollars.ui.report_store.StorePhotoDialog
 import com.zion830.threedollars.ui.store_detail.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.store_detail.adapter.VisitHistoryAdapter
@@ -90,7 +91,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
-//                    viewModel.deleteReview(item.reviewId)
+                        ReportReviewDialog.getInstance(item,storeId).show(supportFragmentManager,ReportReviewDialog::class.java.name)
                     }
                 }
             }, reviewClickListener = {
