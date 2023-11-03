@@ -124,6 +124,7 @@
         style="@style/apple_gothic_regular.size_14sp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:background="@drawable/rect_radius_8_gray_10"
         android:padding="12dp"
         android:text="@string/review_blind"

@@ -7,7 +7,10 @@ import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
+import com.threedollar.network.data.Reason
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
@@ -17,6 +20,7 @@ import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MenuRequest
+import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 
 fun AdvertisementResponse.asModel() = AdvertisementModel(
@@ -271,9 +275,11 @@ fun String.asReviewStatusType() = when (this) {
     "POSTED" -> {
         ReviewStatusType.POSTED
     }
+
     "FILTERED" -> {
         ReviewStatusType.FILTERED
     }
+
     else -> {
         ReviewStatusType.DELETED
     }
@@ -493,4 +499,19 @@ fun PostUserStoreResponse.asModel() = PostUserStoreModel(
     storeName = storeName ?: "",
     updatedAt = updatedAt ?: "",
     userId = userId ?: 0
+)
+
+fun ReportReviewModelRequest.asRequest() = ReportReviewRequest(
+    reason = reason,
+    reasonDetail = reasonDetail
+)
+
+fun ReportReasonsResponse.asModel() = ReportReasonsModel(
+    reasonModels = reasons?.map { it.asModel() } ?: listOf()
+)
+
+fun Reason.asModel() = ReasonModel(
+    description = description ?: "",
+    hasReasonDetail = hasReasonDetail ?: false,
+    type = type ?: ""
 )

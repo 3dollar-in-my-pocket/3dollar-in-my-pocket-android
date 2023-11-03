@@ -12,6 +12,8 @@ import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.data.store.*
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.ReportReasonsGroupType
+import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.SharedPrefUtils
@@ -233,6 +235,20 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>> =
         homeRemoteDataSource.putUserStore(userStoreRequest = userStoreModelRequest.asRequest(), storeId = storeId).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error
+            )
+        }
+
+    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.reportStoreReview(storeId, reviewId, reportReviewModelRequest.asRequest())
+
+    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>> =
+        homeRemoteDataSource.getReportReasons(reportReasonsGroupType).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),

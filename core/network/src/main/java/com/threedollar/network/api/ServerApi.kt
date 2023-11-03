@@ -1,6 +1,7 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
@@ -136,5 +137,15 @@ interface ServerApi {
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 
     @PUT("/api/v2/store/{storeId}")
-    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int) : Response<BaseResponse<PostUserStoreResponse>>
+    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int): Response<BaseResponse<PostUserStoreResponse>>
+
+    @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
+    suspend fun reportStoreReview(
+        @Path("storeId") storeId: Int,
+        @Path("reviewId") reviewId: Int,
+        @Body reportReviewRequest: ReportReviewRequest,
+    ): Response<BaseResponse<String>>
+
+    @GET("/api/v1/report/group/{group}/reasons")
+    suspend fun getReportReasons(@Path("group") group: String) : Response<BaseResponse<ReportReasonsResponse>>
 }

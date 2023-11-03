@@ -1,7 +1,9 @@
 package com.home.data.datasource
 
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.store.*
@@ -143,5 +145,13 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>> = flow {
         emit(apiResult(serverApi.putUserStore(userStoreRequest = userStoreRequest, storeId = storeId)))
+    }
+
+    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.reportStoreReview(storeId, reviewId, reportReviewRequest)))
+    }
+
+    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {
+        emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
     }
 }

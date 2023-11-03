@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.store_detail
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import androidx.activity.viewModels
@@ -13,9 +14,12 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
 import com.zion830.threedollars.ui.report_store.AddReviewDialog
+import com.zion830.threedollars.ui.report_store.ReportReviewDialog
 import com.zion830.threedollars.ui.store_detail.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -34,7 +38,12 @@ class StoreReviewDetailActivity :
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
-//                    viewModel.deleteReview(item.reviewId)
+                        if(item.reviewReport.reportedByMe){
+                            showAlreadyReportDialog()
+                        }
+                        else {
+                            ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                        }
                     }
                 }
             }
@@ -70,9 +79,11 @@ class StoreReviewDetailActivity :
                     0 -> {
                         ReviewSortType.LATEST
                     }
+
                     1 -> {
                         ReviewSortType.HIGHEST_RATING
                     }
+
                     else -> {
                         ReviewSortType.LOWEST_RATING
                     }
@@ -100,8 +111,26 @@ class StoreReviewDetailActivity :
                         }
                     }
                 }
+
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let { showToast(it) }
+                    }
+                }
             }
         }
+    }
+
+    private fun showAlreadyReportDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("신고")
+        builder.setMessage("이미 신고한 댓글입니다!")
+
+        builder.setPositiveButton("확인") { dialog, which ->
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     companion object {
