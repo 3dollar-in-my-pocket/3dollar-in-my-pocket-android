@@ -17,10 +17,6 @@ abstract class SourceModule {
 
     @Singleton
     @Binds
-    abstract fun bindPopupDataSource(impl: PopupDataSourceImpl): PopupDataSource
-
-    @Singleton
-    @Binds
     abstract fun bindStoreDataSource(impl: StoreDataSourceImpl): StoreDataSource
 
     @Singleton

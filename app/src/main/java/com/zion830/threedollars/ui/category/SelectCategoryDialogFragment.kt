@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.category
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -10,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,7 +20,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.category.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.home.HomeViewModel
@@ -31,7 +28,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.BR
 import zion830.com.common.base.loadUrlImg
 
 @AndroidEntryPoint

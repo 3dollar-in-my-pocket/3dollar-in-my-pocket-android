@@ -26,11 +26,9 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseActivity
 import javax.inject.Inject

@@ -19,7 +19,6 @@ import com.zion830.threedollars.ui.store_detail.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

@@ -20,20 +20,11 @@ object LegacySharedPrefUtils {
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
     private const val CATEGORY_LIST = "category_list"
     private const val TRUCK_CATEGORY_LIST = "truck_category_list"
-    private const val FEED_BACK_LIST = "feed_back_list"
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
-    private const val POPUP_URL = "popup_url"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
-
-    fun getPopupUrl() = sharedPreferences.getString(POPUP_URL, "")
-
-    fun setPopupUrl(url: String) = sharedPreferences.edit {
-        putString(POPUP_URL, url)
-        commit()
-    }
 
     fun saveAccessToken(accessToken: String?) = sharedPreferences.edit {
         putString(ACCESS_TOKEN_KEY, accessToken)
@@ -65,8 +56,6 @@ object LegacySharedPrefUtils {
     }
 
     fun getAccessToken() = sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
-
-    fun getUserId() = sharedPreferences.getInt(USER_ID_KEY, -1)
 
     fun getKakaoAccessToken() = sharedPreferences.getString(KAKAO_ACCESS_TOKEN, null)
 
@@ -110,18 +99,6 @@ object LegacySharedPrefUtils {
             val gson = Gson()
             val json = sharedPreferences.getString(TRUCK_CATEGORY_LIST, null)
             val type: Type = object : TypeToken<List<CategoryModel>?>() {}.type
-            gson.fromJson(json, type)
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-
-    fun getFeedbackType(): List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel> {
-        return try {
-            val gson = Gson()
-            val json = sharedPreferences.getString(FEED_BACK_LIST, null)
-            val type: Type = object :
-                TypeToken<List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()

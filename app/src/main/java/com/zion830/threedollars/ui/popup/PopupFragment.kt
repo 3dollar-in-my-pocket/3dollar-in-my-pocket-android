@@ -22,12 +22,8 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.databinding.FragmentPopupBinding
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
 import java.net.URISyntaxException
 import javax.inject.Inject
 

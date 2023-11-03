@@ -5,9 +5,23 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.store.*
+import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
+import com.threedollar.network.data.store.PostUserStoreResponse
+import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.SaveImagesResponse
+import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.*
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
+import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.UserStoreRequest
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 

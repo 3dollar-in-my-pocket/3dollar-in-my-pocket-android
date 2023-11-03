@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +16,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.home.domain.data.store.ReasonModel
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.request.ReportReviewModelRequest
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
 import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
-import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

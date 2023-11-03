@@ -20,8 +20,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
 
-    private var isFirstOpen = true
-
     override val viewModel: AddStoreViewModel by activityViewModels()
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment

@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.map
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModel
 import com.home.domain.repository.HomeRepository
