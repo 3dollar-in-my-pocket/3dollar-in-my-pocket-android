@@ -44,5 +44,37 @@
         android:id="@+id/navigation_write"
         android:name="com.zion830.threedollars.ui.addstore.NewAddressFragment"
         android:label="@string/title_add_store"
-        tools:layout="@layout/fragment_new_address" />
+        tools:layout="@layout/fragment_new_address">
+
+        <action
+            android:id="@+id/action_navigation_write_to_navigation_write_detail"
+            app:destination="@id/navigation_write_detail"
+            app:popUpTo="@id/navigation_write"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_navigation_write_to_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_write"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_write_detail"
+        android:name="com.zion830.threedollars.ui.addstore.AddStoreDetailFragment"
+        android:label="@string/title_add_store"
+        tools:layout="@layout/fragment_add_store">
+
+        <action
+            android:id="@+id/action_navigation_write_detail_to_navigation_write"
+            app:destination="@id/navigation_write"
+            app:popUpTo="@id/navigation_write_detail"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_navigation_write_detail_to_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_write_detail"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

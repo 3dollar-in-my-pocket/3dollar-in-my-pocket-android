@@ -1,13 +1,11 @@
 package com.zion830.threedollars.ui.report_store.map
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.ui.addstore.AddStoreViewModel
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.map.NaverMapFragment
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,16 +42,5 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         super.onMyLocationLoaded(position)
         addStoreViewModel.updateLocation(position)
         isIdleAvailable = true
-    }
-
-    companion object {
-        fun getInstance(latLng: LatLng?) = StoreAddNaverMapFragment().apply {
-            latLng?.let {
-                val bundle = Bundle()
-                bundle.putDouble(NewStoreActivity.KEY_LATITUDE, latLng.latitude)
-                bundle.putDouble(NewStoreActivity.KEY_LONGITUDE, latLng.longitude)
-                arguments = bundle
-            }
-        }
     }
 }

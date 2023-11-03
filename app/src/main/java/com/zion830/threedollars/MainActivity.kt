@@ -23,7 +23,6 @@ import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -94,22 +93,25 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
                 R.id.navigation_home -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
                 }
 
                 R.id.navigation_write -> {
-                    startActivity(NewStoreActivity.getInstance(this, null))
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(false)
                 }
 
                 R.id.navigation_vote -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
                 }
 
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
                     binding.navView.itemBackgroundResource = android.R.color.black
+                    showBottomNavigation(true)
                 }
             }
             true
@@ -194,6 +196,10 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
                 binding.navView.selectedItemId = R.id.navigation_mypage
             }
         }
+    }
+
+    fun showBottomNavigation(state: Boolean) {
+        binding.navView.isVisible = state
     }
 
     companion object {

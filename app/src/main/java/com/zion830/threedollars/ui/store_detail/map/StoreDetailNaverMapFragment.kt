@@ -13,10 +13,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StoreDetailNaverMapFragment : NaverMapFragment() {
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         binding.btnFindLocation.isVisible = false
         map.uiSettings.setLogoMargin(0, SizeUtils.dpToPx(300f), 0, 0) // 로고 가려지도록
     }

@@ -39,7 +39,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     }
 
     private fun initMap() {
-        naverMapFragment = StoreAddNaverMapFragment.getInstance(viewModel.selectedLocation.value)
+        naverMapFragment = StoreAddNaverMapFragment()
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()
     }
 

@@ -128,10 +128,6 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
         _selectedLocation.value = latLng
     }
 
-    fun updateCategory(list: List<SelectedCategory>) {
-//        _selectedCategory.value = list.toList()
-    }
-
     fun removeCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
             list.filter { it.menuType.name != categoryModel.name }

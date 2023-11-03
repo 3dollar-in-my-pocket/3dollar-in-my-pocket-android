@@ -1,12 +1,15 @@
 package com.zion830.threedollars.ui.addstore
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.AddCategoryModel
 import com.home.domain.data.store.DayOfTheWeekType
@@ -17,6 +20,7 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
@@ -28,6 +32,7 @@ import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.navigateSafe
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -35,7 +40,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>() {
-
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 
@@ -57,11 +61,35 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
+    private lateinit var callback: OnBackPressedCallback
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        initNavigationBar()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    }
+
     override fun initView() {
         initMap()
         initButton()
         initAdapter()
         initFlows()
+    }
+
+    private fun initNavigationBar() {
+        if (requireActivity() is MainActivity) {
+            (requireActivity() as MainActivity).showBottomNavigation(false)
+        }
     }
 
     private fun initFlows() {
@@ -88,7 +116,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 launch {
                     viewModel.postUserStoreModel.collect {
                         it?.let {
-                            requireActivity().finish()
+                            findNavController().navigateSafe(R.id.action_navigation_write_detail_to_home)
                             showToast(R.string.add_store_success)
                         }
                     }
@@ -112,11 +140,11 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
     private fun initButton() {
         binding.backButton.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
         }
         binding.editAddressTextView.setOnClickListener {
             EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
-            requireActivity().supportFragmentManager.popBackStack()
+            findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
         }
         binding.btnClearCategory.setOnClickListener {
             addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
@@ -135,7 +163,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private fun initMap() {
         naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
             override fun onTouch() {
-                // 지도 스크롤 이벤트 구분용
                 binding.scroll.requestDisallowInterceptTouchEvent(true)
             }
         })

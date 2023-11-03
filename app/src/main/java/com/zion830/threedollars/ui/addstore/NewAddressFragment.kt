@@ -1,24 +1,24 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.os.Bundle
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.naver.maps.geometry.LatLng
+import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
-import com.threedollar.common.ext.addNewFragment
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
 import com.zion830.threedollars.ui.addstore.view.NearExistDialog
 import com.zion830.threedollars.ui.report_store.map.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
@@ -27,29 +27,47 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
 
     private lateinit var naverMapFragment: StoreAddNaverMapFragment
 
-    private var latitude by Delegates.notNull<Double>()
-    private var longitude by Delegates.notNull<Double>()
+    private lateinit var callback: OnBackPressedCallback
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().navigateSafe(R.id.action_navigation_write_to_home)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        initNavigationBar()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    }
 
     override fun initView() {
-        latitude = arguments?.getDouble(NewStoreActivity.KEY_LATITUDE) ?: -1.0
-        longitude = arguments?.getDouble(NewStoreActivity.KEY_LONGITUDE) ?: -1.0
-
         initMap()
         initFlows()
         initButton()
     }
 
+    private fun initNavigationBar() {
+        if (requireActivity() is MainActivity) {
+            (requireActivity() as MainActivity).showBottomNavigation(false)
+        }
+    }
+
     private fun initButton() {
         binding.backButton.setOnClickListener {
-            requireActivity().onBackPressed()
+            findNavController().navigate(R.id.action_navigation_write_to_home)
         }
         binding.finishButton.setOnClickListener {
-            viewModel.getStoreNearExists(LatLng(latitude, longitude))
+            viewModel.selectedLocation.value?.let { location -> viewModel.getStoreNearExists(location) }
         }
     }
 
     private fun initMap() {
-        naverMapFragment = StoreAddNaverMapFragment.getInstance(LatLng(latitude, longitude))
+        naverMapFragment = StoreAddNaverMapFragment()
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()
         naverMapFragment.setIsShowOverlay(false)
     }
@@ -76,8 +94,6 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                         if (latLng != null) {
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
                             viewModel.requestStoreInfo(latLng)
-                            latitude = latLng.latitude
-                            longitude = latLng.longitude
                         }
                     }
                 }
@@ -86,36 +102,23 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
     }
 
     private fun showNearExistDialog() {
-        NearExistDialog.getInstance(latitude, longitude)
-            .apply {
-                setDialogListener(object : NearExistDialog.DialogListener {
-                    override fun accept() {
-                        moveAddStoreDetailFragment()
-                    }
-                })
-            }.show(parentFragmentManager, "")
+        viewModel.selectedLocation.value?.let { location ->
+            NearExistDialog.getInstance(location.latitude, location.longitude)
+                .apply {
+                    setDialogListener(object : NearExistDialog.DialogListener {
+                        override fun accept() {
+                            moveAddStoreDetailFragment()
+                        }
+                    })
+                }.show(parentFragmentManager, NearExistDialog().tag)
+        }
     }
 
     private fun moveAddStoreDetailFragment() {
-        requireActivity().supportFragmentManager.addNewFragment(
-            R.id.container,
-            AddStoreDetailFragment(),
-            AddStoreDetailFragment::class.java.name,
-            false
-        )
+        findNavController().navigateSafe(R.id.action_navigation_write_to_navigation_write_detail)
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentNewAddressBinding =
         FragmentNewAddressBinding.inflate(inflater, container, false)
 
-    companion object {
-        fun getInstance(latLng: LatLng?) = NewAddressFragment().apply {
-            latLng?.let {
-                val bundle = Bundle()
-                bundle.putDouble(NewStoreActivity.KEY_LATITUDE, latLng.latitude)
-                bundle.putDouble(NewStoreActivity.KEY_LONGITUDE, latLng.longitude)
-                arguments = bundle
-            }
-        }
-    }
 }
