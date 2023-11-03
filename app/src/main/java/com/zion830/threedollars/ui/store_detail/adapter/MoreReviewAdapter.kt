@@ -24,11 +24,6 @@ class MoreReviewAdapter(private val reviewEditOrDeleteClickEvent: OnItemClickLis
     override fun onBindViewHolder(holder: MoreReviewViewHolder, position: Int) {
         holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, position)
     }
-
-    companion object {
-        private const val VIEW_TYPE_REVIEW = 1
-        private const val VIEW_TYPE_BLIND = 2
-    }
 }
 
 class MoreReviewViewHolder(private val binding: ItemMoreReviewBinding) : RecyclerView.ViewHolder(binding.root) {

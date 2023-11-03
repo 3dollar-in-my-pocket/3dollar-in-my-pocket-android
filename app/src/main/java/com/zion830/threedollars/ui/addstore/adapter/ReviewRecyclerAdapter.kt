@@ -2,9 +2,11 @@ package com.zion830.threedollars.ui.addstore.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.ReviewStatusType
 import com.home.domain.data.store.UserStoreDetailEmptyItem
 import com.home.domain.data.store.UserStoreDetailItem
 import com.home.domain.data.store.UserStoreMoreResponse
@@ -85,28 +87,33 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
         reviewClickListener: () -> Unit,
         position: Int,
     ) {
-        binding.root.setOnClickListener { reviewClickListener() }
-        binding.reviewTextView.text = item.review.contents
-        binding.nameTextView.text = item.reviewWriter.name
-        binding.medalTextView.text = item.reviewWriter.medal.name
-        binding.medalImageView.loadImage(item.reviewWriter.medal.iconUrl)
-        binding.createdAtTextView.text = StringUtils.getTimeString(item.review.createdAt, "yy.MM.dd E")
-        binding.reviewRatingBar.rating = item.review.rating.toFloat()
+        binding.blindTextView.isVisible = item.review.status != ReviewStatusType.POSTED
+        binding.reviewConstraintLayout.isVisible = item.review.status == ReviewStatusType.POSTED
 
-        if (position % 2 == 0) {
-            binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_gray_0)
-            binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
-            binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
-        } else {
-            binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_pink_100)
-            binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_white)
-            binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
+        if (item.review.status == ReviewStatusType.POSTED) {
+            binding.reviewConstraintLayout.setOnClickListener { reviewClickListener() }
+            binding.reviewTextView.text = item.review.contents
+            binding.nameTextView.text = item.reviewWriter.name
+            binding.medalTextView.text = item.reviewWriter.medal.name
+            binding.medalImageView.loadImage(item.reviewWriter.medal.iconUrl)
+            binding.createdAtTextView.text = StringUtils.getTimeString(item.review.createdAt, "yy.MM.dd E")
+            binding.reviewRatingBar.rating = item.review.rating.toFloat()
+
+            if (position % 2 == 0) {
+                binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_gray_0)
+                binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
+                binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
+            } else {
+                binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_pink_100)
+                binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_white)
+                binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
+            }
+
+            binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
+            binding.reportAndEditTextView.text =
+                if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
+                    .getString(R.string.review_report)
         }
-
-        binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
-        binding.reportAndEditTextView.text =
-            if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
-                .getString(R.string.review_report)
     }
 }
 
