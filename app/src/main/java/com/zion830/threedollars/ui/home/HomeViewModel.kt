@@ -93,6 +93,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             ).collect {
                 val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
                 if (it.ok) {
+                    updateCurrentLocation(location)
                     if (it.data?.contentModels?.isEmpty() == true) {
                         resultList.add(StoreEmptyResponse())
                     } else {
