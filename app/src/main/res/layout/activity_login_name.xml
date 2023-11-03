@@ -9,7 +9,7 @@
         
         <variable
             name="viewModel"
-            type="com.zion830.threedollars.ui.login.name.InputNameViewModel" />
+            type="com.zion830.threedollars.ui.login.viewModel.InputNameViewModel" />
     </data>
     
     <ScrollView

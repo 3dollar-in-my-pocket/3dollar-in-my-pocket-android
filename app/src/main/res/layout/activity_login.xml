@@ -1,79 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pink">
 
-    <data>
+    <ImageView
+        android:id="@+id/loginImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:src="@drawable/img_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
 
-        <variable
-            name="viewModel"
-            type="com.zion830.threedollars.ui.login.LoginViewModel" />
-    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginImageView"
+        app:layout_constraintVertical_bias="0">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <Button
+            android:id="@+id/btn_login_kakao"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/pink">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="24dp"
+            android:background="@drawable/btn_kakao"
+            android:drawableStart="@drawable/ic_kakao"
+            android:fontFamily="@font/apple_gothic_bold"
+            android:paddingHorizontal="62dp"
+            android:paddingVertical="12dp"
+            android:text="@string/login_kakao"
+            android:textColor="#381e1f"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/loginImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:scaleType="center"
-                android:src="@drawable/img_main"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3" />
+        <Button
+            android:id="@+id/btn_login_google"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/btn_kakao"
+            android:backgroundTint="@color/white"
+            android:drawableStart="@drawable/ic_logo_google"
+            android:fontFamily="@font/apple_gothic_bold"
+            android:paddingHorizontal="62dp"
+            android:paddingVertical="12dp"
+            android:text="@string/login_google"
+            android:textAllCaps="false"
+            android:textColor="#381e1f"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/loginImageView"
-                app:layout_constraintVertical_bias="0">
-
-                <Button
-                    android:id="@+id/btn_login_kakao"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="24dp"
-                    android:background="@drawable/btn_kakao"
-                    android:drawableStart="@drawable/ic_kakao"
-                    android:fontFamily="@font/apple_gothic_bold"
-                    android:paddingHorizontal="62dp"
-                    android:paddingVertical="12dp"
-                    android:text="@string/login_kakao"
-                    android:textColor="#381e1f"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btn_login_google"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/btn_kakao"
-                    android:backgroundTint="@color/white"
-                    android:drawableStart="@drawable/ic_logo_google"
-                    android:fontFamily="@font/apple_gothic_bold"
-                    android:paddingHorizontal="62dp"
-                    android:paddingVertical="12dp"
-                    android:text="@string/login_google"
-                    android:textAllCaps="false"
-                    android:textColor="#381e1f"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>

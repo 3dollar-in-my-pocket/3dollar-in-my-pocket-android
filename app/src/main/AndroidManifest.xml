@@ -38,7 +38,7 @@
         </service>
 
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.splash.ui.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -52,16 +52,16 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.login.ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.store_detail.StoreDetailActivity"
+            android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.addstore.activity.NewStoreActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
+            android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
@@ -87,7 +87,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.map.FullScreenMapActivity"
+            android:name=".ui.map.ui.FullScreenMapActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
@@ -113,7 +113,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
+            android:name=".ui.storeDetail.boss.ui.BossReviewActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -185,12 +185,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.zion830.threedollars.ui.login.name.InputNameActivity"
+            android:name="com.zion830.threedollars.ui.login.ui.InputNameActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".ui.store_detail.MoreImageActivity" />
+        <activity android:name=".ui.storeDetail.user.ui.MoreImageActivity" />
 
-        <activity android:name=".ui.store_detail.StoreReviewDetailActivity" />
+        <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

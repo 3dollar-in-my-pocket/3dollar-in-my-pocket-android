@@ -17,13 +17,14 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
@@ -34,7 +35,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
+class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ ActivityHomeBinding.inflate(it) }),
     ActivityCompat.OnRequestPermissionsResultCallback {
 
     @Inject

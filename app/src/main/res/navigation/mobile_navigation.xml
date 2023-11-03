@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.zion830.threedollars.ui.home.HomeFragment"
+        android:name="com.zion830.threedollars.ui.home.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home">
 
@@ -23,14 +23,14 @@
 
     <fragment
         android:id="@+id/navigation_home_list_view"
-        android:name="com.zion830.threedollars.ui.home.HomeListViewFragment"
+        android:name="com.zion830.threedollars.ui.home.ui.HomeListViewFragment"
         android:label="@string/fragment_home_list_view"
         tools:layout="@layout/fragment_home_list_view" />
 
 
     <fragment
         android:id="@+id/navigation_mypage"
-        android:name="com.zion830.threedollars.ui.mypage.MyPageFragment"
+        android:name="com.zion830.threedollars.ui.mypage.ui.MyPageFragment"
         android:label="@string/title_mypage"
         tools:layout="@layout/fragment_new_my_page" />
 
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/navigation_write"
-        android:name="com.zion830.threedollars.ui.addstore.NewAddressFragment"
+        android:name="com.zion830.threedollars.ui.write.ui.NewAddressFragment"
         android:label="@string/title_add_store"
         tools:layout="@layout/fragment_new_address">
 
@@ -61,7 +61,7 @@
 
     <fragment
         android:id="@+id/navigation_write_detail"
-        android:name="com.zion830.threedollars.ui.addstore.AddStoreDetailFragment"
+        android:name="com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment"
         android:label="@string/title_add_store"
         tools:layout="@layout/fragment_add_store">
 

@@ -1,143 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_black"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
 
-    <data>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/faq"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_back" />
 
-        <import type="android.view.View" />
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#2b2b2b"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-        <variable
-            name="viewModel"
-            type="com.zion830.threedollars.ui.mypage.vm.FAQViewModel" />
-    </data>
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="36dp"
+        android:background="@android:color/transparent"
+        android:foreground="?attr/actionBarItemBackground"
+        android:src="@drawable/ic_back_wh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/faq_message"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/view" />
+
+    <com.greenfrvr.hashtagview.HashtagView
+        android:id="@+id/hash_view_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:composeMode="linear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_message"
+        app:rowMargin="8dp"
+        app:selectionMode="true"
+        app:tagBackground="@drawable/selector_faq_tag"
+        app:tagMargin="4dp"
+        app:tagPaddingBottom="5dp"
+        app:tagPaddingLeft="16dp"
+        app:tagPaddingRight="16dp"
+        app:tagPaddingTop="5dp"
+        app:tagTextColor="@drawable/selector_faq_tag_color"
+        app:tagTextGravity="center"
+        app:tagTextSize="14sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/color_black"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/faq"
-            android:textColor="@color/color_white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_back" />
+        android:id="@+id/layout_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hash_view_tags">
 
         <View
-            android:id="@+id/view"
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="#2b2b2b"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title" />
-
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="36dp"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/actionBarItemBackground"
-            android:src="@drawable/ic_back_wh"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute" />
+            android:layout_height="8dp"
+            android:layout_gravity="bottom"
+            android:background="@color/color_main_red_opa50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tv_selected_category"
+            app:layout_constraintStart_toStartOf="@+id/tv_selected_category" />
 
         <TextView
-            android:id="@+id/tv_message"
+            android:id="@+id/tv_selected_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="@string/faq_message"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/view" />
-
-        <com.greenfrvr.hashtagview.HashtagView
-            android:id="@+id/hash_view_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_message"
-            app:composeMode="linear"
-            app:rowMargin="8dp"
-            app:selectionMode="true"
-            app:tagBackground="@drawable/selector_faq_tag"
-            app:tagMargin="4dp"
-            app:tagPaddingBottom="5dp"
-            app:tagPaddingLeft="16dp"
-            app:tagPaddingRight="16dp"
-            app:tagPaddingTop="5dp"
-            app:tagTextColor="@drawable/selector_faq_tag_color"
-            app:tagTextGravity="center"
-            app:tagTextSize="14sp" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hash_view_tags">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="8dp"
-                android:layout_gravity="bottom"
-                android:background="@color/color_main_red_opa50"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/tv_selected_category"
-                app:layout_constraintStart_toStartOf="@+id/tv_selected_category" />
-
-            <TextView
-                android:id="@+id/tv_selected_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="4dp"
-                android:singleLine="true"
-                android:textColor="@color/color_white"
-                android:layout_marginTop="16dp"
-                android:textSize="16sp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="가게" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_faqs"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="24dp"
-            android:clipToPadding="true"
-            android:paddingBottom="8dp"
+            android:fontFamily="@font/apple_gothic_bold"
+            android:paddingHorizontal="4dp"
+            android:singleLine="true"
             android:textColor="@color/color_white"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_category"
-            tools:listitem="@layout/item_faq_detail" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="가게" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_faqs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:clipToPadding="true"
+        android:paddingBottom="8dp"
+        android:textColor="@color/color_white"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_category"
+        tools:listitem="@layout/item_faq_detail" />
+</androidx.constraintlayout.widget.ConstraintLayout>
