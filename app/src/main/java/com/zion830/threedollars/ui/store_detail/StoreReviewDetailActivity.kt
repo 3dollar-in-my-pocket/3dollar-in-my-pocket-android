@@ -37,10 +37,9 @@ class StoreReviewDetailActivity :
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
-                        if(item.reviewReport.reportedByMe){
+                        if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
-                        }
-                        else {
+                        } else {
                             ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
@@ -107,6 +106,9 @@ class StoreReviewDetailActivity :
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
                             moreReviewAdapter.submitData(pagingData)
+                            binding.reviewRecyclerView.postDelayed({
+                                binding.reviewRecyclerView.smoothScrollToPosition(0)
+                            }, 300)
                         }
                     }
                 }

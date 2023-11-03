@@ -100,11 +100,11 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
             binding.reviewRatingBar.rating = item.review.rating.toFloat()
 
             if (position % 2 == 0) {
-                binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_gray_0)
+                binding.reviewConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_gray_0)
                 binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
                 binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
             } else {
-                binding.rootConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_pink_100)
+                binding.reviewConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_pink_100)
                 binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_white)
                 binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
             }
