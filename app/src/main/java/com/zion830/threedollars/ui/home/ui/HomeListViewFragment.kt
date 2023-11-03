@@ -19,11 +19,14 @@ import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
+import com.zion830.threedollars.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -40,7 +43,15 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
         AroundStoreListViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
-                // TODO: 상세화면으로 이동
+                if (item.storeModel.storeType == Constants.BOSS_STORE) {
+                    val intent =
+                        BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                } else {
+                    val intent =
+                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
+                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+                }
             }
         })
     }
