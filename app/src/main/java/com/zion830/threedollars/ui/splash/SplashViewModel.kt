@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.home.domain.repository.HomeRepository
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
@@ -12,7 +13,6 @@ import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.KakaoLoginDataSource
-import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class SplashViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val storeDataSource: StoreDataSource,
     private val userDataSource: UserDataSource,
-    private val popupDataSource: PopupDataSource,
+    private val homeRepository: HomeRepository,
     private val kakaoLoginDataSource: KakaoLoginDataSource,
 ) : BaseViewModel() {
 
@@ -64,13 +65,15 @@ class SplashViewModel @Inject constructor(
             }
 
 
-            val storeMarkerAdvertisements = popupDataSource.getPopups("STORE_MARKER")
-            if (storeMarkerAdvertisements.isSuccessful) {
-                val advertisements = storeMarkerAdvertisements.body()?.data.orEmpty()
-                if (advertisements.isNotEmpty()) {
-                    GlobalApplication.storeMarker = advertisements.first()
+            homeRepository.getAdvertisements("STORE_MARKER").collect{
+                if (it.ok) {
+                    val advertisements = it.data.orEmpty()
+                    if (advertisements.isNotEmpty()) {
+                        GlobalApplication.storeMarker = advertisements.first()
+                    }
                 }
             }
+
         }
     }
 

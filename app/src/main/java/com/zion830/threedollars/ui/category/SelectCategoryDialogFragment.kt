@@ -84,14 +84,12 @@ class SelectCategoryDialogFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_bottom_select_category, container, false)
+        binding = DialogBottomSelectCategoryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = this
-        binding.setVariable(BR.viewModel, viewModel)
         initView()
         initFlow()
     }
@@ -100,7 +98,6 @@ class SelectCategoryDialogFragment :
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         popupViewModel.getPopups("MENU_CATEGORY_BANNER")
-        initViewModel()
 
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
             val categories = LegacySharedPrefUtils.getCategories()
@@ -124,37 +121,42 @@ class SelectCategoryDialogFragment :
         }
     }
 
-    @SuppressLint("Range")
-    private fun initViewModel() {
-        popupViewModel.popups.observe(viewLifecycleOwner) { popups ->
-            if (popups.isNotEmpty()) {
-                val popup = popups[0]
-                binding.tvAdTitle.text = popup.title
-
-                binding.tvAdBody.text = popup.subTitle
-
-                popup.fontColor?.let {
-                    binding.tvAdTitle.setTextColor(it.toColorInt())
-                    binding.tvAdBody.setTextColor(it.toColorInt())
-                }
-                popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
-
-                binding.ivAdImage.loadUrlImg(popup.imageUrl)
-
-                binding.cdAdCategory.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                    EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
-                }
-            }
-            binding.cdAdCategory.isVisible = popups.isNotEmpty()
-        }
-    }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty()) {
+                            val popup = popups[0]
+                            binding.tvAdTitle.text = popup.title
+
+                            binding.tvAdBody.text = popup.subTitle
+
+                            popup.fontColor?.let {
+                                binding.tvAdTitle.setTextColor(it.toColorInt())
+                                binding.tvAdBody.setTextColor(it.toColorInt())
+                            }
+                            popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
+
+                            binding.ivAdImage.loadUrlImg(popup.imageUrl)
+
+                            binding.cdAdCategory.setOnClickListener {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
+                                EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
+                            }
+                        }
+                        binding.cdAdCategory.isVisible = popups.isNotEmpty()
+                    }
+                }
+                launch {
+                    popupViewModel.serverError.collect {
                         it?.let {
                             showToast(it)
                         }

@@ -8,6 +8,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.threedollar.common.base.BaseDialogFragment
@@ -15,6 +18,7 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 
 
@@ -44,11 +48,21 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
             dismiss()
         }
 
-        viewModel.popupsResponse.observe(viewLifecycleOwner) {
-            Glide.with(this)
-                .load(it.imageUrl)
-                .transform(GranularRoundedCorners(30f, 30f, 0f, 0f))
-                .into(binding.bannerImageView)
+        initFlow()
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.popupsResponse.collect {
+                        Glide.with(requireContext())
+                            .load(it?.imageUrl)
+                            .transform(GranularRoundedCorners(30f, 30f, 0f, 0f))
+                            .into(binding.bannerImageView)
+                    }
+                }
+            }
         }
     }
 

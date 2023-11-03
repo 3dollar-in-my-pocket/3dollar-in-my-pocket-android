@@ -3,20 +3,23 @@ package com.zion830.threedollars.ui.map
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.datasource.PopupDataSource
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.response.Popups
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MarkerClickViewModel @Inject constructor(private val userDataSource: UserDataSource,private val popupDataSource: PopupDataSource) : BaseViewModel() {
+class MarkerClickViewModel @Inject constructor(private val userDataSource: UserDataSource, private val homeRepository: HomeRepository) :
+    BaseViewModel() {
 
-    private val _popupsResponse : MutableLiveData<Popups> = MutableLiveData()
-    val popupsResponse : LiveData<Popups> get() = _popupsResponse
+    private val _popupsResponse: MutableStateFlow<AdvertisementModel?> = MutableStateFlow(null)
+    val popupsResponse: StateFlow<AdvertisementModel?> get() = _popupsResponse
 
     fun eventClick(targetType: String, targetId: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -24,11 +27,12 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
         }
     }
 
-    fun getPopups(){
+    fun getPopups() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val popups = popupDataSource.getPopups("STORE_MARKER_POPUP")
-            if (popups.isSuccessful) {
-                _popupsResponse.value = popups.body()?.data?.first()
+            homeRepository.getAdvertisements("STORE_MARKER_POPUP").collect {
+                if (it.ok) {
+                    _popupsResponse.value = it.data?.first()
+                }
             }
         }
     }
