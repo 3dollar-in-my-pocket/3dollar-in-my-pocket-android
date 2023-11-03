@@ -60,6 +60,9 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
                             .load(it?.imageUrl)
                             .transform(GranularRoundedCorners(30f, 30f, 0f, 0f))
                             .into(binding.bannerImageView)
+                        binding.titleTextView.text = it?.title
+                        binding.bodyTextView.text = it?.subTitle
+                        binding.downloadTextView.text = it?.extraContent
                     }
                 }
             }
