@@ -89,9 +89,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     override fun onSnapPositionChange(position: Int) {
                         if (adapter.getItemLocation(position) != null) {
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
-                            adapter.focusedIndex = position
+                            adapter.focusedIndex = if (position > 0) position -1 else position
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
-
                             adapter.getItemLocation(position)?.let {
                                 naverMapFragment.moveCameraWithAnim(it)
                             }
@@ -283,7 +282,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val position = adapter.getItemPosition(adAndStoreItem)
         if (position >= 0) {
             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
-            adapter.focusedIndex = position
+            adapter.focusedIndex = if (position > 0) position -1 else position
             naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is ContentModel) {
