@@ -31,6 +31,7 @@ class StorePhotoDialog : DialogFragment() {
     private var currentPosition = 0
     private val storeId: Int by lazy { arguments?.getInt(STORE_ID, -1) ?: -1 }
     private val adapter: StoreImageSliderAdapter by lazy { StoreImageSliderAdapter() }
+    private var isInitScroll = false
     override fun onStart() {
         super.onStart()
         if (dialog != null) {
@@ -52,7 +53,6 @@ class StorePhotoDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentPosition = arguments?.getInt(KEY_START_INDEX) ?: 0
         initAdapter()
         initButton()
         initViewModel()
@@ -65,11 +65,23 @@ class StorePhotoDialog : DialogFragment() {
 
     private fun initAdapter() {
         binding.slider.adapter = adapter
+        currentPosition = arguments?.getInt(KEY_START_INDEX) ?: 0
+
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.slider)
+        if(!isInitScroll) {
+            binding.slider.postDelayed({
+                if (currentPosition > 0) {
+                    isInitScroll = true
+                    binding.slider.scrollToPosition(currentPosition)
+                }
+            }, 200)
+        }
         binding.slider.addOnScrollListener(SnapOnScrollListener(snapHelper, onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
             override fun onSnapPositionChange(position: Int) {
-                currentPosition = position
+                if (isInitScroll) {
+                    currentPosition = position
+                }
             }
         }))
     }
@@ -117,11 +129,6 @@ class StorePhotoDialog : DialogFragment() {
                     viewModel.imagePagingData.collect {
                         it?.let { data ->
                             adapter.submitData(data)
-                            binding.slider.post {
-                                if (currentPosition > 0) {
-                                    binding.slider.scrollToPosition(currentPosition)
-                                }
-                            }
                         }
                     }
                 }
