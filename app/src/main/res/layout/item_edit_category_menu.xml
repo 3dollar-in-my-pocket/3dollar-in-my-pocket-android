@@ -1,76 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    
-    <data>
-        
-        <variable
-            name="item"
-            type="com.zion830.threedollars.ui.addstore.ui_model.SelectedCategory" />
-        
-        <variable
-            name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
-    </data>
-    
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_white">
-        
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:paddingHorizontal="12dp">
+
         <ImageView
             android:id="@+id/iv_menu_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_fish_white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_fish_white" />
+
         <TextView
             android:id="@+id/tv_menu"
+            style="@style/apple_gothic_semi_bold.size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@{item.menuType.name}"
-            android:textColor="@color/color_black"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/gray90"
             app:layout_constraintBottom_toBottomOf="@id/iv_menu_icon"
             app:layout_constraintStart_toEndOf="@id/iv_menu_icon"
-            app:layout_constraintTop_toTopOf="@id/iv_menu_icon" />
-        
+            app:layout_constraintTop_toTopOf="@id/iv_menu_icon"
+            tools:text="붕어빵" />
+
         <ImageButton
             android:id="@+id/ib_delete_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="14dp"
             android:background="@android:color/transparent"
-            android:onClick="@{() -> listener.onClick(item)}"
-            android:src="@drawable/ic_delete_small"
+            android:src="@drawable/ic_delete_20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_menu_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/tv_menu"
             tools:listitem="@layout/item_menu_edit" />
-    
+
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_marginTop="16dp"
-            android:background="@color/color_gray3"
+            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_menu_edit" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.cardview.widget.CardView>

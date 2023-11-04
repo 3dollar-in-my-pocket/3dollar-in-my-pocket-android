@@ -20,11 +20,11 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 import java.net.URISyntaxException
 
 @AndroidEntryPoint
-class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>(R.layout.fragment_popup) {
+class PopupFragment : LegacyBaseFragment<FragmentPopupBinding, PopupViewModel>(R.layout.fragment_popup) {
 
     override val viewModel: PopupViewModel by activityViewModels()
 

@@ -1,94 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/adCardView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardCornerRadius="16dp"
+    app:cardUseCompatPadding="true">
 
-    <data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="152dp"
+        android:background="@color/gray100"
+        android:clickable="true"
+        android:focusable="true"
+        tools:ignore="UnusedAttribute">
 
-        <variable
-            name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.Popups" />
+        <ImageView
+            android:id="@+id/iv_ad_image"
+            android:layout_width="88dp"
+            android:layout_height="152dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_launcher_background" />
 
-        <variable
-            name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
-    </data>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/adCardView"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
-        app:cardCornerRadius="16dp"
-        app:cardUseCompatPadding="true">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_item"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_ad"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{() -> listener.onClick(item)}"
-            android:paddingVertical="6dp"
-            tools:ignore="UnusedAttribute">
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rect_radius_40_black"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:text="@string/ad"
+            android:textColor="@color/pink"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/iv_ad_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_ad_image"
+            app:layout_constraintTop_toBottomOf="@id/tv_ad">
 
             <TextView
-                android:id="@+id/tv_ad"
-                android:layout_width="0dp"
+                android:id="@+id/titleTextView"
+                style="@style/apple_gothic_bold.size_16sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/rect_ff5c43_opacity_radius16"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/ad"
-                android:textColor="@color/color_FF5C43"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textColor="@color/white"
+                tools:text="가3팀이 붕어빵을 판다?" />
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/bodyTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/iv_ad_image"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_ad">
+                android:layout_marginTop="4dp"
+                android:textColor="@color/gray50"
+                tools:text="일이삼사오육칠팔구십일이" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_ad_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="6dp"
-                    android:text="@{item.title}"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    tools:text="가3팀이 붕어빵을 판다?" />
-
-                <TextView
-                    android:id="@+id/tv_ad_body"
-                    style="@style/LightTextViewStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="6dp"
-                    android:text="@{item.subTitle}"
-                    android:textColor="@color/color_FFA1AA"
-                    android:textSize="12sp"
-                    tools:text="일이삼사오육칠팔구십일이삼사일이삼사오육칠팔구십일이삼사" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/iv_ad_image"
-                android:layout_width="88dp"
-                android:layout_height="120dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_launcher_background" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-</layout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

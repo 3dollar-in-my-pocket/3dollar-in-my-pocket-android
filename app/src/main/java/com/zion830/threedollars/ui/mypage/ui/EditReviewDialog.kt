@@ -1,16 +1,16 @@
 package com.zion830.threedollars.ui.mypage.ui
 
-import android.content.Context
+import android.app.Dialog
 import android.graphics.Color
-import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
@@ -21,23 +21,40 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class EditReviewDialog(
     private val content: ReviewDetail?,
-    private val onComplete: (NewReview) -> Unit
-) : DialogFragment() {
+    private val onComplete: (NewReview) -> Unit,
+) : BottomSheetDialogFragment() {
+    private lateinit var binding: DialogAddReviewBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener {
+            val bottomSheetDialog = it as BottomSheetDialog
+            setupRatio(bottomSheetDialog)
+        }
+        return dialog
+    }
+
+    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+        val behavior = BottomSheetBehavior.from<View>(bottomSheet)
+        behavior.maxHeight = 100
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val binding = DialogAddReviewBinding.inflate(inflater)
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = DialogAddReviewBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        binding.lifecycleOwner = this
-        binding.ibClose.setOnClickListener {
+        binding.closeImageButton.setOnClickListener {
             dismiss()
         }
         binding.etContent.setText(content?.contents)
@@ -47,9 +64,11 @@ class EditReviewDialog(
                 binding.rating.rating == 0f -> {
                     showToast(R.string.over_rating_1)
                 }
+
                 binding.etContent.text.isBlank() -> {
                     showToast(R.string.input_content)
                 }
+
                 else -> {
                     val newReview =
                         NewReview(binding.etContent.text.toString(), binding.rating.rating)
@@ -61,20 +80,6 @@ class EditReviewDialog(
         binding.etContent.addTextChangedListener {
             binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()
         }
-        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        val windowManager =
-            requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display = windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-
-        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
-        val deviceWidth = size.x
-        params?.width = (deviceWidth * 0.9).toInt()
-        dialog?.window?.attributes = params as WindowManager.LayoutParams
-    }
 }

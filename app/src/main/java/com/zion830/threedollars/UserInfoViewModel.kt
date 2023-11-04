@@ -4,20 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseViewModel
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) :
-    BaseViewModel() {
+class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
 
     private val _userInfo: MutableLiveData<MyInfoResponse> = MutableLiveData()
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
@@ -12,12 +13,10 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class InputNameViewModel @Inject constructor(private val userDataSource: UserDataSource) :
-    BaseViewModel() {
+class InputNameViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
 
     val userName: MutableLiveData<String> = MutableLiveData("")
     private val latestSocialType: MutableLiveData<LoginType> =

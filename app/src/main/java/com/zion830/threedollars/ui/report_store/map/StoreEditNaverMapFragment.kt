@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
 import com.zion830.threedollars.ui.map.NaverMapFragment
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +38,7 @@ open class StoreEditNaverMapFragment(private val onMapUpdated: (LatLng?) -> Unit
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(58f))
         binding.btnFindLocation.layoutParams = params
 
-        viewModel.storeLocation.value?.let { moveCamera(it) }
+//        viewModel.storeLocation.value?.let { moveCamera(it) }
     }
 
     override fun onMyLocationLoaded(position: LatLng) {

@@ -11,7 +11,7 @@
         
         <variable
             name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+            type="com.threedollar.common.listener.OnItemClickListener" />
         
         <import type="android.view.View" />
     </data>

@@ -14,10 +14,10 @@ import com.zion830.threedollars.ui.mypage.vm.FAQViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
-class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.fragment_faq) {
+class FAQFragment : LegacyBaseFragment<FragmentFaqBinding, FAQViewModel>(R.layout.fragment_faq) {
 
     override val viewModel: FAQViewModel by viewModels()
 

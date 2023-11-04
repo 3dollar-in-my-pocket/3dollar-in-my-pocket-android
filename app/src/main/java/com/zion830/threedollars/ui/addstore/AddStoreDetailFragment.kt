@@ -1,89 +1,146 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.graphics.Rect
-import android.os.Handler
-import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
+import com.home.domain.data.store.AddCategoryModel
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.PaymentType
+import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.UserStoreModelRequest
+import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
-import com.zion830.threedollars.datasource.model.v2.request.MyMenu
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
+import com.zion830.threedollars.ui.category.AddStoreMenuCategoryDialogFragment
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
+import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
 import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>(R.layout.fragment_add_store) {
+class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>() {
+
 
     override val viewModel: AddStoreViewModel by activityViewModels()
 
-    private var isFirstOpen = true
-
-    private lateinit var addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter
-
-    private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter
-
-    override fun initView() {
-        binding.btnBack.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        binding.btnEditAddress.setOnClickListener {
-            EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        viewModel.selectedLocation.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = getCurrentLocationName(it)
-        }
-        viewModel.selectedCategory.observe(viewLifecycleOwner) {
-            addCategoryRecyclerAdapter.submitList(it.filter { category -> category.isSelected })
-            editCategoryMenuRecyclerAdapter.setItems(it.filter { category -> category.isSelected })
-        }
-
-        addCategoryRecyclerAdapter = AddCategoryRecyclerAdapter({
-            CategoryBottomSheetDialog().show(
+    private val addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter by lazy {
+        AddCategoryRecyclerAdapter({
+            AddStoreMenuCategoryDialogFragment().show(
                 parentFragmentManager,
-                CategoryBottomSheetDialog::class.java.name
+                AddStoreMenuCategoryDialogFragment::class.java.name
             )
         }, {
             viewModel.removeCategory(it)
         }
         )
-        editCategoryMenuRecyclerAdapter = EditCategoryMenuRecyclerAdapter {
-            viewModel.removeCategory(it)
-        }
+    }
 
-        binding.btnClearCategory.setOnClickListener {
-            editCategoryMenuRecyclerAdapter.clear()
-            addCategoryRecyclerAdapter.clear()
-            viewModel.removeAllCategory()
+    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
+        EditCategoryMenuRecyclerAdapter { viewModel.removeCategory(it) }
+    }
+
+    private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
+
+    override fun initView() {
+        initMap()
+        initButton()
+        initAdapter()
+        initFlows()
+    }
+
+    private fun initFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.selectedLocation.collect {
+                        binding.addressTextView.text = getCurrentLocationName(it)
+                        it?.let {
+                            delay(500L)
+                            val latLng = LatLng(it.latitude, it.longitude)
+                            naverMapFragment.initMap(latLng, false)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.postUserStoreModel.collect {
+                        it?.let {
+                            requireActivity().finish()
+                            showToast(R.string.add_store_success)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.selectCategoryList.collect {
+                        addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(it.size < 3)) + it.map { model -> model.menuType })
+                        editCategoryMenuRecyclerAdapter.setItems(it)
+                    }
+                }
+            }
         }
+    }
+
+    private fun initAdapter() {
         binding.rvCategory.adapter = addCategoryRecyclerAdapter
         binding.rvCategory.itemAnimator = null
-        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
-        binding.rvMenu.itemAnimator = null
-        binding.btnSubmit.setOnClickListener {
+        binding.menuRecyclerView.adapter = editCategoryMenuRecyclerAdapter
+        binding.menuRecyclerView.itemAnimator = null
+    }
+
+    private fun initButton() {
+        binding.backButton.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+        binding.editAddressTextView.setOnClickListener {
+            EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+        binding.btnClearCategory.setOnClickListener {
+            addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
+            viewModel.removeAllCategory()
+        }
+
+        binding.submitButton.setOnClickListener {
             EventTracker.logEvent(Constants.STORE_REGISTER_SUBMIT_BTN_CLICKED)
             saveStore()
         }
-        viewModel.newStoreId.observe(this) {
-            if (it >= 0) {
-                requireActivity().finish()
-                showToast(R.string.add_store_success)
-            } else {
-                showToast(R.string.failed_add_store)
-            }
+        binding.fullScreenButton.setOnClickListener {
+            moveFullScreenMap()
         }
-        initKeyboard()
+    }
+
+    private fun initMap() {
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
+        parentFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        naverMapFragment.setIsShowOverlay(false)
     }
 
     private fun saveStore() {
@@ -97,28 +154,39 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         }
 
         viewModel.addNewStore(
-            NewStoreRequest(
+            UserStoreModelRequest(
                 getAppearanceDays(),
                 viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                 viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
                 getMenuList().reversed(),
                 getPaymentMethod(),
-                viewModel.storeName.value ?: "이름 없음",
+                binding.storeNameEditTextView.text.toString(),
                 storeType = getStoreType()
             )
         )
     }
 
-    private fun getPaymentMethod(): List<String> {
-        val result = arrayListOf<String>()
+    private fun moveFullScreenMap() {
+        val latLng = viewModel.selectedLocation.value
+        val intent = FullScreenMapActivity.getIntent(
+            context = requireContext(),
+            latitude = latLng?.latitude,
+            longitude = latLng?.longitude,
+            name = binding.storeNameTextView.text.toString(),
+        )
+        startActivity(intent)
+    }
+
+    private fun getPaymentMethod(): List<PaymentType> {
+        val result = arrayListOf<PaymentType>()
         if (binding.cbType1.isChecked) {
-            result.add("CASH")
+            result.add(PaymentType.CASH)
         }
         if (binding.cbType2.isChecked) {
-            result.add("CARD")
+            result.add(PaymentType.CARD)
         }
         if (binding.cbType3.isChecked) {
-            result.add("ACCOUNT_TRANSFER")
+            result.add(PaymentType.ACCOUNT_TRANSFER)
         }
         return result
     }
@@ -137,16 +205,16 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         return result.firstOrNull()
     }
 
-    private fun getMenuList(): List<MyMenu> {
-        val menuList = arrayListOf<MyMenu>()
+    private fun getMenuList(): List<MenuModelRequest> {
+        val menuList = arrayListOf<MenuModelRequest>()
 
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
-            binding.rvMenu.getChildAt(i)?.let {
+            binding.menuRecyclerView.getChildAt(i)?.let {
                 val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
                 val editMenuRecyclerView = (view as RecyclerView)
                 val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
                 val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
+                    editCategoryMenuRecyclerAdapter.items[i].menuType.categoryId
                 } else {
                     ""
                 }
@@ -158,13 +226,13 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                     val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
 
                     if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MyMenu(category, name, price))
+                        menuList.add(MenuModelRequest(category, name, price))
                         isEmptyCategory = false
                     }
                 }
 
                 if (isEmptyCategory) {
-                    menuList.add(MyMenu(category, "", ""))
+                    menuList.add(MenuModelRequest(category, "", ""))
                 }
             }
         }
@@ -172,60 +240,41 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         return menuList
     }
 
-    private fun getAppearanceDays(): List<String> {
-        val result = arrayListOf<String>()
-        val const = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
-        if (binding.layoutBtnDayOfWeek.tbMon.isChecked) {
+    private fun getAppearanceDays(): List<DayOfTheWeekType> {
+        val result = arrayListOf<DayOfTheWeekType>()
+        val const = listOf(
+            DayOfTheWeekType.MONDAY,
+            DayOfTheWeekType.TUESDAY,
+            DayOfTheWeekType.WEDNESDAY,
+            DayOfTheWeekType.THURSDAY,
+            DayOfTheWeekType.FRIDAY,
+            DayOfTheWeekType.SATURDAY,
+            DayOfTheWeekType.SUNDAY
+        )
+        if (binding.tbMon.isChecked) {
             result.add(const[0])
         }
-        if (binding.layoutBtnDayOfWeek.tbTue.isChecked) {
+        if (binding.tbTue.isChecked) {
             result.add(const[1])
         }
-        if (binding.layoutBtnDayOfWeek.tbWen.isChecked) {
+        if (binding.tbWen.isChecked) {
             result.add(const[2])
         }
-        if (binding.layoutBtnDayOfWeek.tbThur.isChecked) {
+        if (binding.tbThur.isChecked) {
             result.add(const[3])
         }
-        if (binding.layoutBtnDayOfWeek.tbFri.isChecked) {
+        if (binding.tbFri.isChecked) {
             result.add(const[4])
         }
-        if (binding.layoutBtnDayOfWeek.tbSat.isChecked) {
+        if (binding.tbSat.isChecked) {
             result.add(const[5])
         }
-        if (binding.layoutBtnDayOfWeek.tbSun.isChecked) {
+        if (binding.tbSun.isChecked) {
             result.add(const[6])
         }
         return result
     }
 
-    private fun initKeyboard() {
-        var keypadBaseHeight = 0
-
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect(); // 키보드 위로 보여지는 공간
-            binding.root.getWindowVisibleDisplayFrame(r)
-            val screenHeight = binding.root.rootView.height
-
-            val keypadHeight = screenHeight - r.bottom
-
-            if (keypadBaseHeight == 0) {
-                keypadBaseHeight = keypadHeight
-            }
-
-            if (keypadHeight > screenHeight * 0.15) {
-                binding.btnSubmit.visibility = View.GONE
-                binding.viewSubmitBack.visibility = View.GONE
-            } else {
-                Handler().postDelayed({
-                    if (!isFirstOpen) {
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        binding.viewSubmitBack.visibility = View.VISIBLE
-                    }
-                }, 50)
-            }
-        }
-
-        isFirstOpen = false
-    }
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentAddStoreBinding =
+        FragmentAddStoreBinding.inflate(inflater, container, false)
 }

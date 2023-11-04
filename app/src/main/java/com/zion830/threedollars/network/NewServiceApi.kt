@@ -1,5 +1,8 @@
 package com.zion830.threedollars.network
 
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
@@ -11,10 +14,8 @@ import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavorite
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import zion830.com.common.base.BaseResponse
 
 interface NewServiceApi {
 
@@ -47,22 +48,11 @@ interface NewServiceApi {
         @Body newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
 
-    @POST("/api/v2/store/visit")
-    suspend fun addVisitHistory(
-        @Body newVisitHistory: NewVisitHistory
-    ): Response<BaseResponse<String>>
-
     @PUT("/api/v2/store/{storeId}")
     suspend fun editStore(
         @Path("storeId") storeId: Int,
         @Body editStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
-
-    @DELETE("/api/v2/store/{storeId}")
-    suspend fun deleteStore(
-        @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
-    ): Response<DeleteStoreResponse>
 
     @GET("/api/v1/stores/near/exists")
     suspend fun getNearExists(
@@ -70,16 +60,6 @@ interface NewServiceApi {
         @Query("mapLatitude") latitude: Double,
         @Query("mapLongitude") longitude: Double
     ): Response<NearExistResponse>
-
-    @DELETE("/api/v2/store/image/{imageId}")
-    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
-
-    @POST("/api/v2/store/images")
-    @Multipart
-    suspend fun saveImages(
-        @Part images: List<MultipartBody.Part>,
-        @Query("storeId") storeId: Int
-    ): Response<AddImageResponse>
 
     // 가게 검색
     @GET("/api/v2/store")
@@ -243,12 +223,6 @@ interface NewServiceApi {
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
-
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>

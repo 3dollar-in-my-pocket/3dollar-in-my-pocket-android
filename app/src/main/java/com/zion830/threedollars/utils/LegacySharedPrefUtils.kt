@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.home.domain.data.store.CategoryModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
@@ -23,7 +24,6 @@ object LegacySharedPrefUtils {
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
     private const val POPUP_URL = "popup_url"
-    private const val FOOD_TRUCK_TOOL_TIP = "food_truck_tool_tip"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
@@ -39,13 +39,6 @@ object LegacySharedPrefUtils {
         putString(ACCESS_TOKEN_KEY, accessToken)
         commit()
     }
-
-    fun changeServerStatus() = sharedPreferences.edit {
-        putBoolean("test", !isTestServer())
-        commit()
-    }
-
-    fun isTestServer() = sharedPreferences.getBoolean("test", true) // true일때 개발서버
 
     fun isFirstPermissionCheck(): Boolean {
         val isFirst = sharedPreferences.getBoolean(FIRST_PERMISSION_CHECK, true)
@@ -87,10 +80,6 @@ object LegacySharedPrefUtils {
         saveList(categoryInfo, TRUCK_CATEGORY_LIST)
     }
 
-    fun saveFeedbackType(feedbackType: List<BossStoreFeedbackTypeResponse.BossStoreFeedbackTypeModel>) {
-        saveList(feedbackType, FEED_BACK_LIST)
-    }
-
     fun saveLoginType(loginType: LoginType?) = sharedPreferences.edit {
         putString(LOGIN_TYPE, loginType?.socialName)
         commit()
@@ -105,22 +94,22 @@ object LegacySharedPrefUtils {
 
     fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
 
-    fun getCategories(): List<CategoriesModel> {
+    fun getCategories(): List<CategoryModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoryModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
         }
     }
 
-    fun getTruckCategories(): List<CategoriesModel> {
+    fun getTruckCategories(): List<CategoryModel> {
         return try {
             val gson = Gson()
             val json = sharedPreferences.getString(TRUCK_CATEGORY_LIST, null)
-            val type: Type = object : TypeToken<List<CategoriesModel>?>() {}.type
+            val type: Type = object : TypeToken<List<CategoryModel>?>() {}.type
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()

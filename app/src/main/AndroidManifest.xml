@@ -62,7 +62,56 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.food_truck_store_detail.FoodTruckStoreDetailActivity"
-            android:screenOrientation="portrait" />
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="action"
+                    android:scheme="kakaomap" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="action"
+                    android:scheme="nmap" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.map.FullScreenMapActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="action"
+                    android:scheme="kakaomap" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="action"
+                    android:scheme="nmap" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.food_truck_store_detail.FoodTruckReviewActivity"
             android:screenOrientation="portrait" />
@@ -138,6 +187,10 @@
         <activity
             android:name="com.zion830.threedollars.ui.login.name.InputNameActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".ui.store_detail.MoreImageActivity" />
+
+        <activity android:name=".ui.store_detail.StoreReviewDetailActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

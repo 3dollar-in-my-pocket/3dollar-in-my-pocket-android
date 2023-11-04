@@ -8,6 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.google.firebase.dynamiclinks.ktx.*
 import com.google.firebase.ktx.Firebase
+import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.FavoriteMyFolderDataSourceImpl
@@ -17,8 +19,6 @@ import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
-import zion830.com.common.ext.toStringDefault
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,8 +56,8 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userDataSource.deleteFavorite(storeType, storeId)
-            _isRefresh.value = response.isSuccessful
+//            val response = userDataSource.deleteFavorite(storeType, storeId)
+//            _isRefresh.value = response.isSuccessful
         }
     }
 

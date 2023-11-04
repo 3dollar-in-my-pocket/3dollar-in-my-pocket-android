@@ -1,33 +1,33 @@
 package com.zion830.threedollars.ui.store_detail
 
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.fragment.app.activityViewModels
+import android.graphics.Typeface
+import android.os.Build
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.home.domain.data.store.UserStoreModel
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.ext.loadImage
+import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationBinding
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.ui.mypage.adapter.bindMenuIcons
 import com.zion830.threedollars.ui.store_detail.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.store_detail.map.StoreCertificationNaverMapFragment
 import com.zion830.threedollars.ui.store_detail.vm.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
-import zion830.com.common.ext.addNewFragment
-import zion830.com.common.ext.toFormattedNumber
+import zion830.com.common.ext.isNotNullOrEmpty
 import kotlin.math.abs
 import kotlin.math.min
 
 @AndroidEntryPoint
-class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>(R.layout.layout_certification) {
+class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>() {
 
     override val viewModel: StoreCertificationViewModel by viewModels()
-
-    private val storeDetailViewModel: StoreDetailViewModel by activityViewModels()
 
     private lateinit var naverMapFragment: StoreCertificationNaverMapFragment
 
@@ -36,50 +36,60 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
     private var minX: Float = 0f
     private var maxWidth: Int = 0
 
+    private val userStoreModel: UserStoreModel? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(USER_STORE_MODEL, UserStoreModel::class.java)
+        } else {
+            arguments?.getSerializable(USER_STORE_MODEL) as? UserStoreModel
+        }
+    }
+
     override fun initView() {
         minX = binding.progressIndicator.x
         maxWidth = binding.viewProgressBackground.measuredWidth - SizeUtils.dpToPx(8f)
         binding.progressIndicator.layoutParams.width = 0
-        binding.tvDistance.text = buildSpannedString {
-            append("인증까지 ")
-            bold { append("?m") }
-        }
 
-        binding.tvTitle.text = buildSpannedString {
-            append("가게 근처에서\n")
-            bold { append("방문을 인증") }
-            append("할 수 있어요!")
-        }
-
-        naverMapFragment = StoreCertificationNaverMapFragment()
-        binding.ibClose.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-        observeUiData()
-        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
-
-        naverMapFragment.updateMyLatestLocation {
-            bindDistance(it)
-        }
+        initMap()
+        initTextView()
+        initImageView()
+        initButton()
 
         viewModel.needUpdate.observe(viewLifecycleOwner) {
             naverMapFragment.updateMyLatestLocation {
-                val distance = bindDistance(it)
+                bindDistance(it)
                 val temp = progress
                 binding.ivProgress.x = min(minX, binding.ivProgress.x + (maxWidth * ((temp - progress) / 100.0)).toInt())
             }
         }
     }
 
+    private fun initMap() {
+        val storeLatLng = LatLng(
+            userStoreModel?.location?.latitude ?: 0.0,
+            userStoreModel?.location?.longitude ?: 0.0
+        )
+        naverMapFragment = StoreCertificationNaverMapFragment(storeLatLng)
+        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
+    }
+
+    private fun initButton() {
+        binding.ibClose.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
     private fun bindDistance(it: LatLng?): Float {
-        val distance = NaverMapUtils.calculateDistance(it, storeDetailViewModel.storeLocation.value)
+        val storeLatLng = LatLng(
+            userStoreModel?.location?.latitude ?: 0.0,
+            userStoreModel?.location?.longitude ?: 0.0
+        )
+
+        val distance = NaverMapUtils.calculateDistance(it, storeLatLng)
+
         if (distance <= MIN_DISTANCE) {
             startCertification()
         }
-        binding.tvDistance.text = buildSpannedString {
-            append("인증까지 ")
-            bold { append("${(distance - MIN_DISTANCE).toInt().toFormattedNumber()}m") }
-        }
+        binding.tvDistance.text = getString(R.string.certification_distance, (distance - MIN_DISTANCE).toInt())
         progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
         binding.progressIndicator.progress = progress
         return distance
@@ -89,20 +99,35 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         requireActivity().supportFragmentManager.popBackStack()
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.container,
-            StoreCertificationAvailableFragment(),
+            StoreCertificationAvailableFragment.getInstance(userStoreModel),
             StoreCertificationAvailableFragment::class.java.name,
             false
         )
     }
 
-    private fun observeUiData() {
-        val categories = LegacySharedPrefUtils.getCategories()
-        storeDetailViewModel.storeInfo.observe(viewLifecycleOwner) {
-            binding.tvStoreName.text = it?.storeName
-            binding.ivCategory.bindMenuIcons(it?.categories)
-            binding.ivEnd.bindMenuIcons(it?.categories)
-            binding.tvStoreCategory.text = it?.categories?.joinToString(" ") { category ->
-                "#${categories.find { categoryInfo -> categoryInfo.category == category }?.name}"
+    private fun initTextView() {
+        binding.tvTitle.textPartTypeface("가게 근처", Typeface.BOLD)
+        binding.storeNameTextView.text = userStoreModel?.name
+        binding.storeCategoryTextView.text = userStoreModel?.categories?.joinToString(" ") { "#${it.name}" }
+    }
+
+    private fun initImageView() {
+        if (userStoreModel?.categories.isNotNullOrEmpty()) {
+            binding.ivCategory.loadImage(userStoreModel?.categories?.first()?.imageUrl)
+            binding.ivEnd.loadImage(userStoreModel?.categories?.first()?.imageUrl)
+        }
+    }
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): LayoutCertificationBinding =
+        LayoutCertificationBinding.inflate(inflater, container, false)
+
+    companion object {
+        private const val USER_STORE_MODEL = "userStoreModel"
+        fun getInstance(userStoreModel: UserStoreModel?) = StoreCertificationFragment().apply {
+            userStoreModel?.let {
+                val bundle = Bundle()
+                bundle.putSerializable(USER_STORE_MODEL, userStoreModel)
+                arguments = bundle
             }
         }
     }

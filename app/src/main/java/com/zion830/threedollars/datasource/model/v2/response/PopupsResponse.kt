@@ -1,8 +1,7 @@
 package com.zion830.threedollars.datasource.model.v2.response
 
 import com.google.gson.annotations.SerializedName
-
-interface AdAndStoreItem
+import com.threedollar.common.data.AdAndStoreItem
 
 data class PopupsResponse(
     @SerializedName("data")

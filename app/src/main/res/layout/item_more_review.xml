@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reviewConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rect_radius_12_pink_100"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp">
+
+        <TextView
+            android:id="@+id/nameTextView"
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/gray80"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="강남역 2출 앞" />
+
+
+        <LinearLayout
+            android:id="@+id/medalLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/rect_radius_4_pink_100"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/nameTextView">
+
+
+            <ImageView
+                android:id="@+id/medalImageView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:adjustViewBounds="true"
+                tools:src="@drawable/ic_star" />
+
+            <TextView
+                android:id="@+id/medalTextView"
+                style="@style/apple_gothic_medium.size_10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:singleLine="true"
+                android:textColor="@color/pink"
+                tools:text="붕어빵챌린저" />
+        </LinearLayout>
+
+        <com.willy.ratingbar.ScaleRatingBar
+            android:id="@+id/reviewRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/rect_radius_4_pink_100"
+            app:layout_constraintBottom_toBottomOf="@id/medalLayout"
+            app:layout_constraintStart_toEndOf="@id/medalLayout"
+            app:layout_constraintTop_toTopOf="@id/medalLayout"
+            app:srb_clickable="false"
+            app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_24"
+            app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
+            app:srb_isIndicator="true"
+            app:srb_numStars="5"
+            app:srb_starHeight="12dp"
+            app:srb_starPadding="2dp"
+            app:srb_starWidth="12dp"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/reviewTextView"
+            style="@style/apple_gothic_regular.size_14sp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/gray80"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/medalLayout"
+            tools:text="음~ 냠냠긋 음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~" />
+
+        <TextView
+            android:id="@+id/createdAtTextView"
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/gray40"
+            app:layout_constraintEnd_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2023.04.30" />
+
+        <ImageView
+            android:id="@+id/circleImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/circle_gray40_2dp"
+            app:layout_constraintBottom_toBottomOf="@id/reportAndEditTextView"
+            app:layout_constraintEnd_toStartOf="@id/reportAndEditTextView"
+            app:layout_constraintTop_toTopOf="@id/reportAndEditTextView" />
+
+        <TextView
+            android:id="@+id/reportAndEditTextView"
+            style="@style/apple_gothic_bold.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray60"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="신고" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/blindTextView"
+        style="@style/apple_gothic_regular.size_14sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/rect_radius_8_gray_10"
+        android:padding="12dp"
+        android:text="@string/review_blind"
+        android:textColor="@color/gray50"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,14 @@
 package com.zion830.threedollars.ui.home
 
-import android.os.Bundle
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
@@ -15,11 +18,11 @@ import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
-import zion830.com.common.listener.OnItemClickListener
+import kotlinx.coroutines.launch
+import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
-class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeViewModel>(R.layout.fragment_search_by_address) {
+class SearchAddressFragment : LegacyBaseFragment<FragmentSearchByAddressBinding, HomeViewModel>(R.layout.fragment_search_by_address) {
 
     override val viewModel: HomeViewModel by activityViewModels()
 
@@ -30,32 +33,9 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     override fun initView() {
         binding.etSearch.requestFocus()
 
-        adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
-            override fun onClick(item: Document) {
-                val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                if (arguments?.getBoolean(IS_ROAD_FOOD_MODE) == true) {
-                    viewModel.requestHomeItem(location)
-                } else {
-                    viewModel.getBossNearStore(location)
-                }
-                searchViewModel.updateLatLng(location)
-                activity?.supportFragmentManager?.popBackStack()
-                searchViewModel.clear()
-            }
-        })
-        binding.rvSearchResult.adapter = adapter
-        binding.btnBack.setOnClickListener {
-            EventTracker.logEvent(Constants.CLOSE_BTN_CLICKED)
-            requireActivity().onBackPressed()
-        }
-        binding.btnSearch.setOnClickListener {
-            EventTracker.logEvent(Constants.LOCATION_ITEM_CLICKED)
-            if (binding.etSearch.text.isNullOrBlank()) {
-                showToast("검색어가 없습니다.")
-            } else {
-                searchViewModel.search(binding.etSearch.text.toString(), viewModel.currentLocation.value ?: NaverMapUtils.DEFAULT_LOCATION)
-            }
-        }
+        initAdapter()
+        initButton()
+        initFlow()
         searchViewModel.searchResult.observe(viewLifecycleOwner) {
             adapter.submitList(it?.documents ?: emptyList())
             binding.tvEmpty.isVisible = it?.documents.isNullOrEmpty()
@@ -71,15 +51,49 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         }
     }
 
-    companion object {
+    private fun initAdapter() {
+        adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
+            override fun onClick(item: Document) {
+                val location = LatLng(item.y.toDouble(), item.x.toDouble())
+                viewModel.requestHomeItem(location)
+                searchViewModel.updateLatLng(location)
+                activity?.supportFragmentManager?.popBackStack()
+                searchViewModel.clear()
+            }
+        })
+        binding.rvSearchResult.adapter = adapter
+    }
 
-        const val IS_ROAD_FOOD_MODE = "IS_ROAD_FOOD_MODE"
+    private fun initButton() {
+        binding.btnBack.setOnClickListener {
+            EventTracker.logEvent(Constants.CLOSE_BTN_CLICKED)
+            requireActivity().onBackPressed()
+        }
+        binding.btnSearch.setOnClickListener {
+            EventTracker.logEvent(Constants.LOCATION_ITEM_CLICKED)
+            if (binding.etSearch.text.isNullOrBlank()) {
+                showToast("검색어가 없습니다.")
+            } else {
+                searchViewModel.search(binding.etSearch.text.toString(), viewModel.currentLocation.value ?: NaverMapUtils.DEFAULT_LOCATION)
+            }
+        }
+    }
 
-        fun newInstance(isRoadFoodMode: Boolean) =
-            SearchAddressFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean(IS_ROAD_FOOD_MODE, isRoadFoodMode)
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    companion object {
+        fun newInstance() = SearchAddressFragment()
     }
 }

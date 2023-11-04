@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -23,9 +23,6 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +44,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     var listener: OnMapTouchListener? = null
 
+    private var isShowOverlay = true
+
     fun setOnMapTouchListener(mapListener: OnMapTouchListener) {
         listener = mapListener
     }
@@ -54,12 +53,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_naver_map, container, false)
-        binding.lifecycleOwner = this
+        binding = FragmentNaverMapBinding.inflate(inflater, container, false)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragment_map) as? MapFragment?
             ?: MapFragment.newInstance().also {
@@ -98,27 +96,28 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             moveToCurrentLocation(false)
         }
 
-        map.locationSource =
-            FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE)
+        map.locationSource = if (isShowOverlay) FusedLocationSource(this, NaverMapUtils.LOCATION_PERMISSION_REQUEST_CODE) else null
         map.locationTrackingMode = LocationTrackingMode.Follow
         map.uiSettings.isZoomControlEnabled = false
         map.uiSettings.isScaleBarEnabled = false
         map.addOnLocationChangeListener {
             map.locationOverlay.bearing = 0f
         }
-        val storeMarker = GlobalApplication.storeMarker
-        if (storeMarker.imageUrl.isNotEmpty()) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
-                    storeMarker.imageUrl.urlToBitmap().get()
-                })
-                map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
-                map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
-            }
-            map.locationOverlay.setOnClickListener {
-                val dialog = MarkerClickDialog()
-                dialog.show(parentFragmentManager, dialog.tag)
-                return@setOnClickListener false
+        if (isShowOverlay) {
+            val storeMarker = GlobalApplication.storeMarker
+            if (storeMarker.imageUrl.isNotEmpty()) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
+                        storeMarker.imageUrl.urlToBitmap().get()
+                    })
+                    map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
+                    map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
+                }
+                map.locationOverlay.setOnClickListener {
+                    val dialog = MarkerClickDialog()
+                    dialog.show(parentFragmentManager, dialog.tag)
+                    return@setOnClickListener false
+                }
             }
         }
     }
@@ -127,7 +126,6 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         if (naverMap == null) {
             return
         }
-
         markers.add(Marker().apply {
             this.position = position
             this.icon = OverlayImage.fromResource(drawableRes)
@@ -135,7 +133,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         })
     }
 
-    fun removeAllMarker() {
+    fun clearMarker() {
         markers.forEach {
             it.map = null
         }
@@ -151,8 +149,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     fun addStoreMarkers(
         @DrawableRes drawableRes: Int,
-        list: List<AdAndStoreItem>,
-        onClick: (marker: AdAndStoreItem) -> Unit = {}
+        list: List<ContentModel>,
+        onClick: (marker: ContentModel) -> Unit = {},
     ) {
         if (naverMap == null) {
             return
@@ -163,22 +161,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
         val newMarkers = list.map { item ->
             Marker().apply {
-
-                this.position = if (item is StoreInfo) {
-                    LatLng(item.latitude, item.longitude)
-                } else {
-                    val location = (item as BossNearStoreResponse.BossNearStoreModel).location
-                    LatLng(location.latitude, location.longitude)
-                }
-                this.icon = if (item is StoreInfo) {
-                    OverlayImage.fromResource(drawableRes)
-                } else {
-                    if ((item as BossNearStoreResponse.BossNearStoreModel).openStatus?.status == "CLOSED") {
-                        OverlayImage.fromResource(R.drawable.ic_food_truck_off)
-                    } else {
-                        OverlayImage.fromResource(drawableRes)
-                    }
-                }
+                this.position = LatLng(item.storeModel.locationModel.latitude, item.storeModel.locationModel.longitude)
+                this.icon = OverlayImage.fromResource(drawableRes)
                 this.map = naverMap
                 setOnClickListener {
                     onClick(item)
@@ -249,6 +233,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
         }
+    }
+
+    fun setIsShowOverlay(isVisible: Boolean) {
+        isShowOverlay = isVisible
     }
 
     fun moveCamera(position: LatLng) {

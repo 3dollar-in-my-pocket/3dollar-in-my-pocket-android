@@ -1,33 +1,27 @@
 package com.zion830.threedollars.ui.report_store.adapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.zion830.threedollars.R
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.home.domain.data.store.ImageContentModel
+import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.databinding.ItemImageSliderBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.Image
-import zion830.com.common.base.BaseRecyclerView
-import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.base.loadUrlImg
-import zion830.com.common.listener.OnItemClickListener
+import zion830.com.common.base.BaseDiffUtilCallback
 
 
-class StoreImageSliderAdapter : BaseRecyclerView<ItemImageSliderBinding, Image>(R.layout.item_image_slider) {
+class StoreImageSliderAdapter : PagingDataAdapter<ImageContentModel, SliderAdapterHolder>(BaseDiffUtilCallback()) {
 
-    fun getItems(): List<Image> = currentList
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        SliderAdapterHolder(ItemImageSliderBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-    override fun submitList(list: List<Image>?) {
-        super.submitList(null)
-        super.submitList(list)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ItemImageSliderBinding, Image> {
-        return SliderAdapterHolder(parent)
+    override fun onBindViewHolder(holder: SliderAdapterHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 }
 
-class SliderAdapterHolder(parent: ViewGroup) : BaseViewHolder<ItemImageSliderBinding, Image>(R.layout.item_image_slider, parent) {
-
-    override fun bind(item: Image, listener: OnItemClickListener<Image>?) {
-        super.bind(item, listener)
-        binding.ivContent.loadUrlImg(item.url)
+class SliderAdapterHolder(private val binding: ItemImageSliderBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(item: ImageContentModel?) {
+        binding.ivContent.loadImage(item?.url)
     }
 }

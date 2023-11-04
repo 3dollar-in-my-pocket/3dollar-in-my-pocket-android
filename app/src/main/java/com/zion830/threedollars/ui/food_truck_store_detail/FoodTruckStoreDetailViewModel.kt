@@ -1,97 +1,107 @@
 package com.zion830.threedollars.ui.food_truck_store_detail
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.store.BossStoreDetailModel
+import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.repository.HomeRepository
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.base.BaseViewModel
+import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.R
-import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailModel
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.utils.StringUtils.getString
-import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.Response
-import zion830.com.common.base.BaseResponse
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class FoodTruckStoreDetailViewModel @Inject constructor(private val repository: StoreDataSource) :
+class FoodTruckStoreDetailViewModel @Inject constructor(private val homeRepository: HomeRepository) :
     BaseViewModel() {
 
-    private val _bossStoreDetailModel = MutableLiveData<BossStoreDetailModel>()
-    val bossStoreDetailModel: LiveData<BossStoreDetailModel> get() = _bossStoreDetailModel
+    private val _bossStoreDetailModel = MutableStateFlow(BossStoreDetailModel())
+    val bossStoreDetailModel: StateFlow<BossStoreDetailModel> get() = _bossStoreDetailModel
 
-    private val _bossStoreFeedbackFullModelList =
-        MutableLiveData<List<BossStoreFeedbackFullResponse.BossStoreFeedbackFullModel>>()
-    val bossStoreFeedbackFullModelList: LiveData<List<BossStoreFeedbackFullResponse.BossStoreFeedbackFullModel>> get() = _bossStoreFeedbackFullModelList
+    private val _foodTruckReviewModelList: MutableStateFlow<List<FoodTruckReviewModel>> = MutableStateFlow(listOf())
+    val foodTruckReviewModelList: StateFlow<List<FoodTruckReviewModel>> get() = _foodTruckReviewModelList
 
-    private val _postFeedbackResponse = MutableLiveData<Response<BaseResponse<String>>>()
-    val postFeedbackResponse: LiveData<Response<BaseResponse<String>>> get() = _postFeedbackResponse
+    private val _postFeedback: MutableStateFlow<BaseResponse<String>?> = MutableStateFlow(null)
+    val postFeedback: StateFlow<BaseResponse<String>?> get() = _postFeedback
 
-    // TODO: SingleLiveData로 수정 필요
-    private val _isFavorite: MutableLiveData<Boolean> = MutableLiveData()
-    val isFavorite: LiveData<Boolean> get() = _isFavorite
+    private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
+    val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
 
     fun getFoodTruckStoreDetail(
         bossStoreId: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
     ) {
-        viewModelScope.launch {
-            repository.getBossStoreDetail(
-                bossStoreId = bossStoreId,
-                latitude = latitude,
-                longitude = longitude
-            ).body()?.data?.let {
-                _bossStoreDetailModel.value = it
-                _isFavorite.value = it.favorite.isFavorite
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getBossStoreDetail(bossStoreId = bossStoreId, deviceLatitude = latitude, deviceLongitude = longitude).collect {
+                if (it.ok) {
+                    _bossStoreDetailModel.value = it.data!!
+                    _favoriteModel.value = it.data!!.favoriteModel
+                } else {
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
 
     fun getBossStoreFeedbackFull(bossStoreId: String) {
-        viewModelScope.launch {
-            repository.getBossStoreFeedbackFull(bossStoreId).body()?.data?.let {
-                _bossStoreFeedbackFullModelList.value = it
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getFeedbackFull(targetType = BOSS_STORE, targetId = bossStoreId).collect {
+                if(it.ok) {
+                    _foodTruckReviewModelList.value = it.data!!
+                }else{
+                    _serverError.emit(it.message)
+                }
             }
         }
     }
 
-    fun postBossStoreFeedback(
-        bossStoreId: String,
-        bossStoreFeedbackRequest: BossStoreFeedbackRequest
-    ) {
-        viewModelScope.launch {
-            _postFeedbackResponse.value =
-                repository.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
+    fun postBossStoreFeedback(bossStoreId: String, bossStoreFeedbackRequest: List<String>) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.postFeedback(BOSS_STORE, bossStoreId, bossStoreFeedbackRequest).collect {
+                if(it.ok) {
+                    _postFeedback.value = it
+                }else{
+                    _serverError.emit(it.message)
+                }
+            }
         }
     }
 
     fun putFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = repository.putFavorite(storeType, storeId)
-            if (response.isSuccessful) {
-                showCustomBlackToast(getString(R.string.toast_favorite_add))
-            } else {
-                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            homeRepository.putFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(getString(R.string.toast_favorite_add))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = true, totalSubscribersCount = it.totalSubscribersCount + 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
             }
-            _isFavorite.value = response.isSuccessful
         }
     }
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = repository.deleteFavorite(storeType, storeId)
-            if (response.isSuccessful) {
-                showCustomBlackToast(getString(R.string.toast_favorite_delete))
-            } else {
-                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
+            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+                if (model.ok) {
+                    showCustomBlackToast(getString(R.string.toast_favorite_delete))
+                    _favoriteModel.update {
+                        it.copy(isFavorite = false, totalSubscribersCount = it.totalSubscribersCount - 1)
+                    }
+                } else {
+                    model.message?.let { message -> showCustomBlackToast(message) }
+                }
             }
-            _isFavorite.value = !response.isSuccessful
         }
     }
 }

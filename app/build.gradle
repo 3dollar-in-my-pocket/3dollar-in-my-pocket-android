@@ -55,12 +55,21 @@ android {
             excludes += ['META-INF/common_release.kotlin_module']
         }
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation project(':common')
     implementation project(':core:network')
     implementation project(':core:common')
+    implementation project(':home:domain')
+    implementation project(':home:data')
+    implementation project(':home:presentation')
+    implementation project(':community:presentation')
+    implementation project(':login:domain')
+    implementation project(':login:data')
 
     implementation 'com.google.firebase:firebase-config:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.0.5'

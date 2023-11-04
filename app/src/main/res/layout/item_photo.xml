@@ -1,82 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    
-    <data>
-        
-        <variable
-            name="item"
-            type="com.zion830.threedollars.ui.addstore.ui_model.StoreImage" />
-        
-        <variable
-            name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
-    </data>
-    
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_item"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_margin="4dp"
-        android:background="@drawable/rect_white_radius_12"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:onClick="@{() -> listener.onClick(item)}"
-        tools:ignore="UnusedAttribute">
-        
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@null"
-            android:padding="26dp"
-            android:src="@drawable/ic_camera"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-        <ImageView
-            loadRoundImage="@{item.url}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@null"
-            android:onClick="@{() -> listener.onClick(item)}"
-            android:padding="26dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_camera"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-        <LinearLayout
-            android:id="@+id/layout_more"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/rect_gray_radius8"
-            android:backgroundTint="#30111111"
-            android:gravity="center"
-            android:orientation="vertical">
-            
-            <TextView
-                android:id="@+id/tv_more_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/color_sub_red"
-                android:textSize="16sp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:textStyle="bold" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_item"
+    android:layout_width="78dp"
+    android:layout_height="78dp"
+    android:layout_marginHorizontal="4dp"
+    android:background="@drawable/rect_white_radius6"
+    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+    tools:ignore="UnusedAttribute">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/more"
-                android:textColor="@color/color_white"
-                android:textSize="12sp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:textStyle="bold" />
-        
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:padding="26dp"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/photoImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_more"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rect_black_op50_radius6"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_more_count"
+            style="@style/apple_gothic_bold.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/pink" />
+
+        <TextView
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/more"
+            android:textColor="@color/gray0" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

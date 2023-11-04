@@ -3,16 +3,16 @@ package com.zion830.threedollars.ui.mypage
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
+import com.threedollar.common.ext.addNewFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
-import zion830.com.common.ext.addNewFragment
+import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
-class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(R.layout.fragment_ask) {
+class AskFragment : LegacyBaseFragment<FragmentAskBinding, UserInfoViewModel>(R.layout.fragment_ask) {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 

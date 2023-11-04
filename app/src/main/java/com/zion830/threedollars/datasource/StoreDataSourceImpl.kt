@@ -1,16 +1,18 @@
 package com.zion830.threedollars.datasource
 
+import com.threedollar.common.base.BaseResponse
 import com.zion830.threedollars.Constants.DISTANCE_ASC
 import com.zion830.threedollars.Constants.REVIEW_DESC
 import com.zion830.threedollars.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.network.NewServiceApi
 import kotlinx.coroutines.flow.flow
-import okhttp3.MultipartBody
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
 class StoreDataSourceImpl @Inject constructor(private val newService: NewServiceApi) :
@@ -70,15 +72,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         reviewId: Int,
     ): Response<BaseResponse<String>> = newService.deleteReview(reviewId)
 
-    override suspend fun saveImage(
-        storeId: Int,
-        images: List<MultipartBody.Part>,
-    ): Response<AddImageResponse> = newService.saveImages(images, storeId)
-
-    override suspend fun deleteImage(
-        imageId: Int,
-    ) = newService.deleteImage(imageId)
-
     override suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.saveStore(newStoreRequest)
@@ -88,10 +81,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.editStore(storeId, newStoreRequest)
 
-    override suspend fun deleteStore(
-        storeId: Int,
-        deleteReasonType: String,
-    ): Response<DeleteStoreResponse> = newService.deleteStore(storeId, deleteReasonType)
 
     override suspend fun getNearExist(
         latitude: Double,
@@ -160,12 +149,4 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     ): Response<BaseResponse<String>> =
         newService.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
 
-    override suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>> =
-        newService.addVisitHistory(newVisitHistory)
-
-    override suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        newService.putFavorite(storeType, storeId)
-
-    override suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        newService.deleteFavorite(storeType, storeId)
 }

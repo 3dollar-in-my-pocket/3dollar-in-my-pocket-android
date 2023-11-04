@@ -36,6 +36,8 @@
 
     <color name="red">#FF5C43</color>
 
+    <color name="black_op50">#80000000</color>
+
     <color name="green">#00C667</color>
     <color name="green_500">#00753D</color>
     <color name="green_400">#00A455</color>
@@ -52,6 +54,7 @@
 
     <color name="gray100">#0F0F0F</color>
     <color name="gray95">#181818</color>
+    <color name="gray95_op60">#99181818</color>
     <color name="gray90">#232323</color>
     <color name="gray80">#2E2E2E</color>
     <color name="gray70">#5A5A5A</color>

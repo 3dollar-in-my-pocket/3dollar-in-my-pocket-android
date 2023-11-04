@@ -1,62 +1,205 @@
 package com.zion830.threedollars.ui.addstore
 
-import android.graphics.Rect
-import android.os.Handler
-import android.util.Log
-import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.home.domain.data.store.*
+import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.ext.getMonthFirstDate
+import com.threedollar.common.ext.replaceFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.datasource.model.v2.request.MyMenu
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.ui.addstore.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.addstore.adapter.EditMenuRecyclerAdapter
-import com.zion830.threedollars.ui.addstore.view.CategoryBottomSheetDialog
-import com.zion830.threedollars.ui.addstore.view.EditCategoryBottomSheetDialog
-import com.zion830.threedollars.ui.category.StoreDetailViewModel
-import com.zion830.threedollars.ui.map.NaverMapFragment
-import com.zion830.threedollars.ui.store_detail.findStoreType
+import com.zion830.threedollars.ui.category.AddStoreMenuCategoryDialogFragment
+import com.zion830.threedollars.ui.map.FullScreenMapActivity
 import com.zion830.threedollars.ui.store_detail.map.StoreDetailNaverMapFragment
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.ui.store_detail.vm.StoreDetailViewModel
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseFragment
-import zion830.com.common.ext.replaceFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class EditStoreDetailFragment :
-    BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>(R.layout.fragment_edit_detail) {
+class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>() {
+
 
     override val viewModel: StoreDetailViewModel by activityViewModels()
+    private val addStoreViewModel: AddStoreViewModel by activityViewModels()
 
-    val editStoreViewModel: EditStoreViewModel by viewModels()
+    private val addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter by lazy {
+        AddCategoryRecyclerAdapter({
+            AddStoreMenuCategoryDialogFragment().show(
+                parentFragmentManager,
+                AddStoreMenuCategoryDialogFragment::class.java.name
+            )
+        }, {
+            addStoreViewModel.removeCategory(it)
+        }
+        )
+    }
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
+        EditCategoryMenuRecyclerAdapter { addStoreViewModel.removeCategory(it) }
+    }
 
-    private lateinit var addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter // 카테고리
-    private lateinit var editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter // 상세 메뉴
-
-    private var isFirstOpen = true
-
-    private lateinit var naverMapFragment: NaverMapFragment
-
-    private var storeTarget: LatLng = NaverMapUtils.DEFAULT_LOCATION
+    private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
     override fun initView() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        refreshStoreInfo()
+        initMap()
+        viewModel.getUserStoreDetail(
+            storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
+            deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+            deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+            filterVisitStartDate = getMonthFirstDate()
+        )
+        initButton()
+        initAdapter()
+        initFlow()
 
-        initKeyboard()
+    }
 
-        binding.ibWrite.setOnClickListener {
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    addStoreViewModel.selectedLocation.collect {
+                        binding.addressTextView.text = getCurrentLocationName(it)
+                        it?.let {
+                            delay(500L)
+                            val latLng = LatLng(it.latitude, it.longitude)
+                            naverMapFragment.initMap(latLng, false)
+                        }
+                    }
+                }
+                launch {
+                    addStoreViewModel.postUserStoreModel.collect {
+                        it?.let {
+                            viewModel.getUserStoreDetail(
+                                storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
+                                deviceLatitude = it.latitude,
+                                deviceLongitude = it.longitude,
+                                filterVisitStartDate = getMonthFirstDate()
+                            )
+                            showToast(R.string.edit_store_success)
+                            requireActivity().supportFragmentManager.popBackStack()
+                        }
+                    }
+                }
+                launch {
+                    addStoreViewModel.selectCategoryList.collect { categoryModelList ->
+                        addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(categoryModelList.size < 3)) + categoryModelList.map { it.menuType })
+                        editCategoryMenuRecyclerAdapter.setItems(categoryModelList)
+                    }
+                }
+                launch {
+                    viewModel.userStoreDetailModel.collect {
+                        it?.let {
+                            val location = it.store.location
+                            val selectCategoryModelList = it.store.categories.map { model ->
+                                val menu = it.store.menus.filter { userStoreMenuModel ->
+                                    userStoreMenuModel.category.categoryId == model.categoryId
+                                }
+                                SelectCategoryModel(menuType = model, menu)
+                            }
+                            addStoreViewModel.setSelectCategoryModelList(selectCategoryModelList)
+                            if (addStoreViewModel.selectedLocation.value == null) {
+                                addStoreViewModel.updateLocation(LatLng(location.latitude, location.longitude))
+                            }
+                            binding.storeNameEditTextView.setText(it.store.name)
+
+                            when (it.store.salesType) {
+                                SalesType.ROAD -> {
+                                    binding.rbType1.isChecked = true
+                                }
+                                SalesType.STORE -> {
+                                    binding.rbType2.isChecked = true
+                                }
+                                SalesType.CONVENIENCE_STORE -> {
+                                    binding.rbType3.isChecked = true
+                                }
+                                else -> {}
+                            }
+
+                            it.store.paymentMethods.forEach { method ->
+                                when (method) {
+                                    PaymentType.CASH -> {
+                                        binding.cbType1.isChecked = true
+                                    }
+                                    PaymentType.CARD -> {
+                                        binding.cbType2.isChecked = true
+                                    }
+                                    PaymentType.ACCOUNT_TRANSFER -> {
+                                        binding.cbType3.isChecked = true
+                                    }
+                                }
+                            }
+                            it.store.appearanceDays.forEach { day ->
+                                when (day) {
+                                    DayOfTheWeekType.MONDAY -> {
+                                        binding.tbMon.isChecked = true
+                                    }
+                                    DayOfTheWeekType.TUESDAY -> {
+                                        binding.tbTue.isChecked = true
+                                    }
+                                    DayOfTheWeekType.WEDNESDAY -> {
+                                        binding.tbWen.isChecked = true
+                                    }
+                                    DayOfTheWeekType.THURSDAY -> {
+                                        binding.tbThur.isChecked = true
+                                    }
+                                    DayOfTheWeekType.FRIDAY -> {
+                                        binding.tbFri.isChecked = true
+                                    }
+                                    DayOfTheWeekType.SATURDAY -> {
+                                        binding.tbSat.isChecked = true
+                                    }
+                                    DayOfTheWeekType.SUNDAY -> {
+                                        binding.tbSun.isChecked = true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initMap() {
+        naverMapFragment.setOnMapTouchListener(object : OnMapTouchListener {
+            override fun onTouch() {
+                // 지도 스크롤 이벤트 구분용
+                binding.scroll.requestDisallowInterceptTouchEvent(true)
+            }
+        })
+        childFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        naverMapFragment.setIsShowOverlay(false)
+    }
+
+    private fun initAdapter() {
+        binding.rvCategory.adapter = addCategoryRecyclerAdapter
+        binding.rvCategory.itemAnimator = null
+        binding.menuRecyclerView.adapter = editCategoryMenuRecyclerAdapter
+        binding.menuRecyclerView.itemAnimator = null
+    }
+
+    private fun initButton() {
+        binding.editAddressTextView.setOnClickListener {
             EventTracker.logEvent(Constants.ADDRESS_EDIT_BTN_CLICKED)
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
@@ -65,139 +208,59 @@ class EditStoreDetailFragment :
                 false
             )
         }
-        binding.btnBack.setOnClickListener {
+        binding.backButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        naverMapFragment = StoreDetailNaverMapFragment()
-        childFragmentManager.beginTransaction().replace(R.id.map, naverMapFragment).commit()
+        binding.btnClearCategory.setOnClickListener {
+            addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
+            addStoreViewModel.removeAllCategory()
+        }
+        binding.fullScreenButton.setOnClickListener {
+            moveFullScreenMap()
+        }
+        binding.submitButton.setOnClickListener {
+            EventTracker.logEvent(Constants.STORE_EDIT_BTN_CLICKED)
+            if (binding.storeNameEditTextView.text.isNullOrBlank()) {
+                showToast(R.string.store_name_empty)
+                return@setOnClickListener
+            }
 
-        addCategoryRecyclerAdapter = AddCategoryRecyclerAdapter({
-            EditCategoryBottomSheetDialog().show(
-                parentFragmentManager,
-                CategoryBottomSheetDialog::class.java.name
+            addStoreViewModel.editStore(
+                UserStoreModelRequest(
+                    getAppearanceDays(),
+                    addStoreViewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                    addStoreViewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                    getMenuList().reversed(),
+                    getPaymentMethod(),
+                    binding.storeNameEditTextView.text.toString(),
+                    storeType = getStoreType()
+                ),
+                viewModel.userStoreDetailModel.value?.store?.storeId ?: 0
             )
-        }, {
-            viewModel.removeCategory(it)
-        })
-        editCategoryMenuRecyclerAdapter = EditCategoryMenuRecyclerAdapter {
-            viewModel.removeCategory(it)
-        }
-        binding.rvCategory.adapter = addCategoryRecyclerAdapter
-        binding.rvMenu.adapter = editCategoryMenuRecyclerAdapter
-
-        editStoreViewModel.editStoreResult.observe(viewLifecycleOwner) {
-            if (it) {
-                refreshStoreInfo()
-                requireActivity().onBackPressed()
-            } else {
-                showToast(R.string.failed_edit_store)
-            }
-        }
-        viewModel.storeInfo.observe(viewLifecycleOwner) {
-            storeTarget = LatLng(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
-            binding.tvAddress.text = getCurrentLocationName(storeTarget)
-            binding.etName.setText(it?.storeName)
-
-            if (!it?.storeType.isNullOrBlank()) {
-                val index = findStoreType(it?.storeType)
-                listOf(binding.rbType1, binding.rbType2, binding.rbType3)[index].isChecked = true
-            }
-
-            it?.paymentMethods?.forEach { method ->
-                if (method == "CASH") {
-                    binding.cbType1.isChecked = true
-                }
-                if (method == "CARD") {
-                    binding.cbType2.isChecked = true
-                }
-                if (method == "ACCOUNT_TRANSFER") {
-                    binding.cbType3.isChecked = true
-                }
-            }
-
-            when (it?.storeType) {
-                "ROAD" -> binding.rbType1.isChecked = true
-                "STORE" -> binding.rbType2.isChecked = true
-                "CONVENIENCE_STORE" -> binding.rbType3.isChecked = true
-            }
-
-            it?.appearanceDays?.forEach { day ->
-                if (day == "MONDAY") {
-                    binding.layoutBtnDayOfWeek.tbMon.isChecked = true
-                }
-                if (day == "TUESDAY") {
-                    binding.layoutBtnDayOfWeek.tbTue.isChecked = true
-                }
-                if (day == "WEDNESDAY") {
-                    binding.layoutBtnDayOfWeek.tbWen.isChecked = true
-                }
-                if (day == "THURSDAY") {
-                    binding.layoutBtnDayOfWeek.tbThur.isChecked = true
-                }
-                if (day == "FRIDAY") {
-                    binding.layoutBtnDayOfWeek.tbFri.isChecked = true
-                }
-                if (day == "SATURDAY") {
-                    binding.layoutBtnDayOfWeek.tbSat.isChecked = true
-                }
-                if (day == "SUNDAY") {
-                    binding.layoutBtnDayOfWeek.tbSun.isChecked = true
-                }
-            }
-
-            viewModel.categoryInfo.observe(viewLifecycleOwner) {
-                viewModel.initSelectedCategory()
-            }
-            viewModel.selectedCategory.observe(viewLifecycleOwner) { allCategoryInfo ->
-                addCategoryRecyclerAdapter.submitList(allCategoryInfo.filter { menu -> menu.isSelected })
-                editCategoryMenuRecyclerAdapter.setItems(allCategoryInfo.filter { category -> category.isSelected })
-            }
-            viewModel.selectedLocation.observe(viewLifecycleOwner) { latlng ->
-                if (latlng != null) {
-                    storeTarget = latlng
-                    binding.tvAddress.text = getCurrentLocationName(latlng)
-                    naverMapFragment.moveCamera(latlng)
-                    naverMapFragment.addMarker(R.drawable.ic_marker, latlng)
-                }
-            }
-            binding.btnClearCategory.setOnClickListener {
-                editCategoryMenuRecyclerAdapter.clear()
-                addCategoryRecyclerAdapter.clear()
-                viewModel.removeAllCategory()
-            }
-            binding.btnSubmit.setOnClickListener {
-                EventTracker.logEvent(Constants.STORE_EDIT_BTN_CLICKED)
-                if (binding.etName.text.isNullOrBlank()) {
-                    showToast(R.string.store_name_empty)
-                    return@setOnClickListener
-                }
-
-                editStoreViewModel.editStore(
-                    viewModel.storeInfo.value?.storeId ?: 0,
-                    NewStoreRequest(
-                        getAppearanceDays(),
-                        storeTarget.latitude,
-                        storeTarget.longitude,
-                        getMenuList(),
-                        getPaymentMethod(),
-                        binding.etName.text.toString(),
-                        getStoreType()
-                    )
-                )
-            }
         }
     }
 
-    private fun getPaymentMethod(): List<String> {
-        val result = arrayListOf<String>()
+    private fun moveFullScreenMap() {
+        val latLng = addStoreViewModel.selectedLocation.value
+        val intent = FullScreenMapActivity.getIntent(
+            context = requireContext(),
+            latitude = latLng?.latitude,
+            longitude = latLng?.longitude,
+            name = binding.storeNameTextView.text.toString(),
+        )
+        startActivity(intent)
+    }
+
+    private fun getPaymentMethod(): List<PaymentType> {
+        val result = arrayListOf<PaymentType>()
         if (binding.cbType1.isChecked) {
-            result.add("CASH")
+            result.add(PaymentType.CASH)
         }
         if (binding.cbType2.isChecked) {
-            result.add("CARD")
+            result.add(PaymentType.CARD)
         }
         if (binding.cbType3.isChecked) {
-            result.add("ACCOUNT_TRANSFER")
+            result.add(PaymentType.ACCOUNT_TRANSFER)
         }
         return result
     }
@@ -216,16 +279,16 @@ class EditStoreDetailFragment :
         return result.firstOrNull()
     }
 
-    private fun getMenuList(): List<MyMenu> {
-        val menuList = arrayListOf<MyMenu>()
+    private fun getMenuList(): List<MenuModelRequest> {
+        val menuList = arrayListOf<MenuModelRequest>()
 
         for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
-            binding.rvMenu.getChildAt(i)?.let {
+            binding.menuRecyclerView.getChildAt(i)?.let {
                 val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
                 val editMenuRecyclerView = (view as RecyclerView)
                 val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
                 val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-                    editCategoryMenuRecyclerAdapter.items[i].menuType.category
+                    editCategoryMenuRecyclerAdapter.items[i].menuType.categoryId
                 } else {
                     ""
                 }
@@ -237,13 +300,13 @@ class EditStoreDetailFragment :
                     val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
 
                     if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MyMenu(category, name, price))
+                        menuList.add(MenuModelRequest(category, name, price))
                         isEmptyCategory = false
                     }
                 }
 
                 if (isEmptyCategory) {
-                    menuList.add(MyMenu(category, "", ""))
+                    menuList.add(MenuModelRequest(category, "", ""))
                 }
             }
         }
@@ -251,79 +314,41 @@ class EditStoreDetailFragment :
         return menuList
     }
 
-    private fun getAppearanceDays(): List<String> {
-        val result = arrayListOf<String>()
-        val const = listOf("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY")
-        if (binding.layoutBtnDayOfWeek.tbMon.isChecked) {
+    private fun getAppearanceDays(): List<DayOfTheWeekType> {
+        val result = arrayListOf<DayOfTheWeekType>()
+        val const = listOf(
+            DayOfTheWeekType.MONDAY,
+            DayOfTheWeekType.TUESDAY,
+            DayOfTheWeekType.WEDNESDAY,
+            DayOfTheWeekType.THURSDAY,
+            DayOfTheWeekType.FRIDAY,
+            DayOfTheWeekType.SATURDAY,
+            DayOfTheWeekType.SUNDAY
+        )
+        if (binding.tbMon.isChecked) {
             result.add(const[0])
         }
-        if (binding.layoutBtnDayOfWeek.tbTue.isChecked) {
+        if (binding.tbTue.isChecked) {
             result.add(const[1])
         }
-        if (binding.layoutBtnDayOfWeek.tbWen.isChecked) {
+        if (binding.tbWen.isChecked) {
             result.add(const[2])
         }
-        if (binding.layoutBtnDayOfWeek.tbThur.isChecked) {
+        if (binding.tbThur.isChecked) {
             result.add(const[3])
         }
-        if (binding.layoutBtnDayOfWeek.tbFri.isChecked) {
+        if (binding.tbFri.isChecked) {
             result.add(const[4])
         }
-        if (binding.layoutBtnDayOfWeek.tbSat.isChecked) {
+        if (binding.tbSat.isChecked) {
             result.add(const[5])
         }
-        if (binding.layoutBtnDayOfWeek.tbSun.isChecked) {
+        if (binding.tbSun.isChecked) {
             result.add(const[6])
         }
         return result
     }
 
-    private fun refreshStoreInfo() {
-        try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    if (it != null) {
-                        viewModel.requestStoreInfo(
-                            viewModel.storeInfo.value?.storeId ?: 0,
-                            it.latitude,
-                            it.longitude
-                        )
-                    }
-                }
-            }
-        } catch (e: SecurityException) {
-            Log.e(this::class.java.name, e.message ?: "")
-        }
-    }
-
-    private fun initKeyboard() {
-        var keypadBaseHeight = 0
-
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-            val r = Rect(); // 키보드 위로 보여지는 공간
-            binding.root.getWindowVisibleDisplayFrame(r)
-            val screenHeight = binding.root.rootView.height
-
-            val keypadHeight = screenHeight - r.bottom
-
-            if (keypadBaseHeight == 0) {
-                keypadBaseHeight = keypadHeight
-            }
-
-            if (keypadHeight > screenHeight * 0.15) {
-                binding.btnSubmit.visibility = View.GONE
-                binding.viewSubmitBack.visibility = View.GONE
-            } else {
-                Handler().postDelayed({
-                    if (!isFirstOpen) {
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        binding.viewSubmitBack.visibility = View.VISIBLE
-                    }
-                }, 50)
-            }
-        }
-
-        isFirstOpen = false
-    }
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentEditDetailBinding =
+        FragmentEditDetailBinding.inflate(inflater, container, false)
 }

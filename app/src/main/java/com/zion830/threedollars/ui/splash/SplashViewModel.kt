@@ -3,6 +3,12 @@ package com.zion830.threedollars.ui.splash
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.login.domain.repository.LoginRepository
+import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.base.ResultWrapper
+import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
+import com.zion830.threedollars.Constants.BOSS_STORE
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.KakaoLoginDataSource
@@ -21,12 +27,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.BaseViewModel
-import zion830.com.common.base.ResultWrapper
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
+    private val sharedPrefUtils: SharedPrefUtils,
+    private val loginRepository: LoginRepository,
     private val storeDataSource: StoreDataSource,
     private val userDataSource: UserDataSource,
     private val popupDataSource: PopupDataSource,
@@ -47,15 +53,16 @@ class SplashViewModel @Inject constructor(
                     _msgTextId.postValue(R.string.connection_failed)
                 }
             }
-
-            val bossStoreFeedbackTypeResponse = storeDataSource.getBossStoreFeedbackType()
-            if (bossStoreFeedbackTypeResponse.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    LegacySharedPrefUtils.saveFeedbackType(
-                        bossStoreFeedbackTypeResponse.body()?.data ?: emptyList()
-                    )
+            loginRepository.getFeedbackTypes(targetType = BOSS_STORE).collect {
+                if (it.ok) {
+                    withContext(Dispatchers.Main) {
+                        sharedPrefUtils.saveList(it.data, BOSS_FEED_BACK_LIST)
+                    }
+                } else {
+                    _serverError.emit(it.message)
                 }
             }
+
 
             val storeMarkerAdvertisements = popupDataSource.getPopups("STORE_MARKER")
             if (storeMarkerAdvertisements.isSuccessful) {

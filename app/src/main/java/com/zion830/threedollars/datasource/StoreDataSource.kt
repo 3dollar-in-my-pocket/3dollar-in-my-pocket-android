@@ -1,12 +1,14 @@
 package com.zion830.threedollars.datasource
 
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.threedollar.common.base.BaseResponse
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
 
 interface StoreDataSource {
 
@@ -47,13 +49,6 @@ interface StoreDataSource {
         reviewId: Int,
     ): Response<BaseResponse<String>>
 
-    suspend fun saveImage(
-        storeId: Int,
-        images: List<MultipartBody.Part>,
-    ): Response<AddImageResponse>
-
-    suspend fun deleteImage(imageId: Int): Response<BaseResponse<String>>
-
     suspend fun saveStore(
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
@@ -62,11 +57,6 @@ interface StoreDataSource {
         storeId: Int,
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
-
-    suspend fun deleteStore(
-        storeId: Int,
-        deleteReasonType: String,
-    ): Response<DeleteStoreResponse>
 
     suspend fun getNearExist(
         latitude: Double,
@@ -105,9 +95,4 @@ interface StoreDataSource {
         bossStoreFeedbackRequest: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>>
 
-    suspend fun addVisitHistory(newVisitHistory: NewVisitHistory): Response<BaseResponse<String>>
-
-    suspend fun putFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
-
-    suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>>
 }

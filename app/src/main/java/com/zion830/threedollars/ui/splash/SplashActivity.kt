@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.messaging.FirebaseMessaging
+import com.threedollar.common.base.ResultWrapper
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -30,12 +31,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.BaseActivity
-import zion830.com.common.base.ResultWrapper
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class SplashActivity :
-    BaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
+    LegacyBaseActivity<ActivitySplashBinding, SplashViewModel>(R.layout.activity_splash) {
 
     override val viewModel: SplashViewModel by viewModels()
 
@@ -59,6 +59,22 @@ class SplashActivity :
                         tryServiceLogin()
                     }
                 })
+        }
+
+        initFlow()
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    viewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
         }
     }
 

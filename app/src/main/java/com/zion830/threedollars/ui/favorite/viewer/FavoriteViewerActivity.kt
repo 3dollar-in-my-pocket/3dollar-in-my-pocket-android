@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BR
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.GlobalApplication
@@ -17,11 +18,10 @@ import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
-import zion830.com.common.ext.toStringDefault
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
-class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {
+class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {
     override val viewModel: FavoriteViewerViewModel by viewModels()
     private lateinit var favoriteId: String
     private val adapter by lazy {

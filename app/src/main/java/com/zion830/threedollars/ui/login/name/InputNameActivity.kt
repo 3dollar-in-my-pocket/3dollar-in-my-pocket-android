@@ -9,12 +9,12 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.ui.MarketingDialog
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class InputNameActivity :
-    BaseActivity<ActivityLoginNameBinding, InputNameViewModel>(R.layout.activity_login_name) {
+    LegacyBaseActivity<ActivityLoginNameBinding, InputNameViewModel>(R.layout.activity_login_name) {
 
     override val viewModel: InputNameViewModel by viewModels()
 

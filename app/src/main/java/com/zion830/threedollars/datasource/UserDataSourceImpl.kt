@@ -1,5 +1,8 @@
 package com.zion830.threedollars.datasource
 
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
@@ -8,7 +11,6 @@ import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.network.NewServiceApi
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
 class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi) : UserDataSource {
@@ -94,9 +96,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun allDeleteFavorite(): Response<BaseResponse<String>> =
         service.allDeleteFavorite()
-
-    override suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        service.deleteFavorite(storeType, storeId)
 
     override suspend fun updateFavoriteInfo(favoriteInfoRequest: FavoriteInfoRequest): Response<BaseResponse<String>> =
         service.updateFavoriteInfo(favoriteInfoRequest = favoriteInfoRequest)

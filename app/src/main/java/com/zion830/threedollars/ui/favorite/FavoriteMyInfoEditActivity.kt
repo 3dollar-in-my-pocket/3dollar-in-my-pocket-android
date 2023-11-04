@@ -10,11 +10,11 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :
-    BaseActivity<ActivityFavoriteMyInfoEditBinding, FavoriteMyInfoEditViewModel>(R.layout.activity_favorite_my_info_edit) {
+    LegacyBaseActivity<ActivityFavoriteMyInfoEditBinding, FavoriteMyInfoEditViewModel>(R.layout.activity_favorite_my_info_edit) {
     override val viewModel: FavoriteMyInfoEditViewModel by viewModels()
 
     override fun initView() {
