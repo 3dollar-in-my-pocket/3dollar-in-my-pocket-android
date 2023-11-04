@@ -38,7 +38,12 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _pollSelected: MutableSharedFlow<Pair<String, String>> = MutableSharedFlow()
     val pollSelected: SharedFlow<Pair<String, String>> = _pollSelected.asSharedFlow()
 
-    fun getPollCategories() {
+    init {
+        getPollCategories()
+        getNeighborhoods()
+    }
+
+    private fun getPollCategories() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollCategories().collect {
                 _categoryList.value = it
@@ -62,19 +67,24 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
         }
     }
 
-    fun getPopularStores() {
+    fun getPopularStores(criteria: String, district: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPopularStores("", "")
+            communityRepository.getPopularStores(criteria, district)
         }
     }
 
-    fun getNeighborhoods() {
+    private fun getNeighborhoods() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getNeighborhoods().collect {
                 _neighborhoods.value = it
             }
         }
     }
+}
+
+sealed class PopularStoreCriteria(val type:String){
+    object MostReview:PopularStoreCriteria("MOST_REVIEWS")
+    object MostVisits:PopularStoreCriteria("MOST_VISITS")
 }
 
 @Suppress("UNCHECKED_CAST")

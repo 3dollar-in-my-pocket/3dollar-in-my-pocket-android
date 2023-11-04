@@ -49,7 +49,7 @@
             app:layout_constraintTop_toBottomOf="@id/twPollTitle" />
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerPoll"
+            android:id="@+id/vpPoll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -69,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/viewPagerPoll" />
+            app:layout_constraintTop_toBottomOf="@id/vpPoll" />
 
         <TextView
             android:id="@+id/twCommunityContentsTitle"
@@ -117,7 +117,7 @@
             tools:text="관악구" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabComminityContent"
+            android:id="@+id/tabCommunityContent"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="12dp"
@@ -132,6 +132,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabComminityContent" />
+            app:layout_constraintTop_toBottomOf="@id/tabCommunityContent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

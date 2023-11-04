@@ -4,4 +4,5 @@
     <string name="str_report">신고</string>
     <string name="str_comment_blind">규정 위반으로 블라이드 처리되었습니다.</string>
     <string name="str_vote_count">%d명 투표</string>
+    <string name="str_neighbor_title">어디 인기 가게를 볼까요?</string>
 </resources>
