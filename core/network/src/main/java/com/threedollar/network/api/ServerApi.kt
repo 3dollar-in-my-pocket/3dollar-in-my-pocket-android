@@ -27,64 +27,64 @@ import retrofit2.http.*
 
 interface ServerApi {
 
-    @POST("/v1/poll")
+    @POST("/api/v1/poll")
     suspend fun createPoll(@Body pollCreateApiRequest: PollCreateApiRequest): BaseResponse<PollCreateApiResponse>
 
-    @GET("/v1/poll/{pollId}")
+    @GET("/api/v1/poll/{pollId}")
     suspend fun getPollId(@Path("pollId") id: String): BaseResponse<GetPollResponse>
 
-    @PUT("/v1/poll/{pollId}/choice")
+    @PUT("/api/v1/poll/{pollId}/choice")
     suspend fun putPollChoice(@Path("pollId") id: String, @Body pollChoiceApiRequest: PollChoiceApiRequest): BaseResponse<String>
 
-    @DELETE("/v1/poll/{pollId}/choice")
+    @DELETE("/api/v1/poll/{pollId}/choice")
     suspend fun deletePollChoice(@Path("pollId") id: String): BaseResponse<String>
 
-    @POST("/v1/poll/{pollId}/report")
+    @POST("/api/v1/poll/{pollId}/report")
     suspend fun reportPoll(@Path("pollId") id: String): BaseResponse<String>
 
-    @GET("/v1/poll/categories")
+    @GET("/api/v1/poll/categories")
     suspend fun getPollCategories(): BaseResponse<PollCategoryApiResponse>
 
-    @GET("/v1/polls")
+    @GET("/api/v1/polls")
     suspend fun getPollList(
         @Query("categoryId") categoryId: String,
         @Query("sortType") sortType: String?,
-        @Query("cursor") cursor: Int?,
+        @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20,
     ): Response<BaseResponse<GetPollListResponse>>
 
-    @GET("/v1/user/poll/policy")
+    @GET("/api/v1/user/poll/policy")
     suspend fun getPollPolicy(): BaseResponse<PollPolicyApiResponse>
 
-    @GET("/v1/user/polls")
+    @GET("/api/v1/user/polls")
     suspend fun getUserPollList(@Query("cursor") cursor: Int?, @Query("size") size: Int = 20): BaseResponse<GetUserPollListResponse>
 
-    @POST("/v1/poll/{pollId}/comment")
+    @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
         @Path("pollId") id: String,
         @Body pollCommentApiRequest: PollCommentApiRequest
     ): BaseResponse<PollCommentCreateApiResponse>
 
-    @DELETE("/v1/poll/{pollId}/comment/{commentId}")
+    @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
     suspend fun deletePollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
 
-    @PATCH("/v1/poll/{pollId}/comment/{commentId}")
+    @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
     suspend fun editPollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
 
-    @POST("/v1/poll/{pollId}/comment/{commentId}/report")
+    @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
     suspend fun reportPollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
 
-    @GET("/v1/poll/{pollId}/comments")
+    @GET("/api/v1/poll/{pollId}/comments")
     suspend fun getPollCommentList(
         @Path("pollId") id: String,
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
     ): BaseResponse<GetPollCommentListResponse>
 
-    @GET("/v1/neighborhood/popular-store/neighborhoods")
+    @GET("/api/v1/neighborhood/popular-store/neighborhoods")
     suspend fun getNeighborhoods(): BaseResponse<GetNeighborhoodsResponse>
 
-    @GET("/v1/neighborhood/popular-stores")
+    @GET("/api/v1/neighborhood/popular-stores")
     suspend fun getPopularStores(
         @Path("criteria") criteria: String,
         @Path("district") district: String,

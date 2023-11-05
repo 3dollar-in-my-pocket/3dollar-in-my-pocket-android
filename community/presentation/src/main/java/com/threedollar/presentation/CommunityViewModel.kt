@@ -2,6 +2,7 @@ package com.threedollar.presentation
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
@@ -17,14 +18,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
-import zion830.com.common.base.BaseViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
 
-    private val _categoryList: MutableStateFlow<List<Category>> = MutableStateFlow(listOf())
-    val categoryList: StateFlow<List<Category>> = _categoryList.asStateFlow()
+    private val _categoryList: MutableSharedFlow<List<Category>> = MutableStateFlow(listOf())
+    val categoryList: SharedFlow<List<Category>> = _categoryList.asSharedFlow()
 
     private val _neighborhoods: MutableStateFlow<Neighborhoods> = MutableStateFlow(Neighborhoods(listOf()))
     val neighborhoods: StateFlow<Neighborhoods> = _neighborhoods.asStateFlow()
@@ -46,15 +46,15 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private fun getPollCategories() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollCategories().collect {
-                _categoryList.value = it
+                _categoryList.emit(it)
             }
         }
     }
 
     fun getPollItems(categoryId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPollList(categoryId, "POPULAR").collect {
-                _pollItems.emit(it.toList())
+            communityRepository.getPollListNotPaging(categoryId, "POPULAR").collect {
+                _pollItems.emit(it.pollItems)
             }
         }
     }
@@ -62,7 +62,7 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     fun votePoll(pollId: String, optionId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.putPollChoice(pollId, optionId).collect {
-
+                _pollSelected.emit(Pair(pollId, optionId))
             }
         }
     }
@@ -82,9 +82,9 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     }
 }
 
-sealed class PopularStoreCriteria(val type:String){
-    object MostReview:PopularStoreCriteria("MOST_REVIEWS")
-    object MostVisits:PopularStoreCriteria("MOST_VISITS")
+sealed class PopularStoreCriteria(val type: String) {
+    object MostReview : PopularStoreCriteria("MOST_REVIEWS")
+    object MostVisits : PopularStoreCriteria("MOST_VISITS")
 }
 
 @Suppress("UNCHECKED_CAST")

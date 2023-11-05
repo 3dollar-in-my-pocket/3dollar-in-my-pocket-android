@@ -68,7 +68,7 @@ data class GetPollListResponse(
                     @SerializedName("count")
                     var count: Int? = null, // 0
                     @SerializedName("ratio")
-                    var ratio: Int? = null, // 0
+                    var ratio: Double? = null, // 0
                     @SerializedName("selectedByMe")
                     var selectedByMe: Boolean? = null // true
                 )

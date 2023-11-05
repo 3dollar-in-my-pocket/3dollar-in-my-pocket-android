@@ -1,11 +1,13 @@
 package com.threedollar.data.datasource
 
+import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
+import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
 import com.threedollar.network.data.poll.response.GetUserPollListResponse
 import com.threedollar.network.data.poll.response.PollCategoryApiResponse
@@ -14,10 +16,9 @@ import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
-class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : CommunityDataSource {
+class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : CommunityDataSource {
     override fun createPoll(pollCreateApiRequest: PollCreateApiRequest): Flow<BaseResponse<PollCreateApiResponse>> = flow {
         emit(serverApi.createPoll(pollCreateApiRequest))
     }
@@ -44,6 +45,15 @@ class CommunityDataSourceImpl(@Inject private val serverApi: ServerApi) : Commun
 
     override fun getPollPolicy(): Flow<BaseResponse<PollPolicyApiResponse>> = flow {
         emit(serverApi.getPollPolicy())
+    }
+
+    override fun getPollListNotPaging(categoryId: String, sortType: String, size: Int): Flow<BaseResponse<GetPollListResponse>> = flow {
+        val response = serverApi.getPollList(categoryId = categoryId, sortType = sortType, size = size, cursor = null)
+        if (response.isSuccessful) {
+            response.body()?.let {
+                emit(it)
+            }
+        }
     }
 
     override fun getUserPollList(cursor: Int?, size: Int): Flow<BaseResponse<GetUserPollListResponse>> = flow {

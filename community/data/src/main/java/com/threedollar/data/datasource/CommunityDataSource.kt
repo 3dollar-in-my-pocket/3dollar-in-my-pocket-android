@@ -1,7 +1,7 @@
 package com.threedollar.data.datasource
 
+import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
-import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -14,7 +14,8 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import kotlinx.coroutines.flow.Flow
-import zion830.com.common.base.BaseResponse
+import retrofit2.Response
+
 
 interface CommunityDataSource {
     fun createPoll(pollCreateApiRequest: PollCreateApiRequest): Flow<BaseResponse<PollCreateApiResponse>>
@@ -24,6 +25,7 @@ interface CommunityDataSource {
     fun reportPoll(id: String): Flow<BaseResponse<String>>
     fun getPollCategories(): Flow<BaseResponse<PollCategoryApiResponse>>
     fun getPollPolicy(): Flow<BaseResponse<PollPolicyApiResponse>>
+    fun getPollListNotPaging(categoryId: String, sortType: String, size: Int = 20): Flow<BaseResponse<GetPollListResponse>>
     fun getUserPollList(cursor: Int?, size: Int = 20): Flow<BaseResponse<GetUserPollListResponse>>
     fun createPollComment(id: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<PollCommentCreateApiResponse>>
     fun deletePollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>

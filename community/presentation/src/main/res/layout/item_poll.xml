@@ -3,8 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clPoll"
-    android:layout_width="match_parent"
-    android:layout_height="246dp"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:background="@drawable/rect_round20"
+    android:backgroundTint="@color/white"
     android:paddingHorizontal="12dp"
     android:paddingTop="20dp"
     android:paddingBottom="12dp">
@@ -68,45 +71,160 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/twPollFirstChoice"
+    <LinearLayout
+        android:id="@+id/llPollFirstChoice"
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/selector_poll_rect"
-        android:backgroundTintMode="multiply"
-        android:gravity="center"
-        android:textColor="@color/selector_poll_text"
-        android:textSize="16dp"
+        android:background="@drawable/rect_poll_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llPollUser"
-        tools:text="슈붕 비정상 팥붕 정상" />
+        app:layout_constraintTop_toBottomOf="@id/llPollUser">
 
-    <TextView
-        android:id="@+id/twPollSecondChoice"
+        <TextView
+            android:id="@+id/twPollFirstChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/gray60"
+            android:textSize="16dp"
+            tools:text="슈붕 비정상 팥붕 정상" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPollVoteFirstChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/twPollVoteFirstChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/selector_poll_text"
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="슈붕 비정상 팥붕 정상" />
+
+            <TextView
+                android:id="@+id/twPollVoteFirstCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray30"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="300명" />
+
+            <TextView
+                android:id="@+id/twPollVoteFirstPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/selector_poll_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/twPollVoteFirstCount"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="92%" />
+
+            <TextView
+                android:id="@+id/twPollVoteFirstIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/twPollVoteFirstPercent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="🤣" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llPollSecondChoice"
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/selector_poll_rect"
-        android:backgroundTintMode="multiply"
-        android:gravity="center"
-        android:textColor="@color/selector_poll_text"
-        android:textSize="16dp"
+        android:background="@drawable/rect_poll_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/twPollFirstChoice"
-        tools:text="슈붕 비정상 팥붕 정상" />
+        app:layout_constraintTop_toBottomOf="@id/llPollFirstChoice">
+
+        <TextView
+            android:id="@+id/twPollSecondChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/gray60"
+            android:textSize="16dp"
+            tools:text="슈붕 비정상 팥붕 정상" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPollVoteSecondChoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/twPollVoteSecondChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/selector_poll_text"
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="슈붕 비정상 팥붕 정상" />
+
+            <TextView
+                android:id="@+id/twPollVoteSecondCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray30"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="300명" />
+
+            <TextView
+                android:id="@+id/twPollVoteSecondPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/selector_poll_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/twPollVoteSecondCount"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="92%" />
+
+            <TextView
+                android:id="@+id/twPollVoteSecondIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/twPollVoteSecondPercent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="🤣" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/twPollSecondChoice"
-        app:layout_constraintVertical_bias="1">
+        app:layout_constraintTop_toBottomOf="@id/llPollSecondChoice"
+        app:layout_constraintVertical_bias="0">
 
         <TextView
             android:id="@+id/twPollComment"

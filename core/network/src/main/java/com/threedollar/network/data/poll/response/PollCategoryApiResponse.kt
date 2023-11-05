@@ -11,6 +11,8 @@ data class PollCategoryApiResponse(
         @SerializedName("categoryId")
         var categoryId: String? = null, // string
         @SerializedName("title")
-        var title: String? = null // string
+        var title: String? = null, // string
+        @SerializedName("content")
+        var content: String? = null // string
     )
 }

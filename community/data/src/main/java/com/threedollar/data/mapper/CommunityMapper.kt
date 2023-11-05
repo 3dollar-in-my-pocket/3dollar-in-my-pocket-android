@@ -1,5 +1,6 @@
 package com.threedollar.data.mapper
 
+import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.data.mapper.GetPollCommentListResponseMapper.toMapper
 import com.threedollar.data.mapper.GetPollListResponseMapper.toMapper
@@ -27,55 +28,55 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
-import zion830.com.common.base.BaseResponse
 
-fun PollCreateApiResponse?.toMapper(): PollId {
+
+fun PollCreateApiResponse?.toPollIdMapper(): PollId {
     return PollId(this?.id.orEmpty())
 }
 
-fun GetPollResponse?.toMapper(): PollItem {
+fun GetPollResponse?.toPollItemMapper(): PollItem {
     return PollItem(
         meta = this?.meta.toMapper(), poll = this?.poll.toMapper(), pollWriter = this?.pollWriter.toMapper()
     )
 }
 
-fun BaseResponse<String>.toMapper(): DefaultResponse {
+fun BaseResponse<String>.toDefaultResponseMapper(): DefaultResponse {
     return DefaultResponse(data = data.orEmpty(), message = message.orEmpty(), resultCode = resultCode.orEmpty())
 }
 
-fun PollCategoryApiResponse?.toMapper(): List<Category> {
-    return this?.categories.orEmpty().map { it.toMapper() }
+fun PollCategoryApiResponse?.toListCategoryMapper(): List<Category> {
+    return this?.categories.orEmpty().map { it.toCategoryMapper() }
 }
 
-fun PollCategoryApiResponse.Category.toMapper(): Category {
-    return Category(categoryId.orEmpty(), title.orEmpty())
+fun PollCategoryApiResponse.Category.toCategoryMapper(): Category {
+    return Category(categoryId.orEmpty(), title.orEmpty(),content.orEmpty())
 }
 
-fun GetPollListResponse?.toMapper(): PollList {
+fun GetPollListResponse?.toPollListMapper(): PollList {
     return PollList(pollItems = this?.contents.orEmpty().map { it.toMapper() }, cursor = this?.cursor.toMapper())
 }
 
-fun PollPolicyApiResponse?.toMapper(): CreatePolicy {
+fun PollPolicyApiResponse?.toCreatePolicyMapper(): CreatePolicy {
     return CreatePolicy(this?.createPolicy?.currentCount.toDefaultInt(), this?.createPolicy?.limitCount.toDefaultInt())
 }
 
-fun GetUserPollListResponse?.toMapper(): UserPollItemList {
+fun GetUserPollListResponse?.toUserPollItemListMapper(): UserPollItemList {
     return UserPollItemList(this?.poll.toMapper(), this?.meta.toMapper())
 }
 
-fun PollCommentCreateApiResponse?.toMapper(): CommentId {
+fun PollCommentCreateApiResponse?.toCommentIdMapper(): CommentId {
     return CommentId(this?.id.orEmpty())
 }
 
-fun GetPollCommentListResponse?.toMapper(): PollCommentList {
+fun GetPollCommentListResponse?.toPollCommentListMapper(): PollCommentList {
     return PollCommentList(this?.contents.orEmpty().map { it.toMapper() }, this?.cursor.toMapper())
 }
 
-fun GetPopularStoresResponse.toMapper(): PopularStores {
+fun GetPopularStoresResponse.toPopularStoresMapper(): PopularStores {
     return PopularStores(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
 }
 
-fun GetNeighborhoodsResponse?.toMapper(): Neighborhoods {
+fun GetNeighborhoodsResponse?.toNeighborhoodsMapper(): Neighborhoods {
     return Neighborhoods(this?.neighborhoods.orEmpty().map { neighborhood ->
         Neighborhoods.Neighborhood(neighborhood.description.orEmpty(), neighborhood.districts.orEmpty().map {
             Neighborhoods.Neighborhood.District(it.description.orEmpty(), it.district.orEmpty())

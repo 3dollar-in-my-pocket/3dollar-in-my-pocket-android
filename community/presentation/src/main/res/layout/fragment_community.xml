@@ -48,17 +48,21 @@
             app:layout_constraintStart_toStartOf="@id/twPollTitle"
             app:layout_constraintTop_toBottomOf="@id/twPollTitle" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vpPoll"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerPoll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:clipToPadding="false"
             android:orientation="horizontal"
-            android:paddingHorizontal="40dp"
+            android:overScrollMode="never"
+            android:paddingStart="4dp"
+            android:paddingEnd="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/twPollListTitle" />
+            app:layout_constraintTop_toBottomOf="@id/twPollListTitle"
+            tools:listitem="@layout/item_poll" />
 
         <View
             android:id="@+id/vwCommunityContentsBack"
@@ -69,7 +73,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/vpPoll" />
+            app:layout_constraintTop_toBottomOf="@id/recyclerPoll" />
 
         <TextView
             android:id="@+id/twCommunityContentsTitle"

@@ -16,7 +16,6 @@ import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import kotlin.math.abs
 
 @AndroidEntryPoint
 class CommunityFragment : Fragment(R.layout.fragment_community) {
@@ -25,7 +24,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     private val pollAdapter by lazy {
         CommunityPollAdapter(choicePoll = { pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
-        }, clickPoll = {})
+        }, clickPoll = {
+
+        })
     }
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
@@ -42,14 +43,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.vpPoll.setPageTransformer { page, position ->
-            val v = abs(position)
-            page.scaleX = 0.8f + 0.2f * v
-            page.scaleY = 0.8f + 0.2f * v
-            page.alpha = 0.5f + (1 - v)
-        }
-        binding.vpPoll.adapter = pollAdapter
+        binding.recyclerPoll.adapter = pollAdapter
         binding.twAreaChoice.onSingleClick {
             choiceNeighborhood?.let { choiceNeighborhood ->
                 NeighborHoodsChoiceDialog().setChoiceNeighborhood(choiceNeighborhood).setItemClick {
@@ -62,14 +56,16 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.categoryList.collect {
+                        if (it.isEmpty()) return@collect
                         val category = it.first()
                         viewModel.getPollItems(category.categoryId)
-                        binding.twPollTitle.text = category.title
+                        binding.twPollTitle.text = category.content
                     }
                 }
                 launch {
                     viewModel.pollItems.collect {
-                        pollItems.addAll(it.toList().subList(0, 4))
+                        if (it.isEmpty()) return@collect
+                        pollItems.addAll(it.toList())
                         pollAdapter.submitList(pollItems)
                     }
                 }
@@ -80,20 +76,35 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                         val selectPoll = pollItems.find { it.poll.pollId == pollId } ?: return@collect
                         var firstChoice = selectPoll.poll.options[0]
                         var secondChoice = selectPoll.poll.options[1]
-                        firstChoice = firstChoice.copy(choice = firstChoice.choice.copy(selectedByMe = firstChoice.optionId == optionId))
-                        secondChoice = secondChoice.copy(choice = secondChoice.choice.copy(selectedByMe = secondChoice.optionId == optionId))
+                        val editFirstCount = if (firstChoice.optionId == optionId) 1 else -1
+                        val editSecondCount = if (secondChoice.optionId == optionId) 1 else -1
+                        firstChoice = firstChoice.copy(
+                            choice = firstChoice.choice.copy(
+                                selectedByMe = firstChoice.optionId == optionId,
+                                count = firstChoice.choice.count + editFirstCount
+                            )
+                        )
+                        secondChoice = secondChoice.copy(
+                            choice = secondChoice.choice.copy(
+                                selectedByMe = secondChoice.optionId == optionId,
+                                count = secondChoice.choice.count + editSecondCount
+                            )
+                        )
                         pollItems[pollItems.indexOfFirst { it.poll.pollId == pollId }] =
                             selectPoll.copy(poll = selectPoll.poll.copy(options = listOf(firstChoice, secondChoice)))
                         pollAdapter.submitList(pollItems)
+                        pollAdapter.notifyDataSetChanged()
                     }
                 }
                 launch {
                     viewModel.popularStores.collect {
+                        if (it.isEmpty()) return@collect
                         storeAdapter.submitList(it.toList().subList(0, 9))
                     }
                 }
                 launch {
                     viewModel.neighborhoods.collect {
+                        if (it.neighborhoods.isEmpty()) return@collect
                         val first = it.neighborhoods.first()
                         binding.twAreaChoice.text = first.description
                         viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, first.districts.first().district)

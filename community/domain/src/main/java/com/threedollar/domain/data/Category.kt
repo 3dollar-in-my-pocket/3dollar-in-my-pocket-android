@@ -2,5 +2,6 @@ package com.threedollar.domain.data
 
 data class Category(
     val categoryId: String,
-    val title: String
+    val title: String,
+    val content: String
 )

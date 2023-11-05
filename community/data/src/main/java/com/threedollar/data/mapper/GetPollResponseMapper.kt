@@ -1,5 +1,6 @@
 package com.threedollar.data.mapper
 
+import com.threedollar.common.utils.toDefaultDouble
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.data.PollItem
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -20,12 +21,13 @@ object GetPollResponseMapper {
             options = this?.options.orEmpty().map { it.toMapper() },
             period = this?.period.toMapper(),
             pollId = this?.pollId.orEmpty(),
-            updatedAt = this?.updatedAt.orEmpty()
+            updatedAt = this?.updatedAt.orEmpty(),
+            isOwner = this?.isOwner ?: false
         )
     }
 
     private fun GetPollResponse.Poll.Category?.toMapper(): PollItem.Poll.Category {
-        return PollItem.Poll.Category(categoryId = this?.categoryId.orEmpty(), title = this?.title.orEmpty())
+        return PollItem.Poll.Category(categoryId = this?.categoryId.orEmpty(), title = this?.title.orEmpty(), content = this?.content.orEmpty())
     }
 
     private fun GetPollResponse.Poll.Content?.toMapper(): PollItem.Poll.Content {
@@ -39,7 +41,7 @@ object GetPollResponseMapper {
     private fun GetPollResponse.Poll.Option.Choice?.toMapper(): PollItem.Poll.Option.Choice {
         return PollItem.Poll.Option.Choice(
             count = this?.count.toDefaultInt(),
-            ratio = this?.ratio.toDefaultInt(),
+            ratio = this?.ratio.toDefaultDouble(),
             selectedByMe = this?.selectedByMe ?: false
         )
     }

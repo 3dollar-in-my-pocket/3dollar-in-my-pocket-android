@@ -37,7 +37,7 @@ data class PollItem(
         ) {
             data class Choice(
                 val count: Int, // 0
-                val ratio: Int, // 0
+                val ratio: Double, // 0
                 val selectedByMe: Boolean // true
             )
         }

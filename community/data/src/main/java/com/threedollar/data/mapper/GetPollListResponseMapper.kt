@@ -1,5 +1,6 @@
 package com.threedollar.data.mapper
 
+import com.threedollar.common.utils.toDefaultDouble
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.data.Cursor
 import com.threedollar.domain.data.PollItem
@@ -45,7 +46,7 @@ object GetPollListResponseMapper {
     private fun GetPollListResponse.Content.Poll.Option.Choice?.toMapper(): PollItem.Poll.Option.Choice {
         return PollItem.Poll.Option.Choice(
             count = this?.count.toDefaultInt(),
-            ratio = this?.ratio.toDefaultInt(),
+            ratio = this?.ratio.toDefaultDouble(),
             selectedByMe = this?.selectedByMe ?: false
         )
     }

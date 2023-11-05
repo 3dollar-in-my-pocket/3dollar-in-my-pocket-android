@@ -40,7 +40,9 @@ data class GetPollResponse(
             @SerializedName("categoryId")
             var categoryId: String? = null, // string
             @SerializedName("title")
-            var title: String? = null // string
+            var title: String? = null, // string
+            @SerializedName("content")
+            var content: String? = null, // string
         )
 
         data class Content(
@@ -60,7 +62,7 @@ data class GetPollResponse(
                 @SerializedName("count")
                 var count: Int? = null, // 0
                 @SerializedName("ratio")
-                var ratio: Int? = null, // 0
+                var ratio: Double? = null, // 0
                 @SerializedName("selectedByMe")
                 var selectedByMe: Boolean? = null // true
             )
