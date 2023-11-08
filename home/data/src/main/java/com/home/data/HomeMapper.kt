@@ -285,7 +285,7 @@ fun Feedback.asModel() = FeedbackModel(
 
 fun OpenStatus.asModel() = OpenStatusModel(
     openStartDateTime = openStartDateTime,
-    status = status?.asStatusType() ?: StatusType.OPEN
+    status = status?.asStatusType() ?: StatusType.NONE
 )
 
 fun String.asDayOfTheWeekType() = when (this) {
