@@ -123,7 +123,8 @@ fun AdvertisementResponse.asModel() = AdvertisementModel(
     imageUrl = imageUrl,
     imageWidth = imageWidth,
     linkUrl = linkUrl,
-    subTitle = subTitle
+    subTitle = subTitle,
+    title = title
 )
 
 fun UserResponse.asModel() = UserModel(
