@@ -91,10 +91,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
-                        if(item.reviewReport.reportedByMe){
+                        if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
-                        }
-                        else {
+                        } else {
                             ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
@@ -487,6 +486,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initAppearanceDays(dayOfTheWeekTypeList: List<DayOfTheWeekType>) {
+        clearAppearanceDay()
         dayOfTheWeekTypeList.forEach {
             when (it) {
                 DayOfTheWeekType.MONDAY -> {
@@ -515,6 +515,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
                 DayOfTheWeekType.SUNDAY -> {
                     initAppearanceDay(binding.sundayTextView)
+                }
+            }
+        }
+    }
+
+    private fun clearAppearanceDay() {
+        binding.run {
+            listOf(mondayTextView, tuesdayTextView, wednesdayTextView, thursdayTextView, fridayTextView, saturdayTextView, sundayTextView).forEach {
+                it.apply {
+                    setBackgroundResource(R.drawable.circle_gray10_24dp)
+                    setTextColor(getColor(R.color.gray40))
                 }
             }
         }
@@ -651,6 +662,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         return imageList.toList()
     }
+
     private fun showAlreadyReportDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("신고")
