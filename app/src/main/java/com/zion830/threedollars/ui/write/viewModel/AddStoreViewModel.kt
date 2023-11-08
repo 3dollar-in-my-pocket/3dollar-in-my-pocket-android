@@ -60,7 +60,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 if (it.ok) {
                     _postUserStoreModel.emit(it.data)
                 } else {
-                    _serverError.emit(it.error)
+                    _serverError.emit(it.message)
                 }
             }
             withContext(Dispatchers.Main) {
@@ -77,7 +77,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 if (it.ok) {
                     _postUserStoreModel.emit(it.data)
                 } else {
-                    _serverError.emit(it.error)
+                    _serverError.emit(it.message)
                 }
             }
             withContext(Dispatchers.Main) {
@@ -105,7 +105,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 if (it.ok) {
                     _aroundStoreModels.value = it.data?.contentModels
                 } else {
-                    _serverError.emit(it.error)
+                    _serverError.emit(it.message)
                 }
             }
         }
@@ -117,7 +117,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 if (it.ok) {
                     _isNearStoreExist.emit(it.data?.isExists ?: false)
                 } else {
-                    _serverError.emit(it.error)
+                    _serverError.emit(it.message)
                 }
             }
         }

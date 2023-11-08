@@ -199,9 +199,8 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         viewModelScope.launch {
             storeId?.let {
                 homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
-                    if (it.ok) {
-                    } else {
-                        _serverError.emit(it.error)
+                    if (!it.ok) {
+                        _serverError.emit(it.message)
                     }
                 }
             }
