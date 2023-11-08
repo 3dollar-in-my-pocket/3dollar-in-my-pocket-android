@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
+import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
@@ -12,11 +13,14 @@ import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InputNameViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+class InputNameViewModel @Inject constructor(private val loginRepository: LoginRepository, private val userDataSource: UserDataSource) :
+    BaseViewModel() {
 
     val userName: MutableLiveData<String> = MutableLiveData("")
     private val latestSocialType: MutableLiveData<LoginType> =
@@ -33,6 +37,9 @@ class InputNameViewModel @Inject constructor(private val userDataSource: UserDat
     private val _isAvailable: MutableLiveData<Boolean> = MutableLiveData(true)
     val isAvailable: LiveData<Boolean>
         get() = _isAvailable
+
+    private val _isMarketing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isMarketing: StateFlow<Boolean> get() = _isMarketing
 
     fun trySignUp() {
         if (userName.value.isNullOrBlank()) {
@@ -66,6 +73,30 @@ class InputNameViewModel @Inject constructor(private val userDataSource: UserDat
                     409 -> _isAlreadyUsed.postValue(R.string.login_name_already_exist)
                     400 -> _isAlreadyUsed.postValue(R.string.invalidate_name)
                     else -> _msgTextId.postValue(R.string.connection_failed)
+                }
+            }
+        }
+    }
+
+    fun postPushInformation(pushToken: String, isMarketing: Boolean) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            loginRepository.postPushInformation(pushToken).collect {
+                if (it.ok) {
+                    putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    private fun putMarketingConsent(marketingConsent: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            loginRepository.putMarketingConsent(marketingConsent).collect {
+                if (it.ok) {
+                    _isMarketing.value = true
+                } else {
+                    _serverError.emit(it.message)
                 }
             }
         }
