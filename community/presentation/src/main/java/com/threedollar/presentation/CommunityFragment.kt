@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -33,7 +34,8 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
         }
     }
-    private var choiceNeighborhood: Neighborhoods.Neighborhood? = null
+    private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
+    private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
     private val pollItems = mutableListOf<PollItem>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,14 +45,29 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        selectedPopular(true)
         binding.recyclerPoll.adapter = pollAdapter
+        binding.recyclerPopularStore.adapter = storeAdapter
         binding.twAreaChoice.onSingleClick {
-            choiceNeighborhood?.let { choiceNeighborhood ->
-                NeighborHoodsChoiceDialog().setChoiceNeighborhood(choiceNeighborhood).setItemClick {
-                    binding.twAreaChoice.text = it.description
-                }.show(childFragmentManager, "")
+            choiceNeighborhood?.let { neighborhood ->
+                seoulNeighborhoods?.let {
+                    NeighborHoodsChoiceDialog().setNeighborHoods(it).setChoiceNeighborhood(neighborhood).setItemClick {
+                        binding.twAreaChoice.text = it.description
+                        choiceNeighborhood = it
+                        binding.twAreaChoice.text = it.description
+                        viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, it.district)
+                    }.show(childFragmentManager, "")
+                }
+
             }
         }
+        binding.clPopularMostReview.onSingleClick {
+            selectedPopular(true)
+        }
+        binding.clPopularMostVisits.onSingleClick {
+            selectedPopular(false)
+        }
+
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -98,21 +115,34 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 }
                 launch {
                     viewModel.popularStores.collect {
-                        if (it.isEmpty()) return@collect
-                        storeAdapter.submitList(it.toList().subList(0, 9))
+                        storeAdapter.submitList(it.toList())
                     }
                 }
                 launch {
                     viewModel.neighborhoods.collect {
                         if (it.neighborhoods.isEmpty()) return@collect
-                        val first = it.neighborhoods.first()
-                        binding.twAreaChoice.text = first.description
-                        viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, first.districts.first().district)
+                        val seoul = it.neighborhoods.find { it.province == "SEOUL" }
+                        seoul?.let {
+                            seoulNeighborhoods = it
+                            choiceNeighborhood = it.districts.first()
+                            binding.twAreaChoice.text = it.districts.first().description
+                            viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, it.districts.first().district)
+                        }
                     }
                 }
             }
         }
 
+    }
+
+    private fun selectedPopular(isReview: Boolean) {
+        binding.twPopularMostReview.isSelected = isReview
+        binding.twPopularMostVisits.isSelected = !isReview
+        binding.vwPopularMostReview.isVisible = isReview
+        binding.vwPopularMostVisits.isVisible = !isReview
+        choiceNeighborhood?.let {
+            viewModel.getPopularStores(if (isReview) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type, it.district)
+        }
     }
 
 }

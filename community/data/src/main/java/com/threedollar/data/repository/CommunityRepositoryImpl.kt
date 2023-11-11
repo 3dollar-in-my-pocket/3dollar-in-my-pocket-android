@@ -1,6 +1,5 @@
 package com.threedollar.data.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -16,6 +15,7 @@ import com.threedollar.data.mapper.toPollCommentListMapper
 import com.threedollar.data.mapper.toPollIdMapper
 import com.threedollar.data.mapper.toPollItemMapper
 import com.threedollar.data.mapper.toPollListMapper
+import com.threedollar.data.mapper.toPopularStoresMapper
 import com.threedollar.data.mapper.toUserPollItemListMapper
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
@@ -27,6 +27,7 @@ import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStore
+import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
 import com.threedollar.domain.repository.CommunityRepository
 import com.threedollar.network.api.ServerApi
@@ -87,5 +88,7 @@ class CommunityRepositoryImpl @Inject constructor(private val serverApi: ServerA
     override fun getPopularStores(criteria: String, district: String): Flow<PagingData<PopularStore>> = Pager(PagingConfig(20)) {
         PopularStoresDataSource(criteria = criteria, district = district, serverApi = serverApi)
     }.flow
+
+    override fun getPopularStoresNotPaging(criteria: String, district: String): Flow<PopularStores> = communityDataSource.getPopularStoresNotPaging(criteria, district).map { it.data.toPopularStoresMapper() }
 
 }

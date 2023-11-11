@@ -69,7 +69,9 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
 
     fun getPopularStores(criteria: String, district: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPopularStores(criteria, district)
+            communityRepository.getPopularStoresNotPaging(criteria, district).collect {
+                _popularStores.emit(it.content)
+            }
         }
     }
 

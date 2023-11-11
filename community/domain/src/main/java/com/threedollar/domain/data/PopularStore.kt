@@ -37,7 +37,7 @@ data class PopularStore(
     }
 
     data class Location(
-        val latitude: Int, // 0
-        val longitude: Int // 0
+        val latitude: Double, // 0
+        val longitude: Double // 0
     )
 }

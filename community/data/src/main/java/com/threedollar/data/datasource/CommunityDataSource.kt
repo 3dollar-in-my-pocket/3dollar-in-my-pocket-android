@@ -2,6 +2,7 @@ package com.threedollar.data.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -14,7 +15,6 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 
 interface CommunityDataSource {
@@ -32,6 +32,6 @@ interface CommunityDataSource {
     fun editPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
     fun reportPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
     fun getPollCommentList(id: String, cursor: Int?, size: Int = 20): Flow<BaseResponse<GetPollCommentListResponse>>
-
+    fun getPopularStoresNotPaging(criteria: String, district: String, size: Int = 20): Flow<BaseResponse<GetPopularStoresResponse>>
     fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
 }

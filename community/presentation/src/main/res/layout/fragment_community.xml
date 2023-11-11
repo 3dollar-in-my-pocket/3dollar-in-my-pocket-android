@@ -81,25 +81,25 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="32dp"
+            android:text="이번 주 동네 인기 가게"
             android:textColor="@color/black"
             android:textSize="16dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/twAreaChoice"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/vwCommunityContentsBack"
-            tools:text="이번 주 동네 인기 가게" />
+            app:layout_constraintTop_toTopOf="@id/vwCommunityContentsBack" />
 
         <TextView
             android:id="@+id/twCommunityContentsMessage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:text="아직 서울만 볼 수 있어요! 조금만 기다려 주세요 :)"
             android:textColor="@color/gray60"
             android:textSize="12dp"
             app:layout_constraintEnd_toEndOf="@id/twCommunityContentsTitle"
             app:layout_constraintStart_toStartOf="@id/twCommunityContentsTitle"
-            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsTitle"
-            tools:text="아직 서울만 볼 수 있어요! 조금만 기다려 주세요 :)" />
+            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsTitle" />
 
         <TextView
             android:id="@+id/twAreaChoice"
@@ -120,22 +120,95 @@
             tools:targetApi="s"
             tools:text="관악구" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabCommunityContent"
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray30"
+            app:layout_constraintBottom_toBottomOf="@id/clPopularMostReview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPopularMostReview"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toStartOf="@id/clPopularMostVisits"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage">
+
+            <TextView
+                android:id="@+id/twPopularMostReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="리뷰가 많아요"
+                android:textColor="@color/selector_popular_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vwPopularMostReview"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/pink"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPopularMostVisits"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage" />
+            app:layout_constraintStart_toEndOf="@id/clPopularMostReview"
+            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vpPopularStore"
+            <TextView
+                android:id="@+id/twPopularMostVisits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="많이 왔다갔어요"
+                android:textColor="@color/selector_popular_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/vwPopularMostVisits"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@color/pink"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerPopularStore"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="15dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabCommunityContent" />
+            app:layout_constraintTop_toBottomOf="@id/clPopularMostReview" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

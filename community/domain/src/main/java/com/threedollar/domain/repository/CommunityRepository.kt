@@ -11,7 +11,7 @@ import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStore
-import com.threedollar.domain.data.UserPollItem
+import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -36,4 +36,5 @@ interface CommunityRepository {
     fun getPollCommentList(id: String, cursor: Int?): Flow<List<PollComment>>
     fun getNeighborhoods(): Flow<Neighborhoods>
     fun getPopularStores(criteria: String, district: String): Flow<PagingData<PopularStore>>
+    fun getPopularStoresNotPaging(criteria: String, district: String): Flow<PopularStores>
 }

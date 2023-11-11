@@ -69,9 +69,9 @@ data class GetPopularStoresResponse(
 
         data class Location(
             @SerializedName("latitude")
-            val latitude: Int? = null, // 0
+            val latitude: Double? = null, // 0
             @SerializedName("longitude")
-            val longitude: Int? = null // 0
+            val longitude: Double? = null // 0
         )
     }
 

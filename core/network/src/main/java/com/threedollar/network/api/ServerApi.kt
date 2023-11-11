@@ -86,8 +86,8 @@ interface ServerApi {
 
     @GET("/api/v1/neighborhood/popular-stores")
     suspend fun getPopularStores(
-        @Path("criteria") criteria: String,
-        @Path("district") district: String,
+        @Query("criteria") criteria: String,
+        @Query("district") district: String,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20,
     ): Response<BaseResponse<GetPopularStoresResponse>>

@@ -3,6 +3,7 @@ package com.threedollar.data.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -79,6 +80,15 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
 
     override fun getPollCommentList(id: String, cursor: Int?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
         emit(serverApi.getPollCommentList(id, cursor, size))
+    }
+
+    override fun getPopularStoresNotPaging(criteria: String, district: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow{
+        val response = serverApi.getPopularStores(criteria = criteria, district = district, size = size, cursor = null)
+        if (response.isSuccessful) {
+            response.body()?.let {
+                emit(it)
+            }
+        }
     }
 
     override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {

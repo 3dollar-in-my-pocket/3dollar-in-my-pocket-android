@@ -10,27 +10,27 @@ import com.threedollar.presentation.databinding.ItemNeighborNameBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 
-class NeighborHoodsChoiceAdapter(private val choiceClick: (Neighborhoods.Neighborhood) -> Unit) :
-    ListAdapter<Neighborhoods.Neighborhood, NeighborHoodsChoiceViewHolder>(BaseDiffUtilCallback()) {
+class NeighborHoodsChoiceAdapter(private val choiceClick: (Neighborhoods.Neighborhood.District) -> Unit) :
+    ListAdapter<Neighborhoods.Neighborhood.District, NeighborHoodsChoiceViewHolder>(BaseDiffUtilCallback()) {
 
-    private var choiceNeighborhood: Neighborhoods.Neighborhood? = null
+    private var choiceDistrict: Neighborhoods.Neighborhood.District? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NeighborHoodsChoiceViewHolder {
         return NeighborHoodsChoiceViewHolder(ItemNeighborNameBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: NeighborHoodsChoiceViewHolder, position: Int) {
-        holder.onBind(getItem(position), choiceClick, choiceNeighborhood?.province == getItem(position).province)
+        holder.onBind(getItem(position), choiceClick, choiceDistrict?.district == getItem(position).district)
     }
 
-    fun setChoiceNeighborhood(neighborhood: Neighborhoods.Neighborhood) {
-        choiceNeighborhood = neighborhood
+    fun setChoiceNeighborhood(district: Neighborhoods.Neighborhood.District) {
+        choiceDistrict = district
         notifyDataSetChanged()
     }
 
 }
 
 class NeighborHoodsChoiceViewHolder(private val binding: ItemNeighborNameBinding) : ViewHolder(binding.root) {
-    fun onBind(neighborhood: Neighborhoods.Neighborhood, choiceClick: (Neighborhoods.Neighborhood) -> Unit, isCheck: Boolean) {
+    fun onBind(neighborhood: Neighborhoods.Neighborhood.District, choiceClick: (Neighborhoods.Neighborhood.District) -> Unit, isCheck: Boolean) {
         binding.imgCheck.isVisible = isCheck
         binding.twName.text = neighborhood.description
         binding.root.onSingleClick { choiceClick(neighborhood) }

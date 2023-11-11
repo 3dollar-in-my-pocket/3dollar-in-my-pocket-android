@@ -1,5 +1,6 @@
 package com.threedollar.data.mapper
 
+import com.threedollar.common.utils.toDefaultDouble
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.data.Cursor
 import com.threedollar.domain.data.PopularStore
@@ -46,7 +47,7 @@ object GetPopularStoresResponseMapper {
     }
 
     fun GetPopularStoresResponse.Content.Location?.toMapper(): PopularStore.Location {
-        return PopularStore.Location(this?.latitude.toDefaultInt(), this?.longitude.toDefaultInt())
+        return PopularStore.Location(this?.latitude.toDefaultDouble(), this?.longitude.toDefaultDouble())
     }
 
     fun GetPopularStoresResponse.Cursor?.toMapper(): Cursor {

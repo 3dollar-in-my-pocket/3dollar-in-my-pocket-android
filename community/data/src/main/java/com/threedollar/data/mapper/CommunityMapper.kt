@@ -49,7 +49,7 @@ fun PollCategoryApiResponse?.toListCategoryMapper(): List<Category> {
 }
 
 fun PollCategoryApiResponse.Category.toCategoryMapper(): Category {
-    return Category(categoryId.orEmpty(), title.orEmpty(),content.orEmpty())
+    return Category(categoryId.orEmpty(), title.orEmpty(), content.orEmpty())
 }
 
 fun GetPollListResponse?.toPollListMapper(): PollList {
@@ -72,8 +72,8 @@ fun GetPollCommentListResponse?.toPollCommentListMapper(): PollCommentList {
     return PollCommentList(this?.contents.orEmpty().map { it.toMapper() }, this?.cursor.toMapper())
 }
 
-fun GetPopularStoresResponse.toPopularStoresMapper(): PopularStores {
-    return PopularStores(this.contents.orEmpty().map { it.toMapper() }, this.cursor.toMapper())
+fun GetPopularStoresResponse?.toPopularStoresMapper(): PopularStores {
+    return PopularStores(this?.contents.orEmpty().map { it.toMapper() }, this?.cursor.toMapper())
 }
 
 fun GetNeighborhoodsResponse?.toNeighborhoodsMapper(): Neighborhoods {
