@@ -7,5 +7,5 @@ data class PollReportCreateApiRequest(
     @SerializedName("reason")
     val reason: String, // string
     @SerializedName("reasonDetail")
-    val reasonDetail: String? // string
+    val reasonDetail: String? = null// string
 )

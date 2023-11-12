@@ -1,11 +1,14 @@
 package com.threedollar.data.datasource
 
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -22,16 +25,17 @@ interface CommunityDataSource {
     fun getPollId(id: String): Flow<BaseResponse<GetPollResponse>>
     fun putPollChoice(id: String, pollChoiceApiRequest: PollChoiceApiRequest): Flow<BaseResponse<String>>
     fun deletePollChoice(id: String): Flow<BaseResponse<String>>
-    fun reportPoll(id: String): Flow<BaseResponse<String>>
+    fun reportPoll(id: String, pollReportCreateApiRequest: PollReportCreateApiRequest): Flow<BaseResponse<String>>
     fun getPollCategories(): Flow<BaseResponse<PollCategoryApiResponse>>
     fun getPollPolicy(): Flow<BaseResponse<PollPolicyApiResponse>>
     fun getPollListNotPaging(categoryId: String, sortType: String, size: Int = 20): Flow<BaseResponse<GetPollListResponse>>
     fun getUserPollList(cursor: Int?, size: Int = 20): Flow<BaseResponse<GetUserPollListResponse>>
     fun createPollComment(id: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<PollCommentCreateApiResponse>>
     fun deletePollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
-    fun editPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
-    fun reportPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>>
+    fun editPollComment(pollId: String, commentId: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<String>>
+    fun reportPollComment(pollId: String, commentId: String, pollReportCreateApiRequest: PollReportCreateApiRequest): Flow<BaseResponse<String>>
     fun getPollCommentList(id: String, cursor: Int?, size: Int = 20): Flow<BaseResponse<GetPollCommentListResponse>>
     fun getPopularStoresNotPaging(criteria: String, district: String, size: Int = 20): Flow<BaseResponse<GetPopularStoresResponse>>
     fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
+    fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
 }

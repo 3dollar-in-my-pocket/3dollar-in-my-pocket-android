@@ -1,5 +1,7 @@
 package com.threedollar.data.mapper
 
+import com.home.domain.data.store.ReasonModel
+import com.home.domain.data.store.ReportReasonsModel
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.data.mapper.GetPollCommentListResponseMapper.toMapper
@@ -18,6 +20,8 @@ import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
+import com.threedollar.network.data.Reason
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -83,3 +87,13 @@ fun GetNeighborhoodsResponse?.toNeighborhoodsMapper(): Neighborhoods {
         }, neighborhood.province.orEmpty())
     })
 }
+
+fun ReportReasonsResponse?.asModel() = ReportReasonsModel(
+    reasonModels = this?.reasons?.map { it.asModel() } ?: listOf()
+)
+
+fun Reason.asModel() = ReasonModel(
+    description = description ?: "",
+    hasReasonDetail = hasReasonDetail ?: false,
+    type = type ?: ""
+)

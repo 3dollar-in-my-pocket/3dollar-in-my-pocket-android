@@ -6,7 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.data.Neighborhoods
-import com.threedollar.presentation.databinding.ItemNeighborNameBinding
+import com.threedollar.presentation.databinding.ItemChoiceNameBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 
@@ -15,7 +15,7 @@ class NeighborHoodsChoiceAdapter(private val choiceClick: (Neighborhoods.Neighbo
 
     private var choiceDistrict: Neighborhoods.Neighborhood.District? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NeighborHoodsChoiceViewHolder {
-        return NeighborHoodsChoiceViewHolder(ItemNeighborNameBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return NeighborHoodsChoiceViewHolder(ItemChoiceNameBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: NeighborHoodsChoiceViewHolder, position: Int) {
@@ -29,7 +29,7 @@ class NeighborHoodsChoiceAdapter(private val choiceClick: (Neighborhoods.Neighbo
 
 }
 
-class NeighborHoodsChoiceViewHolder(private val binding: ItemNeighborNameBinding) : ViewHolder(binding.root) {
+class NeighborHoodsChoiceViewHolder(private val binding: ItemChoiceNameBinding) : ViewHolder(binding.root) {
     fun onBind(neighborhood: Neighborhoods.Neighborhood.District, choiceClick: (Neighborhoods.Neighborhood.District) -> Unit, isCheck: Boolean) {
         binding.imgCheck.isVisible = isCheck
         binding.twName.text = neighborhood.description

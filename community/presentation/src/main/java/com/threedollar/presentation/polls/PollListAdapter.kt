@@ -1,34 +1,41 @@
-package com.threedollar.presentation
+package com.threedollar.presentation.polls
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.data.PollItem
+import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.ItemPollBinding
+import com.threedollar.presentation.databinding.ItemRealtimeTitleBinding
 import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
-class CommunityPollAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
-    ListAdapter<PollItem, CommunityPollViewHolder>(BaseDiffUtilCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommunityPollViewHolder {
-        return CommunityPollViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+class PollListAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
+    PagingDataAdapter<PollItem, ViewHolder>(BaseDiffUtilCallback()) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (position == 1) {
+            getItem(position)?.let {
+                (holder as PollListViewHolder).onBind(it, choicePoll, clickPoll)
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: CommunityPollViewHolder, position: Int) {
-        holder.onBind(getItem(position), choicePoll, clickPoll)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return if (viewType == 0) PollTitleViewHolder(ItemRealtimeTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        else PollListViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
 
-class CommunityPollViewHolder(private val binding: ItemPollBinding) : ViewHolder(binding.root) {
-    @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
+class PollListViewHolder(private val binding: ItemPollBinding) : ViewHolder(binding.root) {
     fun onBind(pollItem: PollItem, choicePoll: (String, String) -> Unit, clickPoll: (PollItem) -> Unit) {
         val context = binding.root.context
         val first = pollItem.poll.options[0]
@@ -95,5 +102,6 @@ class CommunityPollViewHolder(private val binding: ItemPollBinding) : ViewHolder
         }
         binding.root.onSingleClick { clickPoll(pollItem) }
     }
-
 }
+
+class PollTitleViewHolder(private val binding: ItemRealtimeTitleBinding) : ViewHolder(binding.root)

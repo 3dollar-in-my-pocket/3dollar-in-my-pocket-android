@@ -3,9 +3,12 @@ package com.threedollar.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.home.domain.data.store.ReportReasonsModel
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.data.datasource.CommunityDataSource
 import com.threedollar.data.datasource.PollListDataSource
 import com.threedollar.data.datasource.PopularStoresDataSource
+import com.threedollar.data.mapper.asModel
 import com.threedollar.data.mapper.toCommentIdMapper
 import com.threedollar.data.mapper.toCreatePolicyMapper
 import com.threedollar.data.mapper.toDefaultResponseMapper
@@ -34,6 +37,7 @@ import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -51,7 +55,10 @@ class CommunityRepositoryImpl @Inject constructor(private val serverApi: ServerA
 
     override fun deletePollChoice(id: String): Flow<DefaultResponse> = communityDataSource.deletePollChoice(id).map { it.toDefaultResponseMapper() }
 
-    override fun reportPoll(id: String): Flow<DefaultResponse> = communityDataSource.reportPoll(id).map { it.toDefaultResponseMapper() }
+    override fun reportPoll(id: String, reason: String, reasonDetail: String?): Flow<DefaultResponse> = communityDataSource.reportPoll(
+        id,
+        PollReportCreateApiRequest(reason, reasonDetail)
+    ).map { it.toDefaultResponseMapper() }
 
     override fun getPollCategories(): Flow<List<Category>> = communityDataSource.getPollCategories().map { it.data.toListCategoryMapper() }
 
@@ -59,7 +66,8 @@ class CommunityRepositoryImpl @Inject constructor(private val serverApi: ServerA
         PollListDataSource(categoryId = categoryId, sortType = sortType, serverApi = serverApi)
     }.flow
 
-    override fun getPollListNotPaging(categoryId: String, sortType: String): Flow<PollList> = communityDataSource.getPollListNotPaging(categoryId, sortType).map {
+    override fun getPollListNotPaging(categoryId: String, sortType: String): Flow<PollList> =
+        communityDataSource.getPollListNotPaging(categoryId, sortType).map {
             it.data.toPollListMapper()
         }
 
@@ -68,17 +76,18 @@ class CommunityRepositoryImpl @Inject constructor(private val serverApi: ServerA
     override fun getUserPollList(cursor: Int?): Flow<UserPollItemList> =
         communityDataSource.getUserPollList(cursor).map { it.data.toUserPollItemListMapper() }
 
-    override fun createPollComment(id: String, pollCommentApiRequest: PollCommentApiRequest): Flow<CommentId> =
-        communityDataSource.createPollComment(id, pollCommentApiRequest).map { it.data.toCommentIdMapper() }
+    override fun createPollComment(id: String, content: String): Flow<CommentId> =
+        communityDataSource.createPollComment(id, PollCommentApiRequest(content)).map { it.data.toCommentIdMapper() }
 
     override fun deletePollComment(pollId: String, commentId: String): Flow<DefaultResponse> =
         communityDataSource.deletePollComment(pollId, commentId).map { it.toDefaultResponseMapper() }
 
-    override fun editPollComment(pollId: String, commentId: String): Flow<DefaultResponse> =
-        communityDataSource.editPollComment(pollId, commentId).map { it.toDefaultResponseMapper() }
+    override fun editPollComment(pollId: String, commentId: String, content: String): Flow<DefaultResponse> =
+        communityDataSource.editPollComment(pollId, commentId, PollCommentApiRequest(content)).map { it.toDefaultResponseMapper() }
 
-    override fun reportPollComment(pollId: String, commentId: String): Flow<DefaultResponse> =
-        communityDataSource.reportPollComment(pollId, commentId).map { it.toDefaultResponseMapper() }
+    override fun reportPollComment(pollId: String, commentId: String, reason: String, reasonDetail: String?): Flow<DefaultResponse> =
+        communityDataSource.reportPollComment(pollId, commentId, PollReportCreateApiRequest(reason, reasonDetail))
+            .map { it.toDefaultResponseMapper() }
 
     override fun getPollCommentList(id: String, cursor: Int?): Flow<List<PollComment>> =
         communityDataSource.getPollCommentList(id, cursor).map { it.data.toPollCommentListMapper().pollComments }
@@ -89,6 +98,10 @@ class CommunityRepositoryImpl @Inject constructor(private val serverApi: ServerA
         PopularStoresDataSource(criteria = criteria, district = district, serverApi = serverApi)
     }.flow
 
-    override fun getPopularStoresNotPaging(criteria: String, district: String): Flow<PopularStores> = communityDataSource.getPopularStoresNotPaging(criteria, district).map { it.data.toPopularStoresMapper() }
+    override fun getPopularStoresNotPaging(criteria: String, district: String): Flow<PopularStores> =
+        communityDataSource.getPopularStoresNotPaging(criteria, district).map { it.data.toPopularStoresMapper() }
+
+    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<ReportReasonsModel> =
+        communityDataSource.getReportReasons(reportReasonsGroupType).map { it.data.asModel() }
 
 }

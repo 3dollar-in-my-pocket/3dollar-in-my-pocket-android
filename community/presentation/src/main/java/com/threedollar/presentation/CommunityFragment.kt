@@ -26,7 +26,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         CommunityPollAdapter(choicePoll = { pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
         }, clickPoll = {
-
+            it.poll.category.categoryId
         })
     }
     private val storeAdapter by lazy {

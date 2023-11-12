@@ -1,12 +1,15 @@
 package com.threedollar.data.datasource
 
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -15,6 +18,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -36,8 +40,8 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(serverApi.deletePollChoice(id))
     }
 
-    override fun reportPoll(id: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.reportPoll(id))
+    override fun reportPoll(id: String, pollReportCreateApiRequest: PollReportCreateApiRequest): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.reportPoll(id, pollReportCreateApiRequest))
     }
 
     override fun getPollCategories(): Flow<BaseResponse<PollCategoryApiResponse>> = flow {
@@ -70,19 +74,23 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(serverApi.deletePollComment(pollId, commentId))
     }
 
-    override fun editPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.editPollComment(pollId, commentId))
+    override fun editPollComment(pollId: String, commentId: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.editPollComment(pollId, commentId, pollCommentApiRequest))
     }
 
-    override fun reportPollComment(pollId: String, commentId: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.reportPollComment(pollId, commentId))
+    override fun reportPollComment(
+        pollId: String,
+        commentId: String,
+        pollReportCreateApiRequest: PollReportCreateApiRequest
+    ): Flow<BaseResponse<String>> = flow {
+        emit(serverApi.reportPollComment(pollId, commentId, pollReportCreateApiRequest))
     }
 
     override fun getPollCommentList(id: String, cursor: Int?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
         emit(serverApi.getPollCommentList(id, cursor, size))
     }
 
-    override fun getPopularStoresNotPaging(criteria: String, district: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow{
+    override fun getPopularStoresNotPaging(criteria: String, district: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
         val response = serverApi.getPopularStores(criteria = criteria, district = district, size = size, cursor = null)
         if (response.isSuccessful) {
             response.body()?.let {
@@ -93,5 +101,9 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
 
     override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {
         emit(serverApi.getNeighborhoods())
+    }
+
+    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {
+        emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
     }
 }

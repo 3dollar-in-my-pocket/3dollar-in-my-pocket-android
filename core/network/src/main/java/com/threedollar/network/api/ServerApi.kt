@@ -10,6 +10,7 @@ import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -40,7 +41,7 @@ interface ServerApi {
     suspend fun deletePollChoice(@Path("pollId") id: String): BaseResponse<String>
 
     @POST("/api/v1/poll/{pollId}/report")
-    suspend fun reportPoll(@Path("pollId") id: String): BaseResponse<String>
+    suspend fun reportPoll(@Path("pollId") id: String, @Body pollReportCreateApiRequest: PollReportCreateApiRequest): BaseResponse<String>
 
     @GET("/api/v1/poll/categories")
     suspend fun getPollCategories(): BaseResponse<PollCategoryApiResponse>
@@ -69,10 +70,18 @@ interface ServerApi {
     suspend fun deletePollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
 
     @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
-    suspend fun editPollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
+    suspend fun editPollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body commentApiRequest: PollCommentApiRequest
+    ): BaseResponse<String>
 
     @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
-    suspend fun reportPollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): BaseResponse<String>
+    suspend fun reportPollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+    ): BaseResponse<String>
 
     @GET("/api/v1/poll/{pollId}/comments")
     suspend fun getPollCommentList(
