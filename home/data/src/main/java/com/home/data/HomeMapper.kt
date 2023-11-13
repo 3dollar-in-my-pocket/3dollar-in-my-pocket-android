@@ -484,7 +484,7 @@ fun String.asSalesType() = when (this) {
         SalesType.STORE
     }
 
-    "CONVENIENCE_STORE " -> {
+    "CONVENIENCE_STORE" -> {
         SalesType.CONVENIENCE_STORE
     }
 
