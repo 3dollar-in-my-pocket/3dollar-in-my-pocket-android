@@ -68,6 +68,7 @@ class PhotoRecyclerAdapter(
             moreClickListener: () -> Unit?,
         ) {
             binding.photoImageView.loadImage(item.url)
+            binding.tvMoreCount.text = "+${size - MAX_COUNT}"
             when {
                 position < MAX_COUNT - 1 || (size - MAX_COUNT) == 0 -> {
                     binding.root.setOnClickListener { photoClickListener?.onClick(item) }
@@ -75,7 +76,7 @@ class PhotoRecyclerAdapter(
                 }
 
                 (position == MAX_COUNT - 1) -> {
-                    binding.tvMoreCount.text = "+${size - MAX_COUNT}"
+                    binding.layoutMore.isVisible = true
                     binding.root.setOnClickListener { moreClickListener() }
                 }
 

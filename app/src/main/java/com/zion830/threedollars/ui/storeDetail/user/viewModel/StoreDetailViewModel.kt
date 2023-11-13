@@ -74,7 +74,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         storeId: Int,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
-        storeImagesCount: Int? = null,
+        storeImagesCount: Int? = 30,
         reviewsCount: Int? = null,
         visitHistoriesCount: Int? = null,
         filterVisitStartDate: String,
