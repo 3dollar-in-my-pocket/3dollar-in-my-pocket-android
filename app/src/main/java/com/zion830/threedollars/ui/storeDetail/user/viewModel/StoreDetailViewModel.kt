@@ -51,8 +51,8 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
     private val _photoDeleted: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val photoDeleted: SharedFlow<Boolean> get() = _photoDeleted
 
-    private val _isExistStoreInfo: MutableLiveData<Pair<Int, Boolean>> = MutableLiveData()
-    val isExistStoreInfo: LiveData<Pair<Int, Boolean>> get() = _isExistStoreInfo
+    private val _isDeleteStore: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isDeleteStore: StateFlow<Boolean> get() = _isDeleteStore
 
     private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
     val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
@@ -95,6 +95,9 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                             _userStoreDetailModel.value = data
                         }
                     } else {
+                        if (it.error == "not_exists_store") {
+                            _isDeleteStore.value = true
+                        }
                         _serverError.emit(it.message)
                     }
                 }

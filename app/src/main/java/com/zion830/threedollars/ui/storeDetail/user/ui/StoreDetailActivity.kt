@@ -137,14 +137,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 filterVisitStartDate = getMonthFirstDate()
             )
         }
-
-        viewModel.isExistStoreInfo.observe(this) { isExistStore ->
-            val isExist = isExistStore.second
-            if (!isExist) {
-                showToast(R.string.exist_store_error)
-                finish()
-            }
-        }
     }
 
     private fun initAdapter() {
@@ -327,6 +319,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         } else {
                             progressDialog?.dismiss()
                             refreshStoreInfo()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.isDeleteStore.collect {
+                        if (it) {
+                            finish()
                         }
                     }
                 }
