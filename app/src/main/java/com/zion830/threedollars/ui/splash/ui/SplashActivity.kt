@@ -1,8 +1,12 @@
 package com.zion830.threedollars.ui.splash.ui
 
+import android.animation.Animator
+import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -47,22 +51,29 @@ class SplashActivity :
                 viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
             }
         }
-        lifecycleScope.launch {
-            delay(2000L)
-            VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
-                { minimum, current ->
-                    VersionUpdateDialog.getInstance(minimum, current)
-                        .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
-                }, {
-                    if (LegacySharedPrefUtils.getLoginType().isNullOrBlank()) {
-                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                        finish()
-                    } else {
-                        tryServiceLogin()
-                    }
-                })
-        }
-
+        binding.lottieAnimationView.playAnimation()
+        binding.lottieAnimationView.addAnimatorListener(object : AnimatorListener {
+            override fun onAnimationEnd(p0: Animator) {
+                lifecycleScope.launch {
+                    delay(2000L)
+                    VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
+                        { minimum, current ->
+                            VersionUpdateDialog.getInstance(minimum, current)
+                                .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                        }, {
+                            if (LegacySharedPrefUtils.getLoginType().isNullOrBlank()) {
+                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                finish()
+                            } else {
+                                tryServiceLogin()
+                            }
+                        })
+                }
+            }
+            override fun onAnimationStart(p0: Animator) {}
+            override fun onAnimationCancel(p0: Animator) {}
+            override fun onAnimationRepeat(p0: Animator) {}
+        })
         initFlow()
     }
 
