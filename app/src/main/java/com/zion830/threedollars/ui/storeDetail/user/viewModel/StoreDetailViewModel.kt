@@ -93,6 +93,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                     if (it.ok) {
                         it.data?.let { data ->
                             _userStoreDetailModel.value = data
+                            _favoriteModel.value = data.favorite
                         }
                     } else {
                         if (it.error == "not_exists_store") {
