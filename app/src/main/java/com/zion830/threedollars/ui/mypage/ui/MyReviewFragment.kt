@@ -70,6 +70,10 @@ class MyReviewFragment :
         observeUiData()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyReviewFragment")
+    }
+
     private fun observeUiData() {
         myReviewViewModel.updateReview.observe(viewLifecycleOwner) {
             adapter?.refresh()

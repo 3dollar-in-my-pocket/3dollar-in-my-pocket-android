@@ -31,6 +31,10 @@ class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>() {
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("AskFragment")
+    }
+
     private fun openEmailApp() {
         val selectorIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")

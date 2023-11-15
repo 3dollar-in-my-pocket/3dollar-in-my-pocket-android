@@ -61,6 +61,10 @@ class MyVisitHistoryFragment :
         observeUiData()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyVisitHistoryFragment")
+    }
+
     private fun observeUiData() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycleScope.launch {

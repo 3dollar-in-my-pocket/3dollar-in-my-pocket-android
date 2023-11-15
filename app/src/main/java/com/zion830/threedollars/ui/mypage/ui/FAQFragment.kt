@@ -63,6 +63,10 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>() {
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("FAQFragment")
+    }
+
     private fun showDeleteAccountDialog() {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.delete_account_confirm)

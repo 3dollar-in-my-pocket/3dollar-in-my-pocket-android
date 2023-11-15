@@ -42,6 +42,10 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
         observeData()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyMedalFragment")
+    }
+
     private fun observeData() {
         viewModel.myMedals.observe(viewLifecycleOwner) {
             adapter.submitList(it)

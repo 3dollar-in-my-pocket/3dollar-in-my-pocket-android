@@ -52,6 +52,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
         initButton()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("NewAddressFragment")
+    }
+
     private fun initNavigationBar() {
         if (requireActivity() is MainActivity) {
             (requireActivity() as MainActivity).showBottomNavigation(false)

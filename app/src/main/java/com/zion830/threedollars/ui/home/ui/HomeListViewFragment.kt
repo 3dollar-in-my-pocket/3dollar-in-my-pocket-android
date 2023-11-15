@@ -67,6 +67,10 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("HomeListViewFragment")
+    }
+
     private fun initButton() {
         binding.mapViewTextView.setOnClickListener {
             it.findNavController().popBackStack()

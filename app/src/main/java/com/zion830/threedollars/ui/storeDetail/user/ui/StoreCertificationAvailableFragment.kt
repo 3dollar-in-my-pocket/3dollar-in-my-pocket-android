@@ -47,6 +47,10 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
         initMap()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("StoreCertificationAvailableFragment")
+    }
+
     private fun initTextView() {
         binding.tvTitle.textPartTypeface("가게 도착!", Typeface.BOLD)
         binding.storeNameTextView.text = userStoreModel?.name

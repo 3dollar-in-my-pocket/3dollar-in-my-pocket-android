@@ -87,6 +87,10 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         initFlows()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("AddStoreDetailFragment")
+    }
+
     private fun initNavigationBar() {
         if (requireActivity() is MainActivity) {
             (requireActivity() as MainActivity).showBottomNavigation(false)

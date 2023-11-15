@@ -56,6 +56,10 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("SearchAddressFragment")
+    }
+
     private fun initAdapter() {
         adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {

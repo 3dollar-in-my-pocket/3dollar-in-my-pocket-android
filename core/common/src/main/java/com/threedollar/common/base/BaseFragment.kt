@@ -1,6 +1,7 @@
 package com.threedollar.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,11 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     protected abstract val viewModel: VM
 
+    protected lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun onResume() {
         super.onResume()
-        FirebaseAnalytics.getInstance(requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_NAME, this::class.java.simpleName)
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, this::class.java.simpleName)
-        }
+        initFirebaseAnalytics()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,11 +30,17 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         initView()
     }
-
+    fun setFirebaseAnalyticsLogEvent(className: String) {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+        }
+    }
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
 
     abstract fun initView()
+
+    abstract fun initFirebaseAnalytics()
 }

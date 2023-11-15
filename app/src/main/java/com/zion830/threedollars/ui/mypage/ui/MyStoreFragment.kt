@@ -67,6 +67,10 @@ class MyStoreFragment :
         observeUiData()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyStoreFragment")
+    }
+
     override fun onStop() {
         super.onStop()
         myPageViewModel.requestUserActivity()

@@ -35,11 +35,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
 
     override val viewModel: PopupViewModel by activityViewModels()
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
-
     override fun initView() {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-
         binding.run {
             viewModel.popups.value.firstOrNull()?.let {
                 ivPopup.loadImage(it.imageUrl)
@@ -87,6 +83,10 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                 }
             }
         }
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("PopupFragment")
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {

@@ -82,6 +82,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("HomeFragment")
+    }
+
     private fun initScroll() {
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.aroundStoreRecyclerView)
