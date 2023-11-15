@@ -96,6 +96,10 @@ class BossStoreDetailActivity :
         initAdapter()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("BossStoreDetailActivity")
+    }
+
     private fun initAdapter() {
         binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter

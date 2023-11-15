@@ -56,6 +56,10 @@ class StoreReviewDetailActivity :
         initFlow()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity")
+    }
+
     private fun initButton() {
         binding.backButton.setOnClickListener {
             finish()

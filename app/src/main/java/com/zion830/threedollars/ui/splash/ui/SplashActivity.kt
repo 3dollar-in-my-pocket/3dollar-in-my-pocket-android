@@ -77,6 +77,10 @@ class SplashActivity :
         initFlow()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("SplashActivity")
+    }
+
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {

@@ -43,6 +43,10 @@ class FavoriteMyInfoEditActivity :
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("FavoriteMyInfoEditActivity")
+    }
+
     private fun changeText() {
         binding.favoriteTitleEditTextView.addTextChangedListener(object : TextWatcher {
             var previousString = ""

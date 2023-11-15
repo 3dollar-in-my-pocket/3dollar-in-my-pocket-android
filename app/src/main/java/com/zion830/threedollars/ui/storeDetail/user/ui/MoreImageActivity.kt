@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -53,6 +54,9 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         initFlow()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "MoreImageActivity")
+    }
     private fun initViewModel() {
         viewModel.getImage(storeId)
     }

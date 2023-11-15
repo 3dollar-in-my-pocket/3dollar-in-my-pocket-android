@@ -34,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
@@ -60,6 +59,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
             LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("LoginActivity")
     }
 
     private fun tryLoginBySocialType() {
@@ -155,7 +158,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                             is ResultWrapper.GenericError -> {
                                 when (it.code) {
                                     400 -> showToast(R.string.connection_failed)
-                                    404 -> inputNameLauncher.launch(Intent(this@LoginActivity, InputNameActivity::class.java))
+                                    404 -> inputNameLauncher.launch(Intent(this@LoginActivity, SignUpActivity::class.java))
                                     503 -> showToast(R.string.server_500)
                                     500, 502 -> showToast(R.string.connection_failed)
                                     else -> showToast(R.string.connection_failed)

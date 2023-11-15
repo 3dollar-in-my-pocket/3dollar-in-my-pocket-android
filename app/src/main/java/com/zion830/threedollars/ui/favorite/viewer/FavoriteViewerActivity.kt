@@ -13,7 +13,7 @@ import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.dialog.LoginRequestDialog
-import com.zion830.threedollars.ui.login.ui.InputNameActivity
+import com.zion830.threedollars.ui.login.ui.SignUpActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -63,7 +63,7 @@ class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding,
                                 moveToDetailActivity(item)
                             } else {
                                 selectedItem = item
-                                inputNameLauncher.launch(Intent(this, InputNameActivity::class.java))
+                                inputNameLauncher.launch(Intent(this, SignUpActivity::class.java))
                             }
                         }.show(supportFragmentManager, "")
                     }

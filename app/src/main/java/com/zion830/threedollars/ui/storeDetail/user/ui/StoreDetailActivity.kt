@@ -139,6 +139,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity")
+    }
     private fun initAdapter() {
         binding.reviewRecyclerView.adapter = reviewAdapter
         binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter

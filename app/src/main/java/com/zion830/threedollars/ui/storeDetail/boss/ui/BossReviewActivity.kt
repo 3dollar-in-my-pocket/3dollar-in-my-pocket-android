@@ -65,6 +65,10 @@ class BossReviewActivity :
         iniFlows()
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity")
+    }
+
     private fun iniFlows() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
