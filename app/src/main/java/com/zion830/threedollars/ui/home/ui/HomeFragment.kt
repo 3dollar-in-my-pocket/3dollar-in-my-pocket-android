@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home.ui
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -241,9 +242,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             bossFilterTextView.setTextColor(textColor)
                             bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(R.string.fragment_home_filter_latest)
-                            } else {
                                 getString(R.string.fragment_home_filter_distance)
+                            } else {
+                                getString(R.string.fragment_home_filter_latest)
                             }
                         }
                     }
