@@ -16,50 +16,38 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.home.domain.data.store.ReasonModel
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.request.ReportReviewModelRequest
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.R
+import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ReportReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BottomSheetDialogFragment() {
+class ReportReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) :
+    BaseBottomSheetDialogFragment<DialogReportReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
-    private lateinit var binding: DialogReportReviewBinding
 
     private var reportReviewModelRequest = ReportReviewModelRequest()
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogReportReviewBinding =
+        DialogReportReviewBinding.inflate(inflater, container, false)
+
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("ReportReviewDialog")
     }
 
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogReportReviewBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        initView()
         initButton()
-    }
-
-    private fun initView() {
         viewModel.reportReasons.value?.let { reasons ->
             val radioButtonList = listOf(
                 binding.reasonButton1,

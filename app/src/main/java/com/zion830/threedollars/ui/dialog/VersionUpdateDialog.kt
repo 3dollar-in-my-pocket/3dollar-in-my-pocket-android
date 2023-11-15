@@ -67,7 +67,7 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
 
     companion object {
 
-        fun getInstance(minimumVersion: String, currentVersion: String) = VersionUpdateDialog(
+        fun getInstance(currentVersion: String) = VersionUpdateDialog(
             currentVersion
         )
     }

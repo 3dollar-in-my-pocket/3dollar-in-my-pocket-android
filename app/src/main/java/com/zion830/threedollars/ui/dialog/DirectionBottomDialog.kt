@@ -10,45 +10,33 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogBottomDirectionBinding
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
-class DirectionBottomDialog : BottomSheetDialogFragment() {
+class DirectionBottomDialog : BaseBottomSheetDialogFragment<DialogBottomDirectionBinding>() {
 
-    private lateinit var binding: DialogBottomDirectionBinding
     private var latitude = 0.0
     private var longitude = 0.0
     private var storeName = ""
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomDirectionBinding =
+        DialogBottomDirectionBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("DirectionBottomDialog")
     }
 
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
         behavior.maxHeight = 100
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogBottomDirectionBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         arguments?.apply {
             latitude = getDouble(LATITUDE)
             longitude = getDouble(LONGITUDE)

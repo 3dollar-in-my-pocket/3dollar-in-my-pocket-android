@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
@@ -22,19 +23,15 @@ import dagger.hilt.android.AndroidEntryPoint
 class EditReviewDialog(
     private val content: ReviewDetail?,
     private val onComplete: (NewReview) -> Unit,
-) : BottomSheetDialogFragment() {
-    private lateinit var binding: DialogAddReviewBinding
+) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAddReviewBinding =
+        DialogAddReviewBinding.inflate(inflater, container, false)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("EditReviewDialog")
     }
 
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
@@ -42,17 +39,7 @@ class EditReviewDialog(
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogAddReviewBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         binding.closeImageButton.setOnClickListener {
             dismiss()
@@ -81,5 +68,4 @@ class EditReviewDialog(
             binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()
         }
     }
-
 }

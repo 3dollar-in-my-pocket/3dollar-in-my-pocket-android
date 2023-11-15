@@ -1,9 +1,7 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +9,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.home.domain.data.store.ReviewContentModel
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -22,20 +20,10 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BottomSheetDialogFragment() {
+class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
-    private lateinit var binding: DialogAddReviewBinding
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
-    }
-
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
@@ -43,17 +31,10 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogAddReviewBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAddReviewBinding =
+        DialogAddReviewBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         initButton()
@@ -62,6 +43,10 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
             binding.rating.rating = content.review.rating.toFloat()
             binding.etContent.setText(content.review.contents)
         }
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("AddReviewDialog")
     }
 
     private fun initButton() {
@@ -97,6 +82,6 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     companion object {
-        fun getInstance(content: ReviewContentModel? = null, storeId : Int? = null) = AddReviewDialog(content, storeId)
+        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null) = AddReviewDialog(content, storeId)
     }
 }

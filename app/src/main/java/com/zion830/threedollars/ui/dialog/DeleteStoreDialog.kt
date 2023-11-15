@@ -18,52 +18,37 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.home.domain.data.store.DeleteType
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class DeleteStoreDialog : BottomSheetDialogFragment() {
+class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
-    private lateinit var binding: DialogDeleteBinding
-
     private lateinit var deleteType: DeleteType
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogDeleteBinding =
+        DialogDeleteBinding.inflate(inflater, container, false)
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("DeleteStoreDialog")
     }
 
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
         behavior.maxHeight = 100
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogDeleteBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(R.color.gray80))
 
         initButton()
         initFlow()
     }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {

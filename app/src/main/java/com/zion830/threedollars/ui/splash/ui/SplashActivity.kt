@@ -5,8 +5,6 @@ import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.animation.Animation
-import android.view.animation.Animation.AnimationListener
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -37,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class SplashActivity :
@@ -58,7 +55,7 @@ class SplashActivity :
                     delay(2000L)
                     VersionChecker.checkForceUpdateAvailable(this@SplashActivity,
                         { minimum, current ->
-                            VersionUpdateDialog.getInstance(minimum, current)
+                            VersionUpdateDialog.getInstance(current)
                                 .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
                         }, {
                             if (LegacySharedPrefUtils.getLoginType().isNullOrBlank()) {

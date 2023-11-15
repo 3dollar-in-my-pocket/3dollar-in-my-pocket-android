@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
@@ -24,13 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
-
-    private lateinit var binding: DialogBottomAddStoreMenuCategoryBinding
+class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogBottomAddStoreMenuCategoryBinding>() {
 
     private val viewModel: AddStoreViewModel by activityViewModels()
-
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     private val streetCategories by lazy { LegacySharedPrefUtils.getCategories() }
 
@@ -54,43 +47,27 @@ class AddStoreMenuCategoryDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog: Dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnShowListener {
-            val bottomSheetDialog = it as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
-        return dialog
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomAddStoreMenuCategoryBinding =
+        DialogBottomAddStoreMenuCategoryBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("AddStoreMenuCategoryDialogFragment")
     }
 
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DialogBottomAddStoreMenuCategoryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initView()
+    override fun initView() {
         initButton()
         initFlow()
+        initAdapter()
     }
 
-    private fun initView() {
-
-        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-
+    private fun initAdapter() {
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
             initStreetAdapterSubmit()
         }
