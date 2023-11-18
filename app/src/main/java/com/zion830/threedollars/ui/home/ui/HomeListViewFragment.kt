@@ -164,9 +164,9 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                             bossFilterTextView.setTextColor(textColor)
                             bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(R.string.fragment_home_filter_latest)
-                            } else {
                                 getString(R.string.fragment_home_filter_distance)
+                            } else {
+                                getString(R.string.fragment_home_filter_latest)
                             }
                         }
                     }
