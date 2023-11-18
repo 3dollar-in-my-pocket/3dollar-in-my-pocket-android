@@ -57,6 +57,19 @@
         app:layout_constraintStart_toEndOf="@id/filterTextView"
         app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/admob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rect_gray"
+        app:adSize="BANNER"
+        app:adUnitId="@string/admob_unit_id"
+        app:layout_constraintTop_toBottomOf="@id/allMenuTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/listTitleTextView"
         style="@style/apple_gothic_semi_bold.size_20sp"
@@ -66,7 +79,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/fragment_home_all_menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
+        app:layout_constraintTop_toBottomOf="@id/admob" />
 
     <TextView
         android:id="@+id/certifiedStoreTextView"
@@ -79,7 +92,7 @@
         android:drawablePadding="4dp"
         android:textColor="@color/gray60"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/allMenuTextView"
+        app:layout_constraintTop_toBottomOf="@id/admob"
         app:drawableStartCompat="@drawable/ic_certification_check_off" />
 
     <androidx.recyclerview.widget.RecyclerView

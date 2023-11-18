@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
@@ -61,12 +62,17 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         FragmentHomeListViewBinding.inflate(inflater, container, false)
 
     override fun initView() {
+        initAdmob()
         initFlow()
         initButton()
         binding.listRecyclerView.adapter = adapter
 
     }
 
+    private fun initAdmob(){
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+    }
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent("HomeListViewFragment")
     }
