@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.login.ui
 
+import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +10,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.messaging.FirebaseMessaging
 import com.threedollar.common.base.BaseActivity
+import com.zion830.threedollars.Constants.CLICK_SIGN_UP
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.ui.dialog.MarketingDialog
@@ -110,6 +115,11 @@ class SignUpActivity :
         }
 
         binding.btnFinish.onSingleClick {
+            val bundle = Bundle().apply {
+                putString("screen", "sign_up")
+                putString("nickname", binding.etName.text.toString())
+            }
+            EventTracker.logEvent(CLICK_SIGN_UP, bundle)
             viewModel.trySignUp()
         }
     }

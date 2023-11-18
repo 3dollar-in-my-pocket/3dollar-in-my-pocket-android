@@ -19,8 +19,11 @@ object Constants {
     const val CURRENT_LOCATION_BTN_CLICKED = "current_location_button_clicked"
 
     //login
-    const val KAKAO_BTN_CLICKED = "kakao_login_button_clicked"
-    const val GOOGLE_BTN_CLICKED = "google_login_button_clicked"
+    const val KAKAO_BTN_CLICKED = "click_sign_in_kakao"
+    const val GOOGLE_BTN_CLICKED = "click_sign_in_google"
+
+    //signUP
+    const val CLICK_SIGN_UP = "click_sign_up"
 
     // nickname_init
     const val NICKNAME_CHANGE_BTN_CLICKED = "nickname_change_button_clicked"
