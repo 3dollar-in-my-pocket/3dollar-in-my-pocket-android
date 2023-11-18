@@ -30,8 +30,16 @@ object Constants {
     const val NICKNAME_ALREADY_EXISTED = "nickname_already_existed"
 
     // home
-    const val SEARCH_BTN_CLICKED = "search_button_clicked"
-    const val STORE_CARD_BTN_CLICKED = "store_card_button_clicked"
+    const val CLICK_STORE = "click_store"
+    const val CLICK_VISIT = "click_visit"
+    const val CLICK_CURRENT_LOCATION = "click_current_location"
+    const val CLICK_MARKER = "click_marker"
+    const val CLICK_ADDRESS_FIELD = "click_address_field"
+    const val CLICK_CATEGORY_FILTER = "click_category_filter"
+    const val CLICK_BOSS_FILTER = "click_boss_filter"
+    const val CLICK_SORTING = "click_sorting"
+    const val CLICK_AD_CARD = "click_ad_card"
+    const val CLICK_AD_MARKER = "click_ad_marker"
 
     // search
     const val CLOSE_BTN_CLICKED = "close_button_clicked"

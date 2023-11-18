@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home.ui
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,6 +33,14 @@ import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.BOSS_STORE
+import com.zion830.threedollars.Constants.CLICK_ADDRESS_FIELD
+import com.zion830.threedollars.Constants.CLICK_AD_CARD
+import com.zion830.threedollars.Constants.CLICK_BOSS_FILTER
+import com.zion830.threedollars.Constants.CLICK_CATEGORY_FILTER
+import com.zion830.threedollars.Constants.CLICK_MARKER
+import com.zion830.threedollars.Constants.CLICK_SORTING
+import com.zion830.threedollars.Constants.CLICK_STORE
+import com.zion830.threedollars.Constants.CLICK_VISIT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -96,7 +105,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     override fun onSnapPositionChange(position: Int) {
                         if (adapter.getItemLocation(position) != null) {
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
-                            adapter.focusedIndex = if (position > 0) position -1 else position
+                            adapter.focusedIndex = if (position > 0) position - 1 else position
                             naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
                             adapter.getItemLocation(position)?.let {
                                 naverMapFragment.moveCameraWithAnim(it)
@@ -115,7 +124,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initAdapter() {
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
-                EventTracker.logEvent(Constants.STORE_CARD_BTN_CLICKED)
+                val bundle = Bundle().apply {
+                    putString("screen", "home")
+                    putString("store_id", item.storeModel.storeId)
+                    putString("type", item.storeModel.storeType)
+                }
+                EventTracker.logEvent(CLICK_STORE, bundle)
                 if (item.storeModel.storeType == BOSS_STORE) {
                     val intent =
                         BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
@@ -129,10 +143,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }, object : OnItemClickListener<AdvertisementModel> {
             override fun onClick(item: AdvertisementModel) {
-                EventTracker.logEvent(Constants.HOME_AD_BANNER_CLICKED)
+                val bundle = Bundle().apply {
+                    putString("screen", "home")
+                    putString("advertisement_id", item.advertisementId.toString())
+                }
+                EventTracker.logEvent(CLICK_AD_CARD, bundle)
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
             }
         }) { item ->
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                putString("store_id", item.storeModel.storeId)
+            }
+            EventTracker.logEvent(CLICK_VISIT, bundle)
             val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
@@ -152,7 +175,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initButton() {
         binding.layoutAddress.setOnClickListener {
-            EventTracker.logEvent(Constants.SEARCH_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+            }
+            EventTracker.logEvent(CLICK_ADDRESS_FIELD, bundle)
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 SearchAddressFragment.newInstance(),
@@ -161,6 +187,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.allMenuTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+            }
+            EventTracker.logEvent(CLICK_CATEGORY_FILTER, bundle)
             showSelectCategoryDialog()
         }
 
@@ -170,11 +200,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             } else {
                 HomeSortType.DISTANCE_ASC
             }
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                putString("type", homeSortType.name)
+            }
+            EventTracker.logEvent(CLICK_SORTING, bundle)
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.setOnClickListener {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
+            }
+            EventTracker.logEvent(CLICK_BOSS_FILTER, bundle)
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
@@ -288,8 +328,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
         val position = adapter.getItemPosition(adAndStoreItem)
         if (position >= 0) {
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                if (adAndStoreItem is ContentModel) {
+                    putString("store_id", adAndStoreItem.storeModel.storeId)
+                    putString("type", adAndStoreItem.storeModel.storeType)
+                } else if (adAndStoreItem is BossNearStoreResponse.BossNearStoreModel) {
+                    putString("store_id", adAndStoreItem.bossStoreId)
+                    putString("type", "BOSS_STORE")
+                }
+            }
+            EventTracker.logEvent(CLICK_MARKER, bundle)
             naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
-            adapter.focusedIndex = if (position > 0) position -1 else position
+            adapter.focusedIndex = if (position > 0) position - 1 else position
             naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is ContentModel) {

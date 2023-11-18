@@ -20,6 +20,8 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
@@ -117,6 +119,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
                 }
                 map.locationOverlay.setOnClickListener {
+                    val bundle = Bundle().apply {
+                        putString("screen", "home")
+                        putString("advertisement_id", storeMarker.advertisementId.toString())
+                    }
+                    EventTracker.logEvent(Constants.CLICK_AD_MARKER, bundle)
                     val dialog = MarkerClickDialog()
                     dialog.show(parentFragmentManager, dialog.tag)
                     return@setOnClickListener false
