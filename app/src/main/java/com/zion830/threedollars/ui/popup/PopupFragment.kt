@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
@@ -42,19 +44,30 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             }
 
             tvClose.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("screen", "main_ad_banner")
+                }
+                EventTracker.logEvent(Constants.CLICK_CLOSE, bundle)
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("screen", "main_ad_banner")
+                }
+                EventTracker.logEvent(Constants.CLICK_NOT_SHOW_TODAY, bundle)
                 sharedPrefUtils.setTodayNotPopupDate(getCurrentDate())
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
-                EventTracker.logEvent(Constants.SPLASH_POPUP_CLICKED)
-
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel.popups.value.let { popups ->
                     popups.firstOrNull()?.let { popup ->
+                        val bundle = Bundle().apply {
+                            putString("screen", "main_ad_banner")
+                            putString("advertisement_id", popup.advertisementId.toString())
+                        }
+                        EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
                         popup.linkUrl?.let { linkUrl ->
                             webView.loadUrl(linkUrl)
 

@@ -46,6 +46,13 @@ object Constants {
     const val CLICK_CATEGORY = "click_category"
     const val CLICK_AD_BANNER = "click_ad_banner"
 
+    // main_ad_banner
+    const val CLICK_NOT_SHOW_TODAY = "click_not_show_today"
+    const val CLICK_CLOSE = "click_close"
+
+    // marker_popup
+    const val CLICK_BOTTOM_BUTTON = "click_bottom_button"
+
     // search
     const val CLOSE_BTN_CLICKED = "close_button_clicked"
     const val LOCATION_ITEM_CLICKED = "location_item_clicked"

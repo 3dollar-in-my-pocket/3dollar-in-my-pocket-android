@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import com.zion830.threedollars.ui.map.viewModel.MarkerClickViewModel
@@ -39,9 +41,15 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
         viewModel.getPopups()
 
         binding.downloadTextView.onSingleClick {
-            if (viewModel.popupsResponse.value?.linkUrl.isNotNullOrEmpty()) {
-                viewModel.eventClick("ADVERTISEMENT", viewModel.popupsResponse.value?.advertisementId.toString())
-                context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.popupsResponse.value?.linkUrl)))
+            viewModel.popupsResponse.value?.let { advertisementModel ->
+                val bundle = Bundle().apply {
+                    putString("screen", "marker_popup")
+                    putString("advertisement_id", advertisementModel.advertisementId.toString())
+                }
+                EventTracker.logEvent(Constants.CLICK_BOTTOM_BUTTON, bundle)
+                if (advertisementModel.linkUrl.isNotNullOrEmpty()) {
+                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.linkUrl)))
+                }
             }
         }
 
