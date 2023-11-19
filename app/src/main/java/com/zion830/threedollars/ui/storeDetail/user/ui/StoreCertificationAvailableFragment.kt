@@ -14,6 +14,10 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_VISIT_FAIL
+import com.zion830.threedollars.Constants.CLICK_VISIT_SUCCESS
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationAvailableBinding
 import com.zion830.threedollars.ui.map.ui.StoreCertificationNaverMapFragment
@@ -77,9 +81,19 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.layoutSuccess.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "visit_store")
+                putString("store_id", userStoreModel?.storeId.toString())
+            }
+            EventTracker.logEvent(CLICK_VISIT_SUCCESS, bundle)
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, true)
         }
         binding.layoutFailed.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "visit_store")
+                putString("store_id", userStoreModel?.storeId.toString())
+            }
+            EventTracker.logEvent(CLICK_VISIT_FAIL, bundle)
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, false)
         }
     }

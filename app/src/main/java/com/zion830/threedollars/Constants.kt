@@ -72,6 +72,13 @@ object Constants {
     // review_bottom_sheet
     const val CLICK_REVIEW_BOTTOM_BUTTON = "click_review_bottom_button"
 
+    // visit_store
+    const val CLICK_VISIT_SUCCESS = "click_visit_success"
+    const val CLICK_VISIT_FAIL = "click_visit_fail"
+
+    // boss_store_detail
+    const val CLICK_SNS = "click_sns"
+
     // search
     const val CLOSE_BTN_CLICKED = "close_button_clicked"
     const val LOCATION_ITEM_CLICKED = "location_item_clicked"

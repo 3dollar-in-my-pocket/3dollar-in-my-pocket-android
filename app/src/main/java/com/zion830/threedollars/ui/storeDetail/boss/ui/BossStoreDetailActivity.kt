@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,6 +24,8 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_NAVIGATION
+import com.zion830.threedollars.Constants.CLICK_SNS
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
@@ -151,9 +154,19 @@ class BossStoreDetailActivity :
         }
 
         binding.snsButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "boss_store_detail")
+                putString("store_id", storeId)
+            }
+            EventTracker.logEvent(CLICK_SNS, bundle)
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
         }
         binding.snsTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "boss_store_detail")
+                putString("store_id", storeId)
+            }
+            EventTracker.logEvent(CLICK_SNS, bundle)
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
         }
         binding.directionsButton.setOnClickListener {
@@ -189,6 +202,11 @@ class BossStoreDetailActivity :
     }
 
     private fun showDirectionBottomDialog() {
+        val bundle = Bundle().apply {
+            putString("screen", "boss_store_detail")
+            putString("store_id", storeId)
+        }
+        EventTracker.logEvent(CLICK_NAVIGATION, bundle)
         val store = viewModel.bossStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
     }
@@ -273,7 +291,11 @@ class BossStoreDetailActivity :
 
 
     private fun initShared() {
-        EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
+        val bundle = Bundle().apply {
+            putString("screen", "boss_store_detail")
+            putString("store_id", storeId)
+        }
+        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val shareFormat = ShareFormat(
             getString(R.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
@@ -296,16 +318,28 @@ class BossStoreDetailActivity :
     }
 
     private fun moveFoodTruckReviewActivity() {
+        val bundle = Bundle().apply {
+            putString("screen", "boss_store_detail")
+            putString("store_id", storeId)
+        }
+        EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
         val intent = BossReviewActivity.getIntent(this, storeId)
         startActivity(intent)
     }
 
     private fun clickFavoriteButton() {
+        val bundle = Bundle().apply {
+            putString("screen", "boss_store_detail")
+            putString("store_id", storeId)
+        }
         if (viewModel.favoriteModel.value.isFavorite) {
+            bundle.putString("value", "off")
             viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
         } else {
+            bundle.putString("value", "on")
             viewModel.putFavorite(Constants.BOSS_STORE, storeId)
         }
+        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
