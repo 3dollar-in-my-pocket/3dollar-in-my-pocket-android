@@ -79,25 +79,14 @@ object Constants {
     // boss_store_detail
     const val CLICK_SNS = "click_sns"
 
-    // search
-    const val CLOSE_BTN_CLICKED = "close_button_clicked"
-    const val LOCATION_ITEM_CLICKED = "location_item_clicked"
+    // write_address
+    const val CLICK_SET_ADDRESS = "click_set_address"
 
-    const val CATEGORY_BTN_CLICKED_FORMAT = "_button_clicked"
-    // store list
-    const val ORDER_BY_DISTANCE_BTN_CLICKED = "order_by_distance_button_list"
-    const val ORDER_BY_RATING_BTN_CLICKED = "order_by_rating_button_list"
-
-    const val STORE_LIST_ITEM_CLICKED = "store_list_item_clicked"
-
-    // review
-    const val REVIEW_WRITE_CLOSE_BTN_CLICKED = "review_write_close_button_clicked"
-    const val STAR_BTN_CLICKED = "review_write_close_button_clicked"
-    const val REVIEW_REGISTER_BTN_CLICKED = "review_write_close_button_clicked"
+    // write_address_popup
+    const val CLICK_ADDRESS_OK = "click_address_ok"
 
     // store edit
-    const val ADDRESS_EDIT_BTN_CLICKED = "address_edit_button_clicked"
-    const val STORE_EDIT_BTN_CLICKED = "store_edit_submit_button_clicked"
+    const val CLICK_WRITE_STORE = "click_write_store"
 
     // store register
     const val EDIT_ADDRESS_BTN_CLICKED = "edit_address_button_clicked"
@@ -129,14 +118,6 @@ object Constants {
     const val LATEST = "LATEST"
     const val TOTAL_FEEDBACKS_COUNTS_DESC = "TOTAL_FEEDBACKS_COUNTS_DESC"
     const val REVIEW_DESC = "REVIEW_DESC"
-
-    //popup
-    const val TIME_MILLIS_DAY = 86400000L
-    const val SPLASH_POPUP_CLICKED = "splash_popup_clicked"
-    const val HOME_AD_BANNER_CLICKED = "home_ad_banner_clicked"
-    const val CATEGORY_AD_BANNER_CLICKED = "category_ad_banner_clicked"
-    const val STORE_LIST_AD_BANNER_CLICKED = "store_list_ad_banner_clicked"
-    const val FOODTRUCK_LIST_AD_BANNER_CLICKED = "foodtruck_list_ad_banner_clicked"
 
     //storeType
     const val BOSS_STORE = "BOSS_STORE"

@@ -53,7 +53,6 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
 
     private fun initButton() {
         binding.closeImageButton.setOnClickListener {
-            EventTracker.logEvent(Constants.REVIEW_WRITE_CLOSE_BTN_CLICKED)
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
@@ -78,9 +77,6 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
                 viewModel.putStoreReview(content.review.reviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
                 dismiss()
             }
-        }
-        binding.rating.setOnClickListener {
-            EventTracker.logEvent(Constants.STAR_BTN_CLICKED)
         }
         binding.etContent.addTextChangedListener {
             binding.btnFinish.isEnabled = binding.etContent.text.isNotBlank()

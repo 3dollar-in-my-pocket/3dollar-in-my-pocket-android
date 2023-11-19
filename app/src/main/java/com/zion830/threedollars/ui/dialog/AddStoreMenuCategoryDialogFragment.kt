@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.dialog
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
 
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             initStreetAdapterSubmit()
 
@@ -40,7 +40,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
 
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
             viewModel.changeSelectCategory(item)
             initTruckAdapterSubmit()
 
@@ -83,6 +82,11 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
             if (sameItem == null) {
                 item.copy(isSelected = false)
             } else {
+                val bundle = Bundle().apply {
+                    putString("screen", "category_selection")
+                    putString("category_name", item.name)
+                }
+                EventTracker.logEvent(Constants.CLICK_CATEGORY, bundle)
                 item.copy(isSelected = true)
             }
         })
@@ -95,6 +99,11 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
             if (sameItem == null) {
                 item.copy(isSelected = false)
             } else {
+                val bundle = Bundle().apply {
+                    putString("screen", "category_selection")
+                    putString("category_name", item.name)
+                }
+                EventTracker.logEvent(Constants.CLICK_CATEGORY, bundle)
                 item.copy(isSelected = true)
             }
         })

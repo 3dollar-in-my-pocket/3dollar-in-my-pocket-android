@@ -75,11 +75,9 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
 
     private fun initButton() {
         binding.btnBack.setOnClickListener {
-            EventTracker.logEvent(Constants.CLOSE_BTN_CLICKED)
             requireActivity().onBackPressed()
         }
         binding.btnSearch.setOnClickListener {
-            EventTracker.logEvent(Constants.LOCATION_ITEM_CLICKED)
             if (binding.etSearch.text.isNullOrBlank()) {
                 showToast("검색어가 없습니다.")
             } else {

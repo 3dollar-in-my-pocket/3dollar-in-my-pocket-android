@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.write.ui
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -10,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
@@ -67,6 +70,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
             findNavController().navigate(R.id.action_navigation_write_to_home)
         }
         binding.finishButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "write_address")
+            }
+            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
             viewModel.selectedLocation.value?.let { location -> viewModel.getStoreNearExists(location) }
         }
     }
@@ -98,6 +105,11 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                            val bundle = Bundle().apply {
+                                putString("screen", "write_address")
+                                putString("address", binding.addressTextView.text.toString())
+                            }
+                            EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
                             viewModel.requestStoreInfo(latLng)
                         }
                     }

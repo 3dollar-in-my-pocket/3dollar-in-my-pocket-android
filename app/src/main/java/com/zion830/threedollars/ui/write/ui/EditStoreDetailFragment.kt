@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.write.ui
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -209,7 +210,6 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
 
     private fun initButton() {
         binding.editAddressTextView.setOnClickListener {
-            EventTracker.logEvent(Constants.ADDRESS_EDIT_BTN_CLICKED)
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
                 EditAddressFragment(),
@@ -228,12 +228,14 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             moveFullScreenMap()
         }
         binding.submitButton.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_EDIT_BTN_CLICKED)
             if (binding.storeNameEditTextView.text.isNullOrBlank()) {
                 showToast(R.string.store_name_empty)
                 return@setOnClickListener
             }
-
+            val bundle = Bundle().apply {
+                putString("screen", "write_address_detail")
+            }
+            EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
             addStoreViewModel.editStore(
                 UserStoreModelRequest(
                     getAppearanceDays(),
