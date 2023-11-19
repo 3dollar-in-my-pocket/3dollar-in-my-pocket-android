@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -22,6 +23,8 @@ import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_STORE
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
@@ -45,6 +48,12 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
         AroundStoreListViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
+                val bundle = Bundle().apply {
+                    putString("screen", "home_list")
+                    putString("store_id", item.storeModel.storeId)
+                    putString("type", item.storeModel.storeType)
+                }
+                EventTracker.logEvent(CLICK_STORE, bundle)
                 if (item.storeModel.storeType == Constants.BOSS_STORE) {
                     val intent =
                         BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
@@ -69,10 +78,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     }
 
-    private fun initAdmob(){
+    private fun initAdmob() {
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
     }
+
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent("HomeListViewFragment")
     }
@@ -83,6 +93,10 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         }
 
         binding.allMenuTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+            }
+            EventTracker.logEvent(Constants.CLICK_CATEGORY_FILTER, bundle)
             showSelectCategoryDialog()
         }
 
@@ -92,16 +106,31 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             } else {
                 HomeSortType.DISTANCE_ASC
             }
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putString("type", homeSortType.name)
+            }
+            EventTracker.logEvent(Constants.CLICK_SORTING, bundle)
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.setOnClickListener {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
+            }
+            EventTracker.logEvent(Constants.CLICK_BOSS_FILTER, bundle)
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
         binding.certifiedStoreTextView.setOnClickListener {
             isFilterCertifiedStores = !isFilterCertifiedStores
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putString("value", if (isFilterCertifiedStores) "true" else "false")
+            }
+            EventTracker.logEvent(Constants.CLICK_ONLY_VISIT, bundle)
             val drawableStart = ContextCompat.getDrawable(
                 requireContext(),
                 if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
