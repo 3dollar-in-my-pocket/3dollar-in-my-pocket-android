@@ -22,7 +22,7 @@ object Constants {
     const val KAKAO_BTN_CLICKED = "click_sign_in_kakao"
     const val GOOGLE_BTN_CLICKED = "click_sign_in_google"
 
-    //signUP
+    //signUp
     const val CLICK_SIGN_UP = "click_sign_up"
 
     // nickname_init
@@ -40,6 +40,10 @@ object Constants {
     const val CLICK_SORTING = "click_sorting"
     const val CLICK_AD_CARD = "click_ad_card"
     const val CLICK_AD_MARKER = "click_ad_marker"
+
+    // category
+    const val CLICK_CATEGORY = "click_category"
+    const val CLICK_AD_BANNER = "click_ad_banner"
 
     // search
     const val CLOSE_BTN_CLICKED = "close_button_clicked"

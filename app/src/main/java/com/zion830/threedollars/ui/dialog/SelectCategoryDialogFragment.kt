@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_CATEGORY
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
@@ -42,7 +43,12 @@ class SelectCategoryDialogFragment :
 
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            val bundle = Bundle().apply {
+                putString("screen", "category_filter")
+                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
+            }
+
+            EventTracker.logEvent(CLICK_CATEGORY, bundle)
             viewModel.changeSelectCategory(item)
             dismiss()
         }
@@ -50,7 +56,12 @@ class SelectCategoryDialogFragment :
 
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter { item ->
-            EventTracker.logEvent(item.categoryId + Constants.CATEGORY_BTN_CLICKED_FORMAT)
+            val bundle = Bundle().apply {
+                putString("screen", "category_filter")
+                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
+            }
+
+            EventTracker.logEvent(CLICK_CATEGORY, bundle)
             viewModel.changeSelectCategory(item)
             dismiss()
         }
@@ -127,8 +138,12 @@ class SelectCategoryDialogFragment :
                             binding.ivAdImage.loadUrlImg(popup.imageUrl)
 
                             binding.cdAdCategory.setOnClickListener {
+                                val bundle = Bundle().apply {
+                                    putString("screen", "category_filter")
+                                    putString("advertisement_id", popup.advertisementId.toString())
+                                }
+                                EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
                                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
-                                EventTracker.logEvent(Constants.CATEGORY_AD_BANNER_CLICKED)
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()
