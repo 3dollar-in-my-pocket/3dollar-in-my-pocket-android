@@ -6,6 +6,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.DefaultResponse
+import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.repository.CommunityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PollDetailViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
 
-    private val pollId: String = ""
+    private var pollId: String = ""
     private val _report = MutableSharedFlow<DefaultResponse>()
     val report: SharedFlow<DefaultResponse> get() = _report.asSharedFlow()
 
@@ -35,13 +36,16 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     val editComment: SharedFlow<DefaultResponse> get() = _editComment.asSharedFlow()
 
     private val _reportComment = MutableSharedFlow<DefaultResponse>()
-    val reportComment: SharedFlow<DefaultResponse> get() = _reportComment
+    val reportComment: SharedFlow<DefaultResponse> get() = _reportComment.asSharedFlow()
 
     private val _pollReportList = MutableSharedFlow<ReportReasonsModel>()
-    val pollReportList: SharedFlow<ReportReasonsModel> get() = _pollReportList
+    val pollReportList: SharedFlow<ReportReasonsModel> get() = _pollReportList.asSharedFlow()
 
     private val _pollCommentReportList = MutableSharedFlow<ReportReasonsModel>()
-    val pollCommentReportList: SharedFlow<ReportReasonsModel> get() = _pollCommentReportList
+    val pollCommentReportList: SharedFlow<ReportReasonsModel> get() = _pollCommentReportList.asSharedFlow()
+
+    private val _pollComment: MutableSharedFlow<PollCommentList> = MutableSharedFlow()
+    val pollComment: SharedFlow<PollCommentList> get() = _pollComment.asSharedFlow()
 
     init {
         getReportList(ReportReasonsGroupType.POLL)
@@ -75,7 +79,7 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     fun createComment(content: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.createPollComment(pollId, content).collect {
-
+                _createComment.emit(it)
             }
         }
     }
@@ -96,6 +100,14 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
         }
     }
 
+    fun getComment(cursor: String? = null) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            communityRepository.getPollCommentList(pollId, cursor).collect {
+                _pollComment.emit(it)
+            }
+        }
+    }
+
     private fun getReportList(reportReasonsGroupType: ReportReasonsGroupType) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getReportReasons(reportReasonsGroupType).collect {
@@ -103,6 +115,10 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
                 else _pollCommentReportList.emit(it)
             }
         }
+    }
+
+    fun setPollId(id: String) {
+        pollId = id
     }
 
 }

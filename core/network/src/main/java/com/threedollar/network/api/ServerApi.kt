@@ -43,7 +43,7 @@ interface ServerApi {
     @POST("/api/v1/poll/{pollId}/report")
     suspend fun reportPoll(@Path("pollId") id: String, @Body pollReportCreateApiRequest: PollReportCreateApiRequest): BaseResponse<String>
 
-    @GET("/api/v1/poll/categories")
+    @GET("/api/v1/poll-categories")
     suspend fun getPollCategories(): BaseResponse<PollCategoryApiResponse>
 
     @GET("/api/v1/polls")
@@ -52,7 +52,7 @@ interface ServerApi {
         @Query("sortType") sortType: String?,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20,
-    ): Response<BaseResponse<GetPollListResponse>>
+    ): BaseResponse<GetPollListResponse>
 
     @GET("/api/v1/user/poll/policy")
     suspend fun getPollPolicy(): BaseResponse<PollPolicyApiResponse>
@@ -86,7 +86,7 @@ interface ServerApi {
     @GET("/api/v1/poll/{pollId}/comments")
     suspend fun getPollCommentList(
         @Path("pollId") id: String,
-        @Query("cursor") cursor: Int?,
+        @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20,
     ): BaseResponse<GetPollCommentListResponse>
 
@@ -99,7 +99,7 @@ interface ServerApi {
         @Query("district") district: String,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20,
-    ): Response<BaseResponse<GetPopularStoresResponse>>
+    ): BaseResponse<GetPopularStoresResponse>
 
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>

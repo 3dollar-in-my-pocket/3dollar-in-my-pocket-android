@@ -5,6 +5,7 @@
     android:id="@+id/clCommentBack"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/selector_poll_comment"
     android:paddingHorizontal="20dp"
     android:paddingTop="16dp"
     android:paddingBottom="16dp">
@@ -22,7 +23,7 @@
         tools:text="관악구 광화문연가" />
 
     <TextView
-        android:id="@+id/twPollCommentReport"
+        android:id="@+id/twPollCommentOption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/str_report"
@@ -37,9 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:src="@drawable/rect_dot"
-        app:layout_constraintBottom_toBottomOf="@id/twPollCommentReport"
-        app:layout_constraintEnd_toStartOf="@id/twPollCommentReport"
-        app:layout_constraintTop_toTopOf="@id/twPollCommentReport" />
+        app:layout_constraintBottom_toBottomOf="@id/twPollCommentOption"
+        app:layout_constraintEnd_toStartOf="@id/twPollCommentOption"
+        app:layout_constraintTop_toTopOf="@id/twPollCommentOption" />
 
     <TextView
         android:id="@+id/twPollCommentDate"
@@ -48,9 +49,9 @@
         android:layout_marginEnd="4dp"
         android:textColor="@color/gray40"
         android:textSize="12dp"
-        app:layout_constraintBottom_toBottomOf="@id/twPollCommentReport"
+        app:layout_constraintBottom_toBottomOf="@id/twPollCommentOption"
         app:layout_constraintEnd_toStartOf="@id/imgDot"
-        app:layout_constraintTop_toTopOf="@id/twPollCommentReport"
+        app:layout_constraintTop_toTopOf="@id/twPollCommentOption"
         tools:text="2023.04.30" />
 
 
@@ -112,9 +113,10 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/twPollCommentChoice"
         app:layout_constraintTop_toTopOf="@id/llMedal"
-        tools:text="작성자" />
+        android:text="작성자" />
 
     <TextView
+        android:id="@+id/twPollCommentContent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

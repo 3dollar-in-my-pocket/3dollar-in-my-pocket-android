@@ -61,7 +61,11 @@ fun GetPollListResponse?.toPollListMapper(): PollList {
 }
 
 fun PollPolicyApiResponse?.toCreatePolicyMapper(): CreatePolicy {
-    return CreatePolicy(this?.createPolicy?.currentCount.toDefaultInt(), this?.createPolicy?.limitCount.toDefaultInt())
+    return CreatePolicy(
+        this?.createPolicy?.currentCount.toDefaultInt(),
+        this?.createPolicy?.limitCount.toDefaultInt(),
+        this?.createPolicy?.pollRetentionDays.toDefaultInt()
+    )
 }
 
 fun GetUserPollListResponse?.toUserPollItemListMapper(): UserPollItemList {

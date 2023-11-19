@@ -1,7 +1,11 @@
 package com.threedollar.presentation.poll
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
@@ -10,7 +14,11 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.ReasonModel
+import com.threedollar.domain.data.PollComment
+import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.ActivityPollDetailBinding
@@ -31,10 +39,55 @@ class PollDetailActivity : AppCompatActivity() {
     private var editCommentId = ""
     private val pollReports = mutableListOf<ReasonModel>()
     private val pollCommentReports = mutableListOf<ReasonModel>()
+    private val pollComment = mutableListOf<PollComment>()
+    private var pollComments: PollCommentList? = null
+    private var isLoading = false
+    private val adapter by lazy {
+        PollCommentAdapter {
+            if (it.current.poll.isWriter) {
+                isCommentEdit = true
+                editCommentId = it.current.comment.commentId
+                binding.etComment.requestFocusFromTouch()
+                binding.etComment.setText(it.current.comment.content)
+            } else {
+                ReportChoiceDialog().setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
+                    if (reasonModel.type == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.type, s)
+                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.type)
+                }.show(supportFragmentManager, "")
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPollDetailBinding.inflate(getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
         setContentView(binding.root)
+        viewModel.setPollId(intent.getStringExtra("id").orEmpty())
+        viewModel.pollDetail()
+        viewModel.getComment()
+        binding.recyclerComment.itemAnimator = null
+        binding.recyclerComment.adapter = adapter
+        binding.recyclerComment.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
+                layoutManager?.let {
+                    val totalItemCount = it.itemCount
+                    val lastVisibleItemPosition = it.findLastVisibleItemPosition()
+
+                    if (!isLoading && totalItemCount <= (lastVisibleItemPosition + 3)) {
+                        pollComments?.let { pollList ->
+                            if (pollList.cursor.hasMore) {
+                                viewModel.getComment(pollList.cursor.nextCursor)
+                                isLoading = true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        binding.imgClose.onSingleClick { finish() }
         binding.imgCommentWrite.onSingleClick {
             if (isCommentEdit) viewModel.editComment(editCommentId, binding.etComment.text.toString())
             else viewModel.createComment(binding.etComment.text.toString())
@@ -62,6 +115,7 @@ class PollDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.pollDetail.collect {
                         pollItem = it
+                        settingCommentCount(it.meta.totalCommentsCount)
                         settingPoll()
                     }
                 }
@@ -90,12 +144,18 @@ class PollDetailActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.createComment.collect {
-
+                        binding.etComment.setText("")
+                        pollComments = null
+                        adapter.submitList(emptyList())
+                        pollComment.clear()
+                        viewModel.getComment()
                     }
                 }
                 launch {
                     viewModel.editComment.collect {
-
+                        isCommentEdit = false
+                        editCommentId = ""
+                        binding.etComment.setText("")
                     }
                 }
                 launch {
@@ -105,7 +165,10 @@ class PollDetailActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.reportComment.collect {
-
+                        pollComments = null
+                        adapter.submitList(emptyList())
+                        pollComment.clear()
+                        viewModel.getComment()
                     }
                 }
                 launch {
@@ -118,8 +181,32 @@ class PollDetailActivity : AppCompatActivity() {
                         pollCommentReports.addAll(it.reasonModels)
                     }
                 }
+                launch {
+                    viewModel.pollComment.collect {
+                        isLoading = false
+                        pollComments = it
+                        pollComment.addAll(it.pollComments)
+                        settingCommentCount(pollItem.meta.totalCommentsCount.coerceAtLeast(it.pollComments.size))
+                        adapter.submitList(pollComment)
+                    }
+                }
             }
         }
+    }
+
+    private fun settingCommentCount(count: Int) {
+        val text = "${count}개 의견"
+        val spannableString = SpannableString(text)
+        val spanStart = text.indexOf("개")
+        val spanEnd = spanStart + "개".length
+        val boldSpan = StyleSpan(Typeface.BOLD)
+        spannableString.setSpan(
+            boldSpan,
+            0,
+            spanEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.twPollCommentCount.text = spannableString
     }
 
     private fun settingPoll() {

@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/btnBack"
+        android:id="@+id/imgClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -32,7 +32,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack">
+        app:layout_constraintTop_toBottomOf="@id/imgClose">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -128,8 +128,10 @@
                 android:id="@+id/llPollFirstChoice"
                 android:layout_width="0dp"
                 android:layout_height="44dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/rect_poll_default"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/llPollUser">
@@ -152,11 +154,12 @@
 
                     <TextView
                         android:id="@+id/twPollVoteFirstChoice"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textColor="@color/selector_poll_text"
                         android:textSize="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/twPollVoteFirstIcon"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="슈붕 비정상 팥붕 정상" />
@@ -200,8 +203,10 @@
                 android:id="@+id/llPollSecondChoice"
                 android:layout_width="0dp"
                 android:layout_height="44dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rect_poll_default"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/llPollFirstChoice">
@@ -224,11 +229,12 @@
 
                     <TextView
                         android:id="@+id/twPollVoteSecondChoice"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textColor="@color/selector_poll_text"
                         android:textSize="12dp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/twPollVoteSecondIcon"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="슈붕 비정상 팥붕 정상" />
@@ -302,9 +308,11 @@
                 tools:text="23개 의견" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:clipToPadding="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

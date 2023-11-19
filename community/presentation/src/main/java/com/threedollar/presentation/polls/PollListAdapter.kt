@@ -3,11 +3,11 @@ package com.threedollar.presentation.polls
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.R
-import com.threedollar.presentation.databinding.ItemPollBinding
+import com.threedollar.presentation.databinding.ItemPollListBinding
 import com.threedollar.presentation.databinding.ItemRealtimeTitleBinding
 import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
@@ -16,28 +16,41 @@ import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
 class PollListAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
-    PagingDataAdapter<PollItem, ViewHolder>(BaseDiffUtilCallback()) {
+    ListAdapter<PollItem, ViewHolder>(BaseDiffUtilCallback()) {
+
+    private var pollSort: PollSort = PollSort.Latest
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position == 1) {
+        if (holder is PollListViewHolder) {
             getItem(position)?.let {
-                (holder as PollListViewHolder).onBind(it, choicePoll, clickPoll)
+                holder.onBind(it, choicePoll, clickPoll)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return if (viewType == 0) PollTitleViewHolder(ItemRealtimeTitleBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        else PollListViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return if (pollSort == PollSort.Popular && viewType == 0) PollTitleViewHolder(
+            ItemRealtimeTitleBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+        else PollListViewHolder(ItemPollListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemViewType(position: Int): Int {
         return position
     }
+
+    fun settingPollSort(pollSort: PollSort) {
+        this.pollSort = pollSort
+    }
 }
 
-class PollListViewHolder(private val binding: ItemPollBinding) : ViewHolder(binding.root) {
+class PollListViewHolder(private val binding: ItemPollListBinding) : ViewHolder(binding.root) {
     fun onBind(pollItem: PollItem, choicePoll: (String, String) -> Unit, clickPoll: (PollItem) -> Unit) {
         val context = binding.root.context
+        if(pollItem.poll.options.size < 2) return
         val first = pollItem.poll.options[0]
         val second = pollItem.poll.options[1]
         val isSelected = first.choice.selectedByMe || second.choice.selectedByMe

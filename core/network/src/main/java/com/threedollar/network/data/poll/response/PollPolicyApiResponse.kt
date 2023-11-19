@@ -11,6 +11,8 @@ data class PollPolicyApiResponse(
         @SerializedName("currentCount")
         var currentCount: Int? = null, // 0
         @SerializedName("limitCount")
-        var limitCount: Int? = null // 0
+        var limitCount: Int? = null, // 0
+        @SerializedName("pollRetentionDays")
+        var pollRetentionDays: Int? = null
     )
 }

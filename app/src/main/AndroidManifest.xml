@@ -191,7 +191,8 @@
         <activity android:name=".ui.store_detail.MoreImageActivity" />
 
         <activity android:name=".ui.store_detail.StoreReviewDetailActivity" />
-
+        <activity android:name="com.threedollar.presentation.polls.PollListActivity" />
+        <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />

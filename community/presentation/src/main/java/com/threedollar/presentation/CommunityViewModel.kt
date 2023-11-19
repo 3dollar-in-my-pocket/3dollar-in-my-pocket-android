@@ -53,7 +53,7 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
 
     fun getPollItems(categoryId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPollListNotPaging(categoryId, "POPULAR").collect {
+            communityRepository.getPollList(categoryId, "POPULAR", "").collect {
                 _pollItems.emit(it.pollItems)
             }
         }
@@ -69,7 +69,7 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
 
     fun getPopularStores(criteria: String, district: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPopularStoresNotPaging(criteria, district).collect {
+            communityRepository.getPopularStores(criteria, district, "").collect {
                 _popularStores.emit(it.content)
             }
         }

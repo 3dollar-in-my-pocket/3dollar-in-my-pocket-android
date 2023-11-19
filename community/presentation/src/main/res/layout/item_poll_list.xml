@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clPoll"
-    android:layout_width="280dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
     android:background="@drawable/rect_round20"
     android:backgroundTint="@color/white"
     android:paddingHorizontal="12dp"
+    android:layout_marginBottom="16dp"
     android:paddingTop="20dp"
     android:paddingBottom="12dp">
 
@@ -86,9 +86,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textColor="@color/gray60"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/gray60"
             android:textSize="16dp"
             tools:text="슈붕 비정상 팥붕 정상" />
 
@@ -161,9 +161,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:textColor="@color/gray60"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
-            android:textColor="@color/gray60"
             android:textSize="16dp"
             tools:text="슈붕 비정상 팥붕 정상" />
 

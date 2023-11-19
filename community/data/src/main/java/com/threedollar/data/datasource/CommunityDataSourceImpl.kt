@@ -52,13 +52,8 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(serverApi.getPollPolicy())
     }
 
-    override fun getPollListNotPaging(categoryId: String, sortType: String, size: Int): Flow<BaseResponse<GetPollListResponse>> = flow {
-        val response = serverApi.getPollList(categoryId = categoryId, sortType = sortType, size = size, cursor = null)
-        if (response.isSuccessful) {
-            response.body()?.let {
-                emit(it)
-            }
-        }
+    override fun getPollList(categoryId: String, sortType: String, cursor: String): Flow<BaseResponse<GetPollListResponse>> = flow{
+        emit(serverApi.getPollList(categoryId, sortType, cursor))
     }
 
     override fun getUserPollList(cursor: Int?, size: Int): Flow<BaseResponse<GetUserPollListResponse>> = flow {
@@ -86,17 +81,12 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(serverApi.reportPollComment(pollId, commentId, pollReportCreateApiRequest))
     }
 
-    override fun getPollCommentList(id: String, cursor: Int?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
+    override fun getPollCommentList(id: String, cursor: String?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
         emit(serverApi.getPollCommentList(id, cursor, size))
     }
 
-    override fun getPopularStoresNotPaging(criteria: String, district: String, size: Int): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
-        val response = serverApi.getPopularStores(criteria = criteria, district = district, size = size, cursor = null)
-        if (response.isSuccessful) {
-            response.body()?.let {
-                emit(it)
-            }
-        }
+    override fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
+        emit(serverApi.getPopularStores(criteria = criteria, district = district, cursor = cursor))
     }
 
     override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {

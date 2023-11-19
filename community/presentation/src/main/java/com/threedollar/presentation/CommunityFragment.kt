@@ -1,5 +1,6 @@
 package com.threedollar.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
+import com.threedollar.presentation.poll.PollDetailActivity
+import com.threedollar.presentation.polls.PollListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -26,7 +29,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         CommunityPollAdapter(choicePoll = { pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
         }, clickPoll = {
-            it.poll.category.categoryId
+            startActivity(Intent(requireActivity(), PollDetailActivity::class.java).apply {
+                putExtra("id", it.poll.pollId)
+            })
         })
     }
     private val storeAdapter by lazy {
@@ -37,6 +42,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
     private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
     private val pollItems = mutableListOf<PollItem>()
+    private var categoryId = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentCommunityBinding.inflate(inflater)
@@ -67,7 +73,13 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         binding.clPopularMostVisits.onSingleClick {
             selectedPopular(false)
         }
-
+        binding.twPollListTitle.onSingleClick {
+            if (categoryId.isNotEmpty()) {
+                startActivity(Intent(requireContext(), PollListActivity::class.java).apply {
+                    putExtra("category", categoryId)
+                })
+            }
+        }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -75,6 +87,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                     viewModel.categoryList.collect {
                         if (it.isEmpty()) return@collect
                         val category = it.first()
+                        categoryId = category.categoryId
                         viewModel.getPollItems(category.categoryId)
                         binding.twPollTitle.text = category.content
                     }
