@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
@@ -129,7 +130,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initFlows()
 
         viewModel.addReviewResult.observe(this) {
-            EventTracker.logEvent(Constants.REVIEW_WRITE_BTN_CLICKED)
             viewModel.getUserStoreDetail(
                 storeId = storeId,
                 deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
@@ -142,6 +142,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity")
     }
+
     private fun initAdapter() {
         binding.reviewRecyclerView.adapter = reviewAdapter
         binding.visitHistoryRecyclerView.adapter = visitHistoryAdapter
@@ -166,6 +167,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             finish()
         }
         binding.deleteButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "store_detail")
+                putString("store_id", storeId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_REPORT, bundle)
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
         binding.photoSummitTextView.setOnClickListener {
@@ -182,10 +188,15 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         .show()
                 }
             }.startMultiImage { uriData ->
-                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
+                        val bundle = Bundle().apply {
+                            putString("screen", "upload_photo")
+                            putString("store_id", storeId.toString())
+                            putString("count", images.size.toString())
+                        }
+                        EventTracker.logEvent(Constants.CLICK_UPLOAD, bundle)
                         viewModel.saveImages(images, storeId)
                     }
                 }
@@ -195,16 +206,25 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             initShared()
         }
         binding.writeReviewTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "store_detail")
+                putString("store_id", storeId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
 
         binding.reviewButton.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "store_detail")
+                putString("store_id", storeId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.editStoreInfoButton.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_MODIFY_BTN_CLICKED)
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 EditStoreDetailFragment(),
@@ -213,7 +233,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             )
         }
         binding.addCertificationButton.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_CERTIFICATION_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "store_detail")
+                putString("store_id", storeId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_VISIT, bundle)
             startCertification()
         }
         binding.favoriteButton.onSingleClick {
@@ -226,6 +250,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             moveFullScreenMap()
         }
         binding.addressTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "store_detail")
+                putString("store_id", storeId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_COPY_ADDRESS, bundle)
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
             showToast("주소가 복사됐습니다.")
@@ -233,13 +262,14 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.directionsButton.setOnClickListener {
             showDirectionBottomDialog()
         }
-        binding.writeReviewTextView.setOnClickListener {
-            AddReviewDialog.getInstance().show(supportFragmentManager, AddReviewDialog::class.java.name)
-        }
     }
 
     private fun initShared() {
-        EventTracker.logEvent(Constants.SHARE_BTN_CLICKED)
+        val bundle = Bundle().apply {
+            putString("screen", "store_detail")
+            putString("store_id", storeId.toString())
+        }
+        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val shareFormat = ShareFormat(
@@ -541,6 +571,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun clickFavoriteButton() {
+        val bundle = Bundle().apply {
+            putString("screen", "store_detail")
+            putString("store_id", storeId.toString())
+            putString("value", if (viewModel.favoriteModel.value.isFavorite) "on" else "false")
+        }
+        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(USER_STORE, storeId.toString())
         } else {
@@ -573,11 +609,21 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun showDirectionBottomDialog() {
+        val bundle = Bundle().apply {
+            putString("screen", "store_detail")
+            putString("store_id", storeId.toString())
+        }
+        EventTracker.logEvent(Constants.CLICK_NAVIGATION, bundle)
         val store = viewModel.userStoreDetailModel.value?.store
         DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
     }
 
     private fun moveFullScreenMap() {
+        val bundle = Bundle().apply {
+            putString("screen", "store_detail")
+            putString("store_id", storeId.toString())
+        }
+        EventTracker.logEvent(Constants.CLICK_ZOOM_MAP, bundle)
         val store = viewModel.userStoreDetailModel.value?.store
         val intent = FullScreenMapActivity.getIntent(
             context = this,

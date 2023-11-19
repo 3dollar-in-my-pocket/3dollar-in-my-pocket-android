@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.user.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,6 +13,11 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
+import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_EDIT_REVIEW
+import com.zion830.threedollars.Constants.CLICK_REPORT
+import com.zion830.threedollars.Constants.CLICK_SORT
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
@@ -34,6 +40,11 @@ class StoreReviewDetailActivity :
         MoreReviewAdapter(
             object : OnItemClickListener<ReviewContentModel> {
                 override fun onClick(item: ReviewContentModel) {
+                    val bundle = Bundle().apply {
+                        putString("screen", "review_list")
+                        putString("review_id", item.review.reviewId.toString())
+                    }
+                    EventTracker.logEvent(if(item.review.isOwner) CLICK_EDIT_REVIEW else CLICK_REPORT, bundle)
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
@@ -90,6 +101,11 @@ class StoreReviewDetailActivity :
                         ReviewSortType.LOWEST_RATING
                     }
                 }
+                val bundle = Bundle().apply {
+                    putString("screen", "review_list")
+                    putString("type", reviewSortType.name)
+                }
+                EventTracker.logEvent(CLICK_SORT, bundle)
                 viewModel.getReview(storeId, reviewSortType)
             }
 

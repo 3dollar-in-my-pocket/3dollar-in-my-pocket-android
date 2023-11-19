@@ -53,23 +53,35 @@ object Constants {
     // marker_popup
     const val CLICK_BOTTOM_BUTTON = "click_bottom_button"
 
+    // store detail
+    const val CLICK_FAVORITE = "click_favorite"
+    const val CLICK_REPORT = "click_report"
+    const val CLICK_SHARE = "click_share"
+    const val CLICK_NAVIGATION = "click_navigation"
+    const val CLICK_WRITE_REVIEW = "click_write_review"
+    const val CLICK_COPY_ADDRESS = "click_copy_address"
+    const val CLICK_ZOOM_MAP = "click_zoom_map"
+
+    // upload_photo
+    const val CLICK_UPLOAD = "click_upload"
+
+    // review_list
+    const val CLICK_SORT = "click_sort"
+    const val CLICK_EDIT_REVIEW = "click_edit_review"
+
+    // review_bottom_sheet
+    const val CLICK_REVIEW_BOTTOM_BUTTON = "click_review_bottom_button"
+
     // search
     const val CLOSE_BTN_CLICKED = "close_button_clicked"
     const val LOCATION_ITEM_CLICKED = "location_item_clicked"
-    const val CATEGORY_BTN_CLICKED_FORMAT = "_button_clicked"
 
+    const val CATEGORY_BTN_CLICKED_FORMAT = "_button_clicked"
     // store list
     const val ORDER_BY_DISTANCE_BTN_CLICKED = "order_by_distance_button_list"
     const val ORDER_BY_RATING_BTN_CLICKED = "order_by_rating_button_list"
-    const val STORE_LIST_ITEM_CLICKED = "store_list_item_clicked"
 
-    // store detail
-    const val STORE_DELETE_BTN_CLICKED = "store_delete_request_button_clicked"
-    const val SHARE_BTN_CLICKED = "share_button_clicked"
-    const val STORE_MODIFY_BTN_CLICKED = "store_modify_button_clicked"
-    const val IMAGE_ATTACH_BTN_CLICKED = "image_attach_button_clicked"
-    const val REVIEW_WRITE_BTN_CLICKED = "review_write_button_clicked"
-    const val STORE_CERTIFICATION_BTN_CLICKED = "store_certification_button_clicked"
+    const val STORE_LIST_ITEM_CLICKED = "store_list_item_clicked"
 
     // review
     const val REVIEW_WRITE_CLOSE_BTN_CLICKED = "review_write_close_button_clicked"

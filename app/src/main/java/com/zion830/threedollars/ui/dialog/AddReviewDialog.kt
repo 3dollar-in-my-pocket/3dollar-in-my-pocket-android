@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.dialog
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.home.domain.data.store.ReviewContentModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.Constants
+import com.zion830.threedollars.Constants.CLICK_REVIEW_BOTTOM_BUTTON
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
@@ -55,12 +57,16 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
-            EventTracker.logEvent(Constants.REVIEW_REGISTER_BTN_CLICKED)
             if (binding.rating.rating == 0f) {
                 showToast(R.string.over_rating_1)
                 return@setOnClickListener
             }
-
+            val bundle = Bundle().apply {
+                putString("screen", "review_bottom_sheet")
+                putString("store_id", storeId.toString())
+                putString("rating", binding.rating.rating.toString())
+            }
+            EventTracker.logEvent(CLICK_REVIEW_BOTTOM_BUTTON, bundle)
             if (content == null) {
                 viewModel.postStoreReview(
                     binding.etContent.text.toString(),

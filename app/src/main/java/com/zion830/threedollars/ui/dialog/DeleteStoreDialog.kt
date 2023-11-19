@@ -19,6 +19,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.home.domain.data.store.DeleteType
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.zion830.threedollars.Constants.CLICK_REPORT
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
@@ -32,6 +33,7 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     private lateinit var deleteType: DeleteType
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogDeleteBinding =
         DialogDeleteBinding.inflate(inflater, container, false)
+
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent("DeleteStoreDialog")
     }
@@ -43,12 +45,14 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
         behavior.maxHeight = 100
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
+
     override fun initView() {
         binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(R.color.gray80))
 
         initButton()
         initFlow()
     }
+
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -69,7 +73,12 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
             dismiss()
         }
         binding.btnFinish.setOnClickListener {
-            EventTracker.logEvent(Constants.DELETE_REQUEST_SUBMIT_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "report_store")
+                putString("store_id", viewModel.userStoreDetailModel.value?.store?.storeId.toString())
+                putString("value", deleteType.key)
+            }
+            EventTracker.logEvent(CLICK_REPORT, bundle)
             viewModel.deleteStore(deleteType)
             dismiss()
             activity?.finish()
