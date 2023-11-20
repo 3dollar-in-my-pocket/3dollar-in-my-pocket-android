@@ -390,6 +390,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (imageContentModelList.isEmpty()) {
             photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.photo_empty))))
         } else {
+            photoAdapter.submitList(listOf())
             photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
             }.toList())
