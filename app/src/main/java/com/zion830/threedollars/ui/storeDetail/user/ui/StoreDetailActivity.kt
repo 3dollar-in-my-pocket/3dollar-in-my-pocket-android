@@ -49,6 +49,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -66,6 +67,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val userStoreMenuAdapter: UserStoreMenuAdapter by lazy {
         UserStoreMenuAdapter {
             val menuGroup = viewModel.userStoreDetailModel.value?.store?.menus?.groupBy { it.category.name }
+            userStoreMenuAdapter.submitList(listOf())
+            userStoreMenuAdapter.clearCategoryNameList()
             userStoreMenuAdapter.submitList(menuGroup?.flatMap { it.value })
         }
     }
@@ -413,6 +416,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initMenu(menuModel: List<UserStoreMenuModel>) {
         val menuGroup = menuModel.groupBy { it.category.name }
         if (menuGroup.size < 3) {
+            userStoreMenuAdapter.submitList(listOf())
+            userStoreMenuAdapter.clearCategoryNameList()
             userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
         } else {
             val subKeys = menuGroup.keys.take(2)
@@ -420,7 +425,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             val userStoreMoreResponse = UserStoreMoreResponse(
                 moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2)
             )
-            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMoreResponse)
+            lifecycleScope.launch {
+                userStoreMenuAdapter.submitList(listOf())
+                userStoreMenuAdapter.clearCategoryNameList()
+                delay(5L)
+                userStoreMenuAdapter.submitList(subMenuGroup + userStoreMoreResponse)
+            }
         }
     }
 
