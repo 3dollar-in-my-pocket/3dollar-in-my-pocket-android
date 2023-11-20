@@ -47,6 +47,15 @@ fun String.convertCreatedAt(): String {
     }
 }
 
+fun getCurrentDate(): String {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH) + 1
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    return String.format("%d-%02d-%02d", year, month, day)
+}
+
 fun getMonthFirstDate(): String {
     val calendar = Calendar.getInstance()
     calendar.set(Calendar.DAY_OF_MONTH, 1)

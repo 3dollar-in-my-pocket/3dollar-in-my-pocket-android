@@ -14,7 +14,7 @@ data class AdvertisementResponse(
     @SerializedName("imageHeight")
     val imageHeight: Int = 0,
     @SerializedName("imageUrl")
-    val imageUrl: String? = "",
+    val imageUrl: String? = null,
     @SerializedName("imageWidth")
     val imageWidth: Int = 0,
     @SerializedName("linkUrl")

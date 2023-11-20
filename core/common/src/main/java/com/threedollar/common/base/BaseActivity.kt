@@ -7,6 +7,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 import com.threedollar.common.ext.showSnack
 
 abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
@@ -17,12 +19,15 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
     protected abstract val viewModel: VM
 
+    protected lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = bindingFactory(layoutInflater)
         setContentView(binding.root)
         initView()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         viewModel.msgTextId.observe(this) {
             if (it >= 0) {
@@ -31,8 +36,13 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         }
     }
 
-    abstract fun initView()
+    override fun onResume() {
+        super.onResume()
+        initFirebaseAnalytics()
+    }
 
+    abstract fun initView()
+    abstract fun initFirebaseAnalytics()
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         val v = currentFocus
         val ret = super.dispatchTouchEvent(event)
@@ -53,7 +63,11 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
         return ret
     }
-
+    fun setFirebaseAnalyticsLogEvent(className: String) {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+        }
+    }
     private fun hideKeyboard() {
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.currentFocus!!.windowToken, 0)

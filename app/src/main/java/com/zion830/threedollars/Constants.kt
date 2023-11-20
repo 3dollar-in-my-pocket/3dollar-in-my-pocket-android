@@ -19,43 +19,74 @@ object Constants {
     const val CURRENT_LOCATION_BTN_CLICKED = "current_location_button_clicked"
 
     //login
-    const val KAKAO_BTN_CLICKED = "kakao_login_button_clicked"
-    const val GOOGLE_BTN_CLICKED = "google_login_button_clicked"
+    const val KAKAO_BTN_CLICKED = "click_sign_in_kakao"
+    const val GOOGLE_BTN_CLICKED = "click_sign_in_google"
+
+    //signUp
+    const val CLICK_SIGN_UP = "click_sign_up"
 
     // nickname_init
     const val NICKNAME_CHANGE_BTN_CLICKED = "nickname_change_button_clicked"
     const val NICKNAME_ALREADY_EXISTED = "nickname_already_existed"
 
     // home
-    const val SEARCH_BTN_CLICKED = "search_button_clicked"
-    const val STORE_CARD_BTN_CLICKED = "store_card_button_clicked"
+    const val CLICK_STORE = "click_store"
+    const val CLICK_VISIT = "click_visit"
+    const val CLICK_CURRENT_LOCATION = "click_current_location"
+    const val CLICK_MARKER = "click_marker"
+    const val CLICK_ADDRESS_FIELD = "click_address_field"
+    const val CLICK_CATEGORY_FILTER = "click_category_filter"
+    const val CLICK_BOSS_FILTER = "click_boss_filter"
+    const val CLICK_SORTING = "click_sorting"
+    const val CLICK_AD_CARD = "click_ad_card"
+    const val CLICK_AD_MARKER = "click_ad_marker"
+    const val CLICK_ONLY_VISIT = "click_only_visit"
 
-    // search
-    const val CLOSE_BTN_CLICKED = "close_button_clicked"
-    const val LOCATION_ITEM_CLICKED = "location_item_clicked"
-    const val CATEGORY_BTN_CLICKED_FORMAT = "_button_clicked"
+    // category
+    const val CLICK_CATEGORY = "click_category"
+    const val CLICK_AD_BANNER = "click_ad_banner"
 
-    // store list
-    const val ORDER_BY_DISTANCE_BTN_CLICKED = "order_by_distance_button_list"
-    const val ORDER_BY_RATING_BTN_CLICKED = "order_by_rating_button_list"
-    const val STORE_LIST_ITEM_CLICKED = "store_list_item_clicked"
+    // main_ad_banner
+    const val CLICK_NOT_SHOW_TODAY = "click_not_show_today"
+    const val CLICK_CLOSE = "click_close"
+
+    // marker_popup
+    const val CLICK_BOTTOM_BUTTON = "click_bottom_button"
 
     // store detail
-    const val STORE_DELETE_BTN_CLICKED = "store_delete_request_button_clicked"
-    const val SHARE_BTN_CLICKED = "share_button_clicked"
-    const val STORE_MODIFY_BTN_CLICKED = "store_modify_button_clicked"
-    const val IMAGE_ATTACH_BTN_CLICKED = "image_attach_button_clicked"
-    const val REVIEW_WRITE_BTN_CLICKED = "review_write_button_clicked"
-    const val STORE_CERTIFICATION_BTN_CLICKED = "store_certification_button_clicked"
+    const val CLICK_FAVORITE = "click_favorite"
+    const val CLICK_REPORT = "click_report"
+    const val CLICK_SHARE = "click_share"
+    const val CLICK_NAVIGATION = "click_navigation"
+    const val CLICK_WRITE_REVIEW = "click_write_review"
+    const val CLICK_COPY_ADDRESS = "click_copy_address"
+    const val CLICK_ZOOM_MAP = "click_zoom_map"
 
-    // review
-    const val REVIEW_WRITE_CLOSE_BTN_CLICKED = "review_write_close_button_clicked"
-    const val STAR_BTN_CLICKED = "review_write_close_button_clicked"
-    const val REVIEW_REGISTER_BTN_CLICKED = "review_write_close_button_clicked"
+    // upload_photo
+    const val CLICK_UPLOAD = "click_upload"
+
+    // review_list
+    const val CLICK_SORT = "click_sort"
+    const val CLICK_EDIT_REVIEW = "click_edit_review"
+
+    // review_bottom_sheet
+    const val CLICK_REVIEW_BOTTOM_BUTTON = "click_review_bottom_button"
+
+    // visit_store
+    const val CLICK_VISIT_SUCCESS = "click_visit_success"
+    const val CLICK_VISIT_FAIL = "click_visit_fail"
+
+    // boss_store_detail
+    const val CLICK_SNS = "click_sns"
+
+    // write_address
+    const val CLICK_SET_ADDRESS = "click_set_address"
+
+    // write_address_popup
+    const val CLICK_ADDRESS_OK = "click_address_ok"
 
     // store edit
-    const val ADDRESS_EDIT_BTN_CLICKED = "address_edit_button_clicked"
-    const val STORE_EDIT_BTN_CLICKED = "store_edit_submit_button_clicked"
+    const val CLICK_WRITE_STORE = "click_write_store"
 
     // store register
     const val EDIT_ADDRESS_BTN_CLICKED = "edit_address_button_clicked"
@@ -87,14 +118,6 @@ object Constants {
     const val LATEST = "LATEST"
     const val TOTAL_FEEDBACKS_COUNTS_DESC = "TOTAL_FEEDBACKS_COUNTS_DESC"
     const val REVIEW_DESC = "REVIEW_DESC"
-
-    //popup
-    const val TIME_MILLIS_DAY = 86400000L
-    const val SPLASH_POPUP_CLICKED = "splash_popup_clicked"
-    const val HOME_AD_BANNER_CLICKED = "home_ad_banner_clicked"
-    const val CATEGORY_AD_BANNER_CLICKED = "category_ad_banner_clicked"
-    const val STORE_LIST_AD_BANNER_CLICKED = "store_list_ad_banner_clicked"
-    const val FOODTRUCK_LIST_AD_BANNER_CLICKED = "foodtruck_list_ad_banner_clicked"
 
     //storeType
     const val BOSS_STORE = "BOSS_STORE"

@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "174359764387-ggn4cg54sjmn7sd1c7v7n9al16eu0m33.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars",
+            "certificate_hash": "9bbc3bb993768dcf80fdb0149e2caec7925fa1f1"
+          }
+        },
+        {
           "client_id": "174359764387-j6f2gog8sudeme8tp3r7dioco9tc1or9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -47,11 +55,11 @@
           }
         },
         {
-          "client_id": "174359764387-r43vc73trbdlrg2ko9okl7uhgn1eiqa2.apps.googleusercontent.com",
+          "client_id": "174359764387-t1s2h2obv1sf4nu0cgk5rojr8o7it5b0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.zion830.threedollars",
-            "certificate_hash": "9bbc3bb993768dcf80fdb0149e2caec7925fa1f1"
+            "certificate_hash": "f6e00e1a4eb6c18e412209a489da3b1383d98a9c"
           }
         },
         {
@@ -72,10 +80,11 @@
               "client_type": 3
             },
             {
-              "client_id": "174359764387-ofqktq0ngncki9fphjmueaqdpoos0gd4.apps.googleusercontent.com",
+              "client_id": "174359764387-0cct7ueiel2enk7epi67hqghpergsrjg.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.macgongmon.-dollar-in-my-pocket"
+                "bundle_id": "com.macgongmon.-dollar-in-my-pocket",
+                "app_store_id": "1496099467"
               }
             }
           ]

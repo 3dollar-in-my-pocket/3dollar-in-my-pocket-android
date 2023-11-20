@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.StringRes
-import com.zion830.threedollars.ui.splash.SplashActivity
+import com.zion830.threedollars.ui.splash.ui.SplashActivity
 
 enum class DeepLinkInfo(@StringRes val hostStringResId: Int) {
 

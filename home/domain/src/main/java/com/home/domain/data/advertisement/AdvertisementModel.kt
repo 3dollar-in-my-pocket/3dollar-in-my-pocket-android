@@ -8,7 +8,7 @@ data class AdvertisementModel(
     val extraContent: String? = "",
     val fontColor: String? = "",
     val imageHeight: Int = 0,
-    val imageUrl: String? = "",
+    val imageUrl: String? = null,
     val imageWidth: Int = 0,
     val linkUrl: String? = "",
     val subTitle: String? = "",

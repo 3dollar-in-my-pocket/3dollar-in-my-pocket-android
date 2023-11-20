@@ -10,27 +10,36 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.addstore.activity.NewStoreActivity
-import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.LegacyBaseActivity
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
+class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ ActivityHomeBinding.inflate(it) }),
     ActivityCompat.OnRequestPermissionsResultCallback {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: UserInfoViewModel by viewModels()
     private val myPageViewModel: MyPageViewModel by viewModels()
@@ -52,13 +61,35 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
-        popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && popups[0].linkUrl != LegacySharedPrefUtils.getPopupUrl()) {
-                binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
-            }
-        }
+        initFlow()
         initNavController(navController)
         initNavView()
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MainActivity")
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty() && getCurrentDate() != sharedPrefUtils.getTodayNotPopupDate()) {
+                            binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
+                        }
+                    }
+                }
+                launch {
+                    popupViewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun initNavView() {
@@ -67,19 +98,25 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
                 R.id.navigation_home -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
                 }
+
                 R.id.navigation_write -> {
-                    startActivity(NewStoreActivity.getInstance(this, null))
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(false)
                 }
-                R.id.navigation_vote -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
-                    binding.navView.itemBackgroundResource = android.R.color.white
-                }
+
+//                R.id.navigation_vote -> {
+//                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
+//                    binding.navView.itemBackgroundResource = android.R.color.white
+//                    showBottomNavigation(true)
+//                }
+
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
                     binding.navView.itemBackgroundResource = android.R.color.black
+                    showBottomNavigation(true)
                 }
             }
             true
@@ -127,7 +164,7 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (permissions.isEmpty()) return
@@ -164,6 +201,10 @@ class MainActivity : LegacyBaseActivity<ActivityHomeBinding, UserInfoViewModel>(
                 binding.navView.selectedItemId = R.id.navigation_mypage
             }
         }
+    }
+
+    fun showBottomNavigation(state: Boolean) {
+        binding.navView.isVisible = state
     }
 
     companion object {

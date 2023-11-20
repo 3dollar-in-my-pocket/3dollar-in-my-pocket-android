@@ -14,15 +14,20 @@ import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -41,9 +46,9 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
-import com.zion830.threedollars.ui.login.LoginActivity
+import com.zion830.threedollars.ui.login.ui.LoginActivity
 import org.json.JSONObject
-import java.util.*
+import java.util.Locale
 
 
 fun showToast(@StringRes resId: Int) {
@@ -250,4 +255,17 @@ fun Activity.navigateToMainActivityOnCloseIfNeeded() {
     }
     if (isBackMainActivity && GlobalApplication.isLoggedIn) startActivity(MainActivity.getIntent(this))
     else startActivity(Intent(this, LoginActivity::class.java))
+}
+
+fun NavController.navigateSafe(
+    @IdRes resId: Int,
+    args: Bundle? = null,
+    navOptions: NavOptions? = null,
+    navExtras: Navigator.Extras? = null,
+) {
+    val action = currentDestination?.getAction(resId) ?: graph.getAction(resId)
+    // 현재 fragment의 id와 이동할 fragment의 id가 다르면 화면이동 실행 (같다는 건, 이미 이동이 된 후이기 때문)
+    if (action != null && currentDestination?.id != action.destinationId) {
+        navigate(resId, args, navOptions, navExtras)
+    }
 }

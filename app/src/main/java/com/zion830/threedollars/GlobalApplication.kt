@@ -11,10 +11,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.home.domain.data.advertisement.AdvertisementModel
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.Popups
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
 
@@ -47,7 +47,7 @@ class GlobalApplication : Application() {
         var loginPlatform: LoginType = LoginType.NONE
             private set
 
-        var storeMarker = Popups()
+        var storeMarker = AdvertisementModel()
 
         @JvmStatic
         fun getContext(): Context {

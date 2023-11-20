@@ -5,7 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
@@ -14,42 +17,62 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.home.presentation.data.HomeStoreType
+import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.ext.getCurrentDate
+import com.threedollar.common.ext.loadImage
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentPopupBinding
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
 import java.net.URISyntaxException
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class PopupFragment : LegacyBaseFragment<FragmentPopupBinding, PopupViewModel>(R.layout.fragment_popup) {
+class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: PopupViewModel by activityViewModels()
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
-
     override fun initView() {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-
         binding.run {
+            viewModel.popups.value.firstOrNull()?.let {
+                ivPopup.loadImage(it.imageUrl)
+            }
+
             tvClose.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("screen", "main_ad_banner")
+                }
+                EventTracker.logEvent(Constants.CLICK_CLOSE, bundle)
                 it.findNavController().navigateUp()
             }
             tvTodayNotPopup.setOnClickListener {
-                viewModel?.popups?.value?.let { popup ->
-                    LegacySharedPrefUtils.setPopupUrl(popup[0].linkUrl!!)
+                val bundle = Bundle().apply {
+                    putString("screen", "main_ad_banner")
                 }
+                EventTracker.logEvent(Constants.CLICK_NOT_SHOW_TODAY, bundle)
+                sharedPrefUtils.setTodayNotPopupDate(getCurrentDate())
                 it.findNavController().navigateUp()
             }
             ivPopup.setOnClickListener {
-                EventTracker.logEvent(Constants.SPLASH_POPUP_CLICKED)
-
                 ivPopup.isVisible = false
                 webView.isVisible = true
-                viewModel?.popups?.value?.let { popups ->
-                    webView.loadUrl(popups[0].linkUrl!!)
+                viewModel.popups.value.let { popups ->
+                    popups.firstOrNull()?.let { popup ->
+                        val bundle = Bundle().apply {
+                            putString("screen", "main_ad_banner")
+                            putString("advertisement_id", popup.advertisementId.toString())
+                        }
+                        EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+                        popup.linkUrl?.let { linkUrl ->
+                            webView.loadUrl(linkUrl)
+
+                        }
+                    }
                 }
             }
             webView.apply {
@@ -73,6 +96,10 @@ class PopupFragment : LegacyBaseFragment<FragmentPopupBinding, PopupViewModel>(R
                 }
             }
         }
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("PopupFragment")
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {
@@ -151,4 +178,7 @@ class PopupFragment : LegacyBaseFragment<FragmentPopupBinding, PopupViewModel>(R
             return true
         }
     }
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPopupBinding =
+        FragmentPopupBinding.inflate(inflater, container, false)
 }
