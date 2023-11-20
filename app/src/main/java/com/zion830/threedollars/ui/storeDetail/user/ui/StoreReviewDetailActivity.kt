@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.google.android.material.tabs.TabLayout
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
@@ -125,10 +126,11 @@ class StoreReviewDetailActivity :
                 launch {
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
+                            moreReviewAdapter.submitData(PagingData.empty())
                             moreReviewAdapter.submitData(pagingData)
                             binding.reviewRecyclerView.postDelayed({
                                 binding.reviewRecyclerView.smoothScrollToPosition(0)
-                            }, 300)
+                            }, 500)
                         }
                     }
                 }
