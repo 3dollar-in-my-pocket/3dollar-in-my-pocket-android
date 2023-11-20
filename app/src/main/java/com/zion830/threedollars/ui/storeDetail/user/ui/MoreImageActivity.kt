@@ -83,7 +83,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                         .show()
                 }
             }.startMultiImage { uriData ->
-                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
