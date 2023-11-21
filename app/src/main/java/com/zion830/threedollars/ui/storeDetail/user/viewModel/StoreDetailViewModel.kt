@@ -144,6 +144,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         viewModelScope.launch(coroutineExceptionHandler) {
             _uploadImageStatus.emit(true)
             homeRepository.saveImages(images, storeId).collect {
+                getImage(storeId)
                 _uploadImageStatus.emit(false)
             }
         }

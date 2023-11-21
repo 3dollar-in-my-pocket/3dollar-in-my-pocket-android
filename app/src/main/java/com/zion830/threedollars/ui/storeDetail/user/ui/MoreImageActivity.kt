@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnItemClickListener
@@ -99,6 +100,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                 launch {
                     viewModel.imagePagingData.collectLatest {
                         it?.let { pagingData ->
+                            adapter.submitData(PagingData.empty())
                             adapter.submitData(pagingData)
                         }
                     }
