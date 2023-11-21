@@ -66,6 +66,9 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
     private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
 
+    private val _reviewSuccessEvent = MutableSharedFlow<Boolean>()
+    val reviewSuccessEvent : SharedFlow<Boolean> get() = _reviewSuccessEvent
+
     init {
         getReportReasons()
     }
@@ -204,7 +207,10 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         viewModelScope.launch {
             storeId?.let {
                 homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
-                    if (!it.ok) {
+                    if (it.ok) {
+                        _reviewSuccessEvent.emit(true)
+                    }
+                    else{
                         _serverError.emit(it.message)
                     }
                 }

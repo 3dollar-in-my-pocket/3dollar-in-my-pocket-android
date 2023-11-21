@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -103,7 +105,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     }
                 }
             }, reviewClickListener = {
-                startActivity(StoreReviewDetailActivity.getInstance(this, storeId))
+                activityResultLauncher.launch(StoreReviewDetailActivity.getInstance(this, storeId))
             })
     }
 
@@ -121,11 +123,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             finish()
         }
     }
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                refreshStoreInfo()
+            }
+        }
+
         refreshStoreInfo()
         initMap()
         initButton()
@@ -362,6 +373,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     viewModel.isDeleteStore.collect {
                         if (it) {
                             finish()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.reviewSuccessEvent.collect{
+                        if(it) {
+                            refreshStoreInfo()
                         }
                     }
                 }
@@ -647,7 +665,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun moveMoreImageActivity() {
         val intent = MoreImageActivity.getIntent(this, storeId)
-        startActivity(intent)
+        activityResultLauncher.launch(intent)
     }
 
     private fun refreshStoreInfo() {
@@ -675,13 +693,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             Log.e(this::class.java.name, e.message ?: "")
             showToast(getString(R.string.exist_location_error))
             finish()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EDIT_STORE_INFO && resultCode == RESULT_OK) {
-            refreshStoreInfo()
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -47,8 +48,15 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
             }
         })
     }
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
 
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initViewModel()
         initAdapter()
         initButton()
@@ -68,6 +76,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
 
     private fun initButton() {
         binding.backButton.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.submitPhotoTextView.setOnClickListener {
