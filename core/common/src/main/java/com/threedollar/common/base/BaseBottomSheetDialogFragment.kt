@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
+import com.threedollar.common.R
 
 abstract class BaseBottomSheetDialogFragment<B : ViewBinding> : BottomSheetDialogFragment() {
 
@@ -18,10 +19,6 @@ abstract class BaseBottomSheetDialogFragment<B : ViewBinding> : BottomSheetDialo
 
     protected lateinit var firebaseAnalytics: FirebaseAnalytics
 
-    override fun onStart() {
-        super.onStart()
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-    }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog: Dialog = super.onCreateDialog(savedInstanceState)
         dialog.setOnShowListener {
