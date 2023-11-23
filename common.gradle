@@ -78,8 +78,7 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.42"
 
     // 카카오 로그인
-    implementation "com.kakao.sdk:v2-user:2.0.3"
-    implementation "com.kakao.sdk:v2-link:2.0.3"
+    implementation "com.kakao.sdk:v2-all:2.12.0"
 
     // google
     implementation 'com.android.support:multidex:1.0.3'

@@ -13,7 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
-import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.BaseActivity
@@ -192,10 +191,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
             }
         }
 
-        if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
-            LoginClient.instance.loginWithKakaoTalk(this, callback = loginResCallback)
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.instance.loginWithKakaoTalk(this, callback = loginResCallback)
         } else {
-            LoginClient.instance.loginWithKakaoAccount(this, callback = loginResCallback)
+            UserApiClient.instance.loginWithKakaoAccount(this, callback = loginResCallback)
         }
     }
 }
