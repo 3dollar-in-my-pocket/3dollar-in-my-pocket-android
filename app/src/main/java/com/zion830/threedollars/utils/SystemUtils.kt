@@ -35,12 +35,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.FutureTarget
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.kakao.sdk.auth.LoginClient
-import com.kakao.sdk.link.LinkClient
+import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
+import com.kakao.sdk.user.UserApiClient
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -172,7 +172,7 @@ fun Context.shareWithKakao(
     storeId: String?,
     type: String?
 ) {
-    if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
+    if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
         val feed = FeedTemplate(
             content = Content(
                 title = title ?: "",
@@ -186,14 +186,14 @@ fun Context.shareWithKakao(
                     link = Link(
                         webUrl = shareFormat.shareUrl,
                         mobileWebUrl = shareFormat.shareUrl,
-                        androidExecParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString()),
-                        iosExecParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString())
+                        androidExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString()),
+                        iosExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString())
                     )
                 )
             )
         )
 
-        LinkClient.instance.defaultTemplate(this, feed) { linkResult, error ->
+        ShareClient.instance.shareDefault(this, feed) { linkResult, error ->
             if (error != null) {
                 shareUrl(shareFormat.url)
             } else if (linkResult != null) {

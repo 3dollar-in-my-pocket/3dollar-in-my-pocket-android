@@ -16,7 +16,12 @@ import zion830.com.common.base.BaseDiffUtilCallback
 class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     ListAdapter<UserStoreDetailItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
-    private var categoryName = ""
+    private var categoryNameList = mutableListOf<String>()
+
+    fun clearCategoryNameList() {
+        categoryNameList.clear()
+    }
+
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is UserStoreMenuModel -> {
             VIEW_TYPE_MENU
@@ -59,8 +64,8 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     inner class UserStoreMenuViewHolder(private val binding: ItemUserStoreMenuBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: UserStoreMenuModel) {
-            if (item.category.name != categoryName) {
-                categoryName = item.category.name
+            if (!categoryNameList.contains(item.category.name)) {
+                categoryNameList.add(item.category.name)
                 binding.categoryImageView.apply {
                     Glide.with(this)
                         .load(item.category.imageUrl)
@@ -71,6 +76,9 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
                     text = item.category.name
                     isVisible = true
                 }
+            } else {
+                binding.categoryImageView.isVisible = false
+                binding.categoryTextView.isVisible = false
             }
             binding.menuNameTextView.text = if (item.name.isNullOrEmpty()) "-" else item.name
             binding.menuPriceTextView.text = if (item.price.isNullOrEmpty()) "-" else item.price

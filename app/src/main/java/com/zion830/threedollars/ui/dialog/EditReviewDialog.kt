@@ -24,6 +24,11 @@ class EditReviewDialog(
     private val content: ReviewDetail?,
     private val onComplete: (NewReview) -> Unit,
 ) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+    }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAddReviewBinding =
         DialogAddReviewBinding.inflate(inflater, container, false)
 
@@ -35,7 +40,6 @@ class EditReviewDialog(
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
-        behavior.maxHeight = 100
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 

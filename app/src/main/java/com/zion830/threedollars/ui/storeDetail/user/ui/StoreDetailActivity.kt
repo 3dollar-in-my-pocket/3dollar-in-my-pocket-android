@@ -14,6 +14,8 @@ import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -49,6 +51,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -66,6 +69,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val userStoreMenuAdapter: UserStoreMenuAdapter by lazy {
         UserStoreMenuAdapter {
             val menuGroup = viewModel.userStoreDetailModel.value?.store?.menus?.groupBy { it.category.name }
+            userStoreMenuAdapter.submitList(listOf())
+            userStoreMenuAdapter.clearCategoryNameList()
             userStoreMenuAdapter.submitList(menuGroup?.flatMap { it.value })
         }
     }
@@ -100,7 +105,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     }
                 }
             }, reviewClickListener = {
-                startActivity(StoreReviewDetailActivity.getInstance(this, storeId))
+                activityResultLauncher.launch(StoreReviewDetailActivity.getInstance(this, storeId))
             })
     }
 
@@ -118,11 +123,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             finish()
         }
     }
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                refreshStoreInfo()
+            }
+        }
+
         refreshStoreInfo()
         initMap()
         initButton()
@@ -362,6 +376,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         }
                     }
                 }
+                launch {
+                    viewModel.reviewSuccessEvent.collect{
+                        if(it) {
+                            refreshStoreInfo()
+                        }
+                    }
+                }
             }
         }
     }
@@ -387,6 +408,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (imageContentModelList.isEmpty()) {
             photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.photo_empty))))
         } else {
+            photoAdapter.submitList(listOf())
             photoAdapter.submitList(it.images.contents.mapIndexed { index, image ->
                 StoreImage(index, null, image.url)
             }.toList())
@@ -413,6 +435,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initMenu(menuModel: List<UserStoreMenuModel>) {
         val menuGroup = menuModel.groupBy { it.category.name }
         if (menuGroup.size < 3) {
+            userStoreMenuAdapter.submitList(listOf())
+            userStoreMenuAdapter.clearCategoryNameList()
             userStoreMenuAdapter.submitList(menuGroup.flatMap { it.value })
         } else {
             val subKeys = menuGroup.keys.take(2)
@@ -420,7 +444,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             val userStoreMoreResponse = UserStoreMoreResponse(
                 moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2)
             )
-            userStoreMenuAdapter.submitList(subMenuGroup + userStoreMoreResponse)
+            lifecycleScope.launch {
+                userStoreMenuAdapter.submitList(listOf())
+                userStoreMenuAdapter.clearCategoryNameList()
+                delay(5L)
+                userStoreMenuAdapter.submitList(subMenuGroup + userStoreMoreResponse)
+            }
         }
     }
 
@@ -636,7 +665,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun moveMoreImageActivity() {
         val intent = MoreImageActivity.getIntent(this, storeId)
-        startActivity(intent)
+        activityResultLauncher.launch(intent)
     }
 
     private fun refreshStoreInfo() {
@@ -664,13 +693,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             Log.e(this::class.java.name, e.message ?: "")
             showToast(getString(R.string.exist_location_error))
             finish()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == EDIT_STORE_INFO && resultCode == RESULT_OK) {
-            refreshStoreInfo()
         }
     }
 

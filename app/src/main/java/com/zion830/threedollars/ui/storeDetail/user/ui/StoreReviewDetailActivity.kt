@@ -4,10 +4,12 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.google.android.material.tabs.TabLayout
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
@@ -25,6 +27,7 @@ import com.zion830.threedollars.ui.storeDetail.user.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -44,7 +47,7 @@ class StoreReviewDetailActivity :
                         putString("screen", "review_list")
                         putString("review_id", item.review.reviewId.toString())
                     }
-                    EventTracker.logEvent(if(item.review.isOwner) CLICK_EDIT_REVIEW else CLICK_REPORT, bundle)
+                    EventTracker.logEvent(if (item.review.isOwner) CLICK_EDIT_REVIEW else CLICK_REPORT, bundle)
                     if (item.review.isOwner) {
                         AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
@@ -58,8 +61,15 @@ class StoreReviewDetailActivity :
             }
         )
     }
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
 
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initButton()
         initViewModel()
         initAdapter()
@@ -73,6 +83,7 @@ class StoreReviewDetailActivity :
 
     private fun initButton() {
         binding.backButton.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
 
@@ -125,10 +136,11 @@ class StoreReviewDetailActivity :
                 launch {
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
+                            moreReviewAdapter.submitData(PagingData.empty())
                             moreReviewAdapter.submitData(pagingData)
                             binding.reviewRecyclerView.postDelayed({
                                 binding.reviewRecyclerView.smoothScrollToPosition(0)
-                            }, 300)
+                            }, 500)
                         }
                     }
                 }
@@ -138,6 +150,20 @@ class StoreReviewDetailActivity :
                         it?.let { showToast(it) }
                     }
                 }
+
+                launch {
+                    viewModel.reviewSuccessEvent.collect {
+                        if (it) {
+                            viewModel.getReview(storeId, reviewSortType)
+                        }
+                    }
+                }
+            }
+        }
+
+        viewModel.addReviewResult.observe(this) {
+            if (it) {
+                viewModel.getReview(storeId, reviewSortType)
             }
         }
     }

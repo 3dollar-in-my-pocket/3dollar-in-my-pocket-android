@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnItemClickListener
@@ -46,8 +48,15 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
             }
         })
     }
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
 
     override fun initView() {
+        this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initViewModel()
         initAdapter()
         initButton()
@@ -67,6 +76,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
 
     private fun initButton() {
         binding.backButton.setOnClickListener {
+            setResult(RESULT_OK)
             finish()
         }
         binding.submitPhotoTextView.setOnClickListener {
@@ -83,7 +93,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                         .show()
                 }
             }.startMultiImage { uriData ->
-                EventTracker.logEvent(Constants.IMAGE_ATTACH_BTN_CLICKED)
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
@@ -100,6 +109,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                 launch {
                     viewModel.imagePagingData.collectLatest {
                         it?.let { pagingData ->
+                            adapter.submitData(PagingData.empty())
                             adapter.submitData(pagingData)
                         }
                     }

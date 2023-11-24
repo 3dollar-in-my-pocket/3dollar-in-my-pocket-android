@@ -134,7 +134,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="kakao${kakao_key}" />
+                <data
+                    android:host="kakaolink"
+                    android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>
         <activity
@@ -201,6 +203,8 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admob_id}" />
-        <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
     </application>
 </manifest>
