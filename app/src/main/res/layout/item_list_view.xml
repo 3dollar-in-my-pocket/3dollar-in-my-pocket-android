@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardCornerRadius="20dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:focusable="true"
+        android:padding="16dp"
+        tools:ignore="UnusedAttribute">
+
+        <ImageView
+            android:id="@+id/menuIconImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_no_store" />
+
+        <TextView
+            android:id="@+id/tagTextView"
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:ellipsize="end"
+            android:maxLength="25"
+            android:textColor="@color/gray40"
+            app:layout_constraintStart_toEndOf="@id/menuIconImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="#붕어빵 #한식 #한식 #한식 #한식 #한식 " />
+
+        <TextView
+            android:id="@+id/storeNameTextView"
+            style="@style/apple_gothic_bold.size_16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLength="16"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toEndOf="@id/menuIconImageView"
+            app:layout_constraintTop_toBottomOf="@id/tagTextView"
+            tools:text="강남역 0번 출구 앞 붕어빵" />
+
+        <ImageView
+            android:id="@+id/newImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_new"
+            app:layout_constraintStart_toEndOf="@id/storeNameTextView"
+            app:layout_constraintTop_toTopOf="@id/storeNameTextView" />
+
+        <TextView
+            android:id="@+id/bossOrResentVisitTextView"
+            style="@style/apple_gothic_medium.size_12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/rect_radius_18_gray_80"
+            android:drawablePadding="4dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            app:layout_constraintStart_toEndOf="@id/menuIconImageView"
+            app:layout_constraintTop_toBottomOf="@id/storeNameTextView"
+            tools:text="최근 방문 5명"
+            tools:textColor="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/distanceReviewLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@id/menuIconImageView"
+            app:layout_constraintTop_toBottomOf="@id/bossOrResentVisitTextView">
+
+            <TextView
+                android:id="@+id/reviewTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="2dp"
+                android:textColor="@color/gray40"
+                app:drawableStartCompat="@drawable/ic_review_12"
+                tools:text="12개" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="8dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@color/gray70" />
+
+            <TextView
+                android:id="@+id/ratingTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="2dp"
+                android:textColor="@color/gray40"
+                app:drawableStartCompat="@drawable/ic_star_solid_12"
+                tools:text="4.6" />
+
+            <View
+                android:id="@+id/ratingView"
+                android:layout_width="1dp"
+                android:layout_height="8dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@color/gray70" />
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                style="@style/apple_gothic_medium.size_12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="2dp"
+                android:textColor="@color/gray40"
+                app:drawableStartCompat="@drawable/ic_location_soild_12"
+                tools:text="1km +" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -6,11 +6,11 @@
         
         <variable
             name="item"
-            type="com.zion830.threedollars.ui.addstore.ui_model.StoreImage" />
+            type="com.home.domain.data.store.StoreImage" />
         
         <variable
             name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+            type="com.threedollar.common.listener.OnItemClickListener" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

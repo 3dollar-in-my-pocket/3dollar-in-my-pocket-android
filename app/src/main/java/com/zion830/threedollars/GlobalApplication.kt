@@ -11,11 +11,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.home.domain.data.advertisement.AdvertisementModel
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.Popups
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -43,11 +43,11 @@ class GlobalApplication : Application() {
             GoogleSignIn.getClient(APPLICATION_CONTEXT, googleSignInOptions)
         }
         val isLoggedIn: Boolean
-            get() = !SharedPrefUtils.getLoginType().isNullOrBlank()
+            get() = !LegacySharedPrefUtils.getLoginType().isNullOrBlank()
         var loginPlatform: LoginType = LoginType.NONE
             private set
 
-        var storeMarker = Popups()
+        var storeMarker = AdvertisementModel()
 
         @JvmStatic
         fun getContext(): Context {
@@ -68,7 +68,7 @@ class GlobalApplication : Application() {
             NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
 
         if (isLoggedIn) {
-            loginPlatform = LoginType.of(SharedPrefUtils.getLoginType())
+            loginPlatform = LoginType.of(LegacySharedPrefUtils.getLoginType())
         }
     }
 }

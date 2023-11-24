@@ -4,24 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BR
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
-import com.zion830.threedollars.ui.login.dialog.LoginRequestDialog
-import com.zion830.threedollars.ui.login.name.InputNameActivity
-import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.dialog.LoginRequestDialog
+import com.zion830.threedollars.ui.login.ui.SignUpActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
-import zion830.com.common.ext.toStringDefault
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
-class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {
+class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {
     override val viewModel: FavoriteViewerViewModel by viewModels()
     private lateinit var favoriteId: String
     private val adapter by lazy {
@@ -63,7 +63,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                                 moveToDetailActivity(item)
                             } else {
                                 selectedItem = item
-                                inputNameLauncher.launch(Intent(this, InputNameActivity::class.java))
+                                inputNameLauncher.launch(Intent(this, SignUpActivity::class.java))
                             }
                         }.show(supportFragmentManager, "")
                     }
@@ -88,7 +88,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
 
     private fun moveToDetailActivity(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
         val intent = if (item.storeType == Constants.BOSS_STORE) {
-            FoodTruckStoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId)
+            BossStoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId)
         } else {
             StoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId.toInt())
         }

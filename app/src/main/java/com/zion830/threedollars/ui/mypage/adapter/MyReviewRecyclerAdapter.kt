@@ -6,13 +6,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyReviewBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
 
 class MyReviewRecyclerAdapter(
     private val listener: OnItemClickListener<ReviewDetail>,

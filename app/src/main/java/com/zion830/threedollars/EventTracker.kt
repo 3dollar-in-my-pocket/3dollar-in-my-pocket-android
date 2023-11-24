@@ -1,7 +1,6 @@
 package com.zion830.threedollars
 
 import android.os.Bundle
-import com.google.firebase.analytics.FirebaseAnalytics
 
 object EventTracker {
 

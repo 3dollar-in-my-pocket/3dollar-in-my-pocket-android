@@ -1,39 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <data>
-        
-        <variable
-            name="item"
-            type="String" />
-        
-        <variable
-            name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
-    </data>
-    
-    <LinearLayout
-        android:id="@+id/btn_add_new"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btn_add_new"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/addImageView"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/circle_gray100"
+        android:scaleType="center"
+        android:src="@drawable/ic_plus" />
+
+    <TextView
+        android:id="@+id/addTextView"
+        style="@style/apple_gothic_medium.size_12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:onClick="@{() -> listener.onClick(&quot;&quot;)}"
-        android:orientation="vertical">
-        
-        <ImageView
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_margin="8dp"
-            android:layout_marginStart="7dp"
-            android:background="@drawable/circle_black"
-            android:scaleType="center"
-            android:src="@drawable/ic_plus" />
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add"
-            android:textColor="@color/color_black"
-            android:textSize="12sp" />
-    </LinearLayout>
-</layout>
+        android:text="@string/add"
+        android:textColor="@color/gray80" />
+</LinearLayout>

@@ -3,14 +3,13 @@ package com.zion830.threedollars.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.di.NetworkModule
+import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
-import javax.inject.Inject
 
 class MyStoreDataSourceImpl :
     PagingSource<Int, StoreInfo>() {
 
-    private val newServiceApi: NewServiceApi = NetworkModule.newServiceApi
+    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
 
     override fun getRefreshKey(state: PagingState<Int, StoreInfo>): Int? = null
 

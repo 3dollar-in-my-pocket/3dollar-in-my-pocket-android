@@ -8,13 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
-import com.zion830.threedollars.ui.food_truck_store_detail.FoodTruckStoreDetailActivity
-import com.zion830.threedollars.ui.store_detail.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.ext.isNotNullOrEmpty
-import zion830.com.common.ext.toStringDefault
 
 @AndroidEntryPoint
 class DynamicLinkActivity : AppCompatActivity() {
@@ -101,7 +101,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                 val type = deeplink.getQueryParameter("storeType").toStringDefault()
                 if (type == "BOSS_STORE") {
                     startActivity(
-                        FoodTruckStoreDetailActivity.getIntent(
+                        BossStoreDetailActivity.getIntent(
                             this,
                             deepLinkStoreId = id
                         )

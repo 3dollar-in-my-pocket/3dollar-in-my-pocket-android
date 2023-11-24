@@ -6,11 +6,11 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.kakao.Document" />
+            type="com.threedollar.network.data.kakao.Document" />
 
         <variable
             name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+            type="com.threedollar.common.listener.OnItemClickListener" />
     </data>
 
     <LinearLayout

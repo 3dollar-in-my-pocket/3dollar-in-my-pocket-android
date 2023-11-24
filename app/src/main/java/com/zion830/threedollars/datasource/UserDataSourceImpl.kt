@@ -1,14 +1,27 @@
 package com.zion830.threedollars.datasource
 
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
+import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
+import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
+import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
+import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.*
+import com.zion830.threedollars.datasource.model.v2.response.my.Medal
+import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.MyStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
+import com.zion830.threedollars.datasource.model.v2.response.my.User
+import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.network.NewServiceApi
 import retrofit2.Response
-import zion830.com.common.base.BaseResponse
 import javax.inject.Inject
 
 class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi) : UserDataSource {
@@ -80,9 +93,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
         service.putPushInformationToken(informationTokenRequest)
 
-    override suspend fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>> =
-        service.putMarketingConsent(marketingConsentRequest)
-
     override suspend fun getFavoriteViewer(favoriteId: String, cursor: String?): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getFavoriteViewer(favoriteId, cursor)
 
@@ -94,9 +104,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun allDeleteFavorite(): Response<BaseResponse<String>> =
         service.allDeleteFavorite()
-
-    override suspend fun deleteFavorite(storeType: String, storeId: String): Response<BaseResponse<String>> =
-        service.deleteFavorite(storeType, storeId)
 
     override suspend fun updateFavoriteInfo(favoriteInfoRequest: FavoriteInfoRequest): Response<BaseResponse<String>> =
         service.updateFavoriteInfo(favoriteInfoRequest = favoriteInfoRequest)

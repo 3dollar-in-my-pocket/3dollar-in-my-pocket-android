@@ -3,14 +3,14 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
 
 class MyVisitHistoryRecyclerAdapter(
     private val listener: OnItemClickListener<VisitHistoryContent>,
@@ -24,8 +24,8 @@ class MyVisitHistoryRecyclerAdapter(
         holder.bind(item, if (!item.store.isDeleted) listener else null)
 
         val beforeItem = if (position > 0) getItem(position - 1) else null
-        val categoryInfo = SharedPrefUtils.getCategories()
-        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}" }
+        val categoryInfo = LegacySharedPrefUtils.getCategories()
+        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}" }
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd")

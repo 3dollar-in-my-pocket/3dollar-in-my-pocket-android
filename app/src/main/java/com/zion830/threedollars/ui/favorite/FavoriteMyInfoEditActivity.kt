@@ -4,18 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import com.threedollar.common.base.BaseActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
+import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :
-    BaseActivity<ActivityFavoriteMyInfoEditBinding, FavoriteMyInfoEditViewModel>(R.layout.activity_favorite_my_info_edit) {
+    BaseActivity<ActivityFavoriteMyInfoEditBinding, FavoriteMyInfoEditViewModel>({ ActivityFavoriteMyInfoEditBinding.inflate(it) }) {
     override val viewModel: FavoriteMyInfoEditViewModel by viewModels()
 
     override fun initView() {
@@ -41,6 +41,10 @@ class FavoriteMyInfoEditActivity :
                 finish()
             }
         }
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("FavoriteMyInfoEditActivity")
     }
 
     private fun changeText() {

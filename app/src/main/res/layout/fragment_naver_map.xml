@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    
-    <data>
-    
-    </data>
-    
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_map"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_map"
+        android:name="com.naver.maps.map.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-        <fragment
-            android:id="@+id/fragment_map"
-            android:name="com.naver.maps.map.MapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:navermap_zoomControlEnabled="false" />
-        
-        <ImageButton
-            android:id="@+id/btn_find_location"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="75dp"
-            android:background="@drawable/circle_white"
-            android:elevation="8dp"
-            android:foreground="?android:attr/actionBarItemBackground"
-            android:src="@drawable/ic_search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+        android:layout_height="match_parent"
+        app:navermap_zoomControlEnabled="false" />
+
+    <ImageButton
+        android:id="@+id/btn_find_location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/circle_white"
+        android:elevation="8dp"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

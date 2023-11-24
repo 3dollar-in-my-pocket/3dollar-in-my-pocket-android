@@ -10,42 +10,47 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.ext.getCurrentDate
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.showSnack
+import com.threedollar.common.listener.OnBackPressedListener
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.mypage.vm.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.store_detail.vm.StreetStoreByMenuViewModel
-import com.zion830.threedollars.utils.SharedPrefUtils
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.BaseActivity
-import zion830.com.common.ext.isNotNullOrEmpty
-import zion830.com.common.ext.showSnack
-import zion830.com.common.listener.OnBackPressedListener
+import kotlinx.coroutines.launch
+import zion830.com.common.base.LegacyBaseActivity
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layout.activity_home),
+class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ ActivityHomeBinding.inflate(it) }),
     ActivityCompat.OnRequestPermissionsResultCallback {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: UserInfoViewModel by viewModels()
     private val myPageViewModel: MyPageViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
 
-    private val streetStoreByMenuViewModel: StreetStoreByMenuViewModel by viewModels()
 
     private lateinit var navHostFragment: NavHostFragment
 
     override fun initView() {
         requestPermissionFirst()
         popupViewModel.getPopups(position = "SPLASH")
-        if (SharedPrefUtils.getCategories().isEmpty()) {
-            streetStoreByMenuViewModel.loadCategories()
-        }
 
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -56,13 +61,35 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = R.color.color_main_red)
         }
-        popupViewModel.popups.observe(this) { popups ->
-            if (popups.isNotEmpty() && popups[0].linkUrl != SharedPrefUtils.getPopupUrl()) {
-                binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
-            }
-        }
+        initFlow()
         initNavController(navController)
         initNavView()
+    }
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MainActivity")
+    }
+
+    private fun initFlow() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch {
+                    popupViewModel.popups.collect { popups ->
+                        if (popups.isNotEmpty() && getCurrentDate() != sharedPrefUtils.getTodayNotPopupDate()) {
+                            binding.navHostFragment.findNavController().navigate(R.id.navigation_popup)
+                        }
+                    }
+                }
+                launch {
+                    popupViewModel.serverError.collect {
+                        it?.let {
+                            showToast(it)
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private fun initNavView() {
@@ -71,18 +98,25 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                 R.id.navigation_home -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
                 }
-                R.id.navigation_street -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_street)
+
+                R.id.navigation_write -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_write)
                     binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(false)
                 }
-                R.id.navigation_truck -> {
-                    binding.navHostFragment.findNavController().navigate(R.id.navigation_truck)
-                    binding.navView.itemBackgroundResource = android.R.color.white
-                }
+
+//                R.id.navigation_vote -> {
+//                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
+//                    binding.navView.itemBackgroundResource = android.R.color.white
+//                    showBottomNavigation(true)
+//                }
+
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
                     binding.navView.itemBackgroundResource = android.R.color.black
+                    showBottomNavigation(true)
                 }
             }
             true
@@ -130,7 +164,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (permissions.isEmpty()) return
@@ -167,6 +201,10 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>(R.layo
                 binding.navView.selectedItemId = R.id.navigation_mypage
             }
         }
+    }
+
+    fun showBottomNavigation(state: Boolean) {
+        binding.navView.isVisible = state
     }
 
     companion object {

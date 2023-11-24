@@ -3,13 +3,13 @@ package com.zion830.threedollars.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.di.NetworkModule
+import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.utils.getErrorMessage
 
 class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
 
-    private val newServiceApi: NewServiceApi = NetworkModule.newServiceApi
+    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
 
     override fun getRefreshKey(state: PagingState<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>): String? = null
 

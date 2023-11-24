@@ -1,5 +1,6 @@
 package com.zion830.threedollars.datasource.model.v2.response
 
+import com.threedollar.common.data.AdAndStoreItem
 import com.zion830.threedollars.R
 
 data class StoreEmptyResponse(

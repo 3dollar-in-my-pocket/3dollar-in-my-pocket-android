@@ -3,19 +3,19 @@ package com.zion830.threedollars.ui.mypage.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMypageEmptyBinding
 import com.zion830.threedollars.databinding.ItemMypageFavoriteBinding
 import com.zion830.threedollars.databinding.ItemRecentVisitHistoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.AdAndStoreItem
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
-import com.zion830.threedollars.utils.SharedPrefUtils
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
-import zion830.com.common.listener.OnItemClickListener
 
 class MyPageRecyclerAdapter(
     private val onClickListener: OnItemClickListener<AdAndStoreItem>,
@@ -74,9 +74,9 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
         binding.run {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
             ivCategory.bindMenuIcons(item.store.categories)
-            val categoryInfo = SharedPrefUtils.getCategories()
+            val categoryInfo = LegacySharedPrefUtils.getCategories()
             val categories = item.store.categories.joinToString(" ") {
-                "#${categoryInfo.find { categoryInfo -> categoryInfo.category == it }?.name}"
+                "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}"
             }
             tvCategories.text = categories
             layoutItem.setOnClickListener {

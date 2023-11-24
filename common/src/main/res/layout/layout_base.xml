@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="zion830.com.common.base.BaseViewModel" />
+            type="com.threedollar.common.base.BaseViewModel" />
 
         <variable
             name="item"
@@ -14,7 +14,7 @@
 
         <variable
             name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+            type="com.threedollar.common.listener.OnItemClickListener" />
     </data>
 
     <LinearLayout

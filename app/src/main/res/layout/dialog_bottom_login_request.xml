@@ -1,93 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent">
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="29dp"
+        android:background="@drawable/rect_gray80_radius30"
+        android:backgroundTint="@color/gray90">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/loginRequestTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/login_user_request"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/closeImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:contentDescription="로그인 요청 다이얼로그 닫기 버튼"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/loginRequestTitleText"
+            tools:ignore="HardcodedText" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="29dp"
-            android:background="@drawable/rect_gray80_radius30"
-            android:backgroundTint="@color/gray90">
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="36dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginRequestTitleText"
+            app:layout_constraintVertical_bias="0">
 
-            <TextView
-                android:id="@+id/loginRequestTitleText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/login_user_request"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/closeImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:contentDescription="로그인 요청 다이얼로그 닫기 버튼"
-                android:src="@drawable/ic_close"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/loginRequestTitleText"
-                tools:ignore="HardcodedText" />
-
-            <LinearLayout
+            <Button
+                android:id="@+id/btn_login_kakao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:layout_marginBottom="36dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/loginRequestTitleText"
-                app:layout_constraintVertical_bias="0">
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/btn_kakao"
+                android:drawableStart="@drawable/ic_kakao"
+                android:fontFamily="@font/apple_gothic_bold"
+                android:paddingHorizontal="62dp"
+                android:paddingVertical="12dp"
+                android:text="@string/login_kakao"
+                android:textColor="#381e1f"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/btn_login_kakao"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@drawable/btn_kakao"
-                    android:drawableStart="@drawable/ic_kakao"
-                    android:fontFamily="@font/applegothic_bold"
-                    android:paddingHorizontal="62dp"
-                    android:paddingVertical="12dp"
-                    android:text="@string/login_kakao"
-                    android:textColor="#381e1f"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_login_google"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/btn_kakao"
+                android:backgroundTint="@color/white"
+                android:drawableStart="@drawable/ic_logo_google"
+                android:fontFamily="@font/apple_gothic_bold"
+                android:paddingHorizontal="62dp"
+                android:paddingVertical="12dp"
+                android:text="@string/login_google"
+                android:textAllCaps="false"
+                android:textColor="#381e1f"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-                <Button
-                    android:id="@+id/btn_login_google"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/btn_kakao"
-                    android:backgroundTint="@color/white"
-                    android:drawableStart="@drawable/ic_logo_google"
-                    android:fontFamily="@font/applegothic_bold"
-                    android:paddingHorizontal="62dp"
-                    android:paddingVertical="12dp"
-                    android:text="@string/login_google"
-                    android:textAllCaps="false"
-                    android:textColor="#381e1f"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
-</layout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

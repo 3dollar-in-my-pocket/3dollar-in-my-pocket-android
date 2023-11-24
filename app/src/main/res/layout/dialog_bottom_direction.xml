@@ -1,0 +1,45 @@
+<!-- app_to_app_selection_dialog.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rect_radius12_opacity"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/kakaoMapTextView"
+        style="@style/apple_gothic_medium.size_16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rect_white_radius12_stroke_gray20"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="@string/kakao_map"
+        android:textColor="@color/gray100" />
+
+    <TextView
+        android:id="@+id/naverMapTextView"
+        style="@style/apple_gothic_medium.size_16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rect_white_radius12_stroke_gray20"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="@string/naver_map"
+        android:textColor="@color/gray100" />
+
+    <TextView
+        android:id="@+id/closeTextView"
+        style="@style/apple_gothic_medium.size_16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:paddingVertical="16dp"
+        android:text="@string/close"
+        android:textColor="@color/gray100" />
+</LinearLayout>

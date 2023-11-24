@@ -1,20 +1,19 @@
 package com.zion830.threedollars.network
 
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.FAVORITE_STORE
 import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import zion830.com.common.base.BaseResponse
 
 interface NewServiceApi {
 
@@ -47,22 +46,11 @@ interface NewServiceApi {
         @Body newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
 
-    @POST("/api/v2/store/visit")
-    suspend fun addVisitHistory(
-        @Body newVisitHistory: NewVisitHistory
-    ): Response<BaseResponse<String>>
-
     @PUT("/api/v2/store/{storeId}")
     suspend fun editStore(
         @Path("storeId") storeId: Int,
         @Body editStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
-
-    @DELETE("/api/v2/store/{storeId}")
-    suspend fun deleteStore(
-        @Path("storeId") storeId: Int,
-        @Query("deleteReasonType") deleteReasonType: String = "WRONG_CONTENT"
-    ): Response<DeleteStoreResponse>
 
     @GET("/api/v1/stores/near/exists")
     suspend fun getNearExists(
@@ -70,16 +58,6 @@ interface NewServiceApi {
         @Query("mapLatitude") latitude: Double,
         @Query("mapLongitude") longitude: Double
     ): Response<NearExistResponse>
-
-    @DELETE("/api/v2/store/image/{imageId}")
-    suspend fun deleteImage(@Path("imageId") imageId: Int): Response<BaseResponse<String>>
-
-    @POST("/api/v2/store/images")
-    @Multipart
-    suspend fun saveImages(
-        @Part images: List<MultipartBody.Part>,
-        @Query("storeId") storeId: Int
-    ): Response<AddImageResponse>
 
     // 가게 검색
     @GET("/api/v2/store")
@@ -101,29 +79,11 @@ interface NewServiceApi {
         @Query("category") category: String = ""
     ): Response<NearStoreResponse>
 
-    @GET("/api/v2/store/{storeId}/images")
-    suspend fun getStoreImages(
-        @Query("storeId") storeId: Int,
-    ): Response<AddImageResponse>
-
-    @GET("/api/v2/stores/me")
-    suspend fun getMyStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("cachingTotalElements") cachingTotalElements: Int,
-        @Query("cursor") cursor: Int,
-        @Query("size") size: Int = 100,
-    ): Response<MyStoreResponse>
-
     @GET("/api/v3/stores/me")
     suspend fun getMyStore(
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
-
-    // 카테고리
-    @GET("/api/v2/store/menu/categories")
-    suspend fun getCategories(): Response<CategoryResponse>
 
     // 사용자
     @DELETE("/api/v2/signout")
@@ -172,14 +132,8 @@ interface NewServiceApi {
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
 
-    @GET("/api/v1/advertisements")
-    suspend fun getPopups(
-        @Query("platform") platform: String = "AOS",
-        @Query("position") position: String
-    ): Response<PopupsResponse>
-
-    @GET("/api/v1/boss/store/categories")
-    suspend fun getBossCategories(): Response<BossCategoriesResponse>
+    @GET("/api/v4/store/categories")
+    suspend fun getCategories(): Response<CategoriesResponse>
 
     @GET("/api/v1/boss/stores/around")
     suspend fun getBossNearStore(
@@ -232,9 +186,6 @@ interface NewServiceApi {
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/user/me/marketing-consent")
-    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
-
     @GET("/api/v1/favorite/store/folder/my")
     suspend fun getMyFavoriteFolder(
         @Query("cursor") cursor: String?,
@@ -247,12 +198,6 @@ interface NewServiceApi {
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
-
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
 
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>

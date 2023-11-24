@@ -1,54 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <data>
-
-        <variable
-            name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.store.DetailVisitHistory" />
-
-        <import type="com.zion830.threedollars.utils.StringUtils" />
-    </data>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/createdAtTextView"
+        style="@style/apple_gothic_medium.size_12sp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:layout_marginStart="4dp"
+        android:drawablePadding="8dp"
+        android:textColor="@color/gray50"
+        app:drawableStartCompat="@drawable/circle_green_4dp"
+        tools:text="23.02.03 16:43" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@{item.exist ? @drawable/rect_green_stroke : @drawable/rect_red_stroke_round}"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp">
+    <TextView
+        android:id="@+id/userNameTextView"
+        style="@style/apple_gothic_bold.size_12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/gray100"
+        tools:text="마포구몽키스패너" />
 
-            <ImageView
-                android:id="@+id/tv_status"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:src="@{item.exist ? @drawable/ic_good : @drawable/ic_bad}" />
-
-            <TextView
-                android:id="@+id/tv_created_at"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:textColor="@{item.exist ? @color/color_green : @color/color_main_red}"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@{item.user.name}"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:fontFamily="@font/applegothic_bold"
-            android:textStyle="bold" />
-    </LinearLayout>
-</layout>
+</LinearLayout>

@@ -11,7 +11,7 @@
 
         <variable
             name="listener"
-            type="zion830.com.common.listener.OnItemClickListener" />
+            type="com.threedollar.common.listener.OnItemClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,7 +51,7 @@
                 android:id="@+id/tv_store_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/applegothic_bold"
+                android:fontFamily="@font/apple_gothic_bold"
                 android:singleLine="true"
                 android:text="@{item.storeName}"
                 android:textColor="@color/color_white"
@@ -79,9 +79,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:background="@drawable/rect_red_radius48"
-            android:backgroundTint="@{item.deleted ? @color/gray60 : @color/color_green}"
+            android:backgroundTint="@{item.deleted ? @color/gray60 : @color/green}"
             android:drawablePadding="4dp"
-            android:fontFamily="@font/applegothic_bold"
+            android:fontFamily="@font/apple_gothic_bold"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
             android:textColor="@color/white"
