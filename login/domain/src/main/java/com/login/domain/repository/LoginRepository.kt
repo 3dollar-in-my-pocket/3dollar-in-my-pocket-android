@@ -6,4 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository {
     fun getFeedbackTypes(targetType: String): Flow<BaseResponse<List<FeedbackTypeResponse>>>
+
+    fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>>
+
+    fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
 }

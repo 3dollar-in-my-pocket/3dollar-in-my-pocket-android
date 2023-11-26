@@ -14,7 +14,7 @@
         android:layout_marginTop="25dp"
         android:background="@drawable/rect_white_radius10_stroke_gray30"
         android:drawablePadding="4dp"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
         android:text="@string/fragment_home_all_menu"
         app:drawableStartCompat="@drawable/ic_category"
@@ -32,7 +32,7 @@
         android:layout_marginStart="10dp"
         android:background="@drawable/rect_white_radius10_stroke_gray30"
         android:drawablePadding="4dp"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
         android:text="@string/fragment_home_filter_distance"
         app:drawableStartCompat="@drawable/ic_change"
@@ -48,7 +48,7 @@
         android:layout_marginStart="10dp"
         android:background="@drawable/rect_white_radius10_stroke_gray30"
         android:drawablePadding="4dp"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="8dp"
         android:paddingVertical="8dp"
         android:text="@string/fragment_home_boss_filter"
         android:textColor="@color/gray40"
@@ -56,6 +56,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/filterTextView"
         app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/admob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rect_gray"
+        app:adSize="BANNER"
+        app:adUnitId="@string/admob_unit_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
 
     <TextView
         android:id="@+id/listTitleTextView"
@@ -66,7 +79,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/fragment_home_all_menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
+        app:layout_constraintTop_toBottomOf="@id/admob" />
 
     <TextView
         android:id="@+id/certifiedStoreTextView"
@@ -75,12 +88,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="20dp"
-        android:text="@string/visit_certified_store"
         android:drawablePadding="4dp"
+        android:text="@string/visit_certified_store"
         android:textColor="@color/gray60"
+        app:drawableStartCompat="@drawable/ic_certification_check_off"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/allMenuTextView"
-        app:drawableStartCompat="@drawable/ic_certification_check_off" />
+        app:layout_constraintTop_toBottomOf="@id/admob" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listRecyclerView"

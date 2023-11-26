@@ -13,10 +13,10 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
 
     val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
-    fun getPopupUrl() = sharedPreferences.getString(POPUP_URL, "")
+    fun getTodayNotPopupDate() = sharedPreferences.getString(TODAY_NOT_POPUP_DATE, "")
 
-    fun setPopupUrl(url: String) = sharedPreferences.edit {
-        putString(POPUP_URL, url)
+    fun setTodayNotPopupDate(date: String) = sharedPreferences.edit {
+        putString(TODAY_NOT_POPUP_DATE, date)
         commit()
     }
 
@@ -115,7 +115,7 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         private const val FEED_BACK_LIST = "feed_back_list"
         private const val LOGIN_TYPE = "login_type"
         private const val GOOGLE_TOKEN = "google_token"
-        private const val POPUP_URL = "popup_url"
+        private const val TODAY_NOT_POPUP_DATE = "popup_url"
         private const val FOOD_TRUCK_TOOL_TIP = "food_truck_tool_tip"
         val BOSS_FEED_BACK_LIST = "boss_feed_back_list"
     }

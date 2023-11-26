@@ -1,7 +1,6 @@
 package com.zion830.threedollars.network
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.FAVORITE_STORE
@@ -9,7 +8,6 @@ import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.PopupsResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
@@ -81,20 +79,6 @@ interface NewServiceApi {
         @Query("category") category: String = ""
     ): Response<NearStoreResponse>
 
-    @GET("/api/v2/store/{storeId}/images")
-    suspend fun getStoreImages(
-        @Query("storeId") storeId: Int,
-    ): Response<AddImageResponse>
-
-    @GET("/api/v2/stores/me")
-    suspend fun getMyStore(
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
-        @Query("cachingTotalElements") cachingTotalElements: Int,
-        @Query("cursor") cursor: Int,
-        @Query("size") size: Int = 100,
-    ): Response<MyStoreResponse>
-
     @GET("/api/v3/stores/me")
     suspend fun getMyStore(
         @Query("cursor") cursor: Int?,
@@ -147,12 +131,6 @@ interface NewServiceApi {
 
     @GET("/api/v2/faqs")
     suspend fun getFAQByCategory(@Query("category") category: String): Response<FAQByCategoryResponse>
-
-    @GET("/api/v1/advertisements")
-    suspend fun getPopups(
-        @Query("platform") platform: String = "AOS",
-        @Query("position") position: String
-    ): Response<PopupsResponse>
 
     @GET("/api/v4/store/categories")
     suspend fun getCategories(): Response<CategoriesResponse>
@@ -207,9 +185,6 @@ interface NewServiceApi {
 
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
-
-    @PUT("/api/v1/user/me/marketing-consent")
-    suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
 
     @GET("/api/v1/favorite/store/folder/my")
     suspend fun getMyFavoriteFolder(
