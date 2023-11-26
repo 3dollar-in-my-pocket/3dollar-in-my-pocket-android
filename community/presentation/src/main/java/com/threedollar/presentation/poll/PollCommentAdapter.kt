@@ -39,14 +39,15 @@ class PollCommentAdapter(private val optionClick: (PollComment) -> Unit) :
 class PollCommentViewHolder(private val binding: ItemPollCommentBinding) : ViewHolder(binding.root) {
     fun onBind(pollComment: PollComment, commentClick: (PollComment) -> Unit) {
         binding.twPollCommentOption.onSingleClick { commentClick(pollComment) }
-        binding.clCommentBack.isSelected = pollComment.current.poll.isWriter
-        binding.twPollCommentOption.text = if (pollComment.current.poll.isWriter) "수정" else "신고"
+        binding.clCommentBack.isSelected = pollComment.current.comment.isOwner
+        binding.twPollCommentOption.text = if (pollComment.current.comment.isOwner) "수정" else "신고"
         binding.twMedalName.text = pollComment.current.commentWriter.medal.name
         binding.imgMedal.loadUrlImg(pollComment.current.commentWriter.medal.iconUrl)
-        binding.twPollCommentChoice.text = pollComment.current.poll.selectedOptions.first().name
+        binding.twPollCommentChoice.isVisible = pollComment.current.poll.selectedOptions.isNotEmpty()
+        if (binding.twPollCommentChoice.isVisible) binding.twPollCommentChoice.text = pollComment.current.poll.selectedOptions.first().name
         binding.twPollCommentDate.text = getTimeAgo(pollComment.current.comment.createdAt)
         binding.twPollCommentNick.text = pollComment.current.commentWriter.name
-        binding.twPollCommentWriter.isVisible = pollComment.current.comment.isOwner
+        binding.twPollCommentWriter.isVisible = pollComment.current.poll.isWriter
         binding.twPollCommentContent.text = pollComment.current.comment.content
     }
 
