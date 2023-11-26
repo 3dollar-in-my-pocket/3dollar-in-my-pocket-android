@@ -64,7 +64,6 @@ class PollDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel.setPollId(intent.getStringExtra("id").orEmpty())
         viewModel.pollDetail()
-        viewModel.getComment()
         binding.recyclerComment.itemAnimator = null
         binding.recyclerComment.adapter = adapter
         binding.recyclerComment.addOnScrollListener(object : RecyclerView.OnScrollListener() {

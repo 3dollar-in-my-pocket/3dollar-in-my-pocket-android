@@ -72,6 +72,7 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollId(pollId).collect {
                 _pollDetail.emit(it)
+                getComment()
             }
         }
     }
