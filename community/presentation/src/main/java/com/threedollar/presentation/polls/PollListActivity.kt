@@ -114,6 +114,7 @@ class PollListActivity : AppCompatActivity() {
                         pollList = null
                         pollItems.clear()
                         adapter.submitList(emptyList())
+                        viewModel.getPollPolicy()
                         viewModel.getPollItems(categoryId, PollSort.Latest.type, "")
                     }
                 }

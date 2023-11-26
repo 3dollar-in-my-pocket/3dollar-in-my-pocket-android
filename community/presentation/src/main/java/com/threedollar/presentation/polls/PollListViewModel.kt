@@ -28,7 +28,11 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     val createPoll: SharedFlow<PollId> get() = _createPoll.asSharedFlow()
 
     init {
-        viewModelScope.launch {
+        getPollPolicy()
+    }
+
+    fun getPollPolicy(){
+        viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollPolicy().collect {
                 _userPollPolicy.emit(it)
             }
