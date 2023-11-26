@@ -11,20 +11,26 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.threedollar.presentation.polls.PollListActivity
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommunityFragment : Fragment(R.layout.fragment_community) {
     private lateinit var binding: FragmentCommunityBinding
     private val viewModel: CommunityViewModel by viewModels()
+
+    @Inject
+    lateinit var activityStarter: ActivityStarter
     private val pollAdapter by lazy {
         CommunityPollAdapter(choicePoll = { pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
@@ -36,7 +42,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     }
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
-
+            activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
         }
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
