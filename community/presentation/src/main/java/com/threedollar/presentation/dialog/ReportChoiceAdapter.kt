@@ -33,6 +33,7 @@ class ReportChoiceViewHolder(private val binding: ItemChoiceNameBinding) : ViewH
     fun onBind(reasonModel: ReasonModel, choiceClick: (ReasonModel) -> Unit, isCheck: Boolean) {
         binding.imgCheck.isVisible = isCheck
         binding.twName.text = reasonModel.description
+        binding.clChoiceBack.isSelected = isCheck
         binding.root.onSingleClick { choiceClick(reasonModel) }
     }
 }

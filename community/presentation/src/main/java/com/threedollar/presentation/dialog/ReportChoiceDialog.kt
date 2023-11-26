@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.home.domain.data.store.ReasonModel
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
@@ -19,6 +20,7 @@ class ReportChoiceDialog : BottomSheetDialogFragment() {
     }
     private val choiceClick: (ReasonModel) -> Unit = {
         choiceReasonModel = it
+        binding.etReport.isVisible = it.type == "POLL_OTHER"
         adapter.setChoiceReasonModel(choiceReasonModel)
     }
 
