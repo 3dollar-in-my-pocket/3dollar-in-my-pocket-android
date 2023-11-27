@@ -14,6 +14,8 @@ import com.threedollar.presentation.utils.getDeadlineString
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
+import java.util.Calendar
+import java.util.TimeZone
 
 class PollListAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
     ListAdapter<PollItem, ViewHolder>(BaseDiffUtilCallback()) {
@@ -24,6 +26,8 @@ class PollListAdapter(private val choicePoll: (String, String) -> Unit, private 
             getItem(position)?.let {
                 holder.onBind(it, choicePoll, clickPoll)
             }
+        } else if (holder is PollTitleViewHolder) {
+            holder.onBind()
         }
     }
 
@@ -50,7 +54,7 @@ class PollListAdapter(private val choicePoll: (String, String) -> Unit, private 
 class PollListViewHolder(private val binding: ItemPollListBinding) : ViewHolder(binding.root) {
     fun onBind(pollItem: PollItem, choicePoll: (String, String) -> Unit, clickPoll: (PollItem) -> Unit) {
         val context = binding.root.context
-        if(pollItem.poll.options.size < 2) return
+        if (pollItem.poll.options.size < 2) return
         val first = pollItem.poll.options[0]
         val second = pollItem.poll.options[1]
         val isSelected = first.choice.selectedByMe || second.choice.selectedByMe
@@ -117,4 +121,10 @@ class PollListViewHolder(private val binding: ItemPollListBinding) : ViewHolder(
     }
 }
 
-class PollTitleViewHolder(private val binding: ItemRealtimeTitleBinding) : ViewHolder(binding.root)
+class PollTitleViewHolder(private val binding: ItemRealtimeTitleBinding) : ViewHolder(binding.root) {
+    fun onBind() {
+        val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"))
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        binding.twRealTimeTitle.text = "${hour}시 인기 투표"
+    }
+}
