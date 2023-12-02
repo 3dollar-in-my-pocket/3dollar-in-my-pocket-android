@@ -26,6 +26,7 @@ import com.threedollar.presentation.databinding.ActivityPollDetailBinding
 import com.threedollar.presentation.dialog.ReportChoiceDialog
 import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
+import com.threedollar.presentation.utils.hasVotingPeriodEnded
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
@@ -218,12 +219,24 @@ class PollDetailActivity : AppCompatActivity() {
         val first = pollItem.poll.options[0]
         val second = pollItem.poll.options[1]
         val isSelected = first.choice.selectedByMe || second.choice.selectedByMe
-        binding.twPollFirstChoice.isVisible = !isSelected
-        binding.twPollSecondChoice.isVisible = !isSelected
-        binding.clPollVoteFirstChoice.isVisible = isSelected
-        binding.clPollVoteSecondChoice.isVisible = isSelected
+        val hasVotingPeriodEnded = hasVotingPeriodEnded(pollItem.poll.period.endDateTime)
+        binding.twPollFirstChoice.isVisible = !isSelected || !hasVotingPeriodEnded
+        binding.twPollSecondChoice.isVisible = !isSelected || !hasVotingPeriodEnded
+        binding.clPollVoteFirstChoice.isVisible = isSelected || hasVotingPeriodEnded
+        binding.clPollVoteSecondChoice.isVisible = isSelected || hasVotingPeriodEnded
+        if (hasVotingPeriodEnded) {
+            binding.clPollVoteFirstChoice.isVisible = true
+            binding.clPollVoteSecondChoice.isVisible = true
+            binding.twPollFirstChoice.isVisible = false
+            binding.twPollSecondChoice.isVisible = false
+        } else {
+            binding.twPollFirstChoice.isVisible = !isSelected
+            binding.twPollSecondChoice.isVisible = !isSelected
+            binding.clPollVoteFirstChoice.isVisible = isSelected
+            binding.clPollVoteSecondChoice.isVisible = isSelected
+        }
 
-        if (isSelected) {
+        if (isSelected || hasVotingPeriodEnded) {
             val firstVoteCount = first.choice.count
             val secondVoteCount = second.choice.count
             val firstBack = if (firstVoteCount > secondVoteCount) {
