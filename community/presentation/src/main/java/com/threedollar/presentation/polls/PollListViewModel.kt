@@ -33,7 +33,7 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
         getPollPolicy()
     }
 
-    fun getPollPolicy() {
+    private fun getPollPolicy() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollPolicy().collect {
                 if (it.ok) _userPollPolicy.emit(it.data!!)
@@ -56,8 +56,7 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
             communityRepository.createPoll(pollCreateApiRequest).collect {
                 if (it.ok) {
                     _createPoll.emit(it.data!!)
-                    val userPollPolicy = userPollPolicy.single()
-                    _userPollPolicy.emit(userPollPolicy.copy(currentCount = userPollPolicy.currentCount + 1))
+                    getPollPolicy()
                 } else _toast.emit(it.message.orEmpty())
             }
         }

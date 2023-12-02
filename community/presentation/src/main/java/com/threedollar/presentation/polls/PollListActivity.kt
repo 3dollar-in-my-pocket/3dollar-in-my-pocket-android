@@ -52,8 +52,8 @@ class PollListActivity : AppCompatActivity() {
         if (categoryId.isEmpty()) {
             finish()
         }
-        selectedPoll(true)
         binding.recyclerPoll.adapter = adapter
+        binding.recyclerPoll.itemAnimator = null
         binding.recyclerPoll.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -79,10 +79,10 @@ class PollListActivity : AppCompatActivity() {
             }
         })
         binding.clPollLatest.onSingleClick {
-            selectedPoll(true)
+            if (!binding.twPollLatest.isSelected) selectedPoll(true)
         }
         binding.clPollPopular.onSingleClick {
-            selectedPoll(false)
+            if (!binding.twPollPopular.isSelected) selectedPoll(false)
         }
         binding.llPollCreate.onSingleClick {
             CreatePollDialog().setCreatePoll { title, first, second ->
@@ -115,7 +115,6 @@ class PollListActivity : AppCompatActivity() {
                         pollList = null
                         pollItems.clear()
                         adapter.submitList(emptyList())
-                        viewModel.getPollPolicy()
                         viewModel.getPollItems(categoryId, PollSort.Latest.type, "")
                     }
                 }
@@ -148,9 +147,14 @@ class PollListActivity : AppCompatActivity() {
             }
             launch {
                 viewModel.pollItems.collect {
+                    val isFirstPollItems = pollList == null
                     isLoading = false
                     pollList = it
                     pollItems.addAll(it.pollItems)
+                    if (isFirstPollItems) {
+                        binding.recyclerPoll.adapter = null
+                        binding.recyclerPoll.adapter = adapter
+                    }
                     adapter.submitList(pollItems.toList())
                 }
             }
@@ -162,19 +166,26 @@ class PollListActivity : AppCompatActivity() {
         }
     }
 
-    private fun selectedPoll(isLast: Boolean) {
-        if (binding.twPollLatest.isSelected != isLast) {
-            binding.twPollLatest.isSelected = isLast
-            binding.twPollPopular.isSelected = !isLast
-            binding.vwPollLatest.isVisible = isLast
-            binding.vwPollPopular.isVisible = !isLast
-            isLoading = true
-            pollList = null
-            pollItems.clear()
-            if (!isLast) pollItems.add(null)
-            adapter.submitList(emptyList())
-            adapter.settingPollSort(if (isLast) PollSort.Latest else PollSort.Popular)
-            viewModel.getPollItems(categoryId, if (isLast) PollSort.Latest.type else PollSort.Popular.type, "")
+    override fun onResume() {
+        super.onResume()
+        if (binding.twPollLatest.isSelected || binding.twPollPopular.isSelected) {
+            selectedPoll(binding.twPollLatest.isSelected)
+        } else {
+            selectedPoll(true)
         }
+    }
+
+    private fun selectedPoll(isLast: Boolean) {
+        binding.twPollLatest.isSelected = isLast
+        binding.twPollPopular.isSelected = !isLast
+        binding.vwPollLatest.isVisible = isLast
+        binding.vwPollPopular.isVisible = !isLast
+        isLoading = true
+        pollList = null
+        pollItems.clear()
+        if (!isLast) pollItems.add(null)
+        adapter.submitList(emptyList())
+        adapter.settingPollSort(if (isLast) PollSort.Latest else PollSort.Popular)
+        viewModel.getPollItems(categoryId, if (isLast) PollSort.Latest.type else PollSort.Popular.type, "")
     }
 }
