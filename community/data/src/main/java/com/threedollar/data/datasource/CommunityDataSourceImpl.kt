@@ -25,52 +25,52 @@ import javax.inject.Inject
 
 class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : CommunityDataSource {
     override fun createPoll(pollCreateApiRequest: PollCreateApiRequest): Flow<BaseResponse<PollCreateApiResponse>> = flow {
-        emit(serverApi.createPoll(pollCreateApiRequest))
+        emit(apiResult(serverApi.createPoll(pollCreateApiRequest)))
     }
 
     override fun getPollId(id: String): Flow<BaseResponse<GetPollResponse>> = flow {
-        emit(serverApi.getPollId(id))
+        emit(apiResult(serverApi.getPollId(id)))
     }
 
     override fun putPollChoice(id: String, pollChoiceApiRequest: PollChoiceApiRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.putPollChoice(id, pollChoiceApiRequest))
+        emit(apiResult(serverApi.putPollChoice(id, pollChoiceApiRequest)))
     }
 
     override fun deletePollChoice(id: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.deletePollChoice(id))
+        emit(apiResult(serverApi.deletePollChoice(id)))
     }
 
     override fun reportPoll(id: String, pollReportCreateApiRequest: PollReportCreateApiRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.reportPoll(id, pollReportCreateApiRequest))
+        emit(apiResult(serverApi.reportPoll(id, pollReportCreateApiRequest)))
     }
 
     override fun getPollCategories(): Flow<BaseResponse<PollCategoryApiResponse>> = flow {
-        emit(serverApi.getPollCategories())
+        emit(apiResult(serverApi.getPollCategories()))
     }
 
     override fun getPollPolicy(): Flow<BaseResponse<PollPolicyApiResponse>> = flow {
-        emit(serverApi.getPollPolicy())
+        emit(apiResult(serverApi.getPollPolicy()))
     }
 
     override fun getPollList(categoryId: String, sortType: String, cursor: String): Flow<BaseResponse<GetPollListResponse>> = flow{
-        emit(serverApi.getPollList(categoryId, sortType, cursor))
+        emit(apiResult(serverApi.getPollList(categoryId, sortType, cursor)))
     }
 
     override fun getUserPollList(cursor: Int?, size: Int): Flow<BaseResponse<GetUserPollListResponse>> = flow {
-        emit(serverApi.getUserPollList(cursor, size))
+        emit(apiResult(serverApi.getUserPollList(cursor, size)))
     }
 
     override fun createPollComment(id: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<PollCommentCreateApiResponse>> =
         flow {
-            emit(serverApi.createPollComment(id, pollCommentApiRequest))
+            emit(apiResult(serverApi.createPollComment(id, pollCommentApiRequest)))
         }
 
     override fun deletePollComment(pollId: String, commentId: String): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.deletePollComment(pollId, commentId))
+        emit(apiResult(serverApi.deletePollComment(pollId, commentId)))
     }
 
     override fun editPollComment(pollId: String, commentId: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.editPollComment(pollId, commentId, pollCommentApiRequest))
+        emit(apiResult(serverApi.editPollComment(pollId, commentId, pollCommentApiRequest)))
     }
 
     override fun reportPollComment(
@@ -78,19 +78,19 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         commentId: String,
         pollReportCreateApiRequest: PollReportCreateApiRequest
     ): Flow<BaseResponse<String>> = flow {
-        emit(serverApi.reportPollComment(pollId, commentId, pollReportCreateApiRequest))
+        emit(apiResult(serverApi.reportPollComment(pollId, commentId, pollReportCreateApiRequest)))
     }
 
     override fun getPollCommentList(id: String, cursor: String?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
-        emit(serverApi.getPollCommentList(id, cursor, size))
+        emit(apiResult(serverApi.getPollCommentList(id, cursor, size)))
     }
 
     override fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
-        emit(serverApi.getPopularStores(criteria = criteria, district = district, cursor = cursor))
+        emit(apiResult(serverApi.getPopularStores(criteria = criteria, district = district, cursor = cursor)))
     }
 
     override fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>> = flow {
-        emit(serverApi.getNeighborhoods())
+        emit(apiResult(serverApi.getNeighborhoods()))
     }
 
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {

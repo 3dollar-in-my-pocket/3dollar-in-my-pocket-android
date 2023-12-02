@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -151,6 +152,11 @@ class PollListActivity : AppCompatActivity() {
                     pollList = it
                     pollItems.addAll(it.pollItems)
                     adapter.submitList(pollItems.toList())
+                }
+            }
+            launch {
+                viewModel.toast.collect {
+                    Toast.makeText(this@PollListActivity, it, Toast.LENGTH_SHORT).show()
                 }
             }
         }

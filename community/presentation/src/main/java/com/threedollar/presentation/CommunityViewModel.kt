@@ -38,6 +38,9 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _pollSelected: MutableSharedFlow<Pair<String, String>> = MutableSharedFlow()
     val pollSelected: SharedFlow<Pair<String, String>> = _pollSelected.asSharedFlow()
 
+    private val _toast: MutableSharedFlow<String> = MutableSharedFlow()
+    val toast: SharedFlow<String> = _toast.asSharedFlow()
+
     init {
         getPollCategories()
         getNeighborhoods()
@@ -46,7 +49,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private fun getPollCategories() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollCategories().collect {
-                _categoryList.emit(it)
+                if (it.ok) _categoryList.emit(it.data.orEmpty())
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -54,7 +58,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     fun getPollItems(categoryId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollList(categoryId, "POPULAR", "").collect {
-                _pollItems.emit(it.pollItems)
+                if (it.ok) _pollItems.emit(it.data?.pollItems.orEmpty())
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -62,7 +67,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     fun votePoll(pollId: String, optionId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.putPollChoice(pollId, optionId).collect {
-                _pollSelected.emit(Pair(pollId, optionId))
+                if (it.ok) _pollSelected.emit(Pair(pollId, optionId))
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -70,7 +76,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     fun getPopularStores(criteria: String, district: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPopularStores(criteria, district, "").collect {
-                _popularStores.emit(it.content)
+                if (it.ok) _popularStores.emit(it.data?.content.orEmpty())
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -78,7 +85,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private fun getNeighborhoods() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getNeighborhoods().collect {
-                _neighborhoods.value = it
+                if (it.ok) _neighborhoods.value = it.data!!
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }

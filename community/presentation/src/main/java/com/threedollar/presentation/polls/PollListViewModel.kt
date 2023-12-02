@@ -26,15 +26,18 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     val userPollPolicy: SharedFlow<CreatePolicy> = _userPollPolicy.asSharedFlow()
     private val _createPoll: MutableSharedFlow<PollId> = MutableSharedFlow()
     val createPoll: SharedFlow<PollId> get() = _createPoll.asSharedFlow()
+    private val _toast: MutableSharedFlow<String> = MutableSharedFlow()
+    val toast: SharedFlow<String> = _toast.asSharedFlow()
 
     init {
         getPollPolicy()
     }
 
-    fun getPollPolicy(){
+    fun getPollPolicy() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollPolicy().collect {
-                _userPollPolicy.emit(it)
+                if (it.ok) _userPollPolicy.emit(it.data!!)
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -42,7 +45,8 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     fun getPollItems(categoryId: String, sortType: String, cursor: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPollList(categoryId, sortType, cursor).collect {
-                _pollItems.emit(it)
+                if (it.ok) _pollItems.emit(it.data!!)
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -50,9 +54,11 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     fun createPoll(pollCreateApiRequest: PollCreateApiRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.createPoll(pollCreateApiRequest).collect {
-                _createPoll.emit(it)
-                val userPollPolicy = userPollPolicy.single()
-                _userPollPolicy.emit(userPollPolicy.copy(currentCount = userPollPolicy.currentCount + 1))
+                if (it.ok) {
+                    _createPoll.emit(it.data!!)
+                    val userPollPolicy = userPollPolicy.single()
+                    _userPollPolicy.emit(userPollPolicy.copy(currentCount = userPollPolicy.currentCount + 1))
+                } else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -60,7 +66,8 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     fun votePoll(pollId: String, optionId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.putPollChoice(pollId, optionId).collect {
-                _pollSelected.emit(Pair(pollId, optionId))
+                if (it.ok) _pollSelected.emit(Pair(pollId, optionId))
+                else _toast.emit(it.message.orEmpty())
             }
         }
     }

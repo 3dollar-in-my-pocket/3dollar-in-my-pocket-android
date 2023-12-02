@@ -8,6 +8,7 @@ import android.text.Spanned
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -187,6 +188,11 @@ class PollDetailActivity : AppCompatActivity() {
                         pollComment.addAll(it.pollComments)
                         settingCommentCount(pollItem.meta.totalCommentsCount.coerceAtLeast(it.pollComments.size))
                         adapter.submitList(pollComment)
+                    }
+                }
+                launch {
+                    viewModel.toast.collect {
+                        Toast.makeText(this@PollDetailActivity, it, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
