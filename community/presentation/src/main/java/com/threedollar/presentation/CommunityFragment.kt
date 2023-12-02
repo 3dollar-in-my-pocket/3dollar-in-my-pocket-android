@@ -68,17 +68,20 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                         binding.twAreaChoice.text = it.description
                         choiceNeighborhood = it
                         binding.twAreaChoice.text = it.description
-                        viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, it.district)
+                        viewModel.getPopularStores(
+                            if (binding.twPopularMostReview.isSelected) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type,
+                            it.district
+                        )
                     }.show(childFragmentManager, "")
                 }
 
             }
         }
         binding.clPopularMostReview.onSingleClick {
-            selectedPopular(true)
+            if (!binding.twPopularMostReview.isSelected) selectedPopular(true)
         }
         binding.clPopularMostVisits.onSingleClick {
-            selectedPopular(false)
+            if (!binding.twPopularMostVisits.isSelected) selectedPopular(false)
         }
         binding.twPollListTitle.onSingleClick {
             if (categoryId.isNotEmpty()) {
