@@ -30,6 +30,8 @@ fun getDeadlineString(inputDate: String): String {
 
     if (daysUntilDeadline == 0) {
         return "오늘 마감"
+    } else if (daysUntilDeadline < 0) {
+        return "마감"
     }
 
     return "D-$daysUntilDeadline"

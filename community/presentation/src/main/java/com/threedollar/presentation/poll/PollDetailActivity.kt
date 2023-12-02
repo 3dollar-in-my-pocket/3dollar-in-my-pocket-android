@@ -264,7 +264,7 @@ class PollDetailActivity : AppCompatActivity() {
         binding.twPollNickName.text = pollItem.pollWriter.name
         binding.twMedalName.text = pollItem.pollWriter.medal.name
         binding.twPollUserCount.text = getString(R.string.str_vote_count, pollItem.meta.totalParticipantsCount)
-        binding.twPollEndDate.text = getDeadlineString(pollItem.poll.createdAt)
+        binding.twPollEndDate.text = getDeadlineString(pollItem.poll.period.endDateTime)
 
         binding.imgMedal.loadUrlImg(pollItem.pollWriter.medal.iconUrl)
 
