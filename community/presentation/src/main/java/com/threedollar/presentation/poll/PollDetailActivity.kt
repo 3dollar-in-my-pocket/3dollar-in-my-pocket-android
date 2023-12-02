@@ -188,7 +188,7 @@ class PollDetailActivity : AppCompatActivity() {
                         pollComments = it
                         pollComment.addAll(it.pollComments)
                         settingCommentCount(pollItem.meta.totalCommentsCount.coerceAtLeast(it.pollComments.size))
-                        adapter.submitList(pollComment)
+                        adapter.submitList(pollComment.toList())
                     }
                 }
                 launch {
