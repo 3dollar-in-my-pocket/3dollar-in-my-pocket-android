@@ -10,6 +10,7 @@ import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.toStringDefault
+import com.threedollar.presentation.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
@@ -23,6 +24,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val HOME = "home"
         const val MEDAL = "medal"
         const val STORE = "store"
+        const val POLL = "pollDetail"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +90,17 @@ class DynamicLinkActivity : AppCompatActivity() {
                     putExtra("favoriteId", id)
                 })
             }
+
             HOME -> {
                 startActivity(MainActivity.getIntent(this))
             }
+
             MEDAL -> {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(MEDAL, MEDAL)
                 })
             }
+
             STORE -> {
                 val id = deeplink.getQueryParameter("storeId").toStringDefault()
                 val type = deeplink.getQueryParameter("storeType").toStringDefault()
@@ -114,6 +119,12 @@ class DynamicLinkActivity : AppCompatActivity() {
                         )
                     )
                 }
+            }
+            POLL -> {
+                val id = deeplink.getQueryParameter("pollId").toStringDefault()
+                startActivity(Intent(this, PollDetailActivity::class.java).apply {
+                    putExtra("id", id)
+                })
             }
         }
         finish()
