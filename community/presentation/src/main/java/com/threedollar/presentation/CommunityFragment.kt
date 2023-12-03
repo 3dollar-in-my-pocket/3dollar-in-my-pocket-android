@@ -1,11 +1,14 @@
 package com.threedollar.presentation
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -33,15 +36,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
     @Inject
     lateinit var activityStarter: ActivityStarter
-    private val pollAdapter by lazy {
-        CommunityPollAdapter(choicePoll = { pollId, optionId ->
-            viewModel.votePoll(pollId, optionId)
-        }, clickPoll = {
-            startActivity(Intent(requireActivity(), PollDetailActivity::class.java).apply {
-                putExtra("id", it.poll.pollId)
-            })
-        })
-    }
+    private lateinit var pollAdapter: CommunityPollAdapter
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
             activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
@@ -51,9 +46,31 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
     private val pollItems = mutableListOf<PollItem>()
     private var categoryId = ""
+    private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == AppCompatActivity.RESULT_OK) {
+            it.data?.let { intent ->
+                val pollItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) intent.getParcelableExtra("pollItem", PollItem::class.java)
+                else intent.getParcelableExtra("pollItem")
+                if (pollItem == null) return@registerForActivityResult
+                val index = pollItems.indexOfFirst { item -> item.poll.pollId == pollItem.poll.pollId }
+                if (index > -1) {
+                    pollItems[index] = pollItem
+                    pollAdapter.submitList(pollItems.toList())
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentCommunityBinding.inflate(inflater)
+        pollAdapter =
+            CommunityPollAdapter(choicePoll = { pollId, optionId ->
+                viewModel.votePoll(pollId, optionId)
+            }, clickPoll = {
+                registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
+                    putExtra("id", it.poll.pollId)
+                })
+            })
         return binding.root
     }
 

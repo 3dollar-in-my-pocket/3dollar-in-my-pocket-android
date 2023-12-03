@@ -1,6 +1,7 @@
 package com.threedollar.presentation.poll
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
@@ -192,6 +193,13 @@ class PollDetailActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun finish() {
+        setResult(RESULT_OK, Intent().apply {
+            putExtra("pollItem", pollItem)
+        })
+        super.finish()
     }
 
     private fun settingCommentCount(count: Int) {

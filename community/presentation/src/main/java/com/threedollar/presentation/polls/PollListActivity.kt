@@ -2,9 +2,11 @@ package com.threedollar.presentation.polls
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -31,15 +33,21 @@ class PollListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPollListBinding
     private val viewModel: PollListViewModel by viewModels()
-    private val adapter by lazy {
-        PollListAdapter({ pollId, optionId ->
-            viewModel.votePoll(pollId, optionId)
-        }, {
-            startActivity(Intent(this, PollDetailActivity::class.java).apply {
-                putExtra("id", it.poll.pollId)
-            })
-        })
+    private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
+            it.data?.let { intent ->
+                val pollItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) intent.getParcelableExtra("pollItem", PollItem::class.java)
+                else intent.getParcelableExtra("pollItem")
+                val index = pollItems.indexOfFirst { item -> item?.poll?.pollId == pollItem?.poll?.pollId }
+                if (index > -1) {
+                    pollItems[index] = pollItem
+                    adapter.submitList(pollItems.toList())
+                }
+            }
+        }
     }
+
+    private lateinit var adapter: PollListAdapter
     private val pollItems = mutableListOf<PollItem?>()
     private var pollList: PollList? = null
     private var isLoading = false
@@ -47,12 +55,20 @@ class PollListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        adapter = PollListAdapter({ pollId, optionId ->
+            viewModel.votePoll(pollId, optionId)
+        }, {
+            registerPollDetail.launch(Intent(this, PollDetailActivity::class.java).apply {
+                putExtra("id", it.poll.pollId)
+            })
+        })
         binding = ActivityPollListBinding.inflate(getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
         setContentView(binding.root)
         categoryId = intent.getStringExtra("category").orEmpty()
         if (categoryId.isEmpty()) {
             finish()
         }
+        selectedPollMenu(true)
         binding.recyclerPoll.adapter = adapter
         binding.recyclerPoll.itemAnimator = null
         binding.recyclerPoll.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -149,16 +165,6 @@ class PollListActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        if (binding.twPollLatest.isSelected || binding.twPollPopular.isSelected) {
-            selectedPollMenu(binding.twPollLatest.isSelected)
-        } else {
-            selectedPollMenu(true)
-        }
-    }
-
     private fun selectedPollMenu(isLast: Boolean) {
         binding.twPollLatest.isSelected = isLast
         binding.twPollPopular.isSelected = !isLast
