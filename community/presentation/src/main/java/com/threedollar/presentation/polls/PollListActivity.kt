@@ -18,6 +18,7 @@ import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.ActivityPollListBinding
 import com.threedollar.presentation.dialog.CreatePollDialog
 import com.threedollar.presentation.poll.PollDetailActivity
+import com.threedollar.presentation.utils.selectedPoll
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -79,10 +80,10 @@ class PollListActivity : AppCompatActivity() {
             }
         })
         binding.clPollLatest.onSingleClick {
-            if (!binding.twPollLatest.isSelected) selectedPoll(true)
+            if (!binding.twPollLatest.isSelected) selectedPollMenu(true)
         }
         binding.clPollPopular.onSingleClick {
-            if (!binding.twPollPopular.isSelected) selectedPoll(false)
+            if (!binding.twPollPopular.isSelected) selectedPollMenu(false)
         }
         binding.llPollCreate.onSingleClick {
             CreatePollDialog().setCreatePoll { title, first, second ->
@@ -124,24 +125,7 @@ class PollListActivity : AppCompatActivity() {
                     val pollId = it.first
                     val optionId = it.second
                     val selectPoll = pollItems.find { it?.poll?.pollId == pollId } ?: return@collect
-                    var firstChoice = selectPoll.poll.options[0]
-                    var secondChoice = selectPoll.poll.options[1]
-                    val editFirstCount = if (firstChoice.optionId == optionId) 1 else -1
-                    val editSecondCount = if (secondChoice.optionId == optionId) 1 else -1
-                    firstChoice = firstChoice.copy(
-                        choice = firstChoice.choice.copy(
-                            selectedByMe = firstChoice.optionId == optionId,
-                            count = firstChoice.choice.count + editFirstCount
-                        )
-                    )
-                    secondChoice = secondChoice.copy(
-                        choice = secondChoice.choice.copy(
-                            selectedByMe = secondChoice.optionId == optionId,
-                            count = secondChoice.choice.count + editSecondCount
-                        )
-                    )
-                    pollItems[pollItems.indexOfFirst { it?.poll?.pollId == pollId }] =
-                        selectPoll.copy(poll = selectPoll.poll.copy(options = listOf(firstChoice, secondChoice)))
+                    pollItems[pollItems.indexOfFirst { it?.poll?.pollId == pollId }] = selectedPoll(selectPoll, optionId)
                     adapter.submitList(pollItems.toList())
                 }
             }
@@ -169,13 +153,13 @@ class PollListActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (binding.twPollLatest.isSelected || binding.twPollPopular.isSelected) {
-            selectedPoll(binding.twPollLatest.isSelected)
+            selectedPollMenu(binding.twPollLatest.isSelected)
         } else {
-            selectedPoll(true)
+            selectedPollMenu(true)
         }
     }
 
-    private fun selectedPoll(isLast: Boolean) {
+    private fun selectedPollMenu(isLast: Boolean) {
         binding.twPollLatest.isSelected = isLast
         binding.twPollPopular.isSelected = !isLast
         binding.vwPollLatest.isVisible = isLast

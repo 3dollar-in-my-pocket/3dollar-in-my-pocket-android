@@ -1,5 +1,6 @@
 package com.threedollar.presentation.utils
 
+import com.threedollar.domain.data.PollItem
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -50,4 +51,25 @@ fun hasVotingPeriodEnded(inputDate: String): Boolean {
         (deadlineCalendar.timeInMillis - currentCalendar.timeInMillis) / (1000.0 * 60 * 60 * 24)
     ).toInt()
     return daysUntilDeadline < 0
+}
+
+fun selectedPoll(pollItem: PollItem,optionId:String):PollItem{
+    var firstChoice = pollItem.poll.options[0]
+    var secondChoice = pollItem.poll.options[1]
+    val isSelectedOption = pollItem.poll.options.find { it.choice.selectedByMe } == null
+    val editFirstCount = if (firstChoice.optionId == optionId) 1 else if(isSelectedOption) 0 else -1
+    val editSecondCount = if (secondChoice.optionId == optionId) 1 else if(isSelectedOption) 0 else -1
+    firstChoice = firstChoice.copy(
+        choice = firstChoice.choice.copy(
+            selectedByMe = firstChoice.optionId == optionId,
+            count = firstChoice.choice.count + editFirstCount
+        )
+    )
+    secondChoice = secondChoice.copy(
+        choice = secondChoice.choice.copy(
+            selectedByMe = secondChoice.optionId == optionId,
+            count = secondChoice.choice.count + editSecondCount
+        )
+    )
+    return pollItem.copy(poll = pollItem.poll.copy(options = listOf(firstChoice, secondChoice)))
 }

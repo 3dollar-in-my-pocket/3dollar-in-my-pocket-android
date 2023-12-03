@@ -27,6 +27,7 @@ import com.threedollar.presentation.dialog.ReportChoiceDialog
 import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
 import com.threedollar.presentation.utils.hasVotingPeriodEnded
+import com.threedollar.presentation.utils.selectedPoll
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
@@ -123,23 +124,7 @@ class PollDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.pollSelected.collect {
                         val optionId = it
-                        var firstChoice = pollItem.poll.options[0]
-                        var secondChoice = pollItem.poll.options[1]
-                        val editFirstCount = if (firstChoice.optionId == optionId) 1 else -1
-                        val editSecondCount = if (secondChoice.optionId == optionId) 1 else -1
-                        firstChoice = firstChoice.copy(
-                            choice = firstChoice.choice.copy(
-                                selectedByMe = firstChoice.optionId == optionId,
-                                count = firstChoice.choice.count + editFirstCount
-                            )
-                        )
-                        secondChoice = secondChoice.copy(
-                            choice = secondChoice.choice.copy(
-                                selectedByMe = secondChoice.optionId == optionId,
-                                count = secondChoice.choice.count + editSecondCount
-                            )
-                        )
-                        pollItem = pollItem.copy(poll = pollItem.poll.copy(options = listOf(firstChoice, secondChoice)))
+                        pollItem = selectedPoll(pollItem, optionId)
                         settingPoll()
                     }
                 }
