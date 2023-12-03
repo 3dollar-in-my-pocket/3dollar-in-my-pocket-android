@@ -39,7 +39,12 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     private lateinit var pollAdapter: CommunityPollAdapter
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
-            activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
+            if (it.storeType == "BOSS_STORE") {
+                activityStarter.startBossDetailActivity(requireContext(), it.storeId)
+            } else {
+                activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
+            }
+
         }
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
