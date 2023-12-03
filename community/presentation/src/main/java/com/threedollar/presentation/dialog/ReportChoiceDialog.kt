@@ -20,7 +20,7 @@ class ReportChoiceDialog : BottomSheetDialogFragment() {
     }
     private val choiceClick: (ReasonModel) -> Unit = {
         choiceReasonModel = it
-        binding.etReport.isVisible = it.type == "POLL_OTHER"
+        binding.etReport.isVisible = it.hasReasonDetail
         adapter.setChoiceReasonModel(choiceReasonModel)
     }
 
