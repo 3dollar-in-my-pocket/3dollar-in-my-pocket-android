@@ -33,8 +33,8 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     private val _createComment = MutableSharedFlow<CommentId>()
     val createComment: SharedFlow<CommentId> get() = _createComment.asSharedFlow()
 
-    private val _editComment = MutableSharedFlow<BaseResponse<String>>()
-    val editComment: SharedFlow<BaseResponse<String>> get() = _editComment.asSharedFlow()
+    private val _editComment = MutableSharedFlow<String>()
+    val editComment: SharedFlow<String> get() = _editComment.asSharedFlow()
 
     private val _reportComment = MutableSharedFlow<BaseResponse<String>>()
     val reportComment: SharedFlow<BaseResponse<String>> get() = _reportComment.asSharedFlow()
@@ -96,7 +96,7 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     fun editComment(commentId: String, content: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.editPollComment(pollId, commentId, content).collect {
-                if (it.ok) _editComment.emit(it)
+                if (it.ok) _editComment.emit(commentId)
                 else _toast.emit(it.message.orEmpty())
             }
         }

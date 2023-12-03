@@ -47,7 +47,7 @@ class PollDetailActivity : AppCompatActivity() {
     private var isLoading = false
     private val adapter by lazy {
         PollCommentAdapter {
-            if (it.current.poll.isWriter) {
+            if (it.current.comment.isOwner) {
                 isCommentEdit = true
                 editCommentId = it.current.comment.commentId
                 binding.etComment.requestFocusFromTouch()
@@ -138,7 +138,16 @@ class PollDetailActivity : AppCompatActivity() {
                     }
                 }
                 launch {
-                    viewModel.editComment.collect {
+                    viewModel.editComment.collect { commentId ->
+                        val content = binding.etComment.text.toString()
+                        val comment = pollComment.find { it.current.comment.commentId == commentId } ?: return@collect
+                        val currentComment = comment.current.comment.copy(content = content)
+                        val changeComment = comment.copy(current = comment.current.copy(comment = currentComment))
+                        val index = pollComment.indexOf(comment)
+                        if (index > -1) {
+                            pollComment[index] = changeComment
+                            adapter.submitList(pollComment.toList())
+                        }
                         isCommentEdit = false
                         editCommentId = ""
                         binding.etComment.setText("")
