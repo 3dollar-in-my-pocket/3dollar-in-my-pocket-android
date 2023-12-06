@@ -67,6 +67,7 @@ dependencies {
     implementation project(':home:domain')
     implementation project(':home:data')
     implementation project(':home:presentation')
+    implementation project(':community:presentation')
     implementation project(':login:domain')
     implementation project(':login:data')
 

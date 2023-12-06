@@ -1,5 +1,7 @@
 package com.zion830.threedollars.di
 
+import com.threedollar.common.listener.ActivityStarter
+import com.zion830.threedollars.ActivityStarterImpl
 import com.zion830.threedollars.datasource.*
 import dagger.Binds
 import dagger.Module
@@ -26,4 +28,8 @@ abstract class SourceModule {
     @Singleton
     @Binds
     abstract fun bindKakaoLoginDataSource(impl: KakaoLoginDataSourceImpl): KakaoLoginDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindActivityStarter(impl: ActivityStarterImpl): ActivityStarter
 }

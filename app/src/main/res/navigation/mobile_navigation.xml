@@ -44,7 +44,13 @@
         android:id="@+id/navigation_write"
         android:name="com.zion830.threedollars.ui.write.ui.NewAddressFragment"
         android:label="@string/title_add_store"
-        tools:layout="@layout/fragment_new_address">
+        tools:layout="@layout/fragment_new_address" />
+
+    <fragment
+        android:id="@+id/navigation_vote"
+        android:name="com.threedollar.presentation.CommunityFragment"
+        android:label="@string/title_add_store"
+        tools:layout="@layout/fragment_community" >
 
         <action
             android:id="@+id/action_navigation_write_to_navigation_write_detail"

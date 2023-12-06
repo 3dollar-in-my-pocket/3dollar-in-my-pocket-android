@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clCommentBack"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/selector_poll_comment"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/twPollCommentNick"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:textColor="@color/gray80"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toStartOf="@id/twPollCommentDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="관악구 광화문연가" />
+
+    <TextView
+        android:id="@+id/twPollCommentOption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_report"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/rect_dot"
+        app:layout_constraintBottom_toBottomOf="@id/twPollCommentOption"
+        app:layout_constraintEnd_toStartOf="@id/twPollCommentOption"
+        app:layout_constraintTop_toTopOf="@id/twPollCommentOption" />
+
+    <TextView
+        android:id="@+id/twPollCommentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:textColor="@color/gray40"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/twPollCommentOption"
+        app:layout_constraintEnd_toStartOf="@id/imgDot"
+        app:layout_constraintTop_toTopOf="@id/twPollCommentOption"
+        tools:text="2023.04.30" />
+
+
+    <LinearLayout
+        android:id="@+id/llMedal"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/rect_round4"
+        android:backgroundTint="@color/pink_100"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twPollCommentNick">
+
+        <ImageView
+            android:id="@+id/imgMedal"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="2dp" />
+
+        <TextView
+            android:id="@+id/twMedalName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/pink"
+            android:textSize="10dp"
+            tools:text="따끈따끈한 뉴비" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/twPollCommentChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/rect_round4"
+        android:backgroundTint="@color/gray10"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="3dp"
+        android:textSize="10dp"
+        app:layout_constraintStart_toEndOf="@id/llMedal"
+        app:layout_constraintTop_toTopOf="@id/llMedal"
+        tools:text="슈붕 비정상 팥붕 정상 투표" />
+
+    <TextView
+        android:id="@+id/twPollCommentWriter"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/rect_round4"
+        android:backgroundTint="@color/gray10"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="3dp"
+        android:textColor="@color/gray80"
+        android:textSize="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/twPollCommentChoice"
+        app:layout_constraintTop_toTopOf="@id/llMedal"
+        android:text="작성자" />
+
+    <TextView
+        android:id="@+id/twPollCommentContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/gray80"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llMedal"
+        tools:text="슈붕을 좋아하면 델리만쥬를 먹지 왜 붕어빵을 먹음?" />
+</androidx.constraintlayout.widget.ConstraintLayout>

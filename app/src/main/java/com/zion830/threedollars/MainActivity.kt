@@ -107,11 +107,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                     showBottomNavigation(false)
                 }
 
-//                R.id.navigation_vote -> {
-//                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
-//                    binding.navView.itemBackgroundResource = android.R.color.white
-//                    showBottomNavigation(true)
-//                }
+                R.id.navigation_vote -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
+                    binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
+                }
 
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)

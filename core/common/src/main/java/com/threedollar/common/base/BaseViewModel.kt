@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.threedollar.common.BuildConfig
 import com.threedollar.common.R
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -26,6 +27,7 @@ open class BaseViewModel : ViewModel() {
     val serverError: SharedFlow<String?> get() = _serverError
 
     protected val coroutineExceptionHandler = CoroutineExceptionHandler { _, t ->
+        if (BuildConfig.DEBUG) t.printStackTrace()
         FirebaseCrashlytics.getInstance().log(t.message ?: t::class.java.simpleName)
     }
 
