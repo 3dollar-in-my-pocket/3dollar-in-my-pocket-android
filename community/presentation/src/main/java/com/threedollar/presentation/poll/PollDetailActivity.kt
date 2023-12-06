@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.ReasonModel
+import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
@@ -33,9 +34,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PollDetailActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var activityStarter: ActivityStarter
     private lateinit var binding: ActivityPollDetailBinding
     private val viewModel: PollDetailViewModel by viewModels()
     private lateinit var pollItem: PollItem
@@ -199,6 +204,7 @@ class PollDetailActivity : AppCompatActivity() {
         setResult(RESULT_OK, Intent().apply {
             putExtra("pollItem", pollItem)
         })
+        activityStarter.activityNavigateToMainActivityOnCloseIfNeeded(this)
         super.finish()
     }
 

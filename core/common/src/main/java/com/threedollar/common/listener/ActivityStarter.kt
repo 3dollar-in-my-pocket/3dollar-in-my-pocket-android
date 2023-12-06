@@ -1,5 +1,6 @@
 package com.threedollar.common.listener
 
+import android.app.Activity
 import android.content.Context
 
 /**
@@ -14,4 +15,6 @@ interface ActivityStarter {
     )
 
     fun startBossDetailActivity(context: Context, storeId: String? = null, deepLinkStoreId: String? = null)
+
+    fun activityNavigateToMainActivityOnCloseIfNeeded(activity: Activity)
 }

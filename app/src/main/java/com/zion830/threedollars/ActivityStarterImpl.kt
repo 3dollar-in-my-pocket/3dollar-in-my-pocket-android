@@ -1,9 +1,11 @@
 package com.zion830.threedollars
 
+import android.app.Activity
 import android.content.Context
 import com.threedollar.common.listener.ActivityStarter
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import javax.inject.Inject
 
 class ActivityStarterImpl @Inject constructor() : ActivityStarter {
@@ -13,6 +15,10 @@ class ActivityStarterImpl @Inject constructor() : ActivityStarter {
 
     override fun startBossDetailActivity(context: Context, storeId: String?, deepLinkStoreId: String?) {
         context.startActivity(BossStoreDetailActivity.getIntent(context, storeId, deepLinkStoreId))
+    }
+
+    override fun activityNavigateToMainActivityOnCloseIfNeeded(activity: Activity) {
+        activity.navigateToMainActivityOnCloseIfNeeded()
     }
 
 }
