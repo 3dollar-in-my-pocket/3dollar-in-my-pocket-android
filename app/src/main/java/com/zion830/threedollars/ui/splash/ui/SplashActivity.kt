@@ -18,6 +18,7 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
+import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -54,15 +55,24 @@ class SplashActivity :
             override fun onAnimationEnd(p0: Animator) {
                 lifecycleScope.launch {
                     delay(2000L)
-                    val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
-                    val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-                    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                            appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                        ) {
-                            appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this@SplashActivity, APP_UPDATE_CODE)
-                        } else {
-                            initLogin()
+                    if (BuildConfig.DEBUG) {
+                        initLogin()
+                    } else {
+                        val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
+                        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+                        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                            ) {
+                                appUpdateManager.startUpdateFlowForResult(
+                                    appUpdateInfo,
+                                    AppUpdateType.IMMEDIATE,
+                                    this@SplashActivity,
+                                    APP_UPDATE_CODE
+                                )
+                            } else {
+                                initLogin()
+                            }
                         }
                     }
                 }
