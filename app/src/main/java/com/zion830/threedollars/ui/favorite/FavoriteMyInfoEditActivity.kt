@@ -11,7 +11,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :

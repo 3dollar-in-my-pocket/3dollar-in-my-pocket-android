@@ -30,7 +30,6 @@ import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseActivity
 import javax.inject.Inject
 
 
