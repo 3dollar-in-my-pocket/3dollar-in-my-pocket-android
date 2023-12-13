@@ -63,8 +63,7 @@ class SplashViewModel @Inject constructor(
                 }
             }
 
-
-            homeRepository.getAdvertisements("STORE_MARKER").collect{
+            homeRepository.getAdvertisements("STORE_MARKER").collect {
                 if (it.ok) {
                     val advertisements = it.data.orEmpty()
                     if (advertisements.isNotEmpty()) {
@@ -72,7 +71,6 @@ class SplashViewModel @Inject constructor(
                     }
                 }
             }
-
         }
     }
 
@@ -94,11 +92,16 @@ class SplashViewModel @Inject constructor(
     }
 
     fun refreshGoogleToken(account: GoogleSignInAccount) {
+        if (account.account == null) {
+            _msgTextId.postValue(R.string.connection_failed)
+            return
+        }
         val token = GoogleAuthUtil.getToken(
             GlobalApplication.getContext(),
             account.account!!,
-            "oauth2:https://www.googleapis.com/auth/plus.me"
+            "oauth2:https://www.googleapis.com/auth/plus.me",
         )
+
         LegacySharedPrefUtils.saveGoogleToken(token)
         LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
         tryLogin()
@@ -113,7 +116,7 @@ class SplashViewModel @Inject constructor(
                 LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 LegacySharedPrefUtils.saveKakaoToken(
                     response.body()?.accessToken ?: "",
-                    response.body()?.refreshToken ?: ""
+                    response.body()?.refreshToken ?: "",
                 )
                 tryLogin()
             } else {
@@ -127,5 +130,4 @@ class SplashViewModel @Inject constructor(
             userDataSource.putPushInformationToken(informationRequest)
         }
     }
-
 }
