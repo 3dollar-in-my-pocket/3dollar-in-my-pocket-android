@@ -1,11 +1,14 @@
 package com.zion830.threedollars.ui.mypage.ui
 
 import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearSnapHelper
+import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
@@ -19,17 +22,22 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
-class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewModel>(R.layout.fragment_new_my_page) {
+class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>() {
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentNewMyPageBinding =
+        FragmentNewMyPageBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyPageFragment")
+    }
 
     override val viewModel: MyPageViewModel by activityViewModels()
 
@@ -54,7 +62,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
 
     override fun initView() {
         activityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
+            ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 viewModel.getMyFavoriteFolder()
@@ -62,6 +70,24 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         }
         viewModel.initAllMedals()
         viewModel.getMyFavoriteFolder()
+        initFlow()
+        initAdapter()
+        initButton()
+        observeUiData()
+        if (viewModel.isMoveMedalPage) {
+            addShowAllMedalFragment()
+        }
+    }
+
+    private fun initFlow() {
+        viewModel.userActivity.observe(viewLifecycleOwner) {
+            binding.tvStoreCount.text = it?.activity?.storesCount.toString()
+            binding.tvReviewCount.text = it?.activity?.reviewsCount.toString()
+            binding.tvMedalCount.text = it?.activity?.medalsCounts.toString()
+        }
+    }
+
+    private fun initAdapter() {
         visitHistoryAdapter = MyPageRecyclerAdapter(
             object : OnItemClickListener<AdAndStoreItem> {
                 override fun onClick(item: AdAndStoreItem) {
@@ -69,8 +95,8 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
                     val intent = StoreDetailActivity.getIntent(requireContext(), visitHistoryContent.store.storeId)
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
-            })
-
+            },
+        )
         myFavoriteAdapter = MyPageRecyclerAdapter(object : OnItemClickListener<AdAndStoreItem> {
             override fun onClick(item: AdAndStoreItem) {
                 val myFavoriteFolderFavoriteModel = item as MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel
@@ -80,14 +106,15 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
                     activityResultLauncher.launch(StoreDetailActivity.getIntent(requireContext(), myFavoriteFolderFavoriteModel.storeId.toInt()))
                 }
             }
-
         })
 
         binding.rvRecentVisitHistory.adapter = visitHistoryAdapter
         binding.favoriteRecyclerView.adapter = myFavoriteAdapter
         LinearSnapHelper().attachToRecyclerView(binding.rvRecentVisitHistory)
         LinearSnapHelper().attachToRecyclerView(binding.favoriteRecyclerView)
+    }
 
+    private fun initButton() {
         binding.ibSetting.onSingleClick {
             addSettingPageFragment()
         }
@@ -110,15 +137,11 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 EditNameFragment(),
-                EditNameFragment::class.java.name
+                EditNameFragment::class.java.name,
             )
         }
         binding.favoriteMoreTextView.setOnClickListener {
             activityResultLauncher.launch(Intent(requireActivity(), FavoriteMyFolderActivity::class.java))
-        }
-        observeUiData()
-        if (viewModel.isMoveMedalPage) {
-            addShowAllMedalFragment()
         }
     }
 
@@ -128,8 +151,8 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
                 StoreEmptyResponse(
                     emptyImage = R.drawable.img_empty,
                     emptyTitle = R.string.no_visit_history,
-                    emptyBody = R.string.no_visit_history_msg
-                )
+                    emptyBody = R.string.no_visit_history_msg,
+                ),
             )
             if (it.isNullOrEmpty()) {
                 visitHistoryAdapter.submitList(emptyResponseList)
@@ -149,8 +172,8 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
                 StoreEmptyResponse(
                     emptyImage = R.drawable.img_empty,
                     emptyTitle = R.string.mypage_favorite_empty_title,
-                    emptyBody = R.string.mypage_favorite_empty_body
-                )
+                    emptyBody = R.string.mypage_favorite_empty_body,
+                ),
             )
             if (it.isNullOrEmpty()) {
                 myFavoriteAdapter.submitList(emptyResponseList)
@@ -164,7 +187,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyPageSettingFragment(),
-            MyPageSettingFragment::class.java.name
+            MyPageSettingFragment::class.java.name,
         )
     }
 
@@ -173,7 +196,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyStoreFragment(),
-            MyStoreFragment::class.java.name
+            MyStoreFragment::class.java.name,
         )
     }
 
@@ -182,7 +205,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyReviewFragment(),
-            MyReviewFragment::class.java.name
+            MyReviewFragment::class.java.name,
         )
     }
 
@@ -191,7 +214,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyMedalFragment(),
-            MyMedalFragment::class.java.name
+            MyMedalFragment::class.java.name,
         )
     }
 
@@ -199,7 +222,7 @@ class MyPageFragment : LegacyBaseFragment<FragmentNewMyPageBinding, MyPageViewMo
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyVisitHistoryFragment(),
-            MyVisitHistoryFragment::class.java.name
+            MyVisitHistoryFragment::class.java.name,
         )
     }
 }

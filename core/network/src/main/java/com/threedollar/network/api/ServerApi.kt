@@ -5,6 +5,20 @@ import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
+import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
+import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.poll.request.PollChoiceApiRequest
+import com.threedollar.network.data.poll.request.PollCommentApiRequest
+import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
+import com.threedollar.network.data.poll.response.GetPollCommentListResponse
+import com.threedollar.network.data.poll.response.GetPollListResponse
+import com.threedollar.network.data.poll.response.GetPollResponse
+import com.threedollar.network.data.poll.response.GetUserPollListResponse
+import com.threedollar.network.data.poll.response.PollCategoryApiResponse
+import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
+import com.threedollar.network.data.poll.response.PollCreateApiResponse
+import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.network.data.store.*
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.*
@@ -14,7 +28,79 @@ import retrofit2.http.*
 
 interface ServerApi {
 
-    // User
+    @POST("/api/v1/poll")
+    suspend fun createPoll(@Body pollCreateApiRequest: PollCreateApiRequest): Response<BaseResponse<PollCreateApiResponse>>
+
+    @GET("/api/v1/poll/{pollId}")
+    suspend fun getPollId(@Path("pollId") id: String): Response<BaseResponse<GetPollResponse>>
+
+    @PUT("/api/v1/poll/{pollId}/choice")
+    suspend fun putPollChoice(@Path("pollId") id: String, @Body pollChoiceApiRequest: PollChoiceApiRequest): Response<BaseResponse<String>>
+
+    @DELETE("/api/v1/poll/{pollId}/choice")
+    suspend fun deletePollChoice(@Path("pollId") id: String): Response<BaseResponse<String>>
+
+    @POST("/api/v1/poll/{pollId}/report")
+    suspend fun reportPoll(@Path("pollId") id: String, @Body pollReportCreateApiRequest: PollReportCreateApiRequest): Response<BaseResponse<String>>
+
+    @GET("/api/v1/poll-categories")
+    suspend fun getPollCategories(): Response<BaseResponse<PollCategoryApiResponse>>
+
+    @GET("/api/v1/polls")
+    suspend fun getPollList(
+        @Query("categoryId") categoryId: String,
+        @Query("sortType") sortType: String?,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20,
+    ): Response<BaseResponse<GetPollListResponse>>
+
+    @GET("/api/v1/user/poll/policy")
+    suspend fun getPollPolicy(): Response<BaseResponse<PollPolicyApiResponse>>
+
+    @GET("/api/v1/user/polls")
+    suspend fun getUserPollList(@Query("cursor") cursor: Int?, @Query("size") size: Int = 20): Response<BaseResponse<GetUserPollListResponse>>
+
+    @POST("/api/v1/poll/{pollId}/comment")
+    suspend fun createPollComment(
+        @Path("pollId") id: String,
+        @Body pollCommentApiRequest: PollCommentApiRequest
+    ): Response<BaseResponse<PollCommentCreateApiResponse>>
+
+    @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
+    suspend fun deletePollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): Response<BaseResponse<String>>
+
+    @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
+    suspend fun editPollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body commentApiRequest: PollCommentApiRequest
+    ): Response<BaseResponse<String>>
+
+    @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
+    suspend fun reportPollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+    ): Response<BaseResponse<String>>
+
+    @GET("/api/v1/poll/{pollId}/comments")
+    suspend fun getPollCommentList(
+        @Path("pollId") id: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20,
+    ): Response<BaseResponse<GetPollCommentListResponse>>
+
+    @GET("/api/v1/neighborhood/popular-store/neighborhoods")
+    suspend fun getNeighborhoods(): Response<BaseResponse<GetNeighborhoodsResponse>>
+
+    @GET("/api/v1/neighborhood/popular-stores")
+    suspend fun getPopularStores(
+        @Query("criteria") criteria: String,
+        @Query("district") district: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int = 20,
+    ): Response<BaseResponse<GetPopularStoresResponse>>
+
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>
 
@@ -147,5 +233,5 @@ interface ServerApi {
     ): Response<BaseResponse<String>>
 
     @GET("/api/v1/report/group/{group}/reasons")
-    suspend fun getReportReasons(@Path("group") group: String) : Response<BaseResponse<ReportReasonsResponse>>
+    suspend fun getReportReasons(@Path("group") group: String): Response<BaseResponse<ReportReasonsResponse>>
 }

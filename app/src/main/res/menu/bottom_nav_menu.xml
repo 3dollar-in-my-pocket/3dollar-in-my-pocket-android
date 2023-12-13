@@ -11,10 +11,10 @@
         android:title="제보하기"
         android:icon="@drawable/selector_write" />
     
-<!--    <item-->
-<!--        android:id="@+id/navigation_vote"-->
-<!--        android:icon="@drawable/selector_vote"-->
-<!--        android:title="투표하기" />-->
+    <item
+        android:id="@+id/navigation_vote"
+        android:icon="@drawable/selector_vote"
+        android:title="투표하기" />
     
     <item
         android:id="@+id/navigation_mypage"

@@ -1,7 +1,7 @@
 package com.threedollar.data.di
 
-import com.threedollar.data.datasource.CommunityRemoteDataSource
-import com.threedollar.data.datasource.CommunityRemoteDataSourceImpl
+import com.threedollar.data.datasource.CommunityDataSource
+import com.threedollar.data.datasource.CommunityDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Module
 abstract class CommunityDataSourceModule {
 
-    @Singleton
     @Binds
-    abstract fun bindCommunityRemoteDataSource(impl: CommunityRemoteDataSourceImpl): CommunityRemoteDataSource
+    @Singleton
+    abstract fun bindCommunityDataSource(impl: CommunityDataSourceImpl): CommunityDataSource
 }

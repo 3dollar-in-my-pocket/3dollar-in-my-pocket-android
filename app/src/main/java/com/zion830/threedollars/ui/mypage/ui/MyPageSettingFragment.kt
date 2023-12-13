@@ -5,9 +5,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.messaging.FirebaseMessaging
+import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
@@ -22,17 +25,77 @@ import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
-    LegacyBaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(R.layout.fragment_mypage_setting) {
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>() {
+
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMypageSettingBinding =
+        FragmentMypageSettingBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("MyPageSettingFragment")
+    }
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
     override fun initView() {
         EventTracker.logEvent(Constants.SETTING_BTN_CLICKED)
 
+        initButton()
+
+        binding.token.isVisible = BuildConfig.BUILD_TYPE == "debug"
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = "테스트용 토큰입니다 - 길게 클릭하면 복사됩니다!\n${task.result}"
+                binding.token.text = token
+                binding.token.setOnLongClickListener {
+                    val manager =
+                        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                    manager.text = task.result
+                    showToast("토큰이 복사되었습니다.")
+                    false
+                }
+            }
+        }
+
+        initObserve()
+    }
+
+    private fun initObserve() {
+        viewModel.logoutResult.observe(viewLifecycleOwner) {
+            if (it) {
+                LegacySharedPrefUtils.clearUserInfo()
+                showToast(R.string.logout_message)
+                startActivity(Intent(requireContext(), SplashActivity::class.java))
+                requireActivity().finish()
+            } else {
+                showToast(R.string.connection_failed)
+            }
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) {
+            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
+            binding.tvName.text = it.data.name
+            binding.ivKakaoLogo.setBackgroundColor(
+                if (it.data.isKakaoUser()) {
+                    resources.getColor(
+                        R.color.color_kakao,
+                        null,
+                    )
+                } else {
+                    resources.getColor(R.color.white, null)
+                },
+            )
+            binding.ivKakaoLogo.setImageResource(if (it.data.isKakaoUser()) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google)
+            binding.accountTypeTextView.text = if (it.data.isKakaoUser()) getString(R.string.kakao_user) else getString(R.string.google_user)
+        }
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            binding.progressBar.isVisible = it
+        }
+    }
+
+    private fun initButton() {
         binding.btnEditName.setOnClickListener {
             addEditNameFragment()
         }
@@ -69,47 +132,16 @@ class MyPageSettingFragment :
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
                         viewModel.postPushInformation(
-                            informationRequest = PushInformationRequest(pushToken = it.result)
+                            informationRequest = PushInformationRequest(pushToken = it.result),
                         )
                     } else {
                         // TODO: 실패했을때 예외처리 필요
                     }
-
                 }
             } else {
                 eventTracker.setUserProperty("isPushEnable", "false")
                 viewModel.deletePushInformation()
             }
-        }
-
-        binding.token.isVisible = BuildConfig.BUILD_TYPE == "debug"
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val token = "테스트용 토큰입니다 - 길게 클릭하면 복사됩니다!\n${task.result}"
-                binding.token.text = token
-                binding.token.setOnLongClickListener {
-                    val manager =
-                        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-                    manager.text = task.result
-                    showToast("토큰이 복사되었습니다.")
-                    false
-                }
-            }
-        }
-
-        viewModel.logoutResult.observe(viewLifecycleOwner) {
-            if (it) {
-                LegacySharedPrefUtils.clearUserInfo()
-                showToast(R.string.logout_message)
-                startActivity(Intent(requireContext(), SplashActivity::class.java))
-                requireActivity().finish()
-            } else {
-                showToast(R.string.connection_failed)
-            }
-        }
-
-        viewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
         }
     }
 
@@ -143,7 +175,7 @@ class MyPageSettingFragment :
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.setting_container,
             EditNameFragment(),
-            EditNameFragment::class.java.name
+            EditNameFragment::class.java.name,
         )
     }
 
@@ -151,7 +183,7 @@ class MyPageSettingFragment :
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.setting_container,
             AskFragment(),
-            AskFragment::class.java.name
+            AskFragment::class.java.name,
         )
     }
 }

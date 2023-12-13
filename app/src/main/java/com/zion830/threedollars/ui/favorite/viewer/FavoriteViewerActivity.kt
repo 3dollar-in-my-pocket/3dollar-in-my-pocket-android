@@ -4,24 +4,28 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.toStringDefault
-import com.zion830.threedollars.BR
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.ui.SignUpActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseActivity
 
 @AndroidEntryPoint
-class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>(R.layout.activity_favorite_viewer) {
+class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent("FavoriteViewerActivity")
+    }
+
     override val viewModel: FavoriteViewerViewModel by viewModels()
     private lateinit var favoriteId: String
     private val adapter by lazy {
@@ -39,7 +43,6 @@ class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.setVariable(BR.item, MyFavoriteFolderResponse())
         favoriteId = intent.getStringExtra("favoriteId").toStringDefault()
         if (!this::favoriteId.isInitialized || favoriteId.isEmpty()) {
             return finish()
@@ -48,8 +51,19 @@ class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding,
         viewModel.getFavoriteViewer(favoriteId)
     }
 
-    override fun initBinding() {
-        super.initBinding()
+    override fun initView() {
+        requestPermissionFirst()
+        initObserve()
+        initButton()
+    }
+
+    private fun initButton() {
+        binding.closeImage.setOnClickListener {
+            viewModel.onEventClick(FavoriteViewerViewModel.Event.Close)
+        }
+    }
+
+    private fun initObserve() {
         viewModel.eventClick.observe(this) {
             when (it) {
                 FavoriteViewerViewModel.Event.Close -> finish()
@@ -73,12 +87,12 @@ class FavoriteViewerActivity : LegacyBaseActivity<ActivityFavoriteViewerBinding,
         viewModel.favoriteViewer.observe(this) {
             adapter.submitList(it.favorites)
             binding.favoriteCountText.text = getString(R.string.count_list, adapter.itemCount)
-            binding.setVariable(BR.item, it)
+            binding.favoriteTitleText.textFavoriteTitle(it)
+            binding.favoriteUserMedalText.text = it.user.medal.name
+            binding.favoriteUserMedalImage.loadImage(it.user.medal.iconUrl)
+            binding.favoriteUserNameText.textFavoriteUserName(it.user.name)
+            binding.favoriteMemoText.text = it.introduction
         }
-    }
-
-    override fun initView() {
-        requestPermissionFirst()
     }
 
     override fun finish() {

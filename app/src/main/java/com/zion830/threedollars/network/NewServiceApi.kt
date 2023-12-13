@@ -210,4 +210,6 @@ interface NewServiceApi {
         @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
         @Body favoriteInfoRequest: FavoriteInfoRequest
     ): Response<BaseResponse<String>>
+
+
 }

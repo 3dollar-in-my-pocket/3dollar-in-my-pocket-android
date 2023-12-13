@@ -58,9 +58,6 @@
             android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.addstore.activity.NewStoreActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -192,6 +189,8 @@
 
         <activity android:name=".ui.storeDetail.user.ui.MoreImageActivity" />
 
+        <activity android:name="com.threedollar.presentation.polls.PollListActivity" />
+        <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
 
         <meta-data

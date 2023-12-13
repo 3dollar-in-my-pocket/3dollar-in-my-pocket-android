@@ -24,7 +24,6 @@ import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
 class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeViewModel>() {

@@ -30,7 +30,6 @@ import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseActivity
 import javax.inject.Inject
 
 
@@ -107,11 +106,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                     showBottomNavigation(false)
                 }
 
-//                R.id.navigation_vote -> {
-//                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
-//                    binding.navView.itemBackgroundResource = android.R.color.white
-//                    showBottomNavigation(true)
-//                }
+                R.id.navigation_vote -> {
+                    binding.navHostFragment.findNavController().navigate(R.id.navigation_vote)
+                    binding.navView.itemBackgroundResource = android.R.color.white
+                    showBottomNavigation(true)
+                }
 
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
