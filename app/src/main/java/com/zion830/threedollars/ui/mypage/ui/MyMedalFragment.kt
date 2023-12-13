@@ -15,7 +15,6 @@ import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.LegacyBaseFragment
 import zion830.com.common.base.loadUrlImg
 
 @AndroidEntryPoint

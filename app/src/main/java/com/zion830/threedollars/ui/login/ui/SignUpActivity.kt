@@ -23,7 +23,6 @@ import com.zion830.threedollars.ui.login.viewModel.InputNameViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseActivity
 import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint

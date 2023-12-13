@@ -1,5 +1,7 @@
 package com.home.domain.data.store
 
+import java.io.Serializable
+
 interface CategoryItem
 data class CategoryModel(
     val categoryId: String = "",
@@ -10,7 +12,7 @@ data class CategoryModel(
     val isNew: Boolean = false,
     val name: String = "",
     val isSelected: Boolean = false
-) : CategoryItem
+) : CategoryItem, Serializable
 
 data class SelectCategoryModel(
     val menuType: CategoryModel = CategoryModel(),

@@ -1,328 +1,315 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel" />
-    </data>
-
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black">
+        android:layout_height="wrap_content"
+        android:paddingBottom="76dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layout_profile"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="76dp">
+            android:background="@drawable/rect_gray_corner_bottom"
+            android:backgroundTint="@color/gray95"
+            android:paddingVertical="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_profile"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rect_gray_corner_bottom"
-                android:backgroundTint="@color/gray95"
-                android:paddingVertical="24dp"
+                android:text="@string/title_mypage"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_mypage"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="0dp"
+                android:layout_height="154dp"
+                android:layout_marginTop="36dp"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_back_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-                <ImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="0dp"
-                    android:layout_height="154dp"
-                    android:layout_marginTop="36dp"
-                    android:contentDescription="@null"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/img_back_gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_title" />
+            <ImageButton
+                android:id="@+id/ib_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:background="?attr/actionBarItemBackground"
+                android:src="@drawable/ic_setting"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_title" />
 
-                <ImageButton
-                    android:id="@+id/ib_setting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:background="?attr/actionBarItemBackground"
-                    android:src="@drawable/ic_setting"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_title" />
+            <ImageView
+                android:id="@+id/iv_profile"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="37dp"
+                android:background="@drawable/circle_gray"
+                android:backgroundTint="@color/gray80"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_no_store"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-                <ImageView
-                    android:id="@+id/iv_profile"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_marginTop="37dp"
-                    android:background="@drawable/circle_gray"
-                    android:backgroundTint="@color/gray80"
-                    android:padding="12dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_no_store"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_title" />
+            <TextView
+                android:id="@+id/tv_user_medal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rect_pink_round_stroke"
+                android:fontFamily="@font/apple_gothic_bold"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:textColor="@color/color_sub_red"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_profile" />
 
-                <TextView
-                    android:id="@+id/tv_user_medal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/rect_pink_round_stroke"
-                    android:fontFamily="@font/apple_gothic_bold"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="6dp"
-                    android:textColor="@color/color_sub_red"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_profile" />
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/apple_gothic_bold"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_user_medal"
+                tools:text="마고수" />
 
-                <TextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/apple_gothic_bold"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_user_medal"
-                    tools:text="마고수" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_name">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/layout_store"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="24dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_name">
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rect_black_radius16_opa40"
+                    android:backgroundTint="@color/gray90"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="14dp">
 
-                    <LinearLayout
-                        android:id="@+id/layout_store"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/tv_store_count"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rect_black_radius16_opa40"
-                        android:backgroundTint="@color/gray90"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="14dp">
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/tv_store_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{String.valueOf(viewModel.userActivity.activity.storesCount)}"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:text="@string/my_store"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_review"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rect_black_radius16_opa40"
-                        android:backgroundTint="@color/gray90"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="14dp">
-
-                        <TextView
-                            android:id="@+id/tv_review_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{String.valueOf(viewModel.userActivity.activity.reviewsCount)}"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:gravity="center"
-                            android:text="@string/my_review"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/layout_medal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rect_black_radius16_opa40"
-                        android:backgroundTint="@color/gray90"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="14dp">
-
-                        <TextView
-                            android:id="@+id/tv_medal_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{String.valueOf(viewModel.userActivity.activity.medalsCounts)}"
-                            android:textColor="@color/white"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:text="@string/my_medal"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
-                    </LinearLayout>
+                        android:layout_marginTop="14dp"
+                        android:text="@string/my_store"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
                 </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tv_certification"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="30dp"
-                android:drawablePadding="6dp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:gravity="center"
-                android:text="@string/certification"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_badge_gray"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_profile" />
+                <LinearLayout
+                    android:id="@+id/layout_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rect_black_radius16_opa40"
+                    android:backgroundTint="@color/gray90"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="14dp">
 
-            <TextView
-                android:id="@+id/tv_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:drawablePadding="10dp"
-                android:focusable="true"
-                android:text="@string/my_certification_message"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                app:drawableEndCompat="@drawable/ic_white_arrow"
-                app:layout_constraintStart_toStartOf="@id/tv_certification"
-                app:layout_constraintTop_toBottomOf="@id/tv_certification" />
+                    <TextView
+                        android:id="@+id/tv_review_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_recent_visit_history"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:layout_marginBottom="56dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                android:paddingStart="24dp"
-                android:paddingEnd="8dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_message"
-                tools:listitem="@layout/item_recent_visit_history" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center"
+                        android:text="@string/my_review"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/favoriteTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="48dp"
-                android:drawablePadding="6dp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:gravity="center"
-                android:text="@string/favorite"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:drawableStartCompat="@drawable/ic_favorite_gray"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rv_recent_visit_history" />
+                <LinearLayout
+                    android:id="@+id/layout_medal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rect_black_radius16_opa40"
+                    android:backgroundTint="@color/gray90"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="14dp">
 
-            <TextView
-                android:id="@+id/favoriteTitleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="?attr/selectableItemBackground"
-                android:drawablePadding="10dp"
-                android:text="@string/mypage_favorite_title"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="@id/favoriteTextView"
-                app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
+                    <TextView
+                        android:id="@+id/tv_medal_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/favoriteMoreTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/rect_gray80_radius30"
-                android:drawablePadding="10dp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="@string/more"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/favoriteRecyclerView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="56dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:overScrollMode="never"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/favoriteTitleTextView"
-                app:layout_constraintTop_toBottomOf="@id/favoriteTitleTextView"
-                tools:listitem="@layout/item_mypage_favorite" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/my_medal"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-</layout>
+
+        <TextView
+            android:id="@+id/tv_certification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
+            android:drawablePadding="6dp"
+            android:fontFamily="@font/apple_gothic_bold"
+            android:gravity="center"
+            android:text="@string/certification"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_badge_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_profile" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="10dp"
+            android:focusable="true"
+            android:text="@string/my_certification_message"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:drawableEndCompat="@drawable/ic_white_arrow"
+            app:layout_constraintStart_toStartOf="@id/tv_certification"
+            app:layout_constraintTop_toBottomOf="@id/tv_certification" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recent_visit_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="23dp"
+            android:layout_marginBottom="56dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:paddingStart="24dp"
+            android:paddingEnd="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_message"
+            tools:listitem="@layout/item_recent_visit_history" />
+
+        <TextView
+            android:id="@+id/favoriteTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="48dp"
+            android:drawablePadding="6dp"
+            android:fontFamily="@font/apple_gothic_bold"
+            android:gravity="center"
+            android:text="@string/favorite"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_favorite_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_recent_visit_history" />
+
+        <TextView
+            android:id="@+id/favoriteTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="?attr/selectableItemBackground"
+            android:drawablePadding="10dp"
+            android:text="@string/mypage_favorite_title"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="@id/favoriteTextView"
+            app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
+
+        <TextView
+            android:id="@+id/favoriteMoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rect_gray80_radius30"
+            android:drawablePadding="10dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="@string/more"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favoriteTextView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favoriteRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="56dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/favoriteTitleTextView"
+            app:layout_constraintTop_toBottomOf="@id/favoriteTitleTextView"
+            tools:listitem="@layout/item_mypage_favorite" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

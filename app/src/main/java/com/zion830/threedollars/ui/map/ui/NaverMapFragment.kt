@@ -1,8 +1,10 @@
 package com.zion830.threedollars.ui.map.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +33,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import zion830.com.common.base.convertDpToPx
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -72,15 +73,15 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         frameLayout.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
-                android.R.color.transparent
-            )
+                android.R.color.transparent,
+            ),
         )
         (binding.root as? ViewGroup)?.addView(
             frameLayout,
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            ),
         )
 
         return binding.root
@@ -111,9 +112,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             if (storeMarker.imageUrl?.isNotEmpty() == true) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     storeMarker.imageUrl?.let {
-                        map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
-                            it.urlToBitmap().get()
-                        })
+                        map.locationOverlay.icon = OverlayImage.fromBitmap(
+                            withContext(Dispatchers.IO) {
+                                it.urlToBitmap().get()
+                            },
+                        )
                     }
                     map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
                     map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
@@ -136,11 +139,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         if (naverMap == null) {
             return
         }
-        markers.add(Marker().apply {
-            this.position = position
-            this.icon = OverlayImage.fromResource(drawableRes)
-            this.map = naverMap
-        })
+        markers.add(
+            Marker().apply {
+                this.position = position
+                this.icon = OverlayImage.fromResource(drawableRes)
+                this.map = naverMap
+            },
+        )
     }
 
     fun clearMarker() {
@@ -272,4 +277,12 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     }
 
     fun getMapCenterLatLng() = naverMap?.cameraPosition?.target ?: NaverMapUtils.DEFAULT_LOCATION
+
+    private fun Context.convertDpToPx(dp: Float): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            this.resources.displayMetrics,
+        )
+    }
 }

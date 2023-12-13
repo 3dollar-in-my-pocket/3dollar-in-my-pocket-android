@@ -24,7 +24,6 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import zion830.com.common.base.LegacyBaseFragment
 
 @AndroidEntryPoint
 class MyReviewFragment :

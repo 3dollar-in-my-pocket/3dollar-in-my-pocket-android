@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.Constants
@@ -37,7 +38,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().navigateSafe(R.id.action_navigation_write_to_home)
+                findNavController().navigate(R.id.navigation_home)
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
@@ -67,7 +68,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
 
     private fun initButton() {
         binding.backButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_write_to_home)
+            findNavController().navigate(R.id.navigation_home)
         }
         binding.finishButton.setOnClickListener {
             val bundle = Bundle().apply {
