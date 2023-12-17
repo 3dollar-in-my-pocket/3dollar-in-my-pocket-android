@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.ReasonModel
+import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollCommentList
@@ -37,12 +38,11 @@ import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PollDetailActivity : AppCompatActivity() {
+class PollDetailActivity :  BaseActivity<ActivityPollDetailBinding, PollDetailViewModel>({ ActivityPollDetailBinding.inflate(it) }) {
 
     @Inject
     lateinit var activityStarter: ActivityStarter
-    private lateinit var binding: ActivityPollDetailBinding
-    private val viewModel: PollDetailViewModel by viewModels()
+    override val viewModel: PollDetailViewModel by viewModels()
     private lateinit var pollItem: PollItem
     private var isCommentEdit = false
     private var editCommentId = ""
@@ -67,12 +67,18 @@ class PollDetailActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPollDetailBinding.inflate(getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-        setContentView(binding.root)
-        viewModel.setPollId(intent.getStringExtra("id").orEmpty())
-        viewModel.pollDetail()
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "PollDetailActivity", screenName = "poll_detail")
+    }
+
+    override fun initView() {
+        initViewModel()
+        initAdapter()
+        initButton()
+        initFlow()
+    }
+
+    private fun initAdapter() {
         binding.recyclerComment.itemAnimator = null
         binding.recyclerComment.adapter = adapter
         binding.recyclerComment.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -95,12 +101,20 @@ class PollDetailActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun initViewModel() {
+        viewModel.setPollId(intent.getStringExtra("id").orEmpty())
+        viewModel.pollDetail()
+    }
+
+    private fun initButton() {
         binding.imgClose.onSingleClick { finish() }
         binding.imgCommentWrite.onSingleClick {
             if (isCommentEdit) viewModel.editComment(editCommentId, binding.etComment.text.toString())
             else viewModel.createComment(binding.etComment.text.toString())
         }
-        binding.etComment.setOnEditorActionListener { v, actionId, event ->
+        binding.etComment.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEND -> {
                     if (isCommentEdit) viewModel.editComment(editCommentId, binding.etComment.text.toString())
@@ -117,7 +131,9 @@ class PollDetailActivity : AppCompatActivity() {
                 else viewModel.report(reasonModel.type)
             }.show(supportFragmentManager, "")
         }
+    }
 
+    private fun initFlow() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {

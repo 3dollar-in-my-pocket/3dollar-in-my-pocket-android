@@ -1,18 +1,15 @@
 package com.threedollar.presentation.polls
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.common.base.BaseActivity
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -29,10 +26,9 @@ import java.util.Calendar
 import java.util.Locale
 
 @AndroidEntryPoint
-class PollListActivity : AppCompatActivity() {
+class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel>({ ActivityPollListBinding.inflate(it) }) {
 
-    private lateinit var binding: ActivityPollListBinding
-    private val viewModel: PollListViewModel by viewModels()
+    override val viewModel: PollListViewModel by viewModels()
     private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             it.data?.let { intent ->
@@ -47,28 +43,35 @@ class PollListActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var adapter: PollListAdapter
-    private val pollItems = mutableListOf<PollItem?>()
-    private var pollList: PollList? = null
-    private var isLoading = false
-    private var categoryId = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        adapter = PollListAdapter({ pollId, optionId ->
+    private val adapter: PollListAdapter by lazy {
+        PollListAdapter({ pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
         }, {
             registerPollDetail.launch(Intent(this, PollDetailActivity::class.java).apply {
                 putExtra("id", it.poll.pollId)
             })
         })
-        binding = ActivityPollListBinding.inflate(getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-        setContentView(binding.root)
+    }
+    private val pollItems = mutableListOf<PollItem?>()
+    private var pollList: PollList? = null
+    private var isLoading = false
+    private var categoryId = ""
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "PollListActivity", screenName = "poll_list")
+    }
+
+    override fun initView() {
         categoryId = intent.getStringExtra("category").orEmpty()
         if (categoryId.isEmpty()) {
             finish()
         }
         selectedPollMenu(true)
+        initAdapter()
+        initButton()
+        initFlow()
+    }
+
+    private fun initAdapter() {
         binding.recyclerPoll.adapter = adapter
         binding.recyclerPoll.itemAnimator = null
         binding.recyclerPoll.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -95,6 +98,9 @@ class PollListActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun initButton() {
         binding.clPollLatest.onSingleClick {
             if (!binding.twPollLatest.isSelected) selectedPollMenu(true)
         }
@@ -117,6 +123,9 @@ class PollListActivity : AppCompatActivity() {
             }.show(supportFragmentManager, "")
         }
         binding.imgClose.onSingleClick { finish() }
+    }
+
+    private fun initFlow() {
         lifecycleScope.launch {
             launch {
                 viewModel.userPollPolicy.collect {
@@ -165,6 +174,7 @@ class PollListActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun selectedPollMenu(isLast: Boolean) {
         binding.twPollLatest.isSelected = isLast
         binding.twPollPopular.isSelected = !isLast

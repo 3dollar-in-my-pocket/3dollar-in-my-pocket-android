@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
@@ -30,13 +31,20 @@ import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CommunityFragment : Fragment(R.layout.fragment_community) {
-    private lateinit var binding: FragmentCommunityBinding
-    private val viewModel: CommunityViewModel by viewModels()
+class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewModel>() {
+    override val viewModel: CommunityViewModel by viewModels()
 
     @Inject
     lateinit var activityStarter: ActivityStarter
-    private lateinit var pollAdapter: CommunityPollAdapter
+    private val pollAdapter: CommunityPollAdapter by lazy {
+        CommunityPollAdapter(choicePoll = { pollId, optionId ->
+            viewModel.votePoll(pollId, optionId)
+        }, clickPoll = {
+            registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
+                putExtra("id", it.poll.pollId)
+            })
+        })
+    }
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
             if (it.storeType == "BOSS_STORE") {
@@ -66,28 +74,30 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCommunityBinding.inflate(inflater)
-        pollAdapter =
-            CommunityPollAdapter(choicePoll = { pollId, optionId ->
-                viewModel.votePoll(pollId, optionId)
-            }, clickPoll = {
-                registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
-                    putExtra("id", it.poll.pollId)
-                })
-            })
-        return binding.root
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
+        FragmentCommunityBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "CommunityFragment", screenName = "community")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         selectedPopular(true)
+        initAdapter()
+        initButton()
+        initFlow()
+    }
+
+    private fun initAdapter() {
         binding.recyclerPoll.adapter = pollAdapter
         binding.recyclerPopularStore.adapter = storeAdapter
+    }
+
+    private fun initButton() {
         binding.twAreaChoice.onSingleClick {
             choiceNeighborhood?.let { neighborhood ->
-                seoulNeighborhoods?.let {
-                    NeighborHoodsChoiceDialog().setNeighborHoods(it).setChoiceNeighborhood(neighborhood).setItemClick {
+                seoulNeighborhoods?.let { seoulNeighborhoods ->
+                    NeighborHoodsChoiceDialog().setNeighborHoods(seoulNeighborhoods).setChoiceNeighborhood(neighborhood).setItemClick {
                         binding.twAreaChoice.text = it.description
                         choiceNeighborhood = it
                         binding.twAreaChoice.text = it.description
@@ -113,7 +123,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 })
             }
         }
+    }
 
+    private fun initFlow() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
@@ -166,7 +178,6 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 }
             }
         }
-
     }
 
     private fun selectedPopular(isReview: Boolean) {
