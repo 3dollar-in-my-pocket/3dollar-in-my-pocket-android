@@ -87,7 +87,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
 
     private fun initFlows() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.aroundStoreModels.collect { res ->
                         naverMapFragment.addStoreMarkers(R.drawable.ic_mappin_focused_off, res ?: listOf())
