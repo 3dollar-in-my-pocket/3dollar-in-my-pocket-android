@@ -84,7 +84,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("HomeListViewFragment")
+        setFirebaseAnalyticsLogEvent(className = "HomeListViewFragment", screenName = "home_list")
     }
 
     private fun initButton() {

@@ -34,7 +34,7 @@ class MyPageSettingFragment :
         FragmentMypageSettingBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyPageSettingFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyPageSettingFragment", screenName = null)
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()

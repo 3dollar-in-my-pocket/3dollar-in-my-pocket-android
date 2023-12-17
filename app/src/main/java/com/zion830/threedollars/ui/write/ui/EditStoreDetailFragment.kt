@@ -80,7 +80,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditStoreDetailFragment")
+        setFirebaseAnalyticsLogEvent(className = "EditStoreDetailFragment", screenName = "write_address_detail")
     }
 
     private fun initFlow() {

@@ -92,7 +92,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("HomeFragment")
+        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
     }
 
     private fun initScroll() {

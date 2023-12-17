@@ -36,7 +36,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>()
         FragmentNewMyPageBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyPageFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyPageFragment", screenName = null)
     }
 
     override val viewModel: MyPageViewModel by activityViewModels()

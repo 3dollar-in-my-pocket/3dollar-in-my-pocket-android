@@ -51,7 +51,7 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AddReviewDialog")
+        setFirebaseAnalyticsLogEvent(className = "AddReviewDialog", screenName = "review_bottom_sheet")
     }
 
     private fun initButton() {

@@ -34,7 +34,7 @@ class FullScreenMapActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FullScreenMapActivity")
+        setFirebaseAnalyticsLogEvent(className = "FullScreenMapActivity", screenName = null)
     }
 
     private fun initIntent() {

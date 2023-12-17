@@ -63,9 +63,12 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
         return ret
     }
-    fun setFirebaseAnalyticsLogEvent(className: String) {
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+            screenName?.let {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            }
         }
     }
     private fun hideKeyboard() {

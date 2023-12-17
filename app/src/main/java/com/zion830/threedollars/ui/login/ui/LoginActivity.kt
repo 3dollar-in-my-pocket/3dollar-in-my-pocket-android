@@ -61,7 +61,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("LoginActivity")
+        setFirebaseAnalyticsLogEvent(className = "LoginActivity", screenName = "sign_in")
     }
 
     private fun tryLoginBySocialType() {

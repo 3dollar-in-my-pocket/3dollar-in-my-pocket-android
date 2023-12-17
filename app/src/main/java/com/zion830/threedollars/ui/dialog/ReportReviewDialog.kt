@@ -1,9 +1,7 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +10,11 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.home.domain.data.store.ReasonModel
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +31,7 @@ class ReportReviewDialog(private val content: ReviewContentModel?, private val s
 
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("ReportReviewDialog")
+        setFirebaseAnalyticsLogEvent(className = "ReportReviewDialog", screenName = null)
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

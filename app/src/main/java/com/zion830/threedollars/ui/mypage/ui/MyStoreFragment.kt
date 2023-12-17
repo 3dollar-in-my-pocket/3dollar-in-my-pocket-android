@@ -67,7 +67,7 @@ class MyStoreFragment :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyStoreFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyStoreFragment", screenName = null)
     }
 
     override fun onStop() {

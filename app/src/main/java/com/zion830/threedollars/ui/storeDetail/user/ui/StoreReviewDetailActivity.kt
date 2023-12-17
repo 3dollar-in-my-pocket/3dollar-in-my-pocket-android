@@ -78,7 +78,7 @@ class StoreReviewDetailActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity", screenName = "review_list")
     }
 
     private fun initButton() {

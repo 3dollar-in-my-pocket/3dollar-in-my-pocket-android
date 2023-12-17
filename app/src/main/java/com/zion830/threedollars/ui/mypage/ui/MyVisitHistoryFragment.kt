@@ -61,7 +61,7 @@ class MyVisitHistoryFragment :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyVisitHistoryFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyVisitHistoryFragment", screenName = null)
     }
 
     private fun observeUiData() {

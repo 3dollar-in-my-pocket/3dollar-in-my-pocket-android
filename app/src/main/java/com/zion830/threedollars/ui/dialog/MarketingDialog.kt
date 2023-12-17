@@ -29,6 +29,9 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
         this.listener = listener
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "MarketingDialog",screenName = null)
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext(), R.style.TransparentDialog)

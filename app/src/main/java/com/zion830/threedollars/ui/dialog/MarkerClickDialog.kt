@@ -36,6 +36,10 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
         return Dialog(requireContext(), R.style.TransparentDialog)
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "MarkerClickDialog", screenName = "marker_popup")
+    }
+
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
         viewModel.getPopups()

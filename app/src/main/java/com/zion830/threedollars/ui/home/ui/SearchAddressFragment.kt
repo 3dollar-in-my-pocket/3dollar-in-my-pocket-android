@@ -56,7 +56,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SearchAddressFragment")
+        setFirebaseAnalyticsLogEvent(className = "SearchAddressFragment", screenName = null)
     }
 
     private fun initAdapter() {

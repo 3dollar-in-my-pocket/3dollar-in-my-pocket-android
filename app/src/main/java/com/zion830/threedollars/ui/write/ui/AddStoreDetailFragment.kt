@@ -88,7 +88,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AddStoreDetailFragment")
+        setFirebaseAnalyticsLogEvent(className = "AddStoreDetailFragment", screenName = "write_address_detail")
     }
 
     private fun initNavigationBar() {

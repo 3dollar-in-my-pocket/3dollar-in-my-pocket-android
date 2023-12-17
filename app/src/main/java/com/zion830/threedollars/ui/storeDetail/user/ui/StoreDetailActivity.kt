@@ -154,7 +154,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity", screenName = "store_detail")
     }
 
     private fun initAdapter() {

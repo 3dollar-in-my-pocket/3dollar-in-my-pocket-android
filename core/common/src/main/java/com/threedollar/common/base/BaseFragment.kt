@@ -33,11 +33,16 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         initView()
     }
-    fun setFirebaseAnalyticsLogEvent(className: String) {
+
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName: String?) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+            screenName?.let {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            }
         }
     }
+
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
 
     abstract fun initView()

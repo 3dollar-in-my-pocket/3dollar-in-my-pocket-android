@@ -74,7 +74,7 @@ class BossReviewActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity")
+        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity",screenName = "boss_store_review")
     }
 
     private fun iniFlows() {

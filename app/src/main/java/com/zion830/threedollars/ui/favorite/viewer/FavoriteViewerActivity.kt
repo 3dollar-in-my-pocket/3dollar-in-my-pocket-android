@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FavoriteViewerActivity")
+        setFirebaseAnalyticsLogEvent(className = "FavoriteViewerActivity", screenName = null)
     }
 
     override val viewModel: FavoriteViewerViewModel by viewModels()

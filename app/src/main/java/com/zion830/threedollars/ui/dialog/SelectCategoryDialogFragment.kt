@@ -72,7 +72,7 @@ class SelectCategoryDialogFragment :
 
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SelectCategoryDialogFragment")
+        setFirebaseAnalyticsLogEvent(className = "SelectCategoryDialogFragment", screenName = "category_filter")
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

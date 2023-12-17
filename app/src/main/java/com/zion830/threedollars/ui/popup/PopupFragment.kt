@@ -99,7 +99,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("PopupFragment")
+        setFirebaseAnalyticsLogEvent(className = "PopupFragment", screenName = "main_ad_banner")
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {

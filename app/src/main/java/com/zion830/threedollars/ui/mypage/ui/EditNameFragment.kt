@@ -27,7 +27,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         FragmentEditNameBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditNameFragment")
+        setFirebaseAnalyticsLogEvent(className = "EditNameFragment", screenName = null)
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()

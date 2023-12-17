@@ -35,7 +35,7 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
         DialogDeleteBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("DeleteStoreDialog")
+        setFirebaseAnalyticsLogEvent(className = "DeleteStoreDialog", screenName = "report_store")
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

@@ -50,7 +50,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
         DialogBottomAddStoreMenuCategoryBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AddStoreMenuCategoryDialogFragment")
+        setFirebaseAnalyticsLogEvent(className = "AddStoreMenuCategoryDialogFragment", screenName = "category_selection")
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

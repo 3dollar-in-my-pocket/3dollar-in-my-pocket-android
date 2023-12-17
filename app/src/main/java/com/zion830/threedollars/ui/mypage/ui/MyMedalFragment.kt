@@ -42,7 +42,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyMedalFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyMedalFragment", screenName = null)
     }
 
     private fun observeData() {

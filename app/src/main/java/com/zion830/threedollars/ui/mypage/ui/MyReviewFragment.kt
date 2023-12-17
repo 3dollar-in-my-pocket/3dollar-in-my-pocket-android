@@ -70,7 +70,7 @@ class MyReviewFragment :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyReviewFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyReviewFragment", screenName = null)
     }
 
     private fun observeUiData() {

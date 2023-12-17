@@ -26,7 +26,7 @@ class DirectionBottomDialog : BaseBottomSheetDialogFragment<DialogBottomDirectio
         DialogBottomDirectionBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("DirectionBottomDialog")
+        setFirebaseAnalyticsLogEvent(className = "DirectionBottomDialog", screenName = null)
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

@@ -100,7 +100,7 @@ class BossStoreDetailActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("BossStoreDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "BossStoreDetailActivity",screenName = "boss_store_detail")
     }
 
     private fun initAdapter() {

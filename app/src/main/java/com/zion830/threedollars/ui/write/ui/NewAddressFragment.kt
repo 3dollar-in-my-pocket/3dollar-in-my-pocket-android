@@ -57,7 +57,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("NewAddressFragment")
+        setFirebaseAnalyticsLogEvent(className = "NewAddressFragment", screenName = "write_address")
     }
 
     private fun initNavigationBar() {

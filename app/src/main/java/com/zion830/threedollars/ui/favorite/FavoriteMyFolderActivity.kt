@@ -140,6 +140,6 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FavoriteMyFolderActivity")
+        setFirebaseAnalyticsLogEvent(className = "FavoriteMyFolderActivity", screenName = null)
     }
 }

@@ -66,7 +66,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MainActivity")
+        setFirebaseAnalyticsLogEvent(className = "MainActivity", screenName = null)
     }
 
     private fun initFlow() {
