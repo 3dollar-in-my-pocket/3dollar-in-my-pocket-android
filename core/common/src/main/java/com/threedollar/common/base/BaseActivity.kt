@@ -28,17 +28,12 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         setContentView(binding.root)
         initView()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
+        initFirebaseAnalytics()
         viewModel.msgTextId.observe(this) {
             if (it >= 0) {
                 binding.root.showSnack(it)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initFirebaseAnalytics()
     }
 
     abstract fun initView()

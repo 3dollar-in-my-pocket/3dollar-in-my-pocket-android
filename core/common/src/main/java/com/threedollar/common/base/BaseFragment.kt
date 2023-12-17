@@ -18,11 +18,6 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
 
     protected lateinit var firebaseAnalytics: FirebaseAnalytics
 
-    override fun onResume() {
-        super.onResume()
-        initFirebaseAnalytics()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = getFragmentBinding(inflater, container)
         return binding.root
@@ -31,6 +26,7 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        initFirebaseAnalytics()
         initView()
     }
 
