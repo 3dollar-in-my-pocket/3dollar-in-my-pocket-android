@@ -93,6 +93,7 @@ fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION)
         ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
             ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
         }
+
         else -> {
             if (LegacySharedPrefUtils.isFirstPermissionCheck()) {
                 ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
@@ -243,7 +244,7 @@ fun Activity.navigateToMainActivityOnCloseIfNeeded() {
     val isBackMainActivity = manager.appTasks.isEmpty() || manager.let {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             it.appTasks.forEach { task ->
-                if (task.taskInfo.topActivity?.className?.contains("MainActivity") == true) return@let false
+                if (task.taskInfo.baseActivity?.className?.contains("MainActivity") == true) return@let false
             }
             return@let true
         } else {
@@ -254,7 +255,7 @@ fun Activity.navigateToMainActivityOnCloseIfNeeded() {
         }
     }
     if (isBackMainActivity && GlobalApplication.isLoggedIn) startActivity(MainActivity.getIntent(this))
-    else startActivity(Intent(this, LoginActivity::class.java))
+    else if (!GlobalApplication.isLoggedIn) startActivity(Intent(this, LoginActivity::class.java))
 }
 
 fun NavController.navigateSafe(

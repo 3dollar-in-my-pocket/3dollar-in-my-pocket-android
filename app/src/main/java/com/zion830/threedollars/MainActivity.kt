@@ -204,7 +204,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     }
 
     fun showBottomNavigation(state: Boolean) {
-        binding.navView.isVisible = state
+        if (isBindingInitialized()) {
+            binding.navView.isVisible = state
+        }
     }
 
     companion object {

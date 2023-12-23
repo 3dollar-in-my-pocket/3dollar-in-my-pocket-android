@@ -140,10 +140,12 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
 
         private fun isExistInfo(intent: Intent?): Boolean {
             return try {
-                intent != null && requireActivity().packageManager.getPackageInfo(
-                    intent.`package`.toString(),
-                    PackageManager.GET_ACTIVITIES
-                ) != null
+                activity?.let {
+                    intent != null && it.packageManager.getPackageInfo(
+                        intent.`package`.toString(),
+                        PackageManager.GET_ACTIVITIES
+                    ) != null
+                } ?: false
             } catch (e: PackageManager.NameNotFoundException) {
                 false
             }
