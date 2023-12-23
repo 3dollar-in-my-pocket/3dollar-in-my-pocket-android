@@ -15,6 +15,7 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     private val reportList = mutableListOf<ReasonModel>()
     private var reportCallBack: (ReasonModel, String?) -> Unit = { _, _ -> }
     private lateinit var choiceReasonModel: ReasonModel
+    private var type = Type.POLL
     private val adapter by lazy {
         ReportChoiceAdapter(choiceClick)
     }
@@ -48,7 +49,12 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "ReportChoiceDialog", screenName = "report_poll")
+        setFirebaseAnalyticsLogEvent(
+            className = "ReportChoiceDialog", screenName = when (type) {
+                Type.POLL -> "report_poll"
+                Type.COMMENT -> "report_review"
+            }
+        )
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
@@ -63,9 +69,18 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
         return this
     }
 
+    fun setType(type: Type): ReportChoiceDialog {
+        this.type = type
+        return this
+    }
+
     fun setReportList(list: List<ReasonModel>): ReportChoiceDialog {
         reportList.addAll(list)
         choiceReasonModel = reportList.first()
         return this
+    }
+
+    enum class Type {
+        POLL, COMMENT
     }
 }
