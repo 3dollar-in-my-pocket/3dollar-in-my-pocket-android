@@ -105,7 +105,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.postPushInformation(informationRequest)))
     }
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementResponse>>> = flow {
+    override fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>> = flow {
         emit(apiResult(serverApi.getAdvertisements(position)))
     }
 

@@ -1,7 +1,7 @@
 package com.zion830.threedollars.ui.popup
 
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,8 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PopupViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
 
-    private val _popups: MutableStateFlow<List<AdvertisementModel>> = MutableStateFlow(listOf())
-    val popups: StateFlow<List<AdvertisementModel>> get() = _popups
+    private val _popups: MutableStateFlow<List<AdvertisementModelV2>> = MutableStateFlow(listOf())
+    val popups: StateFlow<List<AdvertisementModelV2>> get() = _popups
 
     fun getPopups(position: String) {
         viewModelScope.launch {

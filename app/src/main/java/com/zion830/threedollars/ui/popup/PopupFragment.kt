@@ -40,7 +40,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
     override fun initView() {
         binding.run {
             viewModel.popups.value.firstOrNull()?.let {
-                ivPopup.loadImage(it.imageUrl)
+                ivPopup.loadImage(it.image.url)
             }
 
             tvClose.setOnClickListener {
@@ -68,7 +68,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                             putString("advertisement_id", popup.advertisementId.toString())
                         }
                         EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                        popup.linkUrl?.let { linkUrl ->
+                        popup.link.url.let { linkUrl ->
                             webView.loadUrl(linkUrl)
 
                         }

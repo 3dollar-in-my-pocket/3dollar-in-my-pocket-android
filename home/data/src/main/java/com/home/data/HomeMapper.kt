@@ -1,6 +1,6 @@
 package com.home.data
 
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.AccountModel
 import com.home.domain.data.store.AddressModel
 import com.home.domain.data.store.AppearanceDayModel
@@ -114,18 +114,38 @@ import com.threedollar.network.request.MenuRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 
-fun AdvertisementResponse.asModel() = AdvertisementModel(
-    advertisementId = advertisementId,
-    bgColor = bgColor,
-    extraContent = extraContent,
-    fontColor = fontColor,
-    imageHeight = imageHeight,
-    imageUrl = imageUrl,
-    imageWidth = imageWidth,
-    linkUrl = linkUrl,
-    subTitle = subTitle,
-    title = title
-)
+fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
+    return AdvertisementModelV2(
+        advertisementId = advertisementId ?: 0,
+        background = AdvertisementModelV2.Background(
+            color = background?.color ?: ""
+        ),
+        extra = AdvertisementModelV2.Extra(
+            content = extra?.content ?: "",
+            fontColor = extra?.fontColor ?: ""
+        ),
+        image = AdvertisementModelV2.Image(
+            height = image?.height ?: 0,
+            url = image?.url ?: "",
+            width = image?.width ?: 0
+        ),
+        link = AdvertisementModelV2.Link(
+            type = link?.type ?: "",
+            url = link?.url ?: ""
+        ),
+        metadata = AdvertisementModelV2.MetaData(
+            exposureIndex = metadata?.exposureIndex ?: 0
+        ),
+        subTitle = AdvertisementModelV2.SubTitle(
+            content = subTitle?.content ?: "",
+            fontColor = subTitle?.fontColor ?: ""
+        ),
+        title = AdvertisementModelV2.Title(
+            content = title?.content ?: "",
+            fontColor = title?.fontColor ?: ""
+        )
+    )
+}
 
 fun UserResponse.asModel() = UserModel(
     createdAt = createdAt,

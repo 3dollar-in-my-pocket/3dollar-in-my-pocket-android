@@ -50,7 +50,7 @@ interface HomeRemoteDataSource {
 
     fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementResponse>>>
+    fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>>
 
     fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
 

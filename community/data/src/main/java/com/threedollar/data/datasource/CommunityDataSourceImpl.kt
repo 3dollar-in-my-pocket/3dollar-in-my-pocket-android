@@ -4,6 +4,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
+import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
@@ -95,5 +96,9 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
 
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {
         emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
+    }
+
+    override fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(apiResult(serverApi.getAdvertisements(position)))
     }
 }

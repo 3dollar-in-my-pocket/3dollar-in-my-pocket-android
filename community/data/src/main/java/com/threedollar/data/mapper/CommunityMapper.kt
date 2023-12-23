@@ -9,6 +9,7 @@ import com.threedollar.data.mapper.GetPollListResponseMapper.toMapper
 import com.threedollar.data.mapper.GetPollResponseMapper.toMapper
 import com.threedollar.data.mapper.GetPopularStoresResponseMapper.toMapper
 import com.threedollar.data.mapper.GetUserPollListResponseMapper.toMapper
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.CreatePolicy
@@ -22,6 +23,7 @@ import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
 import com.threedollar.network.data.Reason
 import com.threedollar.network.data.ReportReasonsResponse
+import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
@@ -33,6 +35,38 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 
+fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
+    return AdvertisementModelV2(
+        advertisementId = advertisementId ?: 0,
+        background = AdvertisementModelV2.Background(
+            color = background?.color ?: ""
+        ),
+        extra = AdvertisementModelV2.Extra(
+            content = extra?.content ?: "",
+            fontColor = extra?.fontColor ?: ""
+        ),
+        image = AdvertisementModelV2.Image(
+            height = image?.height ?: 0,
+            url = image?.url ?: "",
+            width = image?.width ?: 0
+        ),
+        link = AdvertisementModelV2.Link(
+            type = link?.type ?: "",
+            url = link?.url ?: ""
+        ),
+        metadata = AdvertisementModelV2.MetaData(
+            exposureIndex = metadata?.exposureIndex ?: 0
+        ),
+        subTitle = AdvertisementModelV2.SubTitle(
+            content = subTitle?.content ?: "",
+            fontColor = subTitle?.fontColor ?: ""
+        ),
+        title = AdvertisementModelV2.Title(
+            content = title?.content ?: "",
+            fontColor = title?.fontColor ?: ""
+        )
+    )
+}
 
 fun PollCreateApiResponse?.toPollIdMapper(): PollId {
     return PollId(this?.id.orEmpty())

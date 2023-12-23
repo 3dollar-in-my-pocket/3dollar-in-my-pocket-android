@@ -3,6 +3,7 @@ package com.threedollar.data.datasource
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.ReportReasonsResponse
+import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
@@ -38,4 +39,5 @@ interface CommunityDataSource {
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>>
     fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
+    fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>>
 }

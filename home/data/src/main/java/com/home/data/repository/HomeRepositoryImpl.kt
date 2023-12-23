@@ -8,7 +8,7 @@ import com.home.data.asRequest
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
 import com.home.data.datasource.ReviewPagingDataSource
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
@@ -130,11 +130,11 @@ class HomeRepositoryImpl @Inject constructor(
     override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.postPushInformation(PushInformationRequest(pushToken = pushToken))
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModel>>> =
+    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModelV2>>> =
         homeRemoteDataSource.getAdvertisements(position).map {
             BaseResponse(
                 ok = it.ok,
-                data = it.data?.map { response -> response.asModel() },
+                data = it.data?.advertisements?.map { response -> response.asModel() }.orEmpty(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error
