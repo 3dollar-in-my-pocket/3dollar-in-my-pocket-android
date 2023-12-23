@@ -72,4 +72,6 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.currentFocus!!.windowToken, 0)
     }
+
+    fun isBindingInitialized() = ::binding.isInitialized
 }
