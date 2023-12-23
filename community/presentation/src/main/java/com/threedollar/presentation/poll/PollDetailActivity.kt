@@ -82,7 +82,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                     putString("screen", "poll_detail")
                     putString("review_id", it.current.comment.commentId)
                 }
-                eventTrackerListener.logEvent(Constants.CLICK_REPORT_COMMENT, bundle)
+                eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
             }
         }
     }

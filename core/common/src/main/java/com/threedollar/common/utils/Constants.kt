@@ -103,7 +103,6 @@ object Constants {
     const val CLICK_DISTRICT = "click_district"
     const val CLICK_POPULAR_FILTER = "click_popular_filter"
     const val CLICK_CREATE_POLL = "click_create_poll"
-    const val CLICK_REPORT_COMMENT = "click_report_comment"
 
     // my info
     const val SETTING_BTN_CLICKED = "setting_button_clicked"
