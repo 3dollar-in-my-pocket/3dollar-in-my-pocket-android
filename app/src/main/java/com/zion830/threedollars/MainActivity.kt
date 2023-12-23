@@ -22,6 +22,7 @@ import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel

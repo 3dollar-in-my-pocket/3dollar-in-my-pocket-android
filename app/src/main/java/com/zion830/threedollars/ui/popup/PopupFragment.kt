@@ -16,13 +16,11 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.SharedPrefUtils
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import dagger.hilt.android.AndroidEntryPoint

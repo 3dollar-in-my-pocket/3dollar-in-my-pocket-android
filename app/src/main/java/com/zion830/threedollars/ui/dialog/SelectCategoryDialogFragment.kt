@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,13 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_CATEGORY
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_CATEGORY
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel

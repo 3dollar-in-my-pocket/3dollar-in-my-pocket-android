@@ -14,7 +14,7 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker

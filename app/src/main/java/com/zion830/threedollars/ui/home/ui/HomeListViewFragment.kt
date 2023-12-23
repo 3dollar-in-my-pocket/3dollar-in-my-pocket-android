@@ -22,8 +22,8 @@ import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_STORE
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding

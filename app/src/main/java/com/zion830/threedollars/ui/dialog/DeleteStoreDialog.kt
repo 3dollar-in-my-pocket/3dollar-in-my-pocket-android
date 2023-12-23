@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +10,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.threedollar.common.ext.textPartColor
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.home.domain.data.store.DeleteType
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.Constants.CLICK_REPORT
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
+import com.threedollar.common.utils.Constants.CLICK_REPORT
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint

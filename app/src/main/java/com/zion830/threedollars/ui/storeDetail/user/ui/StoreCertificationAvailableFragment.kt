@@ -14,9 +14,8 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_VISIT_FAIL
-import com.zion830.threedollars.Constants.CLICK_VISIT_SUCCESS
+import com.threedollar.common.utils.Constants.CLICK_VISIT_FAIL
+import com.threedollar.common.utils.Constants.CLICK_VISIT_SUCCESS
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationAvailableBinding

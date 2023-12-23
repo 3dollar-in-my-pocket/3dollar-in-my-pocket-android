@@ -18,7 +18,7 @@ import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R

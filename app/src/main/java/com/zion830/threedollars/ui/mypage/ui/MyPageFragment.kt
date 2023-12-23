@@ -12,8 +12,8 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
