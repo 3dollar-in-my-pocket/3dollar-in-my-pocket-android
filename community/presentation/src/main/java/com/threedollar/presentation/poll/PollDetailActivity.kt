@@ -69,6 +69,14 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 ReportChoiceDialog().setType(ReportChoiceDialog.Type.COMMENT).setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
                     if (reasonModel.type == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.type, s)
                     else viewModel.reportComment(it.current.comment.commentId, reasonModel.type)
+                    if (::pollItem.isInitialized) {
+                        val bundle = Bundle().apply {
+                            putString("screen", "report_review")
+                            putString("poll_id", pollItem.poll.pollId)
+                            putString("review_id", it.current.comment.commentId)
+                        }
+                        eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
+                    }
                 }.show(supportFragmentManager, "")
                 val bundle = Bundle().apply {
                     putString("screen", "poll_detail")
@@ -141,6 +149,13 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
             ReportChoiceDialog().setType(ReportChoiceDialog.Type.POLL).setReportList(pollReports).setReportCallback { reasonModel, s ->
                 if (reasonModel.type == "POLL_OTHER") viewModel.report(reasonModel.type, s)
                 else viewModel.report(reasonModel.type)
+                if (::pollItem.isInitialized) {
+                    val bundle = Bundle().apply {
+                        putString("screen", "report_poll")
+                        putString("poll_id", pollItem.poll.pollId)
+                    }
+                    eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
+                }
             }.show(supportFragmentManager, "")
             if (::pollItem.isInitialized) {
                 val bundle = Bundle().apply {
