@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_CATEGORY
 import com.zion830.threedollars.EventTracker
@@ -79,7 +80,7 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
-        popupViewModel.getPopups("MENU_CATEGORY_BANNER")
+        popupViewModel.getPopups(AdvertisementsPosition.MENU_CATEGORY_BANNER)
         initAdapter()
         initFlow()
     }
@@ -121,17 +122,17 @@ class SelectCategoryDialogFragment :
                     popupViewModel.popups.collect { popups ->
                         if (popups.isNotEmpty()) {
                             val popup = popups[0]
-                            binding.tvAdTitle.text = popup.title
+                            binding.tvAdTitle.text = popup.title.content
 
-                            binding.tvAdBody.text = popup.subTitle
+                            binding.tvAdBody.text = popup.subTitle.content
 
-                            popup.fontColor?.let {
+                            popup.title.fontColor.let {
                                 binding.tvAdTitle.setTextColor(it.toColorInt())
                                 binding.tvAdBody.setTextColor(it.toColorInt())
                             }
-                            popup.bgColor?.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
+                            popup.background.color.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
 
-                            binding.ivAdImage.loadUrlImg(popup.imageUrl)
+                            binding.ivAdImage.loadUrlImg(popup.image.url)
 
                             binding.cdAdCategory.setOnClickListener {
                                 val bundle = Bundle().apply {
@@ -139,7 +140,7 @@ class SelectCategoryDialogFragment :
                                     putString("advertisement_id", popup.advertisementId.toString())
                                 }
                                 EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.linkUrl)))
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()

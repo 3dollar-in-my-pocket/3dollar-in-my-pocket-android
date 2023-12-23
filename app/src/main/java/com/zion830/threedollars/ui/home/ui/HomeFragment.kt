@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
@@ -140,14 +140,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
 
             }
-        }, object : OnItemClickListener<AdvertisementModel> {
-            override fun onClick(item: AdvertisementModel) {
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
                 val bundle = Bundle().apply {
                     putString("screen", "home")
                     putString("advertisement_id", item.advertisementId.toString())
                 }
                 EventTracker.logEvent(CLICK_AD_CARD, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
             }
         }) { item ->
             val bundle = Bundle().apply {

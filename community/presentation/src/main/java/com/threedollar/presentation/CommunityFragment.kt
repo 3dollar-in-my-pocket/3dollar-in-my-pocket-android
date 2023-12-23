@@ -1,9 +1,11 @@
 package com.threedollar.presentation
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,9 +18,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_AD_CARD
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
+import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
@@ -56,6 +62,15 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 putString("poll_id", it.poll.pollId)
             }
             eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("advertisement_id", item.advertisementId.toString())
+                }
+                eventTrackerListener.logEvent(CLICK_AD_CARD, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+            }
         })
     }
     private val storeAdapter by lazy {
@@ -75,7 +90,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
     private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
-    private val pollItems = mutableListOf<PollItem>()
+    private var advertisementModelV2: AdvertisementModelV2? = null
+    private val pollItems = mutableListOf<PollListData>()
     private var categoryId = ""
     private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
@@ -83,13 +99,18 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 val pollItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) intent.getParcelableExtra("pollItem", PollItem::class.java)
                 else intent.getParcelableExtra("pollItem")
                 if (pollItem == null) return@registerForActivityResult
-                val index = pollItems.indexOfFirst { item -> item.poll.pollId == pollItem.poll.pollId }
+                val index = pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollItem.poll.pollId) }
                 if (index > -1) {
-                    pollItems[index] = pollItem
+                    pollItems[index] = PollListData.Poll(pollItem)
                     pollAdapter.submitList(pollItems.toList())
                 }
             }
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentCommunityBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
@@ -180,7 +201,11 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.pollItems.collect {
                         if (it.isEmpty()) return@collect
-                        pollItems.addAll(it.toList())
+                        pollItems.addAll(it.toList().map { poll -> PollListData.Poll(poll) })
+                        advertisementModelV2?.let { advertisement ->
+                            if (pollItems.size > 3) pollItems.add(2, PollListData.Ad(advertisement))
+                            else pollItems.add(PollListData.Ad(advertisement))
+                        }
                         pollAdapter.submitList(pollItems)
                     }
                 }
@@ -188,8 +213,9 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                     viewModel.pollSelected.collect {
                         val pollId = it.first
                         val optionId = it.second
-                        val selectPoll = pollItems.find { it.poll.pollId == pollId } ?: return@collect
-                        pollItems[pollItems.indexOfFirst { it.poll.pollId == pollId }] = selectedPoll(selectPoll, optionId)
+                        val selectPoll = pollItems.find { pollListData -> pollListData.isSelectPoll(pollId) } as? PollListData.Poll ?: return@collect
+                        pollItems[pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollId) }] =
+                            PollListData.Poll(selectedPoll(selectPoll.pollItem, optionId))
                         pollAdapter.submitList(pollItems)
                         pollAdapter.notifyDataSetChanged()
                     }
@@ -216,10 +242,16 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
                 }
+                launch {
+                    viewModel.advertisements.collect {
+                        advertisementModelV2 = it.firstOrNull()
+                    }
+                }
             }
         }
     }
 
+    private fun PollListData.isSelectPoll(pollId: String) = if (this is PollListData.Poll) this.pollItem.poll.pollId == pollId else false
     private fun selectedPopular(isReview: Boolean) {
         binding.twPopularMostReview.isSelected = isReview
         binding.twPopularMostVisits.isSelected = !isReview

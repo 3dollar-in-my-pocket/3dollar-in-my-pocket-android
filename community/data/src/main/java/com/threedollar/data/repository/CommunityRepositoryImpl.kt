@@ -1,8 +1,10 @@
 package com.threedollar.data.repository
 
+
 import com.home.domain.data.store.ReportReasonsModel
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.data.datasource.CommunityDataSource
 import com.threedollar.data.mapper.asModel
 import com.threedollar.data.mapper.toCommentIdMapper
@@ -15,6 +17,7 @@ import com.threedollar.data.mapper.toPollItemMapper
 import com.threedollar.data.mapper.toPollListMapper
 import com.threedollar.data.mapper.toPopularStoresMapper
 import com.threedollar.data.mapper.toUserPollItemListMapper
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.CreatePolicy
@@ -222,5 +225,15 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
                 error = it.error
             )
         }
+
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(position).map {
+        BaseResponse(
+            ok = it.ok,
+            data = it.data?.advertisements.orEmpty().map { it.asModel() },
+            message = it.message,
+            resultCode = it.resultCode,
+            error = it.error
+        )
+    }
 
 }

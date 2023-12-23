@@ -1,12 +1,12 @@
 package com.threedollar.presentation.poll
 
 import androidx.lifecycle.viewModelScope
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ReportReasonsModel
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CommentId
-import com.threedollar.domain.data.DefaultResponse
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.repository.CommunityRepository
@@ -49,6 +49,9 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     val pollComment: SharedFlow<PollCommentList> get() = _pollComment.asSharedFlow()
     private val _toast: MutableSharedFlow<String> = MutableSharedFlow()
     val toast: SharedFlow<String> = _toast.asSharedFlow()
+
+    private val _pollAd = MutableSharedFlow<List<AdvertisementModelV2>>()
+    val pollAd: SharedFlow<List<AdvertisementModelV2>> get() = _pollAd.asSharedFlow()
 
     init {
         getReportList(ReportReasonsGroupType.POLL)

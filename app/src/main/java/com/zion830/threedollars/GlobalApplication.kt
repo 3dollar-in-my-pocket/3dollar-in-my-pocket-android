@@ -11,7 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
@@ -47,7 +47,7 @@ class GlobalApplication : Application() {
         var loginPlatform: LoginType = LoginType.NONE
             private set
 
-        var storeMarker = AdvertisementModel()
+        var storeMarker: AdvertisementModelV2? = null
 
         @JvmStatic
         fun getContext(): Context {

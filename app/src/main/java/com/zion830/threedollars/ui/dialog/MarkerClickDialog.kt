@@ -51,8 +51,8 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
                     putString("advertisement_id", advertisementModel.advertisementId.toString())
                 }
                 EventTracker.logEvent(Constants.CLICK_BOTTOM_BUTTON, bundle)
-                if (advertisementModel.linkUrl.isNotNullOrEmpty()) {
-                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.linkUrl)))
+                if (advertisementModel.link.url.isNotNullOrEmpty()) {
+                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.link.url)))
                 }
             }
         }
@@ -70,12 +70,12 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
                 launch {
                     viewModel.popupsResponse.collect {
                         Glide.with(requireContext())
-                            .load(it?.imageUrl)
+                            .load(it?.image?.url)
                             .transform(GranularRoundedCorners(30f, 30f, 0f, 0f))
                             .into(binding.bannerImageView)
-                        binding.titleTextView.text = it?.title
-                        binding.bodyTextView.text = it?.subTitle
-                        binding.downloadTextView.text = it?.extraContent
+                        binding.titleTextView.text = it?.title?.content
+                        binding.bodyTextView.text = it?.subTitle?.content
+                        binding.downloadTextView.text = it?.extra?.content
                     }
                 }
             }
