@@ -4,19 +4,19 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
+import com.threedollar.common.listener.EventTrackerListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
@@ -24,7 +24,6 @@ import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.threedollar.presentation.polls.PollListActivity
 import com.threedollar.presentation.utils.selectedPoll
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -36,13 +35,27 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
 
     @Inject
     lateinit var activityStarter: ActivityStarter
+
+    @Inject
+    lateinit var eventTrackerListener: EventTrackerListener
     private val pollAdapter: CommunityPollAdapter by lazy {
         CommunityPollAdapter(choicePoll = { pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("poll_id", pollId)
+                putString("option_id", optionId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
         }, clickPoll = {
             registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
                 putExtra("id", it.poll.pollId)
             })
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("poll_id", it.poll.pollId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
         })
     }
     private val storeAdapter by lazy {
@@ -52,7 +65,12 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
             } else {
                 activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
             }
-
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("store_id", it.storeId)
+                putString("type", it.storeType)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_STORE, bundle)
         }
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
@@ -106,15 +124,33 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                             it.district
                         )
                     }.show(childFragmentManager, "")
+                    val bundle = Bundle().apply {
+                        putString("screen", "community")
+                    }
+                    eventTrackerListener.logEvent(Constants.CLICK_DISTRICT, bundle)
                 }
 
             }
         }
         binding.clPopularMostReview.onSingleClick {
-            if (!binding.twPopularMostReview.isSelected) selectedPopular(true)
+            if (!binding.twPopularMostReview.isSelected) {
+                selectedPopular(true)
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("value", "MOST_REVIEWS")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POPULAR_FILTER, bundle)
+            }
         }
         binding.clPopularMostVisits.onSingleClick {
-            if (!binding.twPopularMostVisits.isSelected) selectedPopular(false)
+            if (!binding.twPopularMostVisits.isSelected) {
+                selectedPopular(false)
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("value", "MOST_VISITS")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POPULAR_FILTER, bundle)
+            }
         }
         binding.twPollListTitle.onSingleClick {
             if (categoryId.isNotEmpty()) {
