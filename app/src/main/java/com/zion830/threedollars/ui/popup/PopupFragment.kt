@@ -16,8 +16,6 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
@@ -142,10 +140,12 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
 
         private fun isExistInfo(intent: Intent?): Boolean {
             return try {
-                intent != null && requireActivity().packageManager.getPackageInfo(
-                    intent.`package`.toString(),
-                    PackageManager.GET_ACTIVITIES
-                ) != null
+                activity?.let {
+                    intent != null && it.packageManager.getPackageInfo(
+                        intent.`package`.toString(),
+                        PackageManager.GET_ACTIVITIES
+                    ) != null
+                } ?: false
             } catch (e: PackageManager.NameNotFoundException) {
                 false
             }
