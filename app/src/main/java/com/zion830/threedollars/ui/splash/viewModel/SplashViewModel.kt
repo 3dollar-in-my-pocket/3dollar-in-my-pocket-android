@@ -96,15 +96,19 @@ class SplashViewModel @Inject constructor(
             _msgTextId.postValue(R.string.connection_failed)
             return
         }
-        val token = GoogleAuthUtil.getToken(
-            GlobalApplication.getContext(),
-            account.account!!,
-            "oauth2:https://www.googleapis.com/auth/plus.me",
-        )
+        try {
+            val token = GoogleAuthUtil.getToken(
+                GlobalApplication.getContext(),
+                account.account!!,
+                "oauth2:https://www.googleapis.com/auth/plus.me",
+            )
 
-        LegacySharedPrefUtils.saveGoogleToken(token)
-        LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-        tryLogin()
+            LegacySharedPrefUtils.saveGoogleToken(token)
+            LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+            tryLogin()
+        } catch (e: Exception) {
+            _msgTextId.postValue(R.string.connection_failed)
+        }
     }
 
     fun refreshKakaoToken() {
