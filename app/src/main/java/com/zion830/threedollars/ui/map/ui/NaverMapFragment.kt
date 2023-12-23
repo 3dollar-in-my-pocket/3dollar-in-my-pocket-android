@@ -111,15 +111,17 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             val storeMarker = GlobalApplication.storeMarker
             if (storeMarker.imageUrl?.isNotEmpty() == true) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    storeMarker.imageUrl?.let {
-                        map.locationOverlay.icon = OverlayImage.fromBitmap(
-                            withContext(Dispatchers.IO) {
+                    try {
+                        storeMarker.imageUrl?.let {
+                            map.locationOverlay.icon = OverlayImage.fromBitmap(withContext(Dispatchers.IO) {
                                 it.urlToBitmap().get()
-                            },
-                        )
+                            })
+                        }
+                        map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
+                        map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
-                    map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
                 }
                 map.locationOverlay.setOnClickListener {
                     val bundle = Bundle().apply {
