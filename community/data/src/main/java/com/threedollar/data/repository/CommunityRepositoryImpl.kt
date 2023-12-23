@@ -4,6 +4,7 @@ package com.threedollar.data.repository
 import com.home.domain.data.store.ReportReasonsModel
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.data.datasource.CommunityDataSource
 import com.threedollar.data.mapper.asModel
 import com.threedollar.data.mapper.toCommentIdMapper
@@ -225,7 +226,7 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
             )
         }
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(position).map {
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(position).map {
         BaseResponse(
             ok = it.ok,
             data = it.data?.advertisements.orEmpty().map { it.asModel() },

@@ -19,6 +19,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -98,7 +99,7 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
     }
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>> = flow {
-        emit(apiResult(serverApi.getAdvertisements(position)))
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(apiResult(serverApi.getAdvertisements(position.name)))
     }
 }

@@ -18,6 +18,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 
 
@@ -39,5 +40,5 @@ interface CommunityDataSource {
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>>
     fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
-    fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>>
+    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>>
 }

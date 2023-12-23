@@ -23,6 +23,7 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -105,8 +106,8 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.postPushInformation(informationRequest)))
     }
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>> = flow {
-        emit(apiResult(serverApi.getAdvertisements(position)))
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(apiResult(serverApi.getAdvertisements(position.name)))
     }
 
     override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {

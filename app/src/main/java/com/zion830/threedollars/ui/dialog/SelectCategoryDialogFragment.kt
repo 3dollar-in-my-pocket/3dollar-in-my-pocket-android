@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.Constants
 import com.zion830.threedollars.Constants.CLICK_CATEGORY
 import com.zion830.threedollars.EventTracker
@@ -79,7 +80,7 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
-        popupViewModel.getPopups("MENU_CATEGORY_BANNER")
+        popupViewModel.getPopups(AdvertisementsPosition.MENU_CATEGORY_BANNER)
         initAdapter()
         initFlow()
     }

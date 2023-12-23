@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.datasource.UserDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
 
     fun getPopups() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAdvertisements("STORE_MARKER_POPUP").collect {
+            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_MARKER_POPUP).collect {
                 if (it.ok) {
                     _popupsResponse.value = it.data?.first()
                 }

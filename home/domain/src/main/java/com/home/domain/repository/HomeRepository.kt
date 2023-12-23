@@ -20,6 +20,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
@@ -53,7 +54,7 @@ interface HomeRepository {
 
     fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModelV2>>>
+    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
 
     fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
 

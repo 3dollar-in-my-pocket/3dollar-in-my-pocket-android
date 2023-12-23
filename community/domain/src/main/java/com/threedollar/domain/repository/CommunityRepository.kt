@@ -3,6 +3,7 @@ package com.threedollar.domain.repository
 import com.home.domain.data.store.ReportReasonsModel
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.CommentId
@@ -35,5 +36,5 @@ interface CommunityRepository {
     fun getNeighborhoods(): Flow<BaseResponse<Neighborhoods>>
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<PopularStores>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
-    fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModelV2>>>
+    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
 }

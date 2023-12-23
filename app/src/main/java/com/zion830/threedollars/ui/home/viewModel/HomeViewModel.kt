@@ -12,6 +12,7 @@ import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -152,7 +153,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private fun getAdvertisement() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAdvertisements("MAIN_PAGE_CARD").collect {
+            homeRepository.getAdvertisements(AdvertisementsPosition.MAIN_PAGE_CARD).collect {
                 if (it.ok) {
                     _advertisementModel.value = it.data?.firstOrNull()
                 } else {

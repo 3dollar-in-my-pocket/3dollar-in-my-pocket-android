@@ -22,6 +22,7 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
+import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
@@ -50,7 +51,7 @@ interface HomeRemoteDataSource {
 
     fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: String): Flow<BaseResponse<AdvertisementResponse>>
+    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>>
 
     fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
 

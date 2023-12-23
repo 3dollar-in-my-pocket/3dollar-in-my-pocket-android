@@ -164,6 +164,11 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                     }
                 }
+                launch {
+                    viewModel.advertisements.collect {
+
+                    }
+                }
             }
         }
 

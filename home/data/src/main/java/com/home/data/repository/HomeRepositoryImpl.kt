@@ -37,6 +37,7 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -130,7 +131,7 @@ class HomeRepositoryImpl @Inject constructor(
     override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.postPushInformation(PushInformationRequest(pushToken = pushToken))
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModelV2>>> =
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> =
         homeRemoteDataSource.getAdvertisements(position).map {
             BaseResponse(
                 ok = it.ok,

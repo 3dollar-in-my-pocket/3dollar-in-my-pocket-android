@@ -7,6 +7,7 @@ import com.home.domain.repository.HomeRepository
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.zion830.threedollars.Constants.BOSS_STORE
@@ -63,7 +64,7 @@ class SplashViewModel @Inject constructor(
                 }
             }
 
-            homeRepository.getAdvertisements("STORE_MARKER").collect {
+            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_MARKER).collect {
                 if (it.ok) {
                     val advertisements = it.data.orEmpty()
                     if (advertisements.isNotEmpty()) {
