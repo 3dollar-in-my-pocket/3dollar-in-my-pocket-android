@@ -9,28 +9,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.DialogCreatePollBinding
+import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import zion830.com.common.base.onSingleClick
 
-class CreatePollDialog : DialogFragment() {
+class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
 
-    private lateinit var binding: DialogCreatePollBinding
     private var createClick: (String, String, String) -> Unit = { _, _, _ -> }
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogCreatePollBinding =
+        DialogCreatePollBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "CreatePollDialog", screenName = "create_poll")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.DialogStyle)
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DialogCreatePollBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun initViews() {
+        pollInfoSetting()
+        initButton()
+        initEditText()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        pollInfoSetting()
+    private fun initButton() {
         binding.btnCreate.isEnabled = false
         binding.btnCreate.isSelected = false
         binding.btnCreate.onSingleClick {
@@ -41,10 +46,13 @@ class CreatePollDialog : DialogFragment() {
             dismiss()
         }
         binding.btnCancel.onSingleClick { dismiss() }
+    }
+
+    private fun initEditText() {
         binding.editPollName.addTextChangedListener {
             checkCreateEnable()
             val textLength = it.toString().length
-            val colorForN = if (textLength > 0) resources.getColor(R.color.pink) else resources.getColor(R.color.gray60)
+            val colorForN = if (textLength > 0) resources.getColor(R.color.pink, null) else resources.getColor(R.color.gray60, null)
             val spannableString = SpannableString("$textLength/20")
 
             spannableString.setSpan(
@@ -55,7 +63,7 @@ class CreatePollDialog : DialogFragment() {
             )
 
             spannableString.setSpan(
-                ForegroundColorSpan(resources.getColor(R.color.gray30)),
+                ForegroundColorSpan(resources.getColor(R.color.gray30, null)),
                 spannableString.indexOf("/"),
                 spannableString.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -85,7 +93,7 @@ class CreatePollDialog : DialogFragment() {
         val span1Start = fullText.indexOf("3일 동안")
         val span1End = span1Start + "3일 동안".length
         spannableString.setSpan(
-            ForegroundColorSpan(resources.getColor(R.color.gray100)),
+            ForegroundColorSpan(resources.getColor(R.color.gray100,null)),
             span1Start,
             span1End,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -94,7 +102,7 @@ class CreatePollDialog : DialogFragment() {
         val span2Start = fullText.indexOf("1일 1회")
         val span2End = span2Start + "1일 1회".length
         spannableString.setSpan(
-            ForegroundColorSpan(resources.getColor(R.color.gray100)),
+            ForegroundColorSpan(resources.getColor(R.color.gray100,null)),
             span2Start,
             span2End,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

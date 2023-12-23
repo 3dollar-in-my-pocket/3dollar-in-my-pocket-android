@@ -1,20 +1,21 @@
 package com.threedollar.presentation.dialog
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.home.domain.data.store.ReasonModel
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
 import zion830.com.common.base.onSingleClick
 
-class ReportChoiceDialog : BottomSheetDialogFragment() {
-    private lateinit var binding: DialogReportChoiceBinding
+class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBinding>() {
     private val reportList = mutableListOf<ReasonModel>()
     private var reportCallBack: (ReasonModel, String?) -> Unit = { _, _ -> }
     private lateinit var choiceReasonModel: ReasonModel
+    private var type = Type.POLL
     private val adapter by lazy {
         ReportChoiceAdapter(choiceClick)
     }
@@ -24,16 +25,22 @@ class ReportChoiceDialog : BottomSheetDialogFragment() {
         adapter.setChoiceReasonModel(choiceReasonModel)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DialogReportChoiceBinding.inflate(inflater)
-        return binding.root
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogReportChoiceBinding =
+        DialogReportChoiceBinding.inflate(inflater, container, false)
+
+
+    override fun initView() {
+        initAdapter()
+        initButton()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun initAdapter() {
         adapter.setChoiceReasonModel(choiceReasonModel)
         binding.recyclerNeighbor.adapter = adapter
         adapter.submitList(reportList)
+    }
+
+    private fun initButton() {
         binding.imgClose.onSingleClick { dismiss() }
         binding.twReport.onSingleClick {
             reportCallBack(choiceReasonModel, binding.etReport.text.toString())
@@ -41,8 +48,29 @@ class ReportChoiceDialog : BottomSheetDialogFragment() {
         }
     }
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(
+            className = "ReportChoiceDialog", screenName = when (type) {
+                Type.POLL -> "report_poll"
+                Type.COMMENT -> "report_review"
+            }
+        )
+    }
+
+    override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+        val behavior = BottomSheetBehavior.from<View>(bottomSheet)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
     fun setReportCallback(callBack: (ReasonModel, String?) -> Unit): ReportChoiceDialog {
         reportCallBack = callBack
+        return this
+    }
+
+    fun setType(type: Type): ReportChoiceDialog {
+        this.type = type
         return this
     }
 
@@ -50,5 +78,9 @@ class ReportChoiceDialog : BottomSheetDialogFragment() {
         reportList.addAll(list)
         choiceReasonModel = reportList.first()
         return this
+    }
+
+    enum class Type {
+        POLL, COMMENT
     }
 }

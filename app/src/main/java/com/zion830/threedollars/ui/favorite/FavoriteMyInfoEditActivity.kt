@@ -43,7 +43,7 @@ class FavoriteMyInfoEditActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FavoriteMyInfoEditActivity")
+        setFirebaseAnalyticsLogEvent(className = "FavoriteMyInfoEditActivity", screenName = null)
     }
 
     private fun changeText() {

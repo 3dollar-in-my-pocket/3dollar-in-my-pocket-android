@@ -10,7 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
@@ -74,7 +74,7 @@ class BossReviewActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity")
+        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity",screenName = "boss_store_review")
     }
 
     private fun iniFlows() {

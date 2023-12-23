@@ -95,7 +95,7 @@ class SplashActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SplashActivity")
+        setFirebaseAnalyticsLogEvent(className = "SplashActivity", screenName = null)
     }
 
     private fun initFlow() {

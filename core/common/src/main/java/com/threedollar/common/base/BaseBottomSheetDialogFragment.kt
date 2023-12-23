@@ -36,15 +36,15 @@ abstract class BaseBottomSheetDialogFragment<B : ViewBinding> : BottomSheetDialo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        initFirebaseAnalytics()
         initView()
     }
-    override fun onResume() {
-        super.onResume()
-        initFirebaseAnalytics()
-    }
-    fun setFirebaseAnalyticsLogEvent(className: String) {
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+            screenName?.let {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            }
         }
     }
 

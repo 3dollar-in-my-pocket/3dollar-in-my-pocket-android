@@ -28,17 +28,12 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         setContentView(binding.root)
         initView()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
+        initFirebaseAnalytics()
         viewModel.msgTextId.observe(this) {
             if (it >= 0) {
                 binding.root.showSnack(it)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initFirebaseAnalytics()
     }
 
     abstract fun initView()
@@ -63,9 +58,12 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
         return ret
     }
-    fun setFirebaseAnalyticsLogEvent(className: String) {
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+            screenName?.let {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            }
         }
     }
     private fun hideKeyboard() {

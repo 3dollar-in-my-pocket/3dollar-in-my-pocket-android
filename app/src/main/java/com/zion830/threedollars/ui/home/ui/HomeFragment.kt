@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -31,16 +30,16 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.BOSS_STORE
-import com.zion830.threedollars.Constants.CLICK_ADDRESS_FIELD
-import com.zion830.threedollars.Constants.CLICK_AD_CARD
-import com.zion830.threedollars.Constants.CLICK_BOSS_FILTER
-import com.zion830.threedollars.Constants.CLICK_CATEGORY_FILTER
-import com.zion830.threedollars.Constants.CLICK_MARKER
-import com.zion830.threedollars.Constants.CLICK_SORTING
-import com.zion830.threedollars.Constants.CLICK_STORE
-import com.zion830.threedollars.Constants.CLICK_VISIT
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.CLICK_ADDRESS_FIELD
+import com.threedollar.common.utils.Constants.CLICK_AD_CARD
+import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
+import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
+import com.threedollar.common.utils.Constants.CLICK_MARKER
+import com.threedollar.common.utils.Constants.CLICK_SORTING
+import com.threedollar.common.utils.Constants.CLICK_STORE
+import com.threedollar.common.utils.Constants.CLICK_VISIT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -92,7 +91,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("HomeFragment")
+        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
     }
 
     private fun initScroll() {

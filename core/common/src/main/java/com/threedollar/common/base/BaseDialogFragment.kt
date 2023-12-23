@@ -9,11 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 
 abstract class BaseDialogFragment<B : ViewBinding> :
     DialogFragment() {
 
     protected lateinit var binding: B
+
+    protected lateinit var firebaseAnalytics: FirebaseAnalytics
 
     private var heightRatio = -1f  // default
     private var widthRatio = 0.88888889f // default
@@ -59,9 +63,20 @@ abstract class BaseDialogFragment<B : ViewBinding> :
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        initFirebaseAnalytics()
         initViews()
     }
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
+            screenName?.let {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            }
+        }
+    }
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
+    abstract fun initFirebaseAnalytics()
 
     abstract fun initViews()
     companion object {

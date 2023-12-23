@@ -4,18 +4,19 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
+import com.threedollar.common.listener.EventTrackerListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
@@ -23,20 +24,40 @@ import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.threedollar.presentation.polls.PollListActivity
 import com.threedollar.presentation.utils.selectedPoll
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CommunityFragment : Fragment(R.layout.fragment_community) {
-    private lateinit var binding: FragmentCommunityBinding
-    private val viewModel: CommunityViewModel by viewModels()
+class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewModel>() {
+    override val viewModel: CommunityViewModel by viewModels()
 
     @Inject
     lateinit var activityStarter: ActivityStarter
-    private lateinit var pollAdapter: CommunityPollAdapter
+
+    @Inject
+    lateinit var eventTrackerListener: EventTrackerListener
+    private val pollAdapter: CommunityPollAdapter by lazy {
+        CommunityPollAdapter(choicePoll = { pollId, optionId ->
+            viewModel.votePoll(pollId, optionId)
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("poll_id", pollId)
+                putString("option_id", optionId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
+        }, clickPoll = {
+            registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
+                putExtra("id", it.poll.pollId)
+            })
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("poll_id", it.poll.pollId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
+        })
+    }
     private val storeAdapter by lazy {
         CommunityStoreAdapter {
             if (it.storeType == "BOSS_STORE") {
@@ -44,7 +65,12 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
             } else {
                 activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toIntOrNull())
             }
-
+            val bundle = Bundle().apply {
+                putString("screen", "community")
+                putString("store_id", it.storeId)
+                putString("type", it.storeType)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_STORE, bundle)
         }
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
@@ -66,28 +92,30 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCommunityBinding.inflate(inflater)
-        pollAdapter =
-            CommunityPollAdapter(choicePoll = { pollId, optionId ->
-                viewModel.votePoll(pollId, optionId)
-            }, clickPoll = {
-                registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
-                    putExtra("id", it.poll.pollId)
-                })
-            })
-        return binding.root
+    override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
+        FragmentCommunityBinding.inflate(inflater, container, false)
+
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "CommunityFragment", screenName = "community")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initView() {
         selectedPopular(true)
+        initAdapter()
+        initButton()
+        initFlow()
+    }
+
+    private fun initAdapter() {
         binding.recyclerPoll.adapter = pollAdapter
         binding.recyclerPopularStore.adapter = storeAdapter
+    }
+
+    private fun initButton() {
         binding.twAreaChoice.onSingleClick {
             choiceNeighborhood?.let { neighborhood ->
-                seoulNeighborhoods?.let {
-                    NeighborHoodsChoiceDialog().setNeighborHoods(it).setChoiceNeighborhood(neighborhood).setItemClick {
+                seoulNeighborhoods?.let { seoulNeighborhoods ->
+                    NeighborHoodsChoiceDialog().setNeighborHoods(seoulNeighborhoods).setChoiceNeighborhood(neighborhood).setItemClick {
                         binding.twAreaChoice.text = it.description
                         choiceNeighborhood = it
                         binding.twAreaChoice.text = it.description
@@ -96,24 +124,48 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                             it.district
                         )
                     }.show(childFragmentManager, "")
+                    val bundle = Bundle().apply {
+                        putString("screen", "community")
+                    }
+                    eventTrackerListener.logEvent(Constants.CLICK_DISTRICT, bundle)
                 }
 
             }
         }
         binding.clPopularMostReview.onSingleClick {
-            if (!binding.twPopularMostReview.isSelected) selectedPopular(true)
+            if (!binding.twPopularMostReview.isSelected) {
+                selectedPopular(true)
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("value", "MOST_REVIEWS")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POPULAR_FILTER, bundle)
+            }
         }
         binding.clPopularMostVisits.onSingleClick {
-            if (!binding.twPopularMostVisits.isSelected) selectedPopular(false)
+            if (!binding.twPopularMostVisits.isSelected) {
+                selectedPopular(false)
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("value", "MOST_VISITS")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POPULAR_FILTER, bundle)
+            }
         }
         binding.twPollListTitle.onSingleClick {
             if (categoryId.isNotEmpty()) {
                 startActivity(Intent(requireContext(), PollListActivity::class.java).apply {
                     putExtra("category", categoryId)
                 })
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POLL_CATEGORY, bundle)
             }
         }
+    }
 
+    private fun initFlow() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
@@ -166,7 +218,6 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 }
             }
         }
-
     }
 
     private fun selectedPopular(isReview: Boolean) {

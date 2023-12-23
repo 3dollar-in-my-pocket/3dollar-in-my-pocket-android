@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
@@ -140,6 +140,6 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FavoriteMyFolderActivity")
+        setFirebaseAnalyticsLogEvent(className = "FavoriteMyFolderActivity", screenName = null)
     }
 }

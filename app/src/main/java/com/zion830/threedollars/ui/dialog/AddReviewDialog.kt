@@ -12,8 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.home.domain.data.store.ReviewContentModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_REVIEW_BOTTOM_BUTTON
+import com.threedollar.common.utils.Constants.CLICK_REVIEW_BOTTOM_BUTTON
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
@@ -51,7 +50,7 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AddReviewDialog")
+        setFirebaseAnalyticsLogEvent(className = "AddReviewDialog", screenName = "review_bottom_sheet")
     }
 
     private fun initButton() {

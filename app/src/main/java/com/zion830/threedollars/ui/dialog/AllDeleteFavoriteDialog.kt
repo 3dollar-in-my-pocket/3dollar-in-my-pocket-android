@@ -16,6 +16,10 @@ class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBindin
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAllDeleteFavoriteBinding =
         DialogAllDeleteFavoriteBinding.inflate(inflater, container, false)
 
+    override fun initFirebaseAnalytics() {
+        setFirebaseAnalyticsLogEvent(className = "AllDeleteFavoriteDialog", screenName = null)
+    }
+
     private var listener: DialogListener? = null
 
     interface DialogListener {

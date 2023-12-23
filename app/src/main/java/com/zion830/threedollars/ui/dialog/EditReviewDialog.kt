@@ -33,7 +33,7 @@ class EditReviewDialog(
         DialogAddReviewBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditReviewDialog")
+        setFirebaseAnalyticsLogEvent(className = "EditReviewDialog",screenName = "review_bottom_sheet")
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

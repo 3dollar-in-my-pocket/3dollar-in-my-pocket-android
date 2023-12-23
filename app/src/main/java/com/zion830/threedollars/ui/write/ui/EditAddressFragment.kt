@@ -40,7 +40,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditAddressFragment")
+        setFirebaseAnalyticsLogEvent(className = "EditAddressFragment", screenName = "write_address")
     }
 
     private fun initMap() {

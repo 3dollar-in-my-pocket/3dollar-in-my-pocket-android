@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.toStringDefault
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FavoriteViewerActivity")
+        setFirebaseAnalyticsLogEvent(className = "FavoriteViewerActivity", screenName = null)
     }
 
     override val viewModel: FavoriteViewerViewModel by viewModels()

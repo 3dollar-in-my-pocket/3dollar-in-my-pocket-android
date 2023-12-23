@@ -11,8 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.R
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
@@ -61,7 +60,7 @@ class MyVisitHistoryFragment :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyVisitHistoryFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyVisitHistoryFragment", screenName = null)
     }
 
     private fun observeUiData() {
