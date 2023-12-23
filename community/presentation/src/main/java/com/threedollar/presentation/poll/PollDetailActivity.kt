@@ -201,9 +201,11 @@ class PollDetailActivity : AppCompatActivity() {
     }
 
     override fun finish() {
-        setResult(RESULT_OK, Intent().apply {
-            putExtra("pollItem", pollItem)
-        })
+        if (::pollItem.isInitialized) {
+            setResult(RESULT_OK, Intent().apply {
+                putExtra("pollItem", pollItem)
+            })
+        }
         activityStarter.activityNavigateToMainActivityOnCloseIfNeeded(this)
         super.finish()
     }
