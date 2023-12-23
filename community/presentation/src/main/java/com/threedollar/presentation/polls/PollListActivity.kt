@@ -143,6 +143,13 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
                         startDateTime = formattedDate
                     )
                 )
+                val bundle = Bundle().apply {
+                    putString("screen", "create_poll")
+                    putString("title", title)
+                    putString("poll_first_option", first)
+                    putString("poll_second_option", second)
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
             }.show(supportFragmentManager, "")
         }
         binding.imgClose.onSingleClick { finish() }
