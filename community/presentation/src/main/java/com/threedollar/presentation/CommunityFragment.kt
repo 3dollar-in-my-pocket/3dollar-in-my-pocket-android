@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,10 +17,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
-import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.common.listener.EventTrackerListener
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_AD_CARD
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.data.PollListData
@@ -60,6 +62,15 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 putString("poll_id", it.poll.pollId)
             }
             eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                    putString("advertisement_id", item.advertisementId.toString())
+                }
+                eventTrackerListener.logEvent(CLICK_AD_CARD, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+            }
         })
     }
     private val storeAdapter by lazy {
@@ -97,28 +108,11 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCommunityBinding.inflate(inflater)
-        pollAdapter =
-            CommunityPollAdapter(choicePoll = { pollId, optionId ->
-                viewModel.votePoll(pollId, optionId)
-            }, clickPoll = {
-                registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
-                    putExtra("id", it.poll.pollId)
-                })
-            }, object : OnItemClickListener<AdvertisementModelV2> {
-                override fun onClick(item: AdvertisementModelV2) {
-//                    val bundle = Bundle().apply {
-//                        putString("screen", "community")
-//                        putString("advertisement_id", item.advertisementId.toString())
-//                    }
-//                    EventTracker.logEvent(CLICK_AD_CARD, bundle)
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
-                }
-            })
         return binding.root
     }
-    
+
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
         FragmentCommunityBinding.inflate(inflater, container, false)
 
