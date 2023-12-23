@@ -2,6 +2,7 @@ package com.threedollar.presentation.polls
 
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -10,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.listener.EventTrackerListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -24,10 +27,13 @@ import zion830.com.common.base.onSingleClick
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel>({ ActivityPollListBinding.inflate(it) }) {
 
+    @Inject
+    lateinit var eventTrackerListener: EventTrackerListener
     override val viewModel: PollListViewModel by viewModels()
     private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
@@ -46,10 +52,21 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
     private val adapter: PollListAdapter by lazy {
         PollListAdapter({ pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
+            val bundle = Bundle().apply {
+                putString("screen", "poll_list")
+                putString("poll_id", pollId)
+                putString("option_id", optionId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
         }, {
             registerPollDetail.launch(Intent(this, PollDetailActivity::class.java).apply {
                 putExtra("id", it.poll.pollId)
             })
+            val bundle = Bundle().apply {
+                putString("screen", "poll_list")
+                putString("poll_id", it.poll.pollId)
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
         })
     }
     private val pollItems = mutableListOf<PollItem?>()
@@ -102,7 +119,13 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
 
     private fun initButton() {
         binding.clPollLatest.onSingleClick {
-            if (!binding.twPollLatest.isSelected) selectedPollMenu(true)
+            if (!binding.twPollLatest.isSelected) {
+                selectedPollMenu(true)
+                val bundle = Bundle().apply {
+                    putString("screen", "poll_list")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
+            }
         }
         binding.clPollPopular.onSingleClick {
             if (!binding.twPollPopular.isSelected) selectedPollMenu(false)

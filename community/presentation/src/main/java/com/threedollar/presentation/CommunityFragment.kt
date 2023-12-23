@@ -157,6 +157,10 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 startActivity(Intent(requireContext(), PollListActivity::class.java).apply {
                     putExtra("category", categoryId)
                 })
+                val bundle = Bundle().apply {
+                    putString("screen", "community")
+                }
+                eventTrackerListener.logEvent(Constants.CLICK_POLL_CATEGORY, bundle)
             }
         }
     }
