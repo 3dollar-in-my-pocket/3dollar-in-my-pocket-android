@@ -1,12 +1,18 @@
 package com.threedollar.presentation
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.PollItem
+import com.threedollar.presentation.data.PollListData
+import com.threedollar.presentation.databinding.ItemPollAdBinding
 import com.threedollar.presentation.databinding.ItemPollBinding
 import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
@@ -15,17 +21,50 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
-class CommunityPollAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
-    ListAdapter<PollItem, CommunityPollViewHolder>(BaseDiffUtilCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommunityPollViewHolder {
-        return CommunityPollViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+class CommunityPollAdapter(
+    private val choicePoll: (String, String) -> Unit,
+    private val clickPoll: (PollItem) -> Unit,
+    private val adClick: OnItemClickListener<AdvertisementModelV2>
+) :
+    ListAdapter<PollListData, ViewHolder>(BaseDiffUtilCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return if (viewType == 0) CommunityPollAdViewHolder(ItemPollAdBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        else CommunityPollViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: CommunityPollViewHolder, position: Int) {
-        holder.onBind(getItem(position), choicePoll, clickPoll)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        when (val item = getItem(position)) {
+            is PollListData.Ad -> {
+                (holder as CommunityPollAdViewHolder).onBind(item.advertisementModelV2, adClick)
+            }
+
+            is PollListData.Poll -> {
+                (holder as CommunityPollViewHolder).onBind(item.pollItem, choicePoll, clickPoll)
+            }
+        }
+
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is PollListData.Ad -> 0
+            is PollListData.Poll -> 1
+        }
+    }
+}
 
+class CommunityPollAdViewHolder(private val binding: ItemPollAdBinding) : ViewHolder(binding.root) {
+    fun onBind(advertisementModelV2: AdvertisementModelV2, adClick: OnItemClickListener<AdvertisementModelV2>) {
+        binding.clPollAd.onSingleClick {
+            adClick.onClick(advertisementModelV2)
+        }
+        binding.imgAd.loadUrlImg(advertisementModelV2.image.url)
+        binding.twAdSub.text = advertisementModelV2.subTitle.content
+        binding.twAdSub.setTextColor(Color.parseColor(advertisementModelV2.subTitle.fontColor))
+        binding.twAdTitle.text = advertisementModelV2.title.content
+        binding.twAdTitle.setTextColor(Color.parseColor(advertisementModelV2.title.fontColor))
+        binding.clPollAd.backgroundTintList = ColorStateList.valueOf(Color.parseColor(advertisementModelV2.background.color))
+    }
 }
 
 class CommunityPollViewHolder(private val binding: ItemPollBinding) : ViewHolder(binding.root) {

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clPollAd"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:background="@drawable/rect_round20"
+    android:backgroundTint="@color/white"
+    android:paddingHorizontal="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="16dp">
+
+    <ImageView
+        android:id="@+id/imgAd"
+        android:layout_width="0dp"
+        android:layout_height="94dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/twAdTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/gray90"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgAd" />
+
+    <TextView
+        android:id="@+id/twAdSub"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="@color/gray50"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twAdTitle" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rect_round40"
+        android:backgroundTint="@color/gray10"
+        android:gravity="center"
+        android:text="광고"
+        android:textColor="@color/gray50"
+        android:textSize="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twAdSub" />
+
+    <ImageView
+        android:id="@+id/imgArrow"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/gray50" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:text="자세히 보기"
+        android:textColor="@color/gray50"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/imgArrow"
+        app:layout_constraintEnd_toStartOf="@id/imgArrow"
+        app:layout_constraintTop_toTopOf="@id/imgArrow" />
+</androidx.constraintlayout.widget.ConstraintLayout>

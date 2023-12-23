@@ -1,6 +1,7 @@
 package com.threedollar.presentation
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,14 +17,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.listener.ActivityStarter
+import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
+import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.threedollar.presentation.polls.PollListActivity
 import com.threedollar.presentation.utils.selectedPoll
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -49,7 +52,8 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
     }
     private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
     private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
-    private val pollItems = mutableListOf<PollItem>()
+    private var advertisementModelV2: AdvertisementModelV2? = null
+    private val pollItems = mutableListOf<PollListData>()
     private var categoryId = ""
     private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
@@ -57,9 +61,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 val pollItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) intent.getParcelableExtra("pollItem", PollItem::class.java)
                 else intent.getParcelableExtra("pollItem")
                 if (pollItem == null) return@registerForActivityResult
-                val index = pollItems.indexOfFirst { item -> item.poll.pollId == pollItem.poll.pollId }
+                val index = pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollItem.poll.pollId) }
                 if (index > -1) {
-                    pollItems[index] = pollItem
+                    pollItems[index] = PollListData.Poll(pollItem)
                     pollAdapter.submitList(pollItems.toList())
                 }
             }
@@ -75,6 +79,15 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 registerPollDetail.launch(Intent(requireActivity(), PollDetailActivity::class.java).apply {
                     putExtra("id", it.poll.pollId)
                 })
+            }, object : OnItemClickListener<AdvertisementModelV2> {
+                override fun onClick(item: AdvertisementModelV2) {
+//                    val bundle = Bundle().apply {
+//                        putString("screen", "community")
+//                        putString("advertisement_id", item.advertisementId.toString())
+//                    }
+//                    EventTracker.logEvent(CLICK_AD_CARD, bundle)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
             })
         return binding.root
     }
@@ -128,7 +141,11 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 launch {
                     viewModel.pollItems.collect {
                         if (it.isEmpty()) return@collect
-                        pollItems.addAll(it.toList())
+                        pollItems.addAll(it.toList().map { poll -> PollListData.Poll(poll) })
+                        advertisementModelV2?.let { advertisement ->
+                            if (pollItems.size > 3) pollItems.add(2, PollListData.Ad(advertisement))
+                            else pollItems.add(PollListData.Ad(advertisement))
+                        }
                         pollAdapter.submitList(pollItems)
                     }
                 }
@@ -136,8 +153,9 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                     viewModel.pollSelected.collect {
                         val pollId = it.first
                         val optionId = it.second
-                        val selectPoll = pollItems.find { it.poll.pollId == pollId } ?: return@collect
-                        pollItems[pollItems.indexOfFirst { it.poll.pollId == pollId }] = selectedPoll(selectPoll, optionId)
+                        val selectPoll = pollItems.find { pollListData -> pollListData.isSelectPoll(pollId) } as? PollListData.Poll ?: return@collect
+                        pollItems[pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollId) }] =
+                            PollListData.Poll(selectedPoll(selectPoll.pollItem, optionId))
                         pollAdapter.submitList(pollItems)
                         pollAdapter.notifyDataSetChanged()
                     }
@@ -166,7 +184,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
                 }
                 launch {
                     viewModel.advertisements.collect {
-
+                        advertisementModelV2 = it.firstOrNull()
                     }
                 }
             }
@@ -174,6 +192,7 @@ class CommunityFragment : Fragment(R.layout.fragment_community) {
 
     }
 
+    private fun PollListData.isSelectPoll(pollId: String) = if (this is PollListData.Poll) this.pollItem.poll.pollId == pollId else false
     private fun selectedPopular(isReview: Boolean) {
         binding.twPopularMostReview.isSelected = isReview
         binding.twPopularMostVisits.isSelected = !isReview

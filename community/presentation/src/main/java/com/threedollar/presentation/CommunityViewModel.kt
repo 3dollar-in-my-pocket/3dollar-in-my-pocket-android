@@ -47,8 +47,6 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     val advertisements: SharedFlow<List<AdvertisementModelV2>> get() = _advertisements
 
     init {
-        getPollCategories()
-        getNeighborhoods()
         getAdvertisements()
     }
 
@@ -57,6 +55,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
             communityRepository.getAdvertisements(AdvertisementsPosition.POLL_CARD).collect {
                 if (it.ok) _advertisements.emit(it.data.orEmpty())
                 else _toast.emit(it.message.orEmpty())
+                getPollCategories()
+                getNeighborhoods()
             }
         }
     }
