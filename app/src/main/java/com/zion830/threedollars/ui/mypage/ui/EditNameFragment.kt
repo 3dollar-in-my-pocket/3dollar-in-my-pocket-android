@@ -12,7 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -27,7 +27,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         FragmentEditNameBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditNameFragment")
+        setFirebaseAnalyticsLogEvent(className = "EditNameFragment", screenName = null)
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()

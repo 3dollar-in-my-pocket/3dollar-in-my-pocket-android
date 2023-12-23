@@ -14,7 +14,7 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants.USER_STORE
+import com.threedollar.common.utils.Constants.USER_STORE
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding

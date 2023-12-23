@@ -31,7 +31,7 @@ class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AskFragment")
+        setFirebaseAnalyticsLogEvent(className = "AskFragment", screenName = null)
     }
 
     private fun openEmailApp() {

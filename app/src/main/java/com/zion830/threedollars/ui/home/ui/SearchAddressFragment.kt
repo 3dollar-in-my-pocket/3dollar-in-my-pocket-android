@@ -13,9 +13,6 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.network.data.kakao.Document
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
@@ -56,7 +53,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SearchAddressFragment")
+        setFirebaseAnalyticsLogEvent(className = "SearchAddressFragment", screenName = null)
     }
 
     private fun initAdapter() {

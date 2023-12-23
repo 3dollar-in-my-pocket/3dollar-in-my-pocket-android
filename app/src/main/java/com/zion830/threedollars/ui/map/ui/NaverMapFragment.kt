@@ -22,7 +22,7 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
@@ -111,15 +111,18 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             val storeMarker = GlobalApplication.storeMarker ?: return
             if (storeMarker.image.url.isNotEmpty()) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    storeMarker.image.url.let {
-                        map.locationOverlay.icon = OverlayImage.fromBitmap(
-                            withContext(Dispatchers.IO) {
-                                it.urlToBitmap().get()
-                            },
-                        )
+                    try {
+                        storeMarker.image.url.let {
+                          map.locationOverlay.icon = OverlayImage.fromBitmap(
+                              withContext(Dispatchers.IO) {
+                                  it.urlToBitmap().get()
+                              })
+                        }
+                        map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
+                        map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                    map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
-                    map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
                 }
                 map.locationOverlay.setOnClickListener {
                     val bundle = Bundle().apply {

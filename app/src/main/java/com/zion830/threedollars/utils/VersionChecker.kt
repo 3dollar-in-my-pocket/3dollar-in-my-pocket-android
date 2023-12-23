@@ -5,7 +5,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 
 object VersionChecker {

@@ -7,7 +7,7 @@ import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showCustomBlackToast

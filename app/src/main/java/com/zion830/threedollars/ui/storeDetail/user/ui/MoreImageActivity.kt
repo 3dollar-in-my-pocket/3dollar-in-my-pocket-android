@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,7 +14,7 @@ import androidx.paging.PagingData
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityMoreImageBinding
@@ -64,7 +64,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MoreImageActivity")
+        setFirebaseAnalyticsLogEvent(className = "MoreImageActivity",screenName = null)
     }
     private fun initViewModel() {
         viewModel.getImage(storeId)
@@ -96,6 +96,12 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                 lifecycleScope.launch {
                     val images = getImageFiles(uriData)
                     if (images != null) {
+                        val bundle = Bundle().apply {
+                            putString("screen", "upload_photo")
+                            putString("store_id", storeId.toString())
+                            putString("count", images.size.toString())
+                        }
+                        EventTracker.logEvent(Constants.CLICK_UPLOAD, bundle)
                         viewModel.saveImages(images, storeId)
                     }
                 }

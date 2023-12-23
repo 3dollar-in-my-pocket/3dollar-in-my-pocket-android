@@ -63,7 +63,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("FAQFragment")
+        setFirebaseAnalyticsLogEvent(className = "FAQFragment", screenName = null)
     }
 
     private fun showDeleteAccountDialog() {

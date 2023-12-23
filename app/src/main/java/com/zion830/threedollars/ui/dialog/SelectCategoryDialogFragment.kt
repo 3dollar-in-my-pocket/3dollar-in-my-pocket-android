@@ -17,8 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_CATEGORY
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_CATEGORY
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
@@ -69,7 +69,7 @@ class SelectCategoryDialogFragment :
 
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SelectCategoryDialogFragment")
+        setFirebaseAnalyticsLogEvent(className = "SelectCategoryDialogFragment", screenName = "category_filter")
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

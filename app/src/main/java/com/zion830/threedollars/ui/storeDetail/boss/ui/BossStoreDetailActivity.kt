@@ -23,9 +23,9 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.loadImage
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_NAVIGATION
-import com.zion830.threedollars.Constants.CLICK_SNS
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
+import com.threedollar.common.utils.Constants.CLICK_SNS
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
@@ -100,7 +100,7 @@ class BossStoreDetailActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("BossStoreDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "BossStoreDetailActivity",screenName = "boss_store_detail")
     }
 
     private fun initAdapter() {

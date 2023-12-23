@@ -6,7 +6,7 @@ import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils

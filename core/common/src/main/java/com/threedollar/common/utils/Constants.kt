@@ -1,4 +1,4 @@
-package com.zion830.threedollars
+package com.threedollar.common.utils
 
 object Constants {
 
@@ -95,6 +95,14 @@ object Constants {
     // store delete
     const val DELETE_POPUP_CLOSE_BTN_CLICKED = "delete_request_popup_close_button_clicked"
     const val DELETE_REQUEST_SUBMIT_BTN_CLICKED = "delete_request_submit_button_clicked"
+
+    // community
+    const val CLICK_POLL = "click_poll"
+    const val CLICK_POLL_OPTION = "click_poll_option"
+    const val CLICK_POLL_CATEGORY = "click_poll_category"
+    const val CLICK_DISTRICT = "click_district"
+    const val CLICK_POPULAR_FILTER = "click_popular_filter"
+    const val CLICK_CREATE_POLL = "click_create_poll"
 
     // my info
     const val SETTING_BTN_CLICKED = "setting_button_clicked"

@@ -15,10 +15,9 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_EDIT_REVIEW
-import com.zion830.threedollars.Constants.CLICK_REPORT
-import com.zion830.threedollars.Constants.CLICK_SORT
+import com.threedollar.common.utils.Constants.CLICK_EDIT_REVIEW
+import com.threedollar.common.utils.Constants.CLICK_REPORT
+import com.threedollar.common.utils.Constants.CLICK_SORT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
@@ -27,7 +26,6 @@ import com.zion830.threedollars.ui.storeDetail.user.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -78,7 +76,7 @@ class StoreReviewDetailActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity", screenName = "review_list")
     }
 
     private fun initButton() {
