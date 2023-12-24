@@ -119,13 +119,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
 
     private fun initButton() {
         binding.clPollLatest.onSingleClick {
-            if (!binding.twPollLatest.isSelected) {
-                selectedPollMenu(true)
-                val bundle = Bundle().apply {
-                    putString("screen", "poll_list")
-                }
-                eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
-            }
+            if (!binding.twPollLatest.isSelected) selectedPollMenu(true)
         }
         binding.clPollPopular.onSingleClick {
             if (!binding.twPollPopular.isSelected) selectedPollMenu(false)
@@ -151,6 +145,10 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
                 }
                 eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
             }.show(supportFragmentManager, "")
+            val bundle = Bundle().apply {
+                putString("screen", "poll_list")
+            }
+            eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
         }
         binding.imgClose.onSingleClick { finish() }
     }
