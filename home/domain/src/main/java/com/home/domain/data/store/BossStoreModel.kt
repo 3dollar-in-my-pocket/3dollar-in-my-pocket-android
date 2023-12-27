@@ -14,5 +14,7 @@ data class BossStoreModel(
     val name: String = "",
     val snsUrl: String? = "",
     val storeId: String = "",
-    val updatedAt: String = ""
+    val updatedAt: String = "",
+    val isOwner: Boolean = false,
+    val accountNumbers: List<AccountNumberModel>? = listOf(),
 )
