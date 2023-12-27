@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.AppearanceDayModel
+import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
@@ -268,6 +270,8 @@ class BossStoreDetailActivity :
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
                         }
+
+                        initAccount(bossStoreDetailModel)
                     }
                 }
                 launch {
@@ -289,6 +293,22 @@ class BossStoreDetailActivity :
                     }
                 }
             }
+        }
+    }
+
+    private fun initAccount(bossStoreDetailModel: BossStoreDetailModel) {
+        val accountNumberModel = bossStoreDetailModel.store.accountNumbers?.firstOrNull()
+        if (accountNumberModel != null) {
+            binding.accountCardView.isVisible = true
+            binding.accountNumberTextView.text =
+                "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
+            binding.accountCopyButton.setOnClickListener {
+                val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                manager.text = accountNumberModel.accountNumber
+                showToast("계좌번호가 복사되었습니다.")
+            }
+        } else {
+            binding.accountCardView.isVisible = false
         }
     }
 
