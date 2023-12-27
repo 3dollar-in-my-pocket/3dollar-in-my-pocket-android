@@ -504,6 +504,7 @@ fun UserStore.asModel() = UserStoreModel(
     salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: "",
+    openingHoursModel = openingHours?.asModel() ?: OpeningHoursModel(),
 )
 
 fun String.asPaymentType() = when (this) {
