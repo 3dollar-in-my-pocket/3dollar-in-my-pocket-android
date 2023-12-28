@@ -59,6 +59,7 @@ import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.OpeningHourRequest
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.Reason
@@ -606,8 +607,14 @@ fun UserStoreModelRequest.asRequest() = UserStoreRequest(
     longitude = longitude,
     menuRequests = menuRequests.map { it.asRequest() },
     paymentMethods = paymentMethods.map { it.name },
+    openingHours = openingHours?.asRequest(),
     storeName = storeName,
     storeType = storeType,
+)
+
+fun OpeningHourRequest.asRequest() = com.threedollar.network.request.OpeningHourRequest(
+    startTime = startTime,
+    endTime = endTime,
 )
 
 fun MenuModelRequest.asRequest() = MenuRequest(

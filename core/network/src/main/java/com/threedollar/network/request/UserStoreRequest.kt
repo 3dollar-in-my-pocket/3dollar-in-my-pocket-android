@@ -14,6 +14,8 @@ data class UserStoreRequest(
     val menuRequests: List<MenuRequest>,
     @SerializedName("paymentMethods")
     val paymentMethods: List<String>,
+    @SerializedName("openingHours")
+    val openingHours: OpeningHourRequest? = null,
     @SerializedName("storeName")
     val storeName: String,
     @SerializedName("storeType")

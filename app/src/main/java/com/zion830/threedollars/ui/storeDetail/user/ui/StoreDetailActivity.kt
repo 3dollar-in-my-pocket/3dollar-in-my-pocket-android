@@ -57,6 +57,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -518,12 +520,31 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.reviewTitleTextView.textPartTypeface("${userStoreDetailModel.reviews.contents.size}개", Typeface.NORMAL)
         binding.reviewRatingAvgTextView.text = getString(R.string.score, userStoreDetailModel.store.rating)
         binding.reviewRatingBar.rating = userStoreDetailModel.store.rating.toFloat()
-        binding.openingHourTextView.text =
-            if (userStoreDetailModel.store.openingHoursModel.startTime.isEmpty() && userStoreDetailModel.store.openingHoursModel.endTime.isEmpty()) {
-                "제보가 필요해요\uD83D\uDE22"
-            } else {
-                "${userStoreDetailModel.store.openingHoursModel.startTime}시 - ${userStoreDetailModel.store.openingHoursModel.endTime}시"
-            }
+        try {
+            binding.openingHourTextView.text =
+                if (userStoreDetailModel.store.openingHoursModel.startTime.isEmpty() && userStoreDetailModel.store.openingHoursModel.endTime.isEmpty()) {
+                    "제보가 필요해요\uD83D\uDE22"
+                } else {
+                    val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val outputFormat = SimpleDateFormat("a h시", Locale.getDefault())
+
+                    var startTimeText = ""
+                    var endTimeText = ""
+                    if (userStoreDetailModel.store.openingHoursModel.startTime.isNotNullOrEmpty()) {
+                        inputFormat.parse(userStoreDetailModel.store.openingHoursModel.startTime)?.let { startDate ->
+                            startTimeText = outputFormat.format(startDate)
+                        }
+                    }
+                    if (userStoreDetailModel.store.openingHoursModel.endTime.isNotNullOrEmpty()) {
+                        inputFormat.parse(userStoreDetailModel.store.openingHoursModel.endTime)?.let { endDate ->
+                            endTimeText = outputFormat.format(endDate)
+                        }
+                    }
+                    "$startTimeText - $endTimeText"
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         initPayments(userStoreDetailModel.store.paymentMethods)
         initAppearanceDays(userStoreDetailModel.store.appearanceDays)
     }
