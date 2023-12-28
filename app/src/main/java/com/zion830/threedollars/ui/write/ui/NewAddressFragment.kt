@@ -70,10 +70,6 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
             findNavController().navigate(R.id.navigation_home)
         }
         binding.finishButton.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("screen", "write_address")
-            }
-            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
             viewModel.selectedLocation.value?.let { location -> viewModel.getStoreNearExists(location) }
         }
     }
@@ -97,6 +93,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                         if (it) {
                             showNearExistDialog()
                         } else {
+                            val bundle = Bundle().apply {
+                                putString("screen", "write_address")
+                            }
+                            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
                             moveAddStoreDetailFragment()
                         }
                     }
@@ -124,6 +124,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                 .apply {
                     setDialogListener(object : NearExistDialog.DialogListener {
                         override fun accept() {
+                            val bundle = Bundle().apply {
+                                putString("screen", "write_address")
+                            }
+                            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
                             moveAddStoreDetailFragment()
                         }
                     })

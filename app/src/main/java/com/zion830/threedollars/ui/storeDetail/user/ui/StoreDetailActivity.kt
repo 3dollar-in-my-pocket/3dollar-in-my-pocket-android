@@ -636,7 +636,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val bundle = Bundle().apply {
             putString("screen", "store_detail")
             putString("store_id", storeId.toString())
-            putString("value", if (viewModel.favoriteModel.value.isFavorite) "on" else "false")
+            putString("value", if (viewModel.favoriteModel.value.isFavorite) "on" else "off")
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {

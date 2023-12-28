@@ -168,7 +168,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         }
 
         binding.submitButton.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_REGISTER_SUBMIT_BTN_CLICKED)
+            EventTracker.logEvent("click_write_store")
             saveStore()
         }
         binding.fullScreenButton.setOnClickListener {

@@ -361,7 +361,7 @@ class BossStoreDetailActivity :
             bundle.putString("value", "on")
             viewModel.putFavorite(Constants.BOSS_STORE, storeId)
         }
-        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
+        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
