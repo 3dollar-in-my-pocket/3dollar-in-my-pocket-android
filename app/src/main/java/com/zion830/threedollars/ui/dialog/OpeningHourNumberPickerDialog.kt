@@ -9,7 +9,7 @@ import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.databinding.DialogOpeningHourNumberPickerBinding
 
 interface OnClickDoneListener {
-    fun onClickDoneButton(hour: Int)
+    fun onClickDoneButton(hour: Int?)
 }
 
 class OpeningHourNumberPickerDialog :
@@ -21,6 +21,10 @@ class OpeningHourNumberPickerDialog :
     override fun initView() {
         binding.doneTextView.setOnClickListener {
             listener?.onClickDoneButton(binding.hourNumberPicker.value)
+            dismiss()
+        }
+        binding.deleteTextView.setOnClickListener {
+            listener?.onClickDoneButton(null)
             dismiss()
         }
 

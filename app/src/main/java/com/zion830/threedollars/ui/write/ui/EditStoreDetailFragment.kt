@@ -292,10 +292,15 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             OpeningHourNumberPickerDialog.getInstance()
                 .apply {
                     setDialogListener(object : OnClickDoneListener {
-                        override fun onClickDoneButton(hour: Int) {
-                            binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
-                            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                            startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourStartTimeTextView.text = ""
+                                startTime = null
+                            } else {
+                                binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
                         }
                     })
                 }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
@@ -304,10 +309,15 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             OpeningHourNumberPickerDialog.getInstance()
                 .apply {
                     setDialogListener(object : OnClickDoneListener {
-                        override fun onClickDoneButton(hour: Int) {
-                            binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
-                            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                            endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourEndTimeTextView.text = ""
+                                endTime = null
+                            } else {
+                                binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
                         }
                     })
                 }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
