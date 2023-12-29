@@ -540,7 +540,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             endTimeText = outputFormat.format(endDate)
                         }
                     }
-                    "$startTimeText - $endTimeText"
+                    if (startTimeText.isNotEmpty()) {
+                        startTimeText += "부터"
+                    }
+                    if (endTimeText.isNotEmpty()) {
+                        endTimeText += "까지"
+                    }
+                    "$startTimeText $endTimeText"
                 }
         } catch (e: Exception) {
             e.printStackTrace()
