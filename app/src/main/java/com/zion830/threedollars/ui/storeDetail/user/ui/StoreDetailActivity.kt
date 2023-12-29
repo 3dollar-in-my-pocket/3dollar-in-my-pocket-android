@@ -96,7 +96,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             object : OnItemClickListener<ReviewContentModel> {
                 override fun onClick(item: ReviewContentModel) {
                     if (item.review.isOwner) {
-                        AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                        AddReviewDialog.getInstance(item, storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
@@ -642,7 +642,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val bundle = Bundle().apply {
             putString("screen", "store_detail")
             putString("store_id", storeId.toString())
-            putString("value", if (viewModel.favoriteModel.value.isFavorite) "on" else "off")
+            putString("value", if (viewModel.favoriteModel.value.isFavorite) "off" else "on")
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {

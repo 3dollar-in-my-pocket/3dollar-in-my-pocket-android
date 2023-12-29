@@ -15,6 +15,7 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_EDIT_REVIEW
 import com.threedollar.common.utils.Constants.CLICK_REPORT
 import com.threedollar.common.utils.Constants.CLICK_SORT
@@ -47,7 +48,7 @@ class StoreReviewDetailActivity :
                     }
                     EventTracker.logEvent(if (item.review.isOwner) CLICK_EDIT_REVIEW else CLICK_REPORT, bundle)
                     if (item.review.isOwner) {
-                        AddReviewDialog.getInstance(item).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                        AddReviewDialog.getInstance(item, storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
@@ -56,7 +57,7 @@ class StoreReviewDetailActivity :
                         }
                     }
                 }
-            }
+            },
         )
     }
     private val backPressedCallback = object : OnBackPressedCallback(true) {
@@ -86,6 +87,10 @@ class StoreReviewDetailActivity :
         }
 
         binding.reviewWriteTextView.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("screen", "review_list")
+            }
+            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
             AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
     }

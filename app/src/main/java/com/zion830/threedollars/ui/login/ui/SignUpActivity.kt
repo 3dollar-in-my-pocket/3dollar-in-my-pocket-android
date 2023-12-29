@@ -59,7 +59,7 @@ class SignUpActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "SignUpActivity", screenName = "sign_in")
+        setFirebaseAnalyticsLogEvent(className = "SignUpActivity", screenName = "sign_up")
     }
 
     private fun initEditTextView() {

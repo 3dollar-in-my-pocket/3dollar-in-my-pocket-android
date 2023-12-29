@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.write.ui
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -168,7 +169,10 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         }
 
         binding.submitButton.setOnClickListener {
-            EventTracker.logEvent("click_write_store")
+            val bundle = Bundle().apply {
+                putString("screen", "write_address_detail")
+            }
+            EventTracker.logEvent("click_write_store", bundle)
             saveStore()
         }
         binding.fullScreenButton.setOnClickListener {

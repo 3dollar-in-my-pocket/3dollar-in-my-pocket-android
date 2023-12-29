@@ -51,7 +51,6 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreCertificationAvailableFragment",screenName = "visit_store")
     }
 
     private fun initTextView() {
