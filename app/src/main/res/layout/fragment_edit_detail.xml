@@ -481,6 +481,91 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
+                    android:paddingHorizontal="20dp">
+
+                    <TextView
+                        android:id="@+id/openingHourTitleTextView"
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/opening_hour"
+                        android:textColor="@color/gray100"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/openingHourSubTitleTextView"
+                        style="@style/apple_gothic_regular.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/option"
+                        android:textColor="@color/gray40"
+                        app:layout_constraintStart_toEndOf="@id/openingHourTitleTextView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/apple_gothic_bold.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/enable_multi_select"
+                        android:textColor="@color/pink"
+                        app:layout_constraintStart_toEndOf="@id/openingHourSubTitleTextView"
+                        app:layout_constraintTop_toTopOf="@id/openingHourSubTitleTextView" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintTop_toBottomOf="@id/openingHourTitleTextView">
+
+                        <TextView
+                            android:id="@+id/openingHourStartTimeTextView"
+                            style="@style/apple_gothic_regular.size_14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/rect_gray10_radius8"
+                            android:hint="오전 11시"
+                            android:padding="12dp"
+                            android:textColor="@color/gray100" />
+
+                        <TextView
+                            style="@style/apple_gothic_medium.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="부터"
+                            android:textColor="@color/gray100" />
+
+                        <TextView
+                            android:id="@+id/openingHourEndTimeTextView"
+                            style="@style/apple_gothic_regular.size_14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rect_gray10_radius8"
+                            android:hint="오후 8시"
+                            android:padding="12dp"
+                            android:textColor="@color/gray100" />
+
+                        <TextView
+                            style="@style/apple_gothic_medium.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="까지"
+                            android:textColor="@color/gray100" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
                     android:background="@color/gray0"
                     android:paddingHorizontal="20dp">
 

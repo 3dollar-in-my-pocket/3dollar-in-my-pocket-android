@@ -2,7 +2,6 @@ package com.home.domain.data.store
 
 import java.io.Serializable
 
-
 data class UserStoreModel(
     val address: AddressModel = AddressModel(),
     val appearanceDays: List<DayOfTheWeekType> = listOf(),
@@ -16,4 +15,5 @@ data class UserStoreModel(
     val salesType: SalesType = SalesType.NONE,
     val storeId: Int = 0,
     val updatedAt: String = "",
+    val openingHoursModel: OpeningHoursModel = OpeningHoursModel(),
 ) : Serializable

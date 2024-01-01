@@ -1,6 +1,5 @@
 package com.threedollar.network.data.store
 
-
 import com.google.gson.annotations.SerializedName
 
 data class UserStore(
@@ -27,5 +26,7 @@ data class UserStore(
     @SerializedName("storeId")
     val storeId: Int? = 0,
     @SerializedName("updatedAt")
-    val updatedAt: String? = ""
+    val updatedAt: String? = "",
+    @SerializedName("openingHours")
+    val openingHours: OpeningHours? = OpeningHours(),
 )

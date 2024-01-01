@@ -94,8 +94,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
-            FirebaseAnalytics.getInstance(requireContext())
-                .logEvent("CURRENT_LOCATION_BTN_CLICKED") {}
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("click_current_location") {}
             requireActivity().requestPermissionIfNeeds()
             moveToCurrentLocation(false)
         }

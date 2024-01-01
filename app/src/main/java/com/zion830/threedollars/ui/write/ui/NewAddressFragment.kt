@@ -72,8 +72,9 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
         binding.finishButton.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("screen", "write_address")
+                putString("address", binding.addressTextView.text.toString())
             }
-            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
+            EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
             viewModel.selectedLocation.value?.let { location -> viewModel.getStoreNearExists(location) }
         }
     }
@@ -97,6 +98,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                         if (it) {
                             showNearExistDialog()
                         } else {
+                            val bundle = Bundle().apply {
+                                putString("screen", "write_address")
+                            }
+                            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
                             moveAddStoreDetailFragment()
                         }
                     }
@@ -105,11 +110,6 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
-                            val bundle = Bundle().apply {
-                                putString("screen", "write_address")
-                                putString("address", binding.addressTextView.text.toString())
-                            }
-                            EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
                             viewModel.requestStoreInfo(latLng)
                         }
                     }
@@ -137,5 +137,4 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentNewAddressBinding =
         FragmentNewAddressBinding.inflate(inflater, container, false)
-
 }

@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class AppearanceDay(
     @SerializedName("dayOfTheWeek")
-    val dayOfTheWeek: String? ="",
+    val dayOfTheWeek: String? = "",
     @SerializedName("locationDescription")
-    val locationDescription: String? ="",
+    val locationDescription: String? = "",
     @SerializedName("openingHours")
-    val openingHours: OpeningHours? = OpeningHours()
+    val openingHours: OpeningHours? = OpeningHours(),
 )

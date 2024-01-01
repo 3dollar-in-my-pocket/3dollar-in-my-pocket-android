@@ -28,6 +28,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.api.ServerApi
@@ -37,7 +38,6 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.StoreReviewRequest
-import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -66,14 +66,14 @@ class HomeRepositoryImpl @Inject constructor(
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,
-        deviceLongitude = deviceLongitude
+        deviceLongitude = deviceLongitude,
     ).map {
         BaseResponse(
             ok = it.ok,
             data = it.data?.asModel(),
             message = it.message,
             resultCode = it.resultCode,
-            error = it.error
+            error = it.error,
         )
     }
 
@@ -84,7 +84,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -104,14 +104,14 @@ class HomeRepositoryImpl @Inject constructor(
             storeImagesCount = storeImagesCount,
             reviewsCount = reviewsCount,
             visitHistoriesCount = visitHistoriesCount,
-            filterVisitStartDate = filterVisitStartDate
+            filterVisitStartDate = filterVisitStartDate,
         ).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -121,7 +121,7 @@ class HomeRepositoryImpl @Inject constructor(
             data = it.data?.asModel(),
             message = it.message,
             resultCode = it.resultCode,
-            error = it.error
+            error = it.error,
         )
     }
 
@@ -138,7 +138,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.advertisements?.map { response -> response.asModel() }.orEmpty(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -155,7 +155,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
     }
@@ -164,7 +164,7 @@ class HomeRepositoryImpl @Inject constructor(
         homeRemoteDataSource.postFeedback(
             targetType = targetType,
             targetId = targetId,
-            postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest)
+            postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest),
         )
 
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>> =
@@ -174,7 +174,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -190,7 +190,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.map { response -> response.asModel() },
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -205,7 +205,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -216,7 +216,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -231,7 +231,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -242,7 +242,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -253,7 +253,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -267,7 +267,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 }

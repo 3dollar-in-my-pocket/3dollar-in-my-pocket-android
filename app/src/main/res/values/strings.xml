@@ -316,4 +316,7 @@
     <string name="photo_empty">사진을 제보해주세요!</string>
     <string name="naver_map">네이버 지도</string>
     <string name="kakao_map">카카오 지도</string>
+    <string name="account">계좌정보</string>
+    <string name="copy">복사하기</string>
+    <string name="opening_hour">출몰 시간대</string>
 </resources>

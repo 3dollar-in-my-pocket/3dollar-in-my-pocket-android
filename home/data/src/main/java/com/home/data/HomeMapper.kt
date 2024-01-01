@@ -2,9 +2,11 @@ package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.AccountModel
+import com.home.domain.data.store.AccountNumberModel
 import com.home.domain.data.store.AddressModel
 import com.home.domain.data.store.AppearanceDayModel
 import com.home.domain.data.store.AroundStoreModel
+import com.home.domain.data.store.BankModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.BossStoreModel
 import com.home.domain.data.store.CategoryModel
@@ -57,6 +59,7 @@ import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.OpeningHourRequest
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.Reason
@@ -65,9 +68,11 @@ import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.Account
+import com.threedollar.network.data.store.AccountNumber
 import com.threedollar.network.data.store.Address
 import com.threedollar.network.data.store.AppearanceDay
 import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.Bank
 import com.threedollar.network.data.store.BossStore
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.Category
@@ -118,32 +123,32 @@ fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
     return AdvertisementModelV2(
         advertisementId = advertisementId ?: 0,
         background = AdvertisementModelV2.Background(
-            color = background?.color ?: ""
+            color = background?.color ?: "",
         ),
         extra = AdvertisementModelV2.Extra(
             content = extra?.content ?: "",
-            fontColor = extra?.fontColor ?: ""
+            fontColor = extra?.fontColor ?: "",
         ),
         image = AdvertisementModelV2.Image(
             height = image?.height ?: 0,
             url = image?.url ?: "",
-            width = image?.width ?: 0
+            width = image?.width ?: 0,
         ),
         link = AdvertisementModelV2.Link(
             type = link?.type ?: "",
-            url = link?.url ?: ""
+            url = link?.url ?: "",
         ),
         metadata = AdvertisementModelV2.MetaData(
-            exposureIndex = metadata?.exposureIndex ?: 0
+            exposureIndex = metadata?.exposureIndex ?: 0,
         ),
         subTitle = AdvertisementModelV2.SubTitle(
             content = subTitle?.content ?: "",
-            fontColor = subTitle?.fontColor ?: ""
+            fontColor = subTitle?.fontColor ?: "",
         ),
         title = AdvertisementModelV2.Title(
             content = title?.content ?: "",
-            fontColor = title?.fontColor ?: ""
-        )
+            fontColor = title?.fontColor ?: "",
+        ),
     )
 }
 
@@ -155,11 +160,11 @@ fun UserResponse.asModel() = UserModel(
     name = name,
     socialType = socialType,
     updatedAt = updatedAt,
-    userId = userId
+    userId = userId,
 )
 
 fun Device.asModel() = DeviceModel(
-    isSetupNotification = isSetupNotification
+    isSetupNotification = isSetupNotification,
 )
 
 fun Medal.asModel() = MedalModel(
@@ -170,25 +175,25 @@ fun Medal.asModel() = MedalModel(
     introduction = introduction,
     medalId = medalId,
     name = name,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
 )
 
 fun Acquisition.asModel() = AcquisitionModel(
-    description = description
+    description = description,
 )
 
 fun Account.asModel() = AccountModel(
     accountId = accountId ?: "",
-    accountType = accountType ?: ""
+    accountType = accountType ?: "",
 )
 
 fun Address.asModel() = AddressModel(
-    fullAddress = fullAddress ?: ""
+    fullAddress = fullAddress ?: "",
 )
 
 fun AroundStoreResponse.asModel() = AroundStoreModel(
     contentModels = contents?.map { it.asModel() } ?: listOf(),
-    cursorModel = cursor?.asModel() ?: CursorModel()
+    cursorModel = cursor?.asModel() ?: CursorModel(),
 )
 
 fun Category.asModel() = CategoryModel(
@@ -203,18 +208,18 @@ fun Category.asModel() = CategoryModel(
 
 fun Classification.asModel() = ClassificationModel(
     description = description ?: "",
-    type = type ?: ""
+    type = type ?: "",
 )
 
 fun Content.asModel() = ContentModel(
     distanceM = distanceM ?: 0,
     extraModel = extra?.asModel() ?: ExtraModel(),
-    storeModel = store?.asModel() ?: StoreModel()
+    storeModel = store?.asModel() ?: StoreModel(),
 )
 
 fun Cursor.asModel() = CursorModel(
     hasMore = hasMore ?: false,
-    nextCursor = nextCursor
+    nextCursor = nextCursor,
 )
 
 fun Extra.asModel() = ExtraModel(
@@ -226,7 +231,7 @@ fun Extra.asModel() = ExtraModel(
 
 fun Location.asModel() = LocationModel(
     latitude = latitude ?: 0.0,
-    longitude = longitude ?: 0.0
+    longitude = longitude ?: 0.0,
 )
 
 fun Store.asModel() = StoreModel(
@@ -243,24 +248,24 @@ fun Store.asModel() = StoreModel(
 )
 
 fun Tags.asModel() = TagsModel(
-    isNew = isNew ?: false
+    isNew = isNew ?: false,
 )
 
 fun VisitCounts.asModel() = VisitCountsModel(
     existsCounts = existsCounts ?: 0,
     isCertified = isCertified ?: false,
-    notExistsCounts = notExistsCounts ?: 0
+    notExistsCounts = notExistsCounts ?: 0,
 )
 
 fun AppearanceDay.asModel() = AppearanceDayModel(
     dayOfTheWeek = dayOfTheWeek?.asDayOfTheWeekType() ?: DayOfTheWeekType.SUNDAY,
     locationDescription = locationDescription ?: "",
-    openingHoursModel = openingHours?.asModel() ?: OpeningHoursModel()
+    openingHoursModel = openingHours?.asModel() ?: OpeningHoursModel(),
 )
 
 fun OpeningHours.asModel() = OpeningHoursModel(
     endTime = endTime ?: "",
-    startTime = startTime ?: ""
+    startTime = startTime ?: "",
 )
 
 fun BossStore.asModel() = BossStoreModel(
@@ -275,13 +280,27 @@ fun BossStore.asModel() = BossStoreModel(
     name = name ?: "",
     snsUrl = snsUrl,
     storeId = storeId ?: "",
-    updatedAt = updatedAt ?: ""
+    updatedAt = updatedAt ?: "",
+    isOwner = isOwner ?: false,
+    accountNumbers = accountNumbers?.map { it.asModel() } ?: listOf(),
+)
+
+fun AccountNumber.asModel() = AccountNumberModel(
+    bank = bank?.asModel() ?: BankModel(),
+    accountHolder = accountHolder ?: "",
+    accountNumber = accountNumber ?: "",
+    description = description ?: "",
+)
+
+fun Bank.asModel() = BankModel(
+    key = key ?: "",
+    description = description ?: "",
 )
 
 fun Menu.asModel() = MenuModel(
     imageUrl = imageUrl,
     name = name ?: "",
-    price = price ?: 0
+    price = price ?: 0,
 )
 
 fun BossStoreResponse.asModel() = BossStoreDetailModel(
@@ -290,23 +309,23 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     feedbackModels = feedbacks?.map { it.asModel() } ?: listOf(),
     openStatusModel = openStatus?.asModel() ?: OpenStatusModel(),
     store = store?.asModel() ?: BossStoreModel(),
-    tags = tags?.asModel() ?: TagsModel()
+    tags = tags?.asModel() ?: TagsModel(),
 )
 
 fun Favorite.asModel() = FavoriteModel(
     isFavorite = isFavorite ?: false,
-    totalSubscribersCount = totalSubscribersCount ?: 0
+    totalSubscribersCount = totalSubscribersCount ?: 0,
 )
 
 fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
-    ratio = ratio ?: 0.0
+    ratio = ratio ?: 0.0,
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
     openStartDateTime = openStartDateTime,
-    status = status?.asStatusType() ?: StatusType.NONE
+    status = status?.asStatusType() ?: StatusType.NONE,
 )
 
 fun String.asDayOfTheWeekType() = when (this) {
@@ -398,7 +417,6 @@ fun String.asReviewStatusType() = when (this) {
 }
 
 fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeResponse>): FoodTruckReviewModel {
-
     val feedbackType = feedbackTypeResponseList.find { type ->
         (type as? FeedbackTypeResponse)?.feedbackType == this.feedbackType
     }
@@ -407,7 +425,7 @@ fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeRes
         feedbackType = this.feedbackType,
         ratio = ratio,
         description = feedbackType?.description,
-        emoji = feedbackType?.emoji
+        emoji = feedbackType?.emoji,
     )
 }
 
@@ -419,7 +437,7 @@ fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
     reviews = reviews?.asModel() ?: ReviewsModel(),
     store = store?.asModel() ?: UserStoreModel(),
     tags = tags?.asModel() ?: TagsModel(),
-    visits = visits?.asModel() ?: VisitsModel()
+    visits = visits?.asModel() ?: VisitsModel(),
 
 )
 
@@ -427,29 +445,29 @@ fun Creator.asModel(): CreatorModel = CreatorModel(
     medal = medal?.asModel() ?: MedalModel(),
     name = name ?: "",
     socialType = socialType,
-    userId = userId
+    userId = userId,
 )
 
 fun Images.asModel(): ImagesModel = ImagesModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
-    cursor = cursor?.asModel() ?: CursorModel()
+    cursor = cursor?.asModel() ?: CursorModel(),
 )
 
 fun Image.asModel() = ImageContentModel(
     createdAt = createdAt ?: "",
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
-    url = url ?: ""
+    url = url ?: "",
 )
 
 fun Reviews.asModel() = ReviewsModel(
-    contents = contents?.map { it.asModel() } ?: listOf()
+    contents = contents?.map { it.asModel() } ?: listOf(),
 )
 
 fun ReviewContent.asModel() = ReviewContentModel(
     review = review?.asModel() ?: ReviewModel(),
     reviewReport = reviewReport?.asModel() ?: ReviewReportModel(),
-    reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel()
+    reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel(),
 
 )
 
@@ -460,18 +478,18 @@ fun Review.asModel() = ReviewModel(
     reviewId = reviewId ?: 0,
     status = status?.asReviewStatusType() ?: ReviewStatusType.POSTED,
     updatedAt = updatedAt ?: "",
-    isOwner = isOwner ?: false
+    isOwner = isOwner ?: false,
 )
 
 fun ReviewReport.asModel() = ReviewReportModel(
-    reportedByMe = reportedByMe ?: false
+    reportedByMe = reportedByMe ?: false,
 )
 
 fun ReviewWriter.asModel() = ReviewWriterModel(
     medal = medal?.asModel() ?: MedalModel(),
     name = name ?: "",
     socialType = socialType,
-    userId = userId
+    userId = userId,
 )
 
 fun UserStore.asModel() = UserStoreModel(
@@ -486,7 +504,8 @@ fun UserStore.asModel() = UserStoreModel(
     rating = rating ?: 0.0,
     salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
-    updatedAt = updatedAt ?: ""
+    updatedAt = updatedAt ?: "",
+    openingHoursModel = openingHours?.asModel() ?: OpeningHoursModel(),
 )
 
 fun String.asPaymentType() = when (this) {
@@ -517,28 +536,28 @@ fun UserStoreMenu.asModel() = UserStoreMenuModel(
     category = category?.asModel() ?: CategoryModel(),
     menuId = menuId ?: 0,
     name = name,
-    price = price
+    price = price,
 )
 
 fun Visits.asModel() = VisitsModel(
     counts = counts?.asModel() ?: CountsModel(),
-    histories = histories?.asModel() ?: HistoriesModel()
+    histories = histories?.asModel() ?: HistoriesModel(),
 )
 
 fun Counts.asModel() = CountsModel(
     existsCounts = existsCounts ?: 0,
     isCertified = isCertified ?: false,
-    notExistsCounts = notExistsCounts ?: 0
+    notExistsCounts = notExistsCounts ?: 0,
 )
 
 fun Histories.asModel() = HistoriesModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
-    cursor = cursor?.asModel() ?: CursorModel()
+    cursor = cursor?.asModel() ?: CursorModel(),
 )
 
 fun HistoriesContent.asModel() = HistoriesContentModel(
     visit = visit?.asModel() ?: VisitModel(),
-    visitor = visitor?.asModel() ?: VisitorModel()
+    visitor = visitor?.asModel() ?: VisitorModel(),
 )
 
 fun Visit.asModel() = VisitModel(
@@ -546,25 +565,25 @@ fun Visit.asModel() = VisitModel(
     type = type ?: "",
     updatedAt = updatedAt ?: "",
     visitDate = visitDate ?: "",
-    visitId = visitId ?: ""
+    visitId = visitId ?: "",
 )
 
 fun Visitor.asModel() = VisitorModel(
     medal = medal?.asModel() ?: MedalModel(),
     name = name ?: "",
     socialType = socialType,
-    userId = userId
+    userId = userId,
 )
 
 fun DeleteResultResponse.asModel() = DeleteResultModel(
-    isDeleted = isDeleted ?: false
+    isDeleted = isDeleted ?: false,
 )
 
 fun SaveImagesResponse.asModel() = SaveImagesModel(
     createdAt = createdAt ?: "",
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
-    url = url ?: ""
+    url = url ?: "",
 )
 
 fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
@@ -579,7 +598,7 @@ fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
 )
 
 fun StoreNearExistResponse.asModel() = StoreNearExistsModel(
-    isExists = isExists
+    isExists = isExists,
 )
 
 fun UserStoreModelRequest.asRequest() = UserStoreRequest(
@@ -588,14 +607,20 @@ fun UserStoreModelRequest.asRequest() = UserStoreRequest(
     longitude = longitude,
     menuRequests = menuRequests.map { it.asRequest() },
     paymentMethods = paymentMethods.map { it.name },
+    openingHours = openingHours?.asRequest(),
     storeName = storeName,
-    storeType = storeType
+    storeType = storeType,
+)
+
+fun OpeningHourRequest.asRequest() = com.threedollar.network.request.OpeningHourRequest(
+    startTime = startTime,
+    endTime = endTime,
 )
 
 fun MenuModelRequest.asRequest() = MenuRequest(
     category = category,
     name = name,
-    price = price
+    price = price,
 )
 
 fun PostUserStoreResponse.asModel() = PostUserStoreModel(
@@ -610,20 +635,20 @@ fun PostUserStoreResponse.asModel() = PostUserStoreModel(
     storeId = storeId ?: 0,
     storeName = storeName ?: "",
     updatedAt = updatedAt ?: "",
-    userId = userId ?: 0
+    userId = userId ?: 0,
 )
 
 fun ReportReviewModelRequest.asRequest() = ReportReviewRequest(
     reason = reason,
-    reasonDetail = reasonDetail
+    reasonDetail = reasonDetail,
 )
 
 fun ReportReasonsResponse.asModel() = ReportReasonsModel(
-    reasonModels = reasons?.map { it.asModel() } ?: listOf()
+    reasonModels = reasons?.map { it.asModel() } ?: listOf(),
 )
 
 fun Reason.asModel() = ReasonModel(
     description = description ?: "",
     hasReasonDetail = hasReasonDetail ?: false,
-    type = type ?: ""
+    type = type ?: "",
 )
