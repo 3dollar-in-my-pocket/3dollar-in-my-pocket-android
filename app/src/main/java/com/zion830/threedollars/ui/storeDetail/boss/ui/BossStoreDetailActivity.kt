@@ -24,6 +24,7 @@ import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
+import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
@@ -165,12 +166,14 @@ class BossStoreDetailActivity :
             }
         }
         binding.snsTextView.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("screen", "boss_store_detail")
-                putString("store_id", storeId)
+            if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
+                val bundle = Bundle().apply {
+                    putString("screen", "boss_store_detail")
+                    putString("store_id", storeId)
+                }
+                EventTracker.logEvent(CLICK_SNS, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
-            EventTracker.logEvent(CLICK_SNS, bundle)
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
         }
         binding.directionsButton.setOnClickListener {
             showDirectionBottomDialog()
