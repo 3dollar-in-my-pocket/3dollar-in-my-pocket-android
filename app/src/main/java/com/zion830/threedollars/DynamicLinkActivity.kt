@@ -90,11 +90,6 @@ class DynamicLinkActivity : AppCompatActivity() {
                     putExtra("favoriteId", id)
                 })
             }
-
-            HOME -> {
-                startActivity(MainActivity.getIntent(this))
-            }
-
             MEDAL -> {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(MEDAL, MEDAL)
@@ -125,6 +120,9 @@ class DynamicLinkActivity : AppCompatActivity() {
                 startActivity(Intent(this, PollDetailActivity::class.java).apply {
                     putExtra("id", id)
                 })
+            }
+            else -> {
+                startActivity(MainActivity.getIntent(this))
             }
         }
         finish()
