@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 70,
-      "versionName": "4.0.0-test11",
-      "outputFile": "3dollor_4.0.0-test11(70)-debug.apk"
+      "versionCode": 75,
+      "versionName": "4.1.0",
+      "outputFile": "3dollor_4.1.0(75)-debug.apk"
     }
   ],
   "elementType": "File"
