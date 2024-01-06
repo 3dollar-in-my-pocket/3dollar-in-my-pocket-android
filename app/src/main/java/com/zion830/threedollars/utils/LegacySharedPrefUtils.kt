@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken
 import com.home.domain.data.store.CategoryModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 import java.lang.reflect.Type
 
@@ -22,6 +21,7 @@ object LegacySharedPrefUtils {
     private const val TRUCK_CATEGORY_LIST = "truck_category_list"
     private const val LOGIN_TYPE = "login_type"
     private const val GOOGLE_TOKEN = "google_token"
+    private const val FIRST_MARKETING = "first_marketing"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
@@ -102,6 +102,14 @@ object LegacySharedPrefUtils {
             gson.fromJson(json, type)
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    fun getFirstMarketing(): Boolean = sharedPreferences.getBoolean(FIRST_MARKETING, false)
+    fun setFirstMarketing() {
+        sharedPreferences.edit {
+            putBoolean(FIRST_MARKETING, true)
+            commit()
         }
     }
 
