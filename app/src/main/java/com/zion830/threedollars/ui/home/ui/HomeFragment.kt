@@ -45,15 +45,17 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
-import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
+import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -257,6 +259,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     viewModel.userInfo.collect {
                         if (it.marketingConsent == "UNVERIFIED") {
                             showMarketingDialog()
+                        }
+                        if (!LegacySharedPrefUtils.getFirstMarketing()) {
+                            if (it.marketingConsent == "APPROVE") subscribeToTopicFirebase(true)
                         }
                     }
                 }
