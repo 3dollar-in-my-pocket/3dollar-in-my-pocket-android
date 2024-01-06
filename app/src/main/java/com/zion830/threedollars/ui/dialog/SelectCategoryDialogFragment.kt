@@ -1,12 +1,12 @@
 package com.zion830.threedollars.ui.dialog
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -127,10 +127,12 @@ class SelectCategoryDialogFragment :
                             binding.tvAdBody.text = popup.subTitle.content
 
                             popup.title.fontColor.let {
-                                binding.tvAdTitle.setTextColor(it.toColorInt())
-                                binding.tvAdBody.setTextColor(it.toColorInt())
+                                if (it.isNotEmpty()) {
+                                    binding.tvAdTitle.setTextColor(Color.parseColor(it))
+                                    binding.tvAdBody.setTextColor(Color.parseColor(it))
+                                }
                             }
-                            popup.background.color.let { binding.cdAdCategory.setCardBackgroundColor(it.toColorInt()) }
+                            popup.background.color.let { if (it.isNotEmpty()) binding.cdAdCategory.setCardBackgroundColor(Color.parseColor(it)) }
 
                             binding.ivAdImage.loadUrlImg(popup.image.url)
 
