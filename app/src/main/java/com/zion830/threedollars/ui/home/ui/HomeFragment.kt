@@ -263,7 +263,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        adapter.submitList(adAndStoreItems)
+                        val resultList = mutableListOf<AdAndStoreItem>()
+                        resultList.addAll(adAndStoreItems)
+                        viewModel.advertisementModel.value?.let { advertisementModel ->
+                            resultList.add(1, advertisementModel)
+                        }
+                        adapter.submitList(resultList)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)
