@@ -7,10 +7,13 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
+import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -164,6 +167,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
             }
             agreeContinueTextView.setOnClickListener {
                 eventTracker.setUserProperty("isPushEnable", "true")
+                subscribeToTopicFirebase(check2)
                 listener?.accept(check2)
                 dismiss()
             }

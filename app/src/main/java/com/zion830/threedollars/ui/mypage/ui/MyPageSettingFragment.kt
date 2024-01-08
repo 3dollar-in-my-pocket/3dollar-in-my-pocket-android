@@ -24,6 +24,7 @@ import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -127,6 +128,7 @@ class MyPageSettingFragment :
             showDeleteAccountDialog()
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+            subscribeToTopicFirebase(isCheck)
             if (isCheck) {
                 eventTracker.setUserProperty("isPushEnable", "true")
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
