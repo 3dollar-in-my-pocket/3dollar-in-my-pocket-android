@@ -43,11 +43,15 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _advertisementModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val advertisementModel: StateFlow<AdvertisementModelV2?> get() = _advertisementModel
 
+    private val _advertisementListModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
+    val advertisementListModel: StateFlow<AdvertisementModelV2?> get() = _advertisementListModel
+
     private val _homeFilterEvent: MutableStateFlow<HomeFilterEvent> = MutableStateFlow(HomeFilterEvent())
     val homeFilterEvent: StateFlow<HomeFilterEvent> get() = _homeFilterEvent
 
     init {
         getAdvertisement()
+        getAdvertisementList()
     }
 
     fun getUserInfo() {
@@ -99,9 +103,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                         resultList.add(StoreEmptyResponse())
                     } else {
                         it.data?.let { it1 -> resultList.addAll(it1.contentModels) }
-                        advertisementModel.value?.let { advertisementModel ->
-                            resultList.add(1, advertisementModel)
-                        }
                     }
                     _aroundStoreModels.value = resultList
                 } else {
@@ -156,6 +157,18 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             homeRepository.getAdvertisements(AdvertisementsPosition.MAIN_PAGE_CARD).collect {
                 if (it.ok) {
                     _advertisementModel.value = it.data?.firstOrNull()
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    private fun getAdvertisementList() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_LIST).collect {
+                if (it.ok) {
+                    _advertisementListModel.value = it.data?.firstOrNull()
                 } else {
                     _serverError.emit(it.message)
                 }
