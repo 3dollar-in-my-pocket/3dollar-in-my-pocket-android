@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.ui
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -65,6 +66,15 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
                 }
+            }
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
+                val bundle = Bundle().apply {
+                    putString("screen", "home_list")
+                    putString("advertisement_id", item.advertisementId.toString())
+                }
+                EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
             }
         })
     }

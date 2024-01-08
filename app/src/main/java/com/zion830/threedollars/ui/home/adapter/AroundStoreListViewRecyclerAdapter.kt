@@ -24,6 +24,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 
 class AroundStoreListViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
+    private val clickAdListener:OnItemClickListener<AdvertisementModelV2>
 ) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
     private var emptyAd: AdvertisementModelV2? = null
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
@@ -49,11 +50,11 @@ class AroundStoreListViewRecyclerAdapter(
         }
 
         VIEW_TYPE_AD -> {
-            NearStoreAdListViewViewHolder(ItemListViewAdBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            NearStoreAdListViewViewHolder(ItemListViewAdBinding.inflate(LayoutInflater.from(parent.context), parent, false),clickAdListener)
         }
 
         else -> {
-            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false),clickAdListener)
         }
     }
 
@@ -84,10 +85,11 @@ class AroundStoreListViewRecyclerAdapter(
     }
 }
 
-class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBinding) : ViewHolder(binding.root) {
+class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2?) {
         binding.itemListViewAd.root.isVisible = advertisementModelV2 == null
         advertisementModelV2?.let {
+            binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
             binding.itemListViewAd.imgAd.loadImage(it.image.url)
             binding.itemListViewAd.tvAdTitle.text = it.title.content
             binding.itemListViewAd.tvAdBody.text = it.subTitle.content
@@ -98,8 +100,9 @@ class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBin
     }
 }
 
-class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding) : ViewHolder(binding.root) {
+class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2) {
+        binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
         binding.imgAd.loadImage(advertisementModelV2.image.url)
         binding.tvAdTitle.text = advertisementModelV2.title.content
         binding.tvAdBody.text = advertisementModelV2.subTitle.content
