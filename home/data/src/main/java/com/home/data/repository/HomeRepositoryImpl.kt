@@ -8,7 +8,7 @@ import com.home.data.asRequest
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
 import com.home.data.datasource.ReviewPagingDataSource
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
@@ -28,6 +28,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.api.ServerApi
@@ -65,14 +66,14 @@ class HomeRepositoryImpl @Inject constructor(
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,
-        deviceLongitude = deviceLongitude
+        deviceLongitude = deviceLongitude,
     ).map {
         BaseResponse(
             ok = it.ok,
             data = it.data?.asModel(),
             message = it.message,
             resultCode = it.resultCode,
-            error = it.error
+            error = it.error,
         )
     }
 
@@ -83,7 +84,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -103,14 +104,14 @@ class HomeRepositoryImpl @Inject constructor(
             storeImagesCount = storeImagesCount,
             reviewsCount = reviewsCount,
             visitHistoriesCount = visitHistoriesCount,
-            filterVisitStartDate = filterVisitStartDate
+            filterVisitStartDate = filterVisitStartDate,
         ).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -120,7 +121,7 @@ class HomeRepositoryImpl @Inject constructor(
             data = it.data?.asModel(),
             message = it.message,
             resultCode = it.resultCode,
-            error = it.error
+            error = it.error,
         )
     }
 
@@ -130,14 +131,14 @@ class HomeRepositoryImpl @Inject constructor(
     override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.postPushInformation(PushInformationRequest(pushToken = pushToken))
 
-    override fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModel>>> =
+    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> =
         homeRemoteDataSource.getAdvertisements(position).map {
             BaseResponse(
                 ok = it.ok,
-                data = it.data?.map { response -> response.asModel() },
+                data = it.data?.advertisements?.map { response -> response.asModel() }.orEmpty(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -154,7 +155,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.map { feedbackCountResponse -> feedbackCountResponse.asModel(feedbackTypeResponseList) },
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
     }
@@ -163,7 +164,7 @@ class HomeRepositoryImpl @Inject constructor(
         homeRemoteDataSource.postFeedback(
             targetType = targetType,
             targetId = targetId,
-            postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest)
+            postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest),
         )
 
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>> =
@@ -173,7 +174,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -189,7 +190,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.map { response -> response.asModel() },
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -204,7 +205,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -215,7 +216,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -230,7 +231,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -241,7 +242,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -252,7 +253,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 
@@ -266,7 +267,7 @@ class HomeRepositoryImpl @Inject constructor(
                 data = it.data?.asModel(),
                 message = it.message,
                 resultCode = it.resultCode,
-                error = it.error
+                error = it.error,
             )
         }
 }

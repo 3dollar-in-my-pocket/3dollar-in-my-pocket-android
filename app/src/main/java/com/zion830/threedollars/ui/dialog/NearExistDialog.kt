@@ -1,19 +1,17 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_ADDRESS_OK
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogNearExistBinding
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +30,7 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
         DialogNearExistBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("NearExistDialog")
+        setFirebaseAnalyticsLogEvent(className = "NearExistDialog", screenName = "write_address_popup")
     }
 
 
@@ -68,7 +66,7 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
                 putString("screen", "write_address_popup")
                 putString("address", binding.addressTextView.text.toString())
             }
-            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
+            EventTracker.logEvent(CLICK_ADDRESS_OK, bundle)
             listener?.accept()
             dismiss()
         }

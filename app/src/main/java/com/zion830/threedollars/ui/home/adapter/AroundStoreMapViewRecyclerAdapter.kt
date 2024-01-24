@@ -8,13 +8,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants.USER_STORE
+import com.threedollar.common.utils.Constants.USER_STORE
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
@@ -27,7 +27,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 
 class AroundStoreMapViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
-    private val adClickListener: OnItemClickListener<AdvertisementModel>,
+    private val adClickListener: OnItemClickListener<AdvertisementModelV2>,
     private val certificationClick: (ContentModel) -> Unit,
 ) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
     var focusedIndex = 0
@@ -58,7 +58,7 @@ class AroundStoreMapViewRecyclerAdapter(
             VIEW_TYPE_STORE
         }
 
-        is AdvertisementModel -> {
+        is AdvertisementModelV2 -> {
             VIEW_TYPE_AD
         }
 
@@ -94,7 +94,7 @@ class AroundStoreMapViewRecyclerAdapter(
             }
 
             is NearStoreAdMapViewViewHolder -> {
-                holder.bind(getItem(position) as AdvertisementModel)
+                holder.bind(getItem(position) as AdvertisementModelV2)
             }
 
             is NearStoreEmptyMapViewViewHolder -> {
@@ -126,11 +126,11 @@ class NearStoreEmptyMapViewViewHolder(private val binding: ItemHomeEmptyBinding)
 
 class NearStoreAdMapViewViewHolder(
     private val binding: ItemNearStoreAdBinding,
-    private val adClickListener: OnItemClickListener<AdvertisementModel>,
+    private val adClickListener: OnItemClickListener<AdvertisementModelV2>,
 ) :
     ViewHolder(binding.root) {
     @SuppressLint("Range")
-    fun bind(item: AdvertisementModel) {
+    fun bind(item: AdvertisementModelV2) {
         binding.run {
             setOnclick(item)
             setText(item)
@@ -138,17 +138,17 @@ class NearStoreAdMapViewViewHolder(
         }
     }
 
-    private fun ItemNearStoreAdBinding.setOnclick(item: AdvertisementModel) {
+    private fun ItemNearStoreAdBinding.setOnclick(item: AdvertisementModelV2) {
         rootConstraintLayout.setOnClickListener {
             adClickListener.onClick(item)
         }
     }
 
-    private fun ItemNearStoreAdBinding.setImage(item: AdvertisementModel) = binding.ivAdImage.loadImage(item.imageUrl)
+    private fun ItemNearStoreAdBinding.setImage(item: AdvertisementModelV2) = binding.ivAdImage.loadImage(item.image.url)
 
-    private fun ItemNearStoreAdBinding.setText(item: AdvertisementModel) {
-        titleTextView.text = item.title
-        bodyTextView.text = item.subTitle
+    private fun ItemNearStoreAdBinding.setText(item: AdvertisementModelV2) {
+        titleTextView.text = item.title.content
+        bodyTextView.text = item.subTitle.content
     }
 }
 

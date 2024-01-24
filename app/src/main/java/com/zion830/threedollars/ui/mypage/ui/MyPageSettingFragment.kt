@@ -14,7 +14,7 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
@@ -24,6 +24,7 @@ import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class MyPageSettingFragment :
         FragmentMypageSettingBinding.inflate(inflater, container, false)
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("MyPageSettingFragment")
+        setFirebaseAnalyticsLogEvent(className = "MyPageSettingFragment", screenName = null)
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()
@@ -127,6 +128,7 @@ class MyPageSettingFragment :
             showDeleteAccountDialog()
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+            subscribeToTopicFirebase(isCheck)
             if (isCheck) {
                 eventTracker.setUserProperty("isPushEnable", "true")
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {

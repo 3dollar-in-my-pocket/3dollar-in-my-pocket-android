@@ -3,6 +3,8 @@ package com.threedollar.presentation
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Category
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
@@ -41,9 +43,22 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _toast: MutableSharedFlow<String> = MutableSharedFlow()
     val toast: SharedFlow<String> = _toast.asSharedFlow()
 
+    private val _advertisements: MutableSharedFlow<List<AdvertisementModelV2>> = MutableSharedFlow()
+    val advertisements: SharedFlow<List<AdvertisementModelV2>> get() = _advertisements
+
     init {
-        getPollCategories()
-        getNeighborhoods()
+        getAdvertisements()
+    }
+
+    private fun getAdvertisements() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            communityRepository.getAdvertisements(AdvertisementsPosition.POLL_CARD).collect {
+                if (it.ok) _advertisements.emit(it.data.orEmpty())
+                else _toast.emit(it.message.orEmpty())
+                getPollCategories()
+                getNeighborhoods()
+            }
+        }
     }
 
     private fun getPollCategories() {

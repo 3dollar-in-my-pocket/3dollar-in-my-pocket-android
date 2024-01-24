@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.login.ui
 
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -17,8 +18,8 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.GOOGLE_SIGN_IN
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -49,19 +50,25 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     override fun initView() {
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
-            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "sign_in")
+            }
+            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED, bundle)
             LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
             tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
-            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "sign_in")
+            }
+            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED, bundle)
             LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("LoginActivity")
+        setFirebaseAnalyticsLogEvent(className = "LoginActivity", screenName = "sign_in")
     }
 
     private fun tryLoginBySocialType() {
@@ -93,14 +100,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                     GoogleAuthUtil.getToken(
                         GlobalApplication.getContext(),
                         account?.account!!,
-                        "oauth2:https://www.googleapis.com/auth/plus.me"
+                        "oauth2:https://www.googleapis.com/auth/plus.me",
                     )
                 LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
                 LegacySharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
-
         }
     }
 

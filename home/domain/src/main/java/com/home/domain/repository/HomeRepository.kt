@@ -1,7 +1,7 @@
 package com.home.domain.repository
 
 import androidx.paging.PagingData
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
@@ -20,6 +20,7 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
@@ -53,7 +54,7 @@ interface HomeRepository {
 
     fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: String): Flow<BaseResponse<List<AdvertisementModel>>>
+    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
 
     fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
 

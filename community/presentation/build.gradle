@@ -5,6 +5,9 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.threedollar.presentation'
     compileSdk 34
@@ -15,6 +18,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        resValue "string", "admob_id", properties.getProperty("admob_id")
+        resValue "string", "admob_unit_id", properties.getProperty("admob_unit_id")
     }
 
     buildTypes {
@@ -51,6 +57,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.42"
     implementation project(path: ':home:domain')
     kapt "com.google.dagger:hilt-android-compiler:2.42"
+
+    implementation 'com.google.android.gms:play-services-ads:21.3.0'
 
     implementation "androidx.paging:paging-runtime-ktx:3.1.1"
 

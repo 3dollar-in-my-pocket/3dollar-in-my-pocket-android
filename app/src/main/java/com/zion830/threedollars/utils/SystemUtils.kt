@@ -35,6 +35,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.FutureTarget
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
@@ -93,6 +95,7 @@ fun Activity.requestPermissionIfNeeds(permission: String = ACCESS_FINE_LOCATION)
         ActivityCompat.shouldShowRequestPermissionRationale(this, permission) -> {
             ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
         }
+
         else -> {
             if (LegacySharedPrefUtils.isFirstPermissionCheck()) {
                 ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
@@ -243,7 +246,7 @@ fun Activity.navigateToMainActivityOnCloseIfNeeded() {
     val isBackMainActivity = manager.appTasks.isEmpty() || manager.let {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             it.appTasks.forEach { task ->
-                if (task.taskInfo.topActivity?.className?.contains("MainActivity") == true) return@let false
+                if (task.taskInfo.baseActivity?.className?.contains("MainActivity") == true) return@let false
             }
             return@let true
         } else {
@@ -254,7 +257,7 @@ fun Activity.navigateToMainActivityOnCloseIfNeeded() {
         }
     }
     if (isBackMainActivity && GlobalApplication.isLoggedIn) startActivity(MainActivity.getIntent(this))
-    else startActivity(Intent(this, LoginActivity::class.java))
+    else if (!GlobalApplication.isLoggedIn) startActivity(Intent(this, LoginActivity::class.java))
 }
 
 fun NavController.navigateSafe(
@@ -267,5 +270,17 @@ fun NavController.navigateSafe(
     // 현재 fragment의 id와 이동할 fragment의 id가 다르면 화면이동 실행 (같다는 건, 이미 이동이 된 후이기 때문)
     if (action != null && currentDestination?.id != action.destinationId) {
         navigate(resId, args, navOptions, navExtras)
+    }
+}
+
+fun subscribeToTopicFirebase(isSubscribe: Boolean) {
+    if (isSubscribe) {
+        Firebase.messaging.subscribeToTopic("marketing_aos").addOnCompleteListener {
+            if (it.isSuccessful) {
+                if (!LegacySharedPrefUtils.getFirstMarketing()) LegacySharedPrefUtils.setFirstMarketing()
+            }
+        }
+    } else {
+        Firebase.messaging.unsubscribeFromTopic("marketing_aos")
     }
 }

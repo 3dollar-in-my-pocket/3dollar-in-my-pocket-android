@@ -15,22 +15,26 @@ import com.home.domain.data.store.PaymentType
 import com.home.domain.data.store.SalesType
 import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.OpeningHourRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getMonthFirstDate
+import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.replaceFragment
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
-import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
-import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
-import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.OnClickDoneListener
+import com.zion830.threedollars.ui.dialog.OpeningHourNumberPickerDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
+import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
+import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
+import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -39,23 +43,27 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>() {
-
 
     override val viewModel: StoreDetailViewModel by activityViewModels()
     private val addStoreViewModel: AddStoreViewModel by activityViewModels()
 
     private val addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter by lazy {
-        AddCategoryRecyclerAdapter({
-            AddStoreMenuCategoryDialogFragment().show(
-                parentFragmentManager,
-                AddStoreMenuCategoryDialogFragment::class.java.name
-            )
-        }, {
-            addStoreViewModel.removeCategory(it)
-        }
+        AddCategoryRecyclerAdapter(
+            {
+                AddStoreMenuCategoryDialogFragment().show(
+                    parentFragmentManager,
+                    AddStoreMenuCategoryDialogFragment::class.java.name,
+                )
+            },
+            {
+                addStoreViewModel.removeCategory(it)
+            },
         )
     }
 
@@ -65,22 +73,23 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
+    private var startTime: String? = null
+    private var endTime: String? = null
     override fun initView() {
         initMap()
         viewModel.getUserStoreDetail(
             storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
             deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
             deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
-            filterVisitStartDate = getMonthFirstDate()
+            filterVisitStartDate = getMonthFirstDate(),
         )
         initButton()
         initAdapter()
         initFlow()
-
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("EditStoreDetailFragment")
+        setFirebaseAnalyticsLogEvent(className = "EditStoreDetailFragment", screenName = "write_address_detail")
     }
 
     private fun initFlow() {
@@ -103,7 +112,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
                                 deviceLatitude = it.latitude,
                                 deviceLongitude = it.longitude,
-                                filterVisitStartDate = getMonthFirstDate()
+                                filterVisitStartDate = getMonthFirstDate(),
                             )
                             showToast(R.string.edit_store_success)
                             requireActivity().supportFragmentManager.popBackStack()
@@ -136,12 +145,15 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 SalesType.ROAD -> {
                                     binding.rbType1.isChecked = true
                                 }
+
                                 SalesType.STORE -> {
                                     binding.rbType2.isChecked = true
                                 }
+
                                 SalesType.CONVENIENCE_STORE -> {
                                     binding.rbType3.isChecked = true
                                 }
+
                                 else -> {}
                             }
 
@@ -150,9 +162,11 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                     PaymentType.CASH -> {
                                         binding.cbType1.isChecked = true
                                     }
+
                                     PaymentType.CARD -> {
                                         binding.cbType2.isChecked = true
                                     }
+
                                     PaymentType.ACCOUNT_TRANSFER -> {
                                         binding.cbType3.isChecked = true
                                     }
@@ -163,24 +177,45 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                     DayOfTheWeekType.MONDAY -> {
                                         binding.tbMon.isChecked = true
                                     }
+
                                     DayOfTheWeekType.TUESDAY -> {
                                         binding.tbTue.isChecked = true
                                     }
+
                                     DayOfTheWeekType.WEDNESDAY -> {
                                         binding.tbWen.isChecked = true
                                     }
+
                                     DayOfTheWeekType.THURSDAY -> {
                                         binding.tbThur.isChecked = true
                                     }
+
                                     DayOfTheWeekType.FRIDAY -> {
                                         binding.tbFri.isChecked = true
                                     }
+
                                     DayOfTheWeekType.SATURDAY -> {
                                         binding.tbSat.isChecked = true
                                     }
+
                                     DayOfTheWeekType.SUNDAY -> {
                                         binding.tbSun.isChecked = true
                                     }
+                                }
+                            }
+                            val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                            val outputFormat = SimpleDateFormat("a h시", Locale.getDefault())
+
+                            if (it.store.openingHoursModel.startTime.isNotNullOrEmpty()) {
+                                startTime = it.store.openingHoursModel.startTime
+                                inputFormat.parse(startTime!!)?.let { startDate ->
+                                    binding.openingHourStartTimeTextView.text = outputFormat.format(startDate)
+                                }
+                            }
+                            if (it.store.openingHoursModel.endTime.isNotNullOrEmpty()) {
+                                endTime = it.store.openingHoursModel.endTime
+                                inputFormat.parse(endTime!!)?.let { endDate ->
+                                    binding.openingHourEndTimeTextView.text = outputFormat.format(endDate)
                                 }
                             }
                         }
@@ -214,7 +249,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 R.id.container,
                 EditAddressFragment(),
                 EditAddressFragment::class.java.name,
-                false
+                false,
             )
         }
         binding.backButton.setOnClickListener {
@@ -238,16 +273,54 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
             addStoreViewModel.editStore(
                 UserStoreModelRequest(
-                    getAppearanceDays(),
-                    addStoreViewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    addStoreViewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    getMenuList().reversed(),
-                    getPaymentMethod(),
-                    binding.storeNameEditTextView.text.toString(),
-                    storeType = getStoreType()
+                    appearanceDays = getAppearanceDays(),
+                    latitude = addStoreViewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                    longitude = addStoreViewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                    menuRequests = getMenuList().reversed(),
+                    paymentMethods = getPaymentMethod(),
+                    openingHours = OpeningHourRequest(
+                        startTime = startTime,
+                        endTime = endTime,
+                    ),
+                    storeName = binding.storeNameEditTextView.text.toString(),
+                    storeType = getStoreType(),
                 ),
-                viewModel.userStoreDetailModel.value?.store?.storeId ?: 0
+                viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
             )
+        }
+        binding.openingHourStartTimeTextView.setOnClickListener {
+            OpeningHourNumberPickerDialog.getInstance()
+                .apply {
+                    setDialogListener(object : OnClickDoneListener {
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourStartTimeTextView.text = ""
+                                startTime = null
+                            } else {
+                                binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
+                        }
+                    })
+                }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
+        }
+        binding.openingHourEndTimeTextView.setOnClickListener {
+            OpeningHourNumberPickerDialog.getInstance()
+                .apply {
+                    setDialogListener(object : OnClickDoneListener {
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourEndTimeTextView.text = ""
+                                endTime = null
+                            } else {
+                                binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
+                        }
+                    })
+                }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
         }
     }
 
@@ -334,7 +407,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             DayOfTheWeekType.THURSDAY,
             DayOfTheWeekType.FRIDAY,
             DayOfTheWeekType.SATURDAY,
-            DayOfTheWeekType.SUNDAY
+            DayOfTheWeekType.SUNDAY,
         )
         if (binding.tbMon.isChecked) {
             result.add(const[0])

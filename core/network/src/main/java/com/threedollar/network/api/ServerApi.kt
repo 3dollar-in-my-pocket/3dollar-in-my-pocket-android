@@ -157,8 +157,8 @@ interface ServerApi {
     suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     // advertisement
-    @GET("/api/v1/advertisements")
-    suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<List<AdvertisementResponse>>>
+    @GET("/api/v2/advertisements")
+    suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")

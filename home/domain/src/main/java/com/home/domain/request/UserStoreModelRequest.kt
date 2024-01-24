@@ -9,6 +9,7 @@ data class UserStoreModelRequest(
     val longitude: Double,
     val menuRequests: List<MenuModelRequest>,
     val paymentMethods: List<PaymentType>,
+    val openingHours: OpeningHourRequest? = null,
     val storeName: String,
-    val storeType: String? = null
+    val storeType: String? = null,
 )

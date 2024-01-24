@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.write.ui
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -15,20 +16,23 @@ import com.home.domain.data.store.AddCategoryModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.PaymentType
 import com.home.domain.request.MenuModelRequest
+import com.home.domain.request.OpeningHourRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
-import com.zion830.threedollars.Constants
+import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
+import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.OnClickDoneListener
+import com.zion830.threedollars.ui.dialog.OpeningHourNumberPickerDialog
+import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
+import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
-import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
-import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
-import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -38,6 +42,9 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>() {
@@ -45,14 +52,16 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     override val viewModel: AddStoreViewModel by activityViewModels()
 
     private val addCategoryRecyclerAdapter: AddCategoryRecyclerAdapter by lazy {
-        AddCategoryRecyclerAdapter({
-            AddStoreMenuCategoryDialogFragment().show(
-                parentFragmentManager,
-                AddStoreMenuCategoryDialogFragment::class.java.name
-            )
-        }, {
-            viewModel.removeCategory(it)
-        }
+        AddCategoryRecyclerAdapter(
+            {
+                AddStoreMenuCategoryDialogFragment().show(
+                    parentFragmentManager,
+                    AddStoreMenuCategoryDialogFragment::class.java.name,
+                )
+            },
+            {
+                viewModel.removeCategory(it)
+            },
         )
     }
 
@@ -63,6 +72,9 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
 
     private lateinit var callback: OnBackPressedCallback
+
+    private var startTime: String? = null
+    private var endTime: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -88,7 +100,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("AddStoreDetailFragment")
+        setFirebaseAnalyticsLogEvent(className = "AddStoreDetailFragment", screenName = "write_address_detail")
     }
 
     private fun initNavigationBar() {
@@ -157,11 +169,48 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         }
 
         binding.submitButton.setOnClickListener {
-            EventTracker.logEvent(Constants.STORE_REGISTER_SUBMIT_BTN_CLICKED)
+            val bundle = Bundle().apply {
+                putString("screen", "write_address_detail")
+            }
+            EventTracker.logEvent("click_write_store", bundle)
             saveStore()
         }
         binding.fullScreenButton.setOnClickListener {
             moveFullScreenMap()
+        }
+        binding.openingHourStartTimeTextView.setOnClickListener {
+            OpeningHourNumberPickerDialog.getInstance()
+                .apply {
+                    setDialogListener(object : OnClickDoneListener {
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourStartTimeTextView.text = ""
+                                startTime = null
+                            } else {
+                                binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
+                        }
+                    })
+                }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
+        }
+        binding.openingHourEndTimeTextView.setOnClickListener {
+            OpeningHourNumberPickerDialog.getInstance()
+                .apply {
+                    setDialogListener(object : OnClickDoneListener {
+                        override fun onClickDoneButton(hour: Int?) {
+                            if (hour == null) {
+                                binding.openingHourEndTimeTextView.text = ""
+                                endTime = null
+                            } else {
+                                binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
+                            }
+                        }
+                    })
+                }.show(parentFragmentManager, OpeningHourNumberPickerDialog().tag)
         }
     }
 
@@ -187,14 +236,15 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
         viewModel.addNewStore(
             UserStoreModelRequest(
-                getAppearanceDays(),
-                viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                getMenuList().reversed(),
-                getPaymentMethod(),
-                binding.storeNameEditTextView.text.toString(),
-                storeType = getStoreType()
-            )
+                appearanceDays = getAppearanceDays(),
+                latitude = viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                longitude = viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                menuRequests = getMenuList().reversed(),
+                paymentMethods = getPaymentMethod(),
+                openingHours = OpeningHourRequest(startTime = startTime, endTime = endTime),
+                storeName = binding.storeNameEditTextView.text.toString(),
+                storeType = getStoreType(),
+            ),
         )
     }
 
@@ -281,7 +331,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             DayOfTheWeekType.THURSDAY,
             DayOfTheWeekType.FRIDAY,
             DayOfTheWeekType.SATURDAY,
-            DayOfTheWeekType.SUNDAY
+            DayOfTheWeekType.SUNDAY,
         )
         if (binding.tbMon.isChecked) {
             result.add(const[0])

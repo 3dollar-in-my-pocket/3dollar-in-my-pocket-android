@@ -26,5 +26,9 @@ data class BossStore(
     @SerializedName("storeId")
     val storeId: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String? = ""
+    val updatedAt: String? = "",
+    @SerializedName("isOwner")
+    val isOwner: Boolean? = false,
+    @SerializedName("accountNumbers")
+    val accountNumbers: List<AccountNumber>? = listOf(),
 )

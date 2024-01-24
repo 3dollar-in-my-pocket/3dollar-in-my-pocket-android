@@ -64,7 +64,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("StoreCertificationFragment")
+        setFirebaseAnalyticsLogEvent(className = "StoreCertificationFragment", screenName = "visit_store")
     }
 
     private fun initMap() {

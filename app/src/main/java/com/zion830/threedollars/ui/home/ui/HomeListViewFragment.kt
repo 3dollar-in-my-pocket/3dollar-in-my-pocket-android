@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.ui
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -17,19 +18,21 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.ads.AdRequest
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_STORE
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
-import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
@@ -64,6 +67,15 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
                 }
             }
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
+                val bundle = Bundle().apply {
+                    putString("screen", "home_list")
+                    putString("advertisement_id", item.advertisementId.toString())
+                }
+                EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+            }
         })
     }
 
@@ -84,7 +96,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("HomeListViewFragment")
+        setFirebaseAnalyticsLogEvent(className = "HomeListViewFragment", screenName = "home_list")
     }
 
     private fun initButton() {
@@ -136,7 +148,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                 if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
             )
             binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-            getNearStore()
         }
     }
 
@@ -173,8 +184,12 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         binding.listTitleTextView.text = viewModel.selectCategory.value.description.ifEmpty {
                             getString(R.string.fragment_home_all_menu)
                         }
-
-                        adapter.submitList(adAndStoreItems.filterIsInstance<ContentModel>())
+                        val resultList = mutableListOf<AdAndStoreItem>()
+                        resultList.addAll(adAndStoreItems)
+                        viewModel.advertisementListModel.value?.let { advertisementModel ->
+                            resultList.add(1, advertisementModel)
+                        }
+                        adapter.submitList(resultList)
                         delay(200L)
                         binding.listRecyclerView.scrollToPosition(0)
                     }
@@ -198,6 +213,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                                 getString(R.string.fragment_home_filter_latest)
                             }
                         }
+                    }
+                }
+                launch {
+                    viewModel.advertisementListModel.collect {
+                        adapter.setAd(advertisementModelV2 = it)
                     }
                 }
                 launch {

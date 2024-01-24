@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -20,7 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
-import com.home.domain.data.advertisement.AdvertisementModel
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
@@ -31,30 +30,32 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.BOSS_STORE
-import com.zion830.threedollars.Constants.CLICK_ADDRESS_FIELD
-import com.zion830.threedollars.Constants.CLICK_AD_CARD
-import com.zion830.threedollars.Constants.CLICK_BOSS_FILTER
-import com.zion830.threedollars.Constants.CLICK_CATEGORY_FILTER
-import com.zion830.threedollars.Constants.CLICK_MARKER
-import com.zion830.threedollars.Constants.CLICK_SORTING
-import com.zion830.threedollars.Constants.CLICK_STORE
-import com.zion830.threedollars.Constants.CLICK_VISIT
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.CLICK_ADDRESS_FIELD
+import com.threedollar.common.utils.Constants.CLICK_AD_CARD
+import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
+import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
+import com.threedollar.common.utils.Constants.CLICK_MARKER
+import com.threedollar.common.utils.Constants.CLICK_SORTING
+import com.threedollar.common.utils.Constants.CLICK_STORE
+import com.threedollar.common.utils.Constants.CLICK_VISIT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
-import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
+import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -92,7 +93,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("HomeFragment")
+        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
     }
 
     private fun initScroll() {
@@ -141,14 +142,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
 
             }
-        }, object : OnItemClickListener<AdvertisementModel> {
-            override fun onClick(item: AdvertisementModel) {
+        }, object : OnItemClickListener<AdvertisementModelV2> {
+            override fun onClick(item: AdvertisementModelV2) {
                 val bundle = Bundle().apply {
                     putString("screen", "home")
                     putString("advertisement_id", item.advertisementId.toString())
                 }
                 EventTracker.logEvent(CLICK_AD_CARD, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.linkUrl)))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
             }
         }) { item ->
             val bundle = Bundle().apply {
@@ -259,12 +260,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         if (it.marketingConsent == "UNVERIFIED") {
                             showMarketingDialog()
                         }
+                        if (!LegacySharedPrefUtils.getFirstMarketing()) {
+                            if (it.marketingConsent == "APPROVE") subscribeToTopicFirebase(true)
+                        }
                     }
                 }
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        adapter.submitList(adAndStoreItems)
+                        val resultList = mutableListOf<AdAndStoreItem>()
+                        resultList.addAll(adAndStoreItems)
+                        viewModel.advertisementModel.value?.let { advertisementModel ->
+                            resultList.add(1, advertisementModel)
+                        }
+                        adapter.submitList(resultList)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)

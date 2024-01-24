@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,15 +18,17 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.AppearanceDayModel
+import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DayOfTheWeekType
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
+import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
-import com.zion830.threedollars.Constants
-import com.zion830.threedollars.Constants.CLICK_NAVIGATION
-import com.zion830.threedollars.Constants.CLICK_SNS
+import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
+import com.threedollar.common.utils.Constants.CLICK_SNS
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
@@ -34,16 +37,15 @@ import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyR
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
-import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import java.util.*
-
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -86,7 +88,7 @@ class BossStoreDetailActivity :
         AppearanceDayModel(DayOfTheWeekType.THURSDAY),
         AppearanceDayModel(DayOfTheWeekType.FRIDAY),
         AppearanceDayModel(DayOfTheWeekType.SATURDAY),
-        AppearanceDayModel(DayOfTheWeekType.SUNDAY)
+        AppearanceDayModel(DayOfTheWeekType.SUNDAY),
     )
 
     @SuppressLint("ClickableViewAccessibility")
@@ -100,7 +102,7 @@ class BossStoreDetailActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("BossStoreDetailActivity")
+        setFirebaseAnalyticsLogEvent(className = "BossStoreDetailActivity", screenName = "boss_store_detail")
     }
 
     private fun initAdapter() {
@@ -129,7 +131,7 @@ class BossStoreDetailActivity :
                     viewModel.getFoodTruckStoreDetail(
                         bossStoreId = storeId,
                         latitude = it.latitude,
-                        longitude = it.longitude
+                        longitude = it.longitude,
                     )
                 }
             }
@@ -158,16 +160,20 @@ class BossStoreDetailActivity :
                 putString("screen", "boss_store_detail")
                 putString("store_id", storeId)
             }
-            EventTracker.logEvent(CLICK_SNS, bundle)
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
+            viewModel.bossStoreDetailModel.value.store.snsUrl?.let {
+                EventTracker.logEvent(CLICK_SNS, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+            }
         }
         binding.snsTextView.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("screen", "boss_store_detail")
-                putString("store_id", storeId)
+            if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
+                val bundle = Bundle().apply {
+                    putString("screen", "boss_store_detail")
+                    putString("store_id", storeId)
+                }
+                EventTracker.logEvent(CLICK_SNS, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
-            EventTracker.logEvent(CLICK_SNS, bundle)
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
         }
         binding.directionsButton.setOnClickListener {
             showDirectionBottomDialog()
@@ -196,7 +202,7 @@ class BossStoreDetailActivity :
             latitude = store.location?.latitude,
             longitude = store.location?.longitude,
             name = store.name,
-            isClosed = viewModel.bossStoreDetailModel.value.openStatusModel.status == StatusType.CLOSED
+            isClosed = viewModel.bossStoreDetailModel.value.openStatusModel.status == StatusType.CLOSED,
         )
         startActivity(intent)
     }
@@ -226,18 +232,20 @@ class BossStoreDetailActivity :
                             naverMapFragment.initMap(latLng, isClosed)
                         }
 
-                        appearanceDayAdapter.submitList(appearanceDayModels.map { appearanceDayModel ->
-                            bossStoreDetailModel.store.appearanceDayModels.find {
-                                appearanceDayModel.dayOfTheWeek == it.dayOfTheWeek
-                            } ?: appearanceDayModel
-                        })
+                        appearanceDayAdapter.submitList(
+                            appearanceDayModels.map { appearanceDayModel ->
+                                bossStoreDetailModel.store.appearanceDayModels.find {
+                                    appearanceDayModel.dayOfTheWeek == it.dayOfTheWeek
+                                } ?: appearanceDayModel
+                            },
+                        )
 
                         if (bossStoreDetailModel.store.menuModels.isEmpty()) {
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
                         } else if (bossStoreDetailModel.store.menuModels.size > 5) {
                             val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
                             val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
-                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5)
+                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5),
                             )
                             foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
@@ -265,6 +273,8 @@ class BossStoreDetailActivity :
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
                         }
+
+                        initAccount(bossStoreDetailModel)
                     }
                 }
                 launch {
@@ -289,6 +299,21 @@ class BossStoreDetailActivity :
         }
     }
 
+    private fun initAccount(bossStoreDetailModel: BossStoreDetailModel) {
+        val accountNumberModel = bossStoreDetailModel.store.accountNumbers?.firstOrNull()
+        if (accountNumberModel != null) {
+            binding.accountCardView.isVisible = true
+            binding.accountNumberTextView.text =
+                "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
+            binding.accountCopyButton.setOnClickListener {
+                val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                manager.text = accountNumberModel.accountNumber
+                showToast("계좌번호가 복사되었습니다.")
+            }
+        } else {
+            binding.accountCardView.isVisible = false
+        }
+    }
 
     private fun initShared() {
         val bundle = Bundle().apply {
@@ -299,21 +324,21 @@ class BossStoreDetailActivity :
         val shareFormat = ShareFormat(
             getString(R.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
-            LatLng(latitude, longitude)
+            LatLng(latitude, longitude),
         )
         shareWithKakao(
             shareFormat = shareFormat,
             title = getString(
                 R.string.share_kakao_food_truck_title,
-                viewModel.bossStoreDetailModel.value.store.name
+                viewModel.bossStoreDetailModel.value.store.name,
             ),
             description = getString(
                 R.string.share_kakao_food_truck,
-                viewModel.bossStoreDetailModel.value.store.name
+                viewModel.bossStoreDetailModel.value.store.name,
             ),
             imageUrl = viewModel.bossStoreDetailModel.value.store.imageUrl,
             storeId = storeId,
-            type = getString(R.string.scheme_host_kakao_link_food_truck_type)
+            type = getString(R.string.scheme_host_kakao_link_food_truck_type),
         )
     }
 
@@ -339,7 +364,7 @@ class BossStoreDetailActivity :
             bundle.putString("value", "on")
             viewModel.putFavorite(Constants.BOSS_STORE, storeId)
         }
-        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
+        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {

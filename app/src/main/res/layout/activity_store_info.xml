@@ -578,6 +578,31 @@
                                 android:textColor="@color/gray40" />
                         </LinearLayout>
 
+
+                        <TextView
+                            android:id="@+id/openingHourTitleTextView"
+                            style="@style/apple_gothic_bold.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="11dp"
+                            android:text="@string/opening_hour"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/showTypeTitleTextView" />
+
+                        <TextView
+                            android:id="@+id/openingHourTextView"
+                            style="@style/apple_gothic_medium.size_12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="4dp"
+                            android:layout_marginTop="9dp"
+                            android:gravity="center"
+                            android:textColor="@color/gray70"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/showTypeLayout"
+                            tools:text="오전 12시 - 오후 8시" />
+
                         <TextView
                             android:id="@+id/paymentTypeTitleTextView"
                             style="@style/apple_gothic_bold.size_12sp"
@@ -587,7 +612,7 @@
                             android:text="@string/payment_type"
                             android:textColor="@color/gray100"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/showTypeTitleTextView" />
+                            app:layout_constraintTop_toBottomOf="@id/openingHourTitleTextView" />
 
 
                         <LinearLayout
@@ -596,7 +621,7 @@
                             android:layout_marginTop="9dp"
                             android:orientation="horizontal"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/showTypeLayout">
+                            app:layout_constraintTop_toBottomOf="@id/openingHourTextView">
 
                             <TextView
                                 android:id="@+id/cashTextView"
@@ -785,11 +810,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.33"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="@id/reviewRatingAvgTitleTextView"
                             app:srb_clickable="false"
                             app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_24"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintHorizontal_bias="0.33"
                             app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
                             app:srb_isIndicator="true"
                             app:srb_numStars="5"

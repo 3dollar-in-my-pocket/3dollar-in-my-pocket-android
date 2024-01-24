@@ -10,11 +10,9 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.messaging.FirebaseMessaging
 import com.threedollar.common.base.BaseActivity
-import com.zion830.threedollars.Constants.CLICK_SIGN_UP
+import com.threedollar.common.utils.Constants.CLICK_SIGN_UP
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
@@ -61,7 +59,7 @@ class SignUpActivity :
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent("SignUpActivity")
+        setFirebaseAnalyticsLogEvent(className = "SignUpActivity", screenName = "sign_up")
     }
 
     private fun initEditTextView() {

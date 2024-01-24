@@ -26,7 +26,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:layout_marginBottom="30dp"
         android:text="@string/empty_store_msg"
         android:textColor="@color/gray70" />
+
+    <include
+        android:id="@+id/itemListViewAd"
+        layout="@layout/item_list_view_ad" />
 
 </LinearLayout>
