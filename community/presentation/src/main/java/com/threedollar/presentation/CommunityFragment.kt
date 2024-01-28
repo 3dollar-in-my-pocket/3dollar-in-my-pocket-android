@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.ads.AdRequest
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
@@ -125,11 +126,17 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         initAdapter()
         initButton()
         initFlow()
+        initAdmob()
     }
 
     private fun initAdapter() {
         binding.recyclerPoll.adapter = pollAdapter
         binding.recyclerPopularStore.adapter = storeAdapter
+    }
+
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     private fun initButton() {

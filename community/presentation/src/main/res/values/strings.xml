@@ -7,4 +7,6 @@
     <string name="str_neighbor_title">어디 인기 가게를 볼까요?</string>
     <string name="str_create_count">투표만들기 %d/%d회</string>
     <string name="str_create_poll_hint">투표 제목을 입력하세요.</string>
+    <string name="admob_community_comment_banner">ca-app-pub-5385646520024289/4196241163</string>
+    <string name="admob_community_tab_banner">ca-app-pub-5385646520024289/3222264361</string>
 </resources>

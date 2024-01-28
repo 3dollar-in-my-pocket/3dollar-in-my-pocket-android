@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
@@ -268,11 +269,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
+                        if(adAndStoreItems.isEmpty()) return@collect
                         val resultList = mutableListOf<AdAndStoreItem>()
                         resultList.addAll(adAndStoreItems)
-                        viewModel.advertisementModel.value?.let { advertisementModel ->
-                            resultList.add(1, advertisementModel)
-                        }
+                        resultList.add(1, viewModel.advertisementModel.value ?: AdvertisementModelV2Empty())
                         adapter.submitList(resultList)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {

@@ -8,7 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
@@ -58,7 +60,7 @@ class AroundStoreMapViewRecyclerAdapter(
             VIEW_TYPE_STORE
         }
 
-        is AdvertisementModelV2 -> {
+        is AdvertisementModelV2, is AdvertisementModelV2Empty -> {
             VIEW_TYPE_AD
         }
 
@@ -94,7 +96,10 @@ class AroundStoreMapViewRecyclerAdapter(
             }
 
             is NearStoreAdMapViewViewHolder -> {
-                holder.bind(getItem(position) as AdvertisementModelV2)
+                if (getItem(position) is AdvertisementModelV2)
+                    holder.bind(getItem(position) as AdvertisementModelV2)
+                else if (getItem(position) is AdvertisementModelV2Empty)
+                    holder.bind(getItem(position) as AdvertisementModelV2Empty)
             }
 
             is NearStoreEmptyMapViewViewHolder -> {
@@ -131,11 +136,20 @@ class NearStoreAdMapViewViewHolder(
     ViewHolder(binding.root) {
     @SuppressLint("Range")
     fun bind(item: AdvertisementModelV2) {
+        binding.admob.isVisible = false
+        binding.groupAd.isVisible = true
         binding.run {
             setOnclick(item)
             setText(item)
             setImage(item)
         }
+    }
+
+    fun bind(item: AdvertisementModelV2Empty) {
+        binding.admob.isVisible = true
+        binding.groupAd.isVisible = false
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     private fun ItemNearStoreAdBinding.setOnclick(item: AdvertisementModelV2) {

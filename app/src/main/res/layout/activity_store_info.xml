@@ -296,6 +296,19 @@
                 app:layout_constraintBottom_toBottomOf="@id/map"
                 app:layout_constraintEnd_toEndOf="@id/map" />
 
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/admob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rect_gray"
+                android:visibility="visible"
+                app:adSize="BANNER"
+                app:adUnitId="@string/admob_store_detail_banner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/map" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/visitHistoryLayout"
                 android:layout_width="0dp"
@@ -303,7 +316,7 @@
                 android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/map">
+                app:layout_constraintTop_toBottomOf="@id/admob">
 
                 <TextView
                     android:id="@+id/visitHistoryTitleTextView"

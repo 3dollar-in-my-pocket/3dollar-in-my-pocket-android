@@ -1,5 +1,6 @@
 package com.threedollar.presentation.poll
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -15,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.store.ReasonModel
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
@@ -96,6 +98,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         initAdapter()
         initButton()
         initFlow()
+        initAdmob()
     }
 
     private fun initAdapter() {
@@ -128,6 +131,12 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         viewModel.pollDetail()
     }
 
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+    }
+
+    @SuppressLint("MissingPermission")
     private fun initButton() {
         binding.imgClose.onSingleClick { finish() }
         binding.imgCommentWrite.onSingleClick {
