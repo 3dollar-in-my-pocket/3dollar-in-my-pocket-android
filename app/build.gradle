@@ -14,7 +14,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         resValue "string", "admob_id", properties.getProperty("admob_id")
-        resValue "string", "admob_unit_id", properties.getProperty("admob_unit_id")
         buildConfigField "String", "NMF_CLIENT_ID", "\"${properties.getProperty('nmf_client_id')}\""
         manifestPlaceholders = [
                 google_map_key: properties.getProperty('google_map_key'),

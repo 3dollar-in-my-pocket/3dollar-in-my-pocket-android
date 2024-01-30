@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.AppearanceDayModel
@@ -99,6 +100,12 @@ class BossStoreDetailActivity :
         initButton()
         initFlows()
         initAdapter()
+        initAdmob()
+    }
+
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     override fun initFirebaseAnalytics() {

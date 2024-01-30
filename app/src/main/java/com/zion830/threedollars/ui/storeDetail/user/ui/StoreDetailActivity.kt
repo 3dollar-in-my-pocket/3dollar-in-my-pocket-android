@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.*
@@ -145,6 +146,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initButton()
         initAdapter()
         initFlows()
+        initAdmob()
 
         viewModel.addReviewResult.observe(this) {
             viewModel.getUserStoreDetail(
@@ -156,6 +158,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+    }
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity", screenName = "store_detail")
     }

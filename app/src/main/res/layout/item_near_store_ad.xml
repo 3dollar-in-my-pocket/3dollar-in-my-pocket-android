@@ -19,6 +19,19 @@
         android:focusable="true"
         tools:ignore="UnusedAttribute">
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/admob"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rect_gray"
+            android:visibility="gone"
+            app:adSize="LARGE_BANNER"
+            app:adUnitId="@string/admob_store_detail_banner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/iv_ad_image"
             android:layout_width="88dp"
@@ -44,6 +57,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:id="@+id/ll_ad"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -74,5 +88,10 @@
                 tools:text="일이삼사오육칠팔구십일ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ" />
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_ad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="tv_ad,iv_ad_image,ll_ad" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
