@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.threedollar.data'
+    namespace 'com.my.data'
     compileSdk 34
 
     defaultConfig {
@@ -36,13 +36,11 @@ dependencies {
     implementation project(':core:network')
     implementation project(':core:common')
     implementation project(':home:domain')
-    implementation project(':community:domain')
+    implementation project(':my:domain')
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.paging:paging-common-ktx:3.1.1'
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -52,4 +50,6 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.42"
 
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
+
+    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
 }
