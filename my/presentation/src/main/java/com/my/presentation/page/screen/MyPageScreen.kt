@@ -3,6 +3,8 @@ package com.my.presentation.page.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +35,7 @@ import com.my.presentation.R
 import zion830.com.common.base.compose.AppleGothicFontFamily
 import zion830.com.common.base.compose.ColorSubRed
 import zion830.com.common.base.compose.Gray100
+import zion830.com.common.base.compose.Gray90
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
@@ -118,5 +121,35 @@ fun MyPageUserInformation() {
             Divider(modifier = Modifier.height(24.dp))
         }
     }
+}
 
+@Preview
+@Composable
+fun MyPageInformationButton(
+    topText: String = "상단",
+    bottomText: String = "하단",
+    onClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .size(88.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(Gray90)
+            .padding(bottom = 12.dp, start = 10.dp, end = 10.dp)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Text(
+            text = topText, fontFamily = AppleGothicFontFamily,
+            fontWeight = FontWeight.W700,
+            color = Color.White, fontSize = dpToSp(dp = 24)
+        )
+        Divider(modifier = Modifier.height(14.dp))
+        Text(
+            text = bottomText, fontFamily = AppleGothicFontFamily,
+            fontWeight = FontWeight.W400,
+            color = Color.White, fontSize = dpToSp(dp = 12)
+        )
+    }
 }
