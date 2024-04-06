@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
+import com.my.presentation.page.data.MyPageButton
+import com.my.presentation.page.data.myPageButtonPreview
 import zion830.com.common.base.compose.AppleGothicFontFamily
 import zion830.com.common.base.compose.ColorSubRed
 import zion830.com.common.base.compose.Gray100
@@ -123,6 +126,24 @@ fun MyPageUserInformation() {
     }
 }
 
+@Composable
+fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp, start = 36.dp, end = 36.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)
+    ) {
+        buttonItems.forEach { myPageButton ->
+            MyPageInformationButton(
+                myPageButton.topText,
+                myPageButton.bottomText,
+                myPageButton.onClick
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun MyPageInformationButton(
@@ -152,4 +173,10 @@ fun MyPageInformationButton(
             color = Color.White, fontSize = dpToSp(dp = 12)
         )
     }
+}
+
+@Preview
+@Composable
+fun MyPageInformationButtonsView(buttonItems: List<MyPageButton> = myPageButtonPreview){
+    MyPageInformationButtons(buttonItems = buttonItems)
 }
