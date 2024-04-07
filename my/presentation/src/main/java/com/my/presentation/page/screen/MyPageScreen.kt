@@ -8,14 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,11 +36,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
 import com.my.presentation.page.data.MyPageButton
+import com.my.presentation.page.data.MyPageSectionTitle
 import com.my.presentation.page.data.myPageButtonPreview
+import com.my.presentation.page.data.myPageSectionTitlePreview
 import zion830.com.common.base.compose.AppleGothicFontFamily
 import zion830.com.common.base.compose.ColorSubRed
 import zion830.com.common.base.compose.Gray100
+import zion830.com.common.base.compose.Gray50
 import zion830.com.common.base.compose.Gray90
+import zion830.com.common.base.compose.Pink
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
@@ -92,7 +98,7 @@ fun MyPageUserInformation() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Divider(modifier = Modifier.height(11.dp))
+            Spacer(modifier = Modifier.height(11.dp))
             AsyncImage(
                 modifier = Modifier
                     .size(90.dp)
@@ -102,7 +108,7 @@ fun MyPageUserInformation() {
                 placeholder = painterResource(id = R.drawable.ic_no_store),
                 contentScale = ContentScale.Crop,
             )
-            Divider(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "테스트세트스",
                 color = ColorSubRed,
@@ -114,14 +120,14 @@ fun MyPageUserInformation() {
                     .border(1.dp, ColorSubRed, RoundedCornerShape(50.dp))
                     .padding(horizontal = 10.dp, vertical = 8.dp)
             )
-            Divider(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "마포구 몽키스패너", fontSize = dpToSp(dp = 30),
                 fontFamily = AppleGothicFontFamily,
                 fontWeight = FontWeight.W700,
                 color = Color.White
             )
-            Divider(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -140,6 +146,59 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
                 myPageButton.bottomText,
                 myPageButton.onClick
             )
+        }
+    }
+}
+
+@Composable
+fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = myPageSectionTitle.topIcon),
+                contentDescription = myPageSectionTitle.topTitle,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = myPageSectionTitle.topTitle, fontSize = dpToSp(dp = 12),
+                fontFamily = AppleGothicFontFamily,
+                fontWeight = FontWeight(700),
+                color = Gray50,
+            )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = myPageSectionTitle.bottomTitle, fontSize = dpToSp(dp = 24),
+                lineHeight = 31.2.sp,
+                fontFamily = AppleGothicFontFamily,
+                fontWeight = FontWeight(400),
+                color = Color.White,
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count),
+                    fontSize = dpToSp(dp = 14),
+                    fontFamily = AppleGothicFontFamily,
+                    fontWeight = FontWeight(600),
+                    color = Pink,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_white_arrow),
+                    contentDescription = "화살표",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
         }
     }
 }
@@ -166,7 +225,7 @@ fun MyPageInformationButton(
             fontWeight = FontWeight.W700,
             color = Color.White, fontSize = dpToSp(dp = 24)
         )
-        Divider(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(14.dp))
         Text(
             text = bottomText, fontFamily = AppleGothicFontFamily,
             fontWeight = FontWeight.W400,
@@ -177,6 +236,16 @@ fun MyPageInformationButton(
 
 @Preview
 @Composable
-fun MyPageInformationButtonsView(buttonItems: List<MyPageButton> = myPageButtonPreview){
+fun MyPageInformationButtonsView(buttonItems: List<MyPageButton> = myPageButtonPreview) {
     MyPageInformationButtons(buttonItems = buttonItems)
+}
+
+@Preview
+@Composable
+fun MyPageInformationTitlesView(titleItems: List<MyPageSectionTitle> = myPageSectionTitlePreview) {
+    Column {
+        titleItems.forEach { myPageSectionTitle ->
+            MyPageSectionTitle(myPageSectionTitle = myPageSectionTitle)
+        }
+    }
 }
