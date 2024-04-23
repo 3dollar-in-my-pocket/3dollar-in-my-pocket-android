@@ -1,6 +1,7 @@
 package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AccountModel
 import com.home.domain.data.store.AccountNumberModel
 import com.home.domain.data.store.AddressModel
@@ -439,7 +440,7 @@ fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
     tags = tags?.asModel() ?: TagsModel(),
     visits = visits?.asModel() ?: VisitsModel(),
 
-)
+    )
 
 fun Creator.asModel(): CreatorModel = CreatorModel(
     medal = medal?.asModel() ?: MedalModel(),
@@ -469,7 +470,7 @@ fun ReviewContent.asModel() = ReviewContentModel(
     reviewReport = reviewReport?.asModel() ?: ReviewReportModel(),
     reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel(),
 
-)
+    )
 
 fun Review.asModel() = ReviewModel(
     contents = contents,
@@ -651,4 +652,15 @@ fun Reason.asModel() = ReasonModel(
     description = description ?: "",
     hasReasonDetail = hasReasonDetail ?: false,
     type = type ?: "",
+)
+
+fun com.threedollar.network.data.place.Content.asModel() = PlaceModel(
+    addressName = addressName ?: "",
+    createdAt = createdAt,
+    location = PlaceModel.Location(longitude = location.longitude ?: 0.0, latitude = location.latitude ?: 0.0),
+    placeId = placeId,
+    placeName = placeName,
+    roadAddressName = roadAddressName ?: "",
+    updatedAt = updatedAt
+
 )

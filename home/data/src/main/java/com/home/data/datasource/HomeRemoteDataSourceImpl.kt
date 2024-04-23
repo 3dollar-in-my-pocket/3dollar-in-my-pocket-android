@@ -2,10 +2,12 @@ package com.home.data.datasource
 
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.place.PlaceResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -17,13 +19,14 @@ import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PlaceRequest
+import com.threedollar.network.request.PlaceType
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
-import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -169,4 +172,13 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {
         emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
     }
+
+    override fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.postPlace(placeRequest = placeRequest, placeType = placeType.name)))
+    }
+
+    override fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deletePlace(placeType = placeType.name, placeId = placeId)))
+    }
+
 }

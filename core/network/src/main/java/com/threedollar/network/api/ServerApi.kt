@@ -264,15 +264,15 @@ interface ServerApi {
     suspend fun getReportReasons(@Path("group") group: String): Response<BaseResponse<ReportReasonsResponse>>
 
     @POST("/api/v1/my/{placeType}/place")
-    suspend fun postPlace(@Body placeRequest: PlaceRequest, @Path("placeType") placeType: String): BaseResponse<String>
+    suspend fun postPlace(@Body placeRequest: PlaceRequest, @Path("placeType") placeType: String): Response<BaseResponse<String>>
 
     @DELETE("api/v1/my/{placeType}/place/{placeId}")
-    suspend fun deletePlace(@Path("placeType") placeType: String, @Path("placeId") placeId: String): BaseResponse<String>
+    suspend fun deletePlace(@Path("placeType") placeType: String, @Path("placeId") placeId: String): Response<BaseResponse<String>>
 
     @GET("apt/v1/my/{placeType}/places")
     suspend fun getPlace(
         @Path("placeType") placeType: String,
         @Query("size") size: Int,
-        @Query("cursor") cursor: String = "",
-    ): BaseResponse<PlaceResponse>
+        @Query("cursor") cursor: String?,
+    ): Response<BaseResponse<PlaceResponse>>
 }
