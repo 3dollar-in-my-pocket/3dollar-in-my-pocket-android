@@ -61,6 +61,8 @@ import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.OpeningHourRequest
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.Reason
@@ -664,3 +666,14 @@ fun com.threedollar.network.data.place.Content.asModel() = PlaceModel(
     updatedAt = updatedAt
 
 )
+
+fun PlaceRequest.asRequest() = com.threedollar.network.request.PlaceRequest(
+    location = com.threedollar.network.request.PlaceRequest.Location(longitude = location.longitude, latitude = location.latitude),
+    placeName = placeName,
+    addressName = addressName,
+    roadAddressName = roadAddressName
+)
+
+fun PlaceType.asType() = when (this) {
+    PlaceType.RECENT_SEARCH -> com.threedollar.network.request.PlaceType.RECENT_SEARCH
+}
