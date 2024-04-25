@@ -3,6 +3,9 @@ package com.zion830.threedollars.ui.home.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.home.domain.repository.HomeRepository
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.data.kakao.SearchAddressResponse
@@ -13,7 +16,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchAddressViewModel @Inject constructor(private val repository: MapDataSource) : BaseViewModel() {
+class SearchAddressViewModel @Inject constructor(private val homeRepository: HomeRepository, private val repository: MapDataSource) :
+    BaseViewModel() {
 
     private val _searchResult: MutableLiveData<SearchAddressResponse?> = MutableLiveData()
     val searchResult: LiveData<SearchAddressResponse?> = _searchResult
@@ -23,7 +27,11 @@ class SearchAddressViewModel @Inject constructor(private val repository: MapData
 
     fun search(query: String, latlng: LatLng) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            _searchResult.postValue(repository.searchAddress(query, latlng))
+            val searchAddressResponse = repository.searchAddress(query,latlng)
+            _searchResult.postValue(searchAddressResponse)
+            if(searchAddressResponse.documents.isNotEmpty()){
+                searchAddressResponse.documents.first()
+            }
         }
     }
 
@@ -33,6 +41,22 @@ class SearchAddressViewModel @Inject constructor(private val repository: MapData
 
     fun clear() {
         _searchResult.postValue(null)
+    }
+
+    fun postPlace(placeRequest: PlaceRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.postPlace(placeRequest = placeRequest, placeType = PlaceType.RECENT_SEARCH).collect {
+
+            }
+        }
+    }
+
+    fun deletePlace(placeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.deletePlace(placeType = PlaceType.RECENT_SEARCH, placeId = placeId).collect {
+
+            }
+        }
     }
 
     override fun handleError(t: Throwable) {
