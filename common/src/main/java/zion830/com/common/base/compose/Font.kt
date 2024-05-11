@@ -11,3 +11,8 @@ val AppleGothicFontFamily = FontFamily(
     Font(R.font.apple_gothic_semi_bold, FontWeight.W600),
     Font(R.font.apple_gothic_bold, FontWeight.W700)
 )
+
+val PretendardFontFamily = FontFamily(
+    Font(R.font.pretendard_medium, FontWeight.W500),
+    Font(R.font.pretendard_bold, FontWeight.W700)
+)

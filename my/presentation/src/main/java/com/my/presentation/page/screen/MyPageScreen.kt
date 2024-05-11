@@ -2,13 +2,13 @@ package com.my.presentation.page.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -39,12 +40,12 @@ import com.my.presentation.page.data.MyPageButton
 import com.my.presentation.page.data.MyPageSectionTitle
 import com.my.presentation.page.data.myPageButtonPreview
 import com.my.presentation.page.data.myPageSectionTitlePreview
-import zion830.com.common.base.compose.AppleGothicFontFamily
-import zion830.com.common.base.compose.ColorSubRed
 import zion830.com.common.base.compose.Gray100
+import zion830.com.common.base.compose.Gray30
 import zion830.com.common.base.compose.Gray50
-import zion830.com.common.base.compose.Gray90
+import zion830.com.common.base.compose.Gray80
 import zion830.com.common.base.compose.Pink
+import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
@@ -98,7 +99,7 @@ fun MyPageUserInformation() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(11.dp))
+            Spacer(modifier = Modifier.height(28.dp))
             AsyncImage(
                 modifier = Modifier
                     .size(90.dp)
@@ -111,23 +112,23 @@ fun MyPageUserInformation() {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "테스트세트스",
-                color = ColorSubRed,
+                color = Pink,
                 fontSize = dpToSp(dp = 14),
-                fontFamily = AppleGothicFontFamily,
+                fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W500,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(50.dp))
-                    .border(1.dp, ColorSubRed, RoundedCornerShape(50.dp))
-                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Gray80)
+                    .padding(horizontal = 4.dp, vertical = 3.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "마포구 몽키스패너", fontSize = dpToSp(dp = 30),
-                fontFamily = AppleGothicFontFamily,
+                fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -137,15 +138,23 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 32.dp, start = 36.dp, end = 36.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally)
+            .padding(12.dp),
     ) {
-        buttonItems.forEach { myPageButton ->
+        buttonItems.forEachIndexed { index,myPageButton ->
             MyPageInformationButton(
                 myPageButton.topText,
                 myPageButton.bottomText,
                 myPageButton.onClick
             )
+            if (index < buttonItems.size - 1) {
+                Divider(
+                    color = Gray80,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .padding(vertical = 18.dp)
+                )
+            }
         }
     }
 }
@@ -166,7 +175,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = myPageSectionTitle.topTitle, fontSize = dpToSp(dp = 12),
-                fontFamily = AppleGothicFontFamily,
+                fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight(700),
                 color = Gray50,
             )
@@ -180,7 +189,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
             Text(
                 text = myPageSectionTitle.bottomTitle, fontSize = dpToSp(dp = 24),
                 lineHeight = 31.2.sp,
-                fontFamily = AppleGothicFontFamily,
+                fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight(400),
                 color = Color.White,
             )
@@ -188,7 +197,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
                 Text(
                     text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count),
                     fontSize = dpToSp(dp = 14),
-                    fontFamily = AppleGothicFontFamily,
+                    fontFamily = PretendardFontFamily,
                     fontWeight = FontWeight(600),
                     color = Pink,
                 )
@@ -212,24 +221,21 @@ fun MyPageInformationButton(
 ) {
     Column(
         modifier = Modifier
-            .size(88.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(Gray90)
-            .padding(bottom = 12.dp, start = 10.dp, end = 10.dp)
+            .fillMaxWidth()
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
         Text(
-            text = topText, fontFamily = AppleGothicFontFamily,
+            text = topText, fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W700,
-            color = Color.White, fontSize = dpToSp(dp = 24)
+            color = Color.White, fontSize = dpToSp(dp = 16)
         )
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = bottomText, fontFamily = AppleGothicFontFamily,
-            fontWeight = FontWeight.W400,
-            color = Color.White, fontSize = dpToSp(dp = 12)
+            text = bottomText, fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W500,
+            color = Gray30, fontSize = dpToSp(dp = 12)
         )
     }
 }
