@@ -269,7 +269,7 @@ interface ServerApi {
     @DELETE("api/v1/my/{placeType}/place/{placeId}")
     suspend fun deletePlace(@Path("placeType") placeType: String, @Path("placeId") placeId: String): Response<BaseResponse<String>>
 
-    @GET("apt/v1/my/{placeType}/places")
+    @GET("api/v1/my/{placeType}/places")
     suspend fun getPlace(
         @Path("placeType") placeType: String,
         @Query("size") size: Int,

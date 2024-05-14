@@ -24,14 +24,13 @@
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="24dp"
+            android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@null"
             android:foreground="?actionBarItemBackground"
             android:src="@drawable/ic_close_black"
             app:layout_constraintBottom_toBottomOf="@id/layout_title"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -48,32 +47,20 @@
             app:layout_constraintTop_toTopOf="@id/btn_back" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageButton
-        android:id="@+id/btn_search"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/circle_white"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_title" />
-
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rect_radius_12_gray10"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/rect_white_radius_12"
         android:hint="@string/search_by_address_hint"
-        app:endIconDrawable="@drawable/ic_clear_text"
+        app:endIconDrawable="@drawable/ic_close_white"
         app:endIconMode="clear_text"
         app:hintEnabled="false"
-        app:layout_constraintBottom_toBottomOf="@id/btn_search"
-        app:layout_constraintEnd_toStartOf="@id/btn_search"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_search"
+        app:layout_constraintTop_toBottomOf="@id/layout_title"
         app:startIconDrawable="@drawable/ic_reading_glasses">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -90,7 +77,8 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/recentSearchLinearLayout"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
         android:background="@color/color_white"
@@ -98,7 +86,28 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_search">
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recentSearchRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_recent_search" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/searchResultLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/color_white"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout">
 
         <View
             android:layout_width="match_parent"
@@ -124,5 +133,6 @@
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_search_by_address" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
