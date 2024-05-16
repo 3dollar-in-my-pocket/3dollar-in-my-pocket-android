@@ -298,11 +298,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     viewModel.homeFilterEvent.collect {
                         viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
 
-                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
-                        val drawableStart = ContextCompat.getDrawable(
-                            requireContext(),
-                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
-                        )
                         binding.run {
                             if (it.filterConditionsType == FilterConditionsTypeModel.RECENT_ACTIVITY) {
                                 filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
@@ -310,6 +305,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             } else {
                                 filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
                                 filterConditionsTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                            }
+                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) {
+                                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                bossFilterTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                            } else {
+                                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                bossFilterTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
                             }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
                                 getString(R.string.fragment_home_filter_distance)
