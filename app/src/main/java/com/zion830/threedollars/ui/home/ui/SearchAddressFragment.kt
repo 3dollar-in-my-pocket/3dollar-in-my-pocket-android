@@ -5,6 +5,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -46,22 +47,16 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         initAdapter()
         initButton()
         initFlow()
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    binding.recentSearchLinearLayout.isVisible = true
-                    binding.searchResultLinearLayout.isVisible = false
-                } else {
-                    binding.recentSearchLinearLayout.isVisible = false
-                    binding.searchResultLinearLayout.isVisible = true
-                    searchViewModel.updateSearchAddress(binding.etSearch.text.toString())
-                }
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            if (text.isNullOrEmpty()) {
+                binding.recentSearchLinearLayout.isVisible = true
+                binding.searchResultLinearLayout.isVisible = false
+            } else {
+                binding.recentSearchLinearLayout.isVisible = false
+                binding.searchResultLinearLayout.isVisible = true
+                searchViewModel.updateSearchAddress(binding.etSearch.text.toString())
             }
-
-            override fun afterTextChanged(e: Editable?) {}
-        })
+        }
     }
 
     override fun initFirebaseAnalytics() {
