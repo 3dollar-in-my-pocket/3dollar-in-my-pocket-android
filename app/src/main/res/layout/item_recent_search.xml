@@ -3,44 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="item"
-            type="com.threedollar.network.data.kakao.Document" />
-
-        <variable
-            name="listener"
-            type="com.threedollar.common.listener.OnItemClickListener" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recentSearchConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:onClick="@{() -> listener.onClick(item)}"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp">
-
-        <ImageView
-            android:id="@+id/addressResultImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_address_result"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:paddingHorizontal="20dp">
 
         <TextView
             android:id="@+id/tv_address"
             style="@style/apple_gothic_semi_bold.size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="16dp"
-            android:text="@{item.placeName}"
+            android:layout_marginTop="12dp"
             android:textColor="@android:color/black"
-            app:layout_constraintStart_toEndOf="@id/addressResultImageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="서울시" />
 
@@ -49,15 +27,22 @@
             style="@style/apple_gothic_regular.size_14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="16dp"
-            android:text="@{item.roadAddressName}"
+            android:layout_marginBottom="12dp"
             android:textColor="@color/gray50"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/addressResultImageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_address"
             tools:text="서울시" />
+
+        <ImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_close_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:layout_width="0dp"

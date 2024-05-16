@@ -7,6 +7,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.place.PlaceResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -19,12 +20,39 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
-import com.threedollar.network.data.store.*
+import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
+import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.PostUserStoreResponse
+import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.Reviews
+import com.threedollar.network.data.store.SaveImagesResponse
+import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.*
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PlaceRequest
+import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
+import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.UserStoreRequest
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ServerApi {
 
@@ -63,7 +91,7 @@ interface ServerApi {
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
         @Path("pollId") id: String,
-        @Body pollCommentApiRequest: PollCommentApiRequest
+        @Body pollCommentApiRequest: PollCommentApiRequest,
     ): Response<BaseResponse<PollCommentCreateApiResponse>>
 
     @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
@@ -73,14 +101,14 @@ interface ServerApi {
     suspend fun editPollComment(
         @Path("pollId") pollId: String,
         @Path("commentId") commentId: String,
-        @Body commentApiRequest: PollCommentApiRequest
+        @Body commentApiRequest: PollCommentApiRequest,
     ): Response<BaseResponse<String>>
 
     @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
     suspend fun reportPollComment(
         @Path("pollId") pollId: String,
         @Path("commentId") commentId: String,
-        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest,
     ): Response<BaseResponse<String>>
 
     @GET("/api/v1/poll/{pollId}/comments")
@@ -234,4 +262,17 @@ interface ServerApi {
 
     @GET("/api/v1/report/group/{group}/reasons")
     suspend fun getReportReasons(@Path("group") group: String): Response<BaseResponse<ReportReasonsResponse>>
+
+    @POST("/api/v1/my/{placeType}/place")
+    suspend fun postPlace(@Body placeRequest: PlaceRequest, @Path("placeType") placeType: String): Response<BaseResponse<String>>
+
+    @DELETE("api/v1/my/{placeType}/place/{placeId}")
+    suspend fun deletePlace(@Path("placeType") placeType: String, @Path("placeId") placeId: String): Response<BaseResponse<String>>
+
+    @GET("api/v1/my/{placeType}/places")
+    suspend fun getPlace(
+        @Path("placeType") placeType: String,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String?,
+    ): Response<BaseResponse<PlaceResponse>>
 }

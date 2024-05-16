@@ -86,11 +86,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.addressText.observe(viewLifecycleOwner) {
             binding.tvAddress.text = it ?: getString(R.string.location_no_address)
         }
-        searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
-            naverMapFragment.moveCamera(it)
-            binding.tvAddress.text =
-                getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-        }
     }
 
     override fun initFirebaseAnalytics() {
@@ -308,6 +303,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         it?.let {
                             showToast(it)
                         }
+                    }
+                }
+                launch {
+                    searchViewModel.searchResultLocation.collect {
+                        naverMapFragment.moveCamera(it)
+                        binding.tvAddress.text =
+                            getCurrentLocationName(it) ?: getString(R.string.location_no_address)
                     }
                 }
             }
