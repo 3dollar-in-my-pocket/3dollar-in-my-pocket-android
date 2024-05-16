@@ -3,6 +3,7 @@ package com.my.presentation.page.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -36,14 +38,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
+import com.my.presentation.page.commponent.MyPageShopInfoView
 import com.my.presentation.page.data.MyPageButton
 import com.my.presentation.page.data.MyPageSectionTitle
+import com.my.presentation.page.data.MyPageShop
 import com.my.presentation.page.data.myPageButtonPreview
 import com.my.presentation.page.data.myPageSectionTitlePreview
+import com.my.presentation.page.data.myPageShopPreview
+import com.my.presentation.page.data.myPageShopsPreview
 import zion830.com.common.base.compose.Gray100
 import zion830.com.common.base.compose.Gray30
 import zion830.com.common.base.compose.Gray50
 import zion830.com.common.base.compose.Gray80
+import zion830.com.common.base.compose.Gray90
+import zion830.com.common.base.compose.Gray95
 import zion830.com.common.base.compose.Pink
 import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.dpToSp
@@ -138,13 +146,18 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(68.dp)
             .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        buttonItems.forEachIndexed { index,myPageButton ->
+        buttonItems.forEachIndexed { index, myPageButton ->
             MyPageInformationButton(
-                myPageButton.topText,
-                myPageButton.bottomText,
-                myPageButton.onClick
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                topText = myPageButton.topText,
+                bottomText = myPageButton.bottomText,
+                onClick = myPageButton.onClick
             )
             if (index < buttonItems.size - 1) {
                 Divider(
@@ -152,7 +165,7 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
                     modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp)
-                        .padding(vertical = 18.dp)
+                        .padding(vertical = 6.dp)
                 )
             }
         }
@@ -215,16 +228,16 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
 @Preview
 @Composable
 fun MyPageInformationButton(
+    modifier: Modifier = Modifier,
     topText: String = "상단",
     bottomText: String = "하단",
     onClick: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = topText, fontFamily = PretendardFontFamily,
@@ -237,6 +250,83 @@ fun MyPageInformationButton(
             fontWeight = FontWeight.W500,
             color = Gray30, fontSize = dpToSp(dp = 12)
         )
+    }
+}
+
+@Preview
+@Composable
+fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPreview.visitedData) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(26.dp)
+            .clip(shape = RoundedCornerShape(13.dp))
+            .background(Gray90),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(14.dp),
+            painter = painterResource(id = if (visitedData.isExists) R.drawable.ic_face_smile else R.drawable.ic_face_sad),
+            contentDescription = "방문 상태"
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = visitedData.date, fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W500,
+            color = Color.White, fontSize = dpToSp(dp = 12)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MyPageShopItem(
+    isMyVisited: Boolean = true,
+    myPageShop: MyPageShop = myPageShopPreview
+) {
+    Column(
+        modifier = Modifier
+            .width(250.dp)
+            .clip(shape = RoundedCornerShape(16.dp))
+            .background(Gray95)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 16.dp)
+    ) {
+        if (isMyVisited) {
+            MyVisitedShopDateItem(visitedData = myPageShop.visitedData)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        MyPageShopInfoView(myPageShop = myPageShop)
+    }
+}
+
+@Preview
+@Composable
+fun MyPageVisitedShopItem(
+    myPageShops: List<MyPageShop> = myPageShopsPreview
+) {
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        myPageShops.forEach {
+            MyPageShopItem(isMyVisited = true, myPageShop = it)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MyPageFavoriteShopItem(
+    myPageShops: List<MyPageShop> = myPageShopsPreview
+) {
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        myPageShops.forEach {
+            MyPageShopItem(isMyVisited = false, myPageShop = it)
+        }
     }
 }
 
