@@ -317,6 +317,40 @@ fun MyPageVisitedShopItem(
 
 @Preview
 @Composable
+fun MyPageVoteCountItem(count: Int = 2042) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(16.dp))
+            .background(Gray95)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = R.drawable.ic_fire),
+            contentDescription = "투표"
+        )
+        Text(
+            text = stringResource(id = R.string.str_mypage_count, count),
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W700,
+            color = Color.White,
+            fontSize = dpToSp(dp = 24)
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = stringResource(id = R.string.str_mypage_vote_count_description),
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W500,
+            color = Color.White,
+            fontSize = dpToSp(dp = 12)
+        )
+    }
+}
+
+@Preview
+@Composable
 fun MyPageFavoriteShopItem(
     myPageShops: List<MyPageShop> = myPageShopsPreview
 ) {

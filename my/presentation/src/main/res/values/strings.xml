@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="str_mypage_count">%d개</string>
+    <string name="str_mypage_vote_count">총 %d명</string>
+    <string name="str_mypage_vote_count_description">내가 만든 투표에 참여</string>
 </resources>
