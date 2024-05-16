@@ -22,6 +22,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
@@ -38,6 +39,7 @@ import com.threedollar.common.utils.Constants.CLICK_AD_CARD
 import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
 import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_MARKER
+import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_SORTING
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.Constants.CLICK_VISIT
@@ -74,6 +76,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
+    private var filterConditionsType = FilterConditionsTypeModel.NO_RECENT_ACTIVITY
 
     override fun initView() {
         initMap()
@@ -191,6 +194,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             showSelectCategoryDialog()
         }
 
+        binding.filterConditionsTextView.setOnClickListener {
+            filterConditionsType = if (filterConditionsType == FilterConditionsTypeModel.NO_RECENT_ACTIVITY) {
+                FilterConditionsTypeModel.RECENT_ACTIVITY
+            } else {
+                FilterConditionsTypeModel.NO_RECENT_ACTIVITY
+            }
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                putBoolean("value", filterConditionsType == FilterConditionsTypeModel.RECENT_ACTIVITY)
+            }
+            EventTracker.logEvent(CLICK_RECENT_ACTIVITY_FILTER, bundle)
+
+            viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
+        }
         binding.filterTextView.setOnClickListener {
             homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
                 HomeSortType.LATEST
@@ -264,7 +281,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 launch {
                     viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        if(adAndStoreItems.isEmpty()) return@collect
+                        if (adAndStoreItems.isEmpty()) return@collect
                         val resultList = mutableListOf<AdAndStoreItem>()
                         resultList.addAll(adAndStoreItems)
                         resultList.add(1, viewModel.advertisementModel.value ?: AdvertisementModelV2Empty())
@@ -287,8 +304,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
                         )
                         binding.run {
-                            bossFilterTextView.setTextColor(textColor)
-                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+                            if (it.filterConditionsType == FilterConditionsTypeModel.RECENT_ACTIVITY) {
+                                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                            } else {
+                                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                            }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
                                 getString(R.string.fragment_home_filter_distance)
                             } else {
