@@ -19,8 +19,10 @@ data class Store(
     val storeId: String? = "",
     @SerializedName("storeName")
     val storeName: String? = "",
+    @SerializedName("activitiesStatus")
+    val activitiesStatus: String? = "",
     @SerializedName("storeType")
     val storeType: String? = "",
     @SerializedName("updatedAt")
-    val updatedAt: String? = ""
+    val updatedAt: String? = "",
 )

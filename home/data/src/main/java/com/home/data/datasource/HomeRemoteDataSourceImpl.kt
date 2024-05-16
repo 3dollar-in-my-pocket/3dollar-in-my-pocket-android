@@ -7,7 +7,6 @@ import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.place.PlaceResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -18,6 +17,7 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PlaceType
@@ -39,6 +39,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsType: FilterConditionsType,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -51,6 +52,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
                     targetStores = targetStores,
                     sortType = sortType,
                     filterCertifiedStores = filterCertifiedStores,
+                    filterConditions = filterConditionsType.name,
                     mapLatitude = mapLatitude,
                     mapLongitude = mapLongitude,
                     deviceLatitude = deviceLatitude,

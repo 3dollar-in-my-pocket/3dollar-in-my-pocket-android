@@ -27,6 +27,7 @@ import com.home.domain.data.store.StoreNearExistsModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.PlaceRequest
 import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReasonsGroupType
@@ -59,6 +60,7 @@ class HomeRepositoryImpl @Inject constructor(
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsTypeModel: FilterConditionsTypeModel,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -68,6 +70,7 @@ class HomeRepositoryImpl @Inject constructor(
         targetStores = targetStores,
         sortType = sortType,
         filterCertifiedStores = filterCertifiedStores,
+        filterConditionsType = filterConditionsTypeModel.asType(),
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,

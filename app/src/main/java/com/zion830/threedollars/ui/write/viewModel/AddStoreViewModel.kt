@@ -8,6 +8,7 @@ import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.PostUserStoreModel
 import com.home.domain.data.store.SelectCategoryModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.UserStoreModelRequest
 import com.home.presentation.data.HomeSortType
 import com.naver.maps.geometry.LatLng
@@ -97,10 +98,11 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 targetStores = null,
                 sortType = HomeSortType.DISTANCE_ASC.name,
                 filterCertifiedStores = false,
+                filterConditionsTypeModel = FilterConditionsTypeModel.NO_RECENT_ACTIVITY,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
                 deviceLatitude = location.latitude,
-                deviceLongitude = location.longitude
+                deviceLongitude = location.longitude,
             ).collect {
                 if (it.ok) {
                     _aroundStoreModels.value = it.data?.contentModels
