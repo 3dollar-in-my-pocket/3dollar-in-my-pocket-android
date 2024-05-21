@@ -34,7 +34,7 @@ class RecentSearchViewHolder(private val binding: ItemRecentSearchBinding) : Rec
         searchClickListener: OnItemClickListener<PlaceModel>,
         deleteClickListener: OnItemClickListener<PlaceModel>,
     ) {
-        binding.tvAddress.text = item.addressName
+        binding.tvAddress.text = item.placeName
         binding.tvAddressDetail.text = item.roadAddressName
         binding.recentSearchConstraintLayout.setOnClickListener {
             searchClickListener.onClick(item)
