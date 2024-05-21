@@ -290,6 +290,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)
                         }
+                        naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, 0)
                         delay(200L)
                         binding.aroundStoreRecyclerView.scrollToPosition(0)
                     }
