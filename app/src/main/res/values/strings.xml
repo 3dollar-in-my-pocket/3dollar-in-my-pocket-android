@@ -323,6 +323,7 @@
     <string name="admob_list_banner">ca-app-pub-5385646520024289/8009257851</string>
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
+    <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
     <string name="fragment_home_filter_conditions">🔥 최근 활동</string>
     <string name="recent_search_title">최근검색 위치</string>
 </resources>

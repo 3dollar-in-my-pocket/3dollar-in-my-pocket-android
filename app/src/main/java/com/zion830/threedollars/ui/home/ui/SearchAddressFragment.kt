@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
+import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.place.PlaceModel
 import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
@@ -47,6 +48,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         initAdapter()
         initButton()
         initFlow()
+        initAdmob()
         binding.etSearch.doOnTextChanged { text, _, _, _ ->
             if (text.isNullOrEmpty()) {
                 binding.recentSearchLinearLayout.isVisible = true
@@ -153,7 +155,10 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
         }
     }
-
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+    }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchByAddressBinding =
         FragmentSearchByAddressBinding.inflate(inflater, container, false)
 
