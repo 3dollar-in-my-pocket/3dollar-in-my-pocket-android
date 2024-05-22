@@ -25,10 +25,25 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.*
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.PaymentType
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.StoreImage
+import com.home.domain.data.store.UserStoreDetailEmptyItem
+import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.UserStoreMenuModel
+import com.home.domain.data.store.UserStoreMoreResponse
+import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.ext.*
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.ext.convertUpdateAt
+import com.threedollar.common.ext.getMonthFirstDate
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.loadImage
+import com.threedollar.common.ext.showSnack
+import com.threedollar.common.ext.textPartColor
+import com.threedollar.common.ext.textPartTypeface
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.USER_STORE
@@ -48,7 +63,17 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.FileUtils
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.StringUtils
+import com.zion830.threedollars.utils.goToPermissionSetting
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
+import com.zion830.threedollars.utils.shareWithKakao
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.delay
@@ -141,6 +166,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         }
 
+        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(R.color.pink, null))
         refreshStoreInfo()
         initMap()
         initButton()
@@ -162,6 +188,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
     }
+
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity", screenName = "store_detail")
     }
@@ -498,6 +525,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     visitHistoryAdapter.submitList(historiesContentModelList)
                 }
                 binding.visitHistoryCardView.isVisible = true
+                binding.visitHistoryNotiLinearLayout.isVisible = false
+            } else {
+                binding.visitHistoryNotiLinearLayout.isVisible = true
+                binding.visitHistoryCardView.isVisible = false
             }
         }
     }
