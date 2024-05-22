@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.ui
 
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,11 +14,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.place.PlaceModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.kakao.Document
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
@@ -68,6 +72,14 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     private fun initAdapter() {
         searchAddressRecyclerAdapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
+                val bundle = Bundle().apply {
+                    putString("screen", "search_address")
+                    putString("building_name",item.placeName)
+                    putString("address",item.addressName)
+                    putString("type","SEARCH")
+                }
+                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
                 searchViewModel.postPlace(
                     placeRequest = PlaceRequest(
@@ -87,6 +99,14 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
 
         recentSearchAdapter = RecentSearchAdapter(searchClickListener = object : OnItemClickListener<PlaceModel> {
             override fun onClick(item: PlaceModel) {
+                val bundle = Bundle().apply {
+                    putString("screen", "search_address")
+                    putString("building_name",item.placeName)
+                    putString("address",item.addressName)
+                    putString("type","RECENT")
+                }
+                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+
                 val location = LatLng(item.location.latitude, item.location.longitude)
                 searchViewModel.postPlace(
                     placeRequest = PlaceRequest(
