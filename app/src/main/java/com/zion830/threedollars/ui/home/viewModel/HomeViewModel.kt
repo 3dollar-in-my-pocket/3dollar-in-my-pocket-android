@@ -145,7 +145,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     fun updateHomeFilterEvent(
         homeSortType: HomeSortType? = null,
         homeStoreType: HomeStoreType? = null,
-        filterConditionsType: FilterConditionsTypeModel? = null,
+        filterConditionsType: List<FilterConditionsTypeModel>? = null,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _homeFilterEvent.update {

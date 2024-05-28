@@ -35,7 +35,7 @@ interface HomeRepository {
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
-        filterConditionsTypeModel: FilterConditionsTypeModel,
+        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,

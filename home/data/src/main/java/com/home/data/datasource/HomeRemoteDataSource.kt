@@ -36,7 +36,7 @@ interface HomeRemoteDataSource {
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
-        filterConditionsType: FilterConditionsType,
+        filterConditionsType: List<FilterConditionsType>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,

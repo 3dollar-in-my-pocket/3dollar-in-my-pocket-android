@@ -76,7 +76,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
-    private var filterConditionsType = FilterConditionsTypeModel.NO_RECENT_ACTIVITY
+    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
 
     override fun initView() {
         initMap()
@@ -195,14 +195,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.filterConditionsTextView.setOnClickListener {
-            filterConditionsType = if (filterConditionsType == FilterConditionsTypeModel.NO_RECENT_ACTIVITY) {
-                FilterConditionsTypeModel.RECENT_ACTIVITY
+            filterConditionsType = if (filterConditionsType.isEmpty()) {
+                listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
             } else {
-                FilterConditionsTypeModel.NO_RECENT_ACTIVITY
+                listOf()
             }
             val bundle = Bundle().apply {
                 putString("screen", "home")
-                putBoolean("value", filterConditionsType == FilterConditionsTypeModel.RECENT_ACTIVITY)
+                putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
             }
             EventTracker.logEvent(CLICK_RECENT_ACTIVITY_FILTER, bundle)
 
@@ -300,7 +300,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
 
                         binding.run {
-                            if (it.filterConditionsType == FilterConditionsTypeModel.RECENT_ACTIVITY) {
+                            if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
                                 filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
                                 filterConditionsTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
                             } else {
