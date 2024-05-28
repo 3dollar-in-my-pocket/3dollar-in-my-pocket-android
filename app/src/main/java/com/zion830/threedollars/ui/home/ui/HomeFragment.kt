@@ -43,6 +43,7 @@ import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_SORTING
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.Constants.CLICK_VISIT
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
@@ -62,9 +63,13 @@ import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: HomeViewModel by activityViewModels()
 
@@ -85,6 +90,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initFlow()
         initButton()
         initScroll()
+
+        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
             binding.tvAddress.text = it ?: getString(R.string.location_no_address)
@@ -195,6 +202,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.filterConditionsTextView.setOnClickListener {
+            sharedPrefUtils.setIsClickFilterConditions()
+            binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
             filterConditionsType = if (filterConditionsType.isEmpty()) {
                 listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
             } else {

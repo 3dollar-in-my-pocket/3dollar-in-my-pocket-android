@@ -107,6 +107,42 @@
                     app:layout_constraintStart_toEndOf="@id/allMenuTextView"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <LinearLayout
+                    android:id="@+id/filterConditionsSpeechBubbleLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/shape_speech_bubble"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    app:layout_constraintEnd_toEndOf="@id/filterConditionsTextView"
+                    app:layout_constraintStart_toStartOf="@id/filterConditionsTextView"
+                    app:layout_constraintTop_toBottomOf="@id/filterConditionsTextView">
+
+                    <TextView
+                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speech_bubble_title"
+                        android:textColor="@color/color_white" />
+
+                    <TextView
+                        style="@style/apple_gothic_medium.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/speech_bubble_body_1"
+                        android:textColor="@color/color_white" />
+
+                    <TextView
+                        style="@style/apple_gothic_medium.size_12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speech_bubble_body_2"
+                        android:textColor="@color/color_white" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/filterTextView"
                     style="@style/apple_gothic_medium.size_12sp"
