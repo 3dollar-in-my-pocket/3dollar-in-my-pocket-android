@@ -97,10 +97,11 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 targetStores = null,
                 sortType = HomeSortType.DISTANCE_ASC.name,
                 filterCertifiedStores = false,
+                filterConditionsTypeModel = listOf(),
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
                 deviceLatitude = location.latitude,
-                deviceLongitude = location.longitude
+                deviceLongitude = location.longitude,
             ).collect {
                 if (it.ok) {
                     _aroundStoreModels.value = it.data?.contentModels

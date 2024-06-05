@@ -59,6 +59,7 @@ import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.OpeningHourRequest
 import com.home.domain.request.PlaceRequest
@@ -118,6 +119,7 @@ import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MenuRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.UserStoreRequest
@@ -244,6 +246,7 @@ fun Store.asModel() = StoreModel(
     createdAt = createdAt ?: "",
     isDeleted = isDeleted ?: false,
     locationModel = location?.asModel() ?: LocationModel(),
+    activitiesStatus = if (activitiesStatus == "RECENT_ACTIVITY") FilterConditionsTypeModel.RECENT_ACTIVITY else FilterConditionsTypeModel.NO_RECENT_ACTIVITY,
     storeId = storeId ?: "",
     storeName = storeName ?: "",
     storeType = storeType ?: "",
@@ -676,4 +679,9 @@ fun PlaceRequest.asRequest() = com.threedollar.network.request.PlaceRequest(
 
 fun PlaceType.asType() = when (this) {
     PlaceType.RECENT_SEARCH -> com.threedollar.network.request.PlaceType.RECENT_SEARCH
+}
+
+fun FilterConditionsTypeModel.asType() = when (this) {
+    FilterConditionsTypeModel.RECENT_ACTIVITY -> FilterConditionsType.RECENT_ACTIVITY
+    FilterConditionsTypeModel.NO_RECENT_ACTIVITY -> FilterConditionsType.NO_RECENT_ACTIVITY
 }

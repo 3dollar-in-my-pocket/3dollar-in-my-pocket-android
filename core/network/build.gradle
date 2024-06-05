@@ -15,6 +15,7 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 34
+        versionName project.property("version_name")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -22,27 +23,27 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_release'),
-                                    appName3dollar : "@string/app_name_3dollar"]
+            manifestPlaceholders = [kakao_key     : properties.getProperty('kakao_key_release'),
+                                    appName3dollar: "@string/app_name_3dollar"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key_release')}\""
             buildConfigField "String", "APPLICATION_ID", "\"${properties.getProperty('application_id_release')}\""
             buildConfigField "String", "VERSION_CODE", "\"${properties.getProperty('version_code')}\""
-            buildConfigField "String", "VERSION_NAME", "\"${properties.getProperty('version_name')}\""
+            buildConfigField "String", "VERSION_NAME", "\"${project['version_name']}\""
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable true
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev'),
-                                    appName3dollar : "@string/app_name_3dollar_debug"]
+            manifestPlaceholders = [kakao_key     : properties.getProperty('kakao_key_dev'),
+                                    appName3dollar: "@string/app_name_3dollar_debug"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
             buildConfigField "String", "APPLICATION_ID", "\"${properties.getProperty('application_id_dev')}\""
             buildConfigField "String", "VERSION_CODE", "\"${properties.getProperty('version_code')}\""
-            buildConfigField "String", "VERSION_NAME", "\"${properties.getProperty('version_name')}\""
+            buildConfigField "String", "VERSION_NAME", "\"${project['version_name']}\""
         }
     }
     compileOptions {

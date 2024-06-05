@@ -217,7 +217,8 @@ class NearStoreMapViewViewHolder(
     }
 
     private fun ItemStoreLocationBinding.setText(item: ContentModel) {
-        tagTextView.text = item.storeModel.categories.joinToString(" ") { "#${it.name}" }
+        val categoryList = item.storeModel.categories.take(3)
+        tagTextView.text = categoryList.joinToString(" ") { "#${it.name}" }
         distanceTextView.text = if (item.distanceM < 1000) "${item.distanceM}m" else StringUtils.getString(R.string.more_1km)
         storeNameTextView.text = item.storeModel.storeName
         reviewTextView.text = "${item.extraModel.reviewsCount}개"

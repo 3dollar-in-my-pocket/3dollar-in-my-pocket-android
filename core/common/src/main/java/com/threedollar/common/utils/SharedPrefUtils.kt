@@ -20,6 +20,13 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         commit()
     }
 
+    fun setIsClickFilterConditions() = sharedPreferences.edit {
+        putBoolean(IS_CLICK_FILTER_CONDITIONS, true)
+        commit()
+    }
+
+    fun getIsClickFilterConditions() = sharedPreferences.getBoolean(IS_CLICK_FILTER_CONDITIONS, false)
+
     fun saveAccessToken(accessToken: String?) = sharedPreferences.edit {
         putString(ACCESS_TOKEN_KEY, accessToken)
         commit()
@@ -117,6 +124,7 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         private const val GOOGLE_TOKEN = "google_token"
         private const val TODAY_NOT_POPUP_DATE = "popup_url"
         private const val FOOD_TRUCK_TOOL_TIP = "food_truck_tool_tip"
+        private const val IS_CLICK_FILTER_CONDITIONS = "is_click_filter_conditions"
         val BOSS_FEED_BACK_LIST = "boss_feed_back_list"
     }
 }

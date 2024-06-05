@@ -143,6 +143,7 @@ interface ServerApi {
         @Query("targetStores") targetStores: Array<String>? = null,
         @Query("sortType") sortType: String,
         @Query("filterCertifiedStores") filterCertifiedStores: Boolean? = null,
+        @Query("filterConditions") filterConditions: List<String> = listOf(),
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Header("X-Device-Latitude") deviceLatitude: Double,
