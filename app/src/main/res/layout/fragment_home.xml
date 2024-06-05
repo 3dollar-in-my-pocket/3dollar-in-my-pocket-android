@@ -71,7 +71,7 @@
             android:layout_marginTop="14dp"
             android:overScrollMode="never"
             android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/layout_address"
             app:layout_constraintStart_toStartOf="@id/layout_address"
             app:layout_constraintTop_toBottomOf="@id/layout_address">
 
