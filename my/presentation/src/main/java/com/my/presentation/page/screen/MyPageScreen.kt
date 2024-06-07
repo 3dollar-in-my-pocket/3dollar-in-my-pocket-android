@@ -2,6 +2,7 @@ package com.my.presentation.page.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,24 +48,62 @@ import com.my.presentation.page.data.myPageButtonPreview
 import com.my.presentation.page.data.myPageSectionTitlePreview
 import com.my.presentation.page.data.myPageShopPreview
 import com.my.presentation.page.data.myPageShopsPreview
+import zion830.com.common.base.compose.ColorWhite
+import zion830.com.common.base.compose.Gray10
 import zion830.com.common.base.compose.Gray100
 import zion830.com.common.base.compose.Gray30
+import zion830.com.common.base.compose.Gray40
 import zion830.com.common.base.compose.Gray50
+import zion830.com.common.base.compose.Gray60
+import zion830.com.common.base.compose.Gray70
 import zion830.com.common.base.compose.Gray80
 import zion830.com.common.base.compose.Gray90
 import zion830.com.common.base.compose.Gray95
 import zion830.com.common.base.compose.Pink
 import zion830.com.common.base.compose.PretendardFontFamily
+import zion830.com.common.base.compose.Red
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
 fun MyPageScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(Gray100)
-    ) {
+    Scaffold(modifier = Modifier
+        .fillMaxSize(1f)
+        .background(Gray100),
+        topBar = { MyPageTitle() })
+    {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            MyPageUserInformation()
+            MyPageInformationButtons()
+            Spacer(modifier = Modifier.height(44.dp))
+            // 내가 방문한 가게
+            MyPageSectionTitle()
+            Spacer(modifier = Modifier.height(16.dp))
+            MyPageVisitedShopItem()
+            Spacer(modifier = Modifier.height(36.dp))
 
+            // 내가 좋아하는 가게
+            MyPageSectionTitle()
+            Spacer(modifier = Modifier.height(16.dp))
+            MyPageVisitedShopItem()
+            Spacer(modifier = Modifier.height(36.dp))
+
+            // 맛대맛 투표
+            MyPageSectionTitle()
+            Spacer(modifier = Modifier.height(16.dp))
+            MyPageVoteCountItem()
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Gray95, shape = RoundedCornerShape(16.dp))
+            ) {
+                MyPageVoteHistoryItem()
+            }
+        }
     }
 }
 
@@ -346,6 +386,85 @@ fun MyPageVoteCountItem(count: Int = 2042) {
             color = Color.White,
             fontSize = dpToSp(dp = 12)
         )
+    }
+}
+
+@Preview
+@Composable
+fun MyPageVoteHistoryItem() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "2222",
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W700,
+                color = Gray10,
+                fontSize = dpToSp(dp = 16),
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "2222",
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W500,
+                color = Gray40,
+                fontSize = dpToSp(dp = 10)
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            MyPageVoteItem(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.width(12.dp))
+            MyPageVoteItem(modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MyPageVoteItem(modifier: Modifier = Modifier.fillMaxWidth(), isVote: Boolean = true) {
+    Column(
+        modifier = modifier
+            .height(90.dp)
+            .border(
+                width = 1.dp,
+                color = if (isVote) Red else Gray70,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "2222",
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W500,
+            color = if (isVote) ColorWhite else Gray60,
+            fontSize = dpToSp(dp = 12),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(
+                    id = R.string.str_vote_percent,
+                    if (isVote) "\uD83E\uDD23" else "\uD83D\uDE1E",
+                    70
+                ),
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W700,
+                color = if (isVote) Color.White else Gray60,
+                fontSize = dpToSp(dp = 16)
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = "300명",
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W500,
+                color = if (isVote) Color.White else Gray60,
+                fontSize = dpToSp(dp = 10)
+            )
+        }
     }
 }
 

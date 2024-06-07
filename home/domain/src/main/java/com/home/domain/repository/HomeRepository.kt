@@ -49,6 +49,7 @@ interface HomeRepository {
     ): Flow<BaseResponse<UserStoreDetailModel>>
 
     fun getMyInfo(): Flow<BaseResponse<UserModel>>
+    fun getUserInfo(): Flow<BaseResponse<UserModel>>
 
     fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>>
 

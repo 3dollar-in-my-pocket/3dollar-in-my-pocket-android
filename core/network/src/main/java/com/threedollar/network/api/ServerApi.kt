@@ -19,12 +19,39 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
-import com.threedollar.network.data.store.*
+import com.threedollar.network.data.store.AroundStoreResponse
+import com.threedollar.network.data.store.BossStoreResponse
+import com.threedollar.network.data.store.DeleteResultResponse
+import com.threedollar.network.data.store.EditStoreReviewResponse
+import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.PostUserStoreResponse
+import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.Reviews
+import com.threedollar.network.data.store.SaveImagesResponse
+import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.*
+import com.threedollar.network.data.user.UserWithDetailApiResponse
+import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PostFeedbackRequest
+import com.threedollar.network.request.PostStoreVisitRequest
+import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StoreReviewRequest
+import com.threedollar.network.request.UserStoreRequest
 import okhttp3.MultipartBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ServerApi {
 
@@ -35,13 +62,19 @@ interface ServerApi {
     suspend fun getPollId(@Path("pollId") id: String): Response<BaseResponse<GetPollResponse>>
 
     @PUT("/api/v1/poll/{pollId}/choice")
-    suspend fun putPollChoice(@Path("pollId") id: String, @Body pollChoiceApiRequest: PollChoiceApiRequest): Response<BaseResponse<String>>
+    suspend fun putPollChoice(
+        @Path("pollId") id: String,
+        @Body pollChoiceApiRequest: PollChoiceApiRequest
+    ): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/poll/{pollId}/choice")
     suspend fun deletePollChoice(@Path("pollId") id: String): Response<BaseResponse<String>>
 
     @POST("/api/v1/poll/{pollId}/report")
-    suspend fun reportPoll(@Path("pollId") id: String, @Body pollReportCreateApiRequest: PollReportCreateApiRequest): Response<BaseResponse<String>>
+    suspend fun reportPoll(
+        @Path("pollId") id: String,
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+    ): Response<BaseResponse<String>>
 
     @GET("/api/v1/poll-categories")
     suspend fun getPollCategories(): Response<BaseResponse<PollCategoryApiResponse>>
@@ -58,7 +91,10 @@ interface ServerApi {
     suspend fun getPollPolicy(): Response<BaseResponse<PollPolicyApiResponse>>
 
     @GET("/api/v1/user/polls")
-    suspend fun getUserPollList(@Query("cursor") cursor: Int?, @Query("size") size: Int = 20): Response<BaseResponse<GetUserPollListResponse>>
+    suspend fun getUserPollList(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20
+    ): Response<BaseResponse<GetUserPollListResponse>>
 
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
@@ -67,7 +103,10 @@ interface ServerApi {
     ): Response<BaseResponse<PollCommentCreateApiResponse>>
 
     @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
-    suspend fun deletePollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): Response<BaseResponse<String>>
+    suspend fun deletePollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String
+    ): Response<BaseResponse<String>>
 
     @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
     suspend fun editPollComment(
@@ -103,6 +142,9 @@ interface ServerApi {
 
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>
+
+    @GET("/api/v4/user/me")
+    suspend fun getUserInfo(@Query("includeActivities") includeActivities: Boolean = true): Response<BaseResponse<UserWithDetailApiResponse>>
 
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
@@ -162,10 +204,16 @@ interface ServerApi {
 
     // favorite
     @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+    suspend fun putFavorite(
+        @Path("storeType") storeType: String,
+        @Path("storeId") storeId: String
+    ): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+    suspend fun deleteFavorite(
+        @Path("storeType") storeType: String,
+        @Path("storeId") storeId: String
+    ): Response<BaseResponse<String>>
 
     // feedback
     @POST("/api/v1/feedback/{targetType}/target/{targetId}")
@@ -186,7 +234,10 @@ interface ServerApi {
 
     @POST("/api/v2/store/images")
     @Multipart
-    suspend fun saveImages(@Part images: List<MultipartBody.Part>, @Query("storeId") storeId: Int): Response<BaseResponse<List<SaveImagesResponse>>>
+    suspend fun saveImages(
+        @Part images: List<MultipartBody.Part>,
+        @Query("storeId") storeId: Int
+    ): Response<BaseResponse<List<SaveImagesResponse>>>
 
     @GET("/api/v4/store/{storeId}/images")
     suspend fun getStoreImages(
@@ -223,7 +274,10 @@ interface ServerApi {
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 
     @PUT("/api/v2/store/{storeId}")
-    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int): Response<BaseResponse<PostUserStoreResponse>>
+    suspend fun putUserStore(
+        @Body userStoreRequest: UserStoreRequest,
+        @Path("storeId") storeId: Int
+    ): Response<BaseResponse<PostUserStoreResponse>>
 
     @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
     suspend fun reportStoreReview(

@@ -2,6 +2,7 @@ package com.home.data.datasource
 
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
@@ -15,6 +16,7 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
@@ -22,7 +24,6 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
-import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 
@@ -46,6 +47,8 @@ interface HomeRemoteDataSource {
     ): Flow<BaseResponse<BossStoreResponse>>
 
     fun getMyInfo(): Flow<BaseResponse<UserResponse>>
+
+    fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>>
 
     fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>>
 

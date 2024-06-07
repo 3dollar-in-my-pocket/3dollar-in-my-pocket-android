@@ -2,6 +2,7 @@ package com.home.data.datasource
 
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
@@ -16,6 +17,7 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
@@ -23,7 +25,6 @@ import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
-import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -96,6 +97,10 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun getMyInfo(): Flow<BaseResponse<UserResponse>> = flow {
         emit(apiResult(serverApi.getMyInfo()))
+    }
+
+    override fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>> = flow {
+        emit(apiResult(serverApi.getUserInfo()))
     }
 
     override fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>> = flow {
