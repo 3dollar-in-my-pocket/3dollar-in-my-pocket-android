@@ -99,10 +99,6 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.getMyInfo()))
     }
 
-    override fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>> = flow {
-        emit(apiResult(serverApi.getUserInfo()))
-    }
-
     override fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>> = flow {
         emit(apiResult(serverApi.putMarketingConsent(marketingConsentRequest)))
     }

@@ -48,8 +48,6 @@ interface HomeRemoteDataSource {
 
     fun getMyInfo(): Flow<BaseResponse<UserResponse>>
 
-    fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>>
-
     fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>>
 
     fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>>
