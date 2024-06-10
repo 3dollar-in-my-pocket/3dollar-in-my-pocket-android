@@ -16,8 +16,8 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 78
-        versionName "4.1.3"
+        versionCode 82
+        versionName project.property("version_name")
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
