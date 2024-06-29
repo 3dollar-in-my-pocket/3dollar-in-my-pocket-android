@@ -1,4 +1,4 @@
-package com.zion830.threedollars.datasource.model.v2.response.store
+package com.threedollar.network.data.store
 
 import com.google.gson.annotations.SerializedName
 

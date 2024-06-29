@@ -232,6 +232,8 @@ class SplashActivity :
                             is ResultWrapper.NetworkError -> {
                                 showToast(R.string.login_failed)
                             }
+
+                            null -> {}
                         }
                     }
                 }

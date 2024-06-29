@@ -1,4 +1,4 @@
-package com.zion830.threedollars.datasource.model.v2.response.favorite
+package com.threedollar.network.data.favorite
 
 import com.google.gson.annotations.SerializedName
 import com.threedollar.common.data.AdAndStoreItem

@@ -14,7 +14,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel

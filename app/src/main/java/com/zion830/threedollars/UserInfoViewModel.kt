@@ -2,14 +2,14 @@ package com.zion830.threedollars
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.data.store.StoreInfo
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
 
     val userName: MutableLiveData<String> = MutableLiveData("")
 
-    val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
+    val isNameEmpty: LiveData<Boolean> = userName.map {
         it.isNullOrBlank()
     }
 

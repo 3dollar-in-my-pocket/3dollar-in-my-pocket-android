@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource.model.v2.response.my
 
 
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.threedollar.network.data.store.StoreInfo
 
 data class MyStoreResponse(
     @SerializedName("data")

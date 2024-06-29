@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFavoritePageBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 

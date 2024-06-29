@@ -8,8 +8,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
+import com.my.presentation.page.screen.MyPageScreen
 import com.threedollar.common.base.BaseComposeFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
     override val viewModel: MyPageViewModel by viewModels()
 
@@ -26,7 +29,7 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 MaterialTheme {
-
+                    MyPageScreen(viewModel)
                 }
             }
         }

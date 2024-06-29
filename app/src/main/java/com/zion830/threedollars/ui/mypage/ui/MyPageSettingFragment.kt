@@ -85,7 +85,7 @@ class MyPageSettingFragment :
                         null,
                     )
                 } else {
-                    resources.getColor(R.color.white, null)
+                    resources.getColor(R.color.color_white, null)
                 },
             )
             binding.ivKakaoLogo.setImageResource(if (it.data.isKakaoUser()) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google)
@@ -154,7 +154,7 @@ class MyPageSettingFragment :
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 EventTracker.logEvent(Constants.SIGNOUT_CANCEL_BTN_CLICKED)
             }
-            .setPositiveButton(R.string.ok) { _, _ -> tryDeleteAccount() }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
             .create()
             .show()
     }

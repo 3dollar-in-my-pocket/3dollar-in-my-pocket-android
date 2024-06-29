@@ -640,7 +640,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
             setBackgroundResource(R.drawable.circle_gray70_24dp)
-            setTextColor(getColor(R.color.white))
+            setTextColor(getColor(R.color.color_white))
         }
     }
 

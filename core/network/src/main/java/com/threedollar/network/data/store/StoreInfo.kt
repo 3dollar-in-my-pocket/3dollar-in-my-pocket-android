@@ -1,11 +1,11 @@
-package com.zion830.threedollars.datasource.model.v2.response.store
+package com.threedollar.network.data.store
 
 import com.google.gson.annotations.SerializedName
 import com.threedollar.common.data.AdAndStoreItem
 
 data class StoreInfo(
     @SerializedName("categories")
-    val categories: List<String> = listOf(),
+    val categories: List<Category> = listOf(),
     @SerializedName("createdAt")
     val createdAt: String = "",
     @SerializedName("distance")

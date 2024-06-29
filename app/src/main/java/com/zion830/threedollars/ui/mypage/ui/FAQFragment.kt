@@ -71,7 +71,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>() {
             .setMessage(R.string.delete_account_confirm)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            .setPositiveButton(R.string.ok) { _, _ -> tryDeleteAccount() }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
             .create()
             .show()
     }

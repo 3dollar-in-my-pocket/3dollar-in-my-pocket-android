@@ -1,10 +1,10 @@
-package com.zion830.threedollars.datasource.model.v2.response.visit_history
+package com.threedollar.network.data.visit_history
 
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.threedollar.common.data.AdAndStoreItem
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
+import com.threedollar.network.data.store.StoreInfo
 
 @JsonClass(generateAdapter = true)
 data class VisitHistoryContent(

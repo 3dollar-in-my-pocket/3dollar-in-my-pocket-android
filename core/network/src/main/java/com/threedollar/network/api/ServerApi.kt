@@ -3,6 +3,7 @@ package com.threedollar.network.api
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
@@ -11,6 +12,7 @@ import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
+import com.threedollar.network.data.poll.response.GetMyPollListResponse
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -32,6 +34,7 @@ import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
@@ -96,6 +99,12 @@ interface ServerApi {
         @Query("size") size: Int = 20
     ): Response<BaseResponse<GetUserPollListResponse>>
 
+    @GET("/api/v1/my/polls")
+    suspend fun getMyPollList(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20
+    ): Response<BaseResponse<GetMyPollListResponse>>
+
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
         @Path("pollId") id: String,
@@ -143,11 +152,17 @@ interface ServerApi {
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>
 
-    @GET("/api/v4/user/me")
+    @GET("/api/v4/my/user")
     suspend fun getUserInfo(@Query("includeActivities") includeActivities: Boolean = true): Response<BaseResponse<UserWithDetailApiResponse>>
 
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
+
+    @GET("/api/v2/my/favorite-stores")
+    suspend fun getMyFavoriteStores(@Query("size") size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    @GET("/api/v4/my/store-visits")
+    suspend fun getMyVisitsStore(@Query("size") size: Int): Response<BaseResponse<MyVisitHistoryResponseV2>>
 
     // Store
     @GET("/api/v4/stores/around")

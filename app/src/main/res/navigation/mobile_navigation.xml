@@ -30,9 +30,8 @@
 
     <fragment
         android:id="@+id/navigation_mypage"
-        android:name="com.zion830.threedollars.ui.mypage.ui.MyPageFragment"
-        android:label="@string/title_mypage"
-        tools:layout="@layout/fragment_new_my_page" />
+        android:name="com.my.presentation.page.MyPageFragment"
+        android:label="@string/title_mypage" />
 
     <fragment
         android:id="@+id/navigation_popup"

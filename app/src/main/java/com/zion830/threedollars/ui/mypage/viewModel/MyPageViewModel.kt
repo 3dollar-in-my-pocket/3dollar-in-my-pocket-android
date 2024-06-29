@@ -2,17 +2,17 @@ package com.zion830.threedollars.ui.mypage.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
@@ -33,7 +33,7 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
     private val _myMedals: MutableLiveData<List<MyMedal>> = MutableLiveData()
     val myMedals: MutableLiveData<List<MyMedal>> = _myMedals
 
-    val selectedMedal = Transformations.map(userActivity) { it?.medal }
+    val selectedMedal = userActivity.map { it?.medal }
 
     private val _allMedals: MutableLiveData<List<Medal>> = MutableLiveData()
     val allMedals: LiveData<List<Medal>> = _allMedals

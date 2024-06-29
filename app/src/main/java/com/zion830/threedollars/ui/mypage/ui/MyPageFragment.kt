@@ -19,8 +19,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentNewMyPageBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
 import com.zion830.threedollars.ui.mypage.adapter.MyPageRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel

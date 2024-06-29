@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -25,7 +25,7 @@ class MyVisitHistoryRecyclerAdapter(
 
         val beforeItem = if (position > 0) getItem(position - 1) else null
         val categoryInfo = LegacySharedPrefUtils.getCategories()
-        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}" }
+        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}" }
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt, "yy.MM.dd")

@@ -1,4 +1,4 @@
-package com.zion830.threedollars.datasource.model.v2.response.visit_history
+package com.threedollar.network.data.visit_history
 
 
 import com.squareup.moshi.Json

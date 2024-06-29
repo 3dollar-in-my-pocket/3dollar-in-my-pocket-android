@@ -1,5 +1,10 @@
 package com.my.presentation.page.data
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.my.presentation.R
+import com.threedollar.network.data.user.UserWithDetailApiResponse
+
 data class MyPageButton(
     val topText: String,
     val bottomText: String,
@@ -12,3 +17,12 @@ val myPageButtonPreview = listOf(
     MyPageButton("5","내 칭호") {},
 
 )
+
+@Composable
+fun UserWithDetailApiResponse.toMyPageButtons():List<MyPageButton>{
+    return listOf(
+        MyPageButton(activities.createStoreCount.toString(), stringResource(R.string.str_button_create_store)) {},
+        MyPageButton(activities.writeReviewCount.toString(),stringResource(R.string.str_button_write_review)) {},
+        MyPageButton(ownedMedals.size.toString(),stringResource(R.string.str_button_medal)) {},
+    )
+}

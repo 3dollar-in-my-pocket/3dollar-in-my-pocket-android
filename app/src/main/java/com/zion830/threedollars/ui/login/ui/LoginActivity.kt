@@ -169,6 +169,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                                     else -> showToast(R.string.connection_failed)
                                 }
                             }
+
+                            ResultWrapper.NetworkError -> {}
                         }
                     }
                 }

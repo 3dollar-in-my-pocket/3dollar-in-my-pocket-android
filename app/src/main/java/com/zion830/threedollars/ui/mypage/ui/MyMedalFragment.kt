@@ -72,7 +72,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
             .setMessage(R.string.change_medal)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            .setPositiveButton(R.string.ok) { _, _ -> viewModel.changeMedal(medalId) }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> viewModel.changeMedal(medalId) }
             .create()
             .show()
     }

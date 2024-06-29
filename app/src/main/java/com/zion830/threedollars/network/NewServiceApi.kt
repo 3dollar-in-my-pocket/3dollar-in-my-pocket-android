@@ -8,10 +8,10 @@ import com.zion830.threedollars.datasource.model.v2.request.*
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 import retrofit2.http.*
 

@@ -3,5 +3,17 @@
     <string name="str_mypage_count">%d개</string>
     <string name="str_mypage_vote_count">총 %d명</string>
     <string name="str_mypage_vote_count_description">내가 만든 투표에 참여</string>
-    <string name="str_vote_percent">%s %d%</string>
+    <string name="str_vote_percent">%s %d%%</string>
+    
+    <string name="str_button_create_store">제보한 가게</string>
+    <string name="str_button_write_review">리뷰와 평과</string>
+    <string name="str_button_medal">획득한 칭호</string>
+
+    <string name="str_section_title_visite">방문인증</string>
+    <string name="str_section_title_favorit">즐겨찾기</string>
+    <string name="str_section_title_vote">맛대맛 투표</string>
+
+    <string name="str_section_bottom_visite">내가 방문한 가게 알아보기</string>
+    <string name="str_section_bottom_favorit">내가 좋아하는 가게는?</string>
+    <string name="str_section_bottom_vote">내가 만든 투표의 히스토리</string>
 </resources>

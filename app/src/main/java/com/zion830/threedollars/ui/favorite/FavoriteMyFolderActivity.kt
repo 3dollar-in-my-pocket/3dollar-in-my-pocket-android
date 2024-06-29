@@ -13,7 +13,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity

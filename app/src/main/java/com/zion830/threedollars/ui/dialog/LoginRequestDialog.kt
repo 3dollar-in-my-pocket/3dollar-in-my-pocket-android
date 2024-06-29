@@ -164,6 +164,8 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                                     else -> showToast(R.string.connection_failed)
                                 }
                             }
+
+                            ResultWrapper.NetworkError -> {}
                         }
                     }
                 }

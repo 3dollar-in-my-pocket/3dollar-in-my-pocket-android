@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,14 +43,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
+import com.my.presentation.page.MyPageViewModel
 import com.my.presentation.page.commponent.MyPageShopInfoView
 import com.my.presentation.page.data.MyPageButton
-import com.my.presentation.page.data.MyPageSectionTitle
+import com.my.presentation.page.data.MyPageSectionTitleData
 import com.my.presentation.page.data.MyPageShop
+import com.my.presentation.page.data.MyPageUserInformationData
+import com.my.presentation.page.data.MyVoteHistory
 import com.my.presentation.page.data.myPageButtonPreview
 import com.my.presentation.page.data.myPageSectionTitlePreview
 import com.my.presentation.page.data.myPageShopPreview
 import com.my.presentation.page.data.myPageShopsPreview
+import com.my.presentation.page.data.myPageUserInformationDataPreview
+import com.my.presentation.page.data.toMyPageButtons
+import com.my.presentation.page.data.toMyPageShops
+import com.my.presentation.page.data.toMyVoteHistory
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.poll.response.GetMyPollListResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import zion830.com.common.base.compose.ColorWhite
 import zion830.com.common.base.compose.Gray10
 import zion830.com.common.base.compose.Gray100
@@ -65,43 +79,76 @@ import zion830.com.common.base.compose.Red
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
-fun MyPageScreen() {
+fun MyPageScreen(viewModel: MyPageViewModel) {
+
+    val userInfo by viewModel.userInfo.collectAsState(UserWithDetailApiResponse())
+    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(MyFavoriteFolderResponse())
+    val myVisitsStore by viewModel.myVisitsStore.collectAsState(MyVisitHistoryResponseV2())
+    val userPollList by viewModel.userPollList.collectAsState(GetMyPollListResponse())
+
+    val myPageUserInformation = MyPageUserInformationData(name = userInfo.name, medal = userInfo.representativeMedal)
+    val myPageButtons = userInfo.toMyPageButtons()
+    val myVisitsShop = myVisitsStore.toMyPageShops()
+    val myFavoriteShop = myFavoriteStores.toMyPageShops()
+    val myVoteHistory = userPollList.polls?.contents.orEmpty().map { it.poll.toMyVoteHistory() }
+
+
     Scaffold(modifier = Modifier
-        .fillMaxSize(1f)
-        .background(Gray100),
+        .fillMaxSize(1f),
+        backgroundColor = Gray100,
         topBar = { MyPageTitle() })
     {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
+                .verticalScroll(rememberScrollState())
         ) {
-            MyPageUserInformation()
-            MyPageInformationButtons()
+            MyPageUserInformation(myPageUserInformation)
+            MyPageInformationButtons(myPageButtons)
             Spacer(modifier = Modifier.height(44.dp))
             // 내가 방문한 가게
-            MyPageSectionTitle()
+            MyPageSectionTitle(MyPageSectionTitleData(
+                topTitle = stringResource(R.string.str_section_title_visite),
+                topIcon = zion830.com.common.R.drawable.ic_badge_gray,
+                bottomTitle = stringResource(R.string.str_section_bottom_visite),
+                count = userInfo.activities.visitStoreCount
+            ) {})
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem()
+            MyPageVisitedShopItem(myVisitsShop, true)
             Spacer(modifier = Modifier.height(36.dp))
 
             // 내가 좋아하는 가게
-            MyPageSectionTitle()
+            MyPageSectionTitle(MyPageSectionTitleData(
+                topTitle = stringResource(R.string.str_section_title_favorit),
+                topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
+                bottomTitle = stringResource(R.string.str_section_bottom_favorit),
+                count = userInfo.activities.favoriteStoreCount
+            ) {})
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem()
+            MyPageVisitedShopItem(myFavoriteShop, false)
             Spacer(modifier = Modifier.height(36.dp))
 
             // 맛대맛 투표
-            MyPageSectionTitle()
+            MyPageSectionTitle(MyPageSectionTitleData(
+                topTitle = stringResource(R.string.str_section_title_vote),
+                topIcon = zion830.com.common.R.drawable.ic_fire,
+                bottomTitle = stringResource(R.string.str_section_bottom_vote)
+            ) {})
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVoteCountItem()
+            MyPageVoteCountItem(userPollList.meta?.totalParticipantsCount ?: 0)
             Spacer(modifier = Modifier.height(8.dp))
             Column(
                 modifier = Modifier
+                    .padding(horizontal = 20.dp)
                     .fillMaxWidth()
                     .background(color = Gray95, shape = RoundedCornerShape(16.dp))
+                    .padding(vertical = 20.dp, horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(28.dp)
             ) {
-                MyPageVoteHistoryItem()
+                myVoteHistory.forEach { vote ->
+                    MyPageVoteHistoryItem(vote)
+                }
             }
         }
     }
@@ -128,7 +175,7 @@ fun MyPageTitle() {
                 .align(Alignment.CenterEnd)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_setting),
+                painter = painterResource(id = zion830.com.common.R.drawable.ic_setting),
                 contentDescription = "마이페이지 셋팅 아이콘"
             )
         }
@@ -137,10 +184,10 @@ fun MyPageTitle() {
 
 @Preview
 @Composable
-fun MyPageUserInformation() {
+fun MyPageUserInformation(myPageUserInformation: MyPageUserInformationData = myPageUserInformationDataPreview) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Image(
-            painter = painterResource(id = R.drawable.img_back_gray),
+            painter = painterResource(id = zion830.com.common.R.drawable.img_back_gray),
             contentDescription = "내 정보 배경"
         )
         Column(
@@ -152,14 +199,14 @@ fun MyPageUserInformation() {
                 modifier = Modifier
                     .size(90.dp)
                     .clip(CircleShape),
-                model = "",
+                model = myPageUserInformation.medal.iconUrl,
                 contentDescription = "내 칭호 사진",
-                placeholder = painterResource(id = R.drawable.ic_no_store),
+                placeholder = painterResource(id = zion830.com.common.R.drawable.ic_no_store),
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "테스트세트스",
+                text = myPageUserInformation.medal.name.orEmpty(),
                 color = Pink,
                 fontSize = dpToSp(dp = 14),
                 fontFamily = PretendardFontFamily,
@@ -171,7 +218,7 @@ fun MyPageUserInformation() {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "마포구 몽키스패너", fontSize = dpToSp(dp = 30),
+                text = myPageUserInformation.name, fontSize = dpToSp(dp = 30),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
                 color = Color.White
@@ -213,7 +260,7 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
 }
 
 @Composable
-fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
+fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,7 +270,8 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
             Icon(
                 painter = painterResource(id = myPageSectionTitle.topIcon),
                 contentDescription = myPageSectionTitle.topTitle,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
+                tint = Gray50
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
@@ -246,20 +294,23 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitle) {
                 fontWeight = FontWeight(400),
                 color = Color.White,
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count),
-                    fontSize = dpToSp(dp = 14),
-                    fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight(600),
-                    color = Pink,
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_white_arrow),
-                    contentDescription = "화살표",
-                    modifier = Modifier.size(12.dp)
-                )
+            if(myPageSectionTitle.count != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count ?: 0),
+                        fontSize = dpToSp(dp = 14),
+                        fontFamily = PretendardFontFamily,
+                        fontWeight = FontWeight(600),
+                        color = Pink,
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+                        tint = Color.White,
+                        contentDescription = "화살표",
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
             }
         }
     }
@@ -307,7 +358,7 @@ fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPr
     ) {
         Image(
             modifier = Modifier.size(14.dp),
-            painter = painterResource(id = if (visitedData.isExists) R.drawable.ic_face_smile else R.drawable.ic_face_sad),
+            painter = painterResource(id = if (visitedData.isExists) zion830.com.common.R.drawable.ic_face_smile else zion830.com.common.R.drawable.ic_face_sad),
             contentDescription = "방문 상태"
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -343,15 +394,18 @@ fun MyPageShopItem(
 @Preview
 @Composable
 fun MyPageVisitedShopItem(
-    myPageShops: List<MyPageShop> = myPageShopsPreview
+    myPageShops: List<MyPageShop> = myPageShopsPreview,
+    isMyVisited: Boolean = true
 ) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Spacer(Modifier.width(8.dp))
         myPageShops.forEach {
-            MyPageShopItem(isMyVisited = true, myPageShop = it)
+            MyPageShopItem(isMyVisited = isMyVisited, myPageShop = it)
         }
+        Spacer(Modifier.width(8.dp))
     }
 }
 
@@ -360,6 +414,7 @@ fun MyPageVisitedShopItem(
 fun MyPageVoteCountItem(count: Int = 2042) {
     Column(
         modifier = Modifier
+            .padding(horizontal = 20.dp)
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
             .background(Gray95)
@@ -368,7 +423,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
     ) {
         Image(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = R.drawable.ic_fire),
+            painter = painterResource(id = zion830.com.common.R.drawable.ic_fire),
             contentDescription = "투표"
         )
         Text(
@@ -389,13 +444,12 @@ fun MyPageVoteCountItem(count: Int = 2042) {
     }
 }
 
-@Preview
 @Composable
-fun MyPageVoteHistoryItem() {
+fun MyPageVoteHistoryItem(vote: MyVoteHistory) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "2222",
+                text = vote.title,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
                 color = Gray10,
@@ -403,7 +457,7 @@ fun MyPageVoteHistoryItem() {
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = "2222",
+                text = vote.date,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W500,
                 color = Gray40,
@@ -411,33 +465,32 @@ fun MyPageVoteHistoryItem() {
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            MyPageVoteItem(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.width(12.dp))
-            MyPageVoteItem(modifier = Modifier.weight(1f))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            vote.options.forEach {
+                MyPageVoteItem(modifier = Modifier.weight(1f), it)
+            }
         }
     }
 }
 
-@Preview
 @Composable
-fun MyPageVoteItem(modifier: Modifier = Modifier.fillMaxWidth(), isVote: Boolean = true) {
+fun MyPageVoteItem(modifier: Modifier = Modifier, option: MyVoteHistory.Option) {
     Column(
         modifier = modifier
             .height(90.dp)
             .border(
                 width = 1.dp,
-                color = if (isVote) Red else Gray70,
+                color = if (option.isTopVote) Red else Gray70,
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "2222",
+            text = option.name,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W500,
-            color = if (isVote) ColorWhite else Gray60,
+            color = if (option.isTopVote) ColorWhite else Gray60,
             fontSize = dpToSp(dp = 12),
             modifier = Modifier
                 .weight(1f)
@@ -448,20 +501,20 @@ fun MyPageVoteItem(modifier: Modifier = Modifier.fillMaxWidth(), isVote: Boolean
             Text(
                 text = stringResource(
                     id = R.string.str_vote_percent,
-                    if (isVote) "\uD83E\uDD23" else "\uD83D\uDE1E",
-                    70
+                    if (option.isTopVote) "\uD83E\uDD23" else "\uD83D\uDE1E",
+                    option.ratio
                 ),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
-                color = if (isVote) Color.White else Gray60,
+                color = if (option.isTopVote) Color.White else Gray60,
                 fontSize = dpToSp(dp = 16)
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
-                text = "300명",
+                text = "${option.choiceCount}명",
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W500,
-                color = if (isVote) Color.White else Gray60,
+                color = if (option.isTopVote) Color.White else Gray60,
                 fontSize = dpToSp(dp = 10)
             )
         }
@@ -491,7 +544,7 @@ fun MyPageInformationButtonsView(buttonItems: List<MyPageButton> = myPageButtonP
 
 @Preview
 @Composable
-fun MyPageInformationTitlesView(titleItems: List<MyPageSectionTitle> = myPageSectionTitlePreview) {
+fun MyPageInformationTitlesView(titleItems: List<MyPageSectionTitleData> = myPageSectionTitlePreview) {
     Column {
         titleItems.forEach { myPageSectionTitle ->
             MyPageSectionTitle(myPageSectionTitle = myPageSectionTitle)

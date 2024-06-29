@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 
