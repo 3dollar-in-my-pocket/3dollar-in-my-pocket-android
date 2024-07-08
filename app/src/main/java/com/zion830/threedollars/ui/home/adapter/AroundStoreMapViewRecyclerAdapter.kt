@@ -1,14 +1,21 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
+import android.util.DisplayMetrics
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
@@ -136,7 +143,6 @@ class NearStoreAdMapViewViewHolder(
     ViewHolder(binding.root) {
     @SuppressLint("Range")
     fun bind(item: AdvertisementModelV2) {
-        binding.admob.isVisible = false
         binding.groupAd.isVisible = true
         binding.run {
             setOnclick(item)
@@ -146,11 +152,48 @@ class NearStoreAdMapViewViewHolder(
     }
 
     fun bind(item: AdvertisementModelV2Empty) {
-        binding.admob.isVisible = true
         binding.groupAd.isVisible = false
+        val adView = AdView(binding.root.context).apply {
+            id = View.generateViewId()
+            setAdSize(getAdSize(binding.rootConstraintLayout))
+            adUnitId = binding.root.context.getString(R.string.admob_map_banner)
+        }
+
+        val layoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+            endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+            topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+            bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+        }
+        binding.rootConstraintLayout.removeAllViews()
+        binding.rootConstraintLayout.addView(adView, layoutParams)
+
         val adRequest = AdRequest.Builder().build()
-        binding.admob.loadAd(adRequest)
+        adView.loadAd(adRequest)
     }
+
+    private fun getAdSize(adContainerView: View): AdSize {
+        // Determine the screen width (less decorations) to use for the ad width.
+        val display: Display = getSystemService(adContainerView.context, WindowManager::class.java)!!.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        display.getMetrics(outMetrics)
+
+        val density = outMetrics.density
+
+        var adWidthPixels: Float = adContainerView.getWidth().toFloat()
+
+        // If the ad hasn't been laid out, default to the full screen width.
+        if (adWidthPixels == 0f) {
+            adWidthPixels = outMetrics.widthPixels.toFloat()
+        }
+
+        val adWidth = (adWidthPixels / density).toInt()
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(adContainerView.context, adWidth)
+    }
+
 
     private fun ItemNearStoreAdBinding.setOnclick(item: AdvertisementModelV2) {
         rootConstraintLayout.setOnClickListener {
