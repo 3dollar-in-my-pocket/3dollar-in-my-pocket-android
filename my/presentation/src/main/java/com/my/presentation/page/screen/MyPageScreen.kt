@@ -118,7 +118,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 count = userInfo.activities.visitStoreCount
             ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem(myVisitsShop, true)
+            MyPageVisitedShopItem(myVisitsShop, true) { myPageShop -> viewModel.clickStore(myPageShop) }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 내가 좋아하는 가게
@@ -127,9 +127,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
                 bottomTitle = stringResource(R.string.str_section_bottom_favorit),
                 count = userInfo.activities.favoriteStoreCount
-            ) {})
+            ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem(myFavoriteShop, false)
+            MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop -> viewModel.clickStore(myPageShop) }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 맛대맛 투표
@@ -379,7 +379,8 @@ fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPr
 @Composable
 fun MyPageShopItem(
     isMyVisited: Boolean = true,
-    myPageShop: MyPageShop = myPageShopPreview
+    myPageShop: MyPageShop = myPageShopPreview,
+    clickShop: (MyPageShop) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -387,6 +388,7 @@ fun MyPageShopItem(
             .clip(shape = RoundedCornerShape(16.dp))
             .background(Gray95)
             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 16.dp)
+            .clickable { clickShop(myPageShop) }
     ) {
         if (isMyVisited) {
             MyVisitedShopDateItem(visitedData = myPageShop.visitedData)
@@ -400,7 +402,8 @@ fun MyPageShopItem(
 @Composable
 fun MyPageVisitedShopItem(
     myPageShops: List<MyPageShop> = myPageShopsPreview,
-    isMyVisited: Boolean = true
+    isMyVisited: Boolean = true,
+    clickShop: (MyPageShop) -> Unit = {}
 ) {
     Row(
         modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -408,7 +411,7 @@ fun MyPageVisitedShopItem(
     ) {
         Spacer(Modifier.width(8.dp))
         myPageShops.forEach {
-            MyPageShopItem(isMyVisited = isMyVisited, myPageShop = it)
+            MyPageShopItem(isMyVisited = isMyVisited, myPageShop = it, clickShop = clickShop)
         }
         Spacer(Modifier.width(8.dp))
     }

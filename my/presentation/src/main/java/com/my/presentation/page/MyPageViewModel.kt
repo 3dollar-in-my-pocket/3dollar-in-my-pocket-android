@@ -2,6 +2,7 @@ package com.my.presentation.page
 
 import androidx.lifecycle.viewModelScope
 import com.my.domain.repository.MyRepository
+import com.my.presentation.page.data.MyPageShop
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
@@ -27,11 +28,14 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     val userPollList: SharedFlow<GetMyPollListResponse> = _userPollList
     private val _addFragments = MutableSharedFlow<MyFragments>()
     val addFragments: SharedFlow<MyFragments> = _addFragments
+    private val _favoriteClick = MutableSharedFlow<Unit>()
+    val favoriteClick: SharedFlow<Unit> = _favoriteClick
+    private val _storeClick = MutableSharedFlow<MyPageShop>()
+    val storeClick: SharedFlow<MyPageShop> = _storeClick
 
     init {
         getUserInfo()
         getMyVisitsStore()
-        getMyFavoriteStores()
         getUserPollList()
     }
 
@@ -55,7 +59,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         }
     }
 
-    private fun getMyFavoriteStores() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun getMyFavoriteStores() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getMyFavoriteStores().collect {
             if (it.ok) {
                 it.data?.let { data ->
@@ -77,5 +81,13 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
 
     fun addFragments(myFragments: MyFragments) = viewModelScope.launch(coroutineExceptionHandler) {
         _addFragments.emit(myFragments)
+    }
+
+    fun clickFavorite() = viewModelScope.launch(coroutineExceptionHandler) {
+        _favoriteClick.emit(Unit)
+    }
+
+    fun clickStore(myPageShop: MyPageShop) = viewModelScope.launch(coroutineExceptionHandler) {
+        _storeClick.emit(myPageShop)
     }
 }

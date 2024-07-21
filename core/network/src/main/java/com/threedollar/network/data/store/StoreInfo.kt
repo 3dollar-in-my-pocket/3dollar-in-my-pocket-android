@@ -22,6 +22,8 @@ data class StoreInfo(
     val storeName: String = "",
     @SerializedName("updatedAt")
     val updatedAt: String = "",
+    @SerializedName("salesType")
+    val salesType: String? = null,
     @SerializedName("visitHistory")
     val visitHistory: VisitHistory = VisitHistory(),
     @SerializedName("isDeleted")

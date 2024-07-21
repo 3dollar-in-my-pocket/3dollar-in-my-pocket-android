@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.my.presentation.page.screen.MyPageScreen
 import com.threedollar.common.base.BaseComposeFragment
+import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.MyFragmentStarter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -22,8 +23,17 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
 
     @Inject
     lateinit var myFragmentStarter: MyFragmentStarter
+
+    @Inject
+    lateinit var activityStarter: ActivityStarter
+
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "MyPageFragment", screenName = null)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getMyFavoriteStores()
     }
 
     override fun onCreateView(
@@ -50,6 +60,20 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
         lifecycleScope.launch {
             viewModel.addFragments.collect {
                 myFragmentStarter.addMyFragments(requireActivity(), it)
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.storeClick.collect {
+                if (it.storeType == "STORE") {
+                    activityStarter.startBossDetailActivity(requireContext(), it.storeId)
+                } else {
+                    activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toInt())
+                }
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.favoriteClick.collect {
+                activityStarter.startFavoriteActivity(requireActivity())
             }
         }
     }
