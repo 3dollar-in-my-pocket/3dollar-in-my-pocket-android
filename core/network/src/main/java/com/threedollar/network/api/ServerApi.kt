@@ -162,7 +162,7 @@ interface ServerApi {
     suspend fun getMyFavoriteStores(@Query("size") size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
 
     @GET("/api/v4/my/store-visits")
-    suspend fun getMyVisitsStore(@Query("size") size: Int): Response<BaseResponse<MyVisitHistoryResponseV2>>
+    suspend fun getMyVisitsStore(@Query("size") size: Int, @Query("cursor") cursor: String? = null): Response<BaseResponse<MyVisitHistoryResponseV2>>
 
     // Store
     @GET("/api/v4/stores/around")

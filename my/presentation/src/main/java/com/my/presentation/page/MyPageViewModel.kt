@@ -3,9 +3,9 @@ package com.my.presentation.page
 import androidx.lifecycle.viewModelScope
 import com.my.domain.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.listener.MyFragments
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.poll.response.GetMyPollListResponse
-import com.threedollar.network.data.poll.response.GetUserPollListResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +25,8 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     val myVisitsStore: SharedFlow<MyVisitHistoryResponseV2> = _myVisitsStore
     private val _userPollList = MutableSharedFlow<GetMyPollListResponse>()
     val userPollList: SharedFlow<GetMyPollListResponse> = _userPollList
+    private val _addFragments = MutableSharedFlow<MyFragments>()
+    val addFragments: SharedFlow<MyFragments> = _addFragments
 
     init {
         getUserInfo()
@@ -71,5 +73,9 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
                 }
             }
         }
+    }
+
+    fun addFragments(myFragments: MyFragments) = viewModelScope.launch(coroutineExceptionHandler) {
+        _addFragments.emit(myFragments)
     }
 }

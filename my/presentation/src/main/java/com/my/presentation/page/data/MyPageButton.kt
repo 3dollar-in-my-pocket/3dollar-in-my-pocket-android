@@ -12,17 +12,21 @@ data class MyPageButton(
 )
 
 val myPageButtonPreview = listOf(
-    MyPageButton("5","제보한 가게") {},
-    MyPageButton("11","내가쓴 리뷰") {},
-    MyPageButton("5","내 칭호") {},
+    MyPageButton("5", "제보한 가게") {},
+    MyPageButton("11", "내가쓴 리뷰") {},
+    MyPageButton("5", "내 칭호") {},
 
-)
+    )
 
 @Composable
-fun UserWithDetailApiResponse.toMyPageButtons():List<MyPageButton>{
+fun UserWithDetailApiResponse.toMyPageButtons(
+    clickCreateStore: () -> Unit,
+    clickWriteReview: () -> Unit,
+    clickMedals: () -> Unit
+): List<MyPageButton> {
     return listOf(
-        MyPageButton(activities.createStoreCount.toString(), stringResource(R.string.str_button_create_store)) {},
-        MyPageButton(activities.writeReviewCount.toString(),stringResource(R.string.str_button_write_review)) {},
-        MyPageButton(ownedMedals.size.toString(),stringResource(R.string.str_button_medal)) {},
+        MyPageButton(activities.createStoreCount.toString(), stringResource(R.string.str_button_create_store), clickCreateStore),
+        MyPageButton(activities.writeReviewCount.toString(), stringResource(R.string.str_button_write_review), clickWriteReview),
+        MyPageButton(ownedMedals.size.toString(), stringResource(R.string.str_button_medal), clickMedals),
     )
 }

@@ -12,6 +12,7 @@ import androidx.paging.LoadState
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.threedollar.network.data.visit_history.VisitHistoryContent
@@ -45,8 +46,8 @@ class MyVisitHistoryFragment :
     }
 
     override fun initView() {
-        adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<VisitHistoryContent> {
-            override fun onClick(item: VisitHistoryContent) {
+        adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<MyVisitHistoryV2> {
+            override fun onClick(item: MyVisitHistoryV2) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }

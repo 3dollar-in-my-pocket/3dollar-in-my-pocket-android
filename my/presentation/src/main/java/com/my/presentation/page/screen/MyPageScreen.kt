@@ -58,6 +58,7 @@ import com.my.presentation.page.data.myPageUserInformationDataPreview
 import com.my.presentation.page.data.toMyPageButtons
 import com.my.presentation.page.data.toMyPageShops
 import com.my.presentation.page.data.toMyVoteHistory
+import com.threedollar.common.listener.MyFragments
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.poll.response.GetMyPollListResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
@@ -87,7 +88,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     val userPollList by viewModel.userPollList.collectAsState(GetMyPollListResponse())
 
     val myPageUserInformation = MyPageUserInformationData(name = userInfo.name, medal = userInfo.representativeMedal)
-    val myPageButtons = userInfo.toMyPageButtons()
+    val myPageButtons = userInfo.toMyPageButtons({ viewModel.addFragments(MyFragments.MyStore) },
+        { viewModel.addFragments(MyFragments.MyReview) },
+        { viewModel.addFragments(MyFragments.MyMedal) })
     val myVisitsShop = myVisitsStore.toMyPageShops()
     val myFavoriteShop = myFavoriteStores.toMyPageShops()
     val myVoteHistory = userPollList.polls?.contents.orEmpty().map { it.poll.toMyVoteHistory() }
@@ -96,7 +99,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     Scaffold(modifier = Modifier
         .fillMaxSize(1f),
         backgroundColor = Gray100,
-        topBar = { MyPageTitle() })
+        topBar = { MyPageTitle { viewModel.addFragments(MyFragments.MyPageSetting) } })
     {
         Column(
             modifier = Modifier
@@ -113,7 +116,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 topIcon = zion830.com.common.R.drawable.ic_badge_gray,
                 bottomTitle = stringResource(R.string.str_section_bottom_visite),
                 count = userInfo.activities.visitStoreCount
-            ) {})
+            ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             MyPageVisitedShopItem(myVisitsShop, true)
             Spacer(modifier = Modifier.height(36.dp))
@@ -156,7 +159,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
 
 @Preview
 @Composable
-fun MyPageTitle() {
+fun MyPageTitle(clickSetting: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -170,7 +173,7 @@ fun MyPageTitle() {
             ), modifier = Modifier.align(Alignment.Center)
         )
         IconButton(
-            onClick = { }, modifier = Modifier
+            onClick = clickSetting, modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.CenterEnd)
         ) {
@@ -283,7 +286,9 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
         }
         Spacer(modifier = Modifier.height(4.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { myPageSectionTitle.onClick() },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -294,7 +299,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
                 fontWeight = FontWeight(400),
                 color = Color.White,
             )
-            if(myPageSectionTitle.count != null) {
+            if (myPageSectionTitle.count != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count ?: 0),
