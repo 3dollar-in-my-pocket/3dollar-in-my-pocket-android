@@ -15,6 +15,7 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.data.store.MyReportedContent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
@@ -45,9 +46,9 @@ class MyStoreFragment :
     }
 
     override fun initView() {
-        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
-            override fun onClick(item: StoreInfo) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<MyReportedContent> {
+            override fun onClick(item: MyReportedContent) {
+                val intent = StoreDetailActivity.getIntent(requireContext(), item.store?.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })

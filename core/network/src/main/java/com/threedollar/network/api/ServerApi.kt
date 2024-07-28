@@ -26,6 +26,7 @@ import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.MyReportedStoresResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
 import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.Reviews
@@ -303,4 +304,12 @@ interface ServerApi {
 
     @GET("/api/v1/report/group/{group}/reasons")
     suspend fun getReportReasons(@Path("group") group: String): Response<BaseResponse<ReportReasonsResponse>>
+
+    @GET("/api/v4/my/stores")
+    suspend fun getMyStores(
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyReportedStoresResponse>>
 }
