@@ -8,14 +8,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
-import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewSummitRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint

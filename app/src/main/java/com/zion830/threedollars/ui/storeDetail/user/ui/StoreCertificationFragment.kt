@@ -14,8 +14,8 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationBinding
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.map.ui.StoreCertificationNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils

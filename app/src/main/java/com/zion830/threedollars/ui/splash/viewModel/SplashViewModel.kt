@@ -8,9 +8,9 @@ import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
-import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.KakaoLoginDataSource

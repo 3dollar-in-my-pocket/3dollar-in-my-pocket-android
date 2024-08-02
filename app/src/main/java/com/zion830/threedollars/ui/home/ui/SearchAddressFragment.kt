@@ -1,8 +1,6 @@
 package com.zion830.threedollars.ui.home.ui
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -14,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.place.PlaceModel
-import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
