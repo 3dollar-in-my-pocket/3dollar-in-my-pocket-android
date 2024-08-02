@@ -6,7 +6,7 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.Category
-import com.threedollar.domain.data.Neighborhoods
+import com.threedollar.domain.data.NeighborhoodModel
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PopularStore
 import com.threedollar.domain.repository.CommunityRepository
@@ -28,8 +28,8 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _categoryList: MutableSharedFlow<List<Category>> = MutableStateFlow(listOf())
     val categoryList: SharedFlow<List<Category>> = _categoryList.asSharedFlow()
 
-    private val _neighborhoods: MutableStateFlow<Neighborhoods> = MutableStateFlow(Neighborhoods(listOf()))
-    val neighborhoods: StateFlow<Neighborhoods> = _neighborhoods.asStateFlow()
+    private val _neighborhoods: MutableStateFlow<List<NeighborhoodModel>> = MutableStateFlow(listOf())
+    val neighborhoods: StateFlow<List<NeighborhoodModel>> = _neighborhoods.asStateFlow()
 
     private val _popularStores: MutableSharedFlow<List<PopularStore>> = MutableSharedFlow()
     val popularStores: SharedFlow<List<PopularStore>> = _popularStores.asSharedFlow()
@@ -89,10 +89,16 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     }
 
     fun getPopularStores(criteria: String, district: String) {
+
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getPopularStores(criteria, district, "").collect {
-                if (it.ok) _popularStores.emit(it.data?.content.orEmpty())
-                else _toast.emit(it.message.orEmpty())
+                if (it.ok) {
+                    val list = it.data?.content.orEmpty()
+                    if (list.isEmpty()) {
+                        _toast.emit("데이터가 없어요!")
+                    }
+                    _popularStores.emit(list)
+                } else _toast.emit(it.message.orEmpty())
             }
         }
     }
@@ -100,8 +106,22 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private fun getNeighborhoods() {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getNeighborhoods().collect {
-                if (it.ok) _neighborhoods.value = it.data!!
-                else _toast.emit(it.message.orEmpty())
+                if (it.ok) {
+                    val neighborhoodsGroup = it.data!!.neighborhoods.groupBy(
+                        keySelector = { neighborhoods -> neighborhoods.description },
+                        valueTransform = { neighborhoods -> neighborhoods.districts }
+                    ).mapValues { entry ->
+                        entry.value.flatten()
+                    }
+
+                    val neighborhoodModels = neighborhoodsGroup.map { neighborhoods ->
+                        NeighborhoodModel(
+                            description = neighborhoods.key,
+                            districts = neighborhoods.value
+                        )
+                    }
+                    _neighborhoods.value = neighborhoodModels
+                } else _toast.emit(it.message.orEmpty())
             }
         }
     }
