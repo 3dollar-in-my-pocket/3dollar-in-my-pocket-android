@@ -20,15 +20,6 @@
         tools:text="강남구" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:src="@drawable/ic_arrow_right_circle_20"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/twName"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
         android:id="@+id/imgCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
