@@ -15,8 +15,8 @@ import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyReviewBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail
-import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.dialog.EditReviewDialog
+import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
