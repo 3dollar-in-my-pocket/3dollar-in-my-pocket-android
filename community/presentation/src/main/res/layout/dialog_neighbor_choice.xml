@@ -25,7 +25,7 @@
         android:layout_marginStart="10dp"
         android:text="@string/str_neighbor_title"
         android:textColor="@color/gray100"
-        android:textSize="20sp"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/districtBackImageView"
         app:layout_constraintTop_toTopOf="parent"
