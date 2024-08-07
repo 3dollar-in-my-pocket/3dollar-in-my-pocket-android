@@ -33,6 +33,8 @@ import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.user.MyFeedbacksResponse
+import com.threedollar.network.data.user.MyReviewResponseV2
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
@@ -312,4 +314,17 @@ interface ServerApi {
         @Query("size") size: Int = 20,
         @Query("cursor") cursor: String?
     ): Response<BaseResponse<MyReportedStoresResponse>>
+
+    @GET("/api/v4/my/store-reviews")
+    suspend fun getMyReviews(
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyReviewResponseV2>>
+
+    @GET("/api/v1/my/store-feedbacks")
+    suspend fun getMyFeedbacks(
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyFeedbacksResponse>>
+
 }

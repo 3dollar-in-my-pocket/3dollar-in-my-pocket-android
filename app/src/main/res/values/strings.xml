@@ -320,6 +320,9 @@
     <string name="copy">복사하기</string>
     <string name="opening_hour">출몰 시간대</string>
 
+    <string name="review_user_tab_title">유저 제보 가게</string>
+    <string name="review_boss_tab_title">사장님 직영점</string>
+
     <string name="admob_list_banner">ca-app-pub-5385646520024289/8009257851</string>
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>

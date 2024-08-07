@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -10,18 +9,17 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.threedollar.network.data.user.ReviewContent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
-import com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EditReviewDialog(
-    private val content: ReviewDetail?,
+    private val content: ReviewContent?,
     private val onComplete: (NewReview) -> Unit,
 ) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
 
@@ -49,7 +47,7 @@ class EditReviewDialog(
             dismiss()
         }
         binding.etContent.setText(content?.contents)
-        binding.rating.rating = content?.rating ?: 0f
+        binding.rating.rating = content?.rating?.toFloat() ?: 0f
         binding.btnFinish.setOnClickListener {
             when {
                 binding.rating.rating == 0f -> {
