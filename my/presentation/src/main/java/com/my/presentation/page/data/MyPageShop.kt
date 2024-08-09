@@ -60,10 +60,10 @@ fun MyFavoriteFolderResponse.toMyPageShops(): List<MyPageShop> {
 fun MyVisitHistoryResponseV2.toMyPageShops(): List<MyPageShop> {
     return contents?.map {
         MyPageShop(
-            title = it.store.storeName,
-            imageUrl = it.store.categories.first().imageUrl.orEmpty(),
-            tags = it.store.categories.map { it.name.orEmpty() },
-            storeType = it.store.salesType.toString(),
+            title = it.store.storeName.toString(),
+            imageUrl = it.store.categories.orEmpty().first().imageUrl.orEmpty(),
+            tags = it.store.categories.orEmpty().map { it.name.orEmpty() },
+            storeType = it.store.storeType.toString(),
             storeId = it.store.storeId.toString(),
             visitedData = MyPageShop.ShopVisitedData(it.visit.isExist(), formatDateString(it.visit.createdAt.orEmpty()))
         )

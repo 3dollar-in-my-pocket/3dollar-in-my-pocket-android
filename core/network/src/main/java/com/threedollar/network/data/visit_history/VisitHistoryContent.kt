@@ -4,6 +4,7 @@ package com.threedollar.network.data.visit_history
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.network.data.store.Store
 import com.threedollar.network.data.store.StoreInfo
 
 @JsonClass(generateAdapter = true)
@@ -13,7 +14,7 @@ data class VisitHistoryContent(
     @Json(name = "dateOfVisit")
     val dateOfVisit: String? = "",
     @Json(name = "store")
-    val store: StoreInfo = StoreInfo(),
+    val store: Store = Store(),
     @Json(name = "type")
     val type: String? = "",
     @Json(name = "updatedAt")

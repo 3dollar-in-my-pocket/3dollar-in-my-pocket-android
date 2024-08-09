@@ -22,11 +22,11 @@ class MyVisitHistoryRecyclerAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder<ItemMyVisitHistoryBinding, MyVisitHistoryV2>, position: Int) {
         val item = getItem(position) ?: MyVisitHistoryV2()
-        holder.bind(item, if (!item.store.isDeleted) listener else null)
+        holder.bind(item, if (item.store.isDeleted == false) listener else null)
 
         val beforeItem = if (position > 0) getItem(position - 1) else null
         val categoryInfo = LegacySharedPrefUtils.getCategories()
-        val categories = item.store.categories.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}" }
+        val categories = item.store.categories.orEmpty().joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}" }
 
         holder.binding.apply {
             tvCreatedAt.text = StringUtils.getTimeString(item.store.createdAt, "yy.MM.dd")

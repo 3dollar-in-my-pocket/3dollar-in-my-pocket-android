@@ -5,7 +5,7 @@ import com.threedollar.common.data.AdAndStoreItem
 
 data class StoreInfo(
     @SerializedName("categories")
-    val categories: List<Category> = listOf(),
+    val categories: List<String> = listOf(),
     @SerializedName("createdAt")
     val createdAt: String = "",
     @SerializedName("distance")

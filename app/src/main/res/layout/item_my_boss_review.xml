@@ -12,6 +12,10 @@
         <variable
             name="listener"
             type="com.threedollar.common.listener.OnItemClickListener" />
+
+        <variable
+            name="feedBackItem"
+            type="java.util.List&lt;String>" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,15 +88,15 @@
             app:layout_constraintTop_toTopOf="@id/tvCount"
             tools:text="20.30.11" />
 
-        <LinearLayout
-            android:id="@+id/llBoosReviews"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvCount" />
+            app:layout_constraintTop_toBottomOf="@id/tvCount"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:feedBacks="@{feedBackItem}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

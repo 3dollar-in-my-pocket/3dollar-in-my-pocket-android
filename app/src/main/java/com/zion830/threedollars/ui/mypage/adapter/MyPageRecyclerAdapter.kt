@@ -73,14 +73,14 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
         super.bind(item, listener)
         binding.run {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
-            ivCategory.bindMenuIcons(item.store.categories)
+            ivCategory.bindMenuIcons(item.store.categories.orEmpty())
             val categoryInfo = LegacySharedPrefUtils.getCategories()
-            val categories = item.store.categories.joinToString(" ") {
+            val categories = item.store.categories.orEmpty().joinToString(" ") {
                 "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}"
             }
             tvCategories.text = categories
             layoutItem.setOnClickListener {
-                if (!item.store.isDeleted) {
+                if (item.store.isDeleted == false) {
                     onClickListener.onClick(item)
                 }
             }

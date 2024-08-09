@@ -26,7 +26,7 @@ allprojects {
 
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://naver.jfrog.io/artifactory/maven/' }
+        maven { url 'https://repository.map.naver.com/archive/maven' }
         maven { url 'https://dl.bintray.com/greenfrvr/maven/' }
     }
 }

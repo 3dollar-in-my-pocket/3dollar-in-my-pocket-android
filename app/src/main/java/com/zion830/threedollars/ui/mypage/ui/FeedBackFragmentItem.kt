@@ -17,7 +17,7 @@ import com.threedollar.network.data.user.MyFeedbacksData
 import com.zion830.threedollars.databinding.FragmentReviewItemBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyBossReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -37,7 +37,7 @@ class FeedBackFragmentItem : Fragment() {
         myReviewViewModel.feedbacks.observe(viewLifecycleOwner) {
             adapter = MyBossReviewRecyclerAdapter(myReviewViewModel.feedbacks.value.orEmpty(), object : OnItemClickListener<MyFeedbacksData> {
                 override fun onClick(item: MyFeedbacksData) {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
+                    val intent = BossStoreDetailActivity.getIntent(requireContext(), item.store.storeId.toString())
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
             })

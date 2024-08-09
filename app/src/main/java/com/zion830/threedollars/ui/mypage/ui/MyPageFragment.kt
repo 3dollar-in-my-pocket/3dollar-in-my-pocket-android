@@ -14,6 +14,7 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.toDefaultInt
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -92,7 +93,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>()
             object : OnItemClickListener<AdAndStoreItem> {
                 override fun onClick(item: AdAndStoreItem) {
                     val visitHistoryContent = item as VisitHistoryContent
-                    val intent = StoreDetailActivity.getIntent(requireContext(), visitHistoryContent.store.storeId)
+                    val intent = StoreDetailActivity.getIntent(requireContext(), visitHistoryContent.store.storeId?.toIntOrNull().toDefaultInt())
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
             },
