@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.google.android.material.tabs.TabLayoutMediator
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
@@ -30,8 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyReviewFragment :
-    BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>() {
+class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>() , OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -70,4 +70,9 @@ class MyReviewFragment :
     }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMyReviewBinding =
         FragmentMyReviewBinding.inflate(inflater, container, false)
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+        viewModel.updateUserInfo()
+    }
 }

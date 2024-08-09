@@ -40,6 +40,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>()
         setFirebaseAnalyticsLogEvent(className = "MyPageFragment", screenName = null)
     }
 
+
     override val viewModel: MyPageViewModel by activityViewModels()
 
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()

@@ -186,6 +186,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         for (fragment in fragmentList) {
             if (fragment is OnBackPressedListener) {
                 (fragment as OnBackPressedListener).onBackPressed()
+                return
             }
         }
         if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_popup) {
