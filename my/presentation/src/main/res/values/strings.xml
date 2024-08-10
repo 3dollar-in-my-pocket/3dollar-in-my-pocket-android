@@ -16,4 +16,13 @@
     <string name="str_section_bottom_visite">내가 방문한 가게 알아보기</string>
     <string name="str_section_bottom_favorit">내가 좋아하는 가게는?</string>
     <string name="str_section_bottom_vote">내가 만든 투표의 히스토리</string>
+
+    <string name="str_visit_empty_title">방문 인증 내역이 없어요</string>
+    <string name="str_visit_empty_message">방문 인증으로 정확도를 높혀봐요</string>
+
+    <string name="str_favorite_empty_title">즐겨찾기 리스트가 없어요</string>
+    <string name="str_favorite_empty_message">가게 상세에서 추가해 보세요</string>
+
+    <string name="str_vote_empty_title">내가 올린 투표가 없어요</string>
+    <string name="str_vote_empty_message">가게 상세에서 추가해 보세요</string>
 </resources>

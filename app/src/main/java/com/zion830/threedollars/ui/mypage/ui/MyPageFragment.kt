@@ -151,7 +151,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>()
         viewModel.myVisitHistory.observe(viewLifecycleOwner) {
             val emptyResponseList = listOf(
                 StoreEmptyResponse(
-                    emptyImage = R.drawable.img_empty,
+                    emptyImage = zion830.com.common.R.drawable.img_empty,
                     emptyTitle = R.string.no_visit_history,
                     emptyBody = R.string.no_visit_history_msg,
                 ),
@@ -172,7 +172,7 @@ class MyPageFragment : BaseFragment<FragmentNewMyPageBinding, MyPageViewModel>()
         viewModel.myFavoriteModel.observe(viewLifecycleOwner) {
             val emptyResponseList = listOf(
                 StoreEmptyResponse(
-                    emptyImage = R.drawable.img_empty,
+                    emptyImage = zion830.com.common.R.drawable.img_empty,
                     emptyTitle = R.string.mypage_favorite_empty_title,
                     emptyBody = R.string.mypage_favorite_empty_body,
                 ),

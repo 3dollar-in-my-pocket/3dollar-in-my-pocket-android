@@ -1,5 +1,6 @@
 package com.my.presentation.page.screen
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -118,7 +119,15 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 count = userInfo.activities.visitStoreCount
             ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem(myVisitsShop, true) { myPageShop -> viewModel.clickStore(myPageShop) }
+            if (myVisitsShop.isEmpty()) {
+                MyPageEmptyView(
+                    zion830.com.common.R.drawable.img_empty,
+                    stringResource(R.string.str_visit_empty_title),
+                    stringResource(R.string.str_visit_empty_message)
+                )
+            } else {
+                MyPageVisitedShopItem(myVisitsShop, true) { myPageShop -> viewModel.clickStore(myPageShop) }
+            }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 내가 좋아하는 가게
@@ -129,7 +138,15 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 count = userInfo.activities.favoriteStoreCount
             ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop -> viewModel.clickStore(myPageShop) }
+            if (myFavoriteShop.isEmpty()) {
+                MyPageEmptyView(
+                    zion830.com.common.R.drawable.img_empty,
+                    stringResource(R.string.str_favorite_empty_title),
+                    stringResource(R.string.str_favorite_empty_message)
+                )
+            } else {
+                MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop -> viewModel.clickStore(myPageShop) }
+            }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 맛대맛 투표
@@ -139,18 +156,27 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 bottomTitle = stringResource(R.string.str_section_bottom_vote)
             ) {})
             Spacer(modifier = Modifier.height(16.dp))
-            MyPageVoteCountItem(userPollList.meta?.totalParticipantsCount ?: 0)
-            Spacer(modifier = Modifier.height(8.dp))
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .fillMaxWidth()
-                    .background(color = Gray95, shape = RoundedCornerShape(16.dp))
-                    .padding(vertical = 20.dp, horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(28.dp)
-            ) {
-                myVoteHistory.forEach { vote ->
-                    MyPageVoteHistoryItem(vote)
+            if (myVoteHistory.isEmpty()) {
+                MyPageEmptyView(
+                    zion830.com.common.R.drawable.ic_fire_disabled,
+                    stringResource(R.string.str_vote_empty_title),
+                    stringResource(R.string.str_vote_empty_message)
+                )
+                Spacer(modifier = Modifier.height(44.dp))
+            } else {
+                MyPageVoteCountItem(userPollList.meta?.totalParticipantsCount ?: 0)
+                Spacer(modifier = Modifier.height(8.dp))
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth()
+                        .background(color = Gray95, shape = RoundedCornerShape(16.dp))
+                        .padding(vertical = 20.dp, horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(28.dp)
+                ) {
+                    myVoteHistory.forEach { vote ->
+                        MyPageVoteHistoryItem(vote)
+                    }
                 }
             }
         }
@@ -299,10 +325,10 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
                 fontWeight = FontWeight(400),
                 color = Color.White,
             )
-            if (myPageSectionTitle.count != null) {
+            if (myPageSectionTitle.count != null && myPageSectionTitle.count > 0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count ?: 0),
+                        text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count),
                         fontSize = dpToSp(dp = 14),
                         fontFamily = PretendardFontFamily,
                         fontWeight = FontWeight(600),
@@ -345,6 +371,37 @@ fun MyPageInformationButton(
             text = bottomText, fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W500,
             color = Gray30, fontSize = dpToSp(dp = 12)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MyPageEmptyView(
+    @DrawableRes icon: Int = zion830.com.common.R.drawable.img_empty,
+    title: String = "가게 상세에서 추가해 보세요",
+    message: String = "가게 상세에서 추가해 보세요"
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .fillMaxWidth()
+            .background(Gray95, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(modifier = Modifier.size(32.dp), painter = painterResource(id = icon), contentDescription = "icon")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = title, fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W700,
+            color = Gray60, fontSize = dpToSp(dp = 16)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = message, fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W500,
+            color = Gray70, fontSize = dpToSp(dp = 12)
         )
     }
 }
