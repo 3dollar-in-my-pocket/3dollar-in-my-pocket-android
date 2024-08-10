@@ -8,6 +8,7 @@ import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.place.PlaceResponse
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
@@ -38,7 +39,7 @@ import com.threedollar.network.data.user.MyReviewResponseV2
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
-import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
@@ -111,7 +112,7 @@ interface ServerApi {
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
         @Path("pollId") id: String,
-        @Body pollCommentApiRequest: PollCommentApiRequest
+        @Body pollCommentApiRequest: PollCommentApiRequest,
     ): Response<BaseResponse<PollCommentCreateApiResponse>>
 
     @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
@@ -124,14 +125,14 @@ interface ServerApi {
     suspend fun editPollComment(
         @Path("pollId") pollId: String,
         @Path("commentId") commentId: String,
-        @Body commentApiRequest: PollCommentApiRequest
+        @Body commentApiRequest: PollCommentApiRequest,
     ): Response<BaseResponse<String>>
 
     @POST("/api/v1/poll/{pollId}/comment/{commentId}/report")
     suspend fun reportPollComment(
         @Path("pollId") pollId: String,
         @Path("commentId") commentId: String,
-        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest,
     ): Response<BaseResponse<String>>
 
     @GET("/api/v1/poll/{pollId}/comments")
@@ -175,6 +176,7 @@ interface ServerApi {
         @Query("targetStores") targetStores: Array<String>? = null,
         @Query("sortType") sortType: String,
         @Query("filterCertifiedStores") filterCertifiedStores: Boolean? = null,
+        @Query("filterConditions") filterConditions: List<String> = listOf(),
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Header("X-Device-Latitude") deviceLatitude: Double,
@@ -327,4 +329,16 @@ interface ServerApi {
         @Query("cursor") cursor: String?
     ): Response<BaseResponse<MyFeedbacksResponse>>
 
+    @POST("/api/v1/my/{placeType}/place")
+    suspend fun postPlace(@Body placeRequest: PlaceRequest, @Path("placeType") placeType: String): Response<BaseResponse<String>>
+
+    @DELETE("api/v1/my/{placeType}/place/{placeId}")
+    suspend fun deletePlace(@Path("placeType") placeType: String, @Path("placeId") placeId: String): Response<BaseResponse<String>>
+
+    @GET("api/v1/my/{placeType}/places")
+    suspend fun getPlace(
+        @Path("placeType") placeType: String,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String?,
+    ): Response<BaseResponse<PlaceResponse>>
 }

@@ -5,10 +5,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.home.data.asModel
 import com.home.data.asRequest
+import com.home.data.asType
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
+import com.home.data.datasource.PlacePagingDataSource
 import com.home.data.datasource.ReviewPagingDataSource
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
@@ -24,6 +27,9 @@ import com.home.domain.data.store.StoreNearExistsModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.FilterConditionsTypeModel
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
@@ -54,6 +60,7 @@ class HomeRepositoryImpl @Inject constructor(
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -63,6 +70,7 @@ class HomeRepositoryImpl @Inject constructor(
         targetStores = targetStores,
         sortType = sortType,
         filterCertifiedStores = filterCertifiedStores,
+        filterConditionsType = filterConditionsTypeModel.map { it.asType() },
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,
@@ -270,4 +278,14 @@ class HomeRepositoryImpl @Inject constructor(
                 error = it.error,
             )
         }
+
+    override fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.postPlace(placeRequest = placeRequest.asRequest(), placeType = placeType.asType())
+
+    override fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.deletePlace(placeType = placeType.asType(), placeId = placeId)
+
+    override fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>> = Pager(PagingConfig(20)) {
+        PlacePagingDataSource(placeType = placeType.asType(), serverApi = serverApi)
+    }.flow
 }

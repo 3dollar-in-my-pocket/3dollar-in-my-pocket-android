@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.home.domain.data.store.DeleteType
 import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.ReasonModel
@@ -17,7 +18,6 @@ import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
-import com.home.domain.data.store.DeleteType
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast

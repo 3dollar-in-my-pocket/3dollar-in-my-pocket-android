@@ -4,61 +4,78 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.domain.data.NeighborhoodModel
 import com.threedollar.domain.data.Neighborhoods
+import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.DialogNeighborChoiceBinding
+import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NeighborHoodsChoiceDialog : BottomSheetDialogFragment() {
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
+
     private lateinit var binding: DialogNeighborChoiceBinding
-    private var choiceDistrict: Neighborhoods.Neighborhood.District? = null
-    private var districts = mutableListOf<Neighborhoods.Neighborhood.District>()
-    private var choiceClick: (Neighborhoods.Neighborhood.District) -> Unit = {}
-    private val adapter by lazy {
-        NeighborHoodsChoiceAdapter {
-            choiceClick(it)
+
+    private lateinit var selectNeighborhoodDistrict: String
+    private var neighborhoodModels: List<NeighborhoodModel> = listOf()
+
+    private var selectClick: (Neighborhoods.Neighborhood.District) -> Unit = {}
+    private val descriptionChoiceAdapter by lazy {
+        DescriptionChoiceAdapter {
+            binding.districtBackImageView.isVisible = true
+            binding.recyclerDescription.isVisible = false
+            binding.recyclerDistrict.isVisible = true
+            binding.titleTextView.text = it.description
+
+            districtChoiceAdapter.submitList(it.districts)
+            districtChoiceAdapter.setSelectDistrict(selectNeighborhoodDistrict)
+        }
+    }
+    private val districtChoiceAdapter by lazy {
+        DistrictChoiceAdapter {
+            selectNeighborhoodDistrict = it.district
+            sharedPrefUtils.saveSelectNeighborhoodDescription(it.description)
+            sharedPrefUtils.saveSelectNeighborhoodDistrict(selectNeighborhoodDistrict)
+            selectClick(it)
             dismiss()
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (choiceDistrict == null) {
-            Toast.makeText(parentFragment?.requireContext(), "지역 정보가 없습니다.", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DialogNeighborChoiceBinding.inflate(inflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.imgClose.onSingleClick { dismiss() }
-        binding.recyclerNeighbor.adapter = adapter
-        choiceDistrict?.let {
-            adapter.submitList(districts)
-            adapter.setChoiceNeighborhood(it)
-        } ?: run { dismiss() }
+        selectNeighborhoodDistrict = sharedPrefUtils.getSelectNeighborhoodDistrict()
+        binding.recyclerDescription.adapter = descriptionChoiceAdapter
+        binding.recyclerDistrict.adapter = districtChoiceAdapter
+
+        descriptionChoiceAdapter.submitList(neighborhoodModels)
+        descriptionChoiceAdapter.setSelectNeighborhood(selectNeighborhoodDistrict)
+        binding.closeImageView.onSingleClick { dismiss() }
+        binding.districtBackImageView.onSingleClick {
+            binding.districtBackImageView.isVisible = false
+            binding.recyclerDescription.isVisible = true
+            binding.recyclerDistrict.isVisible = false
+            binding.titleTextView.text = getString(R.string.str_neighbor_title)
+        }
     }
 
-    fun setChoiceNeighborhood(district: Neighborhoods.Neighborhood.District): NeighborHoodsChoiceDialog {
-        choiceDistrict = district
-        return this
-    }
-
-    fun setNeighborHoods(neighborhood: Neighborhoods.Neighborhood): NeighborHoodsChoiceDialog {
-        districts.addAll(neighborhood.districts)
+    fun setNeighborhoodModels(neighborhoodModels: List<NeighborhoodModel>): NeighborHoodsChoiceDialog {
+        this.neighborhoodModels = neighborhoodModels
         return this
     }
 
     fun setItemClick(click: (Neighborhoods.Neighborhood.District) -> Unit): NeighborHoodsChoiceDialog {
-        choiceClick = click
+        selectClick = click
         return this
     }
-
 }

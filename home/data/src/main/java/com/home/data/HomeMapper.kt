@@ -1,6 +1,7 @@
 package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AccountModel
 import com.home.domain.data.store.AccountNumberModel
 import com.home.domain.data.store.AddressModel
@@ -58,8 +59,11 @@ import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.OpeningHourRequest
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
 import com.threedollar.network.data.Reason
@@ -115,6 +119,7 @@ import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MenuRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.UserStoreRequest
@@ -241,6 +246,7 @@ fun Store.asModel() = StoreModel(
     createdAt = createdAt ?: "",
     isDeleted = isDeleted ?: false,
     locationModel = location?.asModel() ?: LocationModel(),
+    activitiesStatus = if (activitiesStatus == "RECENT_ACTIVITY") FilterConditionsTypeModel.RECENT_ACTIVITY else FilterConditionsTypeModel.NO_RECENT_ACTIVITY,
     storeId = storeId ?: "",
     storeName = storeName ?: "",
     storeType = storeType ?: "",
@@ -439,7 +445,7 @@ fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
     tags = tags?.asModel() ?: TagsModel(),
     visits = visits?.asModel() ?: VisitsModel(),
 
-)
+    )
 
 fun Creator.asModel(): CreatorModel = CreatorModel(
     medal = medal?.asModel() ?: MedalModel(),
@@ -469,7 +475,7 @@ fun ReviewContent.asModel() = ReviewContentModel(
     reviewReport = reviewReport?.asModel() ?: ReviewReportModel(),
     reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel(),
 
-)
+    )
 
 fun Review.asModel() = ReviewModel(
     contents = contents,
@@ -652,3 +658,30 @@ fun Reason.asModel() = ReasonModel(
     hasReasonDetail = hasReasonDetail ?: false,
     type = type ?: "",
 )
+
+fun com.threedollar.network.data.place.Content.asModel() = PlaceModel(
+    addressName = addressName ?: "",
+    createdAt = createdAt,
+    location = PlaceModel.Location(longitude = location.longitude ?: 0.0, latitude = location.latitude ?: 0.0),
+    placeId = placeId,
+    placeName = placeName,
+    roadAddressName = roadAddressName ?: "",
+    updatedAt = updatedAt
+
+)
+
+fun PlaceRequest.asRequest() = com.threedollar.network.request.PlaceRequest(
+    location = com.threedollar.network.request.PlaceRequest.Location(longitude = location.longitude, latitude = location.latitude),
+    placeName = placeName,
+    addressName = addressName,
+    roadAddressName = roadAddressName
+)
+
+fun PlaceType.asType() = when (this) {
+    PlaceType.RECENT_SEARCH -> com.threedollar.network.request.PlaceType.RECENT_SEARCH
+}
+
+fun FilterConditionsTypeModel.asType() = when (this) {
+    FilterConditionsTypeModel.RECENT_ACTIVITY -> FilterConditionsType.RECENT_ACTIVITY
+    FilterConditionsTypeModel.NO_RECENT_ACTIVITY -> FilterConditionsType.NO_RECENT_ACTIVITY
+}

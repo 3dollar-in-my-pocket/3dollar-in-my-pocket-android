@@ -42,11 +42,18 @@ import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecycle
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.StringUtils
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
+import com.zion830.threedollars.utils.shareWithKakao
+import com.zion830.threedollars.utils.showCustomBlackToast
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import java.util.*
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -272,10 +279,11 @@ class BossStoreDetailActivity :
                             distanceTextView.text =
                                 if (bossStoreDetailModel.distanceM < 1000) "${bossStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
                             storeNameTextView.text = bossStoreDetailModel.store.name
-                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
-                            feedbackCountTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            feedbackCountTextView.text =
+                                getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             storeInfoUpdateAtTextView.text =
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress

@@ -19,8 +19,8 @@ import androidx.navigation.findNavController
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
-import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import dagger.hilt.android.AndroidEntryPoint

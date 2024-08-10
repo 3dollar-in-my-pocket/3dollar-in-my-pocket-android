@@ -147,22 +147,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="link.threedollars.co.kr"
-                    android:pathPattern=".*"
-                    android:scheme="https" />
-                <data
-                    android:host="link.threedollars.co.kr"
-                    android:pathPattern=".*"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*"
-                    android:scheme="dollars-dev" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*"
-                    android:scheme="dollars" />
+                <data android:scheme="https"/>
+                <data android:host="link.threedollars.co.kr"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="http"/>
+                <data android:host="link.threedollars.co.kr"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="dollars-dev"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="dollars"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*"/>
             </intent-filter>
         </activity>
         <activity

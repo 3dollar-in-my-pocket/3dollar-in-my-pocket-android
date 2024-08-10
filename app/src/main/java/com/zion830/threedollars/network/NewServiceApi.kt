@@ -1,10 +1,19 @@
 package com.zion830.threedollars.network
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.threedollar.network.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
+import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
+import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
+import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
@@ -13,7 +22,13 @@ import com.zion830.threedollars.datasource.model.v2.response.my.*
 import com.zion830.threedollars.datasource.model.v2.response.store.*
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface NewServiceApi {
 

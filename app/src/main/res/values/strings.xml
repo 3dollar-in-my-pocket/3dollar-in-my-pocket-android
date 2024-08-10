@@ -278,7 +278,7 @@
     <string name="fragment_home_all_menu">전체 메뉴</string>
     <string name="fragment_home_filter_distance">거리순 보기</string>
     <string name="fragment_home_filter_latest">최근 등록순 보기</string>
-    <string name="fragment_home_boss_filter">사장님 직영점만</string>
+    <string name="fragment_home_boss_filter">👨‍🍳 사장님 직영점만</string>
     <string name="fragment_home_list_view">리스트뷰</string>
     <string name="fragment_home_map_view">지도뷰</string>
     <string name="more_1km">1km +</string>
@@ -326,4 +326,10 @@
     <string name="admob_list_banner">ca-app-pub-5385646520024289/8009257851</string>
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
+    <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
+    <string name="fragment_home_filter_conditions">🔥 최근 활동</string>
+    <string name="recent_search_title">최근검색 위치</string>
+    <string name="speech_bubble_title">최근 활동이 있는 가게만 볼 수 있어요!</string>
+    <string name="speech_bubble_body_1">•최근 한 달 내에 방문 인증 성공 내역이 있어요.</string>
+    <string name="speech_bubble_body_2">•신규로 생성된 가게에요.</string>
 </resources>
