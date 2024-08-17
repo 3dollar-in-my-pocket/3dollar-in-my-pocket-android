@@ -2,6 +2,7 @@ package com.home.domain.repository
 
 import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
@@ -16,6 +17,9 @@ import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StoreNearExistsModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.FilterConditionsTypeModel
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
@@ -31,6 +35,7 @@ interface HomeRepository {
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -90,4 +95,10 @@ interface HomeRepository {
     fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
+
+    fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>>
+
+    fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
+
+    fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>>
 }

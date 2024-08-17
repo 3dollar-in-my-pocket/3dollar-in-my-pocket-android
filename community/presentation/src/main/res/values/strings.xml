@@ -9,4 +9,5 @@
     <string name="str_create_poll_hint">투표 제목을 입력하세요.</string>
     <string name="admob_community_comment_banner">ca-app-pub-5385646520024289/4196241163</string>
     <string name="admob_community_tab_banner">ca-app-pub-5385646520024289/3222264361</string>
+    <string name="select_neighborhood_default">📍 %s</string>
 </resources>

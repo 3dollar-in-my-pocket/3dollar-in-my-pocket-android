@@ -20,6 +20,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.ContentModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
@@ -27,6 +28,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_STORE
+import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
@@ -39,13 +41,20 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewModel>() {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
+
     override val viewModel: HomeViewModel by activityViewModels()
 
     private var homeStoreType: HomeStoreType = HomeStoreType.ALL
     private var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC
+    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
+
     private var isFilterCertifiedStores = false
 
     private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
@@ -86,6 +95,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         initAdmob()
         initFlow()
         initButton()
+        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
         binding.listRecyclerView.adapter = adapter
 
     }
@@ -124,6 +134,23 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             }
             EventTracker.logEvent(Constants.CLICK_SORTING, bundle)
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
+        }
+
+        binding.filterConditionsTextView.setOnClickListener {
+            sharedPrefUtils.setIsClickFilterConditions()
+            binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
+            filterConditionsType = if (filterConditionsType.isEmpty()) {
+                listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
+            } else {
+                listOf()
+            }
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
+            }
+            EventTracker.logEvent(Constants.CLICK_RECENT_ACTIVITY_FILTER, bundle)
+
+            viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
         }
 
         binding.bossFilterTextView.setOnClickListener {
@@ -198,20 +225,27 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     viewModel.homeFilterEvent.collect {
                         getNearStore()
 
-                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
-                        val drawableStart = ContextCompat.getDrawable(
-                            requireContext(),
-                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
-                        )
                         binding.run {
-                            certifiedStoreTextView.isVisible = it.homeStoreType != HomeStoreType.BOSS_STORE
-                            bossFilterTextView.setTextColor(textColor)
-                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+                            if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
+                                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                            } else {
+                                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                            }
+                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) {
+                                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                bossFilterTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                            } else {
+                                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                bossFilterTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                            }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
                                 getString(R.string.fragment_home_filter_distance)
                             } else {
                                 getString(R.string.fragment_home_filter_latest)
                             }
+                            certifiedStoreTextView.isVisible = it.homeStoreType != HomeStoreType.BOSS_STORE
                         }
                     }
                 }

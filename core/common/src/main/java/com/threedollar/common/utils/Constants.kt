@@ -40,6 +40,8 @@ object Constants {
     const val CLICK_SORTING = "click_sorting"
     const val CLICK_AD_CARD = "click_ad_card"
     const val CLICK_AD_MARKER = "click_ad_marker"
+    const val CLICK_RECENT_ACTIVITY_FILTER = "click_recent_activity_filter"
+    const val CLICK_ADDRESS = "click_address"
     const val CLICK_ONLY_VISIT = "click_only_visit"
 
     // category

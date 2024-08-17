@@ -6,6 +6,7 @@ import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeFilterEvent
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
@@ -91,6 +92,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 targetStores = targetStores,
                 sortType = homeFilterEvent.value.homeSortType.name,
                 filterCertifiedStores = filterCertifiedStores,
+                filterConditionsTypeModel = homeFilterEvent.value.filterConditionsType,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
                 deviceLatitude = location.latitude,
@@ -102,7 +104,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     if (it.data?.contentModels?.isEmpty() == true) {
                         resultList.add(StoreEmptyResponse())
                     } else {
-                        it.data?.let { it1 -> resultList.addAll(it1.contentModels) }
+                        it.data?.let { aroundStoreModel ->
+                            resultList.addAll(aroundStoreModel.contentModels)
+                        }
                     }
                     _aroundStoreModels.value = resultList
                 } else {
@@ -138,13 +142,19 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun updateHomeFilterEvent(homeSortType: HomeSortType? = null, homeStoreType: HomeStoreType? = null) {
+    fun updateHomeFilterEvent(
+        homeSortType: HomeSortType? = null,
+        homeStoreType: HomeStoreType? = null,
+        filterConditionsType: List<FilterConditionsTypeModel>? = null,
+    ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _homeFilterEvent.update {
                 if (homeSortType != null) {
                     it.copy(homeSortType = homeSortType)
                 } else if (homeStoreType != null) {
                     it.copy(homeStoreType = homeStoreType)
+                } else if (filterConditionsType != null) {
+                    it.copy(filterConditionsType = filterConditionsType)
                 } else {
                     it
                 }

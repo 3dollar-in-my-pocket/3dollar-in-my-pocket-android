@@ -22,8 +22,8 @@ import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_AD_CARD
+import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.data.AdvertisementModelV2
-import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
@@ -42,6 +42,9 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
 
     @Inject
     lateinit var activityStarter: ActivityStarter
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     @Inject
     lateinit var eventTrackerListener: EventTrackerListener
@@ -89,8 +92,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
             eventTrackerListener.logEvent(Constants.CLICK_STORE, bundle)
         }
     }
-    private var choiceNeighborhood: Neighborhoods.Neighborhood.District? = null
-    private var seoulNeighborhoods: Neighborhoods.Neighborhood? = null
+
     private var advertisementModelV2: AdvertisementModelV2? = null
     private val pollItems = mutableListOf<PollListData>()
     private var categoryId = ""
@@ -140,25 +142,21 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
     }
 
     private fun initButton() {
-        binding.twAreaChoice.onSingleClick {
-            choiceNeighborhood?.let { neighborhood ->
-                seoulNeighborhoods?.let { seoulNeighborhoods ->
-                    NeighborHoodsChoiceDialog().setNeighborHoods(seoulNeighborhoods).setChoiceNeighborhood(neighborhood).setItemClick {
-                        binding.twAreaChoice.text = it.description
-                        choiceNeighborhood = it
-                        binding.twAreaChoice.text = it.description
-                        viewModel.getPopularStores(
-                            if (binding.twPopularMostReview.isSelected) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type,
-                            it.district
-                        )
-                    }.show(childFragmentManager, "")
-                    val bundle = Bundle().apply {
-                        putString("screen", "community")
-                    }
-                    eventTrackerListener.logEvent(Constants.CLICK_DISTRICT, bundle)
-                }
+        binding.selectNeighborhoodTextView.onSingleClick {
+            NeighborHoodsChoiceDialog()
+                .setNeighborhoodModels(viewModel.neighborhoods.value)
+                .setItemClick {
+                    binding.selectNeighborhoodTextView.text = getString(R.string.select_neighborhood_default, it.description)
+                    viewModel.getPopularStores(
+                        if (binding.twPopularMostReview.isSelected) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type,
+                        it.district
+                    )
+                }.show(childFragmentManager, "")
 
+            val bundle = Bundle().apply {
+                putString("screen", "community")
             }
+            eventTrackerListener.logEvent(Constants.CLICK_DISTRICT, bundle)
         }
         binding.clPopularMostReview.onSingleClick {
             if (!binding.twPopularMostReview.isSelected) {
@@ -234,14 +232,18 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 }
                 launch {
                     viewModel.neighborhoods.collect {
-                        if (it.neighborhoods.isEmpty()) return@collect
-                        val seoul = it.neighborhoods.find { it.province == "SEOUL" }
-                        seoul?.let {
-                            seoulNeighborhoods = it
-                            choiceNeighborhood = it.districts.first()
-                            binding.twAreaChoice.text = it.districts.first().description
-                            viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, it.districts.first().district)
+                        if (it.isEmpty()) return@collect
+
+                        if (sharedPrefUtils.getSelectNeighborhoodDescription().isEmpty() || sharedPrefUtils.getSelectNeighborhoodDistrict()
+                                .isEmpty()
+                        ) {
+                            val selectNeighborhood = it.first()
+                            sharedPrefUtils.saveSelectNeighborhoodDescription(selectNeighborhood.districts.first().description)
+                            sharedPrefUtils.saveSelectNeighborhoodDistrict(selectNeighborhood.districts.first().district)
                         }
+                        binding.selectNeighborhoodTextView.text =
+                            getString(R.string.select_neighborhood_default, sharedPrefUtils.getSelectNeighborhoodDescription())
+                        viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, sharedPrefUtils.getSelectNeighborhoodDistrict())
                     }
                 }
                 launch {
@@ -264,9 +266,10 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         binding.twPopularMostVisits.isSelected = !isReview
         binding.vwPopularMostReview.isVisible = isReview
         binding.vwPopularMostVisits.isVisible = !isReview
-        choiceNeighborhood?.let {
-            viewModel.getPopularStores(if (isReview) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type, it.district)
-        }
+        viewModel.getPopularStores(
+            criteria = if (isReview) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type,
+            district = sharedPrefUtils.getSelectNeighborhoodDistrict()
+        )
     }
 
 }

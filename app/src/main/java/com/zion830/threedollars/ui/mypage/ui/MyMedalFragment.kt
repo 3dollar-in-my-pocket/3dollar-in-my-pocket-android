@@ -11,8 +11,8 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
-import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
+import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.loadUrlImg

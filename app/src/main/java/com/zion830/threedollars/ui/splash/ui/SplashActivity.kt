@@ -74,6 +74,9 @@ class SplashActivity :
                                 initLogin()
                             }
                         }
+                        appUpdateInfoTask.addOnFailureListener {
+                            initLogin()
+                        }
                     }
                 }
             }

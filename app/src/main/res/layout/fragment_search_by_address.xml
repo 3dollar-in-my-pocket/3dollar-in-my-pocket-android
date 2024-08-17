@@ -24,14 +24,13 @@
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="4dp"
-            android:layout_marginStart="24dp"
+            android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@null"
             android:foreground="?actionBarItemBackground"
             android:src="@drawable/ic_close_black"
             app:layout_constraintBottom_toBottomOf="@id/layout_title"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -48,32 +47,20 @@
             app:layout_constraintTop_toTopOf="@id/btn_back" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageButton
-        android:id="@+id/btn_search"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/circle_white"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_title" />
-
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rect_radius_12_gray10"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/rect_white_radius_12"
         android:hint="@string/search_by_address_hint"
-        app:endIconDrawable="@drawable/ic_clear_text"
+        app:endIconDrawable="@drawable/ic_close_white"
         app:endIconMode="clear_text"
         app:hintEnabled="false"
-        app:layout_constraintBottom_toBottomOf="@id/btn_search"
-        app:layout_constraintEnd_toStartOf="@id/btn_search"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_search"
+        app:layout_constraintTop_toBottomOf="@id/layout_title"
         app:startIconDrawable="@drawable/ic_reading_glasses">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -89,16 +76,60 @@
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/admob"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rect_gray"
+        android:visibility="visible"
+        app:adSize="BANNER"
+        app:adUnitId="@string/admob_search_by_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout"/>
+
+    <LinearLayout
+        android:id="@+id/recentSearchLinearLayout"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/color_white"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_gray3"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_search">
+        app:layout_constraintTop_toBottomOf="@id/admob">
+
+        <TextView
+            style="@style/apple_gothic_bold.size_16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/recent_search_title"
+            android:textColor="@color/color_black" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recentSearchRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_recent_search" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/searchResultLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_gray3"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/admob">
 
         <View
             android:layout_width="match_parent"
@@ -124,5 +155,6 @@
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_search_by_address" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
