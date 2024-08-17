@@ -1,6 +1,9 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
@@ -9,7 +12,6 @@ import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
@@ -18,7 +20,6 @@ import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.datasource.model.v2.response.my.User
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 
 interface UserDataSource {
@@ -56,6 +57,8 @@ interface UserDataSource {
     suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>>
 
     suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    suspend fun patchPushInformation(patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>>
 
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
 

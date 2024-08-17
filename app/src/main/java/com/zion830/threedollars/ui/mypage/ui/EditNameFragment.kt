@@ -37,6 +37,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         initEditTextView()
         initButton()
         initObserve()
+        viewModel.updateUserInfo()
     }
 
     private fun initObserve() {
@@ -56,7 +57,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
             }
         }
         viewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.tvName.text = it.data.name
+            binding.tvName.text = it.name
         }
         viewModel.isNameEmpty.observe(viewLifecycleOwner) {
             binding.btnFinish.isClickable = !it

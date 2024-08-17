@@ -7,20 +7,25 @@ import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
+import com.threedollar.common.utils.Constants
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
-import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
+import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -29,7 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
-    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>() {
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>() ,OnBackPressedListener{
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMypageSettingBinding =
         FragmentMypageSettingBinding.inflate(inflater, container, false)
@@ -39,6 +44,10 @@ class MyPageSettingFragment :
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     override fun initView() {
         EventTracker.logEvent(Constants.SETTING_BTN_CLICKED)
@@ -61,6 +70,8 @@ class MyPageSettingFragment :
         }
 
         initObserve()
+
+        viewModel.updateUserInfo()
     }
 
     private fun initObserve() {
@@ -76,20 +87,16 @@ class MyPageSettingFragment :
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
-            binding.tvName.text = it.data.name
-            binding.ivKakaoLogo.setBackgroundColor(
-                if (it.data.isKakaoUser()) {
-                    resources.getColor(
-                        R.color.color_kakao,
-                        null,
-                    )
-                } else {
-                    resources.getColor(R.color.color_white, null)
-                },
+            binding.pushSwitchButton.isChecked = it.settings.enableActivitiesPush == true
+            binding.pushMarketingSwitchButton.isChecked = it.settings.marketingConsent == "APPROVE"
+            binding.tvName.text = it.name
+            binding.twLoginType.setCompoundDrawables(
+                resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google),
+                null,
+                null,
+                null
             )
-            binding.ivKakaoLogo.setImageResource(if (it.data.isKakaoUser()) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google)
-            binding.accountTypeTextView.text = if (it.data.isKakaoUser()) getString(R.string.kakao_user) else getString(R.string.google_user)
+            binding.twLoginType.text = if (it.socialType == LoginType.KAKAO.socialName) getString(R.string.kakao_user) else getString(R.string.google_user)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
@@ -97,7 +104,7 @@ class MyPageSettingFragment :
     }
 
     private fun initButton() {
-        binding.btnEditName.setOnClickListener {
+        binding.tvName.setOnClickListener {
             addEditNameFragment()
         }
         binding.btnBack.setOnClickListener {
@@ -128,21 +135,25 @@ class MyPageSettingFragment :
             showDeleteAccountDialog()
         }
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+            viewModel.patchPushInformation(
+                PatchPushInformationRequest(
+                    binding.pushSwitchButton.isChecked,
+                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
+                )
+            )
+        }
+        binding.pushMarketingSwitchButton.setOnCheckedChangeListener { _, isCheck ->
             subscribeToTopicFirebase(isCheck)
+            viewModel.patchPushInformation(
+                PatchPushInformationRequest(
+                    binding.pushSwitchButton.isChecked,
+                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
+                )
+            )
             if (isCheck) {
                 eventTracker.setUserProperty("isPushEnable", "true")
-                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        viewModel.postPushInformation(
-                            informationRequest = PushInformationRequest(pushToken = it.result),
-                        )
-                    } else {
-                        // TODO: 실패했을때 예외처리 필요
-                    }
-                }
             } else {
                 eventTracker.setUserProperty("isPushEnable", "false")
-                viewModel.deletePushInformation()
             }
         }
     }

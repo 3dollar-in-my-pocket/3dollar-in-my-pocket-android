@@ -1,6 +1,9 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
@@ -10,7 +13,6 @@ import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
@@ -19,7 +21,6 @@ import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.datasource.model.v2.response.my.User
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.network.NewServiceApi
 import retrofit2.Response
 import javax.inject.Inject
@@ -86,6 +87,9 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
 
     override suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> =
         service.postPushInformation(informationRequest)
+
+    override suspend fun patchPushInformation(patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>> =
+        service.patchPushInformation(patchPushInformationRequest)
 
     override suspend fun deletePushInformation(): Response<BaseResponse<String>> =
         service.deletePushInformation()

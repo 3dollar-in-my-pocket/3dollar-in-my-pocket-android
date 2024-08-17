@@ -1,5 +1,6 @@
 package com.my.presentation.page.screen
 
+import android.provider.ContactsContract.CommonDataKinds.Im
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,9 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -203,7 +206,7 @@ fun MyPageTitle(clickSetting: () -> Unit = {}) {
                 .padding(16.dp)
                 .align(Alignment.CenterEnd)
         ) {
-            Icon(
+            Image(
                 painter = painterResource(id = zion830.com.common.R.drawable.ic_setting),
                 contentDescription = "마이페이지 셋팅 아이콘"
             )
