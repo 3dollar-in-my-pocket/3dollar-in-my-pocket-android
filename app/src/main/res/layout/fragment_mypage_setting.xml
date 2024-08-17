@@ -328,6 +328,104 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_account" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintAd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp"
+            app:layout_constraintBottom_toTopOf="@id/constraintBoss"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/twAdTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/app_pretendard_font"
+                android:text="@string/str_setting_ad_title"
+                android:textColor="@color/pink"
+                android:textFontWeight="600"
+                android:textSize="14dp"
+                app:layout_constraintBottom_toTopOf="@id/twAdSubtitle"
+                app:layout_constraintEnd_toStartOf="@id/imgAd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/twAdSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/str_setting_ad_sub_title"
+                android:textColor="@color/gray40"
+                android:textFontWeight="500"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imgAd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/twAdTitle" />
+
+            <ImageView
+                android:id="@+id/imgAd"
+                android:layout_width="88dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_banner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintBoss"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="24dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/twBossTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/app_pretendard_font"
+                android:text="@string/str_setting_boss_title"
+                android:textColor="@color/green"
+                android:textFontWeight="600"
+                android:textSize="14dp"
+                app:layout_constraintBottom_toTopOf="@id/twBossSubtitle"
+                app:layout_constraintEnd_toStartOf="@id/imgBoss"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/twBossSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/str_setting_boss_sub_title"
+                android:textColor="@color/gray40"
+                android:textFontWeight="500"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imgBoss"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/twBossTitle" />
+
+            <ImageView
+                android:id="@+id/imgBoss"
+                android:layout_width="88dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_boss_banner"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar

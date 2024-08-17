@@ -157,6 +157,20 @@ class MyPageSettingFragment :
                 eventTracker.setUserProperty("isPushEnable", "false")
             }
         }
+        binding.constraintAd.setOnClickListener {
+            val webpage: Uri = Uri.parse("https://massive-iguana-121.notion.site/3-ff344e306d0c4417973daee8792cfe4d") // 여기에 원하는 URL 입력
+            val intent = Intent(Intent.ACTION_VIEW, webpage)
+            startActivity(intent)
+        }
+        binding.constraintBoss.setOnClickListener {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.threedollars.manager"))
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager"))
+                startActivity(intent)
+            }
+        }
     }
 
     private fun showDeleteAccountDialog() {
