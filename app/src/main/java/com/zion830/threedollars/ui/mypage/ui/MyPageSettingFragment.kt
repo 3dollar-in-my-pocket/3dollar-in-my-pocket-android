@@ -34,7 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
-    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>() ,OnBackPressedListener{
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMypageSettingBinding =
         FragmentMypageSettingBinding.inflate(inflater, container, false)
@@ -90,13 +90,14 @@ class MyPageSettingFragment :
             binding.pushSwitchButton.isChecked = it.settings.enableActivitiesPush == true
             binding.pushMarketingSwitchButton.isChecked = it.settings.marketingConsent == "APPROVE"
             binding.tvName.text = it.name
-            binding.twLoginType.setCompoundDrawables(
+            binding.twLoginType.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google),
                 null,
                 null,
                 null
             )
-            binding.twLoginType.text = if (it.socialType == LoginType.KAKAO.socialName) getString(R.string.kakao_user) else getString(R.string.google_user)
+            binding.twLoginType.text =
+                if (it.socialType == LoginType.KAKAO.socialName) getString(R.string.kakao_user) else getString(R.string.google_user)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
