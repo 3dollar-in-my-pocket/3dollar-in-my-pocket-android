@@ -1,6 +1,7 @@
 package com.my.presentation.page
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.my.presentation.page.screen.MyPageScreen
 import com.threedollar.common.base.BaseComposeFragment
 import com.threedollar.common.listener.ActivityStarter
@@ -59,22 +62,29 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
 
     private fun initFlow() {
         lifecycleScope.launch {
-            viewModel.addFragments.collect {
-                myFragmentStarter.addMyFragments(requireActivity(), it)
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.storeClick.collect {
-                if (it.storeType == "STORE") {
-                    activityStarter.startBossDetailActivity(requireContext(), it.storeId)
-                } else {
-                    activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toInt())
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.addFragments.collect {
+                    Log.e("asdasd", it.toString())
+                    myFragmentStarter.addMyFragments(requireActivity(), it)
                 }
             }
         }
         lifecycleScope.launch {
-            viewModel.favoriteClick.collect {
-                activityStarter.startFavoriteActivity(requireActivity())
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.storeClick.collect {
+                    if (it.storeType == "BOSS_STORE") {
+                        activityStarter.startBossDetailActivity(requireContext(), it.storeId)
+                    } else {
+                        activityStarter.startStoreDetailActivity(requireContext(), it.storeId.toInt())
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favoriteClick.collect {
+                    activityStarter.startFavoriteActivity(requireActivity())
+                }
             }
         }
     }

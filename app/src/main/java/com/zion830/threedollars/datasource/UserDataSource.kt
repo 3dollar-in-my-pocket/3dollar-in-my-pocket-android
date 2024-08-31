@@ -42,8 +42,6 @@ interface UserDataSource {
 
     suspend fun getMyStore(cursor: Int?, size: Int): Response<MyStoreResponse>
 
-    suspend fun getMyVisitHistory(cursor: Int?, size: Int): Response<MyVisitHistoryResponse>
-
     suspend fun getFAQCategory(): Response<FAQCategoryResponse>
 
     suspend fun getFAQList(category: String): Response<FAQByCategoryResponse>

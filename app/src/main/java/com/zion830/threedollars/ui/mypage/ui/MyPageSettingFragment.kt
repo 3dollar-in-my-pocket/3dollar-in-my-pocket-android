@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -87,8 +88,10 @@ class MyPageSettingFragment :
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) {
+            initCheckBoxListener()
             binding.pushSwitchButton.isChecked = it.settings.enableActivitiesPush == true
             binding.pushMarketingSwitchButton.isChecked = it.settings.marketingConsent == "APPROVE"
+            checkBoxListener()
             binding.tvName.text = it.name
             binding.twLoginType.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google),
@@ -140,6 +143,28 @@ class MyPageSettingFragment :
             EventTracker.logEvent(Constants.SIGNOUT_BTN_CLICKED)
             showDeleteAccountDialog()
         }
+        binding.constraintAd.setOnClickListener {
+            val webpage: Uri = Uri.parse("https://massive-iguana-121.notion.site/3-ff344e306d0c4417973daee8792cfe4d") // 여기에 원하는 URL 입력
+            val intent = Intent(Intent.ACTION_VIEW, webpage)
+            startActivity(intent)
+        }
+        binding.constraintBoss.setOnClickListener {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.threedollars.manager"))
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager"))
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun initCheckBoxListener(){
+        binding.pushSwitchButton.setOnCheckedChangeListener(null)
+        binding.pushMarketingSwitchButton.setOnCheckedChangeListener(null)
+    }
+
+    private fun checkBoxListener() {
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
             viewModel.patchPushInformation(
                 PatchPushInformationRequest(
@@ -160,20 +185,6 @@ class MyPageSettingFragment :
                 eventTracker.setUserProperty("isPushEnable", "true")
             } else {
                 eventTracker.setUserProperty("isPushEnable", "false")
-            }
-        }
-        binding.constraintAd.setOnClickListener {
-            val webpage: Uri = Uri.parse("https://massive-iguana-121.notion.site/3-ff344e306d0c4417973daee8792cfe4d") // 여기에 원하는 URL 입력
-            val intent = Intent(Intent.ACTION_VIEW, webpage)
-            startActivity(intent)
-        }
-        binding.constraintBoss.setOnClickListener {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.threedollars.manager"))
-                startActivity(intent)
-            } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager"))
-                startActivity(intent)
             }
         }
     }

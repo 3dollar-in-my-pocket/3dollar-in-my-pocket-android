@@ -136,12 +136,6 @@ interface NewServiceApi {
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity(): Response<UserActivityResponse>
 
-    @GET("/api/v2/store/visits/me")
-    suspend fun getMyVisitHistory(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int
-    ): Response<MyVisitHistoryResponse>
-
     @PUT("/api/v2/user/me")
     suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
 

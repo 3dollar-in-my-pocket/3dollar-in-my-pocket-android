@@ -4,12 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.my.domain.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
+import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
 import com.threedollar.network.data.visit_history.VisitHistoryContent
@@ -22,13 +25,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource,private val myRepository: MyRepository) : BaseViewModel() {
 
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity
 
-    private val _myVisitHistory: MutableLiveData<List<VisitHistoryContent>?> = MutableLiveData()
-    val myVisitHistory: LiveData<List<VisitHistoryContent>?> = _myVisitHistory
+    private val _myVisitHistory: MutableLiveData<MyVisitHistoryResponseV2> = MutableLiveData()
+    val myVisitHistory: LiveData<MyVisitHistoryResponseV2> = _myVisitHistory
 
     private val _myMedals: MutableLiveData<List<MyMedal>> = MutableLiveData()
     val myMedals: MutableLiveData<List<MyMedal>> = _myMedals
@@ -65,10 +68,12 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
 
     fun requestVisitHistory() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = userDataSource.getMyVisitHistory(null, 20)
-            if (response.isSuccessful) {
-                val myVisitHistory = response.body()?.data
-                _myVisitHistory.postValue(myVisitHistory?.contents)
+            myRepository.getMyVisitsStore().collect {
+                if (it.ok) {
+                    it.data?.let { data ->
+                        _myVisitHistory.value = data
+                    }
+                }
             }
         }
     }

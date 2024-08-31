@@ -63,13 +63,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
         return service.getMyStore(cursor, size)
     }
 
-    override suspend fun getMyVisitHistory(
-        cursor: Int?,
-        size: Int
-    ): Response<MyVisitHistoryResponse> {
-        return service.getMyVisitHistory(cursor, size)
-    }
-
     override suspend fun getFAQCategory(): Response<FAQCategoryResponse> = service.getFAQCategory()
 
     override suspend fun getFAQList(category: String): Response<FAQByCategoryResponse> =
