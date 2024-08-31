@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <item android:drawable="@drawable/rect_red_radius48" android:state_selected="true" />
+    <item android:drawable="@drawable/rect_pink_radius10" android:state_selected="true" />
     
-    <item android:drawable="@drawable/rect_gray_width1" android:state_selected="false" />
+    <item android:drawable="@drawable/rect_gray70_width1" android:state_selected="false" />
 </selector>
