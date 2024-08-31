@@ -370,7 +370,7 @@
                 android:id="@+id/imgAd"
                 android:layout_width="88dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_banner"
+                android:src="@drawable/ic_fish_party"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -419,7 +419,7 @@
                 android:id="@+id/imgBoss"
                 android:layout_width="88dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_boss_banner"
+                android:src="@drawable/ic_fish_boss"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

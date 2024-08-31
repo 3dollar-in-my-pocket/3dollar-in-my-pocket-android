@@ -1,160 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_black">
+    android:background="@color/gray100">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:fontFamily="@font/apple_gothic_bold"
+        android:text="@string/my_page_edit_name"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_back" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/apple_gothic_bold"
-            android:text="@string/my_page_edit_name"
-            android:textColor="@color/color_white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/btn_back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_back" />
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:foreground="?attr/actionBarItemBackground"
+        android:src="@drawable/ic_back_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
 
-        <ImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="36dp"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/actionBarItemBackground"
-            android:src="@drawable/ic_back_wh"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="UnusedAttribute" />
+    <ImageView
+        android:id="@+id/imgBanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_fish_simple"
+        app:layout_constraintBottom_toTopOf="@id/twNickNameTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_back"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_login_name_back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_back" />
+    <TextView
+        android:id="@+id/twNickNameTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/app_pretendard_font"
+        android:text="@string/str_nickname"
+        android:textColor="@color/color_white"
+        android:textFontWeight="700"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@id/editNickName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgBanner" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_back">
+    <EditText
+        android:id="@+id/editNickName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="2dp"
+        android:background="@null"
+        android:fontFamily="@font/app_pretendard_font"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textColorHint="@color/gray60"
+        android:textFontWeight="700"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@id/twNickNameChanged"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twNickNameTitle"
+        app:layout_constraintWidth_default="wrap" />
 
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:textColor="@color/color_sub_red"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="무슨이윤지" />
+    <ImageView
+        android:id="@+id/imgAlreadyExist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_warning_empty"
+        app:layout_constraintBottom_toBottomOf="@id/editNickName"
+        app:layout_constraintStart_toEndOf="@id/editNickName"
+        app:layout_constraintTop_toTopOf="@id/editNickName" />
 
-            <TextView
-                android:id="@+id/tv_input_name1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:text="@string/my_page_edit_name1"
-                android:textColor="@android:color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/tv_name"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/twNickNameChanged"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/app_pretendard_font"
+        android:text="@string/str_nickname_changed"
+        android:textColor="@color/color_white"
+        android:textFontWeight="700"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editNickName" />
 
-            <EditText
-                android:id="@+id/et_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/btn_login_name"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:hint="@string/login_name"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:maxLength="8"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="12dp"
-                android:singleLine="true"
-                android:textColor="@color/color_sub_red"
-                android:textColorHint="@color/color_sub_red_hint"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/tv_input_name2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_input_name1" />
+    <TextView
+        android:id="@+id/tv_already_exist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rect_white_radius20"
+        android:backgroundTint="@color/red_10"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:text="@string/login_name_already_exist"
+        android:textColor="@color/red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twNickNameChanged" />
 
-            <TextView
-                android:id="@+id/tv_input_name2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:text="@string/login_name2"
-                android:textColor="@android:color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/et_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/et_name" />
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupAlreadyExist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_already_exist,imgAlreadyExist" />
 
-            <Button
-                android:id="@+id/btn_finish"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@android:color/transparent"
-                android:drawablePadding="8dp"
-                android:fontFamily="@font/apple_gothic_bold"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:text="@string/my_page_edit_name3"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/et_name"
-                tools:ignore="UnusedAttribute" />
+    <TextView
+        android:id="@+id/btn_finish"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@color/selector_nickname_back"
+        android:fontFamily="@font/app_pretendard_font"
+        android:gravity="center"
+        android:text="닉네임 변경"
+        android:textColor="@color/selector_nickname_txt"
+        android:textFontWeight="700"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_already_exist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:drawablePadding="5dp"
-                android:text="@string/login_name_already_exist"
-                android:textColor="@color/color_main_red"
-                android:visibility="invisible"
-                app:drawableStartCompat="@drawable/ic_warning"
-                app:layout_constraintBottom_toBottomOf="@id/btn_finish"
-                app:layout_constraintStart_toEndOf="@id/btn_finish"
-                app:layout_constraintTop_toTopOf="@id/btn_finish" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

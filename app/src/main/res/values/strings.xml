@@ -337,4 +337,6 @@
     <string name="speech_bubble_title">최근 활동이 있는 가게만 볼 수 있어요!</string>
     <string name="speech_bubble_body_1">•최근 한 달 내에 방문 인증 성공 내역이 있어요.</string>
     <string name="speech_bubble_body_2">•신규로 생성된 가게에요.</string>
+    <string name="str_nickname">닉네임</string>
+    <string name="str_nickname_changed">로 바꿀래요</string>
 </resources>

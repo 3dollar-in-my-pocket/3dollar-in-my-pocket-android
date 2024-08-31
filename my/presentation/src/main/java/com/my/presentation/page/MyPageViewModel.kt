@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
 
-    private val _userInfo = MutableSharedFlow<UserWithDetailApiResponse>()
+    private val _userInfo = MutableSharedFlow<UserWithDetailApiResponse>(replay = 1)
     val userInfo: SharedFlow<UserWithDetailApiResponse> = _userInfo
     private val _myFavoriteStores = MutableSharedFlow<MyFavoriteFolderResponse>()
     val myFavoriteStores: SharedFlow<MyFavoriteFolderResponse> = _myFavoriteStores
@@ -34,16 +34,15 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     val storeClick: SharedFlow<MyPageShop> = _storeClick
 
     init {
-        getUserInfo()
         getMyVisitsStore()
         getUserPollList()
     }
 
-    private fun getUserInfo() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun getUserInfo() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getUserInfo().collect {
             if (it.ok) {
                 it.data?.let { data ->
-                    _userInfo.emit(data)
+                    _userInfo.emit(data.copy())
                 }
             }
         }
@@ -90,4 +89,6 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     fun clickStore(myPageShop: MyPageShop) = viewModelScope.launch(coroutineExceptionHandler) {
         _storeClick.emit(myPageShop)
     }
+
+    fun isNameUpdated() = getUserInfo()
 }

@@ -6,7 +6,7 @@
     <string name="str_vote_percent">%s %d%%</string>
     
     <string name="str_button_create_store">제보한 가게</string>
-    <string name="str_button_write_review">리뷰와 평과</string>
+    <string name="str_button_write_review">리뷰와 평가</string>
     <string name="str_button_medal">획득한 칭호</string>
 
     <string name="str_section_title_visite">방문인증</string>

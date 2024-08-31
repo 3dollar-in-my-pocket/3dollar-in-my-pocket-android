@@ -40,6 +40,7 @@ import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PatchUserInfoRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
@@ -159,6 +160,9 @@ interface ServerApi {
 
     @GET("/api/v4/my/user")
     suspend fun getUserInfo(@Query("includeActivities") includeActivities: Boolean = true): Response<BaseResponse<UserWithDetailApiResponse>>
+
+    @PATCH("/api/v4/my/user")
+    suspend fun patchUserInfo(@Body patchUserInfoRequest: PatchUserInfoRequest): Response<BaseResponse<String>>
 
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>

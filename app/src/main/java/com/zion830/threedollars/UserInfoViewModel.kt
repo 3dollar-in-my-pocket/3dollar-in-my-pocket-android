@@ -6,33 +6,37 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.my.domain.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.store.StoreInfo
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.PatchPushInformationRequest
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.PatchUserInfoRequest
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource,private val myRepository: MyRepository) : BaseViewModel() {
+class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
 
     private val _userInfo: MutableLiveData<UserWithDetailApiResponse> = MutableLiveData()
 
     val userInfo: LiveData<UserWithDetailApiResponse>
         get() = _userInfo
 
-    private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
-    val isAlreadyUsed: LiveData<Int>
+    private val _isAlreadyUsed: MutableLiveData<String> = MutableLiveData()
+    val isAlreadyUsed: LiveData<String>
         get() = _isAlreadyUsed
 
-    private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
-    val isNameUpdated: LiveData<Boolean>
+    private val _isNameUpdated = MutableSharedFlow<Unit>()
+    val isNameUpdated: SharedFlow<Unit>
         get() = _isNameUpdated
 
     private val _logoutResult: MutableLiveData<Boolean> = MutableLiveData()
@@ -42,13 +46,10 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
     val userName: MutableLiveData<String> = MutableLiveData("")
 
     val isNameEmpty: LiveData<Boolean> = userName.map {
-        it.isNullOrBlank()
+        it.isNullOrBlank() || it == userInfo.value?.name
     }
 
     private val isUpdated: MutableLiveData<Boolean> = MutableLiveData(true)
-
-    private val _isExistStoreInfo: MutableLiveData<Pair<StoreInfo, Boolean>> = MutableLiveData()
-    val isExistStoreInfo: LiveData<Pair<StoreInfo, Boolean>> get() = _isExistStoreInfo
 
     fun updateUserInfo() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
@@ -63,40 +64,25 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
     fun updateName() {
         EventTracker.logEvent(Constants.NICKNAME_CHANGE_BTN_CLICKED)
 
-        if (userName.value.isNullOrBlank()) {
+        if (isNameEmpty.value == true) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val checkName = userDataSource.checkName(userName.value!!)
-            if (checkName.body()?.resultCode?.isNotBlank() == true) {
-                _isAlreadyUsed.postValue(R.string.name_empty)
-                return@launch
-            }
-
-            val result = userDataSource.updateName(userName.value!!)
-            if (result.isSuccessful) {
-                _msgTextId.postValue(R.string.set_name_success)
-                _isNameUpdated.postValue(true)
-                updateUserInfo()
-            }
-
-            _isAlreadyUsed.postValue(
-                when (result.code()) {
-                    200 -> -1
-                    400 -> R.string.invalidate_name
-                    else -> R.string.login_name_already_exist
+            myRepository.patchUserInfo(PatchUserInfoRequest(userName.value.toStringDefault())).collect {
+                if (!it.ok) {
+                    _isAlreadyUsed.postValue(it.message.toStringDefault("-"))
+                } else {
+                    _msgTextId.postValue(R.string.set_name_success)
+                    _isAlreadyUsed.postValue("")
+                    _isNameUpdated.emit(Unit)
                 }
-            )
+            }
         }
     }
 
-    fun initNameUpdateInfo() {
-        _isNameUpdated.value = false
-    }
-
     fun clearName() {
-        userName.value = ""
+        userName.value = userInfo.value?.name.toStringDefault()
     }
 
     fun deleteUser(onSuccess: () -> Unit) {

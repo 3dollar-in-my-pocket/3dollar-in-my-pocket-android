@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
@@ -28,6 +29,8 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
@@ -98,6 +101,11 @@ class MyPageSettingFragment :
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
+        }
+        lifecycleScope.launch {
+            viewModel.isNameUpdated.collect {
+                viewModel.updateUserInfo()
+            }
         }
     }
 

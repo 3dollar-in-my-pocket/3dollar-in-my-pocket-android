@@ -7,6 +7,7 @@ import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.poll.response.GetMyPollListResponse
 import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
+import com.threedollar.network.request.PatchUserInfoRequest
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,6 +17,10 @@ class MyRepositoryImpl @Inject constructor(private val serverApi: ServerApi) : M
 
     override fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>> = flow {
         emit(apiResult(serverApi.getUserInfo()))
+    }
+
+    override fun patchUserInfo(patchUserInfoRequest: PatchUserInfoRequest) = flow {
+        emit(apiResult(serverApi.patchUserInfo(patchUserInfoRequest)))
     }
 
     override fun getMyFavoriteStores(size: Int): Flow<BaseResponse<MyFavoriteFolderResponse>> = flow {

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.my.presentation.page.screen.MyPageScreen
 import com.threedollar.common.base.BaseComposeFragment
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
-    override val viewModel: MyPageViewModel by viewModels()
+    override val viewModel: MyPageViewModel by activityViewModels()
 
     @Inject
     lateinit var myFragmentStarter: MyFragmentStarter
@@ -34,6 +34,7 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
     override fun onResume() {
         super.onResume()
         viewModel.getMyFavoriteStores()
+        viewModel.getUserInfo()
     }
 
     override fun onCreateView(
