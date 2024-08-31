@@ -74,7 +74,6 @@ class MyStoreFragment :
     override fun onStop() {
         super.onStop()
         myPageViewModel.requestUserActivity()
-        myPageViewModel.requestVisitHistory()
     }
 
     private fun observeUiData() {

@@ -41,7 +41,6 @@ class MyVisitHistoryFragment :
 
     override fun onStart() {
         super.onStart()
-        myPageViewModel.requestVisitHistory()
         myPageViewModel.requestUserActivity()
     }
 

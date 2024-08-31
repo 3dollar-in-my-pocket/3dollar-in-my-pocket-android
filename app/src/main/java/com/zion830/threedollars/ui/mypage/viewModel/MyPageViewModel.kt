@@ -30,9 +30,6 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity
 
-    private val _myVisitHistory: MutableLiveData<MyVisitHistoryResponseV2> = MutableLiveData()
-    val myVisitHistory: LiveData<MyVisitHistoryResponseV2> = _myVisitHistory
-
     private val _myMedals: MutableLiveData<List<MyMedal>> = MutableLiveData()
     val myMedals: MutableLiveData<List<MyMedal>> = _myMedals
 
@@ -45,7 +42,13 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
     val myFavoriteModel: LiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> get() = _myFavoriteModel
     var id = ""
     var isMoveMedalPage = false
-    fun initAllMedals() {
+
+    init {
+        requestUserActivity()
+        requestMyMedals()
+    }
+
+    private fun initAllMedals() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = userDataSource.getMedals()
             if (response.isSuccessful) {
@@ -62,18 +65,6 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
                 _userActivity.postValue(userActivity)
             } else {
                 _msgTextId.postValue(R.string.connection_failed)
-            }
-        }
-    }
-
-    fun requestVisitHistory() {
-        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            myRepository.getMyVisitsStore().collect {
-                if (it.ok) {
-                    it.data?.let { data ->
-                        _myVisitHistory.value = data
-                    }
-                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.mypage.ui
 
 import android.app.AlertDialog
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat

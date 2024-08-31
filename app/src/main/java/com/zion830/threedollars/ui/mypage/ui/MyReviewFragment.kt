@@ -46,7 +46,6 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
     override fun onPause() {
         super.onPause()
         myPageViewModel.requestUserActivity()
-        myPageViewModel.requestVisitHistory()
     }
 
 

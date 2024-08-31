@@ -64,7 +64,6 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.addFragments.collect {
-                    Log.e("asdasd", it.toString())
                     myFragmentStarter.addMyFragments(requireActivity(), it)
                 }
             }
