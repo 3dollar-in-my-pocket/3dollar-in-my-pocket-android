@@ -30,6 +30,8 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     val addFragments: SharedFlow<MyFragments> = _addFragments
     private val _favoriteClick = MutableSharedFlow<Unit>()
     val favoriteClick: SharedFlow<Unit> = _favoriteClick
+    private val _teamClick = MutableSharedFlow<Unit>()
+    val teamClick: SharedFlow<Unit> = _teamClick
     private val _storeClick = MutableSharedFlow<MyPageShop>()
     val storeClick: SharedFlow<MyPageShop> = _storeClick
 
@@ -88,6 +90,10 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
 
     fun clickStore(myPageShop: MyPageShop) = viewModelScope.launch(coroutineExceptionHandler) {
         _storeClick.emit(myPageShop)
+    }
+
+    fun clickTeam() = viewModelScope.launch(coroutineExceptionHandler) {
+        _teamClick.emit(Unit)
     }
 
     fun isNameUpdated() = getUserInfo()

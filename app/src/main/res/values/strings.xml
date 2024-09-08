@@ -275,7 +275,7 @@
     <string name="cancel">취소</string>
     <string name="delete">삭제</string>
     <string name="dialog_all_delete_favorite_title">나의 즐겨찾기 리스트를\n모두 삭제할까요?</string>
-    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="team_introduce">가슴속 3천원 팀원 소개</string>
     <string name="fragment_home_all_menu">전체 메뉴</string>
     <string name="fragment_home_filter_distance">거리순 보기</string>
     <string name="fragment_home_filter_latest">최근 등록순 보기</string>

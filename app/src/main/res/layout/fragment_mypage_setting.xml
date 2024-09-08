@@ -224,7 +224,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutPrivacyPolicy"
+            android:id="@+id/layoutTeamIntroduce"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -243,7 +243,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/privacy_policy"
+                android:text="@string/team_introduce"
                 android:textColor="@color/color_white"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -267,7 +267,7 @@
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutPrivacyPolicy"
+            app:layout_constraintTop_toBottomOf="@id/layoutTeamIntroduce"
             app:layout_goneMarginTop="16dp">
 
             <TextView

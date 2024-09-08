@@ -1,6 +1,5 @@
 package com.my.presentation.page.screen
 
-import android.provider.ContactsContract.CommonDataKinds.Im
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,11 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -181,6 +178,10 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                         MyPageVoteHistoryItem(vote)
                     }
                 }
+            }
+            Spacer(modifier = Modifier.height(44.dp))
+            MyPageTeamMoveScreen {
+                viewModel.clickTeam()
             }
         }
     }
@@ -586,6 +587,28 @@ fun MyPageVoteItem(modifier: Modifier = Modifier, option: MyVoteHistory.Option) 
                 fontSize = dpToSp(dp = 10)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun MyPageTeamMoveScreen(clickTeam: () -> Unit = {}) {
+    Row(
+        modifier = Modifier
+            .clickable { clickTeam() }
+            .fillMaxWidth()
+            .background(color = Pink)
+            .padding(20.dp)
+    ) {
+        Text(
+            text = "\uD83D\uDE18 가슴속 3천원 팀원 소개",
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.W600,
+            color = Color.White,
+            fontSize = dpToSp(dp = 14)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Image(painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow), contentDescription = "", modifier = Modifier.size(20.dp))
     }
 }
 

@@ -5,13 +5,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
+import com.my.presentation.page.team.MyPageTeamActivity
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
@@ -30,7 +30,6 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -125,10 +124,9 @@ class MyPageSettingFragment :
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
-        binding.layoutPrivacyPolicy.setOnClickListener {
-            EventTracker.logEvent(Constants.PRIVACY_POLICY_OF_USE_BTN_CLICKED)
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_url)))
+        binding.layoutTeamIntroduce.setOnClickListener {
+            EventTracker.logEvent(Constants.TEAM_INTRODUCE_BTN_CLICKED)
+            val browserIntent = Intent(requireContext(), MyPageTeamActivity::class.java)
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
@@ -159,7 +157,7 @@ class MyPageSettingFragment :
         }
     }
 
-    private fun initCheckBoxListener(){
+    private fun initCheckBoxListener() {
         binding.pushSwitchButton.setOnCheckedChangeListener(null)
         binding.pushMarketingSwitchButton.setOnCheckedChangeListener(null)
     }

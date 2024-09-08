@@ -1,7 +1,7 @@
 package com.my.presentation.page
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.my.presentation.page.screen.MyPageScreen
+import com.my.presentation.page.team.MyPageTeamActivity
 import com.threedollar.common.base.BaseComposeFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.MyFragmentStarter
@@ -83,6 +84,13 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoriteClick.collect {
                     activityStarter.startFavoriteActivity(requireActivity())
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.teamClick.collect {
+                    startActivity(Intent(requireContext(), MyPageTeamActivity::class.java))
                 }
             }
         }
