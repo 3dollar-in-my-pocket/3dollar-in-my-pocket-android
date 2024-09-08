@@ -266,7 +266,6 @@ fun MyPageInformationButtons(buttonItems: List<MyPageButton>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(68.dp)
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

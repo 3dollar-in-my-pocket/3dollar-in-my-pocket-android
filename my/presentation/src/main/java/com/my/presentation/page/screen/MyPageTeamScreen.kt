@@ -40,7 +40,7 @@ import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
-fun MyPageTeamScreen(clickAd: () -> kotlin.Unit = {}, clickTeam: () -> Unit = {}) {
+fun MyPageTeamScreen(clickBack: () -> Unit, clickAd: () -> Unit = {}, clickTeam: () -> Unit = {}) {
     val teams = listOf(
         TeamRow(role = "Design", members = listOf("이윤이", "박은지")),
         TeamRow(role = "iOS", members = listOf("유현식", "이가은")),
@@ -55,7 +55,7 @@ fun MyPageTeamScreen(clickAd: () -> kotlin.Unit = {}, clickTeam: () -> Unit = {}
             .background(Pink),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MyPageTeamTitle {}
+        MyPageTeamTitle { clickBack() }
         Image(
             painter = painterResource(id = zion830.com.common.R.drawable.ic_3dollars_logo),
             contentDescription = "로고",
@@ -105,6 +105,7 @@ fun MyPageTeamTitle(clickBack: () -> Unit = {}) {
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .clickable { clickBack }
+                .padding(end = 16.dp)
         )
         Text(
             text = stringResource(id = R.string.str_team_title), fontSize = dpToSp(dp = 16),

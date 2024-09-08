@@ -10,7 +10,6 @@ import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.my.presentation.page.screen.MyPageTeamScreen
@@ -31,24 +30,27 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
         inItAd()
         setContent {
             MaterialTheme {
-                MyPageTeamScreen(clickAd = {
-                    rewardedAd?.let { ad ->
-                        ad.show(this) { rewardItem ->
-                            val rewardAmount = rewardItem.amount
-                            val rewardType = rewardItem.type
+                MyPageTeamScreen(
+                    clickBack = { finish() },
+                    clickAd = {
+                        rewardedAd?.let { ad ->
+                            ad.show(this) { rewardItem ->
+                                val rewardAmount = rewardItem.amount
+                                val rewardType = rewardItem.type
+                            }
                         }
-                    }
-                }, clickTeam = {
-                    val browserIntent =
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/3dollar_in_my_pocket"))
-                    startActivity(browserIntent)
-                })
+                    },
+                    clickTeam = {
+                        val browserIntent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/3dollar_in_my_pocket"))
+                        startActivity(browserIntent)
+                    })
             }
         }
     }
 
-    private fun inItAd(){
-        RewardedAd.load(this,"ca-app-pub-5385646520024289/4616671581", AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
+    private fun inItAd() {
+        RewardedAd.load(this, "ca-app-pub-5385646520024289/4616671581", AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 rewardedAd = null
             }
@@ -57,7 +59,7 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
                 rewardedAd = ad
             }
         })
-        rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+        rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdClicked() {}
 
             override fun onAdDismissedFullScreenContent() {
