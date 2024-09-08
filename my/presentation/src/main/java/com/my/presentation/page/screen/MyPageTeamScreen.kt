@@ -40,7 +40,7 @@ import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.dpToSp
 
 @Composable
-fun MyPageTeamScreen(clickTeam: () -> Unit = {}) {
+fun MyPageTeamScreen(clickAd: () -> kotlin.Unit = {}, clickTeam: () -> Unit = {}) {
     val teams = listOf(
         TeamRow(role = "Design", members = listOf("이윤이", "박은지")),
         TeamRow(role = "iOS", members = listOf("유현식", "이가은")),
@@ -73,7 +73,7 @@ fun MyPageTeamScreen(clickTeam: () -> Unit = {}) {
             }
             item {
                 AdButton {
-
+                    clickAd()
                 }
             }
         }
@@ -157,9 +157,9 @@ fun MyPageTeamMember(role: String = "BackEnd", members: List<String> = listOf("�
 fun AdButton(clickAd: () -> Unit = {}) {
     Box(
         modifier = Modifier
+            .clickable { clickAd() }
             .background(Color.White, shape = RoundedCornerShape(16.dp))
-            .padding(vertical = 12.dp, horizontal = 20.dp)
-            .clickable { clickAd() },
+            .padding(vertical = 12.dp, horizontal = 20.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
