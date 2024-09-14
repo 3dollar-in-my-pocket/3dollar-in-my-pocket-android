@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
@@ -14,9 +15,13 @@ import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>() {
+class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     override fun initView() {
         binding.btnBack.setOnClickListener {

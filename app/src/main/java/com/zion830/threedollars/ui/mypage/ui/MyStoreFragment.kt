@@ -13,13 +13,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.store.MyReportedContent
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
-import com.threedollar.network.data.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyStoreViewModel
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyStoreFragment :
-    BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>() {
+    BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -43,6 +43,11 @@ class MyStoreFragment :
     override fun onResume() {
         super.onResume()
         adapter?.refresh()
+    }
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+        viewModel.updateUserInfo()
     }
 
     override fun initView() {
@@ -95,10 +100,14 @@ class MyStoreFragment :
                 }
                 launch {
                     adapter?.loadStateFlow?.collectLatest { loadState ->
-                        if (loadState.refresh is LoadState.NotLoading) {
-                            binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                            binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
-                            binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                        when (loadState.refresh) {
+                            is LoadState.NotLoading, is LoadState.Error -> {
+                                binding.ivEmpty.isVisible = adapter?.itemCount == 0
+                                binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                                binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                            }
+
+                            else -> {}
                         }
                     }
                 }

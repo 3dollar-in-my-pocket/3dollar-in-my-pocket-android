@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>() , OnBackPressedListener {
+class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -40,7 +40,6 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
     private val myPageViewModel: MyPageViewModel by activityViewModels()
 
     private var fragmentAdapter: ReviewPagerFragmentStateAdapter? = null
-
 
 
     override fun onPause() {
@@ -67,6 +66,7 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "MyReviewFragment", screenName = null)
     }
+
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMyReviewBinding =
         FragmentMyReviewBinding.inflate(inflater, container, false)
 

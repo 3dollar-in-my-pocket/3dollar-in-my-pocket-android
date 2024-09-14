@@ -10,12 +10,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
-import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyVisitHistoryFragment :
-    BaseFragment<FragmentMyVisitHistoryBinding, UserInfoViewModel>() {
+    BaseFragment<FragmentMyVisitHistoryBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
     private val myVisitHistoryViewModel: MyVisitHistoryViewModel by viewModels()
@@ -42,6 +42,11 @@ class MyVisitHistoryFragment :
     override fun onStart() {
         super.onStart()
         myPageViewModel.requestUserActivity()
+    }
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+        viewModel.updateUserInfo()
     }
 
     override fun initView() {
@@ -74,9 +79,13 @@ class MyVisitHistoryFragment :
                     }
                     launch {
                         adapter?.loadStateFlow?.collectLatest { loadState ->
-                            if (loadState.refresh is LoadState.NotLoading) {
-                                binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                                binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                            when (loadState.refresh) {
+                                is LoadState.NotLoading, is LoadState.Error -> {
+                                    binding.ivEmpty.isVisible = adapter?.itemCount == 0
+                                    binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                                }
+
+                                else -> {}
                             }
                         }
                     }

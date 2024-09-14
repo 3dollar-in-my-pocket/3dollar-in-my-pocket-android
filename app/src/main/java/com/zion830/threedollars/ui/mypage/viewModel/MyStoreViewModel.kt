@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyStoreViewModel @Inject constructor(private val userDataSource: UserDataSource, private val serverApi: ServerApi) : BaseViewModel() {
+class MyStoreViewModel @Inject constructor(private val serverApi: ServerApi) : BaseViewModel() {
 
     val myStorePager =
         Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { MyStoreDataSourceImpl(serverApi) }.flow
@@ -27,7 +27,7 @@ class MyStoreViewModel @Inject constructor(private val userDataSource: UserDataS
         requestTotalCount()
     }
 
-    fun requestTotalCount() {
+    private fun requestTotalCount() {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val response = serverApi.getMyStores(0.0, 0.0, 20, null)
             _totalCount.postValue(

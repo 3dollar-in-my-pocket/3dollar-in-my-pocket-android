@@ -17,6 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="24dp"
         android:onClick="@{()-> listener.onClick(item)}">
 
         <ImageView
@@ -24,7 +25,6 @@
             bindMenuIcons="@{item.store.categories}"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="24dp"
             android:src="@drawable/icon_menu_hodduck_selected"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

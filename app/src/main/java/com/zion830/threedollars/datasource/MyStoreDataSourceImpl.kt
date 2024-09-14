@@ -20,11 +20,7 @@ class MyStoreDataSourceImpl(private val serverApi: ServerApi) :
             val response = serverApi.getMyStores(0.0, 0.0, LOAD_SIZE, cursor.toString())
 
             if (response.isSuccessful) {
-                LoadResult.Page(
-                    data = response.body()?.data?.contents ?: emptyList(),
-                    null,
-                    response.body()?.data?.cursor?.nextCursor?.toIntOrNull()
-                )
+                LoadResult.Error(Exception())
             } else {
                 LoadResult.Error(Exception(response.message()))
             }

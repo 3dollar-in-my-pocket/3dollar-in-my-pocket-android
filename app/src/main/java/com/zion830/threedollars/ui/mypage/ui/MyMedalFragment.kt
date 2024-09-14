@@ -10,6 +10,7 @@ import androidx.core.text.color
 import androidx.fragment.app.activityViewModels
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
@@ -19,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.loadUrlImg
 
 @AndroidEntryPoint
-class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() {
+class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>(), OnBackPressedListener {
 
     override val viewModel: MyPageViewModel by activityViewModels()
 
@@ -40,6 +41,10 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
             MedalInfoDialog().show(this.parentFragmentManager, MedalInfoDialog::class.java.simpleName)
         }
         observeData()
+    }
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     override fun initFirebaseAnalytics() {

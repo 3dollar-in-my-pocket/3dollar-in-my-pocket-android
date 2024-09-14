@@ -12,6 +12,7 @@ import com.google.firebase.dynamiclinks.ktx.iosParameters
 import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
 import com.google.firebase.ktx.Firebase
+import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BuildConfig
@@ -19,14 +20,17 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.FavoriteMyFolderDataSourceImpl
 import com.zion830.threedollars.datasource.UserDataSource
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.R
+import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+class FavoriteViewModel @Inject constructor(private val userDataSource: UserDataSource,private val homeRepository: HomeRepository) : BaseViewModel() {
     val favoriteMyFolderPager = Pager(PagingConfig(FavoriteMyFolderDataSourceImpl.LOAD_SIZE)) { FavoriteMyFolderDataSourceImpl() }.flow
 
     private val _myFavoriteFolderResponse: MutableLiveData<MyFavoriteFolderResponse> = MutableLiveData()
@@ -60,8 +64,9 @@ class FavoriteViewModel @Inject constructor(private val userDataSource: UserData
 
     fun deleteFavorite(storeType: String, storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-//            val response = userDataSource.deleteFavorite(storeType, storeId)
-//            _isRefresh.value = response.isSuccessful
+            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+                _isRefresh.value = model.ok
+            }
         }
     }
 
