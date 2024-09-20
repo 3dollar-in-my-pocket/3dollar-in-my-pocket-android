@@ -223,7 +223,7 @@ interface NewServiceApi {
 
     @GET("/api/v2/folder/{folderId}/favorite-stores")
     suspend fun getFavoriteViewer(
-        @Path("favoriteFolderId") id: String,
+        @Path("folderId") id: String,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
