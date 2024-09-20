@@ -228,15 +228,13 @@ interface ServerApi {
     suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    @PUT("/api/v2/store/{storeId}/favorite")
     suspend fun putFavorite(
-        @Path("storeType") storeType: String,
         @Path("storeId") storeId: String
     ): Response<BaseResponse<String>>
 
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
+    @DELETE("/api/v2/store/{storeId}/favorite")
     suspend fun deleteFavorite(
-        @Path("storeType") storeType: String,
         @Path("storeId") storeId: String
     ): Response<BaseResponse<String>>
 

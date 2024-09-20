@@ -61,9 +61,9 @@ interface HomeRepository {
 
     fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
 
-    fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun putFavorite(storeId: String): Flow<BaseResponse<String>>
 
-    fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun deleteFavorite(storeId: String): Flow<BaseResponse<String>>
 
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>>
 

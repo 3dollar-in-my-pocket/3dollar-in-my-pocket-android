@@ -29,7 +29,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -88,7 +90,14 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     val myVisitsStore by viewModel.myVisitsStore.collectAsState(MyVisitHistoryResponseV2())
     val userPollList by viewModel.userPollList.collectAsState(GetMyPollListResponse())
 
-    val myPageUserInformation = MyPageUserInformationData(name = userInfo.name, medal = userInfo.representativeMedal)
+    val myPageUserInformation by remember(userInfo) {
+        derivedStateOf {
+            MyPageUserInformationData(
+                name = userInfo.name,
+                medal = userInfo.representativeMedal
+            )
+        }
+    }
     val myPageButtons = userInfo.toMyPageButtons({ viewModel.addFragments(MyFragments.MyStore) },
         { viewModel.addFragments(MyFragments.MyReview) },
         { viewModel.addFragments(MyFragments.MyMedal) })

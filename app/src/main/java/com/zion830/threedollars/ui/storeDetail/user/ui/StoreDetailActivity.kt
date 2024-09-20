@@ -683,9 +683,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {
-            viewModel.deleteFavorite(USER_STORE, storeId.toString())
+            viewModel.deleteFavorite(storeId.toString())
         } else {
-            viewModel.putFavorite(USER_STORE, storeId.toString())
+            viewModel.putFavorite(storeId.toString())
         }
     }
 

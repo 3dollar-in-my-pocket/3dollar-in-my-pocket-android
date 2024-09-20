@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
@@ -17,7 +18,6 @@ import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +41,7 @@ class MyVisitHistoryFragment :
 
     override fun onStart() {
         super.onStart()
-        myPageViewModel.requestUserActivity()
+        myPageViewModel.getUserInfo()
     }
 
     override fun onBackPressed() {

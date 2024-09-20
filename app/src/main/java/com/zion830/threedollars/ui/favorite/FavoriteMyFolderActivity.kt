@@ -37,7 +37,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
-                viewModel.deleteFavorite(item.storeType, item.storeId)
+                viewModel.deleteFavorite(item.storeId)
             }
         })
     }

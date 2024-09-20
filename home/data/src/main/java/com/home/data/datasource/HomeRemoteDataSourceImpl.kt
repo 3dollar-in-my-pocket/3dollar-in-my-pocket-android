@@ -116,12 +116,12 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.getAdvertisements(position.name)))
     }
 
-    override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.putFavorite(storeType, storeId)))
+    override fun putFavorite(storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putFavorite(storeId)))
     }
 
-    override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.deleteFavorite(storeType, storeId)))
+    override fun deleteFavorite(storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deleteFavorite(storeId)))
     }
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>> = flow {

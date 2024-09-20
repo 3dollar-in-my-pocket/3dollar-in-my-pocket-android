@@ -215,13 +215,13 @@ interface NewServiceApi {
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
-    @GET("/api/v1/favorite/store/folder/my")
+    @GET("/api/v2/my/favorite-stores")
     suspend fun getMyFavoriteFolder(
         @Query("cursor") cursor: String?,
         @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
-    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
+    @GET("/api/v2/folder/{folderId}/favorite-stores")
     suspend fun getFavoriteViewer(
         @Path("favoriteFolderId") id: String,
         @Query("cursor") cursor: String?,
@@ -231,10 +231,10 @@ interface NewServiceApi {
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 
-    @DELETE("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
+    @DELETE("/api/v2/my/favorite-stores")
+    suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    @PUT("/api/v2/{favoriteType}/folder")
     suspend fun updateFavoriteInfo(
         @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
         @Body favoriteInfoRequest: FavoriteInfoRequest

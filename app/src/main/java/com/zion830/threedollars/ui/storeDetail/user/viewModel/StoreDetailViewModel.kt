@@ -165,9 +165,9 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun putFavorite(storeType: String, storeId: String) {
+    fun putFavorite(storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putFavorite(storeType, storeId).collect { model ->
+            homeRepository.putFavorite(storeId).collect { model ->
                 if (model.ok) {
                     showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_add))
                     _favoriteModel.update {
@@ -180,9 +180,9 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun deleteFavorite(storeType: String, storeId: String) {
+    fun deleteFavorite(storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+            homeRepository.deleteFavorite(storeId).collect { model ->
                 if (model.ok) {
                     showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_delete))
                     _favoriteModel.update {

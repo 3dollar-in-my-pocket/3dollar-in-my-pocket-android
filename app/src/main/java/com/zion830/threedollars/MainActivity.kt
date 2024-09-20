@@ -26,7 +26,7 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: UserInfoViewModel by viewModels()
-    private val myPageViewModel: MyPageViewModel by viewModels()
+    private val myPageViewModel: MyMealViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
 
 

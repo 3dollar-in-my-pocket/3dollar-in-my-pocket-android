@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
@@ -21,7 +22,6 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyStoreViewModel
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,7 +78,7 @@ class MyStoreFragment :
 
     override fun onStop() {
         super.onStop()
-        myPageViewModel.requestUserActivity()
+        myPageViewModel.getUserInfo()
     }
 
     private fun observeUiData() {

@@ -9,13 +9,10 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
-import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
-import com.threedollar.network.data.visit_history.VisitHistoryContent
+import com.threedollar.network.request.PatchUserInfoRequest
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
 import com.zion830.threedollars.utils.getErrorMessage
 import com.zion830.threedollars.utils.showCustomBlackToast
@@ -25,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSource,private val myRepository: MyRepository) : BaseViewModel() {
+class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
 
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity
@@ -85,14 +82,15 @@ class MyPageViewModel @Inject constructor(private val userDataSource: UserDataSo
         }
     }
 
-    fun changeMedal(medalId: Int) {
+    fun updateMedal(medalId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = userDataSource.updateMyMedals(UpdateMedalRequest(medalId))
-            if (response.isSuccessful) {
-                requestUserActivity()
-            } else {
-                _msgTextId.postValue(R.string.error_change_medal)
-                _msgTextId.postValue(-1)
+            myRepository.patchUserInfo(PatchUserInfoRequest(representativeMedalId = medalId)).collect {
+                if (it.ok) {
+                    requestUserActivity()
+                } else {
+                    _msgTextId.postValue(R.string.error_change_medal)
+                    _msgTextId.postValue(-1)
+                }
             }
         }
     }

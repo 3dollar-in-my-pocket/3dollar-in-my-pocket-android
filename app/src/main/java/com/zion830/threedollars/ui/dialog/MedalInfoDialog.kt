@@ -14,13 +14,13 @@ import androidx.fragment.app.activityViewModels
 import com.zion830.threedollars.databinding.DialogMedalInfoBinding
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.ui.mypage.adapter.MedalInfoRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MedalInfoDialog : DialogFragment() {
 
-    private val viewModel: MyPageViewModel by activityViewModels()
+    private val viewModel: MyMealViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val binding = DialogMedalInfoBinding.inflate(inflater, container, false)
