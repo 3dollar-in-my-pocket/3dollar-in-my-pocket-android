@@ -35,11 +35,6 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     private val _storeClick = MutableSharedFlow<MyPageShop>()
     val storeClick: SharedFlow<MyPageShop> = _storeClick
 
-    init {
-        getMyVisitsStore()
-        getUserPollList()
-    }
-
     fun getUserInfo() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getUserInfo().collect {
             if (it.ok) {
@@ -50,7 +45,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         }
     }
 
-    private fun getMyVisitsStore() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun getMyVisitsStore() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getMyVisitsStore().collect {
             if (it.ok) {
                 it.data?.let { data ->
@@ -70,7 +65,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         }
     }
 
-    private fun getUserPollList() = viewModelScope.launch(coroutineExceptionHandler) {
+    fun getUserPollList() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getUserPollList(null, size = 3).collect {
             if (it.ok) {
                 it.data?.let { data ->

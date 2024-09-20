@@ -39,6 +39,8 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
         super.onResume()
         viewModel.getMyFavoriteStores()
         viewModel.getUserInfo()
+        viewModel.getMyVisitsStore()
+        viewModel.getUserPollList()
     }
 
     override fun onCreateView(

@@ -14,7 +14,7 @@ import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 
 class MyStoreRecyclerAdapter(
-    private val listener: OnItemClickListener<MyReportedContent>
+    private val listener: OnItemClickListener<MyReportedStore>
 ) : PagingDataAdapter<MyReportedContent, BaseViewHolder<ItemMyStoreBinding, MyReportedContent>>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
