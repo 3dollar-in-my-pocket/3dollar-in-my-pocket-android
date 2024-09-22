@@ -10,6 +10,20 @@ android {
         }
     }
     namespace 'zion830.com.common'
+    buildFeatures{
+        compose true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0'
+    }
 }
 dependencies {
     implementation project(':core:common')
@@ -17,6 +31,8 @@ dependencies {
     implementation "androidx.core:core-ktx:1.9.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'androidx.compose.ui:ui:1.6.2'
 }
 repositories {
     mavenCentral()

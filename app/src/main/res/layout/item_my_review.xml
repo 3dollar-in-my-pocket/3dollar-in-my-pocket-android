@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.my.ReviewDetail" />
+            type="com.threedollar.network.data.user.MyReviewResponseData" />
 
         <variable
             name="listener"
@@ -16,14 +16,15 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:onClick="@{()-> listener.onClick(item)}">
 
         <ImageView
             android:id="@+id/iv_category"
             bindMenuIcons="@{item.store.categories}"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="40dp"
             android:src="@drawable/icon_menu_hodduck_selected"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,112 +41,65 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_category"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/iv_category"
-            app:layout_constraintTop_toTopOf="@id/iv_category" />
+            app:layout_constraintTop_toTopOf="@id/iv_category"
+            app:layout_constraintWidth="wrap_content" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:background="@color/gray80"
+            app:layout_constraintBottom_toBottomOf="@id/tv_store_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_store_name"
+            app:layout_constraintTop_toTopOf="@id/tv_store_name" />
+
+
+        <com.willy.ratingbar.ScaleRatingBar
+            android:id="@+id/rating_score"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="16dp"
-            android:background="@drawable/rect_light_gray"
-            android:backgroundTint="@color/gray95"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()-> listener.onClick(item)}"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rect_white_radius_4"
+            android:backgroundTint="@color/gray90"
+            android:padding="4dp"
+            app:bindRating="@{item.review.rating}"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_category"
-            tools:ignore="UnusedAttribute">
+            app:srb_clickable="true"
+            app:srb_drawableEmpty="@drawable/ic_star_off"
+            app:srb_drawableFilled="@drawable/ic_star_on"
+            app:srb_isIndicator="true"
+            app:srb_numStars="5"
+            app:srb_starHeight="16dp"
+            app:srb_starPadding="2dp"
+            app:srb_starWidth="16dp"
+            tools:ignore="UnusedAttribute" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@{item.review.contents}"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rating_score"
+            tools:text="음~ 냠냠긋 음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~" />
 
-                <com.willy.ratingbar.ScaleRatingBar
-                    android:id="@+id/rating_score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:bindRating="@{item.rating}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srb_clickable="true"
-                    app:srb_drawableEmpty="@drawable/ic_star_off"
-                    app:srb_drawableFilled="@drawable/ic_star_on"
-                    app:srb_isIndicator="true"
-                    app:srb_numStars="5"
-                    app:srb_starHeight="16dp"
-                    app:srb_starPadding="2dp"
-                    app:srb_starWidth="16dp"
-                    tools:ignore="UnusedAttribute" />
+        <TextView
+            android:id="@+id/tv_created_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/gray30"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/rating_score"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="20.30.11" />
 
-                <TextView
-                    android:id="@+id/tv_my_medal"
-                    visibleIf="@{item.user.medal.name != null}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/rect_red_stroke_round"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="4dp"
-                    android:singleLine="true"
-                    android:text="@{item.user.medal.name}"
-                    android:textColor="@color/color_main_red"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rating_score"
-                    tools:text="강남역 2출 앞" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@{item.user.name}"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_my_medal"
-                    app:layout_constraintStart_toEndOf="@id/tv_my_medal"
-                    app:layout_constraintTop_toTopOf="@id/tv_my_medal" />
-
-                <TextView
-                    android:id="@+id/tv_description"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@{item.contents}"
-                    android:textColor="@android:color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_my_medal"
-                    tools:text="음~ 냠냠긋 음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~음~ 냠냠긋~" />
-
-                <TextView
-                    android:id="@+id/tv_created_at"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:textColor="@color/gray30"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@id/rating_score"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="20.30.11" />
-
-                <ImageButton
-                    android:id="@+id/ib_side_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="?attr/actionBarItemBackground"
-                    android:padding="16dp"
-                    android:src="@drawable/ic_menu_horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_description"
-                    tools:ignore="RtlSymmetry" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

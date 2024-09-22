@@ -7,7 +7,7 @@ import android.text.style.StyleSpan
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.zion830.threedollars.R
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 
 @BindingAdapter("textFavoriteUserName")
 fun TextView.textFavoriteUserName(textFavoriteUserName: String) {

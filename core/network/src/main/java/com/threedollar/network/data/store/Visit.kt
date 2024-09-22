@@ -14,4 +14,6 @@ data class Visit(
     val visitDate: String? = "",
     @SerializedName("visitId")
     val visitId: String? = "",
-)
+) {
+    fun isExist() = type == "EXISTS"
+}

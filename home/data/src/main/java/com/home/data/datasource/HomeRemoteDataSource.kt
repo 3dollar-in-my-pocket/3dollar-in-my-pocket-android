@@ -16,6 +16,7 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
@@ -57,9 +58,9 @@ interface HomeRemoteDataSource {
 
     fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>>
 
-    fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun putFavorite(storeId: String): Flow<BaseResponse<String>>
 
-    fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun deleteFavorite(storeId: String): Flow<BaseResponse<String>>
 
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>>
 

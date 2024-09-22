@@ -150,10 +150,10 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = homeRemoteDataSource.putFavorite(storeType, storeId)
+    override fun putFavorite(storeId: String): Flow<BaseResponse<String>> = homeRemoteDataSource.putFavorite(storeId)
 
-    override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> =
-        homeRemoteDataSource.deleteFavorite(storeType, storeId)
+    override fun deleteFavorite(storeId: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.deleteFavorite(storeId)
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>> {
         val feedbackTypeResponseList = sharedPrefUtils.getList<FeedbackTypeResponse>(BOSS_FEED_BACK_LIST)

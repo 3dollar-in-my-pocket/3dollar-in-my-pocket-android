@@ -2,31 +2,31 @@ package com.zion830.threedollars.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.visit_history.MyVisitHistoryV2
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 
-class MyVisitHistoryDataSourceImpl :
-    PagingSource<Int, VisitHistoryContent>() {
+class MyVisitHistoryDataSourceImpl(private val serverApi: ServerApi) :
+    PagingSource<Int, MyVisitHistoryV2>() {
 
-    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
+    override fun getRefreshKey(state: PagingState<Int, MyVisitHistoryV2>): Int? = null
 
-    override fun getRefreshKey(state: PagingState<Int, VisitHistoryContent>): Int? = null
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VisitHistoryContent> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MyVisitHistoryV2> {
         val cursor = params.key
         if (cursor == -1) {
             return LoadResult.Error(Exception())
         }
 
         return try {
-            val response = newServiceApi.getMyVisitHistory(cursor, LOAD_SIZE)
+            val response = serverApi.getMyVisitsStore(LOAD_SIZE, cursor?.toString())
 
             if (response.isSuccessful) {
                 LoadResult.Page(
                     data = response.body()?.data?.contents ?: emptyList(),
                     null,
-                    response.body()?.data?.nextCursor
+                    response.body()?.data?.cursor?.nextCursor?.toIntOrNull()
                 )
             } else {
                 LoadResult.Error(Exception(response.message()))

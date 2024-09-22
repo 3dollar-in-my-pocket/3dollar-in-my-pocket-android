@@ -35,56 +35,37 @@
         app:tint="@color/white"
         tools:ignore="RtlSymmetry,UnusedAttribute" />
 
-    <ImageButton
-        android:id="@+id/ib_setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:background="?attr/actionBarItemBackground"
-        android:src="@drawable/ic_setting"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/tv_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_title" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_review"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/sortTabLayout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:orientation="vertical"
-        android:overScrollMode="never"
-        android:paddingBottom="10dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
-        tools:listitem="@layout/item_my_review" />
+        app:tabIndicatorColor="@color/pink"
+        app:tabIndicatorHeight="4dp"
+        app:tabTextColor="@color/gray50"
+        app:tabSelectedTextColor="@color/pink" />
 
-    <ImageView
-        android:id="@+id/iv_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/img_no_review"
-        android:visibility="gone"
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/gray70"
+        app:layout_constraintBottom_toBottomOf="@id/sortTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <include
-        android:id="@+id/layout_no_data"
-        layout="@layout/layout_no_data"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
-        android:visibility="gone"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/reviewViewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@{@string/my_review_empty}" />
+        app:layout_constraintTop_toBottomOf="@id/sortTabLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

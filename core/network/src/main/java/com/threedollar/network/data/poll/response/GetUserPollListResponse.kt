@@ -16,7 +16,7 @@ data class GetUserPollListResponse(
 
     data class Poll(
         @SerializedName("contents")
-        var contents: List<Content?>? = null,
+        var contents: List<Content>? = null,
         @SerializedName("cursor")
         var cursor: Cursor? = null
     ) {
@@ -30,7 +30,7 @@ data class GetUserPollListResponse(
             @SerializedName("isOwner")
             var isOwner: Boolean? = null,
             @SerializedName("options")
-            var options: List<Option?>? = null,
+            var options: List<Option>? = null,
             @SerializedName("period")
             var period: Period? = null,
             @SerializedName("pollId")

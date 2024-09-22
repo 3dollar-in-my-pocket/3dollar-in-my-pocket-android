@@ -188,6 +188,7 @@
         <activity android:name="com.threedollar.presentation.polls.PollListActivity" />
         <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
+        <activity android:name="com.my.presentation.page.team.MyPageTeamActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

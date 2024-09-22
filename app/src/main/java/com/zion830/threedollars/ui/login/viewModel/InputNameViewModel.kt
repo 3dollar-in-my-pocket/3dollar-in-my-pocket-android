@@ -2,7 +2,7 @@ package com.zion830.threedollars.ui.login.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
@@ -25,7 +25,7 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
     val userName: MutableLiveData<String> = MutableLiveData("")
     private val latestSocialType: MutableLiveData<LoginType> =
         MutableLiveData(LoginType.of(LegacySharedPrefUtils.getLoginType()))
-    val isNameEmpty: LiveData<Boolean> = Transformations.map(userName) {
+    val isNameEmpty: LiveData<Boolean> = userName.map {
         it.isNullOrBlank()
     }
     private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()

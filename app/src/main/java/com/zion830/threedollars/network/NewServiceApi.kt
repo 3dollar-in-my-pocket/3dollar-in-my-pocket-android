@@ -3,6 +3,9 @@ package com.zion830.threedollars.network
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
@@ -17,7 +20,6 @@ import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
@@ -35,11 +37,11 @@ import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResp
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -134,12 +136,6 @@ interface NewServiceApi {
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity(): Response<UserActivityResponse>
 
-    @GET("/api/v2/store/visits/me")
-    suspend fun getMyVisitHistory(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int
-    ): Response<MyVisitHistoryResponse>
-
     @PUT("/api/v2/user/me")
     suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
 
@@ -210,21 +206,24 @@ interface NewServiceApi {
     @POST("/api/v1/device")
     suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
+    @PATCH("/api/v4/my/user-settings")
+    suspend fun patchPushInformation(@Body patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>>
+
     @DELETE("/api/v1/device")
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
 
     @PUT("/api/v1/device/token")
     suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
-    @GET("/api/v1/favorite/store/folder/my")
+    @GET("/api/v2/my/favorite-stores")
     suspend fun getMyFavoriteFolder(
         @Query("cursor") cursor: String?,
         @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
-    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
+    @GET("/api/v2/folder/{folderId}/favorite-stores")
     suspend fun getFavoriteViewer(
-        @Path("favoriteFolderId") id: String,
+        @Path("folderId") id: String,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
@@ -232,10 +231,10 @@ interface NewServiceApi {
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 
-    @DELETE("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
+    @DELETE("/api/v2/my/favorite-stores")
+    suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    @PUT("/api/v2/{favoriteType}/folder")
     suspend fun updateFavoriteInfo(
         @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
         @Body favoriteInfoRequest: FavoriteInfoRequest

@@ -671,7 +671,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
             setBackgroundResource(R.drawable.circle_gray70_24dp)
-            setTextColor(getColor(R.color.white))
+            setTextColor(getColor(R.color.color_white))
         }
     }
 
@@ -683,9 +683,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {
-            viewModel.deleteFavorite(USER_STORE, storeId.toString())
+            viewModel.deleteFavorite(storeId.toString())
         } else {
-            viewModel.putFavorite(USER_STORE, storeId.toString())
+            viewModel.putFavorite(storeId.toString())
         }
     }
 

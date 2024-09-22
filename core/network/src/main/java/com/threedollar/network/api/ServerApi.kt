@@ -3,6 +3,7 @@ package com.threedollar.network.api
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
@@ -12,6 +13,7 @@ import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
 import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
+import com.threedollar.network.data.poll.response.GetMyPollListResponse
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -25,14 +27,20 @@ import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ImageResponse
+import com.threedollar.network.data.store.MyReportedStoresResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
 import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.network.data.user.MyFeedbacksResponse
+import com.threedollar.network.data.user.MyReviewResponseV2
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
+import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PatchUserInfoRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
@@ -63,13 +71,19 @@ interface ServerApi {
     suspend fun getPollId(@Path("pollId") id: String): Response<BaseResponse<GetPollResponse>>
 
     @PUT("/api/v1/poll/{pollId}/choice")
-    suspend fun putPollChoice(@Path("pollId") id: String, @Body pollChoiceApiRequest: PollChoiceApiRequest): Response<BaseResponse<String>>
+    suspend fun putPollChoice(
+        @Path("pollId") id: String,
+        @Body pollChoiceApiRequest: PollChoiceApiRequest
+    ): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/poll/{pollId}/choice")
     suspend fun deletePollChoice(@Path("pollId") id: String): Response<BaseResponse<String>>
 
     @POST("/api/v1/poll/{pollId}/report")
-    suspend fun reportPoll(@Path("pollId") id: String, @Body pollReportCreateApiRequest: PollReportCreateApiRequest): Response<BaseResponse<String>>
+    suspend fun reportPoll(
+        @Path("pollId") id: String,
+        @Body pollReportCreateApiRequest: PollReportCreateApiRequest
+    ): Response<BaseResponse<String>>
 
     @GET("/api/v1/poll-categories")
     suspend fun getPollCategories(): Response<BaseResponse<PollCategoryApiResponse>>
@@ -86,7 +100,16 @@ interface ServerApi {
     suspend fun getPollPolicy(): Response<BaseResponse<PollPolicyApiResponse>>
 
     @GET("/api/v1/user/polls")
-    suspend fun getUserPollList(@Query("cursor") cursor: Int?, @Query("size") size: Int = 20): Response<BaseResponse<GetUserPollListResponse>>
+    suspend fun getUserPollList(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20
+    ): Response<BaseResponse<GetUserPollListResponse>>
+
+    @GET("/api/v1/my/polls")
+    suspend fun getMyPollList(
+        @Query("cursor") cursor: Int?,
+        @Query("size") size: Int = 20
+    ): Response<BaseResponse<GetMyPollListResponse>>
 
     @POST("/api/v1/poll/{pollId}/comment")
     suspend fun createPollComment(
@@ -95,7 +118,10 @@ interface ServerApi {
     ): Response<BaseResponse<PollCommentCreateApiResponse>>
 
     @DELETE("/api/v1/poll/{pollId}/comment/{commentId}")
-    suspend fun deletePollComment(@Path("pollId") pollId: String, @Path("commentId") commentId: String): Response<BaseResponse<String>>
+    suspend fun deletePollComment(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String
+    ): Response<BaseResponse<String>>
 
     @PATCH("/api/v1/poll/{pollId}/comment/{commentId}")
     suspend fun editPollComment(
@@ -132,8 +158,20 @@ interface ServerApi {
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<BaseResponse<UserResponse>>
 
+    @GET("/api/v4/my/user")
+    suspend fun getUserInfo(@Query("includeActivities") includeActivities: Boolean = true): Response<BaseResponse<UserWithDetailApiResponse>>
+
+    @PATCH("/api/v4/my/user")
+    suspend fun patchUserInfo(@Body patchUserInfoRequest: PatchUserInfoRequest): Response<BaseResponse<String>>
+
     @PUT("/api/v1/user/me/marketing-consent")
     suspend fun putMarketingConsent(@Body marketingConsentRequest: MarketingConsentRequest): Response<BaseResponse<String>>
+
+    @GET("/api/v2/my/favorite-stores")
+    suspend fun getMyFavoriteStores(@Query("size") size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
+
+    @GET("/api/v4/my/store-visits")
+    suspend fun getMyVisitsStore(@Query("size") size: Int, @Query("cursor") cursor: String? = null): Response<BaseResponse<MyVisitHistoryResponseV2>>
 
     // Store
     @GET("/api/v4/stores/around")
@@ -190,11 +228,15 @@ interface ServerApi {
     suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite
-    @PUT("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun putFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+    @PUT("/api/v2/store/{storeId}/favorite")
+    suspend fun putFavorite(
+        @Path("storeId") storeId: String
+    ): Response<BaseResponse<String>>
 
-    @DELETE("/api/v1/favorite/subscription/store/target/{storeType}/{storeId}")
-    suspend fun deleteFavorite(@Path("storeType") storeType: String, @Path("storeId") storeId: String): Response<BaseResponse<String>>
+    @DELETE("/api/v2/store/{storeId}/favorite")
+    suspend fun deleteFavorite(
+        @Path("storeId") storeId: String
+    ): Response<BaseResponse<String>>
 
     // feedback
     @POST("/api/v1/feedback/{targetType}/target/{targetId}")
@@ -215,7 +257,10 @@ interface ServerApi {
 
     @POST("/api/v2/store/images")
     @Multipart
-    suspend fun saveImages(@Part images: List<MultipartBody.Part>, @Query("storeId") storeId: Int): Response<BaseResponse<List<SaveImagesResponse>>>
+    suspend fun saveImages(
+        @Part images: List<MultipartBody.Part>,
+        @Query("storeId") storeId: Int
+    ): Response<BaseResponse<List<SaveImagesResponse>>>
 
     @GET("/api/v4/store/{storeId}/images")
     suspend fun getStoreImages(
@@ -252,7 +297,10 @@ interface ServerApi {
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 
     @PUT("/api/v2/store/{storeId}")
-    suspend fun putUserStore(@Body userStoreRequest: UserStoreRequest, @Path("storeId") storeId: Int): Response<BaseResponse<PostUserStoreResponse>>
+    suspend fun putUserStore(
+        @Body userStoreRequest: UserStoreRequest,
+        @Path("storeId") storeId: Int
+    ): Response<BaseResponse<PostUserStoreResponse>>
 
     @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
     suspend fun reportStoreReview(
@@ -263,6 +311,26 @@ interface ServerApi {
 
     @GET("/api/v1/report/group/{group}/reasons")
     suspend fun getReportReasons(@Path("group") group: String): Response<BaseResponse<ReportReasonsResponse>>
+
+    @GET("/api/v4/my/stores")
+    suspend fun getMyStores(
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyReportedStoresResponse>>
+
+    @GET("/api/v4/my/store-reviews")
+    suspend fun getMyReviews(
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyReviewResponseV2>>
+
+    @GET("/api/v1/my/store-feedbacks")
+    suspend fun getMyFeedbacks(
+        @Query("size") size: Int = 20,
+        @Query("cursor") cursor: String?
+    ): Response<BaseResponse<MyFeedbacksResponse>>
 
     @POST("/api/v1/my/{placeType}/place")
     suspend fun postPlace(@Body placeRequest: PlaceRequest, @Path("placeType") placeType: String): Response<BaseResponse<String>>

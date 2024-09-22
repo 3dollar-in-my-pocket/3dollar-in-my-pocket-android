@@ -8,6 +8,7 @@ import androidx.core.text.buildSpannedString
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
@@ -19,13 +20,17 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>() {
+class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(), OnBackPressedListener {
 
     override val viewModel: FAQViewModel by viewModels()
 
     private val userViewModel: UserInfoViewModel by activityViewModels()
 
     private lateinit var adapter: FaqRecyclerAdapter
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     override fun initView() {
         adapter = FaqRecyclerAdapter {
@@ -71,7 +76,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>() {
             .setMessage(R.string.delete_account_confirm)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            .setPositiveButton(R.string.ok) { _, _ -> tryDeleteAccount() }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
             .create()
             .show()
     }

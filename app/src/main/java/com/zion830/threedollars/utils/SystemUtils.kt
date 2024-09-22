@@ -153,7 +153,7 @@ private fun Activity.openPermissionSettingPage() {
 fun Context.getInstalledInfo() =
     """
         -------------------------------------------------------
-        ${getString(R.string.app_name)}
+        ${getString(R.string.app_name_3dollar)}
         ${getString(R.string.android_version)}: ${Build.VERSION.SDK_INT}
         ------------------------------------------------------- 
     """.trimIndent()

@@ -108,7 +108,7 @@ class StorePhotoDialog : DialogFragment() {
         }
         binding.deleteButton.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setPositiveButton(R.string.ok) { _, _ ->
+                .setPositiveButton(zion830.com.common.R.string.ok) { _, _ ->
                     val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
                     viewModel.deletePhoto(adapter.peek(selectedPosition))
                     dismiss()

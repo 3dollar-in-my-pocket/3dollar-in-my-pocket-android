@@ -252,7 +252,8 @@
     <string name="term_1">(필수) 이용약관 동의</string>
     <string name="term_2">(선택) 마케팅 활용 및 광고성 정보 수신 동의</string>
     <string name="agree_continue">동의하고 계속하기</string>
-    <string name="push">푸시 알림</string>
+    <string name="push">투표 및 댓글 등 활동 알림</string>
+    <string name="push_marketing">마케팅 푸시 알림</string>
     <string name="favorite">즐겨찾기</string>
     <string name="mypage_favorite_title">내 음식 플리 들어볼래?</string>
     <string name="mypage_favorite_empty_title">즐겨찾기 리스트가 없어요!</string>
@@ -274,7 +275,7 @@
     <string name="cancel">취소</string>
     <string name="delete">삭제</string>
     <string name="dialog_all_delete_favorite_title">나의 즐겨찾기 리스트를\n모두 삭제할까요?</string>
-    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="team_introduce">가슴속 3천원 팀원 소개</string>
     <string name="fragment_home_all_menu">전체 메뉴</string>
     <string name="fragment_home_filter_distance">거리순 보기</string>
     <string name="fragment_home_filter_latest">최근 등록순 보기</string>
@@ -320,13 +321,22 @@
     <string name="copy">복사하기</string>
     <string name="opening_hour">출몰 시간대</string>
 
+    <string name="review_user_tab_title">유저 제보 가게</string>
+    <string name="review_boss_tab_title">사장님 직영점</string>
+
     <string name="admob_list_banner">ca-app-pub-5385646520024289/8009257851</string>
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
+    <string name="str_setting_ad_title">가슴속 3천원 앱에 광고하고 싶다면?</string>
+    <string name="str_setting_boss_title">직접 사장님 직영점을 운영하고 싶다면?</string>
+    <string name="str_setting_boss_sub_title"><![CDATA[가슴속 3천원 사장님앱 다운받기 >]]></string>
+    <string name="str_setting_ad_sub_title"><![CDATA[광고소개서 보러 가기 >]]></string>
     <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
     <string name="fragment_home_filter_conditions">🔥 최근 활동</string>
     <string name="recent_search_title">최근검색 위치</string>
     <string name="speech_bubble_title">최근 활동이 있는 가게만 볼 수 있어요!</string>
     <string name="speech_bubble_body_1">•최근 한 달 내에 방문 인증 성공 내역이 있어요.</string>
     <string name="speech_bubble_body_2">•신규로 생성된 가게에요.</string>
+    <string name="str_nickname">닉네임</string>
+    <string name="str_nickname_changed">로 바꿀래요</string>
 </resources>

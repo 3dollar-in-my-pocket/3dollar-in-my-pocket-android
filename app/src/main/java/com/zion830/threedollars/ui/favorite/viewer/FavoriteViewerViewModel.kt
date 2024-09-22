@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

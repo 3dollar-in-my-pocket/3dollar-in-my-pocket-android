@@ -7,20 +7,25 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
 import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
+import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.loadUrlImg
 
 @AndroidEntryPoint
-class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() {
+class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(), OnBackPressedListener {
 
-    override val viewModel: MyPageViewModel by activityViewModels()
+    override val viewModel: MyMealViewModel by viewModels()
+    private val pageViewModel: MyPageViewModel by activityViewModels()
+
 
     private lateinit var adapter: MedalRecyclerAdapter
 
@@ -33,12 +38,18 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
         binding.rvMedal.adapter = adapter
         binding.rvMedal.itemAnimator = null
         binding.btnBack.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            activity?.supportFragmentManager?.popBackStack()
+            pageViewModel.getUserInfo()
         }
         binding.tvAllMedal.setOnClickListener {
             MedalInfoDialog().show(this.parentFragmentManager, MedalInfoDialog::class.java.simpleName)
         }
         observeData()
+    }
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+        pageViewModel.getUserInfo()
     }
 
     override fun initFirebaseAnalytics() {
@@ -72,7 +83,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyPageViewModel>() 
             .setMessage(R.string.change_medal)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
-            .setPositiveButton(R.string.ok) { _, _ -> viewModel.changeMedal(medalId) }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> viewModel.updateMedal(medalId) }
             .create()
             .show()
     }

@@ -374,10 +374,10 @@ class BossStoreDetailActivity :
         }
         if (viewModel.favoriteModel.value.isFavorite) {
             bundle.putString("value", "off")
-            viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
+            viewModel.deleteFavorite(storeId)
         } else {
             bundle.putString("value", "on")
-            viewModel.putFavorite(Constants.BOSS_STORE, storeId)
+            viewModel.putFavorite(storeId)
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }

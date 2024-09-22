@@ -9,11 +9,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
+import com.my.presentation.page.team.MyPageTeamActivity
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
@@ -21,15 +24,17 @@ import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
+import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
-    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>() {
+    BaseFragment<FragmentMypageSettingBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMypageSettingBinding =
         FragmentMypageSettingBinding.inflate(inflater, container, false)
@@ -39,6 +44,10 @@ class MyPageSettingFragment :
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     override fun initView() {
         EventTracker.logEvent(Constants.SETTING_BTN_CLICKED)
@@ -61,6 +70,8 @@ class MyPageSettingFragment :
         }
 
         initObserve()
+
+        viewModel.updateUserInfo()
     }
 
     private fun initObserve() {
@@ -76,28 +87,32 @@ class MyPageSettingFragment :
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) {
-            binding.pushSwitchButton.isChecked = it.data.device?.isSetupNotification == true
-            binding.tvName.text = it.data.name
-            binding.ivKakaoLogo.setBackgroundColor(
-                if (it.data.isKakaoUser()) {
-                    resources.getColor(
-                        R.color.color_kakao,
-                        null,
-                    )
-                } else {
-                    resources.getColor(R.color.white, null)
-                },
+            initCheckBoxListener()
+            binding.pushSwitchButton.isChecked = it.settings.enableActivitiesPush == true
+            binding.pushMarketingSwitchButton.isChecked = it.settings.marketingConsent == "APPROVE"
+            checkBoxListener()
+            binding.tvName.text = it.name
+            binding.twLoginType.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google),
+                null,
+                null,
+                null
             )
-            binding.ivKakaoLogo.setImageResource(if (it.data.isKakaoUser()) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google)
-            binding.accountTypeTextView.text = if (it.data.isKakaoUser()) getString(R.string.kakao_user) else getString(R.string.google_user)
+            binding.twLoginType.text =
+                if (it.socialType == LoginType.KAKAO.socialName) getString(R.string.kakao_user) else getString(R.string.google_user)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
         }
+        lifecycleScope.launch {
+            viewModel.isNameUpdated.collect {
+                viewModel.updateUserInfo()
+            }
+        }
     }
 
     private fun initButton() {
-        binding.btnEditName.setOnClickListener {
+        binding.tvName.setOnClickListener {
             addEditNameFragment()
         }
         binding.btnBack.setOnClickListener {
@@ -109,10 +124,9 @@ class MyPageSettingFragment :
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
-        binding.layoutPrivacyPolicy.setOnClickListener {
-            EventTracker.logEvent(Constants.PRIVACY_POLICY_OF_USE_BTN_CLICKED)
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_url)))
+        binding.layoutTeamIntroduce.setOnClickListener {
+            EventTracker.logEvent(Constants.TEAM_INTRODUCE_BTN_CLICKED)
+            val browserIntent = Intent(requireContext(), MyPageTeamActivity::class.java)
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
@@ -127,22 +141,48 @@ class MyPageSettingFragment :
             EventTracker.logEvent(Constants.SIGNOUT_BTN_CLICKED)
             showDeleteAccountDialog()
         }
+        binding.constraintAd.setOnClickListener {
+            val webpage: Uri = Uri.parse("https://massive-iguana-121.notion.site/3-ff344e306d0c4417973daee8792cfe4d") // 여기에 원하는 URL 입력
+            val intent = Intent(Intent.ACTION_VIEW, webpage)
+            startActivity(intent)
+        }
+        binding.constraintBoss.setOnClickListener {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.threedollars.manager"))
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager"))
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun initCheckBoxListener() {
+        binding.pushSwitchButton.setOnCheckedChangeListener(null)
+        binding.pushMarketingSwitchButton.setOnCheckedChangeListener(null)
+    }
+
+    private fun checkBoxListener() {
         binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+            viewModel.patchPushInformation(
+                PatchPushInformationRequest(
+                    binding.pushSwitchButton.isChecked,
+                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
+                )
+            )
+        }
+        binding.pushMarketingSwitchButton.setOnCheckedChangeListener { _, isCheck ->
             subscribeToTopicFirebase(isCheck)
+            viewModel.patchPushInformation(
+                PatchPushInformationRequest(
+                    binding.pushSwitchButton.isChecked,
+                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
+                )
+            )
             if (isCheck) {
                 eventTracker.setUserProperty("isPushEnable", "true")
-                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        viewModel.postPushInformation(
-                            informationRequest = PushInformationRequest(pushToken = it.result),
-                        )
-                    } else {
-                        // TODO: 실패했을때 예외처리 필요
-                    }
-                }
             } else {
                 eventTracker.setUserProperty("isPushEnable", "false")
-                viewModel.deletePushInformation()
             }
         }
     }
@@ -154,7 +194,7 @@ class MyPageSettingFragment :
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 EventTracker.logEvent(Constants.SIGNOUT_CANCEL_BTN_CLICKED)
             }
-            .setPositiveButton(R.string.ok) { _, _ -> tryDeleteAccount() }
+            .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
             .create()
             .show()
     }

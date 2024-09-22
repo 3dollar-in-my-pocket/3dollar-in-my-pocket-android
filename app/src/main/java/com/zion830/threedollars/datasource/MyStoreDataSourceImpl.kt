@@ -2,31 +2,28 @@ package com.zion830.threedollars.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
-import com.zion830.threedollars.di.LegacyNetworkModule
-import com.zion830.threedollars.network.NewServiceApi
+import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.store.MyReportedContent
 
-class MyStoreDataSourceImpl :
-    PagingSource<Int, StoreInfo>() {
+class MyStoreDataSourceImpl(private val serverApi: ServerApi) :
+    PagingSource<Int, MyReportedContent>() {
 
-    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
+    override fun getRefreshKey(state: PagingState<Int, MyReportedContent>): Int? = null
 
-    override fun getRefreshKey(state: PagingState<Int, StoreInfo>): Int? = null
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, StoreInfo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MyReportedContent> {
         val cursor = params.key
         if (cursor == -1) {
             return LoadResult.Error(Exception())
         }
 
         return try {
-            val response = newServiceApi.getMyStore(cursor, LOAD_SIZE)
+            val response = serverApi.getMyStores(0.0, 0.0, LOAD_SIZE, cursor.toString())
 
             if (response.isSuccessful) {
                 LoadResult.Page(
                     data = response.body()?.data?.contents ?: emptyList(),
                     null,
-                    response.body()?.data?.nextCursor
+                    response.body()?.data?.cursor?.nextCursor?.toIntOrNull()
                 )
             } else {
                 LoadResult.Error(Exception(response.message()))

@@ -231,7 +231,7 @@ class NearStoreMapViewViewHolder(
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
                 text = GlobalApplication.getContext().getString(R.string.resent_visit_count, visitCount)
                 setTextAppearance(R.style.apple_gothic_medium_size_12sp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.white))
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
             } else {
                 text = StringUtils.getString(R.string.only_boss)

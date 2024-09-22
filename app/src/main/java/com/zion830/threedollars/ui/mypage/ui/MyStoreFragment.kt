@@ -11,16 +11,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.data.store.MyReportedContent
+import com.threedollar.network.data.store.MyReportedStore
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyStoreBinding
-import com.zion830.threedollars.datasource.model.v2.response.store.StoreInfo
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
-import com.zion830.threedollars.ui.mypage.viewModel.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.viewModel.MyStoreViewModel
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +31,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyStoreFragment :
-    BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>() {
+    BaseFragment<FragmentMyStoreBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
 
@@ -44,9 +46,14 @@ class MyStoreFragment :
         adapter?.refresh()
     }
 
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+        viewModel.updateUserInfo()
+    }
+
     override fun initView() {
-        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<StoreInfo> {
-            override fun onClick(item: StoreInfo) {
+        adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<MyReportedStore> {
+            override fun onClick(item: MyReportedStore) {
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
@@ -72,8 +79,7 @@ class MyStoreFragment :
 
     override fun onStop() {
         super.onStop()
-        myPageViewModel.requestUserActivity()
-        myPageViewModel.requestVisitHistory()
+        myPageViewModel.getUserInfo()
     }
 
     private fun observeUiData() {
@@ -95,10 +101,14 @@ class MyStoreFragment :
                 }
                 launch {
                     adapter?.loadStateFlow?.collectLatest { loadState ->
-                        if (loadState.refresh is LoadState.NotLoading) {
-                            binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                            binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
-                            binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                        when (loadState.refresh) {
+                            is LoadState.NotLoading, is LoadState.Error -> {
+                                binding.ivEmpty.isVisible = adapter?.itemCount == 0
+                                binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                                binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                            }
+
+                            else -> {}
                         }
                     }
                 }

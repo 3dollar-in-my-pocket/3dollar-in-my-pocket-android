@@ -10,8 +10,8 @@ import com.zion830.threedollars.databinding.ItemMypageEmptyBinding
 import com.zion830.threedollars.databinding.ItemMypageFavoriteBinding
 import com.zion830.threedollars.databinding.ItemRecentVisitHistoryBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.visit_history.VisitHistoryContent
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -73,14 +73,14 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
         super.bind(item, listener)
         binding.run {
             tvCreatedAt.text = StringUtils.getTimeString(item.createdAt)
-            ivCategory.bindMenuIcons(item.store.categories)
+            ivCategory.bindMenuIcons(item.store.categories.orEmpty())
             val categoryInfo = LegacySharedPrefUtils.getCategories()
-            val categories = item.store.categories.joinToString(" ") {
-                "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it }?.name}"
+            val categories = item.store.categories.orEmpty().joinToString(" ") {
+                "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}"
             }
             tvCategories.text = categories
             layoutItem.setOnClickListener {
-                if (!item.store.isDeleted) {
+                if (item.store.isDeleted == false) {
                     onClickListener.onClick(item)
                 }
             }
