@@ -37,11 +37,7 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
                 deviceLongitude = latLng.longitude
             ).collect {
                 if (it.ok) {
-                    val sortedList = it.data?.sortedBy { data ->
-                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                        if (data.link.type == "APP_SCHEME") 0 else 1
-                    }
-                    _popupsResponse.value = sortedList?.firstOrNull()
+                    _popupsResponse.value = it.data?.firstOrNull()
                 }
             }
         }

@@ -171,11 +171,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 deviceLongitude = latLng.longitude
             ).collect {
                 if (it.ok) {
-                    val sortedList = it.data?.sortedBy { data ->
-                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                        if (data.link.type == "APP_SCHEME") 0 else 1
-                    }
-                    _advertisementModel.value = sortedList?.firstOrNull()
+                    _advertisementModel.value = it.data?.firstOrNull()
                 } else {
                     _serverError.emit(it.message)
                 }
@@ -192,11 +188,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 deviceLongitude = latLng.longitude
             ).collect {
                 if (it.ok) {
-                    val sortedList = it.data?.sortedBy { data ->
-                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                        if (data.link.type == "APP_SCHEME") 0 else 1
-                    }
-                    _advertisementListModel.value = sortedList?.firstOrNull()
+                    _advertisementListModel.value = it.data?.firstOrNull()
                 } else {
                     _serverError.emit(it.message)
                 }

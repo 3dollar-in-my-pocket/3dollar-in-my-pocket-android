@@ -32,11 +32,7 @@ class PopupViewModel @Inject constructor(private val homeRepository: HomeReposit
                 deviceLongitude = latLng.longitude
             ).collect {
                 if (it.ok) {
-                    val sortedList = it.data?.sortedBy { data ->
-                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                        if (data.link.type == "APP_SCHEME") 0 else 1
-                    }
-                    _popups.value = sortedList ?: listOf()
+                    _popups.value = it.data ?: listOf()
                 } else {
                     _serverError.emit(it.message)
                 }

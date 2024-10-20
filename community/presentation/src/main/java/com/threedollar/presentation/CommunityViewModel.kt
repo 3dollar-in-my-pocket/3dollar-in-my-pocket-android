@@ -56,11 +56,7 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
                 deviceLongitude = deviceLongitude
             ).collect {
                 if (it.ok) {
-                    val sortedList = it.data?.sortedBy { data ->
-                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                        if (data.link.type == "APP_SCHEME") 0 else 1
-                    }
-                    _advertisements.emit(sortedList.orEmpty())
+                    _advertisements.emit(it.data.orEmpty())
                 } else _toast.emit(it.message.orEmpty())
                 getPollCategories()
                 getNeighborhoods()

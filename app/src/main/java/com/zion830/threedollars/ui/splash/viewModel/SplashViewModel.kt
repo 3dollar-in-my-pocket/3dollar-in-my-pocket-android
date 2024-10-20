@@ -83,11 +83,7 @@ class SplashViewModel @Inject constructor(
                 if (it.ok) {
                     val advertisements = it.data.orEmpty()
                     if (advertisements.isNotEmpty()) {
-                        val sortedList = advertisements.sortedBy { data ->
-                            // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
-                            if (data.link.type == "APP_SCHEME") 0 else 1
-                        }
-                        GlobalApplication.storeMarker = sortedList.first()
+                        GlobalApplication.storeMarker = advertisements.first()
                     }
                 }
             }
