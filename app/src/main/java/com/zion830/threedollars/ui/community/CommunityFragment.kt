@@ -1,4 +1,4 @@
-package com.threedollar.presentation
+package com.zion830.threedollars.ui.community
 
 import android.Manifest
 import android.content.Intent
@@ -26,18 +26,23 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_AD_CARD
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.data.AdvertisementModelV2
 import com.threedollar.domain.data.PollItem
+import com.threedollar.presentation.CommunityPollAdapter
+import com.threedollar.presentation.CommunityStoreAdapter
+import com.threedollar.presentation.CommunityViewModel
+import com.threedollar.presentation.PopularStoreCriteria
+import com.threedollar.presentation.R
 import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.threedollar.presentation.polls.PollListActivity
 import com.threedollar.presentation.utils.selectedPoll
+import com.zion830.threedollars.DynamicLinkActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -80,7 +85,15 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                     putString("advertisement_id", item.advertisementId.toString())
                 }
                 eventTrackerListener.logEvent(CLICK_AD_CARD, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                if (item.link.type == "APP_SCHEME") {
+                    startActivity(
+                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                            putExtra("link", item.link.url)
+                        },
+                    )
+                }else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
             }
         })
     }

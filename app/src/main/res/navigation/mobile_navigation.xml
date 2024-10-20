@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/navigation_vote"
-        android:name="com.threedollar.presentation.CommunityFragment"
+        android:name="com.zion830.threedollars.ui.community.CommunityFragment"
         android:label="@string/title_add_store"
         tools:layout="@layout/fragment_community" >
 
