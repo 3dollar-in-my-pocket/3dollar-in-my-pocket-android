@@ -20,6 +20,7 @@ import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_CATEGORY
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
@@ -150,7 +151,16 @@ class SelectCategoryDialogFragment :
                                     putString("advertisement_id", popup.advertisementId.toString())
                                 }
                                 EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
+                                if (popup.link.type == "APP_SCHEME") {
+                                    startActivity(
+                                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                                            putExtra("link", popup.link.url)
+                                        },
+                                    )
+                                    dismiss()
+                                } else {
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
+                                }
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()
