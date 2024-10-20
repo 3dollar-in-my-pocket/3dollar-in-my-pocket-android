@@ -37,6 +37,7 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
                 param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
             }
         }
+        Log.d("🟢GA", "[SCREEN_VIEW]\nclassName: $className\nscreenName: $screenName")
     }
 
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B

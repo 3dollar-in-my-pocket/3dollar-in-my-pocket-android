@@ -1,6 +1,7 @@
 package com.threedollar.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -69,6 +70,7 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
                 param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
             }
         }
+        Log.d("🟢GA", "[SCREEN_VIEW]\nclassName: $className\nscreenName: $screenName")
     }
     private fun hideKeyboard() {
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,6 +75,7 @@ abstract class BaseDialogFragment<B : ViewBinding> :
                 param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
             }
         }
+        Log.d("🟢GA", "[SCREEN_VIEW]\nclassName: $className\nscreenName: $screenName")
     }
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
     abstract fun initFirebaseAnalytics()
