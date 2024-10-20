@@ -18,6 +18,7 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
@@ -57,7 +58,15 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
                 }
                 EventTracker.logEvent(Constants.CLICK_BOTTOM_BUTTON, bundle)
                 if (advertisementModel.link.url.isNotNullOrEmpty()) {
-                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.link.url)))
+                    if (advertisementModel.link.type == "APP_SCHEME") {
+                        startActivity(
+                            Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                                putExtra("link", advertisementModel.link.url)
+                            },
+                        )
+                    } else {
+                        context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.link.url)))
+                    }
                 }
             }
         }
