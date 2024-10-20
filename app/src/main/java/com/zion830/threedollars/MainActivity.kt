@@ -142,12 +142,14 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             }
             true
         }
-        navigateToMedalPageWithDeepLink()
+        navigateToMedalPageWithDeepLink(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        navigateToMedalPageWithDeepLink()
+        intent?.let {
+            navigateToMedalPageWithDeepLink(it)
+        }
     }
 
     private fun initNavController(navController: NavController) {
@@ -218,11 +220,19 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
-    private fun navigateToMedalPageWithDeepLink() {
-        if (intent.getStringExtra("medal").isNotNullOrEmpty()) {
+    private fun navigateToMedalPageWithDeepLink(intent: Intent) {
+        if (intent.getStringExtra(DynamicLinkActivity.MEDAL).isNotNullOrEmpty()) {
             binding.navView.post {
                 myPageViewModel.isMoveMedalPage = true
                 binding.navView.selectedItemId = R.id.navigation_mypage
+            }
+        } else if (intent.getStringExtra(DynamicLinkActivity.COMMUNITY).isNotNullOrEmpty()) {
+            binding.navView.post {
+                binding.navView.selectedItemId = R.id.navigation_vote
+            }
+        } else if (intent.getStringExtra(DynamicLinkActivity.HOME).isNotNullOrEmpty()) {
+            binding.navView.post {
+                binding.navView.selectedItemId = R.id.navigation_home
             }
         }
     }

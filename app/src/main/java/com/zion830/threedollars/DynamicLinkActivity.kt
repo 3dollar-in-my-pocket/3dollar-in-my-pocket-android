@@ -25,6 +25,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val MEDAL = "medal"
         const val STORE = "store"
         const val POLL = "pollDetail"
+        const val COMMUNITY = "community"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,9 +91,11 @@ class DynamicLinkActivity : AppCompatActivity() {
                     putExtra("favoriteId", id)
                 })
             }
+
             MEDAL -> {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(MEDAL, MEDAL)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
             }
 
@@ -115,12 +118,28 @@ class DynamicLinkActivity : AppCompatActivity() {
                     )
                 }
             }
+
             POLL -> {
                 val id = deeplink.getQueryParameter("pollId").toStringDefault()
                 startActivity(Intent(this, PollDetailActivity::class.java).apply {
                     putExtra("id", id)
                 })
             }
+
+            COMMUNITY -> {
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(COMMUNITY, COMMUNITY)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
+
+            HOME -> {
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(HOME, HOME)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
+
             else -> {
                 startActivity(MainActivity.getIntent(this))
             }
