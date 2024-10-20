@@ -59,7 +59,11 @@ interface HomeRepository {
 
     fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
+    fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>>
 
     fun putFavorite(storeId: String): Flow<BaseResponse<String>>
 

@@ -35,6 +35,7 @@ import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.http.Header
 import javax.inject.Inject
 
 class CommunityRepositoryImpl @Inject constructor(private val communityDataSource: CommunityDataSource) :
@@ -226,7 +227,15 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
             )
         }
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(position).map {
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(
+        position = position,
+        deviceLatitude = deviceLatitude,
+        deviceLongitude = deviceLongitude,
+    ).map {
         BaseResponse(
             ok = it.ok,
             data = it.data?.advertisements.orEmpty().map { it.asModel() },

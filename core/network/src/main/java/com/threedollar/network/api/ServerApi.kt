@@ -225,7 +225,11 @@ interface ServerApi {
 
     // advertisement
     @GET("/api/v2/advertisements")
-    suspend fun getAdvertisements(@Query("position") position: String): Response<BaseResponse<AdvertisementResponse>>
+    suspend fun getAdvertisements(
+        @Query("position") position: String,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+    ): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite
     @PUT("/api/v2/store/{storeId}/favorite")

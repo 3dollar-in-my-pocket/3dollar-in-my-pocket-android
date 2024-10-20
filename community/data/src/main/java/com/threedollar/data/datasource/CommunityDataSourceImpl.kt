@@ -54,7 +54,7 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(apiResult(serverApi.getPollPolicy()))
     }
 
-    override fun getPollList(categoryId: String, sortType: String, cursor: String): Flow<BaseResponse<GetPollListResponse>> = flow{
+    override fun getPollList(categoryId: String, sortType: String, cursor: String): Flow<BaseResponse<GetPollListResponse>> = flow {
         emit(apiResult(serverApi.getPollList(categoryId, sortType, cursor)))
     }
 
@@ -99,7 +99,19 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
         emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
     }
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>> = flow {
-        emit(apiResult(serverApi.getAdvertisements(position.name)))
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(
+            apiResult(
+                serverApi.getAdvertisements(
+                    position = position.name,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                )
+            )
+        )
     }
 }

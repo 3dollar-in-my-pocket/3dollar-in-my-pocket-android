@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +81,14 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
-        popupViewModel.getPopups(AdvertisementsPosition.MENU_CATEGORY_BANNER)
+        Log.e("SelectCategoryDialogFragment", viewModel.currentLocation.value.toString())
+        viewModel.currentLocation.value?.let { latLng ->
+            popupViewModel.getPopups(
+                position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
+                latLng = latLng
+            )
+        }
+
         initAdapter()
         initFlow()
     }

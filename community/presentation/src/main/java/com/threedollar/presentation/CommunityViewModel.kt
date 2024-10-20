@@ -1,5 +1,6 @@
 package com.threedollar.presentation
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.threedollar.common.base.BaseViewModel
@@ -46,15 +47,21 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _advertisements: MutableSharedFlow<List<AdvertisementModelV2>> = MutableSharedFlow()
     val advertisements: SharedFlow<List<AdvertisementModelV2>> get() = _advertisements
 
-    init {
-        getAdvertisements()
-    }
-
-    private fun getAdvertisements() {
+    fun getAdvertisements(deviceLatitude: Double, deviceLongitude: Double) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getAdvertisements(AdvertisementsPosition.POLL_CARD).collect {
-                if (it.ok) _advertisements.emit(it.data.orEmpty())
-                else _toast.emit(it.message.orEmpty())
+            Log.e("community_getAdvertisements", "latitude : ${deviceLatitude} ++++++++ longitude : ${deviceLongitude}")
+            communityRepository.getAdvertisements(
+                position = AdvertisementsPosition.POLL_CARD,
+                deviceLatitude = deviceLatitude,
+                deviceLongitude = deviceLongitude
+            ).collect {
+                if (it.ok) {
+                    val sortedList = it.data?.sortedBy { data ->
+                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
+                        if (data.link.type == "APP_SCHEME") 0 else 1
+                    }
+                    _advertisements.emit(sortedList.orEmpty())
+                } else _toast.emit(it.message.orEmpty())
                 getPollCategories()
                 getNeighborhoods()
             }

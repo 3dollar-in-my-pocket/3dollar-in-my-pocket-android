@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.utils.Constants
@@ -26,7 +28,7 @@ import zion830.com.common.base.onSingleClick
 
 
 @AndroidEntryPoint
-class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
+class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerClickBinding>() {
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarkerClickBinding =
         DialogMarkerClickBinding.inflate(inflater, container, false)
 
@@ -42,7 +44,10 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
 
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
-        viewModel.getPopups()
+        Log.e("MarkerClickDialog_latLng", latLng.toString())
+        if (latLng.isValid) {
+            viewModel.getPopups(latLng = latLng)
+        }
 
         binding.downloadTextView.onSingleClick {
             viewModel.popupsResponse.value?.let { advertisementModel ->

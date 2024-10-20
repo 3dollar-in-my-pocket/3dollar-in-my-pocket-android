@@ -36,5 +36,9 @@ interface CommunityRepository {
     fun getNeighborhoods(): Flow<BaseResponse<Neighborhoods>>
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<PopularStores>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
-    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
+    fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>>
 }

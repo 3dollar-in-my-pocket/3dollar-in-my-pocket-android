@@ -1,25 +1,32 @@
 package com.threedollar.presentation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_AD_CARD
 import com.threedollar.common.utils.SharedPrefUtils
@@ -111,6 +118,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         }
     }
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCommunityBinding.inflate(inflater)
         return binding.root
@@ -125,10 +134,44 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
 
     override fun initView() {
         selectedPopular(true)
+        initAdvertisements()
         initAdapter()
         initButton()
         initFlow()
         initAdmob()
+    }
+
+    private fun initAdvertisements() {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        val locationResult =  fusedLocationProviderClient.lastLocation
+        locationResult.addOnSuccessListener {
+            if (it != null) {
+                Log.e("communityFragment", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
+                viewModel.getAdvertisements(
+                    deviceLatitude = it.latitude,
+                    deviceLongitude = it.longitude
+                )
+            }
+        }
+
     }
 
     private fun initAdapter() {

@@ -5,6 +5,7 @@ import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -12,12 +13,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.GlobalApplication
@@ -31,6 +36,9 @@ import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +51,25 @@ class SplashActivity :
     BaseActivity<ActivitySplashBinding, SplashViewModel>({ ActivitySplashBinding.inflate(it) }) {
 
     override val viewModel: SplashViewModel by viewModels()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
+        requestPermissionFirst()
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this)
+        if (isLocationAvailable() && isGpsAvailable()) {
+            val locationResult = fusedLocationProviderClient.lastLocation
+            locationResult.addOnSuccessListener {
+                if (it != null) {
+                    Log.e("SplashActivity", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
+                    viewModel.getAdvertisements(
+                        position = AdvertisementsPosition.STORE_MARKER,
+                        latLng = LatLng(it.latitude, it.longitude)
+                    )
+                }
+            }
+        }
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful) {
                 viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))

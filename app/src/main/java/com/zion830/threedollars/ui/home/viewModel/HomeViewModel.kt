@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.viewModel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
@@ -38,6 +39,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
 
+    private val _currentLocationFlow: MutableStateFlow<LatLng> = MutableStateFlow(LatLng.INVALID)
+    val currentLocationFlow = _currentLocationFlow.asStateFlow()
+
     private val _selectCategory = MutableStateFlow(CategoryModel())
     val selectCategory = _selectCategory.asStateFlow()
 
@@ -49,11 +53,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private val _homeFilterEvent: MutableStateFlow<HomeFilterEvent> = MutableStateFlow(HomeFilterEvent())
     val homeFilterEvent: StateFlow<HomeFilterEvent> get() = _homeFilterEvent
-
-    init {
-        getAdvertisement()
-        getAdvertisementList()
-    }
 
     fun getUserInfo() {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -69,6 +68,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun updateCurrentLocation(latlng: LatLng) {
         currentLocation.value = latlng
+        _currentLocationFlow.value = latlng
         addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
     }
 
@@ -162,11 +162,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    private fun getAdvertisement() {
+    fun getAdvertisement(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAdvertisements(AdvertisementsPosition.MAIN_PAGE_CARD).collect {
+            Log.e("home_getAdvertisement", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
+            homeRepository.getAdvertisements(
+                position = AdvertisementsPosition.MAIN_PAGE_CARD,
+                deviceLatitude = latLng.latitude,
+                deviceLongitude = latLng.longitude
+            ).collect {
                 if (it.ok) {
-                    _advertisementModel.value = it.data?.firstOrNull()
+                    val sortedList = it.data?.sortedBy { data ->
+                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
+                        if (data.link.type == "APP_SCHEME") 0 else 1
+                    }
+                    _advertisementModel.value = sortedList?.firstOrNull()
                 } else {
                     _serverError.emit(it.message)
                 }
@@ -174,11 +183,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    private fun getAdvertisementList() {
+    fun getAdvertisementList(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_LIST).collect {
+            Log.e("getAdvertisementList", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
+            homeRepository.getAdvertisements(
+                position = AdvertisementsPosition.STORE_LIST,
+                deviceLatitude = latLng.latitude,
+                deviceLongitude = latLng.longitude
+            ).collect {
                 if (it.ok) {
-                    _advertisementListModel.value = it.data?.firstOrNull()
+                    val sortedList = it.data?.sortedBy { data ->
+                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
+                        if (data.link.type == "APP_SCHEME") 0 else 1
+                    }
+                    _advertisementListModel.value = sortedList?.firstOrNull()
                 } else {
                     _serverError.emit(it.message)
                 }

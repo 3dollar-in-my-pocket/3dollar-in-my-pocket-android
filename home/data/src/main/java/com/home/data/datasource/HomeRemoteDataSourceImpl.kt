@@ -32,6 +32,7 @@ import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
+import retrofit2.http.Header
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
@@ -112,8 +113,20 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.postPushInformation(informationRequest)))
     }
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>> = flow {
-        emit(apiResult(serverApi.getAdvertisements(position.name)))
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double
+    ): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(
+            apiResult(
+                serverApi.getAdvertisements(
+                    position = position.name,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude
+                )
+            )
+        )
     }
 
     override fun putFavorite(storeId: String): Flow<BaseResponse<String>> = flow {

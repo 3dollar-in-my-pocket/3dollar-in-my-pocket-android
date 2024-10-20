@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,6 +18,9 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
@@ -28,6 +32,8 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,10 +54,24 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
 
     private lateinit var navHostFragment: NavHostFragment
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
         requestPermissionFirst()
-        popupViewModel.getPopups(position = AdvertisementsPosition.SPLASH)
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this)
+        if (isLocationAvailable() && isGpsAvailable()) {
+            val locationResult = fusedLocationProviderClient.lastLocation
+            locationResult.addOnSuccessListener {
+                if (it != null) {
+                    Log.e("MainActivity", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
+                    popupViewModel.getPopups(
+                        position = AdvertisementsPosition.SPLASH,
+                        latLng = LatLng(it.latitude, it.longitude)
+                    )
+                }
+            }
+        }
 
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

@@ -62,6 +62,7 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -365,6 +366,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+                    }
+                }
+                launch {
+                    viewModel.currentLocationFlow.collectLatest { latLng ->
+                        if(latLng.isValid) {
+                            viewModel.getAdvertisement(latLng = latLng)
+                            viewModel.getAdvertisementList(latLng = latLng)
+                        }
                     }
                 }
             }

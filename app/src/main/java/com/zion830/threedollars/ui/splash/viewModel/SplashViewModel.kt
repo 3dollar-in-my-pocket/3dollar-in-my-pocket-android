@@ -1,10 +1,12 @@
 package com.zion830.threedollars.ui.splash.viewModel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.home.domain.repository.HomeRepository
 import com.login.domain.repository.LoginRepository
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.AdvertisementsPosition
@@ -63,12 +65,29 @@ class SplashViewModel @Inject constructor(
                     _serverError.emit(it.message)
                 }
             }
+        }
+    }
 
-            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_MARKER).collect {
+    fun getAdvertisements(position: AdvertisementsPosition, latLng: LatLng) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            Log.e(
+                "splashViewModel_getAdvertisements",
+                "position : ${position.name}+++++++++++++ latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}"
+            )
+
+            homeRepository.getAdvertisements(
+                position = position,
+                deviceLatitude = latLng.latitude,
+                deviceLongitude = latLng.longitude
+            ).collect {
                 if (it.ok) {
                     val advertisements = it.data.orEmpty()
                     if (advertisements.isNotEmpty()) {
-                        GlobalApplication.storeMarker = advertisements.first()
+                        val sortedList = advertisements.sortedBy { data ->
+                            // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
+                            if (data.link.type == "APP_SCHEME") 0 else 1
+                        }
+                        GlobalApplication.storeMarker = sortedList.first()
                     }
                 }
             }

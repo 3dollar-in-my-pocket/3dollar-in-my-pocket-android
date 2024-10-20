@@ -1,8 +1,10 @@
 package com.zion830.threedollars.ui.map.viewModel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.datasource.UserDataSource
@@ -26,11 +28,20 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
         }
     }
 
-    fun getPopups() {
+    fun getPopups(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAdvertisements(AdvertisementsPosition.STORE_MARKER_POPUP).collect {
+            Log.e("getPopups", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
+            homeRepository.getAdvertisements(
+                position = AdvertisementsPosition.STORE_MARKER_POPUP,
+                deviceLatitude = latLng.latitude,
+                deviceLongitude = latLng.longitude
+            ).collect {
                 if (it.ok) {
-                    _popupsResponse.value = it.data?.first()
+                    val sortedList = it.data?.sortedBy { data ->
+                        // "APP_SCHEME"이면 0, 그렇지 않으면 1로 분류
+                        if (data.link.type == "APP_SCHEME") 0 else 1
+                    }
+                    _popupsResponse.value = sortedList?.firstOrNull()
                 }
             }
         }

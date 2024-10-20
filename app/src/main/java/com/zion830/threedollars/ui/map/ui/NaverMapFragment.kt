@@ -146,7 +146,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                         putString("advertisement_id", storeMarker.advertisementId.toString())
                     }
                     EventTracker.logEvent(Constants.CLICK_AD_MARKER, bundle)
-                    val dialog = MarkerClickDialog()
+                    val dialog = MarkerClickDialog(latLng = currentPosition ?: LatLng.INVALID)
                     dialog.show(parentFragmentManager, dialog.tag)
                     return@setOnClickListener false
                 }
