@@ -1,6 +1,7 @@
 package com.threedollar.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -67,6 +68,7 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : AppCompatActivity() {
                 param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
             }
         }
+        Log.d("🟢GA", "[SCREEN_VIEW]\nclassName: $className\nscreenName: $screenName")
     }
 
     private fun hideKeyboard() {

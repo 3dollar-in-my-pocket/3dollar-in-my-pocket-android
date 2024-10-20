@@ -1,6 +1,7 @@
 package com.threedollar.common.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -26,6 +27,7 @@ abstract class BaseComposeFragment<VM : BaseViewModel> : Fragment() {
                 param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
             }
         }
+        Log.d("🟢GA", "[SCREEN_VIEW]\nclassName: $className\nscreenName: $screenName")
     }
 
     abstract fun initFirebaseAnalytics()
