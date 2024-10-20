@@ -82,7 +82,6 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
-        Log.e("SelectCategoryDialogFragment", viewModel.currentLocation.value.toString())
         viewModel.currentLocation.value?.let { latLng ->
             popupViewModel.getPopups(
                 position = AdvertisementsPosition.MENU_CATEGORY_BANNER,

@@ -64,7 +64,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {
-                    Log.e("MainActivity", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
                     popupViewModel.getPopups(
                         position = AdvertisementsPosition.SPLASH,
                         latLng = LatLng(it.latitude, it.longitude)

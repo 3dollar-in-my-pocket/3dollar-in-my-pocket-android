@@ -177,7 +177,6 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         val locationResult =  fusedLocationProviderClient.lastLocation
         locationResult.addOnSuccessListener {
             if (it != null) {
-                Log.e("communityFragment", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
                 viewModel.getAdvertisements(
                     deviceLatitude = it.latitude,
                     deviceLongitude = it.longitude

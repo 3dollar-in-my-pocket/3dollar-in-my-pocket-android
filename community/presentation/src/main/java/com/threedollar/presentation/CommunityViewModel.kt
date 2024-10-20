@@ -49,7 +49,6 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
 
     fun getAdvertisements(deviceLatitude: Double, deviceLongitude: Double) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            Log.e("community_getAdvertisements", "latitude : ${deviceLatitude} ++++++++ longitude : ${deviceLongitude}")
             communityRepository.getAdvertisements(
                 position = AdvertisementsPosition.POLL_CARD,
                 deviceLatitude = deviceLatitude,

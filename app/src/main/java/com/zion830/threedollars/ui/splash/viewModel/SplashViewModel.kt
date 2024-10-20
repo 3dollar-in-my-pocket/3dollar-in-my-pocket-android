@@ -70,10 +70,6 @@ class SplashViewModel @Inject constructor(
 
     fun getAdvertisements(position: AdvertisementsPosition, latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            Log.e(
-                "splashViewModel_getAdvertisements",
-                "position : ${position.name}+++++++++++++ latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}"
-            )
 
             homeRepository.getAdvertisements(
                 position = position,

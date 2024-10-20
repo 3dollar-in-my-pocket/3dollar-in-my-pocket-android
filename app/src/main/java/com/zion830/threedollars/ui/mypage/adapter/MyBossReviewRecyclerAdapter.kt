@@ -36,7 +36,6 @@ class MyBossReviewRecyclerAdapter(
             tvStoreName.isVisible = titleVisibility
             ivCategory.isVisible = titleVisibility
             tvCount.text = "${feedbackKeys.size}개"
-            Log.e("asdas", feedbackItems.toString())
             feedBackItem = feedbackItems
         }
     }

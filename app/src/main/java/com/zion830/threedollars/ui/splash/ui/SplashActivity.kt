@@ -61,7 +61,6 @@ class SplashActivity :
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {
-                    Log.e("SplashActivity", "latitude : ${it.latitude} ++++++++ longitude : ${it.longitude}")
                     viewModel.getAdvertisements(
                         position = AdvertisementsPosition.STORE_MARKER,
                         latLng = LatLng(it.latitude, it.longitude)

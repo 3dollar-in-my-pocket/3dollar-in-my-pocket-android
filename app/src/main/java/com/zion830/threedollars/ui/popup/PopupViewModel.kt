@@ -25,7 +25,6 @@ class PopupViewModel @Inject constructor(private val homeRepository: HomeReposit
         latLng: LatLng
     ) {
         viewModelScope.launch {
-            Log.e("getPopups", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
             homeRepository.getAdvertisements(
                 position = position,
                 deviceLatitude = latLng.latitude,

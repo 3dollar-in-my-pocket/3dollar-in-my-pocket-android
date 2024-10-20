@@ -164,7 +164,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun getAdvertisement(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            Log.e("home_getAdvertisement", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
             homeRepository.getAdvertisements(
                 position = AdvertisementsPosition.MAIN_PAGE_CARD,
                 deviceLatitude = latLng.latitude,
@@ -181,7 +180,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun getAdvertisementList(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            Log.e("getAdvertisementList", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
             homeRepository.getAdvertisements(
                 position = AdvertisementsPosition.STORE_LIST,
                 deviceLatitude = latLng.latitude,

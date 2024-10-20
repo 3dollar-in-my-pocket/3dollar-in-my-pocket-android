@@ -45,7 +45,6 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
 
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
-        Log.e("MarkerClickDialog_latLng", latLng.toString())
         if (latLng.isValid) {
             viewModel.getPopups(latLng = latLng)
         }

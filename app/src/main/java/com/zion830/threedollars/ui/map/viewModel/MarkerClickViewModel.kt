@@ -30,7 +30,6 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
 
     fun getPopups(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            Log.e("getPopups", "latitude : ${latLng.latitude} ++++++++ longitude : ${latLng.longitude}")
             homeRepository.getAdvertisements(
                 position = AdvertisementsPosition.STORE_MARKER_POPUP,
                 deviceLatitude = latLng.latitude,
