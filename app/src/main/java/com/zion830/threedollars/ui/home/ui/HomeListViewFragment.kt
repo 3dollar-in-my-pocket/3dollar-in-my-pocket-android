@@ -29,6 +29,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.SharedPrefUtils
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
@@ -83,7 +84,15 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     putString("advertisement_id", item.advertisementId.toString())
                 }
                 EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                if (item.link.type == "APP_SCHEME") {
+                    startActivity(
+                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                            putExtra("link", item.link.url)
+                        },
+                    )
+                } else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
             }
         })
     }
