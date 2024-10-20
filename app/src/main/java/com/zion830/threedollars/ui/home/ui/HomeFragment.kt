@@ -111,9 +111,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (adapter.getItemLocation(position) != null) {
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+                            /*
+                            광고가 index를 하나 차지하고 있어서 focusedIndex는 position에 -1을 해준다.
+                            하지만 adapter.getItemMarker에서 markerModel을 가져올 때는 position 기준으로 가져와야 된다.
+                            그러므로 가게 이동전 포커싱 돼 있던 아이콘을 비활성화 하기 위해 adapter.focusedIndex에 +1를 해준 값을 넣어주고
+                            이동후 포커싱 되는 부분에서는 position을 통해 markerModel을 가져온다.
+                             */
+                            naverMapFragment.updateMarkerIcon(
+                                drawableRes = R.drawable.ic_store_off,
+                                position = adapter.focusedIndex,
+                                markerModel = adapter.getItemMarker(adapter.focusedIndex + 1),
+                                isSelected = false
+                            )
                             adapter.focusedIndex = if (position > 0) position - 1 else position
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
+                            naverMapFragment.updateMarkerIcon(
+                                drawableRes = R.drawable.ic_mappin_focused_on,
+                                position = adapter.focusedIndex,
+                                markerModel = adapter.getItemMarker(position),
+                                isSelected = true
+                            )
                             adapter.getItemLocation(position)?.let {
                                 naverMapFragment.moveCameraWithAnim(it)
                             }
@@ -299,7 +315,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
                             onStoreClicked(it)
                         }
-                        naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, 0)
+                        naverMapFragment.updateMarkerIcon(
+                            drawableRes = R.drawable.ic_mappin_focused_on,
+                            position = 0,
+                            markerModel = list.first().markerModel,
+                            isSelected = true
+                        )
                         delay(200L)
                         binding.aroundStoreRecyclerView.scrollToPosition(0)
                     }
@@ -384,9 +405,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
             EventTracker.logEvent(CLICK_MARKER, bundle)
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(
+                drawableRes = R.drawable.ic_store_off,
+                position = adapter.focusedIndex,
+                markerModel = adapter.getItemMarker(adapter.focusedIndex + 1),
+                isSelected = false
+            )
             adapter.focusedIndex = if (position > 0) position - 1 else position
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(
+                drawableRes = R.drawable.ic_mappin_focused_on,
+                position = adapter.focusedIndex,
+                markerModel = adapter.getItemMarker(position),
+                isSelected = true
+            )
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is ContentModel) {
                     LatLng(adAndStoreItem.storeModel.locationModel.latitude, adAndStoreItem.storeModel.locationModel.longitude)

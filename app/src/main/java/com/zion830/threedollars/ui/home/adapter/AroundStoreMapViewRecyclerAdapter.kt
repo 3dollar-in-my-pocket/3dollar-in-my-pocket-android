@@ -54,6 +54,17 @@ class AroundStoreMapViewRecyclerAdapter(
         }
     }
 
+    fun getItemMarker(position: Int) = when (getItem(position)) {
+        is ContentModel -> {
+            val contentModel = (getItem(position) as ContentModel)
+            contentModel.markerModel
+        }
+
+        else -> {
+            null
+        }
+    }
+
     fun getItemPosition(item: AdAndStoreItem) = currentList.indexOfFirst {
         if (it is ContentModel && item is ContentModel) {
             it.storeModel.storeId == item.storeModel.storeId

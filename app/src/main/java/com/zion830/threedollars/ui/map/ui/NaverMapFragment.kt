@@ -2,6 +2,8 @@ package com.zion830.threedollars.ui.map.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -12,11 +14,15 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.home.domain.data.store.ContentModel
+import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -123,10 +129,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 lifecycleScope.launch(Dispatchers.Main) {
                     try {
                         storeMarker.image.url.let {
-                          map.locationOverlay.icon = OverlayImage.fromBitmap(
-                              withContext(Dispatchers.IO) {
-                                  it.urlToBitmap().get()
-                              })
+                            map.locationOverlay.icon = OverlayImage.fromBitmap(
+                                withContext(Dispatchers.IO) {
+                                    it.urlToBitmap().get()
+                                })
                         }
                         map.locationOverlay.iconWidth = context?.convertDpToPx(44f)?.toInt() ?: 44
                         map.locationOverlay.iconHeight = context?.convertDpToPx(48f)?.toInt() ?: 48
@@ -168,10 +174,34 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.clear()
     }
 
-    fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int) {
+    fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int, markerModel: MarkerModel?, isSelected: Boolean) {
         if (markers.size > position) {
-            markers[position].icon = OverlayImage.fromResource(drawableRes)
-            markers[position].map = naverMap
+            if (markerModel == null) {
+                markers[position].icon = OverlayImage.fromResource(drawableRes)
+                markers[position].map = naverMap
+            } else {
+                Glide.with(requireContext())
+                    .asBitmap()
+                    .load(
+                        if (isSelected) {
+                            markerModel.selected.imageUrl
+                        } else {
+                            markerModel.unSelected.imageUrl
+                        }
+                    )
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            markers[position].icon = OverlayImage.fromBitmap(resource)
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            // 로드가 취소되거나 메모리가 정리될 때 호출됩니다.
+                        }
+                    })
+                markers[position].width = markerModel.unSelected.width
+                markers[position].height = markerModel.unSelected.height
+                markers[position].map = naverMap
+            }
         }
     }
 
@@ -190,7 +220,24 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         val newMarkers = list.map { item ->
             Marker().apply {
                 this.position = LatLng(item.storeModel.locationModel.latitude, item.storeModel.locationModel.longitude)
-                this.icon = OverlayImage.fromResource(drawableRes)
+                if (item.markerModel == null) {
+                    this.icon = OverlayImage.fromResource(drawableRes)
+                } else {
+                    Glide.with(requireContext())
+                        .asBitmap()
+                        .load(item.markerModel!!.unSelected.imageUrl)
+                        .into(object : CustomTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                this@apply.icon = OverlayImage.fromBitmap(resource)
+                            }
+
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                // 로드가 취소되거나 메모리가 정리될 때 호출됩니다.
+                            }
+                        })
+                    this.width = item.markerModel!!.unSelected.width
+                    this.height = item.markerModel!!.unSelected.height
+                }
                 this.map = naverMap
                 setOnClickListener {
                     onClick(item)

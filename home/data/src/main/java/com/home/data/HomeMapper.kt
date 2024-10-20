@@ -29,6 +29,7 @@ import com.home.domain.data.store.HistoriesModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.ImagesModel
 import com.home.domain.data.store.LocationModel
+import com.home.domain.data.store.MarkerModel
 import com.home.domain.data.store.MenuModel
 import com.home.domain.data.store.OpenStatusModel
 import com.home.domain.data.store.OpeningHoursModel
@@ -45,6 +46,7 @@ import com.home.domain.data.store.ReviewsModel
 import com.home.domain.data.store.SalesType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StatusType
+import com.home.domain.data.store.StoreMarkerImageModel
 import com.home.domain.data.store.StoreModel
 import com.home.domain.data.store.StoreNearExistsModel
 import com.home.domain.data.store.TagsModel
@@ -95,6 +97,7 @@ import com.threedollar.network.data.store.HistoriesContent
 import com.threedollar.network.data.store.Image
 import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.Location
+import com.threedollar.network.data.store.Marker
 import com.threedollar.network.data.store.Menu
 import com.threedollar.network.data.store.OpenStatus
 import com.threedollar.network.data.store.OpeningHours
@@ -106,6 +109,7 @@ import com.threedollar.network.data.store.ReviewWriter
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.Store
+import com.threedollar.network.data.store.StoreMarkerImageResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.Tags
 import com.threedollar.network.data.store.UserStore
@@ -205,7 +209,6 @@ fun Category.asModel() = CategoryModel(
     categoryId = categoryId ?: "",
     classificationModel = classification?.asModel() ?: ClassificationModel(),
     description = description ?: "",
-    disableImageUrl = disableImageUrl ?: "",
     imageUrl = imageUrl ?: "",
     isNew = isNew ?: false,
     name = name ?: "",
@@ -217,9 +220,22 @@ fun Classification.asModel() = ClassificationModel(
 )
 
 fun Content.asModel() = ContentModel(
+    storeModel = store?.asModel() ?: StoreModel(),
+    markerModel = marker?.asModel(),
+    openStatusModel = openStatus.asModel(),
     distanceM = distanceM ?: 0,
     extraModel = extra?.asModel() ?: ExtraModel(),
-    storeModel = store?.asModel() ?: StoreModel(),
+)
+
+fun Marker.asModel() = MarkerModel(
+    selected = selected.asModel(),
+    unSelected = unSelected.asModel()
+)
+
+fun StoreMarkerImageResponse.asModel() = StoreMarkerImageModel(
+    imageUrl = imageUrl,
+    width = width,
+    height = height
 )
 
 fun Cursor.asModel() = CursorModel(
