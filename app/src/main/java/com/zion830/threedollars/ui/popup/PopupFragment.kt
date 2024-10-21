@@ -21,6 +21,7 @@ import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,9 +67,15 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                             putString("advertisement_id", popup.advertisementId.toString())
                         }
                         EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                        popup.link.url.let { linkUrl ->
-                            webView.loadUrl(linkUrl)
-
+                        if (popup.link.type == "APP_SCHEME") {
+                            startActivity(
+                                Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                                    putExtra("link", popup.link.url)
+                                },
+                            )
+                            it.findNavController().navigateUp()
+                        } else {
+                            webView.loadUrl(popup.link.url)
                         }
                     }
                 }
