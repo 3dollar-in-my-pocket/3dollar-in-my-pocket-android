@@ -1,11 +1,8 @@
 package com.zion830.threedollars.ui.splash.ui
 
-import android.animation.Animator
-import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -22,7 +19,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
-import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.GlobalApplication
@@ -54,6 +51,67 @@ class SplashActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
+        initAdvertisements()
+        initPushToken()
+        initButton()
+        initFlow()
+        initAppUpdate()
+    }
+
+    private fun initButton() {
+        binding.advertisementImageView.setOnClickListener {
+            val advertisement = viewModel.splashAdvertisement.value ?: return@setOnClickListener
+
+            if (advertisement.link.type == "APP_SCHEME") {
+                startActivity(
+                    Intent(this, DynamicLinkActivity::class.java).apply {
+                        putExtra("link", advertisement.link.url)
+                    },
+                )
+            } else {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisement.link.url)))
+            }
+        }
+    }
+
+    private fun initAppUpdate() {
+        lifecycleScope.launch {
+            delay(2000L)
+            if (BuildConfig.DEBUG) {
+                initLogin()
+            } else {
+                val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
+                val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+                appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                        appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                    ) {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.IMMEDIATE,
+                            this@SplashActivity,
+                            APP_UPDATE_CODE
+                        )
+                    } else {
+                        initLogin()
+                    }
+                }
+                appUpdateInfoTask.addOnFailureListener {
+                    initLogin()
+                }
+            }
+        }
+    }
+
+    private fun initPushToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
+            }
+        }
+    }
+
+    private fun initAdvertisements() {
         requestPermissionFirst()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
@@ -61,55 +119,15 @@ class SplashActivity :
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {
-                    viewModel.getAdvertisements(
-                        position = AdvertisementsPosition.STORE_MARKER,
+                    viewModel.getStoreMarkerAdvertisements(
+                        latLng = LatLng(it.latitude, it.longitude)
+                    )
+                    viewModel.getSplashAdvertisements(
                         latLng = LatLng(it.latitude, it.longitude)
                     )
                 }
             }
         }
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (it.isSuccessful) {
-                viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
-            }
-        }
-        binding.lottieAnimationView.playAnimation()
-        binding.lottieAnimationView.addAnimatorListener(object : AnimatorListener {
-            override fun onAnimationEnd(p0: Animator) {
-                lifecycleScope.launch {
-                    delay(2000L)
-                    if (BuildConfig.DEBUG) {
-                        initLogin()
-                    } else {
-                        val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
-                        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-                        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                            ) {
-                                appUpdateManager.startUpdateFlowForResult(
-                                    appUpdateInfo,
-                                    AppUpdateType.IMMEDIATE,
-                                    this@SplashActivity,
-                                    APP_UPDATE_CODE
-                                )
-                            } else {
-                                initLogin()
-                            }
-                        }
-                        appUpdateInfoTask.addOnFailureListener {
-                            initLogin()
-                        }
-                    }
-                }
-            }
-
-            override fun onAnimationStart(p0: Animator) {}
-            override fun onAnimationCancel(p0: Animator) {}
-            override fun onAnimationRepeat(p0: Animator) {}
-        })
-        initFlow()
     }
 
     private fun initLogin() {
@@ -132,6 +150,13 @@ class SplashActivity :
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.splashAdvertisement.collect { advertisement ->
+                        advertisement?.let {
+                            binding.advertisementImageView.loadImage(advertisement.image.url)
                         }
                     }
                 }

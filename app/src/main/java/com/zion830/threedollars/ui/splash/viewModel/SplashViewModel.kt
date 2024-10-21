@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
 import com.login.domain.repository.LoginRepository
 import com.naver.maps.geometry.LatLng
@@ -45,6 +46,9 @@ class SplashViewModel @Inject constructor(
     private val _loginResult: MutableStateFlow<ResultWrapper<SignUser?>?> = MutableStateFlow(null)
     val loginResult: StateFlow<ResultWrapper<SignUser?>?> = _loginResult.asStateFlow()
 
+    private val _splashAdvertisement: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
+    val splashAdvertisement = _splashAdvertisement.asStateFlow()
+
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
             storeDataSource.getCategories().collect { categories ->
@@ -68,11 +72,11 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun getAdvertisements(position: AdvertisementsPosition, latLng: LatLng) {
+    fun getStoreMarkerAdvertisements(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
 
             homeRepository.getAdvertisements(
-                position = position,
+                position = AdvertisementsPosition.STORE_MARKER,
                 deviceLatitude = latLng.latitude,
                 deviceLongitude = latLng.longitude
             ).collect {
@@ -80,6 +84,24 @@ class SplashViewModel @Inject constructor(
                     val advertisements = it.data.orEmpty()
                     if (advertisements.isNotEmpty()) {
                         GlobalApplication.storeMarker = advertisements.first()
+                    }
+                }
+            }
+        }
+    }
+
+    fun getSplashAdvertisements(latLng: LatLng) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+
+            homeRepository.getAdvertisements(
+                position = AdvertisementsPosition.SPLASH,
+                deviceLatitude = latLng.latitude,
+                deviceLongitude = latLng.longitude
+            ).collect {
+                if (it.ok) {
+                    val advertisements = it.data.orEmpty()
+                    if (advertisements.isNotEmpty()) {
+                        _splashAdvertisement.value = advertisements.first()
                     }
                 }
             }
