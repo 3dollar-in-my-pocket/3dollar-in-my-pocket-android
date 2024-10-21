@@ -66,10 +66,10 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun updateCurrentLocation(latlng: LatLng) {
-        currentLocation.value = latlng
-        _currentLocationFlow.value = latlng
-        addressText.value = getCurrentLocationName(latlng) ?: "위치를 찾는 중..."
+    fun updateCurrentLocation(latLng: LatLng) {
+        currentLocation.value = latLng
+        _currentLocationFlow.value = latLng
+        addressText.value = getCurrentLocationName(latLng) ?: "위치를 찾는 중..."
     }
 
     fun requestHomeItem(location: LatLng, filterCertifiedStores: Boolean = false) {

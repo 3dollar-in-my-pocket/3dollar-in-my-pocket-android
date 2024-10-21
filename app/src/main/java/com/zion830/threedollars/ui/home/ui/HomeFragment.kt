@@ -144,6 +144,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initViewModel() {
         viewModel.getUserInfo()
         viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+        viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
     private fun initAdapter() {
@@ -272,6 +273,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
         binding.tvRetrySearch.setOnClickListener {
             viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+            viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
     }
@@ -375,14 +377,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(R.string.location_no_address)
-                    }
-                }
-                launch {
-                    viewModel.currentLocationFlow.collectLatest { latLng ->
-                        if (latLng.isValid) {
-                            viewModel.getAdvertisement(latLng = latLng)
-                            viewModel.getAdvertisementList(latLng = latLng)
-                        }
                     }
                 }
             }

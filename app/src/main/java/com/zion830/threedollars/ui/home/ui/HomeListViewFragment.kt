@@ -41,6 +41,8 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -110,6 +112,10 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun initAdmob() {
+        val latLng = viewModel.currentLocationFlow.value
+        if (latLng.isValid) {
+            viewModel.getAdvertisementList(latLng = latLng)
+        }
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
     }
@@ -222,9 +228,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         }
                         val resultList = mutableListOf<AdAndStoreItem>()
                         resultList.addAll(adAndStoreItems)
-                        viewModel.advertisementListModel.value?.let { advertisementModel ->
-                            resultList.add(1, advertisementModel)
-                        }
+                        val advertisementModel = viewModel.advertisementListModel.filterNotNull().first()
+                        resultList.add(1, advertisementModel)
                         adapter.submitList(resultList)
                         delay(200L)
                         binding.listRecyclerView.scrollToPosition(0)
