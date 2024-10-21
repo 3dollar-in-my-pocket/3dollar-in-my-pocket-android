@@ -198,8 +198,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                             // 로드가 취소되거나 메모리가 정리될 때 호출됩니다.
                         }
                     })
-                markers[position].width = markerModel.unSelected.width
-                markers[position].height = markerModel.unSelected.height
+                markers[position].width = context?.convertDpToPx(markerModel.unSelected.width.toFloat())?.toInt() ?: markers[position].width
+                markers[position].height = context?.convertDpToPx(markerModel.unSelected.height.toFloat())?.toInt() ?: markers[position].height
                 markers[position].map = naverMap
             }
         }
@@ -235,8 +235,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                                 // 로드가 취소되거나 메모리가 정리될 때 호출됩니다.
                             }
                         })
-                    this.width = item.markerModel!!.unSelected.width
-                    this.height = item.markerModel!!.unSelected.height
+                    this.width = context?.convertDpToPx(item.markerModel!!.unSelected.width.toFloat())?.toInt() ?: this.width
+                    this.height = context?.convertDpToPx(item.markerModel!!.unSelected.height.toFloat())?.toInt() ?: this.height
                 }
                 this.map = naverMap
                 setOnClickListener {
