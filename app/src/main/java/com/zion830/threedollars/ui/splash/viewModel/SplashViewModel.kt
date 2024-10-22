@@ -94,7 +94,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
 
             homeRepository.getAdvertisements(
-                position = AdvertisementsPosition.SPLASH,
+                position = AdvertisementsPosition.LOADING,
                 deviceLatitude = latLng.latitude,
                 deviceLongitude = latLng.longitude
             ).collect {

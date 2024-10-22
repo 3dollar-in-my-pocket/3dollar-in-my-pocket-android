@@ -53,25 +53,8 @@ class SplashActivity :
     override fun initView() {
         initAdvertisements()
         initPushToken()
-        initButton()
         initFlow()
         initAppUpdate()
-    }
-
-    private fun initButton() {
-        binding.advertisementImageView.setOnClickListener {
-            val advertisement = viewModel.splashAdvertisement.value ?: return@setOnClickListener
-
-            if (advertisement.link.type == "APP_SCHEME") {
-                startActivity(
-                    Intent(this, DynamicLinkActivity::class.java).apply {
-                        putExtra("link", advertisement.link.url)
-                    },
-                )
-            } else {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisement.link.url)))
-            }
-        }
     }
 
     private fun initAppUpdate() {
