@@ -35,6 +35,8 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     private val _storeClick = MutableSharedFlow<MyPageShop>()
     val storeClick: SharedFlow<MyPageShop> = _storeClick
 
+    var isMoveMedalPage = false
+
     fun getUserInfo() = viewModelScope.launch(coroutineExceptionHandler) {
         myRepository.getUserInfo().collect {
             if (it.ok) {

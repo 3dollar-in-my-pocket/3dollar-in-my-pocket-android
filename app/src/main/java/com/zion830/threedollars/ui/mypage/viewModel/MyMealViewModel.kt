@@ -35,11 +35,6 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
     private val _allMedals: MutableLiveData<List<Medal>> = MutableLiveData()
     val allMedals: LiveData<List<Medal>> = _allMedals
 
-    private val _myFavoriteModel: MutableLiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> = MutableLiveData()
-    val myFavoriteModel: LiveData<List<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>> get() = _myFavoriteModel
-    var id = ""
-    var isMoveMedalPage = false
-
     init {
         requestUserActivity()
         requestMyMedals()
@@ -91,18 +86,6 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
                     _msgTextId.postValue(R.string.error_change_medal)
                     _msgTextId.postValue(-1)
                 }
-            }
-        }
-    }
-
-    fun getMyFavoriteFolder(cursor: String? = null, size: Int = 5) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userDataSource.getMyFavoriteFolder(cursor, size)
-            if (response.isSuccessful) {
-                id = response.body()?.data?.folderId.toStringDefault()
-                _myFavoriteModel.value = response.body()?.data?.favorites
-            } else {
-                response.errorBody()?.string()?.getErrorMessage()?.let { showCustomBlackToast(it) }
             }
         }
     }

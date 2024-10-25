@@ -17,6 +17,7 @@ import com.my.presentation.page.team.MyPageTeamActivity
 import com.threedollar.common.base.BaseComposeFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.MyFragmentStarter
+import com.threedollar.common.listener.MyFragments
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +42,10 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
         viewModel.getUserInfo()
         viewModel.getMyVisitsStore()
         viewModel.getUserPollList()
+        if (viewModel.isMoveMedalPage) {
+            viewModel.addFragments(MyFragments.MyMedal)
+            viewModel.isMoveMedalPage = false
+        }
     }
 
     override fun onCreateView(

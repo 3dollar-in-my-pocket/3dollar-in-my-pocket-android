@@ -20,6 +20,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.my.presentation.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
@@ -49,7 +50,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: UserInfoViewModel by viewModels()
-    private val myPageViewModel: MyMealViewModel by viewModels()
+    private val myPageViewModel: MyPageViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
 
 
