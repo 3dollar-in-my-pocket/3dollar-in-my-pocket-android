@@ -122,7 +122,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             naverMapFragment.updateMarkerIcon(
                                 drawableRes = R.drawable.ic_store_off,
                                 position = adapter.focusedIndex,
-                                markerModel = adapter.getItemMarker(adapter.focusedIndex + 1),
+                                markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                                 isSelected = false
                             )
                             adapter.focusedIndex = if (position > 0) position - 1 else position
@@ -420,7 +420,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.updateMarkerIcon(
                 drawableRes = R.drawable.ic_store_off,
                 position = adapter.focusedIndex,
-                markerModel = adapter.getItemMarker(adapter.focusedIndex + 1),
+                markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                 isSelected = false
             )
             adapter.focusedIndex = if (position > 0) position - 1 else position
