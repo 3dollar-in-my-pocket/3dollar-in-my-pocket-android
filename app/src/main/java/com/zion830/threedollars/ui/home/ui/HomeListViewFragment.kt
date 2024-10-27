@@ -41,8 +41,6 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -228,8 +226,9 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         }
                         val resultList = mutableListOf<AdAndStoreItem>()
                         resultList.addAll(adAndStoreItems)
-                        val advertisementModel = viewModel.advertisementListModel.filterNotNull().first()
-                        resultList.add(1, advertisementModel)
+                        viewModel.advertisementModel.value?.apply {
+                            resultList.add(1, this)
+                        }
                         adapter.submitList(resultList)
                         delay(200L)
                         binding.listRecyclerView.scrollToPosition(0)
