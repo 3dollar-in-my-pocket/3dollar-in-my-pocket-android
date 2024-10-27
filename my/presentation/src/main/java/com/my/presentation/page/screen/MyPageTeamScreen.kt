@@ -43,7 +43,7 @@ import zion830.com.common.base.compose.dpToSp
 fun MyPageTeamScreen(clickBack: () -> Unit, clickAd: () -> Unit = {}, clickTeam: () -> Unit = {}) {
     val teams = listOf(
         TeamRow(role = "Design", members = listOf("이윤이", "박은지")),
-        TeamRow(role = "iOS", members = listOf("유현식", "이가은")),
+        TeamRow(role = "iOS", members = listOf("유현식", "김하경")),
         TeamRow(role = "Android", members = listOf("김민호", "정진용")),
         TeamRow(role = "Backend", members = listOf("강승호", "고예림")),
         TeamRow(role = "Marketer", members = listOf("윤다영", "이한나")),
