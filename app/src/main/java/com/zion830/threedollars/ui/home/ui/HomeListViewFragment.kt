@@ -226,7 +226,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         }
                         val resultList = mutableListOf<AdAndStoreItem>()
                         resultList.addAll(adAndStoreItems)
-                        viewModel.advertisementModel.value?.apply {
+                        viewModel.advertisementListModel.value?.apply {
                             resultList.add(1, this)
                         }
                         adapter.submitList(resultList)
@@ -260,11 +260,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                             }
                             certifiedStoreTextView.isVisible = it.homeStoreType != HomeStoreType.BOSS_STORE
                         }
-                    }
-                }
-                launch {
-                    viewModel.advertisementListModel.collect {
-                        adapter.setAd(advertisementModelV2 = it)
                     }
                 }
                 launch {
