@@ -1,8 +1,8 @@
 package com.home.domain.data.store
 
+import com.threedollar.common.data.AdAndStoreItem
 import java.io.Serializable
 
-interface CategoryItem
 data class CategoryModel(
     val categoryId: String = "",
     val classificationModel: ClassificationModel = ClassificationModel(),
@@ -11,11 +11,12 @@ data class CategoryModel(
     val imageUrl: String = "",
     val isNew: Boolean = false,
     val name: String = "",
-    val isSelected: Boolean = false
-) : CategoryItem, Serializable
+    val isSelected: Boolean = false,
+) : AdAndStoreItem, Serializable
 
 data class SelectCategoryModel(
     val menuType: CategoryModel = CategoryModel(),
-    val menuDetail: List<UserStoreMenuModel>? = listOf()
-) : CategoryItem
-data class AddCategoryModel(val isEnabled : Boolean = true) : CategoryItem
+    val menuDetail: List<UserStoreMenuModel>? = listOf(),
+) : AdAndStoreItem
+
+data class AddCategoryModel(val isEnabled: Boolean = true) : AdAndStoreItem

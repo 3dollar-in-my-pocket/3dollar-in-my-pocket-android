@@ -9,5 +9,6 @@ enum class AdvertisementsPosition {
     STORE_MARKER,
     STORE_MARKER_POPUP,
     POLL_CARD,
-    LOADING
+    LOADING,
+    MENU_CATEGORY_ICON,
 }
