@@ -44,6 +44,8 @@
         android:id="@+id/recyclerDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:paddingBottom="70dp"
+        android:clipToPadding="false"
         android:layout_marginTop="20dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
