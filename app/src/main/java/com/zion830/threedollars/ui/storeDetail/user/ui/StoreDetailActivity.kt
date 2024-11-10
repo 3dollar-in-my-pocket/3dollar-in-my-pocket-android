@@ -46,7 +46,7 @@ import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.ext.textPartTypeface
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.USER_STORE
+import com.threedollar.common.utils.toDefaultInt
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
@@ -433,7 +433,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         } else {
             val subList = reviewContentModelList.take(3)
             val userStoreMoreResponse = UserStoreMoreResponse(
-                moreTitle = getString(R.string.store_detail_review_more, reviewContentModelList.size - 3),
+                moreTitle = getString(R.string.store_detail_review_more, it.reviews.cursor.totalCount.toDefaultInt() - 3),
             )
             reviewAdapter.submitList(subList + userStoreMoreResponse)
         }
@@ -444,6 +444,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (imageContentModelList.isEmpty()) {
             photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.photo_empty))))
         } else {
+            photoAdapter.setTotalCount(it.images.cursor.totalCount.toDefaultInt())
             photoAdapter.submitList(listOf())
             photoAdapter.submitList(
                 it.images.contents.mapIndexed { index, image ->
@@ -546,14 +547,14 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator.name)
         binding.distanceTextView.text =
             if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
-        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.contents.size)
+        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
         binding.visitTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
         binding.visitTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
         binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
         binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
         binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
-        binding.reviewTitleTextView.text = getString(R.string.review_count, userStoreDetailModel.reviews.contents.size)
+        binding.reviewTitleTextView.text = getString(R.string.review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.reviewTitleTextView.textPartTypeface("${userStoreDetailModel.reviews.contents.size}개", Typeface.NORMAL)
         binding.reviewRatingAvgTextView.text = getString(R.string.score, userStoreDetailModel.store.rating)
         binding.reviewRatingBar.rating = userStoreDetailModel.store.rating.toFloat()

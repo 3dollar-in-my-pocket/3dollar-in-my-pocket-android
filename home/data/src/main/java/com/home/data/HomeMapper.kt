@@ -68,6 +68,7 @@ import com.home.domain.request.PlaceRequest
 import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
+import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.network.data.Reason
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
@@ -241,6 +242,7 @@ fun StoreMarkerImageResponse.asModel() = StoreMarkerImageModel(
 fun Cursor.asModel() = CursorModel(
     hasMore = hasMore ?: false,
     nextCursor = nextCursor,
+    totalCount = totalCount.toDefaultInt()
 )
 
 fun Extra.asModel() = ExtraModel(
@@ -484,6 +486,7 @@ fun Image.asModel() = ImageContentModel(
 
 fun Reviews.asModel() = ReviewsModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
+    cursor = cursor?.asModel() ?: CursorModel(),
 )
 
 fun ReviewContent.asModel() = ReviewContentModel(
@@ -559,6 +562,7 @@ fun UserStoreMenu.asModel() = UserStoreMenuModel(
     menuId = menuId ?: 0,
     name = name,
     price = price,
+
 )
 
 fun Visits.asModel() = VisitsModel(
