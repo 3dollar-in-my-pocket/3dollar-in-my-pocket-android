@@ -103,8 +103,8 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
         { viewModel.addFragments(MyFragments.MyReview) },
         { viewModel.addFragments(MyFragments.MyMedal) })
     val myVisitsShop by remember(myVisitsStore) { mutableStateOf(myVisitsStore.toMyPageShops()) }
-    val myFavoriteShop by remember(myVisitsStore) { mutableStateOf(myFavoriteStores.toMyPageShops()) }
-    val myVoteHistory by remember(myVisitsStore) { mutableStateOf(userPollList.polls?.contents.orEmpty().map { it.poll.toMyVoteHistory() }) }
+    val myFavoriteShop by remember(myFavoriteStores) { mutableStateOf(myFavoriteStores.toMyPageShops()) }
+    val myVoteHistory by remember(userPollList) { mutableStateOf(userPollList.polls?.contents.orEmpty().map { it.poll.toMyVoteHistory() }) }
 
 
     Scaffold(modifier = Modifier
