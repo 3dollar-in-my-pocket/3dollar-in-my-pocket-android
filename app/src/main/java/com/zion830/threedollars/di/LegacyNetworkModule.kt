@@ -43,7 +43,9 @@ object LegacyNetworkModule {
                         .removeHeader("User-Agent")
                         .addHeader(
                             "User-Agent",
-                            BuildConfig.VERSION_NAME + " (${BuildConfig.APPLICATION_ID}); " + Build.VERSION.SDK_INT
+                            BuildConfig.VERSION_NAME +
+                                    " (${if (BuildConfig.BUILD_TYPE == "debug") "com.zion830.threedollars.dev" else "com.zion830.threedollars"}); " +
+                                    Build.VERSION.SDK_INT
                         )
                         .addHeader(
                             "Authorization",
