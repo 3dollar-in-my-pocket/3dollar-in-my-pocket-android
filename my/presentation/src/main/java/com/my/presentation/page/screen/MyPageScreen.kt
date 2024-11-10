@@ -240,8 +240,7 @@ fun MyPageUserInformation(myPageUserInformation: MyPageUserInformationData = myP
             Spacer(modifier = Modifier.height(28.dp))
             AsyncImage(
                 modifier = Modifier
-                    .size(90.dp)
-                    .clip(CircleShape),
+                    .size(90.dp),
                 model = myPageUserInformation.medal.iconUrl,
                 contentDescription = "내 칭호 사진",
                 placeholder = painterResource(id = zion830.com.common.R.drawable.ic_no_store),
