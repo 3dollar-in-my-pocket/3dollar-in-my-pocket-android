@@ -86,13 +86,14 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
         }
     }
 
-    fun requestStoreInfo(location: LatLng?) {
+    fun requestStoreInfo(location: LatLng?, distanceM: Double) {
         if (location == null || location == NaverMapUtils.DEFAULT_LOCATION) {
             return
         }
 
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getAroundStores(
+                distanceM = distanceM,
                 categoryIds = null,
                 targetStores = null,
                 sortType = HomeSortType.DISTANCE_ASC.name,

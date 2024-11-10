@@ -56,6 +56,7 @@ class HomeRepositoryImpl @Inject constructor(
 ) :
     HomeRepository {
     override fun getAroundStores(
+        distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
@@ -66,6 +67,7 @@ class HomeRepositoryImpl @Inject constructor(
         deviceLatitude: Double,
         deviceLongitude: Double,
     ): Flow<BaseResponse<AroundStoreModel>> = homeRemoteDataSource.getAroundStores(
+        distanceM = distanceM,
         categoryIds = categoryIds,
         targetStores = targetStores,
         sortType = sortType,

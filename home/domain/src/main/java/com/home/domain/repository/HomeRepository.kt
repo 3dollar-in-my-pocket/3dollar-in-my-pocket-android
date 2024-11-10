@@ -31,6 +31,7 @@ import okhttp3.MultipartBody
 interface HomeRepository {
 
     fun getAroundStores(
+        distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
