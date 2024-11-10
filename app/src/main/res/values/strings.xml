@@ -339,4 +339,8 @@
     <string name="speech_bubble_body_2">•신규로 생성된 가게에요.</string>
     <string name="str_nickname">닉네임</string>
     <string name="str_nickname_changed">로 바꿀래요</string>
+    <string name="marketing_deny_title">혜택 알림 수신 거부</string>
+    <string name="marketing_deny_msg">알림을 받지 않으면 선물과 혜택을 드리는 이벤트 정보를 받으실 수 없어요. 그래도 거부하시겠어요?</string>
+    <string name="marketing_deny_toast">%s에 가슴속3천원 혜택 알림 수신 동의를 철회했어요</string>
+    <string name="marketing_approve_toast">%s에 가슴속3천원 혜택 알림 수신에 동의했어요</string>
 </resources>

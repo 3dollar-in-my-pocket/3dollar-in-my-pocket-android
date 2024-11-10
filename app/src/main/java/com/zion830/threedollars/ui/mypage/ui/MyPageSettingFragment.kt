@@ -27,6 +27,7 @@ import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.getMarketingDate
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,9 +88,8 @@ class MyPageSettingFragment :
         }
 
         viewModel.userInfo.observe(viewLifecycleOwner) {
-            initCheckBoxListener()
-            binding.pushSwitchButton.isChecked = it.settings.enableActivitiesPush == true
-            binding.pushMarketingSwitchButton.isChecked = it.settings.marketingConsent == "APPROVE"
+            binding.pushSwitchButton.isSelected = it.settings.enableActivitiesPush == true
+            binding.pushMarketingSwitchButton.isSelected = it.settings.marketingConsent == "APPROVE"
             checkBoxListener()
             binding.tvName.text = it.name
             binding.twLoginType.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -157,32 +157,40 @@ class MyPageSettingFragment :
         }
     }
 
-    private fun initCheckBoxListener() {
-        binding.pushSwitchButton.setOnCheckedChangeListener(null)
-        binding.pushMarketingSwitchButton.setOnCheckedChangeListener(null)
-    }
-
     private fun checkBoxListener() {
-        binding.pushSwitchButton.setOnCheckedChangeListener { _, isCheck ->
+        binding.layoutPush.setOnClickListener {
+            binding.pushSwitchButton.isSelected = !binding.pushSwitchButton.isSelected
             viewModel.patchPushInformation(
                 PatchPushInformationRequest(
-                    binding.pushSwitchButton.isChecked,
-                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
+                    binding.pushSwitchButton.isSelected,
+                    if (binding.pushMarketingSwitchButton.isSelected) "APPROVE" else "DENY"
                 )
             )
         }
-        binding.pushMarketingSwitchButton.setOnCheckedChangeListener { _, isCheck ->
-            subscribeToTopicFirebase(isCheck)
-            viewModel.patchPushInformation(
-                PatchPushInformationRequest(
-                    binding.pushSwitchButton.isChecked,
-                    if (binding.pushMarketingSwitchButton.isChecked) "APPROVE" else "DENY"
-                )
-            )
-            if (isCheck) {
+        binding.layoutPushMarketing.setOnClickListener {
+            if (!binding.pushMarketingSwitchButton.isSelected) {
+                binding.pushMarketingSwitchButton.isSelected = !binding.pushMarketingSwitchButton.isSelected
+                subscribeToTopicFirebase(true)
+                viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "APPROVE"))
                 eventTracker.setUserProperty("isPushEnable", "true")
+                showToast(getString(R.string.marketing_approve_toast, getMarketingDate()))
             } else {
-                eventTracker.setUserProperty("isPushEnable", "false")
+                AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.marketing_deny_title))
+                    .setMessage(getString(R.string.marketing_deny_msg))
+                    .setCancelable(false)
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton(zion830.com.common.R.string.ok) { _, _ ->
+                        binding.pushMarketingSwitchButton.isSelected = !binding.pushMarketingSwitchButton.isSelected
+                        subscribeToTopicFirebase(false)
+                        viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "DENY"))
+                        eventTracker.setUserProperty("isPushEnable", "false")
+                        showToast(getString(R.string.marketing_deny_toast, getMarketingDate()))
+                    }
+                    .create()
+                    .show()
             }
         }
     }

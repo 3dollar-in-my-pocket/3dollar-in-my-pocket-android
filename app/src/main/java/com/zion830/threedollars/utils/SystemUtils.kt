@@ -50,6 +50,8 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.CustomToastBlackBinding
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 
@@ -283,4 +285,10 @@ fun subscribeToTopicFirebase(isSubscribe: Boolean) {
     } else {
         Firebase.messaging.unsubscribeFromTopic("marketing_aos")
     }
+}
+
+fun getMarketingDate(): String {
+    val current = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("yy.MM.dd")
+    return current.format(formatter)
 }
