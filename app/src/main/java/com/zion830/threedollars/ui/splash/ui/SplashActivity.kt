@@ -135,21 +135,22 @@ class SplashActivity :
                     }
                 }
                 launch {
-                    viewModel.isAccessToken.collect { isAccessToken ->
-                        isAccessToken?.let {
-                            if (isAccessToken) {
+                    viewModel.accessCheckModel.collect { accessCheckModel ->
+                        accessCheckModel?.let {
+                            if (accessCheckModel.ok) {
                                 tryLogin()
                             } else {
-                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                                finish()
+                                when (accessCheckModel.resultCode) {
+                                    "503" -> showAlertDialog()
+                                    else -> {
+                                        accessCheckModel.message?.let {
+                                            showToast(it)
+                                        }
+                                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                        finish()
+                                    }
+                                }
                             }
-                        }
-                    }
-                }
-                launch {
-                    viewModel.errorMessage.collect {
-                        it?.let {
-                            showToast(it)
                         }
                     }
                 }

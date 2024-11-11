@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
+import com.login.domain.data.AccessCheckModel
 import com.login.domain.repository.LoginRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
@@ -37,11 +38,8 @@ class SplashViewModel @Inject constructor(
     private val _splashAdvertisement: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val splashAdvertisement = _splashAdvertisement.asStateFlow()
 
-    private val _isAccessToken: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-    val isAccessToken = _isAccessToken.asStateFlow()
-
-    private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
-    val errorMessage = _errorMessage.asStateFlow()
+    private val _accessCheckModel: MutableStateFlow<AccessCheckModel?> = MutableStateFlow(null)
+    val accessCheckModel = _accessCheckModel.asStateFlow()
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -105,8 +103,7 @@ class SplashViewModel @Inject constructor(
     fun checkAccessToken() {
         viewModelScope.launch(coroutineExceptionHandler) {
             loginRepository.getUserInfo().collect {
-                _isAccessToken.value = it.ok
-                _errorMessage.value = it.message
+                _accessCheckModel.value = it
             }
         }
     }
