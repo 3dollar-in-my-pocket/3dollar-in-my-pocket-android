@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
@@ -117,9 +116,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
 
-    fun postPushInformation(pushToken: String, isMarketing: Boolean) {
+    fun putPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.postPushInformation(pushToken).collect {
+            homeRepository.putPushInformation(pushToken).collect {
                 if (it.ok) {
                     putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
                 } else {

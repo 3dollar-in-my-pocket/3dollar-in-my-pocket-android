@@ -4,7 +4,6 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
@@ -203,17 +202,14 @@ interface NewServiceApi {
         @Body feedbackTypes: BossStoreFeedbackRequest
     ): Response<BaseResponse<String>>
 
-    @POST("/api/v1/device")
-    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+    @PUT("/api/v2/device")
+    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     @PATCH("/api/v4/my/user-settings")
     suspend fun patchPushInformation(@Body patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/device")
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
-
-    @PUT("/api/v1/device/token")
-    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
     @GET("/api/v2/my/favorite-stores")
     suspend fun getMyFavoriteFolder(

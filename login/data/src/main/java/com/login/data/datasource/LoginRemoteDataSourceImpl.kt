@@ -21,8 +21,8 @@ class LoginRemoteDataSourceImpl @Inject constructor(private val serverApi: Serve
         emit(apiResult(serverApi.putMarketingConsent(MarketingConsentRequest(marketingConsent))))
     }
 
-    override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.postPushInformation(PushInformationRequest(pushToken))))
+    override fun putPushInformation(pushToken: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putPushInformation(PushInformationRequest(pushToken))))
     }
 
     override fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>> = flow {

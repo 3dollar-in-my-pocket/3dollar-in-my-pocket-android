@@ -136,8 +136,8 @@ class HomeRepositoryImpl @Inject constructor(
     override fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.putMarketingConsent(MarketingConsentRequest(marketingConsent))
 
-    override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> =
-        homeRemoteDataSource.postPushInformation(PushInformationRequest(pushToken = pushToken))
+    override fun putPushInformation(pushToken: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.putPushInformation(PushInformationRequest(pushToken = pushToken))
 
     override fun getAdvertisements(
         position: AdvertisementsPosition,

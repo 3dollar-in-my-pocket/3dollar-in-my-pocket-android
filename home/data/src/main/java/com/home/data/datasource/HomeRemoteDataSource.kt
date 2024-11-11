@@ -16,7 +16,6 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
@@ -29,7 +28,6 @@ import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.http.Header
 
 interface HomeRemoteDataSource {
 
@@ -55,7 +53,7 @@ interface HomeRemoteDataSource {
 
     fun putMarketingConsent(marketingConsentRequest: MarketingConsentRequest): Flow<BaseResponse<String>>
 
-    fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>>
+    fun putPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>>
 
     fun getAdvertisements(
         position: AdvertisementsPosition,

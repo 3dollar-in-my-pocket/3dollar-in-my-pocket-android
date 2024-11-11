@@ -63,7 +63,6 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -451,7 +450,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             override fun accept(isMarketing: Boolean) {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
-                        viewModel.postPushInformation(pushToken = it.result, isMarketing = isMarketing)
+                        viewModel.putPushInformation(pushToken = it.result, isMarketing = isMarketing)
                     }
                 }
             }

@@ -21,12 +21,12 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -148,7 +148,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                                 LegacySharedPrefUtils.saveAccessToken(it.value?.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
-                                        viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                                        viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
                                     }
                                 }
                                 callBack.invoke(true)

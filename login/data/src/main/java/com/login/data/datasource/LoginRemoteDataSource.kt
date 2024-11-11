@@ -11,7 +11,7 @@ interface LoginRemoteDataSource {
 
     fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>>
 
-    fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
+    fun putPushInformation(pushToken: String): Flow<BaseResponse<String>>
 
     fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>>
 }

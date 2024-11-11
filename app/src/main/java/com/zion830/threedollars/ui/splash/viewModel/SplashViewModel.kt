@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.splash.viewModel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.repository.HomeRepository
@@ -12,11 +11,11 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.UserDataSource
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -108,9 +107,9 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
+    fun putPushInformation(informationRequest: PushInformationRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userDataSource.putPushInformationToken(informationRequest)
+            userDataSource.putPushInformation(informationRequest)
         }
     }
 }
