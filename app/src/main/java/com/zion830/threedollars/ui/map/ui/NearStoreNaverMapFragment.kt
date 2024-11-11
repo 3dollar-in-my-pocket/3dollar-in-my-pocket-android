@@ -9,6 +9,8 @@ import com.naver.maps.map.NaverMap
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
+import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,8 +39,12 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        viewModel.requestHomeItem(position)
-        viewModel.updateCurrentLocation(position)
+        val northWest = naverMap?.contentBounds?.northWest
+        val southEast = naverMap?.contentBounds?.southEast
+        viewModel.requestHomeItem(
+            position,
+            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

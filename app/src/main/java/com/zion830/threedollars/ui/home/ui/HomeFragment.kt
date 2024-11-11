@@ -58,12 +58,13 @@ import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
+import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -143,7 +144,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+        viewModel.requestHomeItem(
+            naverMapFragment.getMapCenterLatLng(),
+            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+        )
         viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
@@ -272,7 +278,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             it.findNavController().navigate(R.id.action_home_to_home_list_view)
         }
         binding.tvRetrySearch.setOnClickListener {
-            viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+            viewModel.requestHomeItem(
+                naverMapFragment.getMapCenterLatLng(),
+                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+            )
             viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
@@ -302,7 +313,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 }
                             }
                         }
-                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+                        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+                        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+                        viewModel.requestHomeItem(
+                            naverMapFragment.getMapCenterLatLng(),
+                            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+                        )
                     }
                 }
                 launch {
@@ -339,7 +355,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     viewModel.homeFilterEvent.collect {
-                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+                        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+                        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+                        viewModel.requestHomeItem(
+                            naverMapFragment.getMapCenterLatLng(),
+                            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+                        )
 
                         binding.run {
                             if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {

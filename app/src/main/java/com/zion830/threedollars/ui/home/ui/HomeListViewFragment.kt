@@ -38,6 +38,7 @@ import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapt
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -280,7 +281,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getNearStore() {
         viewModel.currentLocation.value?.let {
-            viewModel.requestHomeItem(location = it, filterCertifiedStores = isFilterCertifiedStores)
+            viewModel.requestHomeItem(
+                location = it,
+                distanceM = viewModel.currentDistanceM.value ?: DEFAULT_DISTANCE_M,
+                filterCertifiedStores = isFilterCertifiedStores
+            )
         }
     }
 

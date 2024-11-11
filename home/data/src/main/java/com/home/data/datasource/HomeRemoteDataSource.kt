@@ -34,6 +34,7 @@ import retrofit2.http.Header
 interface HomeRemoteDataSource {
 
     fun getAroundStores(
+        distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,

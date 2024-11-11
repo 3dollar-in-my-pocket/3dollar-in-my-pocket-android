@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
@@ -38,6 +37,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val addressText: MutableLiveData<String> = MutableLiveData()
 
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
+    val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
 
     private val _currentLocationFlow: MutableStateFlow<LatLng> = MutableStateFlow(LatLng.INVALID)
     val currentLocationFlow = _currentLocationFlow.asStateFlow()
@@ -66,13 +66,13 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun updateCurrentLocation(latLng: LatLng) {
+    fun updateCurrentLocation(latLng: LatLng, distanceM: Double) {
         currentLocation.value = latLng
         _currentLocationFlow.value = latLng
         addressText.value = getCurrentLocationName(latLng) ?: "위치를 찾는 중..."
     }
 
-    fun requestHomeItem(location: LatLng, filterCertifiedStores: Boolean = false) {
+    fun requestHomeItem(location: LatLng, distanceM: Double, filterCertifiedStores: Boolean = false) {
         viewModelScope.launch(coroutineExceptionHandler) {
             val targetStores = when (homeFilterEvent.value.homeStoreType) {
                 HomeStoreType.ALL -> {
@@ -88,6 +88,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             val categoryIds = if (selectCategory.value.categoryId.isEmpty()) null else arrayOf(selectCategory.value.categoryId)
 
             homeRepository.getAroundStores(
+                distanceM = distanceM,
                 categoryIds = categoryIds,
                 targetStores = targetStores,
                 sortType = homeFilterEvent.value.homeSortType.name,
@@ -100,7 +101,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             ).collect {
                 val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
                 if (it.ok) {
-                    updateCurrentLocation(location)
+                    updateCurrentLocation(location, distanceM)
                     if (it.data?.contentModels?.isEmpty() == true) {
                         resultList.add(StoreEmptyResponse())
                     } else {

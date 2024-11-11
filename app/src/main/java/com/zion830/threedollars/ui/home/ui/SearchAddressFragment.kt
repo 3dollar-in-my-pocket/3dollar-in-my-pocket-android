@@ -24,6 +24,7 @@ import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
@@ -71,9 +72,9 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             override fun onClick(item: Document) {
                 val bundle = Bundle().apply {
                     putString("screen", "search_address")
-                    putString("building_name",item.placeName)
-                    putString("address",item.addressName)
-                    putString("type","SEARCH")
+                    putString("building_name", item.placeName)
+                    putString("address", item.addressName)
+                    putString("type", "SEARCH")
                 }
                 EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
 
@@ -86,7 +87,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                         roadAddressName = item.roadAddressName
                     )
                 )
-                viewModel.requestHomeItem(location)
+                viewModel.requestHomeItem(location, DEFAULT_DISTANCE_M)
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -98,9 +99,9 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             override fun onClick(item: PlaceModel) {
                 val bundle = Bundle().apply {
                     putString("screen", "search_address")
-                    putString("building_name",item.placeName)
-                    putString("address",item.addressName)
-                    putString("type","RECENT")
+                    putString("building_name", item.placeName)
+                    putString("address", item.addressName)
+                    putString("type", "RECENT")
                 }
                 EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
 
@@ -113,7 +114,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                         roadAddressName = item.roadAddressName
                     )
                 )
-                viewModel.requestHomeItem(location)
+                viewModel.requestHomeItem(location, DEFAULT_DISTANCE_M)
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -172,10 +173,12 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             }
         }
     }
+
     private fun initAdmob() {
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
     }
+
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchByAddressBinding =
         FragmentSearchByAddressBinding.inflate(inflater, container, false)
 

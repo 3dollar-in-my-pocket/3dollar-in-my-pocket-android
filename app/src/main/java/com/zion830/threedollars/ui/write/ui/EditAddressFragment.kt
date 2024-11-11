@@ -14,6 +14,8 @@ import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.dialog.NearExistDialog
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
+import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,7 +57,12 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
-                            viewModel.requestStoreInfo(latLng)
+                            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+                            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+                            viewModel.requestStoreInfo(
+                                latLng,
+                                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+                            )
                         }
                     }
                 }
