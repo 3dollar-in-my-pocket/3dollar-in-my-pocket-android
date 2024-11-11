@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.map.ui
 
+import android.os.Bundle
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -12,10 +13,35 @@ import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class StoreCertificationNaverMapFragment(private val latLng: LatLng) : NaverMapFragment() {
+class StoreCertificationNaverMapFragment : NaverMapFragment() {
 
+    companion object {
+        private const val ARG_LATITUDE = "ARG_LATITUDE"
+        private const val ARG_LONGITUDE = "ARG_LONGITUDE"
+
+        // newInstance 메서드를 통해 Fragment 생성 및 인자 전달
+        fun newInstance(latLng: LatLng): StoreCertificationNaverMapFragment {
+            return StoreCertificationNaverMapFragment().apply {
+                arguments = Bundle().apply {
+                    putDouble(ARG_LATITUDE, latLng.latitude)
+                    putDouble(ARG_LONGITUDE, latLng.longitude)
+                }
+            }
+        }
+    }
+
+    private var latLng: LatLng = LatLng(0.0, 0.0)
     private var circleOverlay: CircleOverlay? = null
     private var isOverlayExist = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            val latitude = it.getDouble(ARG_LATITUDE)
+            val longitude = it.getDouble(ARG_LONGITUDE)
+            latLng = LatLng(latitude, longitude)
+        }
+    }
 
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
