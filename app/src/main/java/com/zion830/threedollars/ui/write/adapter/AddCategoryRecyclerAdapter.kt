@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.AddCategoryModel
-import com.home.domain.data.store.CategoryItem
 import com.home.domain.data.store.CategoryModel
+import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
@@ -16,8 +16,8 @@ import zion830.com.common.base.BaseDiffUtilCallback
 
 class AddCategoryRecyclerAdapter(
     private val showDialog: () -> Unit,
-    private val onDeleted: (CategoryModel) -> Unit
-) : ListAdapter<CategoryItem?, ViewHolder>(BaseDiffUtilCallback()) {
+    private val onDeleted: (CategoryModel) -> Unit,
+) : ListAdapter<AdAndStoreItem?, ViewHolder>(BaseDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -25,6 +25,7 @@ class AddCategoryRecyclerAdapter(
                 binding = ItemCategoryAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onClickListener = showDialog
             )
+
             else -> DeleteCategoryViewHolder(
                 binding = ItemSelectedCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onClickListener = onDeleted
@@ -36,6 +37,7 @@ class AddCategoryRecyclerAdapter(
             is AddCategoryViewHolder -> {
                 holder.bind(getItem(position) as AddCategoryModel)
             }
+
             is DeleteCategoryViewHolder -> {
                 holder.bind(getItem(position) as CategoryModel)
             }

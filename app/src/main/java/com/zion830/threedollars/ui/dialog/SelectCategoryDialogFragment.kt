@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,29 +40,52 @@ class SelectCategoryDialogFragment :
     private val popupViewModel: PopupViewModel by viewModels()
 
     private val streetCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            val bundle = Bundle().apply {
-                putString("screen", "category_filter")
-                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
-            }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                val bundle = Bundle().apply {
+                    putString("screen", "category_filter")
+                    putString(
+                        "category_id",
+                        if (viewModel.selectCategory.value.categoryId == item.categoryId) null
+                        else item.categoryId
+                    )
+                }
 
-            EventTracker.logEvent(CLICK_CATEGORY, bundle)
-            viewModel.changeSelectCategory(item)
-            dismiss()
-        }
+                EventTracker.logEvent(CLICK_CATEGORY, bundle)
+                viewModel.changeSelectCategory(item)
+                dismiss()
+            },
+            onAdClickListener = { item ->
+                if (item.link.type == "APP_SCHEME") {
+                    startActivity(
+                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                            putExtra("link", item.link.url)
+                        },
+                    )
+                } else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
+            }
+        )
     }
 
     private val bossCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            val bundle = Bundle().apply {
-                putString("screen", "category_filter")
-                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
-            }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                val bundle = Bundle().apply {
+                    putString("screen", "category_filter")
+                    putString(
+                        "category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null
+                        else item.categoryId
+                    )
+                }
 
-            EventTracker.logEvent(CLICK_CATEGORY, bundle)
-            viewModel.changeSelectCategory(item)
-            dismiss()
-        }
+                EventTracker.logEvent(CLICK_CATEGORY, bundle)
+                viewModel.changeSelectCategory(item)
+                dismiss()
+            },
+            onAdClickListener = {}
+        )
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomSelectCategoryBinding =
@@ -82,37 +104,44 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
+        initAd()
+        initAdapter()
+        initFlow()
+    }
+
+    private fun initAd() {
         viewModel.currentLocation.value?.let { latLng ->
             popupViewModel.getPopups(
                 position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
                 latLng = latLng
             )
+            popupViewModel.getPopups(
+                position = AdvertisementsPosition.MENU_CATEGORY_ICON,
+                latLng = latLng
+            )
         }
-
-        initAdapter()
-        initFlow()
     }
 
     private fun initAdapter() {
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getCategories()
-            submitList(categories.map {
+            val categories = LegacySharedPrefUtils.getCategories().map {
                 if (viewModel.selectCategory.value.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
                 }
-            })
+            }
+            submitList(categories)
         }
         binding.bossCategoryRecyclerView.adapter = bossCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getTruckCategories()
-            submitList(categories.map {
+            val categories = LegacySharedPrefUtils.getTruckCategories().map {
                 if (viewModel.selectCategory.value.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
                 }
-            })
+            }
+            submitList(categories)
         }
     }
 
@@ -163,6 +192,14 @@ class SelectCategoryDialogFragment :
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()
+                    }
+                }
+
+                launch {
+                    popupViewModel.categoryIconAd.collect { advertisementModelV2List ->
+                        advertisementModelV2List?.let {
+                            streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
+                        }
                     }
                 }
                 launch {

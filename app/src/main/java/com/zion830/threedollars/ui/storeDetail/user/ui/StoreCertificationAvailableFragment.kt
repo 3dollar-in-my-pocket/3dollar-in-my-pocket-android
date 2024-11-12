@@ -70,7 +70,7 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             userStoreModel?.location?.latitude ?: 0.0,
             userStoreModel?.location?.longitude ?: 0.0
         )
-        naverMapFragment = StoreCertificationNaverMapFragment(storeLatLng)
+        naverMapFragment = StoreCertificationNaverMapFragment.newInstance(latLng = storeLatLng)
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
     }
 

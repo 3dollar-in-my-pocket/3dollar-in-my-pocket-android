@@ -32,17 +32,23 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val truckCategories by lazy { LegacySharedPrefUtils.getTruckCategories() }
 
     private val streetCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            viewModel.changeSelectCategory(item)
-            initStreetAdapterSubmit()
-        }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                viewModel.changeSelectCategory(item)
+                initStreetAdapterSubmit()
+            },
+            onAdClickListener = {}
+        )
     }
 
     private val bossCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            viewModel.changeSelectCategory(item)
-            initTruckAdapterSubmit()
-        }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                viewModel.changeSelectCategory(item)
+                initTruckAdapterSubmit()
+            },
+            onAdClickListener = {}
+        )
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomAddStoreMenuCategoryBinding =
