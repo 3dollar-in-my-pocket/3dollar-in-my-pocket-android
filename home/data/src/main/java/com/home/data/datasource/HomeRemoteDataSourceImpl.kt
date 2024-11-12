@@ -17,7 +17,6 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
@@ -32,7 +31,6 @@ import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
-import retrofit2.http.Header
 import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
@@ -111,8 +109,8 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.putMarketingConsent(marketingConsentRequest)))
     }
 
-    override fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.postPushInformation(informationRequest)))
+    override fun putPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putPushInformation(informationRequest)))
     }
 
     override fun getAdvertisements(

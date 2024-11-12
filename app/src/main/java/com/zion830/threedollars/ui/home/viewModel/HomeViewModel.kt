@@ -118,9 +118,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
 
-    fun postPushInformation(pushToken: String, isMarketing: Boolean) {
+    fun putPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.postPushInformation(pushToken).collect {
+            homeRepository.putPushInformation(pushToken).collect {
                 if (it.ok) {
                     putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
                 } else {

@@ -220,8 +220,8 @@ interface ServerApi {
 
 
     // Device
-    @POST("/api/v1/device")
-    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+    @PUT("/api/v2/device")
+    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     // advertisement
     @GET("/api/v2/advertisements")

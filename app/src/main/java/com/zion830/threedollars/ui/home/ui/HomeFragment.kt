@@ -472,7 +472,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             override fun accept(isMarketing: Boolean) {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
-                        viewModel.postPushInformation(pushToken = it.result, isMarketing = isMarketing)
+                        viewModel.putPushInformation(pushToken = it.result, isMarketing = isMarketing)
                     }
                 }
             }

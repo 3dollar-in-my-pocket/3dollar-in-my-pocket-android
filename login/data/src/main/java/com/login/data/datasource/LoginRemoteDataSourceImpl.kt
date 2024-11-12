@@ -3,6 +3,7 @@ package com.login.data.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
+import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.util.apiResult
@@ -20,7 +21,11 @@ class LoginRemoteDataSourceImpl @Inject constructor(private val serverApi: Serve
         emit(apiResult(serverApi.putMarketingConsent(MarketingConsentRequest(marketingConsent))))
     }
 
-    override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.postPushInformation(PushInformationRequest(pushToken))))
+    override fun putPushInformation(pushToken: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putPushInformation(PushInformationRequest(pushToken))))
+    }
+
+    override fun getUserInfo(): Flow<BaseResponse<UserWithDetailApiResponse>> = flow {
+        emit(apiResult(serverApi.getUserInfo()))
     }
 }

@@ -3,10 +3,10 @@ package com.zion830.threedollars.ui.login.viewModel
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,9 +39,9 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
         }
     }
 
-    fun putPushInformationToken(informationRequest: PushInformationTokenRequest) {
+    fun putPushInformation(informationRequest: PushInformationRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userDataSource.putPushInformationToken(informationRequest)
+            userDataSource.putPushInformation(informationRequest)
         }
     }
 

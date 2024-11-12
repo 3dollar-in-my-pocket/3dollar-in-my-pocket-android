@@ -2,12 +2,10 @@ package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
@@ -54,13 +52,11 @@ interface UserDataSource {
 
     suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>>
 
-    suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+    suspend fun putPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 
     suspend fun patchPushInformation(patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>>
 
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
-
-    suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
 
     suspend fun getMyFavoriteFolder(cursor: String?, size: Int): Response<BaseResponse<MyFavoriteFolderResponse>>
 

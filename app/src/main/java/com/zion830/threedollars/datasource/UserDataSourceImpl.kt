@@ -2,7 +2,6 @@ package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponse
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
@@ -78,17 +77,14 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>> =
         service.updateMyMedals(updateMedalRequest)
 
-    override suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> =
-        service.postPushInformation(informationRequest)
+    override suspend fun putPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> =
+        service.putPushInformation(informationRequest)
 
     override suspend fun patchPushInformation(patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>> =
         service.patchPushInformation(patchPushInformationRequest)
 
     override suspend fun deletePushInformation(): Response<BaseResponse<String>> =
         service.deletePushInformation()
-
-    override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
-        service.putPushInformationToken(informationTokenRequest)
 
     override suspend fun getFavoriteViewer(favoriteId: String, cursor: String?): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getFavoriteViewer(favoriteId, cursor)

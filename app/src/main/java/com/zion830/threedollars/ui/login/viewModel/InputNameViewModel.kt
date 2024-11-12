@@ -78,9 +78,9 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
         }
     }
 
-    fun postPushInformation(pushToken: String, isMarketing: Boolean) {
+    fun putPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            loginRepository.postPushInformation(pushToken).collect {
+            loginRepository.putPushInformation(pushToken).collect {
                 if (it.ok) {
                     putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
                 } else {
