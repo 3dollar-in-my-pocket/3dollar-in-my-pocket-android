@@ -20,6 +20,7 @@ import com.zion830.threedollars.databinding.ItemListViewBinding
 import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 
 class AroundStoreListViewRecyclerAdapter(
@@ -89,7 +90,7 @@ class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBin
     fun bind(advertisementModelV2: AdvertisementModelV2?) {
         binding.itemListViewAd.root.isVisible = advertisementModelV2 == null
         advertisementModelV2?.let {
-            binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
+            binding.root.onSingleClick { clickAdListener.onClick(advertisementModelV2) }
             binding.itemListViewAd.imgAd.loadImage(it.image.url)
             binding.itemListViewAd.tvAdTitle.text = it.title.content
             binding.itemListViewAd.tvAdBody.text = it.subTitle.content
@@ -102,7 +103,7 @@ class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBin
 
 class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2) {
-        binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
+        binding.root.onSingleClick { clickAdListener.onClick(advertisementModelV2) }
         binding.imgAd.loadImage(advertisementModelV2.image.url)
         binding.tvAdTitle.text = advertisementModelV2.title.content
         binding.tvAdBody.text = advertisementModelV2.subTitle.content

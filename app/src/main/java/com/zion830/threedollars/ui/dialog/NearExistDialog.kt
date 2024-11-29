@@ -14,6 +14,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogNearExistBinding
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 
 @AndroidEntryPoint
@@ -58,9 +59,9 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener { dismiss() }
+        binding.closeImageButton.onSingleClick { dismiss() }
 
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "write_address_popup")
                 putString("address", binding.addressTextView.text.toString())

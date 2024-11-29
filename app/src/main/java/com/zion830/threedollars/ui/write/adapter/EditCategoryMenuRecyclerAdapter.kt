@@ -10,6 +10,7 @@ import com.home.domain.data.store.UserStoreMenuModel
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.databinding.ItemEditCategoryMenuBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 class EditCategoryMenuRecyclerAdapter(private val delete: (CategoryModel) -> Unit) :
     ListAdapter<SelectCategoryModel, EditCategoryMenuViewHolder>((BaseDiffUtilCallback())) {
@@ -37,7 +38,7 @@ class EditCategoryMenuRecyclerAdapter(private val delete: (CategoryModel) -> Uni
 class EditCategoryMenuViewHolder(private val binding: ItemEditCategoryMenuBinding, private val onClickListener: (CategoryModel) -> Unit) :
     ViewHolder(binding.root) {
     fun bind(item: SelectCategoryModel) {
-        binding.ibDeleteCategory.setOnClickListener { onClickListener(item.menuType) }
+        binding.ibDeleteCategory.onSingleClick { onClickListener(item.menuType) }
         binding.ivMenuIcon.loadImage(item.menuType.imageUrl)
         binding.tvMenu.text = item.menuType.name
         binding.rvMenuEdit.adapter = EditMenuRecyclerAdapter().apply {

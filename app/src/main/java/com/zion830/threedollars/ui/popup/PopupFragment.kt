@@ -16,6 +16,7 @@ import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
@@ -25,6 +26,7 @@ import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 import java.net.URISyntaxException
 import javax.inject.Inject
 
@@ -42,22 +44,22 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                 ivPopup.loadImage(it.image.url)
             }
 
-            tvClose.setOnClickListener {
+            tvClose.onSingleClick {
                 val bundle = Bundle().apply {
                     putString("screen", "main_ad_banner")
                 }
                 EventTracker.logEvent(Constants.CLICK_CLOSE, bundle)
-                it.findNavController().navigateUp()
+                findNavController().navigateUp()
             }
-            tvTodayNotPopup.setOnClickListener {
+            tvTodayNotPopup.onSingleClick {
                 val bundle = Bundle().apply {
                     putString("screen", "main_ad_banner")
                 }
                 EventTracker.logEvent(Constants.CLICK_NOT_SHOW_TODAY, bundle)
                 sharedPrefUtils.setTodayNotPopupDate(getCurrentDate())
-                it.findNavController().navigateUp()
+                findNavController().navigateUp()
             }
-            ivPopup.setOnClickListener {
+            ivPopup.onSingleClick {
                 ivPopup.isVisible = false
                 webView.isVisible = true
                 viewModel.popups.value.let { popups ->
@@ -73,7 +75,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                                     putExtra("link", popup.link.url)
                                 },
                             )
-                            it.findNavController().navigateUp()
+                            findNavController().navigateUp()
                         } else {
                             webView.loadUrl(popup.link.url)
                         }

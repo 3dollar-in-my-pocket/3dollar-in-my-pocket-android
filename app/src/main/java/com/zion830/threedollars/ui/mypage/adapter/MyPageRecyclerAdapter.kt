@@ -16,6 +16,7 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.onSingleClick
 
 class MyPageRecyclerAdapter(
     private val onClickListener: OnItemClickListener<AdAndStoreItem>,
@@ -79,7 +80,7 @@ class RecentVisitHistoryViewHolder(parent: ViewGroup, private val onClickListene
                 "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}"
             }
             tvCategories.text = categories
-            layoutItem.setOnClickListener {
+            layoutItem.onSingleClick {
                 if (item.store.isDeleted == false) {
                     onClickListener.onClick(item)
                 }
@@ -102,7 +103,7 @@ class MyFavoriteViewHolder(parent: ViewGroup, private val onClickListener: OnIte
                 "#${it.name}"
             }
             storeCategoriesTextView.text = categories
-            itemLinearLayout.setOnClickListener {
+            itemLinearLayout.onSingleClick {
                 if (!item.isDeleted) {
                     onClickListener.onClick(item)
                 }

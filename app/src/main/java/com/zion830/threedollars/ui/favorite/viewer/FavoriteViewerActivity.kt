@@ -19,6 +19,7 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
@@ -58,7 +59,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     }
 
     private fun initButton() {
-        binding.closeImage.setOnClickListener {
+        binding.closeImage.onSingleClick {
             viewModel.onEventClick(FavoriteViewerViewModel.Event.Close)
         }
     }

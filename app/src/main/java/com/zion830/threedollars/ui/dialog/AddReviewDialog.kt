@@ -19,6 +19,7 @@ import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
@@ -54,13 +55,13 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener {
+        binding.closeImageButton.onSingleClick {
             dismiss()
         }
-        binding.btnFinish.setOnClickListener {
+        binding.btnFinish.onSingleClick {
             if (binding.rating.rating == 0f) {
                 showToast(R.string.over_rating_1)
-                return@setOnClickListener
+                return@onSingleClick
             }
             val bundle = Bundle().apply {
                 putString("screen", "review_bottom_sheet")

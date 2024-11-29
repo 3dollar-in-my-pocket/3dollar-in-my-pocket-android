@@ -20,6 +20,7 @@ import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 
 @AndroidEntryPoint
@@ -109,7 +110,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     }
 
     private fun initButton() {
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             if (viewModel.selectCategoryList.value.isNotNullOrEmpty()) {
                 val bundle = Bundle().apply {
                     putString("screen", "category_selection")
