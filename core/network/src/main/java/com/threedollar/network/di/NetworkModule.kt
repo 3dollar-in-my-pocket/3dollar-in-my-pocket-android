@@ -1,6 +1,7 @@
 package com.threedollar.network.di
 
 import android.os.Build
+import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
 import com.threedollar.network.api.KakaoLoginApi
@@ -10,7 +11,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,10 +47,19 @@ object NetworkModule {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    @Provides
+    @Singleton
+    fun authInterceptor() = Authenticator { _, response ->
+        if(response.code == 401){
+            GlobalEvent.triggerLogout()
+        }
+        return@Authenticator null
+    }
+
     @Singleton
     @Provides
     @OkhttpClient
-    fun provideOkHttpClient(sharedPrefUtils: SharedPrefUtils, interceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideOkHttpClient(sharedPrefUtils: SharedPrefUtils, interceptor: HttpLoggingInterceptor, authenticator: Authenticator): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addInterceptor {
@@ -69,6 +83,7 @@ object NetworkModule {
 
                 it.proceed(request)
             }
+            .authenticator(authenticator)
             .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
             .build()
 
