@@ -70,7 +70,7 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
             }
         }
 
-        binding.closeImageView.setOnClickListener {
+        binding.closeImageView.onSingleClick {
             dismiss()
         }
 

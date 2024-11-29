@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 
 class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
@@ -96,7 +97,7 @@ class BossMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding
         private val clickListener: () -> Unit,
     ) : ViewHolder(binding.root) {
         fun bind(item: BossStoreMenuMoreResponse) {
-            binding.menuLayout.setOnClickListener {
+            binding.menuLayout.onSingleClick {
                 clickListener()
             }
             binding.menuNameTextView.text = item.moreTitle

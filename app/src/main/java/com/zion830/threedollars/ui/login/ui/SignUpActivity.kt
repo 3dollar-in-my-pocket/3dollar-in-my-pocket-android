@@ -107,7 +107,7 @@ class SignUpActivity :
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             finish()
         }
 

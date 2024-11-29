@@ -12,6 +12,7 @@ import com.home.domain.data.store.UserStoreMoreResponse
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     ListAdapter<UserStoreDetailItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
@@ -91,7 +92,7 @@ class UserStoreMenuMoreViewHolder(
     private val clickListener: () -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(item: UserStoreMoreResponse) {
-        binding.menuLayout.setOnClickListener {
+        binding.menuLayout.onSingleClick {
             clickListener()
         }
         binding.menuNameTextView.text = item.moreTitle

@@ -25,6 +25,7 @@ import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
@@ -68,10 +69,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
     }
 
     private fun initButton() {
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             findNavController().navigate(R.id.navigation_home)
         }
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "write_address")
                 putString("address", binding.addressTextView.text.toString())

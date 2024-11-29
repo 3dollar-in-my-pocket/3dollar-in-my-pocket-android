@@ -9,6 +9,7 @@ import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 class BossReviewSummitRecyclerAdapter(private val onClickAction: (FeedbackTypeResponse) -> Unit) :
     ListAdapter<FeedbackTypeResponse, BossReviewSummitRecyclerAdapter.BossReviewSummitViewHolder>(BaseDiffUtilCallback()) {
@@ -28,7 +29,7 @@ class BossReviewSummitRecyclerAdapter(private val onClickAction: (FeedbackTypeRe
         ViewHolder(binding.root) {
         fun bind(item: FeedbackTypeResponse) {
             binding.reviewCheckBox.text = "${item.emoji} ${item.description}"
-            binding.reviewCheckBox.setOnClickListener {
+            binding.reviewCheckBox.onSingleClick {
                 binding.reviewCheckBox.setBackgroundResource(if (binding.reviewCheckBox.isChecked) R.drawable.rect_radius12_pink100_stroke_pink else R.drawable.rect_white_radius12_stroke_gray20)
                 binding.reviewCheckBox.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.selector_type_radio_review, 0)
                 binding.checkImageView.isVisible = binding.reviewCheckBox.isChecked

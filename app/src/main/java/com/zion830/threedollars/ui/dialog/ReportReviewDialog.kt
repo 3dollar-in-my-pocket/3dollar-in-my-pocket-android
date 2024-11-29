@@ -18,6 +18,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class ReportReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) :
@@ -109,11 +110,11 @@ class ReportReviewDialog(private val content: ReviewContentModel?, private val s
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener {
+        binding.closeImageButton.onSingleClick {
             dismiss()
         }
 
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             viewModel.reportReview(storeId = storeId ?: -1, content?.review?.reviewId ?: -1, reportReviewModelRequest)
             dismiss()
         }

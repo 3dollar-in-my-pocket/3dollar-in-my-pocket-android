@@ -20,6 +20,7 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,13 +50,13 @@ class BossReviewActivity :
 
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
 
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             val intent = BossStoreDetailActivity.getIntent(this, storeId)
             startActivity(intent)
             finish()
         }
 
-        binding.completeTextView.setOnClickListener {
+        binding.completeTextView.onSingleClick {
             if (selectReviewSet.isEmpty()) {
                 showToast("리뷰를 선택해주세요.")
             } else {

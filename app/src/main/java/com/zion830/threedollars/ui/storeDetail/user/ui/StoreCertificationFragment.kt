@@ -20,6 +20,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreCertification
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import kotlin.math.abs
 import kotlin.math.min
@@ -77,7 +78,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
     }
 
     private fun initButton() {
-        binding.ibClose.setOnClickListener {
+        binding.ibClose.onSingleClick {
             requireActivity().supportFragmentManager.popBackStack()
         }
     }

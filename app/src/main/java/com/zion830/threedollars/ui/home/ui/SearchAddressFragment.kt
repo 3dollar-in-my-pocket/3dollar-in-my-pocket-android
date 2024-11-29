@@ -31,6 +31,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeViewModel>() {
@@ -132,7 +133,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             requireActivity().onBackPressed()
         }
     }

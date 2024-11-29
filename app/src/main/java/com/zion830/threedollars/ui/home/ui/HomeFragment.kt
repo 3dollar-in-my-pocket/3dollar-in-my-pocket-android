@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -66,6 +67,7 @@ import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -214,7 +216,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initButton() {
-        binding.layoutAddress.setOnClickListener {
+        binding.layoutAddress.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "home")
             }
@@ -226,7 +228,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         }
 
-        binding.allMenuTextView.setOnClickListener {
+        binding.allMenuTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "home")
             }
@@ -234,7 +236,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             showSelectCategoryDialog()
         }
 
-        binding.filterConditionsTextView.setOnClickListener {
+        binding.filterConditionsTextView.onSingleClick {
             sharedPrefUtils.setIsClickFilterConditions()
             binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
             filterConditionsType = if (filterConditionsType.isEmpty()) {
@@ -250,7 +252,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
             viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
         }
-        binding.filterTextView.setOnClickListener {
+        binding.filterTextView.onSingleClick {
             homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
                 HomeSortType.LATEST
             } else {
@@ -264,7 +266,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
-        binding.bossFilterTextView.setOnClickListener {
+        binding.bossFilterTextView.onSingleClick {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
             val bundle = Bundle().apply {
                 putString("screen", "home")
@@ -274,10 +276,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
-        binding.listViewTextView.setOnClickListener {
-            it.findNavController().navigate(R.id.action_home_to_home_list_view)
+        binding.listViewTextView.onSingleClick {
+            findNavController().navigate(R.id.action_home_to_home_list_view)
         }
-        binding.tvRetrySearch.setOnClickListener {
+        binding.tvRetrySearch.onSingleClick {
             val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
             val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
             viewModel.requestHomeItem(

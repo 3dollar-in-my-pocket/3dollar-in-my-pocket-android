@@ -29,6 +29,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class StoreReviewDetailActivity :
@@ -81,12 +82,12 @@ class StoreReviewDetailActivity :
     }
 
     private fun initButton() {
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
 
-        binding.reviewWriteTextView.setOnClickListener {
+        binding.reviewWriteTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "review_list")
             }
