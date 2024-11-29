@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,10 +28,11 @@ import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
-import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
+import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.requestPermissionFirst
@@ -105,6 +105,15 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                     popupViewModel.serverError.collect {
                         it?.let {
                             showToast(it)
+                        }
+                    }
+                }
+                launch {
+                    GlobalEvent.logoutEvent.collect {
+                        if(it) {
+                            startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+                            finish()
+                            GlobalEvent.resetLogoutEvent()
                         }
                     }
                 }
