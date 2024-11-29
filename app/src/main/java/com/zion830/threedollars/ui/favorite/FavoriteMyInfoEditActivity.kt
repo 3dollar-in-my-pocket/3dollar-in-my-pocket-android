@@ -11,6 +11,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :
@@ -24,9 +25,9 @@ class FavoriteMyInfoEditActivity :
 
         changeText()
 
-        binding.backImageView.setOnClickListener { finish() }
+        binding.backImageView.onSingleClick { finish() }
 
-        binding.saveButton.setOnClickListener {
+        binding.saveButton.onSingleClick {
             val favoriteInfoRequest = FavoriteInfoRequest(
                 introduction = binding.favoriteBodyEditTextView.text.toString(),
                 name = binding.favoriteTitleEditTextView.text.toString()

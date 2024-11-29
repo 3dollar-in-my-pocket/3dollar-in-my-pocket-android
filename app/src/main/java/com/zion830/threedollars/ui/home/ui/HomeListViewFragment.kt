@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -45,6 +46,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -92,15 +94,14 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun initButtons() {
         binding.apply {
-            mapViewTextView.setOnClickListener { navigateBack() }
-            allMenuTextView.setOnClickListener { onCategoryFilterClick() }
-            filterTextView.setOnClickListener { onSortFilterClick() }
-            filterConditionsTextView.setOnClickListener { onRecentActivityFilterClick() }
-            bossFilterTextView.setOnClickListener { onBossFilterClick() }
-            certifiedStoreTextView.setOnClickListener { onCertifiedStoreFilterClick() }
+            mapViewTextView.onSingleClick { navigateBack() }
+            allMenuTextView.onSingleClick { onCategoryFilterClick() }
+            filterTextView.onSingleClick { onSortFilterClick() }
+            filterConditionsTextView.onSingleClick { onRecentActivityFilterClick() }
+            bossFilterTextView.onSingleClick { onBossFilterClick() }
+            certifiedStoreTextView.onSingleClick { onCertifiedStoreFilterClick() }
         }
     }
-
     private fun navigateBack() {
         view?.findNavController()?.popBackStack()
     }

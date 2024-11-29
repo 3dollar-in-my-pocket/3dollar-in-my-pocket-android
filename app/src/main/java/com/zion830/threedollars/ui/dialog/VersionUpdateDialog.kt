@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class VersionUpdateDialog(private val currentVersion: String) : DialogFragment() {
@@ -29,7 +30,7 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
         dialog?.setCancelable(false)
         dialog?.setCanceledOnTouchOutside(false)
 
-        binding.btnOk.setOnClickListener {
+        binding.btnOk.onSingleClick {
             requireContext().startActivity(
                 Intent(
                     Intent.ACTION_VIEW,

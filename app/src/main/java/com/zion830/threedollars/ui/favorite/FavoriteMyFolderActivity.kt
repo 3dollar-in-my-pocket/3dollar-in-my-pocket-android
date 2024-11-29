@@ -69,23 +69,23 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.shareImageView.onSingleClick {
             viewModel.createShareUrl()
         }
-        binding.backImageView.setOnClickListener {
+        binding.backImageView.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.deleteTextView.setOnClickListener {
+        binding.deleteTextView.onSingleClick {
             binding.deleteTextView.isVisible = false
             binding.doingDeleteLinearLayout.isVisible = true
             adapter.setDelete(true)
         }
 
-        binding.deleteCompleteTextView.setOnClickListener {
+        binding.deleteCompleteTextView.onSingleClick {
             binding.deleteTextView.isVisible = true
             binding.doingDeleteLinearLayout.isVisible = false
             adapter.setDelete(false)
         }
 
-        binding.allDeleteTextView.setOnClickListener {
+        binding.allDeleteTextView.onSingleClick {
             val dialog = AllDeleteFavoriteDialog()
             dialog.setDialogListener(object : AllDeleteFavoriteDialog.DialogListener {
                 override fun click() {
@@ -94,7 +94,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             })
             dialog.show(supportFragmentManager, dialog.tag)
         }
-        binding.infoEditTextView.setOnClickListener {
+        binding.infoEditTextView.onSingleClick {
             activityResultLauncher.launch(
                 FavoriteMyInfoEditActivity.getIntent(
                     this,

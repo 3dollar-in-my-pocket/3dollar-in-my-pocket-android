@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class EditReviewDialog(
@@ -43,12 +44,12 @@ class EditReviewDialog(
 
     override fun initView() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        binding.closeImageButton.setOnClickListener {
+        binding.closeImageButton.onSingleClick {
             dismiss()
         }
         binding.etContent.setText(content?.contents)
         binding.rating.rating = content?.rating?.toFloat() ?: 0f
-        binding.btnFinish.setOnClickListener {
+        binding.btnFinish.onSingleClick {
             when {
                 binding.rating.rating == 0f -> {
                     showToast(R.string.over_rating_1)

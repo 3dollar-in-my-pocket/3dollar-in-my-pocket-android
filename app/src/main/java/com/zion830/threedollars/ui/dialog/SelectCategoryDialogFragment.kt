@@ -30,6 +30,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class SelectCategoryDialogFragment :
@@ -173,7 +174,7 @@ class SelectCategoryDialogFragment :
 
                             binding.ivAdImage.loadUrlImg(popup.image.url)
 
-                            binding.cdAdCategory.setOnClickListener {
+                            binding.cdAdCategory.onSingleClick {
                                 val bundle = Bundle().apply {
                                     putString("screen", "category_filter")
                                     putString("advertisement_id", popup.advertisementId.toString())

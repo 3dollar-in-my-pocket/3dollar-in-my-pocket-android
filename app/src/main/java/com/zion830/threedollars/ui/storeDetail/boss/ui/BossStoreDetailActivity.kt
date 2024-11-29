@@ -155,21 +155,21 @@ class BossStoreDetailActivity :
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.bottomReviewTextView.setOnClickListener {
+        binding.bottomReviewTextView.onSingleClick {
             moveFoodTruckReviewActivity()
         }
-        binding.feedbackReviewTextView.setOnClickListener {
+        binding.feedbackReviewTextView.onSingleClick {
             moveFoodTruckReviewActivity()
         }
-        binding.shareButton.setOnClickListener {
+        binding.shareButton.onSingleClick {
             initShared()
         }
 
-        binding.snsButton.setOnClickListener {
+        binding.snsButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "boss_store_detail")
                 putString("store_id", storeId)
@@ -179,7 +179,7 @@ class BossStoreDetailActivity :
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
             }
         }
-        binding.snsTextView.setOnClickListener {
+        binding.snsTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
                 val bundle = Bundle().apply {
                     putString("screen", "boss_store_detail")
@@ -189,7 +189,7 @@ class BossStoreDetailActivity :
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
         }
-        binding.directionsButton.setOnClickListener {
+        binding.directionsButton.onSingleClick {
             showDirectionBottomDialog()
         }
 
@@ -199,12 +199,12 @@ class BossStoreDetailActivity :
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.addressTextView.setOnClickListener {
+        binding.addressTextView.onSingleClick {
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
             showToast("주소가 복사됐습니다.")
         }
-        binding.fullScreenButton.setOnClickListener {
+        binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
         }
     }
@@ -320,7 +320,7 @@ class BossStoreDetailActivity :
             binding.accountCardView.isVisible = true
             binding.accountNumberTextView.text =
                 "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
-            binding.accountCopyButton.setOnClickListener {
+            binding.accountCopyButton.onSingleClick {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
                 showToast("계좌번호가 복사되었습니다.")

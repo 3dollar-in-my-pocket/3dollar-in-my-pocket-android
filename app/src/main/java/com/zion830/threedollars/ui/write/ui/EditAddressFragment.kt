@@ -19,6 +19,7 @@ import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
@@ -30,10 +31,10 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     override fun initView() {
         initMap()
         initFlow()
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             viewModel.getStoreNearExists(viewModel.selectedLocation.value ?: LatLng(0.0, 0.0))
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {

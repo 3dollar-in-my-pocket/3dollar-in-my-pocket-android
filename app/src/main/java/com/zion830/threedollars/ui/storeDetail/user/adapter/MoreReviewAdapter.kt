@@ -14,6 +14,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMoreReviewBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 class MoreReviewAdapter(private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>) :
     PagingDataAdapter<ReviewContentModel, MoreReviewViewHolder>(BaseDiffUtilCallback()) {
@@ -50,7 +51,7 @@ class MoreReviewViewHolder(private val binding: ItemMoreReviewBinding) : Recycle
                 binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
             }
 
-            binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
+            binding.reportAndEditTextView.onSingleClick { reviewEditOrDeleteClickEvent.onClick(item) }
             binding.reportAndEditTextView.text =
                 if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
                     .getString(R.string.review_report)

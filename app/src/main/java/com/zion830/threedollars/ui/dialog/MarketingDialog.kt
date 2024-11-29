@@ -13,6 +13,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
@@ -45,7 +46,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
 
         binding.run {
 
-            allAgreeTextView.setOnClickListener {
+            allAgreeTextView.onSingleClick {
                 if (check1 && check2) {
                     check1 = false
                     check2 = false
@@ -92,7 +93,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 agreeContinueTextView.isEnabled = check1
             }
 
-            term1TextView.setOnClickListener {
+            term1TextView.onSingleClick {
                 if (check1) {
                     check1 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -124,7 +125,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 }
                 agreeContinueTextView.isEnabled = check1
             }
-            term2TextView.setOnClickListener {
+            term2TextView.onSingleClick {
                 if (check2) {
                     check2 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -157,13 +158,13 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                     )
                 }
             }
-            term1ImageView.setOnClickListener {
+            term1ImageView.onSingleClick {
                 goWebView(R.string.terms_of_service_url)
             }
-            term2ImageView.setOnClickListener {
+            term2ImageView.onSingleClick {
                 goWebView(R.string.terms_of_marketing_url)
             }
-            agreeContinueTextView.setOnClickListener {
+            agreeContinueTextView.onSingleClick {
                 eventTracker.setUserProperty("isPushEnable", "true")
                 subscribeToTopicFirebase(check2)
                 listener?.accept(check2)

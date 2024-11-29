@@ -22,6 +22,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
@@ -65,11 +66,11 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     }
 
     private fun initButton() {
-        binding.ibClose.setOnClickListener {
+        binding.ibClose.onSingleClick {
             EventTracker.logEvent(Constants.DELETE_POPUP_CLOSE_BTN_CLICKED)
             dismiss()
         }
-        binding.btnFinish.setOnClickListener {
+        binding.btnFinish.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "report_store")
                 putString("store_id", viewModel.userStoreDetailModel.value?.store?.storeId.toString())

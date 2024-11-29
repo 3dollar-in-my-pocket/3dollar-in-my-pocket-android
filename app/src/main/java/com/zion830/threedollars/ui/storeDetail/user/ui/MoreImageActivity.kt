@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailViewModel>({ ActivityMoreImageBinding.inflate(it) }) {
@@ -75,11 +76,11 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     }
 
     private fun initButton() {
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.submitPhotoTextView.setOnClickListener {
+        binding.submitPhotoTextView.onSingleClick {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
                 if (it.message?.startsWith("permission") == true) {
                     AlertDialog.Builder(this)

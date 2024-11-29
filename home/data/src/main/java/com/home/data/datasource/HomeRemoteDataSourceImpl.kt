@@ -49,7 +49,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(
             apiResult(
                 serverApi.getAroundStores(
-                    distanceM = distanceM,
+                    distanceM = if(distanceM <= 0) 100000.0 else distanceM,
                     categoryIds = categoryIds,
                     targetStores = targetStores,
                     sortType = sortType,

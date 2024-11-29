@@ -7,6 +7,7 @@ import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 
 class MedalRecyclerAdapter(
     private val onClick: (MyMedal) -> Unit
@@ -16,7 +17,7 @@ class MedalRecyclerAdapter(
         super.onBindViewHolder(holder, position)
         val item = getItem(position)
         with(holder.binding) {
-            root.setOnClickListener {
+            root.onSingleClick {
                 onClick(item)
             }
             tvName.text = item.medal.name

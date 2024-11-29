@@ -212,11 +212,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.deleteButton.setOnClickListener {
+        binding.deleteButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -224,7 +224,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             EventTracker.logEvent(Constants.CLICK_REPORT, bundle)
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
-        binding.photoSummitTextView.setOnClickListener {
+        binding.photoSummitTextView.onSingleClick {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
                 if (it.message?.startsWith("permission") == true) {
                     AlertDialog.Builder(this)
@@ -252,10 +252,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
             }
         }
-        binding.shareButton.setOnClickListener {
+        binding.shareButton.onSingleClick {
             initShared()
         }
-        binding.writeReviewTextView.setOnClickListener {
+        binding.writeReviewTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -265,7 +265,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
 
-        binding.reviewButton.setOnClickListener {
+        binding.reviewButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -274,7 +274,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
-        binding.editStoreInfoButton.setOnClickListener {
+        binding.editStoreInfoButton.onSingleClick {
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 EditStoreDetailFragment(),
@@ -282,7 +282,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 false,
             )
         }
-        binding.addCertificationButton.setOnClickListener {
+        binding.addCertificationButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -296,10 +296,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.fullScreenButton.setOnClickListener {
+        binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
         }
-        binding.addressTextView.setOnClickListener {
+        binding.addressTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -309,7 +309,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             manager.text = binding.addressTextView.text
             showToast("주소가 복사됐습니다.")
         }
-        binding.directionsButton.setOnClickListener {
+        binding.directionsButton.onSingleClick {
             showDirectionBottomDialog()
         }
     }
