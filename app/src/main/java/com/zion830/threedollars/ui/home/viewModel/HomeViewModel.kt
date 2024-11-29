@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
+import com.home.domain.data.store.ContentModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.FilterConditionsTypeModel
@@ -28,14 +29,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
 
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
-
     val userInfo: StateFlow<UserModel> get() = _userInfo
 
     private val _aroundStoreModels: MutableStateFlow<List<AdAndStoreItem>> = MutableStateFlow(listOf())
     val aroundStoreModels: StateFlow<List<AdAndStoreItem>> get() = _aroundStoreModels
 
     val addressText: MutableLiveData<String> = MutableLiveData()
-
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
     val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
 
@@ -56,17 +55,17 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun getUserInfo() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getMyInfo().collect {
-                if (it.ok) {
-                    _userInfo.value = it.data!!
+            homeRepository.getMyInfo().collect { response ->
+                if (response.ok) {
+                    _userInfo.value = response.data!!
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
     }
 
-    fun updateCurrentLocation(latLng: LatLng, distanceM: Double) {
+    private fun updateCurrentLocation(latLng: LatLng) {
         currentLocation.value = latLng
         _currentLocationFlow.value = latLng
         addressText.value = getCurrentLocationName(latLng) ?: "위치를 찾는 중..."
@@ -74,18 +73,8 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     fun requestHomeItem(location: LatLng, distanceM: Double, filterCertifiedStores: Boolean = false) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val targetStores = when (homeFilterEvent.value.homeStoreType) {
-                HomeStoreType.ALL -> {
-                    null
-                }
-
-                HomeStoreType.USER_STORE,
-                HomeStoreType.BOSS_STORE,
-                -> {
-                    arrayOf(homeFilterEvent.value.homeStoreType.name)
-                }
-            }
-            val categoryIds = if (selectCategory.value.categoryId.isEmpty()) null else arrayOf(selectCategory.value.categoryId)
+            val targetStores = homeFilterEvent.value.homeStoreType.getTargetStoresArray()
+            val categoryIds = selectCategory.value.getCategoryIdArray()
 
             homeRepository.getAroundStores(
                 distanceM = distanceM,
@@ -98,33 +87,25 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 mapLongitude = location.longitude,
                 deviceLatitude = location.latitude,
                 deviceLongitude = location.longitude
-            ).collect {
-                val resultList: ArrayList<AdAndStoreItem> = arrayListOf()
-                if (it.ok) {
-                    updateCurrentLocation(location, distanceM)
-                    if (it.data?.contentModels?.isEmpty() == true) {
-                        resultList.add(StoreEmptyResponse())
-                    } else {
-                        it.data?.let { aroundStoreModel ->
-                            resultList.addAll(aroundStoreModel.contentModels)
-                        }
-                    }
+            ).collect { response ->
+                if (response.ok) {
+                    updateCurrentLocation(location)
+                    val resultList = getResultList(response.data?.contentModels)
                     _aroundStoreModels.value = resultList
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
     }
 
-
     fun putPushInformation(pushToken: String, isMarketing: Boolean) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putPushInformation(pushToken).collect {
-                if (it.ok) {
-                    putMarketingConsent((if (isMarketing) "APPROVE" else "DENY"))
+            homeRepository.putPushInformation(pushToken).collect { response ->
+                if (response.ok) {
+                    putMarketingConsent(if (isMarketing) "APPROVE" else "DENY")
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
@@ -139,7 +120,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     categoryModel
                 }
             )
-
         }
     }
 
@@ -150,46 +130,43 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _homeFilterEvent.update {
-                if (homeSortType != null) {
-                    it.copy(homeSortType = homeSortType)
-                } else if (homeStoreType != null) {
-                    it.copy(homeStoreType = homeStoreType)
-                } else if (filterConditionsType != null) {
-                    it.copy(filterConditionsType = filterConditionsType)
-                } else {
-                    it
-                }
+                it.copy(
+                    homeSortType = homeSortType ?: it.homeSortType,
+                    homeStoreType = homeStoreType ?: it.homeStoreType,
+                    filterConditionsType = filterConditionsType ?: it.filterConditionsType
+                )
             }
         }
     }
 
     fun getAdvertisement(latLng: LatLng) {
+        getAdvertisementList(latLng = latLng)
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getAdvertisements(
                 position = AdvertisementsPosition.MAIN_PAGE_CARD,
                 deviceLatitude = latLng.latitude,
                 deviceLongitude = latLng.longitude
-            ).collect {
-                if (it.ok) {
-                    _advertisementModel.value = it.data?.firstOrNull()
+            ).collect { response ->
+                if (response.ok) {
+                    _advertisementModel.value = response.data?.firstOrNull()
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
     }
 
-    fun getAdvertisementList(latLng: LatLng) {
+    private fun getAdvertisementList(latLng: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getAdvertisements(
                 position = AdvertisementsPosition.STORE_LIST,
                 deviceLatitude = latLng.latitude,
                 deviceLongitude = latLng.longitude
-            ).collect {
-                if (it.ok) {
-                    _advertisementListModel.value = it.data?.firstOrNull()
+            ).collect { response ->
+                if (response.ok) {
+                    _advertisementListModel.value = response.data?.firstOrNull()
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
@@ -197,13 +174,32 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private fun putMarketingConsent(marketingConsent: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putMarketingConsent(marketingConsent).collect {
-                if (it.ok) {
+            homeRepository.putMarketingConsent(marketingConsent).collect { response ->
+                if (response.ok) {
                     getUserInfo()
                 } else {
-                    _serverError.emit(it.message)
+                    _serverError.emit(response.message)
                 }
             }
         }
+    }
+
+    private fun getResultList(contentModels: List<ContentModel>?): ArrayList<AdAndStoreItem> {
+        return if (contentModels.isNullOrEmpty()) {
+            arrayListOf(StoreEmptyResponse())
+        } else {
+            ArrayList(contentModels)
+        }
+    }
+
+    private fun HomeStoreType.getTargetStoresArray(): Array<String>? {
+        return when (this) {
+            HomeStoreType.ALL -> null
+            else -> arrayOf(this.name)
+        }
+    }
+
+    private fun CategoryModel.getCategoryIdArray(): Array<String>? {
+        return if (this.categoryId.isEmpty()) null else arrayOf(this.categoryId)
     }
 }
