@@ -65,6 +65,7 @@ class SelectCategoryDialogFragment :
                 } else {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
                 }
+                dismiss()
             }
         )
     }
@@ -189,6 +190,7 @@ class SelectCategoryDialogFragment :
                                 } else {
                                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
                                 }
+                                dismiss()
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()
