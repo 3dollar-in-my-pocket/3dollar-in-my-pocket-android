@@ -348,7 +348,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.updateMarkerIcon(
                             drawableRes = R.drawable.ic_mappin_focused_on,
                             position = 0,
-                            markerModel = list.first().markerModel,
+                            markerModel = list.firstOrNull()?.markerModel,
                             isSelected = true
                         )
                         delay(200L)
