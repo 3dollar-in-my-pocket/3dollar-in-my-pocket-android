@@ -93,7 +93,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     private fun initFlow() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     popupViewModel.popups.collect { popups ->
                         if (popups.isNotEmpty() && getCurrentDate() != sharedPrefUtils.getTodayNotPopupDate()) {

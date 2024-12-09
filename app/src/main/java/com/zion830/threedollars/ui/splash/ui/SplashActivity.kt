@@ -136,8 +136,10 @@ class SplashActivity :
                                 when (accessCheckModel.resultCode) {
                                     "503" -> showAlertDialog()
                                     else -> {
-                                        accessCheckModel.message?.let {
-                                            showToast(it)
+                                        if (accessCheckModel.resultCode != "UA000") {
+                                            accessCheckModel.message?.let {
+                                                showToast(it)
+                                            }
                                         }
                                         startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                         finish()
