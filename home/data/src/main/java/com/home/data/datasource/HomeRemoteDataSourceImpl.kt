@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
     override fun getAroundStores(
-        distanceM:Double,
+        distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
@@ -49,7 +49,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(
             apiResult(
                 serverApi.getAroundStores(
-                    distanceM = if(distanceM <= 0) 100000.0 else distanceM,
+                    distanceM = if (distanceM.isNaN() || distanceM <= 0) 100000.0 else distanceM,
                     categoryIds = categoryIds,
                     targetStores = targetStores,
                     sortType = sortType,
