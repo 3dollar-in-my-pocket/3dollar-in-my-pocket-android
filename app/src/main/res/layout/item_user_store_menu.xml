@@ -31,21 +31,24 @@
     <TextView
         android:id="@+id/menuNameTextView"
         style="@style/apple_gothic_medium.size_12sp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
         android:layout_marginTop="8dp"
-        android:maxLength="10"
+        android:layout_marginEnd="4dp"
         android:singleLine="true"
         android:textColor="@color/gray100"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/menuPriceTextView"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categoryTextView"
+        app:layout_constraintWidth_default="wrap"
         tools:text="팥붕어빵" />
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="2dp"
         android:layout_marginHorizontal="8dp"
         android:layerType="software"
         android:src="@drawable/dash_gray"
