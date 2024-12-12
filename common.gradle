@@ -12,6 +12,12 @@ android {
             storeFile file('3dollor-android-key.jks')
             storePassword '3dollor'
         }
+        debug {
+            keyAlias '3dollor'
+            keyPassword '3dollor'
+            storeFile file('3dollor-android-key.jks')
+            storePassword '3dollor'
+        }
     }
     defaultConfig {
         minSdkVersion 24

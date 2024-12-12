@@ -47,6 +47,14 @@
           }
         },
         {
+          "client_id": "415186049183-n6q0lcc1vmt5p6dvck066khule8tpt13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zion830.threedollars.dev",
+            "certificate_hash": "9bbc3bb993768dcf80fdb0149e2caec7925fa1f1"
+          }
+        },
+        {
           "client_id": "415186049183-8rar3pa91u5i51kq3gk4n4b074iufmio.apps.googleusercontent.com",
           "client_type": 3
         }
