@@ -1,6 +1,5 @@
 package com.threedollar.presentation
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.threedollar.common.base.BaseViewModel
@@ -93,7 +92,11 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     fun getPopularStores(criteria: String, district: String) {
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getPopularStores(criteria, district, "").collect {
+            communityRepository.getPopularStores(
+                criteria = criteria,
+                district = district.ifBlank { "SEOUL_ALL" },
+                cursor = ""
+            ).collect {
                 if (it.ok) {
                     val list = it.data?.content.orEmpty()
                     if (list.isEmpty()) {
