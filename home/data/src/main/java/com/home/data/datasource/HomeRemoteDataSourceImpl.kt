@@ -157,9 +157,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deleteImage(imageId)))
     }
 
-    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>> = flow {
-        emit(apiResult(serverApi.saveImages(images, storeId)))
-    }
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> = apiResult(serverApi.saveImages(images, storeId))
 
     override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>> = flow {
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))

@@ -67,7 +67,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
 
     private val _reviewSuccessEvent = MutableSharedFlow<Boolean>()
-    val reviewSuccessEvent : SharedFlow<Boolean> get() = _reviewSuccessEvent
+    val reviewSuccessEvent: SharedFlow<Boolean> get() = _reviewSuccessEvent
 
     init {
         getReportReasons()
@@ -146,10 +146,16 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
 
         viewModelScope.launch(coroutineExceptionHandler) {
             _uploadImageStatus.emit(true)
-            homeRepository.saveImages(images, storeId).collect {
+            val result = homeRepository.saveImages(
+                images = images,
+                storeId = storeId
+            )
+            if (result == null) {
+                _serverError.emit("사진 용량이 너무 커요ㅠㅠ")
+            } else {
                 getImage(storeId)
-                _uploadImageStatus.emit(false)
             }
+            _uploadImageStatus.emit(false)
         }
     }
 
@@ -209,8 +215,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                 homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
                     if (it.ok) {
                         _reviewSuccessEvent.emit(true)
-                    }
-                    else{
+                    } else {
                         _serverError.emit(it.message)
                     }
                 }

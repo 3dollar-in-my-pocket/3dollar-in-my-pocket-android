@@ -80,7 +80,7 @@ interface HomeRepository {
 
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
-    fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
+    suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>?
 
     fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
 

@@ -56,7 +56,7 @@ class HomeRepositoryImpl @Inject constructor(
 ) :
     HomeRepository {
     override fun getAroundStores(
-        distanceM:Double,
+        distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
@@ -201,8 +201,10 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = homeRemoteDataSource.deleteImage(imageId)
 
-    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>> =
-        homeRemoteDataSource.saveImages(images, storeId).map {
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>? = runCatching {
+        homeRemoteDataSource.saveImages(images, storeId)
+    }.fold(
+        onSuccess = {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.map { response -> response.asModel() },
@@ -210,7 +212,12 @@ class HomeRepositoryImpl @Inject constructor(
                 resultCode = it.resultCode,
                 error = it.error,
             )
+        },
+        onFailure = {
+            null
         }
+    )
+
 
     override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
         ImagePagingDataSource(storeId, serverApi)
