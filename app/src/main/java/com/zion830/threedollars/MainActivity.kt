@@ -93,7 +93,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     private fun initFlow() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     popupViewModel.popups.collect { popups ->
                         if (popups.isNotEmpty() && getCurrentDate() != sharedPrefUtils.getTodayNotPopupDate()) {
@@ -101,6 +101,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                         }
                     }
                 }
+            }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     popupViewModel.serverError.collect {
                         it?.let {
@@ -110,7 +112,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 }
                 launch {
                     GlobalEvent.logoutEvent.collect {
-                        if(it) {
+                        if (it) {
                             startActivity(Intent(this@MainActivity, SplashActivity::class.java))
                             finish()
                             GlobalEvent.resetLogoutEvent()
