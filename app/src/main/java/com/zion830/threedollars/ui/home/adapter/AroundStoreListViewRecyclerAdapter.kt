@@ -88,7 +88,7 @@ class AroundStoreListViewRecyclerAdapter(
 
 class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2?) {
-        binding.itemListViewAd.root.isVisible = advertisementModelV2 == null
+        binding.itemListViewAd.root.isVisible = false
         advertisementModelV2?.let {
             binding.root.onSingleClick { clickAdListener.onClick(advertisementModelV2) }
             binding.itemListViewAd.imgAd.loadImage(it.image.url)
