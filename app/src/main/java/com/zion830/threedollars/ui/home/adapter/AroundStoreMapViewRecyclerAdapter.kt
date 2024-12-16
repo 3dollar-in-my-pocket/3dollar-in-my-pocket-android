@@ -19,6 +19,7 @@ import com.google.android.gms.ads.AdView
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
+import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
@@ -54,14 +55,20 @@ class AroundStoreMapViewRecyclerAdapter(
         }
     }
 
-    fun getItemMarker(position: Int) = when (getItem(position)) {
-        is ContentModel -> {
-            val contentModel = (getItem(position) as ContentModel)
-            contentModel.markerModel
+    fun getItemMarker(position: Int): MarkerModel? {
+        if (position !in 0 until itemCount) {
+            return null
         }
+        return when (getItem(position)) {
 
-        else -> {
-            null
+            is ContentModel -> {
+                val contentModel = (getItem(position) as ContentModel)
+                contentModel.markerModel
+            }
+
+            else -> {
+                null
+            }
         }
     }
 
