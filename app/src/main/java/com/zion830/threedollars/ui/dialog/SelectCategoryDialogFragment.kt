@@ -201,7 +201,9 @@ class SelectCategoryDialogFragment :
                 launch {
                     popupViewModel.categoryIconAd.collect { advertisementModelV2List ->
                         advertisementModelV2List?.let {
-                            streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
+                            if (it.isNotEmpty()) {
+                                streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
+                            }
                         }
                     }
                 }
