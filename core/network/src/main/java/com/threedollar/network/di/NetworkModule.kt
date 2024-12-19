@@ -31,7 +31,7 @@ object NetworkModule {
     private const val KAKAO_SEARCH_URL = "https://dapi.kakao.com/"
     private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
     private const val BASE_URL: String = BuildConfig.BASE_URL
-    private const val TIME_OUT_SEC = 15L
+    private const val TIME_OUT_SEC = 5L
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)

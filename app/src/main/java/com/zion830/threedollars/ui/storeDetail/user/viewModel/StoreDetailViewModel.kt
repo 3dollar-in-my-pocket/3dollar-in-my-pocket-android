@@ -151,7 +151,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                 storeId = storeId
             )
             if (result == null) {
-                _serverError.emit("사진 용량이 너무 커요ㅠㅠ")
+                _serverError.emit("인터넷이 불안정해요.")
             } else {
                 getImage(storeId)
             }
