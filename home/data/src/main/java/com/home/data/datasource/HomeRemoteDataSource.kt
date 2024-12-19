@@ -32,7 +32,7 @@ import okhttp3.MultipartBody
 interface HomeRemoteDataSource {
 
     fun getAroundStores(
-        distanceM:Double,
+        distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
@@ -89,7 +89,7 @@ interface HomeRemoteDataSource {
 
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
-    fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>>
+    suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>>
 
     fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>>
 
