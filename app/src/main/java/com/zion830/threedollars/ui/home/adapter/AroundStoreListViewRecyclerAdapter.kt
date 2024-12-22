@@ -27,7 +27,6 @@ class AroundStoreListViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val clickAdListener:OnItemClickListener<AdvertisementModelV2>
 ) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
-    private var emptyAd: AdvertisementModelV2? = null
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ContentModel -> {
             VIEW_TYPE_STORE
@@ -55,7 +54,7 @@ class AroundStoreListViewRecyclerAdapter(
         }
 
         else -> {
-            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false),clickAdListener)
+            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
     }
 
@@ -69,14 +68,8 @@ class AroundStoreListViewRecyclerAdapter(
                 holder.bind(getItem(position) as AdvertisementModelV2)
             }
 
-            is NearStoreEmptyListViewViewHolder -> {
-                holder.bind(emptyAd)
-            }
+            is NearStoreEmptyListViewViewHolder -> {}
         }
-    }
-
-    fun setAd(advertisementModelV2: AdvertisementModelV2?) {
-        emptyAd = advertisementModelV2
     }
 
     companion object {
@@ -86,20 +79,7 @@ class AroundStoreListViewRecyclerAdapter(
     }
 }
 
-class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
-    fun bind(advertisementModelV2: AdvertisementModelV2?) {
-        binding.itemListViewAd.root.isVisible = false
-        advertisementModelV2?.let {
-            binding.root.onSingleClick { clickAdListener.onClick(advertisementModelV2) }
-            binding.itemListViewAd.imgAd.loadImage(it.image.url)
-            binding.itemListViewAd.tvAdTitle.text = it.title.content
-            binding.itemListViewAd.tvAdBody.text = it.subTitle.content
-            it.title.fontColor.let { if(it.isNotEmpty()) binding.itemListViewAd.tvAdBody.setTextColor(Color.parseColor(it)) }
-            it.subTitle.fontColor.let { if(it.isNotEmpty()) binding.itemListViewAd.tvAdBody.setTextColor(Color.parseColor(it)) }
-            it.background.color.let { if(it.isNotEmpty()) binding.itemListViewAd.constraintAd.setBackgroundColor(Color.parseColor(it)) }
-        }
-    }
-}
+class NearStoreEmptyListViewViewHolder(binding: ItemListViewEmptyBinding) : ViewHolder(binding.root)
 
 class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2) {
