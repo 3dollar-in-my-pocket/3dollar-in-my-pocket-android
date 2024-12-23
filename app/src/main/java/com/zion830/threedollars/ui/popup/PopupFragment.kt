@@ -110,12 +110,12 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {
-        @SuppressWarnings("deprecation")
-        @Override
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            if (!isAdded) return false // Fragment 상태 확인
+
             val intent = parse(url)
             return if (isIntent(url)) {
-                if (isExistInfo(intent) or isExistPackage(intent))
+                if (isExistInfo(intent) || isExistPackage(intent))
                     start(intent)
                 else
                     gotoMarket(intent)
@@ -161,8 +161,9 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
 
         }
 
-        private fun isExistPackage(intent: Intent?): Boolean =
-            intent != null && requireActivity().packageManager.getLaunchIntentForPackage(intent.`package`.toString()) != null
+        private fun isExistPackage(intent: Intent?): Boolean {
+            return intent != null && activity?.packageManager?.getLaunchIntentForPackage(intent.`package`.toString()) != null
+        }
 
         private fun parse(url: String): Intent? {
             return try {
@@ -187,6 +188,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             return true
         }
     }
+
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPopupBinding =
         FragmentPopupBinding.inflate(inflater, container, false)
