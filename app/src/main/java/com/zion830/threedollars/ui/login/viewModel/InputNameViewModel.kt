@@ -41,7 +41,7 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
     private val _isMarketing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isMarketing: StateFlow<Boolean> get() = _isMarketing
 
-    fun trySignUp() {
+    fun trySignUp(token: String) {
         if (userName.value.isNullOrBlank()) {
             _msgTextId.value = R.string.name_empty
             return
@@ -52,17 +52,11 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
             return
         }
 
-        val token = if (latestSocialType.value!!.socialName == LoginType.KAKAO.socialName) {
-            LegacySharedPrefUtils.getKakaoAccessToken()
-        } else {
-            LegacySharedPrefUtils.getGoogleToken()
-        }
-
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val request = SignUpRequest(
                 userName.value!!,
                 latestSocialType.value!!.socialName,
-                token.toString()
+                token
             )
             val signUpResult = userDataSource.signUp(request)
             if (signUpResult.isSuccessful) {
