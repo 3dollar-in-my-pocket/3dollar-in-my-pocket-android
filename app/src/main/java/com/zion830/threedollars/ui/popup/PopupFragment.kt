@@ -84,8 +84,6 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             }
             webView.apply {
                 settings.apply {
-                    webViewClient = WebViewClient()
-                    webChromeClient = WebChromeClient()
                     javaScriptEnabled = true // 웹페이지 자바스크립트 허용 여부
                     setSupportMultipleWindows(false) // 새창 띄우기 허용 여부
                     javaScriptCanOpenWindowsAutomatically = false // 자바스크립트 새창 띄우기(멀티뷰) 허용 여부
@@ -101,6 +99,8 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                     setLayerType(View.LAYER_TYPE_HARDWARE, null)
                     mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                 }
+                webViewClient = WebViewClient()
+                webChromeClient = WebChromeClient()
             }
         }
     }
@@ -110,12 +110,12 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {
-        @SuppressWarnings("deprecation")
-        @Override
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            if (!isAdded || activity == null) return false // Fragment 연결 상태 확인
+
             val intent = parse(url)
             return if (isIntent(url)) {
-                if (isExistInfo(intent) or isExistPackage(intent))
+                if (isExistInfo(intent) || isExistPackage(intent))
                     start(intent)
                 else
                     gotoMarket(intent)
@@ -125,15 +125,14 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                 false
         }
 
-
         @TargetApi(Build.VERSION_CODES.N)
-        @Override
         override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-            val url = request.url.toString()
+            if (!isAdded || activity == null) return false // Fragment 연결 상태 확인
 
+            val url = request.url.toString()
             val intent = parse(url)
             return if (isIntent(url)) {
-                if (isExistInfo(intent) or isExistPackage(intent))
+                if (isExistInfo(intent) || isExistPackage(intent))
                     start(intent)
                 else
                     gotoMarket(intent)
@@ -158,11 +157,11 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             } catch (e: PackageManager.NameNotFoundException) {
                 false
             }
-
         }
 
-        private fun isExistPackage(intent: Intent?): Boolean =
-            intent != null && requireActivity().packageManager.getLaunchIntentForPackage(intent.`package`.toString()) != null
+        private fun isExistPackage(intent: Intent?): Boolean {
+            return intent != null && isAdded && activity?.packageManager?.getLaunchIntentForPackage(intent.`package`.toString()) != null
+        }
 
         private fun parse(url: String): Intent? {
             return try {
@@ -170,15 +169,16 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             } catch (e: URISyntaxException) {
                 null
             }
-
         }
 
         private fun start(intent: Intent?): Boolean {
+            if (!isAdded || activity == null) return false
             intent?.let { startActivity(it) }
             return true
         }
 
         private fun gotoMarket(intent: Intent?): Boolean {
+            if (!isAdded || activity == null) return false
             intent?.let {
                 start(Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse("market://details?id=${it.`package`}")
