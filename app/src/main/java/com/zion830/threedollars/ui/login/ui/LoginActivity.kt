@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -96,25 +97,52 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     private fun loginWithGoogle(account: GoogleSignInAccount?) {
         try {
             lifecycleScope.launch(Dispatchers.IO) {
-                val token =
-                    GoogleAuthUtil.getToken(
+                try {
+                    val token = GoogleAuthUtil.getToken(
                         GlobalApplication.getContext(),
                         account?.account!!,
                         "oauth2:https://www.googleapis.com/auth/plus.me",
                     )
                 LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
+                } catch (e: UserRecoverableAuthException) {
+                    withContext(Dispatchers.Main) {
+                        e.intent?.let { startActivityForResult(it, GOOGLE_SIGN_IN) }
+                    }
+                }
             }
         } catch (e: Exception) {
+            e.printStackTrace()
+            showToast(R.string.login_failed)
         }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GOOGLE_SIGN_IN) {
-            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
+        if (requestCode == GOOGLE_SIGN_IN && resultCode == RESULT_OK) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                    if (account != null && account.idToken != null) {
+                        val token = GoogleAuthUtil.getToken(
+                            GlobalApplication.getContext(),
+                            account.account!!,
+                            "oauth2:https://www.googleapis.com/auth/plus.me",
+                        )
+                        LegacySharedPrefUtils.saveGoogleToken(token)
+                        viewModel.tryLogin(LoginType.GOOGLE, token)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        showToast(R.string.login_failed)
+                    }
+                }
+            }
         }
     }
+
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>?) {
         try {
