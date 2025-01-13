@@ -103,9 +103,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                         account?.account!!,
                         "oauth2:https://www.googleapis.com/auth/plus.me",
                     )
-                    LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-                    LegacySharedPrefUtils.saveGoogleToken(token)
-                    viewModel.tryLogin(LoginType.GOOGLE, token)
+                LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
+                viewModel.tryLogin(LoginType.GOOGLE, token)
                 } catch (e: UserRecoverableAuthException) {
                     withContext(Dispatchers.Main) {
                         e.intent?.let { startActivityForResult(it, GOOGLE_SIGN_IN) }
@@ -164,7 +163,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
         UserApiClient.instance.me { user, _ ->
             user?.let {
                 Log.d(localClassName, it.groupUserToken.toString())
-                LegacySharedPrefUtils.saveGoogleToken(token.accessToken)
                 viewModel.tryLogin(LoginType.KAKAO, token.accessToken)
             }
         }
@@ -220,8 +218,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                 Log.e(localClassName, "로그인 실패", error)
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
-                LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                LegacySharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
                 tryLoginBySocialType(token)
             }

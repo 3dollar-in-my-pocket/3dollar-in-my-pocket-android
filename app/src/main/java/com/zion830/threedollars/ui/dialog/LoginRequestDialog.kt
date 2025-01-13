@@ -98,7 +98,6 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                         "oauth2:https://www.googleapis.com/auth/plus.me"
                     )
                 LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-                LegacySharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
@@ -131,7 +130,6 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     private fun tryLoginBySocialType(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
-                LegacySharedPrefUtils.saveGoogleToken(token.accessToken)
                 viewModel.tryLogin(LoginType.KAKAO, token.accessToken)
             }
         }
@@ -187,7 +185,6 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                 showToast(R.string.error_no_kakao_login)
             } else if (token != null) {
                 LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                LegacySharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 tryLoginBySocialType(token)
             }
         }
