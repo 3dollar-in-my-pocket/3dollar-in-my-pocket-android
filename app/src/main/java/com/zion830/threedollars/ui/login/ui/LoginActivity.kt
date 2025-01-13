@@ -130,7 +130,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                             account.account!!,
                             "oauth2:https://www.googleapis.com/auth/plus.me",
                         )
-                        LegacySharedPrefUtils.saveGoogleToken(token)
                         viewModel.tryLogin(LoginType.GOOGLE, token)
                     }
                 } catch (e: Exception) {
