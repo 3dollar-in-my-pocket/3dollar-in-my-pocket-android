@@ -13,6 +13,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemListViewAdBinding
@@ -146,7 +147,7 @@ class NearStoreListViewViewHolder(
     private fun ItemListViewBinding.setText(item: ContentModel) {
         ratingTextView.text = (item.extraModel.rating ?: 0).toString()
         tagTextView.text = item.storeModel.categories.joinToString(" ") { "#${it.name}" }
-        distanceTextView.text = if (item.distanceM < 1000) "${item.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        distanceTextView.text = root.context.getDistanceText(item.distanceM)
         storeNameTextView.text = item.storeModel.storeName
         reviewTextView.text = "${item.extraModel.reviewsCount}개"
     }

@@ -30,6 +30,7 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
 import com.threedollar.common.utils.Constants.CLICK_SNS
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
@@ -276,8 +277,7 @@ class BossStoreDetailActivity :
                                 .into(binding.storeImageView)
 
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
-                            distanceTextView.text =
-                                if (bossStoreDetailModel.distanceM < 1000) "${bossStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+                            distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
                             reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             snsTextView.text = bossStoreDetailModel.store.snsUrl

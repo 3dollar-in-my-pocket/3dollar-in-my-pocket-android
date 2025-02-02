@@ -282,7 +282,6 @@
     <string name="fragment_home_boss_filter">👨‍🍳 사장님 직영점만</string>
     <string name="fragment_home_list_view">리스트뷰</string>
     <string name="fragment_home_map_view">지도뷰</string>
-    <string name="more_1km">1km +</string>
     <string name="only_boss">사장님 직영</string>
     <string name="resent_visit_count">최근 방문 %d명</string>
     <string name="visit_certified_store">방문 인증 가게</string>
