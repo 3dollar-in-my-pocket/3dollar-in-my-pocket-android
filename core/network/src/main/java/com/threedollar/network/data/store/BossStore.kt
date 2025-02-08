@@ -23,6 +23,8 @@ data class BossStore(
     val name: String? = "",
     @SerializedName("snsUrl")
     val snsUrl: String? = "",
+    @SerializedName("contactsNumbers")
+    val contactsNumbers: List<ContactsNumber>? = listOf(),
     @SerializedName("storeId")
     val storeId: String? = "",
     @SerializedName("updatedAt")

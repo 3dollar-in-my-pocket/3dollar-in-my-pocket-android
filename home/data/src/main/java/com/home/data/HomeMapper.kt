@@ -305,6 +305,7 @@ fun BossStore.asModel() = BossStoreModel(
     snsUrl = snsUrl,
     storeId = storeId ?: "",
     updatedAt = updatedAt ?: "",
+    contactsNumber = contactsNumbers?.firstOrNull()?.number,
     isOwner = isOwner ?: false,
     accountNumbers = accountNumbers?.map { it.asModel() } ?: listOf(),
 )

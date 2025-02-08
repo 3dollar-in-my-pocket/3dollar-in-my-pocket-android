@@ -358,7 +358,6 @@
                             android:layout_height="wrap_content"
                             android:text="@string/sns"
                             android:textColor="@color/gray100"
-                            app:layout_constraintBottom_toTopOf="@id/ownerOneWordTitleTextView"
                             app:layout_constraintEnd_toStartOf="@id/snsTextView"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -378,6 +377,32 @@
                             tools:text="https://www.instagram.com/merl..." />
 
                         <TextView
+                            android:id="@+id/phoneTitleTextView"
+                            style="@style/apple_gothic_bold.size_12sp"
+                            android:layout_width="0dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/phone_number"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintEnd_toStartOf="@id/phoneTextView"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/snsTextView"/>
+
+                        <TextView
+                            android:id="@+id/phoneTextView"
+                            style="@style/apple_gothic_medium.size_12sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/pink"
+                            app:layout_constraintBottom_toBottomOf="@id/phoneTitleTextView"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/phoneTitleTextView"
+                            app:layout_constraintTop_toTopOf="@id/phoneTitleTextView"
+                            tools:text="010-4425-8447" />
+
+                        <TextView
                             android:id="@+id/ownerOneWordTitleTextView"
                             style="@style/apple_gothic_bold.size_12sp"
                             android:layout_width="wrap_content"
@@ -387,7 +412,7 @@
                             android:textColor="@color/gray100"
                             app:layout_constraintBottom_toTopOf="@id/ownerOneWordTitleTextView"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/snsTitleTextView" />
+                            app:layout_constraintTop_toBottomOf="@id/phoneTextView" />
 
 
                         <TextView
