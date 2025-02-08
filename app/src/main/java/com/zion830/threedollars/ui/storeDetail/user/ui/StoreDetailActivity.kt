@@ -46,6 +46,7 @@ import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.ext.textPartTypeface
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.getDistanceText
 import com.threedollar.common.utils.toDefaultInt
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -545,8 +546,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
         binding.storeNameTextView.text = userStoreDetailModel.store.name
         binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator.name)
-        binding.distanceTextView.text =
-            if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        binding.distanceTextView.text = getDistanceText(userStoreDetailModel.distanceM)
         binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
         binding.visitTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)

@@ -13,6 +13,7 @@ data class BossStoreModel(
     val menuModels: List<MenuModel> = listOf(),
     val name: String = "",
     val snsUrl: String? = "",
+    val contactsNumber: String? = "",
     val storeId: String = "",
     val updatedAt: String = "",
     val isOwner: Boolean = false,

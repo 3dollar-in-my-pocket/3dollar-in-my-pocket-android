@@ -2,4 +2,5 @@
 <resources>
     <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
     <string name="update_at">%s 업데이트</string>
+    <string name="more_10km">10km +</string>
 </resources>

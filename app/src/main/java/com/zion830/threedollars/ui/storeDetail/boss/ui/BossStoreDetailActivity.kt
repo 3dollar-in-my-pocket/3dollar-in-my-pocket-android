@@ -29,7 +29,9 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
+import com.threedollar.common.utils.Constants.CLICK_NUMBER
 import com.threedollar.common.utils.Constants.CLICK_SNS
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
@@ -189,6 +191,16 @@ class BossStoreDetailActivity :
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
         }
+        binding.phoneTextView.onSingleClick {
+            if (viewModel.bossStoreDetailModel.value.store.contactsNumber.isNotNullOrEmpty()) {
+                val bundle = Bundle().apply {
+                    putString("screen", "boss_store_detail")
+                    putString("store_id", storeId)
+                }
+                EventTracker.logEvent(CLICK_NUMBER, bundle)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("tel://${viewModel.bossStoreDetailModel.value.store.contactsNumber}")))
+            }
+        }
         binding.directionsButton.onSingleClick {
             showDirectionBottomDialog()
         }
@@ -276,11 +288,11 @@ class BossStoreDetailActivity :
                                 .into(binding.storeImageView)
 
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
-                            distanceTextView.text =
-                                if (bossStoreDetailModel.distanceM < 1000) "${bossStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+                            distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
                             reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
+                            phoneTextView.text = bossStoreDetailModel.store.contactsNumber
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
                             feedbackCountTextView.text =
                                 getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })

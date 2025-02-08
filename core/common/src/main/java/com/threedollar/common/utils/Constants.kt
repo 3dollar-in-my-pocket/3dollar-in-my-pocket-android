@@ -80,6 +80,7 @@ object Constants {
 
     // boss_store_detail
     const val CLICK_SNS = "click_sns"
+    const val CLICK_NUMBER = "click_number"
 
     // write_address
     const val CLICK_SET_ADDRESS = "click_set_address"
