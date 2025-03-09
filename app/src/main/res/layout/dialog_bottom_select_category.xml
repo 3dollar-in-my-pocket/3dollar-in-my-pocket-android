@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/apple_gothic_semi_bold.size_20sp"
+            style="@style/apple_gothic_semi_bold.size_20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
@@ -91,7 +91,7 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            style="@style/apple_gothic_bold.size_16sp"
+            style="@style/apple_gothic_bold.size_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
@@ -112,7 +112,7 @@
             tools:listitem="@layout/item_street_category_btn" />
 
         <TextView
-            style="@style/apple_gothic_bold.size_16sp"
+            style="@style/apple_gothic_bold.size_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"

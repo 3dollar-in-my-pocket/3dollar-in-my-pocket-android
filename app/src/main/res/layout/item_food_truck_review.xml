@@ -9,7 +9,7 @@
 
     <CheckBox
         android:id="@+id/reviewCheckBox"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:button="@null"

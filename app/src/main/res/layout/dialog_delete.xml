@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/tv_title"
-        style="@style/apple_gothic_semi_bold.size_20sp"
+        style="@style/apple_gothic_semi_bold.size_20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/request_delete_title"
@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/tv_title2"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -46,7 +46,7 @@
 
         <RadioButton
             android:id="@+id/btn_reason1"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -62,7 +62,7 @@
 
         <RadioButton
             android:id="@+id/btn_reason2"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -78,7 +78,7 @@
 
         <RadioButton
             android:id="@+id/btn_reason3"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -95,7 +95,7 @@
 
     <Button
         android:id="@+id/btn_finish"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"

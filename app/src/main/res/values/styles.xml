@@ -84,13 +84,13 @@
         <item name="android:textAppearanceLargePopupMenu">@style/PopupMenuTextStyle</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/PopupMenuTextStyle</item>
         <item name="android:fontFamily">@font/app_font</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="PopupMenuTextStyle" parent="TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
         <item name="android:textColor">#727272</item>
         <item name="android:fontFamily">@font/app_font</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
     <style name="TransparentDialog">
@@ -126,61 +126,104 @@
         <item name="fontFamily">@font/apple_gothic_bold</item>
     </style>
 
+    <style name="pretendard_medium" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="pretendard_bold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
 
     <!--- regular font styles -->
-    <style name="apple_gothic_regular.size_14sp">
-        <item name="android:textSize">14sp</item>
+    <style name="apple_gothic_regular.size_14dp">
+        <item name="android:textSize">14dp</item>
     </style>
 
-    <style name="apple_gothic_regular.size_16sp">
-        <item name="android:textSize">16sp</item>
+    <style name="apple_gothic_regular.size_16dp">
+        <item name="android:textSize">16dp</item>
     </style>
 
-    <style name="apple_gothic_regular.size_24sp">
-        <item name="android:textSize">24sp</item>
+    <style name="apple_gothic_regular.size_24dp">
+        <item name="android:textSize">24dp</item>
     </style>
 
-    <style name="apple_gothic_regular.size_30sp">
-        <item name="android:textSize">30sp</item>
+    <style name="apple_gothic_regular.size_30dp">
+        <item name="android:textSize">30dp</item>
     </style>
 
     <!--- medium font styles -->
-    <style name="apple_gothic_medium.size_10sp">
-        <item name="android:textSize">10sp</item>
+    <style name="apple_gothic_medium.size_10dp">
+        <item name="android:textSize">10dp</item>
     </style>
 
-    <style name="apple_gothic_medium.size_12sp">
-        <item name="android:textSize">12sp</item>
+    <style name="apple_gothic_medium.size_12dp">
+        <item name="android:textSize">12dp</item>
     </style>
 
-    <style name="apple_gothic_medium.size_16sp">
-        <item name="android:textSize">16sp</item>
+    <style name="apple_gothic_medium.size_16dp">
+        <item name="android:textSize">16dp</item>
     </style>
 
     <!--- semi bold font styles -->
-    <style name="apple_gothic_semi_bold.size_14sp">
-        <item name="android:textSize">14sp</item>
+    <style name="apple_gothic_semi_bold.size_14dp">
+        <item name="android:textSize">14dp</item>
     </style>
 
-    <style name="apple_gothic_semi_bold.size_20sp">
-        <item name="android:textSize">20sp</item>
+    <style name="apple_gothic_semi_bold.size_20dp">
+        <item name="android:textSize">20dp</item>
     </style>
 
     <!--- bold font styles -->
-    <style name="apple_gothic_bold.size_12sp">
-        <item name="android:textSize">12sp</item>
+    <style name="apple_gothic_bold.size_12dp">
+        <item name="android:textSize">12dp</item>
     </style>
 
-    <style name="apple_gothic_bold.size_16sp">
-        <item name="android:textSize">16sp</item>
+    <style name="apple_gothic_bold.size_16dp">
+        <item name="android:textSize">16dp</item>
     </style>
 
-    <style name="apple_gothic_bold.size_24sp">
-        <item name="android:textSize">24sp</item>
+    <style name="apple_gothic_bold.size_24dp">
+        <item name="android:textSize">24dp</item>
     </style>
 
-    <style name="apple_gothic_bold.size_30sp">
-        <item name="android:textSize">30sp</item>
+    <style name="apple_gothic_bold.size_30dp">
+        <item name="android:textSize">30dp</item>
+    </style>
+
+
+    <!--- medium font styles -->
+    <style name="pretendard_medium.size_10dp">
+        <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="pretendard_medium.size_12dp">
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="pretendard_medium.size_14dp">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="pretendard_medium.size_16dp">
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <!--- bold font styles -->
+    <style name="pretendard_bold.size_12dp">
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="pretendard_bold.size_16dp">
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="pretendard_bold.size_24dp">
+        <item name="android:textSize">24dp</item>
+    </style>
+
+    <style name="pretendard_bold.size_30dp">
+        <item name="android:textSize">30dp</item>
     </style>
 
     <style name="CustomBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">

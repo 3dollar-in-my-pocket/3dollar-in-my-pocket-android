@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/tagTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
@@ -40,7 +40,7 @@
 
         <TextView
             android:id="@+id/storeNameTextView"
-            style="@style/apple_gothic_bold.size_16sp"
+            style="@style/apple_gothic_bold.size_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
@@ -63,7 +63,7 @@
 
         <TextView
             android:id="@+id/bossOrResentVisitTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
@@ -89,7 +89,7 @@
 
             <TextView
                 android:id="@+id/reviewTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="2dp"
@@ -106,7 +106,7 @@
 
             <TextView
                 android:id="@+id/ratingTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="2dp"
@@ -124,7 +124,7 @@
 
             <TextView
                 android:id="@+id/distanceTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="2dp"

@@ -29,7 +29,7 @@
 
             <TextView
                 android:id="@+id/tv_address"
-                style="@style/apple_gothic_semi_bold.size_14sp"
+                style="@style/apple_gothic_semi_bold.size_14dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -81,7 +81,7 @@
 
                 <TextView
                     android:id="@+id/allMenuTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rect_white_radius10_stroke_gray30"
@@ -95,7 +95,7 @@
 
                 <TextView
                     android:id="@+id/filterConditionsTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -121,14 +121,14 @@
                     app:layout_constraintTop_toBottomOf="@id/filterConditionsTextView">
 
                     <TextView
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/speech_bubble_title"
                         android:textColor="@color/color_white" />
 
                     <TextView
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -136,7 +136,7 @@
                         android:textColor="@color/color_white" />
 
                     <TextView
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/speech_bubble_body_2"
@@ -145,7 +145,7 @@
 
                 <TextView
                     android:id="@+id/filterTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -160,7 +160,7 @@
 
                 <TextView
                     android:id="@+id/bossFilterTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -176,7 +176,7 @@
 
         <TextView
             android:id="@+id/tv_retry_search"
-            style="@style/apple_gothic_bold.size_12sp"
+            style="@style/apple_gothic_bold.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
@@ -195,7 +195,7 @@
 
         <TextView
             android:id="@+id/listViewTextView"
-            style="@style/apple_gothic_bold.size_12sp"
+            style="@style/apple_gothic_bold.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"

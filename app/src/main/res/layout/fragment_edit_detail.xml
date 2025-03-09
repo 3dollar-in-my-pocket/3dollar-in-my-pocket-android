@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/titleTextView"
-        style="@style/apple_gothic_bold.size_16sp"
+        style="@style/apple_gothic_bold.size_16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -87,7 +87,7 @@
 
                     <TextView
                         android:id="@+id/addressTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/store_location"
@@ -97,7 +97,7 @@
 
                     <TextView
                         android:id="@+id/addressTextView"
-                        style="@style/apple_gothic_regular.size_14sp"
+                        style="@style/apple_gothic_regular.size_14dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -110,7 +110,7 @@
 
                     <TextView
                         android:id="@+id/editAddressTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
@@ -130,7 +130,7 @@
 
                     <TextView
                         android:id="@+id/storeNameTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/store_name"
@@ -140,7 +140,7 @@
 
                     <EditText
                         android:id="@+id/storeNameEditTextView"
-                        style="@style/apple_gothic_regular.size_14sp"
+                        style="@style/apple_gothic_regular.size_14dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -165,7 +165,7 @@
 
                     <TextView
                         android:id="@+id/storeTypeTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/store_type"
@@ -193,7 +193,7 @@
 
                         <RadioButton
                             android:id="@+id/rb_type1"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -209,7 +209,7 @@
 
                         <RadioButton
                             android:id="@+id/rb_type2"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -226,7 +226,7 @@
 
                         <RadioButton
                             android:id="@+id/rb_type3"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -251,7 +251,7 @@
 
                     <TextView
                         android:id="@+id/paymentsTypeTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/payment_type"
@@ -261,7 +261,7 @@
 
                     <TextView
                         android:id="@+id/paymentsTypeSubTitleTextView"
-                        style="@style/apple_gothic_regular.size_14sp"
+                        style="@style/apple_gothic_regular.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -271,7 +271,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        style="@style/apple_gothic_bold.size_12sp"
+                        style="@style/apple_gothic_bold.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -282,7 +282,7 @@
 
                     <CheckBox
                         android:id="@+id/cb_type1"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
@@ -301,7 +301,7 @@
 
                     <CheckBox
                         android:id="@+id/cb_type2"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -321,7 +321,7 @@
 
                     <CheckBox
                         android:id="@+id/cb_type3"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -348,7 +348,7 @@
 
                     <TextView
                         android:id="@+id/appearanceDayTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/show_type"
@@ -358,7 +358,7 @@
 
                     <TextView
                         android:id="@+id/appearanceDaySubTitleTextView"
-                        style="@style/apple_gothic_regular.size_14sp"
+                        style="@style/apple_gothic_regular.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -368,7 +368,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        style="@style/apple_gothic_bold.size_12sp"
+                        style="@style/apple_gothic_bold.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -388,7 +388,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_mon"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginEnd="5dp"
@@ -400,7 +400,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_tue"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
@@ -413,7 +413,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_wen"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
@@ -426,7 +426,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_thur"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
@@ -439,7 +439,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_fri"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
@@ -452,7 +452,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_sat"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginLeft="5dp"
@@ -465,7 +465,7 @@
 
                         <ToggleButton
                             android:id="@+id/tb_sun"
-                            style="@style/apple_gothic_semi_bold.size_14sp"
+                            style="@style/apple_gothic_semi_bold.size_14dp"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:layout_marginStart="5dp"
@@ -485,7 +485,7 @@
 
                     <TextView
                         android:id="@+id/openingHourTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/opening_hour"
@@ -495,7 +495,7 @@
 
                     <TextView
                         android:id="@+id/openingHourSubTitleTextView"
-                        style="@style/apple_gothic_regular.size_14sp"
+                        style="@style/apple_gothic_regular.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -505,7 +505,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        style="@style/apple_gothic_bold.size_12sp"
+                        style="@style/apple_gothic_bold.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -523,7 +523,7 @@
 
                         <TextView
                             android:id="@+id/openingHourStartTimeTextView"
-                            style="@style/apple_gothic_regular.size_14sp"
+                            style="@style/apple_gothic_regular.size_14dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -533,7 +533,7 @@
                             android:textColor="@color/gray100" />
 
                         <TextView
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -542,7 +542,7 @@
 
                         <TextView
                             android:id="@+id/openingHourEndTimeTextView"
-                            style="@style/apple_gothic_regular.size_14sp"
+                            style="@style/apple_gothic_regular.size_14dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
@@ -553,7 +553,7 @@
                             android:textColor="@color/gray100" />
 
                         <TextView
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -571,7 +571,7 @@
 
                     <TextView
                         android:id="@+id/categoryTitleTextView"
-                        style="@style/apple_gothic_semi_bold.size_14sp"
+                        style="@style/apple_gothic_semi_bold.size_14dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
@@ -582,7 +582,7 @@
 
                     <TextView
                         android:id="@+id/btn_clear_category"
-                        style="@style/apple_gothic_bold.size_12sp"
+                        style="@style/apple_gothic_bold.size_12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="25dp"
@@ -638,7 +638,7 @@
 
                 <Button
                     android:id="@+id/submitButton"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"

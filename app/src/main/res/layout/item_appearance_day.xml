@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/dayTextView"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gray100"
@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/timeTextView"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gray70"
@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/locationTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"

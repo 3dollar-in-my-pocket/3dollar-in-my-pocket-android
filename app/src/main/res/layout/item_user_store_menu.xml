@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/categoryTextView"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -30,7 +30,7 @@
 
     <TextView
         android:id="@+id/menuNameTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
@@ -59,7 +59,7 @@
 
     <TextView
         android:id="@+id/menuPriceTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

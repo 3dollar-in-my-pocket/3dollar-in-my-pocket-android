@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/tv_title"
-        style="@style/apple_gothic_semi_bold.size_20sp"
+        style="@style/apple_gothic_semi_bold.size_20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/recommend_store"
@@ -46,7 +46,7 @@
 
     <EditText
         android:id="@+id/et_content"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="0dp"
         android:layout_height="85dp"
         android:layout_marginTop="12dp"
@@ -66,7 +66,7 @@
 
     <Button
         android:id="@+id/btn_finish"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"

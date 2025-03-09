@@ -57,7 +57,7 @@
 
             <TextView
                 android:id="@+id/creatorTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -70,7 +70,7 @@
 
             <TextView
                 android:id="@+id/storeNameTextView"
-                style="@style/apple_gothic_semi_bold.size_20sp"
+                style="@style/apple_gothic_semi_bold.size_20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -94,7 +94,7 @@
 
             <TextView
                 android:id="@+id/visitTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -119,7 +119,7 @@
 
                 <TextView
                     android:id="@+id/reviewTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
@@ -136,7 +136,7 @@
 
                 <TextView
                     android:id="@+id/distanceTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
@@ -167,7 +167,7 @@
 
                     <Button
                         android:id="@+id/favoriteButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -193,7 +193,7 @@
 
                     <Button
                         android:id="@+id/shareButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -219,7 +219,7 @@
 
                     <Button
                         android:id="@+id/directionsButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -245,7 +245,7 @@
 
                     <Button
                         android:id="@+id/reviewButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -272,7 +272,7 @@
 
             <TextView
                 android:id="@+id/addressTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -320,7 +320,7 @@
 
                 <TextView
                     android:id="@+id/visitHistoryTitleTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/visit_history_title"
@@ -330,7 +330,7 @@
 
                 <TextView
                     android:id="@+id/smileTextView"
-                    style="@style/apple_gothic_regular.size_14sp"
+                    style="@style/apple_gothic_regular.size_14dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -349,7 +349,7 @@
 
                 <TextView
                     android:id="@+id/sadTextView"
-                    style="@style/apple_gothic_regular.size_14sp"
+                    style="@style/apple_gothic_regular.size_14dp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -382,7 +382,7 @@
 
                     <TextView
                         android:id="@+id/visitHistoryNotiTitleTextView"
-                        style="@style/apple_gothic_bold.size_16sp"
+                        style="@style/apple_gothic_bold.size_16dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -390,7 +390,7 @@
                         android:textColor="@color/color_white" />
 
                     <TextView
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -432,7 +432,7 @@
 
                         <TextView
                             android:id="@+id/visitExtraTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
@@ -456,7 +456,7 @@
 
                 <TextView
                     android:id="@+id/storeInfoTitleTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/store_info"
@@ -466,7 +466,7 @@
 
                 <TextView
                     android:id="@+id/storeInfoUpdatedAtTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -477,7 +477,7 @@
 
                 <TextView
                     android:id="@+id/editStoreInfoButton"
-                    style="@style/apple_gothic_bold.size_12sp"
+                    style="@style/apple_gothic_bold.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/edit_info"
@@ -507,7 +507,7 @@
 
                         <TextView
                             android:id="@+id/storeTypeTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/store_type"
@@ -517,7 +517,7 @@
 
                         <TextView
                             android:id="@+id/storeTypeTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/gray70"
@@ -526,7 +526,7 @@
 
                         <TextView
                             android:id="@+id/showTypeTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="11dp"
@@ -546,7 +546,7 @@
 
                             <TextView
                                 android:id="@+id/mondayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -557,7 +557,7 @@
 
                             <TextView
                                 android:id="@+id/tuesdayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -568,7 +568,7 @@
 
                             <TextView
                                 android:id="@+id/wednesdayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -579,7 +579,7 @@
 
                             <TextView
                                 android:id="@+id/thursdayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -590,7 +590,7 @@
 
                             <TextView
                                 android:id="@+id/fridayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -601,7 +601,7 @@
 
                             <TextView
                                 android:id="@+id/saturdayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -612,7 +612,7 @@
 
                             <TextView
                                 android:id="@+id/sundayTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="1dp"
@@ -625,7 +625,7 @@
 
                         <TextView
                             android:id="@+id/openingHourTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="11dp"
@@ -636,7 +636,7 @@
 
                         <TextView
                             android:id="@+id/openingHourTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="4dp"
@@ -649,7 +649,7 @@
 
                         <TextView
                             android:id="@+id/paymentTypeTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="11dp"
@@ -669,7 +669,7 @@
 
                             <TextView
                                 android:id="@+id/cashTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="4dp"
@@ -681,7 +681,7 @@
 
                             <TextView
                                 android:id="@+id/cardTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="4dp"
@@ -693,7 +693,7 @@
 
                             <TextView
                                 android:id="@+id/bankingTextView"
-                                style="@style/apple_gothic_medium.size_12sp"
+                                style="@style/apple_gothic_medium.size_12dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="4dp"
@@ -753,7 +753,7 @@
 
                 <TextView
                     android:id="@+id/storePhotoTitleTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/store_photo"
@@ -763,7 +763,7 @@
 
                 <TextView
                     android:id="@+id/photoSummitTextView"
-                    style="@style/apple_gothic_bold.size_12sp"
+                    style="@style/apple_gothic_bold.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/photo_summit"
@@ -799,7 +799,7 @@
 
                 <TextView
                     android:id="@+id/reviewTitleTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray100"
@@ -809,7 +809,7 @@
 
                 <TextView
                     android:id="@+id/writeReviewTextView"
-                    style="@style/apple_gothic_bold.size_12sp"
+                    style="@style/apple_gothic_bold.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/review_write"
@@ -839,7 +839,7 @@
 
                         <TextView
                             android:id="@+id/reviewRatingAvgTitleTextView"
-                            style="@style/apple_gothic_medium.size_10sp"
+                            style="@style/apple_gothic_medium.size_10dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rating_avg"
@@ -869,7 +869,7 @@
 
                         <TextView
                             android:id="@+id/reviewRatingAvgTextView"
-                            style="@style/apple_gothic_semi_bold.size_20sp"
+                            style="@style/apple_gothic_semi_bold.size_20dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
@@ -921,7 +921,7 @@
 
         <Button
             android:id="@+id/bottomFavoriteButton"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -937,7 +937,7 @@
 
         <Button
             android:id="@+id/addCertificationButton"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

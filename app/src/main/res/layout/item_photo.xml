@@ -43,13 +43,13 @@
 
         <TextView
             android:id="@+id/tv_more_count"
-            style="@style/apple_gothic_bold.size_12sp"
+            style="@style/apple_gothic_bold.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/pink" />
 
         <TextView
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
