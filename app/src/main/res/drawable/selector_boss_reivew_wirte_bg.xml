@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/rect_radius_12_gray10" />
+    <item android:drawable="@drawable/rect_radius_12_gray10_stroke_pink" android:state_active="true" android:state_enabled="true" />
+</selector>

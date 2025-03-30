@@ -218,6 +218,10 @@
         <item name="android:textSize">16dp</item>
     </style>
 
+    <style name="pretendard_bold.size_20dp">
+        <item name="android:textSize">20dp</item>
+    </style>
+
     <style name="pretendard_bold.size_24dp">
         <item name="android:textSize">24dp</item>
     </style>

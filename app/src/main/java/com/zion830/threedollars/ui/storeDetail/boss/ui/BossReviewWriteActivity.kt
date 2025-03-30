@@ -24,7 +24,7 @@ import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BossReviewActivity :
+class BossReviewWriteActivity :
     BaseActivity<ActivityFoodTruckReviewBinding, BossStoreDetailViewModel>({ ActivityFoodTruckReviewBinding.inflate(it) }) {
 
     @Inject
@@ -85,7 +85,7 @@ class BossReviewActivity :
                     viewModel.postFeedback.collect {
                         if (it?.ok == true) {
                             showCustomBlackToast(getString(R.string.review_toast))
-                            val intent = BossStoreDetailActivity.getIntent(this@BossReviewActivity, storeId)
+                            val intent = BossStoreDetailActivity.getIntent(this@BossReviewWriteActivity, storeId)
                             startActivity(intent)
                             finish()
                         }
@@ -106,7 +106,7 @@ class BossReviewActivity :
         private const val KEY_STORE_ID = "KEY_STORE_ID"
 
         fun getIntent(context: Context, storeId: String) =
-            Intent(context, BossReviewActivity::class.java).apply {
+            Intent(context, BossReviewWriteActivity::class.java).apply {
                 putExtra(KEY_STORE_ID, storeId)
             }
     }

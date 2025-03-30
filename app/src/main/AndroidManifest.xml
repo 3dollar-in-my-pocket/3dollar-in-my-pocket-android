@@ -110,7 +110,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewActivity"
+            android:name=".ui.storeDetail.boss.ui.BossReviewWriteActivity"
             android:screenOrientation="portrait" />
 
         <activity

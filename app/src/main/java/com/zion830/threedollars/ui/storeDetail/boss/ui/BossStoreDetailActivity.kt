@@ -46,7 +46,6 @@ import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewRecyclerAd
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
-import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
@@ -375,7 +374,7 @@ class BossStoreDetailActivity :
             putString("store_id", storeId)
         }
         EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-        val intent = BossReviewActivity.getIntent(this, storeId)
+        val intent = BossReviewWriteActivity.getIntent(this, storeId)
         startActivity(intent)
     }
 
