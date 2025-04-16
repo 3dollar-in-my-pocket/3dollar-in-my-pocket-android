@@ -98,9 +98,13 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                     databaseEnabled = true
                     setLayerType(View.LAYER_TYPE_HARDWARE, null)
                     mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+
+                    allowFileAccess = false
+                    allowContentAccess = false
                 }
                 webViewClient = WebViewClient()
                 webChromeClient = WebChromeClient()
+                setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             }
         }
     }
@@ -190,4 +194,15 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentPopupBinding =
         FragmentPopupBinding.inflate(inflater, container, false)
+
+    override fun onDestroyView() {
+        binding.webView.apply {
+            // WebView 정리
+            stopLoading()
+            clearHistory()
+            clearCache(true)
+            destroy()
+        }
+        super.onDestroyView()
+    }
 }
