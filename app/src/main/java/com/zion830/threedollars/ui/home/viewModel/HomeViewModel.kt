@@ -36,6 +36,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     val addressText: MutableLiveData<String> = MutableLiveData()
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
+    val mapLocation: MutableLiveData<LatLng> = MutableLiveData()
     val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
 
     private val _currentLocationFlow: MutableStateFlow<LatLng> = MutableStateFlow(LatLng.INVALID)
@@ -65,7 +66,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    private fun updateCurrentLocation(latLng: LatLng) {
+    fun updateCurrentLocation(latLng: LatLng) {
         currentLocation.value = latLng
         _currentLocationFlow.value = latLng
         addressText.value = getCurrentLocationName(latLng) ?: "위치를 찾는 중..."
@@ -85,11 +86,11 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 filterConditionsTypeModel = homeFilterEvent.value.filterConditionsType,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude,
-                deviceLatitude = location.latitude,
-                deviceLongitude = location.longitude
+                deviceLatitude = currentLocation.value?.latitude ?: location.latitude,
+                deviceLongitude = currentLocation.value?.longitude ?: location.longitude
             ).collect { response ->
                 if (response.ok) {
-                    updateCurrentLocation(location)
+                    mapLocation.value = location
                     val resultList = getResultList(response.data?.contentModels)
                     _aroundStoreModels.value = resultList
                 } else {

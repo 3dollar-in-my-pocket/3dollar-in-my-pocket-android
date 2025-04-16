@@ -290,7 +290,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun getNearStore() {
-        viewModel.currentLocation.value?.let {
+        viewModel.mapLocation.value?.let {
             viewModel.requestHomeItem(
                 location = it,
                 distanceM = viewModel.currentDistanceM.value ?: DEFAULT_DISTANCE_M,

@@ -213,6 +213,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             delay(500L)
             naverMapFragment.moveToCurrentLocation(false)
         }
+        naverMapFragment.currentPosition.observe(viewLifecycleOwner) {
+            viewModel.updateCurrentLocation(it)
+        }
     }
 
     private fun initButton() {

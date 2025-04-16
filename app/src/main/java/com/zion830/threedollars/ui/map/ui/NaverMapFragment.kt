@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -55,7 +56,7 @@ import kotlinx.coroutines.withContext
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
     var naverMap: NaverMap? = null
 
-    var currentPosition: LatLng? = null
+    var currentPosition: MutableLiveData<LatLng> = MutableLiveData()
 
     protected lateinit var binding: FragmentNaverMapBinding
 
@@ -146,7 +147,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                         putString("advertisement_id", storeMarker.advertisementId.toString())
                     }
                     EventTracker.logEvent(Constants.CLICK_AD_MARKER, bundle)
-                    val dialog = MarkerClickDialog(latLng = currentPosition ?: LatLng.INVALID)
+                    val dialog = MarkerClickDialog(latLng = currentPosition.value ?: LatLng.INVALID)
                     dialog.show(parentFragmentManager, dialog.tag)
                     return@setOnClickListener false
                 }
@@ -273,8 +274,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        currentPosition = LatLng(it.latitude, it.longitude)
-                        currentPosition?.let { position ->
+                        currentPosition.value = LatLng(it.latitude, it.longitude)
+                        currentPosition.value?.let { position ->
                             if (showAnim) {
                                 moveCameraWithAnim(position)
                             } else {
@@ -298,8 +299,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
-                        currentPosition = LatLng(it.latitude, it.longitude)
-                        onMyLocationLoaded(currentPosition)
+                        currentPosition.value = LatLng(it.latitude, it.longitude)
+                        onMyLocationLoaded(currentPosition.value)
                     } else {
                         onMyLocationLoaded(null)
                     }

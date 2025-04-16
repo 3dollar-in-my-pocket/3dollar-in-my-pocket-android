@@ -701,7 +701,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val distance = NaverMapUtils.calculateDistance(
-            naverMapFragment.currentPosition,
+            naverMapFragment.currentPosition.value,
             LatLng(userStoreModel?.location?.latitude ?: 0.0, userStoreModel?.location?.longitude ?: 0.0),
         )
         supportFragmentManager.addNewFragment(
