@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.zion830.threedollars.dev",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 97,
+      "versionName": "4.7.2",
+      "outputFile": "3dollor_4.7.2(97)-debug.apk"
+    }
+  ],
+  "elementType": "File"
+}
