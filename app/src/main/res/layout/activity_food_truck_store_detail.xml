@@ -699,6 +699,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/feedbackRecyclerView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
@@ -708,7 +709,6 @@
                         app:layout_constraintTop_toBottomOf="@id/feedbackTitle"
                         tools:itemCount="4"
                         tools:listitem="@layout/item_feedback_tag">
-
 
                     </androidx.recyclerview.widget.RecyclerView>
                 </androidx.constraintlayout.widget.ConstraintLayout>
