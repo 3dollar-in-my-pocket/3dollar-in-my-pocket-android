@@ -66,7 +66,7 @@ class BossStoreDetailActivity :
 
     private val foodTruckMenuAdapter: BossMenuRecyclerAdapter by lazy {
         BossMenuRecyclerAdapter {
-            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menuModels)
+            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
         }
     }
     private val appearanceDayAdapter: AppearanceDayRecyclerAdapter by lazy {
@@ -190,13 +190,18 @@ class BossStoreDetailActivity :
             }
         }
         binding.phoneTextView.onSingleClick {
-            if (viewModel.bossStoreDetailModel.value.store.contactsNumber.isNotNullOrEmpty()) {
-                val bundle = Bundle().apply {
+            if (viewModel.bossStoreDetailModel.value.store.contactsNumbers.isNotEmpty()) {
+                Bundle().apply {
                     putString("screen", "boss_store_detail")
                     putString("store_id", storeId)
+                    EventTracker.logEvent(CLICK_NUMBER, this)
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("tel://${viewModel.bossStoreDetailModel.value.store.contactsNumbers.first().number}")
+                        )
+                    )
                 }
-                EventTracker.logEvent(CLICK_NUMBER, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("tel://${viewModel.bossStoreDetailModel.value.store.contactsNumber}")))
             }
         }
         binding.directionsButton.onSingleClick {
@@ -258,45 +263,49 @@ class BossStoreDetailActivity :
 
                         appearanceDayAdapter.submitList(
                             appearanceDayModels.map { appearanceDayModel ->
-                                bossStoreDetailModel.store.appearanceDayModels.find {
+                                bossStoreDetailModel.store.appearanceDays.find {
                                     appearanceDayModel.dayOfTheWeek == it.dayOfTheWeek
                                 } ?: appearanceDayModel
                             },
                         )
 
-                        if (bossStoreDetailModel.store.menuModels.isEmpty()) {
+                        if (bossStoreDetailModel.store.menus.isEmpty()) {
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
-                        } else if (bossStoreDetailModel.store.menuModels.size > 5) {
-                            val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
+                        } else if (bossStoreDetailModel.store.menus.size > 5) {
+                            val sublist = bossStoreDetailModel.store.menus.subList(0, 5)
                             val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
-                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5),
+                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menus.size - 5),
                             )
                             foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
-                            foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menuModels)
+                            foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menus)
                         }
 
                         binding.run {
                             if (bossStoreDetailModel.store.categories.isNotEmpty()) {
                                 binding.menuIconImageView.loadImage(bossStoreDetailModel.store.categories.first().imageUrl)
                             }
-                            Glide.with(binding.storeImageView)
-                                .load(bossStoreDetailModel.store.imageUrl)
-                                .transform(FitCenter(), RoundedCorners(12))
-                                .into(binding.storeImageView)
-
+                            if(bossStoreDetailModel.store.representativeImages.isNotEmpty()) {
+                                Glide.with(binding.storeImageView)
+                                    .load(bossStoreDetailModel.store.representativeImages.first().imageUrl)
+                                    .transform(FitCenter(), RoundedCorners(12))
+                                    .into(binding.storeImageView)
+                            }
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
                             distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
                             reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
-                            phoneTextView.text = bossStoreDetailModel.store.contactsNumber
+                            if(bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
+                                phoneTextView.text = bossStoreDetailModel.store.contactsNumbers.first().number
+                            }
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
                             feedbackCountTextView.text =
                                 getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             storeInfoUpdateAtTextView.text =
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
+                            reviewRatingBar.rating = bossStoreDetailModel.store.rating
                         }
 
                         initAccount(bossStoreDetailModel)
@@ -361,7 +370,7 @@ class BossStoreDetailActivity :
                 R.string.share_kakao_food_truck,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
-            imageUrl = viewModel.bossStoreDetailModel.value.store.imageUrl,
+            imageUrl = viewModel.bossStoreDetailModel.value.store.representativeImages.first().imageUrl,
             storeId = storeId,
             type = getString(R.string.scheme_host_kakao_link_food_truck_type),
         )

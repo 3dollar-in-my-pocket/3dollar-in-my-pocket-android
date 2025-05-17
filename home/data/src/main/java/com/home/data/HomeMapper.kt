@@ -4,6 +4,7 @@ import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AccountModel
 import com.home.domain.data.store.AccountNumberModel
+import com.home.domain.data.store.ActivitiesStatus
 import com.home.domain.data.store.AdditionalInfo
 import com.home.domain.data.store.AddressModel
 import com.home.domain.data.store.AppearanceDayModel
@@ -16,6 +17,7 @@ import com.home.domain.data.store.ClassificationModel
 import com.home.domain.data.store.CommentModel
 import com.home.domain.data.store.CommentStatus
 import com.home.domain.data.store.CommentWriter
+import com.home.domain.data.store.ContactNumberModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.CountsModel
 import com.home.domain.data.store.CreatorModel
@@ -31,6 +33,7 @@ import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.HistoriesContentModel
 import com.home.domain.data.store.HistoriesModel
 import com.home.domain.data.store.ImageContentModel
+import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ImagesModel
 import com.home.domain.data.store.LocationModel
 import com.home.domain.data.store.MarkerModel
@@ -95,6 +98,7 @@ import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.Category
 import com.threedollar.network.data.store.Classification
 import com.threedollar.network.data.store.CommentItemResponse
+import com.threedollar.network.data.store.ContactNumber
 import com.threedollar.network.data.store.Content
 import com.threedollar.network.data.store.ContentListCommentResponse
 import com.threedollar.network.data.store.Counts
@@ -116,6 +120,7 @@ import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.OpenStatus
 import com.threedollar.network.data.store.OpeningHours
 import com.threedollar.network.data.store.PostUserStoreResponse
+import com.threedollar.network.data.store.RepresentativeImage
 import com.threedollar.network.data.store.Review
 import com.threedollar.network.data.store.ReviewReport
 import com.threedollar.network.data.store.ReviewWriter
@@ -310,21 +315,35 @@ fun OpeningHours.asModel() = OpeningHoursModel(
 )
 
 fun BossStore.asModel() = BossStoreModel(
-    address = address?.asModel() ?: AddressModel(),
-    appearanceDayModels = appearanceDays?.map { it.asModel() } ?: listOf(),
-    categories = categories?.map { it.asModel() } ?: listOf(),
-    createdAt = createdAt ?: "",
+    storeId             = storeId,
+    isOwner             = isOwner,
+    name                = name,
+    rating              = rating,
+    location            = location.asModel(),
+    address             = address.asModel(),
+    representativeImages= representativeImages.map { it.asModel() },
+    introduction        = introduction,
+    snsUrl              = snsUrl,
+    menus               = menus.map { it.asModel() },
+    appearanceDays      = appearanceDays.map { it.asModel() },
+    categories          = categories.map { it.asModel() },
+    accountNumbers      = accountNumbers.map { it.asModel() },
+    contactsNumbers     = contactsNumbers.map { it.asModel() },
+    activitiesStatus    = ActivitiesStatus.from(activitiesStatus.name),
+    createdAt           = createdAt,
+    updatedAt           = updatedAt
+)
+
+fun ContactNumber.asModel() = ContactNumberModel(
+    number = number,
+    description = description,
+)
+
+fun RepresentativeImage.asModel() = ImageModel(
     imageUrl = imageUrl,
-    introduction = introduction,
-    location = location?.asModel(),
-    menuModels = menus?.map { it.asModel() } ?: listOf(),
-    name = name ?: "",
-    snsUrl = snsUrl,
-    storeId = storeId ?: "",
-    updatedAt = updatedAt ?: "",
-    contactsNumber = contactsNumbers?.firstOrNull()?.number,
-    isOwner = isOwner ?: false,
-    accountNumbers = accountNumbers?.map { it.asModel() } ?: listOf(),
+    width    = width,
+    height   = height,
+    ratio    = ratio
 )
 
 fun AccountNumber.asModel() = AccountNumberModel(
@@ -350,7 +369,7 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     favoriteModel = favorite?.asModel() ?: FavoriteModel(),
     feedbackModels = feedbacks?.map { it.asModel() } ?: listOf(),
     openStatusModel = openStatus?.asModel() ?: OpenStatusModel(),
-    store = store?.asModel() ?: BossStoreModel(),
+    store = store.asModel(),
     tags = tags?.asModel() ?: TagsModel(),
     newsPosts = newsPosts?.contents?.map { it.asModel() } ?: listOf(),
     reviews = reviews?.contents?.map { it.asModel() } ?: listOf(),
@@ -391,6 +410,8 @@ fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
     ratio = ratio ?: 0.0,
+    emoji = emoji ?: "",
+    description = description ?: "",
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
