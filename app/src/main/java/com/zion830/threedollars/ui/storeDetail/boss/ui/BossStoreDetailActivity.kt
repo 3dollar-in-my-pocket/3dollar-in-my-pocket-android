@@ -15,12 +15,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.AppearanceDayModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.FeedbackType
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
@@ -43,9 +48,12 @@ import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.SizeUtils.dpToPx
+import com.zion830.threedollars.utils.SpaceItemDecoration
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
@@ -74,6 +82,9 @@ class BossStoreDetailActivity :
     }
     private val bossReviewRecyclerAdapter: BossReviewRecyclerAdapter by lazy {
         BossReviewRecyclerAdapter()
+    }
+    private val feedbackRecyclerAdapter: FeedbackRecyclerAdapter by lazy {
+        FeedbackRecyclerAdapter()
     }
 
     private var storeId = ""
@@ -123,6 +134,16 @@ class BossStoreDetailActivity :
     private fun initAdapter() {
         binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
+        val space = dpToPx(4f)
+        binding.feedbackRecyclerView.apply {
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+                justifyContent = JustifyContent.CENTER
+            }
+            adapter = feedbackRecyclerAdapter
+            addItemDecoration(SpaceItemDecoration(space, space))
+        }
     }
 
     private fun initMap() {
@@ -268,6 +289,10 @@ class BossStoreDetailActivity :
                                 } ?: appearanceDayModel
                             },
                         )
+                        feedbackRecyclerAdapter.submitList(bossStoreDetailModel.feedbackModels.take(4).mapIndexed { index, feedbackModel ->
+                            if (index == 3) feedbackModel.copy(feedbackType = FeedbackType.MORE)
+                            else feedbackModel
+                        })
 
                         if (bossStoreDetailModel.store.menus.isEmpty()) {
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
@@ -285,7 +310,7 @@ class BossStoreDetailActivity :
                             if (bossStoreDetailModel.store.categories.isNotEmpty()) {
                                 binding.menuIconImageView.loadImage(bossStoreDetailModel.store.categories.first().imageUrl)
                             }
-                            if(bossStoreDetailModel.store.representativeImages.isNotEmpty()) {
+                            if (bossStoreDetailModel.store.representativeImages.isNotEmpty()) {
                                 Glide.with(binding.storeImageView)
                                     .load(bossStoreDetailModel.store.representativeImages.first().imageUrl)
                                     .transform(FitCenter(), RoundedCorners(12))
@@ -296,7 +321,7 @@ class BossStoreDetailActivity :
                             storeNameTextView.text = bossStoreDetailModel.store.name
                             reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
-                            if(bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
+                            if (bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
                                 phoneTextView.text = bossStoreDetailModel.store.contactsNumbers.first().number
                             }
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
@@ -306,6 +331,7 @@ class BossStoreDetailActivity :
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
                             reviewRatingBar.rating = bossStoreDetailModel.store.rating
+                            reviewRatingAvgTextView.text = getString(R.string.score, bossStoreDetailModel.store.rating)
                         }
 
                         initAccount(bossStoreDetailModel)

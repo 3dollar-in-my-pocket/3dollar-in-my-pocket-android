@@ -33,4 +33,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="400개" />
 
+    <ImageView
+        android:id="@+id/feedbackArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/feedbackMessage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gray50" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
