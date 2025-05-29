@@ -109,4 +109,5 @@ interface HomeRemoteDataSource {
 
     fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
 
+    fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
 }

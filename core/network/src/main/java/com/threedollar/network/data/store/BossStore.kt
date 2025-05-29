@@ -16,7 +16,7 @@ data class BossStore(
     val rating: Float = 0.0f,
 
     @SerializedName("location")
-    val location: Location = Location(),
+    val location: Location? = Location(),
 
     @SerializedName("address")
     val address: Address = Address(),
@@ -25,10 +25,10 @@ data class BossStore(
     val representativeImages: List<RepresentativeImage> = emptyList(),
 
     @SerializedName("introduction")
-    val introduction: String = "",
+    val introduction: String? = "",
 
     @SerializedName("snsUrl")
-    val snsUrl: String = "",
+    val snsUrl: String? = "",
 
     @SerializedName("menus")
     val menus: List<Menu> = emptyList(),

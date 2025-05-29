@@ -348,4 +348,7 @@
     <string name="str_boss_review_write_title">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
     <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
+
+    <string name="str_like">좋아요 %d</string>
+    <string name="str_review_more">리뷰 %d개 더보기</string>
 </resources>

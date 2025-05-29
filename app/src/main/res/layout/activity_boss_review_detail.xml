@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabReviewSort"
-        tools:listitem="@layout/item_boss_review_new" />
+        tools:listitem="@layout/item_food_truck_review" />
 
     <TextView
         android:id="@+id/twReviewWrite"

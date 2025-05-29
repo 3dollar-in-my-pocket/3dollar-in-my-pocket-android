@@ -1,33 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginVertical="6dp"
-    android:background="@drawable/rect_white_radius12_stroke_gray20">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <CheckBox
-        android:id="@+id/reviewCheckBox"
-        style="@style/apple_gothic_semi_bold.size_14dp"
+    <data>
+
+        <variable
+            name="index"
+            type="java.lang.Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:button="@null"
-        android:drawablePadding="8dp"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="16dp"
-        android:textColor="@color/gray95"
-        tools:text="음식이 맛있어요" />
-
-    <ImageView
-        android:id="@+id/checkImageView"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/ic_check_pink_20"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/reviewCheckBox"
-        app:layout_constraintEnd_toEndOf="@id/reviewCheckBox"
-        app:layout_constraintTop_toTopOf="@id/reviewCheckBox" />
+        android:padding="16dp"
+        app:settingReviewBackground="@{index}">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/twNickNameTitle"
+            style="@style/pretendard_medium.size_12dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/gray80"
+            app:layout_constraintEnd_toStartOf="@id/twReviewDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="닉네임 타이틀" />
+
+        <TextView
+            android:id="@+id/twReviewReport"
+            style="@style/pretendard_bold.size_12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/review_report"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/twReviewDate"
+            style="@style/pretendard_medium.size_12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray40"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toStartOf="@id/twReviewReport"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2024.04.30 · " />
+
+        <LinearLayout
+            android:id="@+id/medalLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/rect_round4"
+            android:backgroundTint="@color/pink_100"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twNickNameTitle"
+            app:settingReviewComponentBackground="@{index}">
+
+            <ImageView
+                android:id="@+id/imgMedal"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="2dp" />
+
+            <TextView
+                android:id="@+id/twMedalName"
+                style="@style/pretendard_medium.size_10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/pink"
+                tools:text="따끈따끈한 뉴비" />
+        </LinearLayout>
+
+        <com.willy.ratingbar.ScaleRatingBar
+            android:id="@+id/reviewRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/rect_round4"
+            android:backgroundTint="@color/pink_100"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
+            app:layout_constraintBottom_toBottomOf="@id/medalLayout"
+            app:layout_constraintStart_toEndOf="@id/medalLayout"
+            app:layout_constraintTop_toTopOf="@id/medalLayout"
+            app:settingReviewComponentBackground="@{index}"
+            app:srb_clickable="false"
+            app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_12"
+            app:srb_drawableFilled="@drawable/ic_star_solid_pink_12"
+            app:srb_isIndicator="true"
+            app:srb_numStars="5"
+            app:srb_starPadding="2dp"
+            tools:ignore="UnusedAttribute" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerReviewImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/medalLayout" />
+
+        <TextView
+            android:id="@+id/twReviewContent"
+            style="@style/pretendard_medium.size_14dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/gray80"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerReviewImage"
+            tools:text="저희 집은 1번 출구인데 일부러 4번출구에서 붕어빵 사들고 가요. 진자 찐임.저희 집은 1번 출구인데 일부러 4번출구에서 붕어빵 사들고 가요. 진자 찐임.저희 집은 1번 출구인데" />
+
+        <TextView
+            android:id="@+id/twReviewLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/selector_heart"
+            android:drawablePadding="2dp"
+            android:fontFamily="@font/app_pretendard_font"
+            android:gravity="center"
+            android:textColor="@color/selector_red_gray"
+            android:textSize="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twReviewContent"
+            tools:text="좋아요 10" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupReply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="imageReviewTail,constraintReply" />
+
+        <ImageView
+            android:id="@+id/imageReviewTail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_boss_review_tail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twReviewLike"
+            app:settingReplyBackground="@{index}" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintReply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect_boss_review_reply"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageReviewTail"
+            app:settingReplyBackground="@{index}">
+
+            <TextView
+                android:id="@+id/twReplyBoss"
+                style="@style/pretendard_bold.size_12dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@color/gray80"
+                app:layout_constraintEnd_toStartOf="@id/twReplyDate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="사장닉네임" />
+
+            <TextView
+                android:id="@+id/twReplyDate"
+                style="@style/pretendard_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray40"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2024.04.30" />
+
+            <TextView
+                android:id="@+id/twReplyContent"
+                style="@style/pretendard_medium.size_14dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/gray80"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/twReplyBoss"
+                tools:text="안녕하세요! 소중한 시간을 내어 저희 붕어빵에 대한 따뜻한 리뷰를 남겨주셔서 정말 감사드립니다. 고객님의 칭찬 한 마디 한 마디가 저희에게는 큰 힘과 격려가 됩니다. 앞으로도 항상 맛있고 정성 가득한 붕어빵으로 보답드릴 수 있도록 노력하겠습니다. 추운 날씨 속에서도 찾아주셔서 감사드리며, 언제든 다시 방문해 주시면 변함없는 맛과 미소로 모시겠습니다. 고객님의 사랑에 힘입어 오늘도 최선을 다하겠습니다. 건강 유의하시고 따뜻한 하루 보내세요! 감사합니다. 언제든 다시 방문해 주시면 변함없는 맛과 미소로 모시겠습니다. 고객님의 사랑에" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

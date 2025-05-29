@@ -33,7 +33,7 @@ data class Section(
     val url: String,
 
     @SerializedName("ratio")
-    val ratio: Int
+    val ratio: Float
 )
 
 data class Sticker(

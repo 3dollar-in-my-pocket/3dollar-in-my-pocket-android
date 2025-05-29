@@ -319,11 +319,11 @@ fun BossStore.asModel() = BossStoreModel(
     isOwner             = isOwner,
     name                = name,
     rating              = rating,
-    location            = location.asModel(),
+    location            = location?.asModel() ?: LocationModel(),
     address             = address.asModel(),
     representativeImages= representativeImages.map { it.asModel() },
-    introduction        = introduction,
-    snsUrl              = snsUrl,
+    introduction        = introduction ?: "",
+    snsUrl              = snsUrl ?: "",
     menus               = menus.map { it.asModel() },
     appearanceDays      = appearanceDays.map { it.asModel() },
     categories          = categories.map { it.asModel() },
@@ -336,7 +336,7 @@ fun BossStore.asModel() = BossStoreModel(
 
 fun ContactNumber.asModel() = ContactNumberModel(
     number = number,
-    description = description,
+    description = description ?: "",
 )
 
 fun RepresentativeImage.asModel() = ImageModel(
@@ -373,6 +373,7 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     tags = tags?.asModel() ?: TagsModel(),
     newsPosts = newsPosts?.contents?.map { it.asModel() } ?: listOf(),
     reviews = reviews?.contents?.map { it.asModel() } ?: listOf(),
+    reviewTotalCount = reviews?.cursor?.totalCount ?: 0
 )
 
 fun NewsPost.asModel(): NewsPostModel = NewsPostModel(
@@ -593,11 +594,12 @@ fun AdditionalInfoResponse.asModel(): AdditionalInfo = AdditionalInfo(
 fun Review.asModel() = ReviewModel(
     contents = contents,
     createdAt = createdAt ?: "",
-    rating = rating ?: 0,
+    rating = rating ?: 0.0f,
     reviewId = reviewId ?: 0,
     status = status?.asReviewStatusType() ?: ReviewStatusType.POSTED,
     updatedAt = updatedAt ?: "",
     isOwner = isOwner ?: false,
+    images = images.map { it.asModel() },
 )
 
 fun ReviewReport.asModel() = ReviewReportModel(

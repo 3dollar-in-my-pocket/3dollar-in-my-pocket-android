@@ -9,5 +9,6 @@ data class BossStoreDetailModel(
     val store: BossStoreModel = BossStoreModel(),
     val tags: TagsModel = TagsModel(),
     val newsPosts: List<NewsPostModel> = listOf(),
-    val reviews: List<ReviewContentModel> = listOf()
+    val reviews: List<ReviewContentModel> = listOf(),
+    val reviewTotalCount: Int = 0,
 )

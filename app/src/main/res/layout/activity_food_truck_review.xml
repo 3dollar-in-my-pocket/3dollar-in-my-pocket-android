@@ -78,7 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selectMultiReviewTextView"
-        tools:listitem="@layout/item_food_truck_review" />
+        tools:listitem="@layout/item_food_truck_feedback" />
 
     <TextView
         android:id="@+id/completeTextView"

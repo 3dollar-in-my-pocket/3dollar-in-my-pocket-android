@@ -13,7 +13,6 @@ import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse

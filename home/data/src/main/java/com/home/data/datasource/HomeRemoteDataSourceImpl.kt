@@ -25,6 +25,7 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 import com.threedollar.network.util.apiResult
@@ -157,7 +158,8 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deleteImage(imageId)))
     }
 
-    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> = apiResult(serverApi.saveImages(images, storeId))
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> =
+        apiResult(serverApi.saveImages(images, storeId))
 
     override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))
@@ -195,4 +197,15 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deletePlace(placeType = placeType.name, placeId = placeId)))
     }
 
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>> = flow {
+        emit(
+            apiResult(
+                serverApi.putStickers(
+                    storeId = storeId,
+                    reviewId = reviewId,
+                    stickerRequest = StickerRequest(stickers.map { sticker -> StickerRequest.Sticker(sticker) })
+                )
+            )
+        )
+    }
 }

@@ -17,5 +17,5 @@ enum class SectionTypeModel {
 data class SectionModel(
     val sectionType: SectionTypeModel,
     val url: String,
-    val ratio: Int
+    val ratio: Float
 )

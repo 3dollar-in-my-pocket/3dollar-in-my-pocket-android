@@ -3,14 +3,17 @@ package com.zion830.threedollars.ui.storeDetail.boss.viewModel
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.FoodTruckReviewModel
+import com.home.domain.data.store.ReasonModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.ReportReviewModelRequest
+import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showCustomBlackToast
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,14 +28,18 @@ class BossStoreDetailViewModel @Inject constructor(private val homeRepository: H
     private val _bossStoreDetailModel = MutableStateFlow(BossStoreDetailModel())
     val bossStoreDetailModel: StateFlow<BossStoreDetailModel> get() = _bossStoreDetailModel
 
-    private val _foodTruckReviewModelList: MutableStateFlow<List<FoodTruckReviewModel>> = MutableStateFlow(listOf())
-    val foodTruckReviewModelList: StateFlow<List<FoodTruckReviewModel>> get() = _foodTruckReviewModelList
-
     private val _postFeedback: MutableStateFlow<BaseResponse<String>?> = MutableStateFlow(null)
     val postFeedback: StateFlow<BaseResponse<String>?> get() = _postFeedback
 
     private val _favoriteModel: MutableStateFlow<FavoriteModel> = MutableStateFlow(FavoriteModel())
     val favoriteModel: StateFlow<FavoriteModel> get() = _favoriteModel
+
+    private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
+    val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
+
+    init {
+        getReportReasons()
+    }
 
     fun getFoodTruckStoreDetail(
         bossStoreId: String,
@@ -51,24 +58,12 @@ class BossStoreDetailViewModel @Inject constructor(private val homeRepository: H
         }
     }
 
-    fun getBossStoreFeedbackFull(bossStoreId: String) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getFeedbackFull(targetType = BOSS_STORE, targetId = bossStoreId).collect {
-                if(it.ok) {
-                    _foodTruckReviewModelList.value = it.data!!
-                }else{
-                    _serverError.emit(it.message)
-                }
-            }
-        }
-    }
-
     fun postBossStoreFeedback(bossStoreId: String, bossStoreFeedbackRequest: List<String>) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.postFeedback(BOSS_STORE, bossStoreId, bossStoreFeedbackRequest).collect {
-                if(it.ok) {
+                if (it.ok) {
                     _postFeedback.value = it
-                }else{
+                } else {
                     _serverError.emit(it.message)
                 }
             }
@@ -100,6 +95,69 @@ class BossStoreDetailViewModel @Inject constructor(private val homeRepository: H
                     }
                 } else {
                     model.message?.let { message -> showCustomBlackToast(message) }
+                }
+            }
+        }
+    }
+
+    fun putLike(storeId: String, reviewId: String, sticker: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putStickers(storeId, reviewId, listOf(sticker)).collect {
+                if (it.ok) {
+                    _bossStoreDetailModel.update { storeDetail ->
+                        storeDetail.copy(
+                            reviews = storeDetail.reviews.map { reviewContent ->
+                                if (reviewContent.review.reviewId.toString() == reviewId) {
+                                    reviewContent.copy(
+                                        stickers = run {
+                                            val current = reviewContent.stickers
+                                            if (current.any { it.stickerId == sticker && it.reactedByMe }) {
+                                                current.filterNot { it.stickerId == sticker && it.reactedByMe }
+                                            } else {
+                                                val template = current.find { it.stickerId == sticker }
+                                                if (template != null) {
+                                                    current + template.copy(reactedByMe = true)
+                                                } else current
+                                            }
+                                        }
+                                    )
+                                } else reviewContent
+                            }
+                        )
+                    }
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun reportReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest) {
+        viewModelScope.launch {
+            homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
+                if (it.ok) {
+                    showToast("신고 완료!")
+                    _bossStoreDetailModel.update { storeDetail ->
+                        storeDetail.copy(
+                            reviews = storeDetail.reviews.filter { reviewContent ->
+                                reviewContent.review.reviewId != reviewId
+                            }
+                        )
+                    }
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    private fun getReportReasons() {
+        viewModelScope.launch {
+            homeRepository.getReportReasons(ReportReasonsGroupType.REVIEW).collect {
+                if (it.ok) {
+                    _reportReasons.value = it.data?.reasonModels
+                } else {
+                    _serverError.emit(it.message)
                 }
             }
         }

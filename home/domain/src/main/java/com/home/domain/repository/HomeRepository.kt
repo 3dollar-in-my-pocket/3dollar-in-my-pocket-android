@@ -27,6 +27,8 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Body
+import retrofit2.http.Path
 
 interface HomeRepository {
 
@@ -106,4 +108,6 @@ interface HomeRepository {
     fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
 
     fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>>
+
+    fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
 }

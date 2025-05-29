@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.FoodTruckReviewModel
-import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemBossReviewNewBinding
-import com.zion830.threedollars.databinding.ItemFoodTruckReviewDetailBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 
 
@@ -29,6 +26,8 @@ class BossReviewRecyclerAdapter : ListAdapter<FoodTruckReviewModel, BossReviewVi
 
 class BossReviewViewHolder(private val binding: ItemBossReviewNewBinding) : ViewHolder(binding.root) {
     fun bind(item: FoodTruckReviewModel) {
+        binding.apply {
 
+        }
     }
 }

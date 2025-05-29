@@ -29,10 +29,10 @@ import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ImageResponse
 import com.threedollar.network.data.store.MyReportedStoresResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
-import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.MyFeedbacksResponse
 import com.threedollar.network.data.user.MyReviewResponseV2
@@ -46,6 +46,7 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 import okhttp3.MultipartBody
@@ -348,4 +349,11 @@ interface ServerApi {
         @Query("size") size: Int,
         @Query("cursor") cursor: String?,
     ): Response<BaseResponse<PlaceResponse>>
+
+    @PUT("/api/v1/store/{storeId}/review/{reviewId}/stickers")
+    suspend fun putStickers(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+        @Body stickerRequest: StickerRequest
+    ): Response<BaseResponse<String>>
 }

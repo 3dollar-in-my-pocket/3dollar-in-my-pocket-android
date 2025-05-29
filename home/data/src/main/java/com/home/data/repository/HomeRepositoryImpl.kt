@@ -305,4 +305,7 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>> = Pager(PagingConfig(20)) {
         PlacePagingDataSource(placeType = placeType.asType(), serverApi = serverApi)
     }.flow
+
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>>
+        = homeRemoteDataSource.putStickers(storeId, reviewId, stickers)
 }

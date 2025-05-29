@@ -7,5 +7,5 @@ data class ContactNumber(
     val number: String = "",
 
     @SerializedName("description")
-    val description: String = ""
+    val description: String? = ""
 )
