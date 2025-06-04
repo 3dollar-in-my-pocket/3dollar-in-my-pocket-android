@@ -351,4 +351,10 @@
 
     <string name="str_like">좋아요 %d</string>
     <string name="str_review_more">리뷰 %d개 더보기</string>
+
+    <string name="address_copied">주소가 복사됐습니다.</string>
+    <string name="account_number_copied">계좌번호가 복사되었습니다.</string>
+    <string name="review_report_dialog_title">신고</string>
+    <string name="review_report_already_message">이미 신고한 댓글입니다!</string>
+    <string name="report_confirm">확인</string>
 </resources>

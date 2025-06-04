@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -117,7 +118,7 @@ class BossStoreDetailActivity :
                     }
                 }
             },
-            onMoreClickListener = {}
+            onMoreClickListener = { moveBossReviewActivity() }
         )
     }
 
@@ -222,10 +223,10 @@ class BossStoreDetailActivity :
             finish()
         }
         binding.bottomReviewTextView.onSingleClick {
-            moveFoodTruckReviewActivity()
+            moveFoodTruckReviewWriteActivity()
         }
         binding.feedbackReviewTextView.onSingleClick {
-            moveFoodTruckReviewActivity()
+            moveFoodTruckReviewWriteActivity()
         }
         binding.shareButton.onSingleClick {
             initShared()
@@ -279,7 +280,7 @@ class BossStoreDetailActivity :
         binding.addressTextView.onSingleClick {
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
-            showToast("주소가 복사됐습니다.")
+            showToast(getString(R.string.address_copied))
         }
         binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
@@ -334,14 +335,15 @@ class BossStoreDetailActivity :
                             if (index == 3) feedbackModel.copy(feedbackType = FeedbackType.MORE)
                             else feedbackModel
                         })
-                        foodTruckReviewAdapter.count = bossStoreDetailModel.reviewTotalCount
+                        foodTruckReviewAdapter.setTotalCount(bossStoreDetailModel.reviewTotalCount)
                         val filteredReviews = bossStoreDetailModel.reviews.filter { !it.reviewReport.reportedByMe }
                         val reviewListForAdapter = if (bossStoreDetailModel.reviewTotalCount >= 4) {
                             filteredReviews + ReviewContentModel()
                         } else {
                             filteredReviews
                         }
-                        foodTruckReviewAdapter.submitList(reviewListForAdapter)
+                        val pagingData = PagingData.from(reviewListForAdapter)
+                        foodTruckReviewAdapter.submitData(lifecycle, pagingData)
                         if (bossStoreDetailModel.store.menus.isEmpty()) {
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
                         } else if (bossStoreDetailModel.store.menus.size > 5) {
@@ -411,7 +413,7 @@ class BossStoreDetailActivity :
             binding.accountCopyButton.onSingleClick {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
-                showToast("계좌번호가 복사되었습니다.")
+                showToast(getString(R.string.account_number_copied))
             }
         } else {
             binding.accountCardView.isVisible = false
@@ -445,13 +447,18 @@ class BossStoreDetailActivity :
         )
     }
 
-    private fun moveFoodTruckReviewActivity() {
+    private fun moveFoodTruckReviewWriteActivity() {
         val bundle = Bundle().apply {
             putString("screen", "boss_store_detail")
             putString("store_id", storeId)
         }
         EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
         val intent = BossReviewWriteActivity.getIntent(this, storeId)
+        startActivity(intent)
+    }
+
+    private fun moveBossReviewActivity() {
+        val intent = BossReviewDetailActivity.getIntent(this, storeId)
         startActivity(intent)
     }
 
@@ -484,9 +491,9 @@ class BossStoreDetailActivity :
 
     private fun showAlreadyReportDialog() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle("신고")
-        builder.setMessage("이미 신고한 댓글입니다!")
-        builder.setPositiveButton("확인") { dialog, _ -> dialog.dismiss() }
+        builder.setTitle(getString(R.string.review_report_dialog_title))
+        builder.setMessage(getString(R.string.review_report_already_message))
+        builder.setPositiveButton(R.string.report_confirm) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 

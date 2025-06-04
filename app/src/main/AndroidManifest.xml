@@ -58,6 +58,9 @@
             android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
             android:exported="true"
             android:screenOrientation="portrait">
