@@ -65,7 +65,7 @@ class GlobalApplication : Application() {
         MobileAds.initialize(this)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
         NaverMapSdk.getInstance(this).client =
-            NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NMF_CLIENT_ID)
+            NaverMapSdk.NcpKeyClient(BuildConfig.NMF_CLIENT_ID)
 
         if (isLoggedIn) {
             loginPlatform = LoginType.of(LegacySharedPrefUtils.getLoginType())

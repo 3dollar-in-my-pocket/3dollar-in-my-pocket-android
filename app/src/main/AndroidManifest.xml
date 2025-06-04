@@ -194,7 +194,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />
         <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
+            android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="${nmf_client_id}" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
