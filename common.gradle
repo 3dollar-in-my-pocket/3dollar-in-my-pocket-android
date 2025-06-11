@@ -46,11 +46,12 @@ repositories {
     google()
     mavenCentral()
 }
+
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.5.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "com.google.android.material:material:1.7.0"
     implementation "androidx.core:core-ktx:1.9.0"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
@@ -89,7 +90,7 @@ dependencies {
     // google
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services-ads:21.3.0'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
@@ -104,7 +105,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
 
     // naver4
-    implementation "com.naver.maps:map-sdk:3.12.0"
+    implementation "com.naver.maps:map-sdk:3.21.0"
 
     // image slider
     implementation "com.github.ome450901:SimpleRatingBar:1.5.1"
