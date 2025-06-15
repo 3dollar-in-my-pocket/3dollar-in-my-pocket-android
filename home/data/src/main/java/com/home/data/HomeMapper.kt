@@ -410,7 +410,7 @@ fun Favorite.asModel() = FavoriteModel(
 fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
-    ratio = ratio ?: 0.0,
+    ratio = ratio ?: 0.0f,
     emoji = emoji ?: "",
     description = description ?: "",
 )

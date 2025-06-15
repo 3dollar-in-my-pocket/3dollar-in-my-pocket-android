@@ -345,6 +345,9 @@
     <string name="marketing_approve_toast">%s에 가슴속3천원 혜택 알림 수신에 동의했어요</string>
     <string name="str_feedback_title">피드백</string>
     <string name="str_review_write">리뷰 작성하기</string>
+    <string name="str_feedback_write">피드백/리뷰 작성하기</string>
+    <string name="str_feedback_count_html">피드백 %d개</string>
+    <string name="str_feedback_count">%d개</string>
     <string name="str_boss_review_write_title">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
     <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>

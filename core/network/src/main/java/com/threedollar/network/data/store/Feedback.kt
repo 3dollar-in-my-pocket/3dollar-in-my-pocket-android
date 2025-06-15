@@ -16,5 +16,5 @@ data class Feedback(
     val count: Int? = 0,
 
     @SerializedName("ratio")
-    val ratio: Double? = 0.0
+    val ratio: Float? = 0.0f
 )

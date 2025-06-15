@@ -193,6 +193,10 @@
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
         <activity android:name="com.my.presentation.page.team.MyPageTeamActivity" />
 
+        <activity
+            android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />

@@ -22,6 +22,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class BossReviewDetailActivity :
@@ -65,6 +66,7 @@ class BossReviewDetailActivity :
 
     override fun initView() {
         binding.reviewRecyclerView.adapter = foodTruckReviewAdapter
+        binding.btnBack.onSingleClick { finish() }
         initFlow()
         initTabLayout()
         viewModel.getReviewList(storeId, ReviewSortType.LATEST)

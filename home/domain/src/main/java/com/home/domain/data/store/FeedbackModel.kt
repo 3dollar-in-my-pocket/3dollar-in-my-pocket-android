@@ -5,5 +5,5 @@ data class FeedbackModel(
     val description: String,
     val emoji: String,
     val count: Int,
-    val ratio: Double
+    val ratio: Float
 )

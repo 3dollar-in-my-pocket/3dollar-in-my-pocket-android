@@ -86,7 +86,12 @@ class BossStoreDetailActivity :
         AppearanceDayRecyclerAdapter()
     }
     private val feedbackRecyclerAdapter: FeedbackRecyclerAdapter by lazy {
-        FeedbackRecyclerAdapter()
+        FeedbackRecyclerAdapter(onFeedBackMoreClick = object : OnItemClickListener<Unit> {
+            override fun onClick(item: Unit) {
+                moveBossFeedBackActivity()
+            }
+
+        })
     }
     private val foodTruckReviewAdapter: FoodTruckReviewAdapter by lazy {
         FoodTruckReviewAdapter(
@@ -459,6 +464,11 @@ class BossStoreDetailActivity :
 
     private fun moveBossReviewActivity() {
         val intent = BossReviewDetailActivity.getIntent(this, storeId)
+        startActivity(intent)
+    }
+
+    private fun moveBossFeedBackActivity() {
+        val intent = BossFeedBackDetailActivity.getIntent(this, storeId)
         startActivity(intent)
     }
 
