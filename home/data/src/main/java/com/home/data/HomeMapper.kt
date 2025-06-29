@@ -375,7 +375,8 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     tags = tags?.asModel() ?: TagsModel(),
     newsPosts = newsPosts?.contents?.map { it.asModel() } ?: listOf(),
     reviews = reviews?.contents?.map { it.asModel() } ?: listOf(),
-    reviewTotalCount = reviews?.cursor?.totalCount ?: 0
+    reviewTotalCount = reviews?.cursor?.totalCount ?: 0,
+    hasMoreReviews = reviews?.cursor?.hasMore ?: false
 )
 
 fun NewsPost.asModel(): NewsPostModel = NewsPostModel(

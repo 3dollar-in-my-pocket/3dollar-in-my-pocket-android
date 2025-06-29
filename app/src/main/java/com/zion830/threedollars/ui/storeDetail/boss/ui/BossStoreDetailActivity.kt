@@ -345,7 +345,9 @@ class BossStoreDetailActivity :
                         })
                         foodTruckReviewAdapter.setTotalCount(bossStoreDetailModel.reviewTotalCount)
                         val filteredReviews = bossStoreDetailModel.reviews.filter { !it.reviewReport.reportedByMe }
-                        val reviewListForAdapter = if (bossStoreDetailModel.reviewTotalCount >= 4) {
+                        val hasMoreReviews = bossStoreDetailModel.hasMoreReviews
+                        foodTruckReviewAdapter.updateMoreButtonVisibility(hasMoreReviews)
+                        val reviewListForAdapter = if (hasMoreReviews) {
                             filteredReviews + ReviewContentModel()
                         } else {
                             filteredReviews

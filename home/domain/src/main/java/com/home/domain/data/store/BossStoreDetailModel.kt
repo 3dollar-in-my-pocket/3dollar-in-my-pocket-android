@@ -11,4 +11,5 @@ data class BossStoreDetailModel(
     val newsPosts: List<NewsPostModel> = listOf(),
     val reviews: List<ReviewContentModel> = listOf(),
     val reviewTotalCount: Int = 0,
+    val hasMoreReviews: Boolean = false,
 )

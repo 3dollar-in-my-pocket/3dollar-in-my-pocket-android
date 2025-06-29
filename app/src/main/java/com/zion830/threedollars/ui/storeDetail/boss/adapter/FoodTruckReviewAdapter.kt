@@ -6,7 +6,6 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ReviewContentModel
 import com.my.presentation.page.data.convertUpdateAt
 import com.threedollar.common.listener.OnItemClickListener
@@ -17,7 +16,7 @@ import com.zion830.threedollars.databinding.ItemFoodTruckReviewMoreBinding
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
-private const val TYPE_REVIE = 0
+private const val TYPE_REVIEW = 0
 private const val TYPE_MORE = 1
 
 class FoodTruckReviewAdapter(
@@ -25,7 +24,7 @@ class FoodTruckReviewAdapter(
     private val onReviewReportClickListener: OnItemClickListener<ReviewContentModel>,
     private val onReviewLikeClickListener: OnItemClickListener<ReviewContentModel>,
     private val onMoreClickListener: (() -> Unit)?,
-    private val isMore: Boolean = true
+    private var isMore: Boolean = false
 ) : PagingDataAdapter<ReviewContentModel, ViewHolder>(DIFF_CALLBACK) {
     private var count = 0
 
@@ -33,13 +32,19 @@ class FoodTruckReviewAdapter(
         count = totalCount
     }
 
+    fun updateMoreButtonVisibility(hasMore: Boolean) {
+        if (this.isMore != hasMore) {
+            this.isMore = hasMore
+            notifyDataSetChanged()
+        }
+    }
+
     override fun getItemViewType(position: Int): Int {
-        return if (!isMore) TYPE_REVIE
-        else if (position < 3) TYPE_REVIE else TYPE_MORE
+        return if (isMore && position == itemCount - 1) TYPE_MORE else TYPE_REVIEW
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        if (viewType == TYPE_REVIE) {
+        if (viewType == TYPE_REVIEW) {
             FoodTruckReviewViewHolder(
                 ItemFoodTruckReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onReviewImageClickListener,
