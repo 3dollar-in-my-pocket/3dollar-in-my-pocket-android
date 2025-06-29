@@ -10,6 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Clean project**: `./gradlew clean`
 - **Run tests**: `./gradlew test`
 - **Run instrumented tests**: `./gradlew connectedAndroidTest`
+- **Run single test class**: `./gradlew test --tests "com.example.ClassName"`
+- **Check dependencies**: `./gradlew dependencies`
 
 ## Project Architecture
 
@@ -32,10 +34,12 @@ This is a multi-module Android application following Clean Architecture principl
 - **Networking**: Retrofit + OkHttp with Moshi/Kotlinx Serialization
 - **UI**: ViewBinding + DataBinding
 - **Architecture**: MVVM with LiveData
-- **Maps**: Naver Maps SDK
+- **Maps**: Naver Maps SDK (primary), Kakao Map (external navigation)
 - **Image Loading**: Glide
-- **Analytics**: Firebase Analytics
+- **Analytics**: Firebase Analytics, Crashlytics, Remote Config
 - **Login**: Kakao SDK, Google Sign-In
+- **Navigation**: Navigation Component
+- **Animations**: Lottie
 
 ### Configuration
 - **Target SDK**: 34
@@ -56,3 +60,21 @@ This is a multi-module Android application following Clean Architecture principl
 - Test runner: AndroidJUnitRunner
 
 The app is a location-based service for finding street food vendors ("3달러 가게") with features for store discovery, reviews, community polling, and user management.
+
+## Development Notes
+
+### Data Layer Patterns
+- Repository pattern with data/domain/presentation separation in feature modules
+- API responses handled in `core/network` with centralized error handling
+- SharedPreferences used for local data persistence
+
+### UI Patterns
+- Single Activity architecture with Navigation Component
+- Custom views for rating bars, hashtag displays, and image pickers
+- Material Design components with custom theming
+
+### External Integrations
+- Deep linking support with Firebase Dynamic Links
+- Push notifications via Firebase Cloud Messaging
+- AdMob integration for monetization
+- Social login with Kakao and Google SDKs
