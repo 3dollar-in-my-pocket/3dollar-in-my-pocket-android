@@ -7,7 +7,7 @@
 
     <EditText
         android:id="@+id/et_name"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_edittext"
@@ -24,7 +24,7 @@
 
     <EditText
         android:id="@+id/et_price"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"

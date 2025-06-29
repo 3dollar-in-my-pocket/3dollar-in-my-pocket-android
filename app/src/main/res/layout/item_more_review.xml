@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/nameTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/medalTextView"
-                style="@style/apple_gothic_medium.size_10sp"
+                style="@style/apple_gothic_medium.size_10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -77,7 +77,7 @@
 
         <TextView
             android:id="@+id/reviewTextView"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -89,7 +89,7 @@
 
         <TextView
             android:id="@+id/createdAtTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
@@ -110,7 +110,7 @@
 
         <TextView
             android:id="@+id/reportAndEditTextView"
-            style="@style/apple_gothic_bold.size_12sp"
+            style="@style/apple_gothic_bold.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/gray60"
@@ -121,7 +121,7 @@
 
     <TextView
         android:id="@+id/blindTextView"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

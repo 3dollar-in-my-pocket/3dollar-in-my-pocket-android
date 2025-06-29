@@ -24,6 +24,7 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StoreNearExistsModel
+import com.home.domain.data.store.UploadFileModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
@@ -218,6 +219,39 @@ class HomeRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileModel>>? = runCatching {
+        homeRemoteDataSource.uploadFilesBulk(fileType, files)
+    }.fold(
+        onSuccess = {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.map { response -> response.asModel() },
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        },
+        onFailure = {
+            null
+        }
+    )
+
+    override suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileModel>? = runCatching {
+        homeRemoteDataSource.uploadFile(fileType, file)
+    }.fold(
+        onSuccess = {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        },
+        onFailure = {
+            null
+        }
+    )
 
     override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
         ImagePagingDataSource(storeId, serverApi)
@@ -305,4 +339,18 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>> = Pager(PagingConfig(20)) {
         PlacePagingDataSource(placeType = placeType.asType(), serverApi = serverApi)
     }.flow
+
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>>
+        = homeRemoteDataSource.putStickers(storeId, reviewId, stickers)
+
+    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>> =
+        homeRemoteDataSource.postBossStoreReview(storeId, contents, rating, images, feedbacks).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
 }

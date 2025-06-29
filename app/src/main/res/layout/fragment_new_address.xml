@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            style="@style/apple_gothic_medium.size_16sp"
+            style="@style/apple_gothic_medium.size_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_add_store"
@@ -104,7 +104,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            style="@style/apple_gothic_semi_bold.size_20sp"
+            style="@style/apple_gothic_semi_bold.size_20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
@@ -113,7 +113,7 @@
 
         <TextView
             android:id="@+id/addressTextView"
-            style="@style/apple_gothic_bold.size_16sp"
+            style="@style/apple_gothic_bold.size_16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="20dp"
@@ -125,7 +125,7 @@
 
         <TextView
             android:id="@+id/finishButton"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"

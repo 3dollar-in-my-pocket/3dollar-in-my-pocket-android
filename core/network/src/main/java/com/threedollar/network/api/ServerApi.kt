@@ -29,10 +29,11 @@ import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.ImageResponse
 import com.threedollar.network.data.store.MyReportedStoresResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
-import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.StoreReviewDetailResponse
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.network.data.user.MyFeedbacksResponse
 import com.threedollar.network.data.user.MyReviewResponseV2
@@ -46,6 +47,8 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.StickerRequest
+import com.threedollar.network.request.BossStoreReviewRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 import okhttp3.MultipartBody
@@ -266,6 +269,20 @@ interface ServerApi {
         @Query("storeId") storeId: Int
     ): Response<BaseResponse<List<SaveImagesResponse>>>
 
+    @POST("/api/v1/upload/{fileType}/bulk")
+    @Multipart
+    suspend fun uploadFilesBulk(
+        @Path("fileType") fileType: String,
+        @Part files: List<MultipartBody.Part>
+    ): Response<BaseResponse<List<UploadFileResponse>>>
+
+    @POST("/api/v1/upload/{fileType}")
+    @Multipart
+    suspend fun uploadFile(
+        @Path("fileType") fileType: String,
+        @Part file: MultipartBody.Part
+    ): Response<BaseResponse<UploadFileResponse>>
+
     @GET("/api/v4/store/{storeId}/images")
     suspend fun getStoreImages(
         @Path("storeId") storeId: Int,
@@ -274,7 +291,10 @@ interface ServerApi {
     ): Response<BaseResponse<ImageResponse>>
 
     @POST("/api/v3/store/review")
-    suspend fun postStoreReview(@Body storeReviewRequest: StoreReviewRequest): Response<BaseResponse<ReviewContent>>
+    suspend fun postStoreReview(@Body storeReviewRequest: StoreReviewRequest): Response<BaseResponse<StoreReviewDetailResponse>>
+
+    @POST("/api/v3/store/review")
+    suspend fun postBossStoreReview(@Body bossStoreReviewRequest: BossStoreReviewRequest): Response<BaseResponse<StoreReviewDetailResponse>>
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun putStoreReview(
@@ -348,4 +368,11 @@ interface ServerApi {
         @Query("size") size: Int,
         @Query("cursor") cursor: String?,
     ): Response<BaseResponse<PlaceResponse>>
+
+    @PUT("/api/v1/store/{storeId}/review/{reviewId}/stickers")
+    suspend fun putStickers(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+        @Body stickerRequest: StickerRequest
+    ): Response<BaseResponse<String>>
 }

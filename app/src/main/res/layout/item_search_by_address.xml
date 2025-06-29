@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/tv_address"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -46,7 +46,7 @@
 
         <TextView
             android:id="@+id/tv_address_detail"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"

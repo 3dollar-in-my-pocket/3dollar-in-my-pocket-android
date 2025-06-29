@@ -12,10 +12,12 @@ import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
-import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.home.domain.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
@@ -25,6 +27,10 @@ import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.BossStoreReviewRequest
+import com.threedollar.network.request.FeedbackRequest
+import com.threedollar.network.request.ImageRequest
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
 import com.threedollar.network.util.apiResult
@@ -157,9 +163,16 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deleteImage(imageId)))
     }
 
-    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> = apiResult(serverApi.saveImages(images, storeId))
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> =
+        apiResult(serverApi.saveImages(images, storeId))
 
-    override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>> = flow {
+    override suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileResponse>> =
+        apiResult(serverApi.uploadFilesBulk(fileType, files))
+
+    override suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileResponse> =
+        apiResult(serverApi.uploadFile(fileType, file))
+
+    override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))
     }
 
@@ -195,4 +208,28 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deletePlace(placeType = placeType.name, placeId = placeId)))
     }
 
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>> = flow {
+        emit(
+            apiResult(
+                serverApi.putStickers(
+                    storeId = storeId,
+                    reviewId = reviewId,
+                    stickerRequest = StickerRequest(stickers.map { sticker -> StickerRequest.Sticker(sticker) })
+                )
+            )
+        )
+    }
+
+    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
+        val imageRequests = images.map { ImageRequest(url = it.imageUrl, width = it.width, height = it.height) }
+        val feedbackRequests = feedbacks.map { FeedbackRequest(it) }
+        val request = BossStoreReviewRequest(
+            storeId = storeId,
+            contents = contents,
+            rating = rating,
+            images = imageRequests,
+            feedbacks = feedbackRequests
+        )
+        emit(apiResult(serverApi.postBossStoreReview(request)))
+    }
 }

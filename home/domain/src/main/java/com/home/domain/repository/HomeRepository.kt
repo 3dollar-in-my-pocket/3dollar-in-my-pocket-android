@@ -15,6 +15,7 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StoreNearExistsModel
+import com.home.domain.data.store.UploadFileModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.request.FilterConditionsTypeModel
@@ -27,6 +28,8 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Body
+import retrofit2.http.Path
 
 interface HomeRepository {
 
@@ -82,6 +85,10 @@ interface HomeRepository {
 
     suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>?
 
+    suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileModel>>?
+
+    suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileModel>?
+
     fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
 
     fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
@@ -106,4 +113,8 @@ interface HomeRepository {
     fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
 
     fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>>
+
+    fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
+
+    fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>>
 }

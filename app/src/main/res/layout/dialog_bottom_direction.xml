@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/kakaoMapTextView"
-        style="@style/apple_gothic_medium.size_16sp"
+        style="@style/apple_gothic_medium.size_16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/naverMapTextView"
-        style="@style/apple_gothic_medium.size_16sp"
+        style="@style/apple_gothic_medium.size_16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/closeTextView"
-        style="@style/apple_gothic_medium.size_16sp"
+        style="@style/apple_gothic_medium.size_16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"

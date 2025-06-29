@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/titleTextView"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="10dp"
@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/reviewCountTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="49dp"
         android:layout_height="26dp"
         android:background="@drawable/rect_radius_120_stroke_pink"

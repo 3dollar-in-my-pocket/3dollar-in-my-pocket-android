@@ -241,6 +241,7 @@
     <string name="ready_ing">준비중</string>
     <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
     <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
+    <string name="all_more">전체보기</string>
 
     <string name="scheme_host_main">main</string>
     <string name="scheme_host_kakao_link">kakaolink</string>
@@ -342,4 +343,44 @@
     <string name="marketing_deny_msg">알림을 받지 않으면 선물과 혜택을 드리는 이벤트 정보를 받으실 수 없어요. 그래도 거부하시겠어요?</string>
     <string name="marketing_deny_toast">%s에 가슴속3천원 혜택 알림 수신 동의를 철회했어요</string>
     <string name="marketing_approve_toast">%s에 가슴속3천원 혜택 알림 수신에 동의했어요</string>
+    <string name="str_feedback_title">피드백</string>
+    <string name="str_review_write">리뷰 작성하기</string>
+    <string name="str_feedback_write">피드백/리뷰 작성하기</string>
+    <string name="str_feedback_count_html">피드백 %d개</string>
+    <string name="str_feedback_count">%d개</string>
+    <string name="str_boss_review_write_title">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
+
+    <string name="str_like">좋아요 %d</string>
+    <string name="str_review_more">리뷰 %d개 더보기</string>
+
+    <string name="address_copied">주소가 복사됐습니다.</string>
+    <string name="account_number_copied">계좌번호가 복사되었습니다.</string>
+    <string name="review_report_dialog_title">신고</string>
+    <string name="review_report_already_message">이미 신고한 댓글입니다!</string>
+    <string name="report_confirm">확인</string>
+    <string name="str_review_description">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="str_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    
+    <!-- Boss Store Review -->
+    <string name="boss_review_feedback_question">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="boss_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="boss_review_recommend_question">이 가게를 추천하시나요?</string>
+    <string name="boss_review_content_hint">리뷰를 남겨주세요(300자 이내)</string>
+    <string name="boss_review_add_photo">사진 추가하기</string>
+    <string name="boss_review_submit">리뷰 남기기 완료!</string>
+    <string name="boss_review_feedback_required">피드백을 선택해주세요.</string>
+    <string name="boss_review_rating_required">별점을 선택해주세요.</string>
+    <string name="boss_review_content_required">리뷰 내용을 입력해주세요.</string>
+    <string name="boss_review_image_todo">이미지 선택 기능은 추후 구현 예정입니다.</string>
+    <string name="boss_review_max_images_error">최대 %d장까지 선택할 수 있습니다.</string>
+    <string name="boss_review_image_size_error">10MB 이하의 이미지만 업로드 가능합니다.</string>
+    <string name="boss_review_image_selection_error">이미지 선택에 실패했습니다.</string>
+    <string name="boss_review_image_count" formatted="false">%d/%d</string>
+    <string name="boss_review_submitting">리뷰 등록하는 중...</string>
+    <string name="boss_review_uploading_images">이미지 등록중</string>
+    <string name="boss_review_image_upload_failed">이미지 업로드에 실패했습니다.</string>
+    <string name="boss_review_image_upload_error">이미지 업로드 중 오류가 발생했습니다.</string>
+    <string name="boss_review_success">리뷰가 성공적으로 등록되었습니다!</string>
 </resources>

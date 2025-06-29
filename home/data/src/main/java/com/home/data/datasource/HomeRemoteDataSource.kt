@@ -11,10 +11,12 @@ import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
-import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.home.domain.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
@@ -91,7 +93,11 @@ interface HomeRemoteDataSource {
 
     suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>>
 
-    fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>>
+    suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileResponse>>
+
+    suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileResponse>
+
+    fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>>
 
     fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 
@@ -109,4 +115,7 @@ interface HomeRemoteDataSource {
 
     fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
 
+    fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
+
+    fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>>
 }

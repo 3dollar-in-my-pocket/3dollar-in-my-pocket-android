@@ -58,6 +58,9 @@
             android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -110,7 +113,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewActivity"
+            android:name=".ui.storeDetail.boss.ui.BossReviewWriteActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -189,6 +192,10 @@
         <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
         <activity android:name="com.my.presentation.page.team.MyPageTeamActivity" />
+
+        <activity
+            android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

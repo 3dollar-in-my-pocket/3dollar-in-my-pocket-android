@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/titleTextView"
-        style="@style/apple_gothic_semi_bold.size_20sp"
+        style="@style/apple_gothic_semi_bold.size_20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="신고 사유"
@@ -37,7 +37,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton1"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -51,7 +51,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton2"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton3"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton4"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton5"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton6"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
 
         <RadioButton
             android:id="@+id/reasonButton7"
-            style="@style/apple_gothic_regular.size_14sp"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
@@ -148,7 +148,7 @@
 
     <EditText
         android:id="@+id/etcEditTextView"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginTop="8dp"
@@ -169,7 +169,7 @@
 
     <Button
         android:id="@+id/finishButton"
-        style="@style/apple_gothic_semi_bold.size_14sp"
+        style="@style/apple_gothic_semi_bold.size_14dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"

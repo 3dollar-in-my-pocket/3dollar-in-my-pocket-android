@@ -58,7 +58,7 @@
 
             <TextView
                 android:id="@+id/titleTextView"
-                style="@style/apple_gothic_bold.size_16sp"
+                style="@style/apple_gothic_bold.size_16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -67,7 +67,7 @@
 
             <TextView
                 android:id="@+id/bodyTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginTop="4dp"

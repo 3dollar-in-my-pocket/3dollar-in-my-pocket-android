@@ -54,7 +54,12 @@ class StoreReviewDetailActivity :
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
                         } else {
-                            ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                            ReportReviewDialog.getInstance(item, storeId).apply {
+                                setReportReasons(viewModel.reportReasons.value ?: emptyList())
+                                setOnReportClickListener { sId, rId, request ->
+                                    viewModel.reportReview(sId, rId, request)
+                                }
+                            }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
                 }

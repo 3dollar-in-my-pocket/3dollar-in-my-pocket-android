@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -128,7 +129,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
                         } else {
-                            ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                            ReportReviewDialog.getInstance(item, storeId).apply {
+                                setReportReasons(viewModel.reportReasons.value ?: emptyList())
+                                setOnReportClickListener { sId, rId, request ->
+                                    viewModel.reportReview(sId, rId, request)
+                                }
+                            }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
                 }
