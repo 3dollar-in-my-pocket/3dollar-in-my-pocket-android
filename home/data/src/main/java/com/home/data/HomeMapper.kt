@@ -54,6 +54,7 @@ import com.home.domain.data.store.ReviewsModel
 import com.home.domain.data.store.SalesType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.SectionModel
+import com.home.domain.data.store.UploadFileModel
 import com.home.domain.data.store.SectionTypeModel
 import com.home.domain.data.store.StatusType
 import com.home.domain.data.store.StickerModel
@@ -129,6 +130,7 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.Section
 import com.threedollar.network.data.store.SectionType
 import com.threedollar.network.data.store.Sticker
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.Store
 import com.threedollar.network.data.store.StoreMarkerImageResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
@@ -706,6 +708,13 @@ fun SaveImagesResponse.asModel() = SaveImagesModel(
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
     url = url ?: "",
+)
+
+fun UploadFileResponse.asModel() = UploadFileModel(
+    imageUrl = imageUrl,
+    width = width,
+    height = height,
+    ratio = ratio
 )
 
 fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(

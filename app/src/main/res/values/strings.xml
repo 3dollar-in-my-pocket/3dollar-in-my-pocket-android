@@ -360,4 +360,27 @@
     <string name="review_report_dialog_title">신고</string>
     <string name="review_report_already_message">이미 신고한 댓글입니다!</string>
     <string name="report_confirm">확인</string>
+    <string name="str_review_description">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="str_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    
+    <!-- Boss Store Review -->
+    <string name="boss_review_feedback_question">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="boss_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="boss_review_recommend_question">이 가게를 추천하시나요?</string>
+    <string name="boss_review_content_hint">리뷰를 남겨주세요(300자 이내)</string>
+    <string name="boss_review_add_photo">사진 추가하기</string>
+    <string name="boss_review_submit">리뷰 남기기 완료!</string>
+    <string name="boss_review_feedback_required">피드백을 선택해주세요.</string>
+    <string name="boss_review_rating_required">별점을 선택해주세요.</string>
+    <string name="boss_review_content_required">리뷰 내용을 입력해주세요.</string>
+    <string name="boss_review_image_todo">이미지 선택 기능은 추후 구현 예정입니다.</string>
+    <string name="boss_review_max_images_error">최대 %d장까지 선택할 수 있습니다.</string>
+    <string name="boss_review_image_size_error">10MB 이하의 이미지만 업로드 가능합니다.</string>
+    <string name="boss_review_image_selection_error">이미지 선택에 실패했습니다.</string>
+    <string name="boss_review_image_count" formatted="false">%d/%d</string>
+    <string name="boss_review_submitting">리뷰 등록하는 중...</string>
+    <string name="boss_review_uploading_images">이미지 등록중</string>
+    <string name="boss_review_image_upload_failed">이미지 업로드에 실패했습니다.</string>
+    <string name="boss_review_image_upload_error">이미지 업로드 중 오류가 발생했습니다.</string>
+    <string name="boss_review_success">리뷰가 성공적으로 등록되었습니다!</string>
 </resources>

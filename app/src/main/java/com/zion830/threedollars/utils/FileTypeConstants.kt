@@ -1,0 +1,12 @@
+package com.zion830.threedollars.utils
+
+object FileTypeConstants {
+    const val ADVERTISEMENT_IMAGE = "ADVERTISEMENT_IMAGE"
+    const val MEDAL_IMAGE = "MEDAL_IMAGE"
+    const val STORE_IMAGE = "STORE_IMAGE"
+    const val BOSS_STORE_CERTIFICATION_IMAGE = "BOSS_STORE_CERTIFICATION_IMAGE"
+    const val BOSS_STORE_IMAGE = "BOSS_STORE_IMAGE"
+    const val BOSS_STORE_MENU_IMAGE = "BOSS_STORE_MENU_IMAGE"
+    const val STORE_POST_IMAGE = "STORE_POST_IMAGE"
+    const val STORE_REVIEW_IMAGE = "STORE_REVIEW_IMAGE"
+}

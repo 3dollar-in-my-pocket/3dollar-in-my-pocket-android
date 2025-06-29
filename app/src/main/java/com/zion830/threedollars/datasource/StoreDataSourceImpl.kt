@@ -2,6 +2,8 @@ package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.Constants.DISTANCE_ASC
+import com.threedollar.network.data.store.StoreReviewDetailResponse
+import com.threedollar.network.request.BossStoreReviewRequest
 import com.threedollar.common.utils.Constants.REVIEW_DESC
 import com.threedollar.common.utils.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
@@ -18,6 +20,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResp
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import com.zion830.threedollars.network.NewServiceApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
@@ -154,4 +157,15 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         bossStoreFeedbackRequest: BossStoreFeedbackRequest,
     ): Response<BaseResponse<String>> =
         newService.postBossStoreFeedback(bossStoreId, bossStoreFeedbackRequest)
+
+    override fun postBossStoreReview(
+        bossStoreReviewRequest: BossStoreReviewRequest
+    ): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
+        val response = newService.postBossStoreReview(bossStoreReviewRequest)
+        if (response.isSuccessful) {
+            response.body()?.let { emit(it) }
+        } else {
+            emit(BaseResponse(ok = false, message = "네트워크 오류가 발생했습니다.", data = null))
+        }
+    }
 }

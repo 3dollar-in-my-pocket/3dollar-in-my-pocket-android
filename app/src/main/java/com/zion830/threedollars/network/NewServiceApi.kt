@@ -4,6 +4,8 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.store.StoreReviewDetailResponse
+import com.threedollar.network.request.BossStoreReviewRequest
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
@@ -52,6 +54,11 @@ interface NewServiceApi {
     suspend fun saveReview(
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
+
+    @POST("/api/v3/store/review")
+    suspend fun postBossStoreReview(
+        @Body bossStoreReviewRequest: BossStoreReviewRequest
+    ): Response<BaseResponse<StoreReviewDetailResponse>>
 
     @GET("/api/v3/store/reviews/me")
     suspend fun getMyReviews(
