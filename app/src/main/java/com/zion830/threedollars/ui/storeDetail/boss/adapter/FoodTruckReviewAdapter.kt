@@ -10,6 +10,7 @@ import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ReviewContentModel
 import com.my.presentation.page.data.convertUpdateAt
 import com.threedollar.common.listener.OnItemClickListener
+import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewMoreBinding
@@ -20,7 +21,7 @@ private const val TYPE_REVIE = 0
 private const val TYPE_MORE = 1
 
 class FoodTruckReviewAdapter(
-    private val onReviewImageClickListener: OnItemClickListener<ImageModel>,
+    private val onReviewImageClickListener: OnReviewImageClickListener,
     private val onReviewReportClickListener: OnItemClickListener<ReviewContentModel>,
     private val onReviewLikeClickListener: OnItemClickListener<ReviewContentModel>,
     private val onMoreClickListener: (() -> Unit)?,
@@ -82,7 +83,7 @@ class MoreViewHolder(private val binding: ItemFoodTruckReviewMoreBinding, privat
 
 class FoodTruckReviewViewHolder(
     private val binding: ItemFoodTruckReviewBinding,
-    private val onReviewImageClickListener: OnItemClickListener<ImageModel>,
+    private val onReviewImageClickListener: OnReviewImageClickListener,
     private val onReviewReportClickListener: OnItemClickListener<ReviewContentModel>,
     private val onReviewLikeClickListener: OnItemClickListener<ReviewContentModel>,
 ) : ViewHolder(binding.root) {

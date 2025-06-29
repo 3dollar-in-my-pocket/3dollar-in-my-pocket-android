@@ -48,12 +48,14 @@ import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreRe
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
+import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
@@ -95,9 +97,10 @@ class BossStoreDetailActivity :
     }
     private val foodTruckReviewAdapter: FoodTruckReviewAdapter by lazy {
         FoodTruckReviewAdapter(
-            onReviewImageClickListener = object : OnItemClickListener<ImageModel> {
-                override fun onClick(item: ImageModel) {
-
+            onReviewImageClickListener = object : OnReviewImageClickListener {
+                override fun onImageClick(clickedImage: ImageModel, allImages: List<ImageModel>, clickedIndex: Int) {
+                    ReviewPhotoDialog.getInstance(allImages, clickedIndex)
+                        .show(supportFragmentManager, "ReviewPhotoDialog")
                 }
             },
             onReviewReportClickListener = object : OnItemClickListener<ReviewContentModel> {

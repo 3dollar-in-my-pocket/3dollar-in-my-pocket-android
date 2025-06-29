@@ -16,7 +16,9 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityBossReviewDetailBinding
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
+import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossReviewDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,9 +33,10 @@ class BossReviewDetailActivity :
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
     private val foodTruckReviewAdapter: FoodTruckReviewAdapter by lazy {
         FoodTruckReviewAdapter(
-            onReviewImageClickListener = object : OnItemClickListener<ImageModel> {
-                override fun onClick(item: ImageModel) {
-
+            onReviewImageClickListener = object : OnReviewImageClickListener {
+                override fun onImageClick(clickedImage: ImageModel, allImages: List<ImageModel>, clickedIndex: Int) {
+                    ReviewPhotoDialog.getInstance(allImages, clickedIndex)
+                        .show(supportFragmentManager, "ReviewPhotoDialog")
                 }
             },
             onReviewReportClickListener = object : OnItemClickListener<ReviewContentModel> {
