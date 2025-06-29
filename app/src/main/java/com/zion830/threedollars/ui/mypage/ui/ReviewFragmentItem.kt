@@ -56,7 +56,7 @@ class ReviewFragmentItem : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    myReviewViewModel.myReviewPager.collectLatest {
+                    myReviewViewModel.userStoreReviewPager.collectLatest {
                         adapter?.submitData(it)
                     }
                 }
