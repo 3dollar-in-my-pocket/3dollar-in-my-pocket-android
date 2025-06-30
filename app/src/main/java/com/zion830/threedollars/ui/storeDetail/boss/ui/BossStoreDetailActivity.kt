@@ -395,14 +395,14 @@ class BossStoreDetailActivity :
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
                             distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
-                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
+                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
                             if (bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
                                 phoneTextView.text = bossStoreDetailModel.store.contactsNumbers.first().number
                             }
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
                             feedbackCountTextView.text =
-                                getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.sumOf { it.count })
+                                getString(R.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             storeInfoUpdateAtTextView.text =
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
