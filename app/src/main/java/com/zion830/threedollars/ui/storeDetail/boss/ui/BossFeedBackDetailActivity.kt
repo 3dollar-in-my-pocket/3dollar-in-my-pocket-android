@@ -49,7 +49,7 @@ class BossFeedBackDetailActivity :
                 launch {
                     viewModel.bossStoreDetailModel.collect { detail ->
                         feedbackAdapter.submitList(detail.feedbackModels)
-                        binding.twFeedbackCount.text = createBoldFeedbackText(detail.feedbackModels.size)
+                        binding.twFeedbackCount.text = createBoldFeedbackText(detail.feedbackModels.sumOf { it.count })
                     }
                 }
                 launch {
