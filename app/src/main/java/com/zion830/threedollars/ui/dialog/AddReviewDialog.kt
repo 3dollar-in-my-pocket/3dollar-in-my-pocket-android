@@ -21,8 +21,16 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 
+interface OnReviewEditCallback {
+    fun onReviewEdited(updatedReview: ReviewContentModel)
+}
+
 @AndroidEntryPoint
-class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
+class AddReviewDialog(
+    private val content: ReviewContentModel?, 
+    private val storeId: Int?,
+    private val onEditCallback: OnReviewEditCallback? = null
+) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +86,14 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
                 dismiss()
             } else {
                 viewModel.putStoreReview(content.review.reviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
+                // 수정된 리뷰 데이터 생성 후 콜백 호출
+                val updatedReview = content.copy(
+                    review = content.review.copy(
+                        contents = binding.etContent.text.toString(),
+                        rating = binding.rating.rating
+                    )
+                )
+                onEditCallback?.onReviewEdited(updatedReview)
                 dismiss()
             }
         }
@@ -87,6 +103,7 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     companion object {
-        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null) = AddReviewDialog(content, storeId)
+        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null, onEditCallback: OnReviewEditCallback? = null) = 
+            AddReviewDialog(content, storeId, onEditCallback)
     }
 }

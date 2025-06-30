@@ -41,6 +41,28 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
         }
     }
 
+    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putStoreReview(reviewId, content, rating).collect {
+                if (it.ok) {
+                    showToast("리뷰가 수정되었습니다.")
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun updateReviewInPagingData(updatedReview: ReviewContentModel) {
+        _reviewPagingData.value = _reviewPagingData.value?.map { content ->
+            if (content.review.reviewId == updatedReview.review.reviewId) {
+                updatedReview
+            } else {
+                content
+            }
+        }
+    }
+
     fun putLike(storeId: Int, reviewId: String, sticker: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putStickers(storeId.toString(), reviewId, listOf(sticker)).collect { res ->

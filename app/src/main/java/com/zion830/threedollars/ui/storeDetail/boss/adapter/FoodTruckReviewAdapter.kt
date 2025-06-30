@@ -22,6 +22,7 @@ private const val TYPE_MORE = 1
 class FoodTruckReviewAdapter(
     private val onReviewImageClickListener: OnReviewImageClickListener,
     private val onReviewReportClickListener: OnItemClickListener<ReviewContentModel>,
+    private val onReviewEditClickListener: OnItemClickListener<ReviewContentModel>,
     private val onReviewLikeClickListener: OnItemClickListener<ReviewContentModel>,
     private val onMoreClickListener: (() -> Unit)?,
     private var isMore: Boolean = false
@@ -49,6 +50,7 @@ class FoodTruckReviewAdapter(
                 ItemFoodTruckReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 onReviewImageClickListener,
                 onReviewReportClickListener,
+                onReviewEditClickListener,
                 onReviewLikeClickListener
             )
         } else {
@@ -90,6 +92,7 @@ class FoodTruckReviewViewHolder(
     private val binding: ItemFoodTruckReviewBinding,
     private val onReviewImageClickListener: OnReviewImageClickListener,
     private val onReviewReportClickListener: OnItemClickListener<ReviewContentModel>,
+    private val onReviewEditClickListener: OnItemClickListener<ReviewContentModel>,
     private val onReviewLikeClickListener: OnItemClickListener<ReviewContentModel>,
 ) : ViewHolder(binding.root) {
 
@@ -99,7 +102,13 @@ class FoodTruckReviewViewHolder(
             val photoAdapter = ReviewPhotoRecyclerAdapter(onReviewImageClickListener)
             twNickNameTitle.text = item.reviewWriter.name
             twReviewDate.text = "${item.review.updatedAt.convertUpdateAt()} · "
-            twReviewReport.onSingleClick { onReviewReportClickListener.onClick(item) }
+            if (item.review.isOwner) {
+                twReviewReport.text = binding.root.context.getString(R.string.review_edit)
+                twReviewReport.onSingleClick { onReviewEditClickListener.onClick(item) }
+            } else {
+                twReviewReport.text = binding.root.context.getString(R.string.review_report)
+                twReviewReport.onSingleClick { onReviewReportClickListener.onClick(item) }
+            }
             imgMedal.loadUrlImg(item.reviewWriter.medal.iconUrl)
             twMedalName.text = item.reviewWriter.medal.name
             reviewRatingBar.rating = item.review.rating

@@ -145,7 +145,6 @@ class StoreReviewDetailActivity :
                 launch {
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
-                            moreReviewAdapter.submitData(PagingData.empty())
                             moreReviewAdapter.submitData(pagingData)
                             binding.reviewRecyclerView.postDelayed({
                                 binding.reviewRecyclerView.smoothScrollToPosition(0)

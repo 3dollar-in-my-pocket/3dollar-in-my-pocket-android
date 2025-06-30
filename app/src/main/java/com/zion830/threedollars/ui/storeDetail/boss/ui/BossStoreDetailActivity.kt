@@ -46,7 +46,9 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
+import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
+import com.zion830.threedollars.ui.dialog.OnReviewEditCallback
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
@@ -116,6 +118,20 @@ class BossStoreDetailActivity :
                             }
                         }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                     }
+                }
+            },
+            onReviewEditClickListener = object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+                    val dialog = AddReviewDialog.getInstance(
+                        item, 
+                        storeId.toIntOrNull(),
+                        object : OnReviewEditCallback {
+                            override fun onReviewEdited(updatedReview: ReviewContentModel) {
+                                viewModel.updateReviewInList(updatedReview)
+                            }
+                        }
+                    )
+                    dialog.show(supportFragmentManager, "AddReviewDialog")
                 }
             },
             onReviewLikeClickListener = object : OnItemClickListener<ReviewContentModel> {

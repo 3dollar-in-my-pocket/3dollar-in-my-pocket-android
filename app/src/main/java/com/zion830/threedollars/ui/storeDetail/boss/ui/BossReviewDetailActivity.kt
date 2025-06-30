@@ -15,6 +15,8 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityBossReviewDetailBinding
+import com.zion830.threedollars.ui.dialog.AddReviewDialog
+import com.zion830.threedollars.ui.dialog.OnReviewEditCallback
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapter
@@ -52,6 +54,20 @@ class BossReviewDetailActivity :
                             }
                         }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                     }
+                }
+            },
+            onReviewEditClickListener = object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+                    val dialog = AddReviewDialog.getInstance(
+                        item, 
+                        storeId,
+                        object : OnReviewEditCallback {
+                            override fun onReviewEdited(updatedReview: ReviewContentModel) {
+                                viewModel.updateReviewInPagingData(updatedReview)
+                            }
+                        }
+                    )
+                    dialog.show(supportFragmentManager, "AddReviewDialog")
                 }
             },
             onReviewLikeClickListener = object : OnItemClickListener<ReviewContentModel> {
@@ -111,7 +127,6 @@ class BossReviewDetailActivity :
                 launch {
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
-                            foodTruckReviewAdapter.submitData(PagingData.empty())
                             foodTruckReviewAdapter.submitData(pagingData)
                             binding.reviewRecyclerView.postDelayed({
                                 binding.reviewRecyclerView.smoothScrollToPosition(0)

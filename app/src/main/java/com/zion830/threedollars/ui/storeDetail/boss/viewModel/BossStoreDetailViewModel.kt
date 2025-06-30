@@ -48,6 +48,9 @@ class BossStoreDetailViewModel @Inject constructor(
     private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
 
+    private val _reviewEditSuccess = MutableStateFlow<Boolean?>(null)
+    val reviewEditSuccess: StateFlow<Boolean?> get() = _reviewEditSuccess
+
     private val _uploadImageStatus = MutableStateFlow(false)
     val uploadImageStatus: StateFlow<Boolean> get() = _uploadImageStatus
 
@@ -224,6 +227,34 @@ class BossStoreDetailViewModel @Inject constructor(
                     _serverError.emit(it.message)
                 }
             }
+        }
+    }
+
+    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putStoreReview(reviewId, content, rating).collect {
+                if (it.ok) {
+                    _reviewEditSuccess.value = true
+                    showCustomBlackToast(getString(R.string.success_edit_review))
+                } else {
+                    _reviewEditSuccess.value = false
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun updateReviewInList(updatedReview: ReviewContentModel) {
+        _bossStoreDetailModel.update { storeDetail ->
+            storeDetail.copy(
+                reviews = storeDetail.reviews.map { reviewContent ->
+                    if (reviewContent.review.reviewId == updatedReview.review.reviewId) {
+                        updatedReview
+                    } else {
+                        reviewContent
+                    }
+                }
+            )
         }
     }
 
