@@ -128,21 +128,10 @@ class BossReviewWriteActivity :
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.postFeedback.collect {
-                        if (it?.ok == true) {
-                            showCustomBlackToast(getString(R.string.review_toast))
-                            val intent = BossStoreDetailActivity.getIntent(this@BossReviewWriteActivity, storeId)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                }
-                launch {
                     viewModel.postStoreReview.collect {
                         hideLoadingDialog()
                         if (it?.ok == true) {
-                            val intent = BossStoreDetailActivity.getIntent(this@BossReviewWriteActivity, storeId)
-                            startActivity(intent)
+                            showCustomBlackToast(getString(R.string.review_toast))
                             finish()
                         }
                     }

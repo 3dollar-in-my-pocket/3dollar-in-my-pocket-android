@@ -38,9 +38,6 @@ class BossStoreDetailViewModel @Inject constructor(
     private val _bossStoreDetailModel = MutableStateFlow(BossStoreDetailModel())
     val bossStoreDetailModel: StateFlow<BossStoreDetailModel> get() = _bossStoreDetailModel
 
-    private val _postFeedback: MutableStateFlow<BaseResponse<String>?> = MutableStateFlow(null)
-    val postFeedback: StateFlow<BaseResponse<String>?> get() = _postFeedback
-
     private val _postStoreReview: MutableStateFlow<BaseResponse<ReviewContentModel>?> = MutableStateFlow(null)
     val postStoreReview: StateFlow<BaseResponse<ReviewContentModel>?> get() = _postStoreReview
 
@@ -79,18 +76,6 @@ class BossStoreDetailViewModel @Inject constructor(
                 if (it.ok) {
                     _bossStoreDetailModel.value = it.data!!
                     _favoriteModel.value = it.data!!.favoriteModel
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-        }
-    }
-
-    fun postBossStoreFeedback(bossStoreId: String, bossStoreFeedbackRequest: List<String>) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.postFeedback(BOSS_STORE, bossStoreId, bossStoreFeedbackRequest).collect {
-                if (it.ok) {
-                    _postFeedback.value = it
                 } else {
                     _serverError.emit(it.message)
                 }
