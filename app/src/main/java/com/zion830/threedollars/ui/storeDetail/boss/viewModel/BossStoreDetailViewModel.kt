@@ -13,6 +13,7 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.home.domain.data.store.ReviewContentModel
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.FileTypeConstants
 import com.zion830.threedollars.utils.ImageUtils
@@ -21,6 +22,7 @@ import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import android.content.Context
 import android.net.Uri
+import com.threedollar.common.utils.Constants.STORE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +62,9 @@ class BossStoreDetailViewModel @Inject constructor(
     private val _uploadedImages = MutableStateFlow<List<UploadFileModel>?>(null)
     val uploadedImages: StateFlow<List<UploadFileModel>?> get() = _uploadedImages
 
+    private val _feedbackExists = MutableStateFlow<Boolean?>(null)
+    val feedbackExists: StateFlow<Boolean?> get() = _feedbackExists
+
     init {
         getReportReasons()
     }
@@ -97,23 +102,23 @@ class BossStoreDetailViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             _uploadImageStatus.value = true
             _uploadProgress.value = Pair(0, originalUris.size)
-            
+
             try {
                 val uploadedFiles = mutableListOf<UploadFileModel>()
-                
+
                 for ((index, uri) in originalUris.withIndex()) {
                     _uploadProgress.value = Pair(index, originalUris.size)
-                    
+
                     val multipartBody = ImageUtils.uriToMultipartBody(context, uri)
                     if (multipartBody != null) {
                         val result = homeRepository.uploadFile(
                             fileType = FileTypeConstants.STORE_REVIEW_IMAGE,
                             file = multipartBody
                         )
-                        
+
                         if (result?.ok == true && result.data != null) {
                             var uploadFile = result.data!!
-                            
+
                             // 이미지 크기 보정
                             if (uploadFile.width <= 0 || uploadFile.height <= 0) {
                                 val dimensions = ImageUtils.getImageDimensions(context, uri)
@@ -126,7 +131,7 @@ class BossStoreDetailViewModel @Inject constructor(
                                     )
                                 }
                             }
-                            
+
                             uploadedFiles.add(uploadFile)
                         } else {
                             _serverError.emit(result?.message ?: getString(R.string.boss_review_image_upload_failed))
@@ -137,7 +142,7 @@ class BossStoreDetailViewModel @Inject constructor(
                         return@launch
                     }
                 }
-                
+
                 _uploadProgress.value = Pair(originalUris.size, originalUris.size)
                 _uploadedImages.value = uploadedFiles
             } catch (e: Exception) {
@@ -262,7 +267,7 @@ class BossStoreDetailViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {
-                    showToast("신고 완료!")
+                    showToast(getString(R.string.report_completed))
                     _bossStoreDetailModel.update { storeDetail ->
                         storeDetail.copy(
                             reviews = storeDetail.reviews.filter { reviewContent ->
@@ -275,6 +280,22 @@ class BossStoreDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun checkFeedbackExists(storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.checkFeedbackExists(STORE, storeId).collect {
+                if (it.ok) {
+                    _feedbackExists.value = it.data?.exists ?: false
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun resetFeedbackExistsState() {
+        _feedbackExists.value = null
     }
 
     private fun getReportReasons() {

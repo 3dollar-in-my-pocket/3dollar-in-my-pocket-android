@@ -6,6 +6,7 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -118,4 +119,6 @@ interface HomeRemoteDataSource {
     fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
 
     fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>>
+
+    fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsResponse>>
 }

@@ -426,6 +426,20 @@ class BossStoreDetailActivity :
                         }
                     }
                 }
+                launch {
+                    viewModel.feedbackExists.collect { exists ->
+                        exists?.let {
+                            if (it) {
+                                showToast(getString(R.string.already_reviewed_today))
+                            } else {
+                                val intent = BossReviewWriteActivity.getIntent(this@BossStoreDetailActivity, storeId)
+                                startActivity(intent)
+                            }
+                            // Reset the state after handling
+                            viewModel.resetFeedbackExistsState()
+                        }
+                    }
+                }
             }
         }
     }
@@ -479,8 +493,9 @@ class BossStoreDetailActivity :
             putString("store_id", storeId)
         }
         EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-        val intent = BossReviewWriteActivity.getIntent(this, storeId)
-        startActivity(intent)
+        
+        // 피드백 존재 여부 확인
+        viewModel.checkFeedbackExists(storeId)
     }
 
     private fun moveBossReviewActivity() {

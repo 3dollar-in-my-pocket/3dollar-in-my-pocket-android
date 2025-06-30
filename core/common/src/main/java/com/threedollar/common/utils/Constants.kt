@@ -134,6 +134,7 @@ object Constants {
     //storeType
     const val BOSS_STORE = "BOSS_STORE"
     const val USER_STORE = "USER_STORE"
+    const val STORE = "STORE"
 
     const val FAVORITE_STORE = "FAVORITE_STORE"
 }

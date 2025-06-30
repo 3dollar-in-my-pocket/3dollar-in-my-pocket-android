@@ -383,4 +383,6 @@
     <string name="boss_review_image_upload_failed">이미지 업로드에 실패했습니다.</string>
     <string name="boss_review_image_upload_error">이미지 업로드 중 오류가 발생했습니다.</string>
     <string name="boss_review_success">리뷰가 성공적으로 등록되었습니다!</string>
+    <string name="already_reviewed_today">오늘 이미 리뷰를 남겼습니다.\n다른 날 다시 리뷰를 남겨주세요 :)</string>
+    <string name="report_completed">신고 완료!</string>
 </resources>

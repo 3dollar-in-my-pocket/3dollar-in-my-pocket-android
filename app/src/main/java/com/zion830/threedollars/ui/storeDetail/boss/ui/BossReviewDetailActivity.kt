@@ -86,6 +86,9 @@ class BossReviewDetailActivity :
     override fun initView() {
         binding.reviewRecyclerView.adapter = foodTruckReviewAdapter
         binding.btnBack.onSingleClick { finish() }
+        binding.twReviewWrite.onSingleClick { 
+            moveFoodTruckReviewWriteActivity()
+        }
         initFlow()
         initTabLayout()
         viewModel.getReviewList(storeId, ReviewSortType.LATEST)
@@ -139,8 +142,27 @@ class BossReviewDetailActivity :
                         it?.let { showToast(it) }
                     }
                 }
+                launch {
+                    viewModel.feedbackExists.collect { exists ->
+                        exists?.let {
+                            if (it) {
+                                showToast(getString(R.string.already_reviewed_today))
+                            } else {
+                                val intent = BossReviewWriteActivity.getIntent(this@BossReviewDetailActivity, storeId.toString())
+                                startActivity(intent)
+                            }
+                            // Reset the state after handling
+                            viewModel.resetFeedbackExistsState()
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun moveFoodTruckReviewWriteActivity() {
+        // 피드백 존재 여부 확인
+        viewModel.checkFeedbackExists(storeId.toString())
     }
 
     private fun showAlreadyReportDialog() {

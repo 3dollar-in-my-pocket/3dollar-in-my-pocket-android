@@ -16,6 +16,7 @@ import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.EditStoreReviewModel
+import com.home.domain.data.store.FeedbackExistsModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.PostUserStoreModel
@@ -39,6 +40,7 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -351,6 +353,16 @@ class HomeRepositoryImpl @Inject constructor(
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,
+            )
+        }
+
+    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>> =
+        homeRemoteDataSource.checkFeedbackExists(targetType, targetId).map { response ->
+            BaseResponse(
+                ok = response.ok,
+                error = response.error,
+                message = response.message,
+                data = response.data?.asModel()
             )
         }
 }

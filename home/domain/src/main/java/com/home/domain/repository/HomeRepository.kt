@@ -7,6 +7,7 @@ import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.EditStoreReviewModel
+import com.home.domain.data.store.FeedbackExistsModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.PostUserStoreModel
@@ -117,4 +118,6 @@ interface HomeRepository {
     fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
 
     fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>>
+
+    fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>>
 }

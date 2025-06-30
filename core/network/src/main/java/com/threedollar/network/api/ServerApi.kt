@@ -5,6 +5,7 @@ import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
@@ -261,6 +262,12 @@ interface ServerApi {
 
     @GET("/api/v1/feedback/{targetType}/types")
     suspend fun getFeedbackTypes(@Path("targetType") targetType: String): Response<BaseResponse<List<FeedbackTypeResponse>>>
+
+    @GET("/api/v1/feedback/{targetType}/target/{targetId}/exists")
+    suspend fun checkFeedbackExists(
+        @Path("targetType") targetType: String,
+        @Path("targetId") targetId: String
+    ): Response<BaseResponse<FeedbackExistsResponse>>
 
     @POST("/api/v2/store/images")
     @Multipart

@@ -7,6 +7,7 @@ import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -231,5 +232,9 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
             feedbacks = feedbackRequests
         )
         emit(apiResult(serverApi.postBossStoreReview(request)))
+    }
+
+    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsResponse>> = flow {
+        emit(apiResult(serverApi.checkFeedbackExists(targetType, targetId)))
     }
 }

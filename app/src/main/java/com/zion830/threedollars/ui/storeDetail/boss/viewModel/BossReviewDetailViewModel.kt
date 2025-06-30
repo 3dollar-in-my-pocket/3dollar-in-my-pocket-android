@@ -12,6 +12,11 @@ import com.home.domain.repository.HomeRepository
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.STORE
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
+import com.zion830.threedollars.R
+import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +32,14 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
     private val _reviewPagingData = MutableStateFlow<PagingData<ReviewContentModel>?>(null)
     val reviewPagingData get() = _reviewPagingData
 
+    private val _feedbackExists = MutableStateFlow<Boolean?>(null)
+    val feedbackExists: StateFlow<Boolean?> get() = _feedbackExists
+
     init {
         getReportReasons()
     }
 
-    fun getReviewList(bossStoreId: Int,reviewSortType: ReviewSortType) {
+    fun getReviewList(bossStoreId: Int, reviewSortType: ReviewSortType) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getStoreReview(bossStoreId, reviewSortType)
                 .cachedIn(viewModelScope)
@@ -93,7 +101,7 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.reportStoreReview(storeId, reviewId, request).collect { res ->
                 if (res.ok) {
-                    showToast("신고 완료!")
+                    showToast(getString(R.string.report_completed))
                     _reviewPagingData.value = _reviewPagingData.value
                         ?.filter { it.review.reviewId != reviewId }
                 } else {
@@ -101,6 +109,22 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
                 }
             }
         }
+    }
+
+    fun checkFeedbackExists(storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.checkFeedbackExists(STORE, storeId).collect {
+                if (it.ok) {
+                    _feedbackExists.value = it.data?.exists ?: false
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun resetFeedbackExistsState() {
+        _feedbackExists.value = null
     }
 
     private fun getReportReasons() {
