@@ -121,7 +121,7 @@ class FoodTruckReviewViewHolder(
             groupReply.isVisible = item.comments.isNotEmpty()
             item.comments.firstOrNull()?.let {
                 twReplyBoss.text = it.writer.name
-                twReplyDate.text = it.updatedAt
+                twReplyDate.text = it.updatedAt?.convertUpdateAt()
                 twReplyContent.text = it.content
             }
         }
