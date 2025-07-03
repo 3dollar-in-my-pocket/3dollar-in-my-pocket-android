@@ -1,11 +1,16 @@
 package com.zion830.threedollars.ui.home.ui
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -59,9 +64,12 @@ import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.goToPermissionSetting
+import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,6 +95,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
     private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
+    
+    private var hasRequestedLocationPermission = false
+    private var locationPermissionDialog: AlertDialog? = null
+    
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        when {
+            isGranted -> {
+                onLocationPermissionGranted()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // 재요청 가능 상태: 다이얼로그 없이 기본 위치 사용
+                useDefaultLocation()
+            }
+            else -> {
+                // "다시 묻지 않음" 상태: 설명 다이얼로그 표시
+                showLocationPermissionDialog()
+            }
+        }
+    }
 
     override fun initView() {
         initMap()
@@ -205,14 +234,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initMap() {
-        naverMapFragment = NearStoreNaverMapFragment {
-            binding.tvRetrySearch.isVisible = true
-        }
+        naverMapFragment = NearStoreNaverMapFragment(
+            cameraMoved = {
+                binding.tvRetrySearch.isVisible = true
+            },
+            onLocationButtonClicked = {
+                checkLocationPermissionForButton()
+            }
+        )
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        
+        // Check and request location permission after login
         lifecycleScope.launch {
             delay(500L)
-            naverMapFragment.moveToCurrentLocation(false)
+            checkAndRequestLocationPermission()
         }
+        
         naverMapFragment.currentPosition.observe(viewLifecycleOwner) {
             viewModel.updateCurrentLocation(it)
         }
@@ -484,6 +521,99 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         })
         dialog.show(parentFragmentManager, dialog.tag)
     }
+    
+    private fun checkAndRequestLocationPermission() {
+        when {
+            isLocationAvailable() -> {
+                // 권한 있음: 현재 위치로
+                naverMapFragment.moveToCurrentLocation(false)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // 이전에 거부했지만 재요청 가능: 바로 권한 요청
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            hasRequestedLocationPermission -> {
+                // "다시 묻지 않음" 상태: 설명 다이얼로그
+                showLocationPermissionDialog()
+            }
+            else -> {
+                // 첫 요청: 바로 권한 요청
+                hasRequestedLocationPermission = true
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+    
+    private fun checkLocationPermissionForButton() {
+        if (isLocationAvailable()) {
+            // 권한 있음: 현재 위치로
+            naverMapFragment.moveToCurrentLocation(true)
+        } else {
+            // 권한 없음: 항상 설명 다이얼로그 표시
+            showLocationPermissionDialog()
+        }
+    }
+    
+    private fun useDefaultLocation() {
+        naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+        
+        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+        viewModel.requestHomeItem(
+            NaverMapUtils.DEFAULT_LOCATION,
+            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+        )
+        viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
+    }
+    
+    private fun showLocationPermissionDialog() {
+        locationPermissionDialog = AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.location_permission_title))
+            .setMessage(getString(R.string.location_permission_message))
+            .setPositiveButton(
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    getString(R.string.location_permission_grant)
+                } else {
+                    getString(R.string.location_permission_settings)
+                }
+            ) { dialog, _ ->
+                dialog.dismiss()
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // 재요청 가능한 상태: 권한 요청
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                } else {
+                    // "다시 묻지 않음" 상태: 설정 페이지로
+                    requireContext().goToPermissionSetting()
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+                useDefaultLocation()
+            }
+            .setCancelable(false)
+            .create()
+        
+        locationPermissionDialog?.show()
+    }
+    
+    private fun onLocationPermissionGranted() {
+        naverMapFragment.moveToCurrentLocation(true)
+        
+        lifecycleScope.launch {
+            delay(1000L)
+            val currentLocation = naverMapFragment.currentPosition.value
+            if (currentLocation != null) {
+                val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+                val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+                viewModel.requestHomeItem(
+                    currentLocation,
+                    if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+                )
+                viewModel.getAdvertisement(latLng = currentLocation)
+            }
+        }
+    }
+    
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -492,7 +622,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
     }
+    
+    override fun onResume() {
+        super.onResume()
+        // Check if permission was granted from settings
+        if (hasRequestedLocationPermission && isLocationAvailable()) {
+            onLocationPermissionGranted()
+        }
+    }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =
         FragmentHomeBinding.inflate(inflater, container, false)
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        locationPermissionDialog?.dismiss()
+        locationPermissionDialog = null
+    }
 }

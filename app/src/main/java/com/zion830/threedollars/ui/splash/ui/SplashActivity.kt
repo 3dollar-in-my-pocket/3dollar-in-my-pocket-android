@@ -88,7 +88,6 @@ class SplashActivity :
     }
 
     private fun initAdvertisements() {
-        requestPermissionFirst()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
         if (isLocationAvailable() && isGpsAvailable()) {

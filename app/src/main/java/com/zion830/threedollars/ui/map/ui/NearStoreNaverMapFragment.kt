@@ -15,7 +15,10 @@ import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : NaverMapFragment() {
+class NearStoreNaverMapFragment(
+    private val cameraMoved: () -> Unit = {},
+    private val onLocationButtonClicked: () -> Unit = {}
+) : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
     private var isFirstLoad = true
@@ -26,6 +29,11 @@ class NearStoreNaverMapFragment(private val cameraMoved: () -> Unit = {}) : Nave
         val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
         params.setMargins(0, 0, 0, SizeUtils.dpToPx(178f))
         binding.btnFindLocation.layoutParams = params
+
+        // 내 위치 버튼 클릭 리스너를 HomeFragment의 로직으로 교체
+        binding.btnFindLocation.setOnClickListener {
+            onLocationButtonClicked()
+        }
 
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {

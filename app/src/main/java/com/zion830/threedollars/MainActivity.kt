@@ -1,13 +1,10 @@
 package com.zion830.threedollars
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -27,7 +24,6 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.AdvertisementsPosition
-import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
@@ -35,7 +31,6 @@ import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
-import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,8 +38,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ ActivityHomeBinding.inflate(it) }),
-    ActivityCompat.OnRequestPermissionsResultCallback {
+class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ ActivityHomeBinding.inflate(it) }) {
 
     @Inject
     lateinit var sharedPrefUtils: SharedPrefUtils
@@ -58,7 +52,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
-        requestPermissionFirst()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
         if (isLocationAvailable() && isGpsAvailable()) {
@@ -191,25 +184,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         } else {
             navHostFragment.childFragmentManager.fragments.forEach { fragment ->
                 fragment.onActivityResult(requestCode, resultCode, data)
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (permissions.isEmpty()) return
-        val locationIndex = permissions.indexOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        if (grantResults[locationIndex] == PackageManager.PERMISSION_GRANTED) {
-            navHostFragment.childFragmentManager.fragments.forEach { fragment ->
-                fragment.onActivityResult(
-                    Constants.GET_LOCATION_PERMISSION,
-                    Activity.RESULT_OK,
-                    null
-                )
             }
         }
     }
