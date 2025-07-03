@@ -190,26 +190,30 @@ class BossStoreDetailViewModel @Inject constructor(
 
     fun putLike(storeId: String, reviewId: String, sticker: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putStickers(storeId, reviewId, listOf(sticker)).collect {
+            homeRepository.putStickers(storeId, reviewId, if (sticker.isEmpty()) emptyList() else listOf(sticker)).collect {
                 if (it.ok) {
                     _bossStoreDetailModel.update { storeDetail ->
                         storeDetail.copy(
-                            reviews = storeDetail.reviews.map { reviewContent ->
-                                if (reviewContent.review.reviewId.toString() == reviewId) {
-                                    reviewContent.copy(
-                                        stickers = run {
-                                            val current = reviewContent.stickers
-                                            if (current.any { it.stickerId == sticker && it.reactedByMe }) {
-                                                current.filterNot { it.stickerId == sticker && it.reactedByMe }
-                                            } else {
-                                                val template = current.find { it.stickerId == sticker }
-                                                if (template != null) {
-                                                    current + template.copy(reactedByMe = true)
-                                                } else current
-                                            }
+                            reviews = storeDetail.reviews.map { content ->
+                                if (content.review.reviewId.toString() == reviewId) {
+                                    val updatedStickers = run {
+                                        val current = content.stickers.toMutableList()
+                                        val index = current.indexOfFirst { it.stickerId == "LIKE" }
+                                        if (index > -1) {
+                                            current.find { it.stickerId == "LIKE" }?.let { tpl ->
+                                                current[index] = tpl.copy(
+                                                    reactedByMe = !tpl.reactedByMe,
+                                                    count = if (tpl.reactedByMe) tpl.count - 1 else tpl.count + 1
+                                                )
+                                                current
+                                            } ?: current
+                                        } else {
+                                            current
                                         }
-                                    )
-                                } else reviewContent
+
+                                    }
+                                    content.copy(stickers = updatedStickers)
+                                } else content
                             }
                         )
                     }

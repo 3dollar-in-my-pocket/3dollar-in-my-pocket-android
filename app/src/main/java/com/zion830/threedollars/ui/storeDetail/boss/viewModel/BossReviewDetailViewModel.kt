@@ -73,19 +73,25 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
 
     fun putLike(storeId: Int, reviewId: String, sticker: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putStickers(storeId.toString(), reviewId, listOf(sticker)).collect { res ->
+            homeRepository.putStickers(storeId.toString(), reviewId, if (sticker.isEmpty()) emptyList() else listOf(sticker)).collect { res ->
                 if (res.ok) {
                     _reviewPagingData.value = _reviewPagingData.value?.map { content ->
                         if (content.review.reviewId.toString() == reviewId) {
                             val updatedStickers = run {
-                                val current = content.stickers
-                                if (current.any { it.stickerId == sticker && it.reactedByMe }) {
-                                    current.filterNot { it.stickerId == sticker && it.reactedByMe }
+                                val current = content.stickers.toMutableList()
+                                val index = current.indexOfFirst { it.stickerId == "LIKE" }
+                                if (index > -1) {
+                                    current.find { it.stickerId == "LIKE" }?.let { tpl ->
+                                        current[index] = tpl.copy(
+                                            reactedByMe = !tpl.reactedByMe,
+                                            count = if (tpl.reactedByMe) tpl.count - 1 else tpl.count + 1
+                                        )
+                                        current
+                                    } ?: current
                                 } else {
-                                    current.find { it.stickerId == sticker }
-                                        ?.let { tpl -> current + tpl.copy(reactedByMe = true) }
-                                        ?: current
+                                    current
                                 }
+
                             }
                             content.copy(stickers = updatedStickers)
                         } else content
