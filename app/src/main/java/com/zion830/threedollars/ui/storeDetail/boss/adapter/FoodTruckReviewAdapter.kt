@@ -7,12 +7,13 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.ReviewStatusType
 import com.my.presentation.page.data.convertUpdateAt
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewMoreBinding
+import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
@@ -98,6 +99,8 @@ class FoodTruckReviewViewHolder(
 
     fun bind(item: ReviewContentModel, position: Int) {
         binding.apply {
+            blindTextView.isVisible = item.review.status != ReviewStatusType.POSTED
+            reviewConstraintLayout.isVisible = item.review.status == ReviewStatusType.POSTED
             index = position
             val photoAdapter = ReviewPhotoRecyclerAdapter(onReviewImageClickListener)
             twNickNameTitle.text = item.reviewWriter.name

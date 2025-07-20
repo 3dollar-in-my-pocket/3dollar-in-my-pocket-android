@@ -2,19 +2,17 @@ package com.zion830.threedollars.ui.storeDetail.boss.viewModel
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.filter
-import androidx.paging.map
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.home.domain.data.store.ReasonModel
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
+import com.home.domain.data.store.ReviewStatusType
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.Constants.STORE
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showToast
@@ -46,18 +44,6 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
                 .collect {
                     _reviewPagingData.value = it
                 }
-        }
-    }
-
-    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putStoreReview(reviewId, content, rating).collect {
-                if (it.ok) {
-                    showToast("리뷰가 수정되었습니다.")
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
         }
     }
 
@@ -108,8 +94,11 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
             homeRepository.reportStoreReview(storeId, reviewId, request).collect { res ->
                 if (res.ok) {
                     showToast(getString(R.string.report_completed))
-                    _reviewPagingData.value = _reviewPagingData.value
-                        ?.filter { it.review.reviewId != reviewId }
+                    _reviewPagingData.value = _reviewPagingData.value?.map {
+                        if (it.review.reviewId == reviewId) {
+                            it.copy(review = it.review.copy(status = ReviewStatusType.FILTERED))
+                        } else it
+                    }
                 } else {
                     _serverError.emit(res.message)
                 }

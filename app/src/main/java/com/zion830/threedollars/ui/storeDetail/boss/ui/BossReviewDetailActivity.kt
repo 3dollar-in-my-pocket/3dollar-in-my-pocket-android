@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.paging.PagingData
 import com.google.android.material.tabs.TabLayout
 import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ReviewContentModel
