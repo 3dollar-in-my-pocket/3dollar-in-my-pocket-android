@@ -62,6 +62,9 @@ class BossStoreDetailViewModel @Inject constructor(
     private val _feedbackExists = MutableStateFlow<Boolean?>(null)
     val feedbackExists: StateFlow<Boolean?> get() = _feedbackExists
 
+    private val _isInitialLoad = MutableStateFlow(false)
+    val isInitialLoad: StateFlow<Boolean> get() = _isInitialLoad
+
     init {
         getReportReasons()
     }
@@ -72,6 +75,7 @@ class BossStoreDetailViewModel @Inject constructor(
         longitude: Double,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
+            _isInitialLoad.value = true
             homeRepository.getBossStoreDetail(bossStoreId = bossStoreId, deviceLatitude = latitude, deviceLongitude = longitude).collect {
                 if (it.ok) {
                     _bossStoreDetailModel.value = it.data!!
@@ -79,6 +83,7 @@ class BossStoreDetailViewModel @Inject constructor(
                 } else {
                     _serverError.emit(it.message)
                 }
+                _isInitialLoad.value = false
             }
         }
     }

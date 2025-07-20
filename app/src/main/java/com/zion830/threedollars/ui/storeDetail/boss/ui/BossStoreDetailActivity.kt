@@ -341,7 +341,7 @@ class BossStoreDetailActivity :
 
                         val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
 
-                        if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
+                        if (isClosed && viewModel.isInitialLoad.value) showCustomBlackToast(getString(R.string.getting_ready_now))
 
                         if (bossStoreDetailModel.store.location != null) {
                             val latLng = LatLng(bossStoreDetailModel.store.location!!.latitude, bossStoreDetailModel.store.location!!.longitude)
