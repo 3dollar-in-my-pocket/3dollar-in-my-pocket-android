@@ -13,10 +13,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.network.data.user.MyReviewResponseData
 import com.zion830.threedollars.databinding.FragmentReviewItemBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,8 +33,13 @@ class ReviewFragmentItem : Fragment() {
         super.onCreate(savedInstanceState)
         adapter = MyReviewRecyclerAdapter(object : OnItemClickListener<MyReviewResponseData> {
             override fun onClick(item: MyReviewResponseData) {
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
-                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                if (item.store.storeType == BOSS_STORE) {
+                    val intent = BossStoreDetailActivity.getIntent(requireContext(), item.store.storeId.toString())
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                } else {
+                    val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                }
             }
         })
     }

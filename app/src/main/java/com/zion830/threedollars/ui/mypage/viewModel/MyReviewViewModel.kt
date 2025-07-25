@@ -25,7 +25,7 @@ class MyReviewViewModel @Inject constructor(
     }.flow
 
     val userStoreReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        MyReviewDataSourceImpl(serviceApi, "USER_STORE")
+        MyReviewDataSourceImpl(serviceApi)
     }.flow
 
     val myFeedbacksPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {

@@ -10,8 +10,7 @@ import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 
 class MyReviewDataSourceImpl(
-    private val serverApi: ServerApi,
-    private val filterStoreType: String? = null
+    private val serverApi: ServerApi
 ) : PagingSource<Int, MyReviewResponseData>() {
 
     override fun getRefreshKey(state: PagingState<Int, MyReviewResponseData>): Int? = null
@@ -28,15 +27,8 @@ class MyReviewDataSourceImpl(
             if (response.isSuccessful) {
                 val allData = response.body()?.data?.contents ?: emptyList()
                 
-                // storeType 필터링 적용
-                val filteredData = if (filterStoreType != null) {
-                    allData.filter { it.store.storeType == filterStoreType }
-                } else {
-                    allData
-                }
-                
                 LoadResult.Page(
-                    data = filteredData,
+                    data = allData,
                     prevKey = null,
                     nextKey = response.body()?.data?.cursor?.nextCursor?.toIntOrNull()
                 )
