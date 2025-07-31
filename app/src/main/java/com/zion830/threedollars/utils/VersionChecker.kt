@@ -15,7 +15,7 @@ object VersionChecker {
         minimumFetchIntervalInSeconds = Constants.FIREBASE_INTERVAL
     }
 
-    fun getMinimumVersionCode(activity: Activity, checkVersion: (String) -> Unit) {
+    private fun getMinimumVersionCode(activity: Activity, checkVersion: (String) -> Unit) {
         val remoteConfig = Firebase.remoteConfig.apply {
             setConfigSettingsAsync(configSettings)
             setDefaultsAsync(R.xml.remote_config_defaults)

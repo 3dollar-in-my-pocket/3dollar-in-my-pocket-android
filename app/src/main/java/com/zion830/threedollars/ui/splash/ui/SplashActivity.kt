@@ -32,6 +32,8 @@ import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.VersionChecker
+import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,7 +56,7 @@ class SplashActivity :
         lifecycleScope.launch {
             delay(2000L)
             if (BuildConfig.DEBUG) {
-                viewModel.checkAccessToken()
+                checkForceUpdate()
             } else {
                 val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
                 val appUpdateInfoTask = appUpdateManager.appUpdateInfo
@@ -69,11 +71,11 @@ class SplashActivity :
                             APP_UPDATE_CODE
                         )
                     } else {
-                        viewModel.checkAccessToken()
+                        checkForceUpdate()
                     }
                 }
                 appUpdateInfoTask.addOnFailureListener {
-                    viewModel.checkAccessToken()
+                    checkForceUpdate()
                 }
             }
         }
@@ -156,9 +158,13 @@ class SplashActivity :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == APP_UPDATE_CODE) {
             if (resultCode != RESULT_OK) {
-                showToast("앱 업데이트에 실패했습니다. 다시시도해주세요.")
+                // 인앱업데이트 취소/실패 시 강제업데이트 확인
+                showToast("앱 업데이트에 실패했습니다.")
+                checkForceUpdate()
+            } else {
+                // 인앱업데이트 성공 시 정상 진행
+                viewModel.checkAccessToken()
             }
-            viewModel.checkAccessToken()
         }
     }
 
@@ -208,6 +214,19 @@ class SplashActivity :
             .setCancelable(false)
             .create()
             .show()
+    }
+
+    private fun checkForceUpdate() {
+        VersionChecker.checkForceUpdateAvailable(
+            this@SplashActivity,
+            { _, current ->
+                VersionUpdateDialog.getInstance(current)
+                    .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+            },
+            {
+                viewModel.checkAccessToken()
+            }
+        )
     }
 
     companion object {
