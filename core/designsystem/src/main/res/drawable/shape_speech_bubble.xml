@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:bottom="10dp">
+        <vector
+            android:width="16dp"
+            android:height="12dp"
+            android:viewportWidth="16"
+            android:viewportHeight="12">
+            <path
+                android:fillColor="@color/pink"
+                android:pathData="M8,0 L16,12 L0,12 Z" />
+        </vector>
+    </item>
+    <item android:top="10dp">
+        <shape android:shape="rectangle">
+            <size
+                android:width="251dp"
+                android:height="88dp" />
+            <solid android:color="@color/pink" />
+
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,105 @@
+<resources>
+    <!-- Base ThreeDollars Style -->
+    <style name="ThreeDollars">
+        <item name="android:fontFamily">@font/app_font</item>
+    </style>
+
+    <!-- Text Styles -->
+    <style name="ThreeDollars.TextAppearance.Headline" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_xxxl</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
+
+    <style name="ThreeDollars.TextAppearance.Title" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_xxl</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
+
+    <style name="ThreeDollars.TextAppearance.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_lg</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
+
+    <style name="ThreeDollars.TextAppearance.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_sm</item>
+        <item name="android:textColor">@color/gray60</item>
+    </style>
+
+    <!-- EditText Styles -->
+    <style name="ThreeDollars.EditText" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="boxStrokeColor">@color/gray30</item>
+        <item name="boxCornerRadiusTopStart">@dimen/corner_radius_sm</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_radius_sm</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_radius_sm</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_radius_sm</item>
+        <item name="hintTextColor">@color/gray60</item>
+        <item name="android:textColorHint">@color/gray60</item>
+    </style>
+
+    <!-- Toolbar Style -->
+    <style name="ThreeDollars.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/color_white</item>
+        <item name="android:elevation">@dimen/elevation_sm</item>
+        <item name="titleTextColor">@color/color_black</item>
+        <item name="subtitleTextColor">@color/gray60</item>
+        <item name="android:minHeight">@dimen/toolbar_height</item>
+    </style>
+
+    <!-- Tab Layout Style -->
+    <style name="ThreeDollars.TabLayout" parent="Widget.Material3.TabLayout">
+        <item name="tabIndicatorColor">@color/color_main_red</item>
+        <item name="tabSelectedTextColor">@color/color_main_red</item>
+        <item name="tabTextColor">@color/gray60</item>
+        <item name="tabTextAppearance">@style/ThreeDollars.TabTextAppearance</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabMode">fixed</item>
+    </style>
+
+    <style name="ThreeDollars.TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <!-- Checkbox Style -->
+    <style name="ThreeDollars.Checkbox" parent="Widget.Material3.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/color_main_red</item>
+        <item name="android:textColor">@color/color_black</item>
+        <item name="android:fontFamily">@font/app_font</item>
+    </style>
+
+    <!-- RadioButton Style -->
+    <style name="ThreeDollars.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/color_main_red</item>
+        <item name="android:textColor">@color/color_black</item>
+        <item name="android:fontFamily">@font/app_font</item>
+    </style>
+
+    <!-- Switch Style -->
+    <style name="ThreeDollars.Switch" parent="Widget.Material3.CompoundButton.Switch">
+        <item name="trackTint">@color/selector_switch</item>
+        <item name="thumbTint">@color/color_white</item>
+    </style>
+
+    <!-- Progress Bar Style -->
+    <style name="ThreeDollars.ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateTint">@color/color_main_red</item>
+    </style>
+
+    <style name="ThreeDollars.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">@color/color_main_red</item>
+        <item name="android:progressBackgroundTint">@color/gray30</item>
+    </style>
+
+    <!-- Divider Style -->
+    <style name="ThreeDollars.Divider">
+        <item name="android:background">@color/gray20</item>
+        <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+</resources>

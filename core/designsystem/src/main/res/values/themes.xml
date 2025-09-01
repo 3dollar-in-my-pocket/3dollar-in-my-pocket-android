@@ -1,0 +1,41 @@
+<resources>
+    <!-- Base Application Theme -->
+    <style name="ThreeDollarsTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/color_main_red</item>
+        <item name="colorPrimaryVariant">@color/color_sub_red</item>
+        <item name="colorOnPrimary">@color/color_white</item>
+        
+        <item name="colorSecondary">@color/pink</item>
+        <item name="colorSecondaryVariant">@color/pink_300</item>
+        <item name="colorOnSecondary">@color/color_white</item>
+        
+        <item name="colorSurface">@color/color_white</item>
+        <item name="colorOnSurface">@color/color_black</item>
+        
+        <item name="android:colorBackground">@color/gray0</item>
+        <item name="colorOnBackground">@color/color_black</item>
+        
+        <item name="colorError">@color/red</item>
+        <item name="colorOnError">@color/color_white</item>
+        
+        <!-- Custom attributes -->
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="fontFamily">@font/app_font</item>
+        
+        <!-- Override default component styles -->
+        <item name="android:textViewStyle">@style/ThreeDollars.TextView</item>
+    </style>
+
+    <!-- Component Styles -->
+    <style name="ThreeDollars.TextView" parent="Widget.AppCompat.TextView">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textColor">@color/color_black</item>
+    </style>
+
+    <!-- Rating Bar -->
+    <style name="ThreeDollars.RatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:thumb">@null</item>
+        <item name="android:numStars">5</item>
+        <item name="android:isIndicator">true</item>
+    </style>
+</resources>

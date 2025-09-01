@@ -15,7 +15,7 @@ import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
-import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.domain.model.PollCreateModel
 import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.ActivityPollListBinding
 import com.threedollar.presentation.dialog.CreatePollDialog
@@ -130,11 +130,13 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
                 val formattedDate = dateFormat.format(calendar.time)
                 viewModel.createPoll(
-                    PollCreateApiRequest(
+                    PollCreateModel(
                         title = title,
-                        options = listOf(PollCreateApiRequest.Option(first), PollCreateApiRequest.Option(second)),
+                        content = "",
+                        options = listOf(first, second),
                         categoryId = categoryId,
-                        startDateTime = formattedDate
+                        period = 0,
+                        isAllowMultipleChoice = false
                     )
                 )
                 val bundle = Bundle().apply {

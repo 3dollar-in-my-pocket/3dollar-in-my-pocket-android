@@ -4,21 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.my.domain.model.UserInfoModel
+import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
-import com.threedollar.network.data.store.StoreInfo
-import com.threedollar.network.data.user.UserWithDetailApiResponse
 import com.threedollar.network.request.PatchPushInformationRequest
-import com.threedollar.network.request.PatchUserInfoRequest
 import com.zion830.threedollars.datasource.UserDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -26,9 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
 
-    private val _userInfo: MutableLiveData<UserWithDetailApiResponse> = MutableLiveData()
+    private val _userInfo: MutableLiveData<UserInfoModel> = MutableLiveData()
 
-    val userInfo: LiveData<UserWithDetailApiResponse>
+    val userInfo: LiveData<UserInfoModel>
         get() = _userInfo
 
     private val _isAlreadyUsed: MutableLiveData<String> = MutableLiveData()
@@ -69,7 +66,7 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            myRepository.patchUserInfo(PatchUserInfoRequest(userName.value.toStringDefault())).collect {
+            myRepository.patchUserInfo(UserInfoUpdateModel(name = userName.value.toStringDefault())).collect {
                 if (!it.ok) {
                     _isAlreadyUsed.postValue(it.message.toStringDefault("-"))
                 } else {

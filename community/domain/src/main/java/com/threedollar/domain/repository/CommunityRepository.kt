@@ -1,7 +1,7 @@
 package com.threedollar.domain.repository
 
-import com.home.domain.data.store.ReportReasonsModel
-import com.home.domain.request.ReportReasonsGroupType
+import com.threedollar.domain.model.ReportReasonsModel
+import com.threedollar.domain.model.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.data.AdvertisementModelV2
@@ -15,11 +15,11 @@ import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
-import com.threedollar.network.data.poll.request.PollCreateApiRequest
+import com.threedollar.domain.model.PollCreateModel
 import kotlinx.coroutines.flow.Flow
 
 interface CommunityRepository {
-    fun createPoll(pollCreateApiRequest: PollCreateApiRequest): Flow<BaseResponse<PollId>>
+    fun createPoll(pollCreateModel: PollCreateModel): Flow<BaseResponse<PollId>>
     fun getPollId(id: String): Flow<BaseResponse<PollItem>>
     fun putPollChoice(id: String, optionId: String): Flow<BaseResponse<String>>
     fun deletePollChoice(id: String): Flow<BaseResponse<String>>

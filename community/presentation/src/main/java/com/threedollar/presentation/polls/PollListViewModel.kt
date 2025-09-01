@@ -5,13 +5,12 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CreatePolicy
 import com.threedollar.domain.data.PollId
 import com.threedollar.domain.data.PollList
+import com.threedollar.domain.model.PollCreateModel
 import com.threedollar.domain.repository.CommunityRepository
-import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,9 +50,9 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
         }
     }
 
-    fun createPoll(pollCreateApiRequest: PollCreateApiRequest) {
+    fun createPoll(pollCreateModel: PollCreateModel) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.createPoll(pollCreateApiRequest).collect {
+            communityRepository.createPoll(pollCreateModel).collect {
                 if (it.ok) {
                     _createPoll.emit(it.data!!)
                     getPollPolicy()

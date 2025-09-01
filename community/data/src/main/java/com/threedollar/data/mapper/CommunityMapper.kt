@@ -21,11 +21,15 @@ import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
+import com.threedollar.domain.model.PollCreateModel
+import com.threedollar.domain.model.ReportReason
+import com.threedollar.domain.model.ReportReasonsGroupType
 import com.threedollar.network.data.Reason
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse
+import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 import com.threedollar.network.data.poll.response.GetPollListResponse
 import com.threedollar.network.data.poll.response.GetPollResponse
@@ -34,6 +38,8 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.home.domain.request.ReportReasonsGroupType as NetworkReportReasonsGroupType
+import com.threedollar.domain.model.ReportReasonsModel as DomainReportReasonsModel
 
 fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
     return AdvertisementModelV2(
@@ -135,3 +141,34 @@ fun Reason.asModel() = ReasonModel(
     hasReasonDetail = hasReasonDetail ?: false,
     type = type ?: ""
 )
+
+fun PollCreateModel.toNetworkRequest(): PollCreateApiRequest {
+    return PollCreateApiRequest(
+        categoryId = categoryId,
+        options = options.map { PollCreateApiRequest.Option(it) },
+        startDateTime = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
+        title = title
+    )
+}
+
+fun ReportReasonsModel.toDomainModel(): DomainReportReasonsModel {
+    return DomainReportReasonsModel(
+        reasons = reasonModels.map { reason ->
+            ReportReason(
+                id = reason.type,
+                title = reason.description,
+                description = reason.description,
+                hasDetail = reason.hasReasonDetail
+            )
+        }
+    )
+}
+
+fun ReportReasonsGroupType.toNetworkGroupType(): NetworkReportReasonsGroupType {
+    return when (this) {
+        ReportReasonsGroupType.POLL -> NetworkReportReasonsGroupType.POLL
+        ReportReasonsGroupType.POLL_COMMENT -> NetworkReportReasonsGroupType.POLL_COMMENT
+        ReportReasonsGroupType.STORE_REVIEW -> NetworkReportReasonsGroupType.REVIEW
+        ReportReasonsGroupType.BOSS_STORE_REVIEW -> NetworkReportReasonsGroupType.STORE
+    }
+}

@@ -4,18 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData
-import com.threedollar.network.request.PatchUserInfoRequest
 import com.zion830.threedollars.ui.mypage.adapter.MyMedal
-import com.zion830.threedollars.utils.getErrorMessage
-import com.zion830.threedollars.utils.showCustomBlackToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -79,7 +75,7 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
 
     fun updateMedal(medalId: Int) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            myRepository.patchUserInfo(PatchUserInfoRequest(representativeMedalId = medalId)).collect {
+            myRepository.patchUserInfo(UserInfoUpdateModel(representativeMedalId = medalId)).collect {
                 if (it.ok) {
                     requestUserActivity()
                 } else {

@@ -3,7 +3,7 @@ package com.my.presentation.page.data
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.my.presentation.R
-import com.threedollar.network.data.user.UserWithDetailApiResponse
+import com.my.domain.model.UserInfoModel
 
 data class MyPageButton(
     val topText: String,
@@ -19,14 +19,14 @@ val myPageButtonPreview = listOf(
     )
 
 @Composable
-fun UserWithDetailApiResponse.toMyPageButtons(
+fun UserInfoModel.toMyPageButtons(
     clickCreateStore: () -> Unit,
     clickWriteReview: () -> Unit,
     clickMedals: () -> Unit
 ): List<MyPageButton> {
     return listOf(
-        MyPageButton(activities.createStoreCount.toString(), stringResource(R.string.str_button_create_store), clickCreateStore),
-        MyPageButton(activities.writeReviewCount.toString(), stringResource(R.string.str_button_write_review), clickWriteReview),
-        MyPageButton(ownedMedals.size.toString(), stringResource(R.string.str_button_medal), clickMedals),
+        MyPageButton(activity.storesCount.toString(), stringResource(R.string.str_button_create_store), clickCreateStore),
+        MyPageButton(activity.reviewsCount.toString(), stringResource(R.string.str_button_write_review), clickWriteReview),
+        MyPageButton("0", stringResource(R.string.str_button_medal), clickMedals), // TODO: medals count 필드 추가 필요
     )
 }

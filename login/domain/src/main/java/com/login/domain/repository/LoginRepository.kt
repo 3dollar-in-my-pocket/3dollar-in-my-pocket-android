@@ -2,11 +2,11 @@ package com.login.domain.repository
 
 import com.login.domain.data.AccessCheckModel
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.data.feedback.FeedbackTypeResponse
+import com.login.domain.model.FeedbackTypeModel
 import kotlinx.coroutines.flow.Flow
 
 interface LoginRepository {
-    fun getFeedbackTypes(targetType: String): Flow<BaseResponse<List<FeedbackTypeResponse>>>
+    fun getFeedbackTypes(targetType: String): Flow<BaseResponse<List<FeedbackTypeModel>>>
 
     fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>>
 

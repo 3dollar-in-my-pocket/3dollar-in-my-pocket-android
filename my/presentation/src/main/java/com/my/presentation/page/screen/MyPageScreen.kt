@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
 import com.my.presentation.page.MyPageViewModel
+import com.my.domain.model.*
 import com.my.presentation.page.commponent.MyPageShopInfoView
 import com.my.presentation.page.data.MyPageButton
 import com.my.presentation.page.data.MyPageSectionTitleData
@@ -63,10 +64,6 @@ import com.my.presentation.page.data.toMyPageButtons
 import com.my.presentation.page.data.toMyPageShops
 import com.my.presentation.page.data.toMyVoteHistory
 import com.threedollar.common.listener.MyFragments
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.poll.response.GetMyPollListResponse
-import com.threedollar.network.data.user.UserWithDetailApiResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import zion830.com.common.base.compose.ColorWhite
 import zion830.com.common.base.compose.Gray10
 import zion830.com.common.base.compose.Gray100
@@ -86,16 +83,16 @@ import zion830.com.common.base.compose.dpToSp
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {
 
-    val userInfo by viewModel.userInfo.collectAsState(UserWithDetailApiResponse())
-    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(MyFavoriteFolderResponse())
-    val myVisitsStore by viewModel.myVisitsStore.collectAsState(MyVisitHistoryResponseV2())
-    val userPollList by viewModel.userPollList.collectAsState(GetMyPollListResponse())
+    val userInfo by viewModel.userInfo.collectAsState(UserInfoModel("", "", "", null, UserActivityModel(0, 0, 0, 0, false, 0), UserSettingsModel(false, "")))
+    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(FavoriteStoresModel(emptyList(), null))
+    val myVisitsStore by viewModel.myVisitsStore.collectAsState(VisitHistoryModel(emptyList(), null))
+    val userPollList by viewModel.userPollList.collectAsState(UserPollsModel(emptyList(), null))
 
     val myPageUserInformation by remember(userInfo) {
         derivedStateOf {
             MyPageUserInformationData(
                 name = userInfo.name,
-                medal = userInfo.representativeMedal
+                medal = userInfo.medal
             )
         }
     }
@@ -104,7 +101,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
         { viewModel.addFragments(MyFragments.MyMedal) })
     val myVisitsShop by remember(myVisitsStore) { mutableStateOf(myVisitsStore.toMyPageShops()) }
     val myFavoriteShop by remember(myFavoriteStores) { mutableStateOf(myFavoriteStores.toMyPageShops()) }
-    val myVoteHistory by remember(userPollList) { mutableStateOf(userPollList.polls?.contents.orEmpty().map { it.poll.toMyVoteHistory() }) }
+    val myVoteHistory by remember(userPollList) { mutableStateOf(userPollList.contents.map { it.toMyVoteHistory() }) }
 
 
     Scaffold(modifier = Modifier
@@ -126,7 +123,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 topTitle = stringResource(R.string.str_section_title_visite),
                 topIcon = zion830.com.common.R.drawable.ic_badge_gray,
                 bottomTitle = stringResource(R.string.str_section_bottom_visite),
-                count = userInfo.activities.visitStoreCount
+                count = userInfo.activity.storesCount
             ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             if (myVisitsShop.isEmpty()) {
@@ -145,7 +142,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 topTitle = stringResource(R.string.str_section_title_favorit),
                 topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
                 bottomTitle = stringResource(R.string.str_section_bottom_favorit),
-                count = userInfo.activities.favoriteStoreCount
+                count = userInfo.activity.favoriteStoresCount
             ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
@@ -174,7 +171,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 )
                 Spacer(modifier = Modifier.height(44.dp))
             } else {
-                MyPageVoteCountItem(userPollList.meta?.totalParticipantsCount ?: 0)
+                MyPageVoteCountItem(userPollList.contents.size)
                 Spacer(modifier = Modifier.height(8.dp))
                 Column(
                     modifier = Modifier
@@ -241,14 +238,14 @@ fun MyPageUserInformation(myPageUserInformation: MyPageUserInformationData = myP
             AsyncImage(
                 modifier = Modifier
                     .size(90.dp),
-                model = myPageUserInformation.medal.iconUrl,
+                model = myPageUserInformation.medal?.iconUrl ?: "",
                 contentDescription = "내 칭호 사진",
                 placeholder = painterResource(id = zion830.com.common.R.drawable.ic_no_store),
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = myPageUserInformation.medal.name.orEmpty(),
+                text = myPageUserInformation.medal?.name ?: "",
                 color = Pink,
                 fontSize = dpToSp(dp = 14),
                 fontFamily = PretendardFontFamily,

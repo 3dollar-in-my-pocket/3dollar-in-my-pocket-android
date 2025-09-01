@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__activate_project",
+      "mcp__serena__list_dir",
+      "mcp__serena__think_about_collected_information",
+      "Bash(mkdir:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew:*)",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__find_file",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__find_file",
+      "Bash(cp:*)",
+      "mcp__serena__find_symbol",
+      "Bash(find:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

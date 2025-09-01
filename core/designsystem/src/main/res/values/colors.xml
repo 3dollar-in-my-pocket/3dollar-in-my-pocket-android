@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#F3A2A9</color>
+    <color name="colorPrimaryDark">#EE624C</color>
+    <color name="colorAccent">#EE624C</color>
+    <color name="colorOnPrimary">#E5E5E5</color>
+
+    <!-- Brand Colors -->
+    <color name="color_main_red">#EE624C</color>
+    <color name="color_main_red_opa50">#50EE624C</color>
+    <color name="color_main_red_opa10">#1aEE624C</color>
+    <color name="color_sub_red">#F3A2A9</color>
+    <color name="color_sub_red_hint">#66F3A2A9</color>
+
+    <!-- Semantic Colors -->
+    <color name="red">#FF5C43</color>
+    <color name="red_10">#1AFF5C43</color>
+    <color name="green">#00C667</color>
+    <color name="green_500">#00753D</color>
+    <color name="green_400">#00A455</color>
+    <color name="green_300">#4DD794</color>
+    <color name="green_200">#99E8C2</color>
+    <color name="green_100">#F1FFF8</color>
+    
+    <color name="pink">#FF858F</color>
+    <color name="pink_500">#DE616B</color>
+    <color name="pink_400">#F9737E</color>
+    <color name="pink_300">#FFAAB1</color>
+    <color name="pink_200">#FFDADD</color>
+    <color name="pink_100">#FFF3F4</color>
+
+    <!-- Gray Scale -->
+    <color name="gray100">#0F0F0F</color>
+    <color name="gray95">#181818</color>
+    <color name="gray95_op60">#99181818</color>
+    <color name="gray90">#232323</color>
+    <color name="gray80">#2E2E2E</color>
+    <color name="gray70">#5A5A5A</color>
+    <color name="gray60">#787878</color>
+    <color name="gray50">#969696</color>
+    <color name="gray40">#878787</color>
+    <color name="gray30">#D0D0D0</color>
+    <color name="gray20">#E2E2E2</color>
+    <color name="gray10">#F4F4F4</color>
+    <color name="gray0">#FAFAFA</color>
+
+    <!-- Basic Colors -->
+    <color name="color_white">#FFFFFF</color>
+    <color name="color_black">#1C1C1C</color>
+    <color name="black_op50">#80000000</color>
+
+    <!-- External Service Colors -->
+    <color name="color_kakao">#F7E317</color>
+    <color name="color_toss">#0050FF</color>
+
+    <!-- Legacy Colors (for backward compatibility) -->
+    <color name="color_green_opa10">#1a00c667</color>
+    <color name="color_gray1">#C8C8C8</color>
+    <color name="color_gray2">#F5F5F5</color>
+    <color name="color_gray3">#fafafa</color>
+    <color name="color_828282">#828282</color>
+    <color name="color_202020">#202020</color>
+    <color name="color_5C5C5C">#5C5C5C</color>
+    <color name="color_black_2C2C2C">#2C2C2C</color>
+    <color name="color_4f4f4f">#4f4f4f</color>
+    <color name="color_969696">#969696</color>
+    <color name="color_959595">#959595</color>
+    <color name="color_979797">#979797</color>
+    <color name="color_999999">#999999</color>
+    <color name="color_99FFFFFF">#99FFFFFF</color>
+    <color name="color_FFA1AA">#FFA1AA</color>
+    <color name="color_FF5C43">#FF5C43</color>
+    <color name="color_33FF5C43">#33FF5C43</color>
+    <color name="gray5">#f3f3f3</color>
+    <color name="certification_radius">#30F3A2A9</color>
+</resources>

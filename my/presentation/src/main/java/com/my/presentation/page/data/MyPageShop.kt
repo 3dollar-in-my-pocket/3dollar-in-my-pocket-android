@@ -1,7 +1,7 @@
 package com.my.presentation.page.data
 
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
+import com.my.domain.model.FavoriteStoresModel
+import com.my.domain.model.VisitHistoryModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -44,11 +44,11 @@ val myPageShopPreview = MyPageShop(
     visitedData = MyPageShop.ShopVisitedData(false, "10월 1일 19:23:00")
 )
 
-fun MyFavoriteFolderResponse.toMyPageShops(): List<MyPageShop> {
-    return favorites.map {
+fun FavoriteStoresModel.toMyPageShops(): List<MyPageShop> {
+    return contents.map {
         MyPageShop(
             title = it.storeName,
-            imageUrl = it.categories.first().imageUrl,
+            imageUrl = it.categories.firstOrNull()?.imageUrl ?: "",
             tags = it.categories.map { it.name },
             storeType = it.storeType,
             storeId = it.storeId,
@@ -57,17 +57,17 @@ fun MyFavoriteFolderResponse.toMyPageShops(): List<MyPageShop> {
     }
 }
 
-fun MyVisitHistoryResponseV2.toMyPageShops(): List<MyPageShop> {
-    return contents?.map {
+fun VisitHistoryModel.toMyPageShops(): List<MyPageShop> {
+    return contents.map {
         MyPageShop(
-            title = it.store.storeName.toString(),
-            imageUrl = it.store.categories.orEmpty().first().imageUrl.orEmpty(),
-            tags = it.store.categories.orEmpty().map { it.name.orEmpty() },
-            storeType = it.store.storeType.toString(),
-            storeId = it.store.storeId.toString(),
-            visitedData = MyPageShop.ShopVisitedData(it.visit.isExist(), formatDateString(it.visit.createdAt.orEmpty()))
+            title = it.store.storeName,
+            imageUrl = it.store.categories.firstOrNull()?.imageUrl ?: "",
+            tags = it.store.categories.map { it.name },
+            storeType = it.store.storeType,
+            storeId = it.store.storeId,
+            visitedData = MyPageShop.ShopVisitedData(true, formatDateString(it.dateOfVisit))
         )
-    }.orEmpty()
+    }
 }
 
 fun formatDateString(originalDateString: String): String {

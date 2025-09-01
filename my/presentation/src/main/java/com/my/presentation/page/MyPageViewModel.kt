@@ -2,13 +2,13 @@ package com.my.presentation.page
 
 import androidx.lifecycle.viewModelScope
 import com.my.domain.repository.MyRepository
+import com.my.domain.model.UserInfoModel
+import com.my.domain.model.FavoriteStoresModel
+import com.my.domain.model.VisitHistoryModel
+import com.my.domain.model.UserPollsModel
 import com.my.presentation.page.data.MyPageShop
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
-import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.poll.response.GetMyPollListResponse
-import com.threedollar.network.data.user.UserWithDetailApiResponse
-import com.threedollar.network.data.visit_history.MyVisitHistoryResponseV2
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,14 +18,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
 
-    private val _userInfo = MutableSharedFlow<UserWithDetailApiResponse>(replay = 1)
-    val userInfo: SharedFlow<UserWithDetailApiResponse> = _userInfo
-    private val _myFavoriteStores = MutableSharedFlow<MyFavoriteFolderResponse>()
-    val myFavoriteStores: SharedFlow<MyFavoriteFolderResponse> = _myFavoriteStores
-    private val _myVisitsStore = MutableSharedFlow<MyVisitHistoryResponseV2>()
-    val myVisitsStore: SharedFlow<MyVisitHistoryResponseV2> = _myVisitsStore
-    private val _userPollList = MutableSharedFlow<GetMyPollListResponse>()
-    val userPollList: SharedFlow<GetMyPollListResponse> = _userPollList
+    private val _userInfo = MutableSharedFlow<UserInfoModel>(replay = 1)
+    val userInfo: SharedFlow<UserInfoModel> = _userInfo
+    private val _myFavoriteStores = MutableSharedFlow<FavoriteStoresModel>()
+    val myFavoriteStores: SharedFlow<FavoriteStoresModel> = _myFavoriteStores
+    private val _myVisitsStore = MutableSharedFlow<VisitHistoryModel>()
+    val myVisitsStore: SharedFlow<VisitHistoryModel> = _myVisitsStore
+    private val _userPollList = MutableSharedFlow<UserPollsModel>()
+    val userPollList: SharedFlow<UserPollsModel> = _userPollList
     private val _addFragments = MutableSharedFlow<MyFragments>()
     val addFragments: SharedFlow<MyFragments> = _addFragments
     private val _favoriteClick = MutableSharedFlow<Unit>()
@@ -41,7 +41,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         myRepository.getUserInfo().collect {
             if (it.ok) {
                 it.data?.let { data ->
-                    _userInfo.emit(data.copy())
+                    _userInfo.emit(data)
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.my.presentation.page.data
 
-import com.threedollar.network.data.user.Medal
+import com.my.domain.model.MedalModel
 
-data class MyPageUserInformationData(val name: String, val medal: Medal)
+data class MyPageUserInformationData(val name: String, val medal: MedalModel?)
 
-val myPageUserInformationDataPreview = MyPageUserInformationData("몽키스패너",Medal())
+val myPageUserInformationDataPreview = MyPageUserInformationData("몽키스패너", null)

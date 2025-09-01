@@ -1,6 +1,6 @@
 package com.my.presentation.page.data
 
-import com.threedollar.network.data.poll.response.GetMyPollListResponse
+import com.my.domain.model.UserPollModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -18,16 +18,16 @@ data class MyVoteHistory(
     )
 }
 
-fun GetMyPollListResponse.Polls.Content.Poll.toMyVoteHistory(): MyVoteHistory {
+fun UserPollModel.toMyVoteHistory(): MyVoteHistory {
     return MyVoteHistory(
-        title = this.content?.title.orEmpty(),
-        date = this.createdAt.orEmpty().convertUpdateAt(),
-        options = this.options.orEmpty().map {
+        title = this.title,
+        date = this.createdAt.convertUpdateAt(),
+        options = this.options.map {
             MyVoteHistory.Option(
-                name = it.name.orEmpty(),
-                choiceCount = it.choice?.count ?: 0,
-                ratio = it.choice?.ratio?.toInt() ?: 0,
-                isTopVote = it.choice?.selectedByMe ?: false
+                name = it.name,
+                choiceCount = it.count,
+                ratio = (it.ratio * 100).toInt(),
+                isTopVote = false // TODO: Domain 모델에 isSelected 필드 추가 필요
             )
         }
     )

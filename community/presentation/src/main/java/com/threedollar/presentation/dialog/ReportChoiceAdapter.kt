@@ -5,24 +5,24 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.ReasonModel
+import com.threedollar.domain.model.ReportReason
 import com.threedollar.presentation.databinding.ItemChoiceNameBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 
-class ReportChoiceAdapter(private val choiceClick: (ReasonModel) -> Unit) :
-    ListAdapter<ReasonModel, ReportChoiceViewHolder>(BaseDiffUtilCallback()) {
+class ReportChoiceAdapter(private val choiceClick: (ReportReason) -> Unit) :
+    ListAdapter<ReportReason, ReportChoiceViewHolder>(BaseDiffUtilCallback()) {
 
-    private var choiceReason: ReasonModel? = null
+    private var choiceReason: ReportReason? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReportChoiceViewHolder {
         return ReportChoiceViewHolder(ItemChoiceNameBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ReportChoiceViewHolder, position: Int) {
-        holder.onBind(getItem(position), choiceClick, choiceReason?.type == getItem(position).type)
+        holder.onBind(getItem(position), choiceClick, choiceReason?.id == getItem(position).id)
     }
 
-    fun setChoiceReasonModel(reasonModel: ReasonModel) {
+    fun setChoiceReasonModel(reasonModel: ReportReason) {
         choiceReason = reasonModel
         notifyDataSetChanged()
     }
@@ -30,9 +30,9 @@ class ReportChoiceAdapter(private val choiceClick: (ReasonModel) -> Unit) :
 }
 
 class ReportChoiceViewHolder(private val binding: ItemChoiceNameBinding) : ViewHolder(binding.root) {
-    fun onBind(reasonModel: ReasonModel, choiceClick: (ReasonModel) -> Unit, isCheck: Boolean) {
+    fun onBind(reasonModel: ReportReason, choiceClick: (ReportReason) -> Unit, isCheck: Boolean) {
         binding.imgCheck.isVisible = isCheck
-        binding.twName.text = reasonModel.description
+        binding.twName.text = reasonModel.title
         binding.clChoiceBack.isSelected = isCheck
         binding.root.onSingleClick { choiceClick(reasonModel) }
     }

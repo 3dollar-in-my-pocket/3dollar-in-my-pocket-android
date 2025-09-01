@@ -17,7 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
-import com.home.domain.data.store.ReasonModel
+import com.threedollar.domain.model.ReportReason
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
@@ -50,8 +50,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     private lateinit var pollItem: PollItem
     private var isCommentEdit = false
     private var editCommentId = ""
-    private val pollReports = mutableListOf<ReasonModel>()
-    private val pollCommentReports = mutableListOf<ReasonModel>()
+    private val pollReports = mutableListOf<ReportReason>()
+    private val pollCommentReports = mutableListOf<ReportReason>()
     private val pollComment = mutableListOf<PollComment>()
     private var pollComments: PollCommentList? = null
     private var isLoading = false
@@ -69,8 +69,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 eventTrackerListener.logEvent(Constants.CLICK_EDIT_REVIEW, bundle)
             } else {
                 ReportChoiceDialog().setType(ReportChoiceDialog.Type.COMMENT).setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
-                    if (reasonModel.type == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.type, s)
-                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.type)
+                    if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
+                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
                     if (::pollItem.isInitialized) {
                         val bundle = Bundle().apply {
                             putString("screen", "report_review")
@@ -156,8 +156,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         }
         binding.btnReport.onSingleClick {
             ReportChoiceDialog().setType(ReportChoiceDialog.Type.POLL).setReportList(pollReports).setReportCallback { reasonModel, s ->
-                if (reasonModel.type == "POLL_OTHER") viewModel.report(reasonModel.type, s)
-                else viewModel.report(reasonModel.type)
+                if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
+                else viewModel.report(reasonModel.id)
                 if (::pollItem.isInitialized) {
                     val bundle = Bundle().apply {
                         putString("screen", "report_poll")
@@ -233,12 +233,12 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 }
                 launch {
                     viewModel.pollReportList.collect {
-                        pollReports.addAll(it.reasonModels)
+                        pollReports.addAll(it.reasons)
                     }
                 }
                 launch {
                     viewModel.pollCommentReportList.collect {
-                        pollCommentReports.addAll(it.reasonModels)
+                        pollCommentReports.addAll(it.reasons)
                     }
                 }
                 launch {

@@ -6,22 +6,22 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.home.domain.data.store.ReasonModel
+import com.threedollar.domain.model.ReportReason
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
 import zion830.com.common.base.onSingleClick
 
 class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBinding>() {
-    private val reportList = mutableListOf<ReasonModel>()
-    private var reportCallBack: (ReasonModel, String?) -> Unit = { _, _ -> }
-    private lateinit var choiceReasonModel: ReasonModel
+    private val reportList = mutableListOf<ReportReason>()
+    private var reportCallBack: (ReportReason, String?) -> Unit = { _, _ -> }
+    private lateinit var choiceReasonModel: ReportReason
     private var type = Type.POLL
     private val adapter by lazy {
         ReportChoiceAdapter(choiceClick)
     }
-    private val choiceClick: (ReasonModel) -> Unit = {
+    private val choiceClick: (ReportReason) -> Unit = {
         choiceReasonModel = it
-        binding.etReport.isVisible = it.hasReasonDetail
+        binding.etReport.isVisible = it.hasDetail
         adapter.setChoiceReasonModel(choiceReasonModel)
     }
 
@@ -64,7 +64,7 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    fun setReportCallback(callBack: (ReasonModel, String?) -> Unit): ReportChoiceDialog {
+    fun setReportCallback(callBack: (ReportReason, String?) -> Unit): ReportChoiceDialog {
         reportCallBack = callBack
         return this
     }
@@ -74,7 +74,7 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
         return this
     }
 
-    fun setReportList(list: List<ReasonModel>): ReportChoiceDialog {
+    fun setReportList(list: List<ReportReason>): ReportChoiceDialog {
         reportList.addAll(list)
         choiceReasonModel = reportList.first()
         return this
