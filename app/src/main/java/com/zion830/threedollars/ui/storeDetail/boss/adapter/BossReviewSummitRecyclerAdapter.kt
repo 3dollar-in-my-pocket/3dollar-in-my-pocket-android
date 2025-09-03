@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
@@ -47,11 +48,11 @@ class BossReviewSummitRecyclerAdapter(
         private fun updateCheckBoxStyle(isSelected: Boolean) {
             val context = binding.root.context
             if (isSelected) {
-                binding.root.setBackgroundResource(R.drawable.rect_radius12_pink100_stroke_pink)
+                binding.root.setBackgroundResource(DesignSystemR.drawable.rect_radius12_pink100_stroke_pink)
                 binding.reviewCheckBox.typeface = Typeface.DEFAULT_BOLD
                 binding.reviewCheckBox.setTextColor(context.getColor(R.color.pink))
             } else {
-                binding.root.setBackgroundResource(R.drawable.rect_white_radius12_stroke_gray20)
+                binding.root.setBackgroundResource(DesignSystemR.drawable.rect_white_radius12_stroke_gray20)
                 binding.reviewCheckBox.typeface = Typeface.DEFAULT
                 binding.reviewCheckBox.setTextColor(context.getColor(R.color.gray95))
             }

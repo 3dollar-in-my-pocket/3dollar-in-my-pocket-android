@@ -54,6 +54,7 @@ import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
@@ -339,7 +340,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
                         val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
                         val background =
-                            if (it.categoryId.isEmpty()) R.drawable.rect_white_radius10_stroke_gray30 else R.drawable.rect_white_radius10_stroke_black_fill_black
+                            if (it.categoryId.isEmpty()) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
 
                         binding.run {
                             allMenuTextView.text = text
@@ -407,17 +408,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         binding.run {
                             if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
                                 filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
-                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
                             } else {
                                 filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
-                                filterConditionsTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                             }
                             if (it.homeStoreType == HomeStoreType.BOSS_STORE) {
                                 bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
-                                bossFilterTextView.setBackgroundResource(R.drawable.rect_radius10_pink100_stroke_pink)
+                                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
                             } else {
                                 bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
-                                bossFilterTextView.setBackgroundResource(R.drawable.rect_white_radius10_stroke_gray30)
+                                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                             }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
                                 getString(R.string.fragment_home_filter_distance)

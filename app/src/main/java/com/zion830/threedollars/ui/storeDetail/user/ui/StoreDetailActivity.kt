@@ -51,6 +51,7 @@ import com.threedollar.common.utils.getDistanceText
 import com.threedollar.common.utils.toDefaultInt
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
@@ -620,7 +621,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initPayment(textView: TextView) {
         textView.apply {
             setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(this@StoreDetailActivity, R.drawable.circle_gray70_4dp),
+                ContextCompat.getDrawable(this@StoreDetailActivity, DesignSystemR.drawable.circle_gray70_4dp),
                 null,
                 null,
                 null,
@@ -668,7 +669,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.run {
             listOf(mondayTextView, tuesdayTextView, wednesdayTextView, thursdayTextView, fridayTextView, saturdayTextView, sundayTextView).forEach {
                 it.apply {
-                    setBackgroundResource(R.drawable.circle_gray10_24dp)
+                    setBackgroundResource(DesignSystemR.drawable.circle_gray10_24dp)
                     setTextColor(getColor(R.color.gray40))
                 }
             }
@@ -677,7 +678,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
-            setBackgroundResource(R.drawable.circle_gray70_24dp)
+            setBackgroundResource(DesignSystemR.drawable.circle_gray70_24dp)
             setTextColor(getColor(R.color.color_white))
         }
     }

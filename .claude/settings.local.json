@@ -15,7 +15,13 @@
       "Bash(cp:*)",
       "mcp__serena__find_symbol",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__serena__read_memory",
+      "Bash(rm:*)",
+      "Bash(sed:*)",
+      "Bash(for:*)",
+      "Bash(do)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

@@ -28,6 +28,7 @@ import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
@@ -256,7 +257,7 @@ class NearStoreMapViewViewHolder(
                 text = StringUtils.getString(R.string.only_boss)
                 setTextAppearance(R.style.apple_gothic_bold_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
-                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), R.drawable.ic_check_pink_16)
+                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)
                 setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
             }
         }

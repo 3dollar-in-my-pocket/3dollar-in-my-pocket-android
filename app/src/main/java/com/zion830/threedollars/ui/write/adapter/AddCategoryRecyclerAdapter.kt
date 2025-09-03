@@ -10,6 +10,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
 import zion830.com.common.base.BaseDiffUtilCallback
@@ -63,12 +64,12 @@ class AddCategoryRecyclerAdapter(
 class AddCategoryViewHolder(private val binding: ItemCategoryAddBinding, private val onClickListener: () -> Unit) : ViewHolder(binding.root) {
     fun bind(item: AddCategoryModel) {
         if (item.isEnabled) {
-            binding.addImageView.setBackgroundResource(R.drawable.circle_gray100)
+            binding.addImageView.setBackgroundResource(DesignSystemR.drawable.circle_gray100)
             binding.addImageView.setImageResource(R.drawable.ic_plus)
             binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray80))
             binding.btnAddNew.setOnClickListener { onClickListener() }
         } else {
-            binding.addImageView.setBackgroundResource(R.drawable.circle_solid_gray30)
+            binding.addImageView.setBackgroundResource(DesignSystemR.drawable.circle_solid_gray30)
             binding.addImageView.setImageResource(R.drawable.ic_plus_gray10)
             binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray40))
         }

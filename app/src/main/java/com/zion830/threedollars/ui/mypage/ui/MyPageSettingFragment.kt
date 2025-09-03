@@ -22,6 +22,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMypageSettingBinding
 import com.zion830.threedollars.datasource.model.LoginType
@@ -93,7 +94,7 @@ class MyPageSettingFragment :
             checkBoxListener()
             binding.tvName.text = it.name
             binding.twLoginType.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) R.drawable.ic_logo_kakao else R.drawable.ic_logo_google),
+                resources.getDrawable(if (it.socialType == LoginType.KAKAO.socialName) DesignSystemR.drawable.ic_logo_kakao else DesignSystemR.drawable.ic_logo_google),
                 null,
                 null,
                 null

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.home.domain.data.store.FeedbackModel
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackDetailBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 
@@ -35,11 +36,11 @@ class BossFeedBackDetailViewHolder(private val binding: ItemFoodTruckFeedbackDet
     fun setBar(item: FeedbackModel, position: Int) {
         binding.guideline.setGuidelinePercent(item.ratio)
         if (position > 2 || item.count == 0) {
-            binding.barBackView.setBackgroundResource(R.drawable.rect_gray10_radius8)
-            binding.barView.setBackgroundResource(R.drawable.rect_gray30_radius6)
+            binding.barBackView.setBackgroundResource(DesignSystemR.drawable.rect_gray10_radius8)
+            binding.barView.setBackgroundResource(DesignSystemR.drawable.rect_gray30_radius6)
         } else {
-            binding.barBackView.setBackgroundResource(R.drawable.rect_pink100_radius8)
-            binding.barView.setBackgroundResource(R.drawable.rect_pink_radius6)
+            binding.barBackView.setBackgroundResource(DesignSystemR.drawable.rect_pink100_radius8)
+            binding.barView.setBackgroundResource(DesignSystemR.drawable.rect_pink_radius6)
         }
     }
 }

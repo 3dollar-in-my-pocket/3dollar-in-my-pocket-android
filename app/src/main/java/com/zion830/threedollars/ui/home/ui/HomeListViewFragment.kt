@@ -34,6 +34,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
@@ -189,13 +190,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             Triple(
                 getString(R.string.fragment_home_all_menu),
                 R.color.gray70,
-                R.drawable.rect_white_radius10_stroke_gray30
+                DesignSystemR.drawable.rect_white_radius10_stroke_gray30
             )
         } else {
             Triple(
                 category.name,
                 R.color.pink,
-                R.drawable.rect_white_radius10_stroke_black_fill_black
+                DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
             )
         }
     }
@@ -231,11 +232,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         null
                     )
                 )
-                setBackgroundResource(if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.drawable.rect_radius10_pink100_stroke_pink else R.drawable.rect_white_radius10_stroke_gray30)
+                setBackgroundResource(if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
             bossFilterTextView.apply {
                 setTextColor(resources.getColor(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
-                setBackgroundResource(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.rect_radius10_pink100_stroke_pink else R.drawable.rect_white_radius10_stroke_gray30)
+                setBackgroundResource(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
             filterTextView.text = if (filterEvent.homeSortType == HomeSortType.DISTANCE_ASC) {
                 getString(R.string.fragment_home_filter_distance)
