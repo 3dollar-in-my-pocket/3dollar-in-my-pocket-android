@@ -35,6 +35,7 @@ import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.common.R as CommonR
 
 
 class AroundStoreMapViewRecyclerAdapter(
@@ -176,7 +177,7 @@ class NearStoreAdMapViewViewHolder(
         val adView = AdView(binding.root.context).apply {
             id = View.generateViewId()
             setAdSize(getAdSize(binding.rootConstraintLayout))
-            adUnitId = binding.root.context.getString(R.string.admob_map_banner)
+            adUnitId = binding.root.context.getString(CommonR.string.admob_map_banner)
         }
 
         val layoutParams = ConstraintLayout.LayoutParams(
@@ -249,12 +250,12 @@ class NearStoreMapViewViewHolder(
         bossOrResentVisitTextView.apply {
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
-                text = GlobalApplication.getContext().getString(R.string.resent_visit_count, visitCount)
+                text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
                 setTextAppearance(R.style.apple_gothic_medium_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
             } else {
-                text = StringUtils.getString(R.string.only_boss)
+                text = StringUtils.getString(CommonR.string.only_boss)
                 setTextAppearance(R.style.apple_gothic_bold_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
                 val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)

@@ -33,6 +33,7 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MyPageSettingFragment :
@@ -80,11 +81,11 @@ class MyPageSettingFragment :
         viewModel.logoutResult.observe(viewLifecycleOwner) {
             if (it) {
                 LegacySharedPrefUtils.clearUserInfo()
-                showToast(R.string.logout_message)
+                showToast(CommonR.string.logout_message)
                 startActivity(Intent(requireContext(), SplashActivity::class.java))
                 requireActivity().finish()
             } else {
-                showToast(R.string.connection_failed)
+                showToast(CommonR.string.connection_failed)
             }
         }
 
@@ -100,7 +101,7 @@ class MyPageSettingFragment :
                 null
             )
             binding.twLoginType.text =
-                if (it.socialType == LoginType.KAKAO.socialName) getString(R.string.kakao_user) else getString(R.string.google_user)
+                if (it.socialType == LoginType.KAKAO.socialName) getString(CommonR.string.kakao_user) else getString(CommonR.string.google_user)
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
@@ -122,7 +123,7 @@ class MyPageSettingFragment :
         binding.layoutTerms.setOnClickListener {
             EventTracker.logEvent(Constants.TERMS_OF_USE_BTN_CLICKED)
             val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.terms_of_service_url)))
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(CommonR.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
         binding.layoutTeamIntroduce.setOnClickListener {
@@ -174,11 +175,11 @@ class MyPageSettingFragment :
                 subscribeToTopicFirebase(true)
                 viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "APPROVE"))
                 eventTracker.setUserProperty("isPushEnable", "true")
-                showToast(getString(R.string.marketing_approve_toast, getMarketingDate()))
+                showToast(getString(CommonR.string.marketing_approve_toast, getMarketingDate()))
             } else {
                 AlertDialog.Builder(requireContext())
-                    .setTitle(getString(R.string.marketing_deny_title))
-                    .setMessage(getString(R.string.marketing_deny_msg))
+                    .setTitle(getString(CommonR.string.marketing_deny_title))
+                    .setMessage(getString(CommonR.string.marketing_deny_msg))
                     .setCancelable(false)
                     .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                         dialog.dismiss()
@@ -188,7 +189,7 @@ class MyPageSettingFragment :
                         subscribeToTopicFirebase(false)
                         viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "DENY"))
                         eventTracker.setUserProperty("isPushEnable", "false")
-                        showToast(getString(R.string.marketing_deny_toast, getMarketingDate()))
+                        showToast(getString(CommonR.string.marketing_deny_toast, getMarketingDate()))
                     }
                     .create()
                     .show()
@@ -198,7 +199,7 @@ class MyPageSettingFragment :
 
     private fun showDeleteAccountDialog() {
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.delete_account_confirm)
+            .setMessage(CommonR.string.delete_account_confirm)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
                 EventTracker.logEvent(Constants.SIGNOUT_CANCEL_BTN_CLICKED)
@@ -211,7 +212,7 @@ class MyPageSettingFragment :
     private fun tryDeleteAccount() {
         EventTracker.logEvent(Constants.SIGNOUT_WITHDRAW_BTN_CLICKED)
         viewModel.deleteUser {
-            showToast(R.string.delete_account_success)
+            showToast(CommonR.string.delete_account_success)
             LegacySharedPrefUtils.clearUserInfo()
             GlobalApplication.googleClient.signOut()
             requireActivity().finish()

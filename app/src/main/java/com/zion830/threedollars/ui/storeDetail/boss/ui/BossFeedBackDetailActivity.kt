@@ -19,6 +19,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class BossFeedBackDetailActivity :
@@ -56,7 +57,7 @@ class BossFeedBackDetailActivity :
                     viewModel.feedbackExists.collect { exists ->
                         exists?.let {
                             if (it) {
-                                showToast(getString(R.string.already_reviewed_today))
+                                showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 storeId?.let { id ->
                                     val intent = BossReviewWriteActivity.getIntent(this@BossFeedBackDetailActivity, id)
@@ -73,7 +74,7 @@ class BossFeedBackDetailActivity :
     }
 
     private fun createBoldFeedbackText(count: Int): SpannableString {
-        val text = getString(R.string.str_feedback_count_html, count)
+        val text = getString(CommonR.string.str_feedback_count_html, count)
         val spannable = SpannableString(text)
 
         val boldStart = 0

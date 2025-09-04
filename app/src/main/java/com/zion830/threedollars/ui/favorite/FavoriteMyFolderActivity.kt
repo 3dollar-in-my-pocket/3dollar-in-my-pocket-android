@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, FavoriteViewModel>({ ActivityFavoriteMyFolderBinding.inflate(it) }) {
@@ -115,7 +116,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }
         viewModel.myFavoriteFolderResponse.observe(this) {
-            val title = it.name.ifEmpty { getString(R.string.favorite_title, it.user.name, getString(R.string.favorite)) }
+            val title = it.name.ifEmpty { getString(CommonR.string.favorite_title, it.user.name, getString(CommonR.string.favorite)) }
             binding.favoriteTitleTextView.text = title
             binding.favoriteBodyTextView.text = it.introduction
         }
@@ -130,7 +131,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                     if (loadState.refresh is LoadState.NotLoading) {
                         val isEmpty = adapter.itemCount == 0
 
-                        binding.itemCountTextView.text = getString(R.string.count_list, adapter.itemCount)
+                        binding.itemCountTextView.text = getString(CommonR.string.count_list, adapter.itemCount)
                         binding.favoriteListRecyclerView.isVisible = isEmpty.not()
                         binding.emptyLinearLayout.isVisible = isEmpty
                     }

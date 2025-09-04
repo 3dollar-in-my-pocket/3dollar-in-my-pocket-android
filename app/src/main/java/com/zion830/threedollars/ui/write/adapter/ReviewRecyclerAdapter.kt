@@ -20,6 +20,7 @@ import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.common.R as CommonR
 
 class ReviewRecyclerAdapter(
     private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
@@ -112,8 +113,8 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
 
             binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
             binding.reportAndEditTextView.text =
-                if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
-                    .getString(R.string.review_report)
+                if (item.review.isOwner) GlobalApplication.getContext().getString(CommonR.string.review_edit) else GlobalApplication.getContext()
+                    .getString(CommonR.string.review_report)
         }
     }
 }

@@ -1,11 +1,481 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="connection_failed">통신에 실패했습니다. 다시 시도해주세요!</string>
+    <!-- App Info -->
+    <string name="app_name_3dollar">가슴속3천원</string>
+    <string name="app_name_3dollar_debug">(개발)가슴속3천원</string>
+    <string name="android_version">Android Version</string>
+    <string name="help_feedback_title">[Android] 가슴속 3천원 1:1 문의</string>
+    
+    <!-- Common Actions -->
+    <string name="save">저장하기</string>
+    <string name="edit">수정</string>
+    <string name="delete">삭제</string>
+    <string name="cancel">취소</string>
+    <string name="close">닫기</string>
+    <string name="complete">완료</string>
+    <string name="more">더보기</string>
+    <string name="show_all">모두보기</string>
+    <string name="all_more">전체보기</string>
+    <string name="share">공유하기</string>
+    <string name="copy">복사하기</string>
+    <string name="add">추가하기</string>
+    <string name="select">총 %d개 선택하기</string>
+    <string name="option">(선택)</string>
+    
+    <!-- Common Messages -->
+    <string name="connection_failed">요청을 처리하는데 문제가 생긴것 같아요! 다시 한번 시도해주시고 계속 안된다면 문의 부탁드립니다!</string>
+    <string name="server_500">서버 점검 중!</string>
+    <string name="server_500_msg">서버 점검 중!</string>
+    <string name="loading">로딩 중...</string>
+    <string name="empty_data">아직 등록된 정보가 없어요.</string>
+    <string name="empty_result">검색 결과가 없어요.</string>
+    
+    <!-- Common Formats -->
+    <string name="score">%.1f점</string>
+    <string name="count">%d개 제보하셨네요!</string>
+    <string name="img_count">+%d</string>
+    <string name="distance">%dm</string>
+    <string name="updated_at">업데이트</string>
     <string name="update_at">%s 업데이트</string>
     <string name="more_10km">10km +</string>
     
-    <!-- UI Common Strings -->
+    <!-- Permissions -->
+    <string name="request_permission">권한이 필요해요 😮</string>
+    <string name="request_permission_msg">사진을 제보하려면 설정 페이지에서 저장공간 권한을 허용해주세요!</string>
+    <string name="request_permission_ok">알았어요</string>
+    <string name="location_permission_title">위치 권한이 필요해요 🗺️</string>
+    <string name="location_permission_message">내 주변 가게를 찾기 위해\n위치 권한을 허용해 주세요!</string>
+    <string name="location_permission_grant">권한 허용</string>
+    <string name="location_permission_deny">나중에</string>
+    <string name="location_permission_settings">설정에서 허용</string>
+    <string name="exist_location_error">위치 정보가 없습니다.\n다시 확인 해주세요.</string>
+    <string name="location_no_address">알 수 없는 위치</string>
+    
+    <!-- Error Messages -->
+    <string name="error_no_kakao_login">카카오톡에서 로그인이 되어있는지 확인해주세요.</string>
+    <string name="error_file_size">10MB 이상의 파일은 첨부할 수 없습니다.</string>
+    <string name="error_change_medal">칭호 변경에 실패했습니다. 다시 시도해주세요!</string>
+    
+    <!-- Update -->
+    <string name="update_available">업데이트가 필요합니다!</string>
+    <string name="update_available_desc">앱을 정상적으로 이용하기 위해 업데이트가 필요해요.😭 (현재 버전 : %s)</string>
+    <string name="go_to_update">업데이트 하기</string>
+    
+    <!-- Days of Week -->
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+    <string name="sunday">일</string>
+    <string-array name="day_name">
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
+        <item>일요일</item>
+    </string-array>
+    
+    <!-- Store Types -->
+    <string name="road">길거리</string>
+    <string name="road_food">길거리음식</string>
+    <string name="food_truck">푸드트럭</string>
+    <string name="store">매장</string>
+    <string name="convenience_store">편의점</string>
+    <string name="store_type">가게형태</string>
+    
+    <!-- Payment Types -->
+    <string name="cash">현금</string>
+    <string name="card">카드</string>
+    <string name="banking">계좌이체</string>
+    <string name="payment_type">결제방식</string>
+    
+    <!-- Home Feature -->
+    <string name="title_home">홈</string>
+    <string name="title_add_store">가게 제보</string>
+    <string name="search_by_address">위치 검색</string>
+    <string name="search_by_address_hint">구, 동, 건물명, 역 등으로 검색</string>
+    <string name="no_store">주변에 가게가 없어요</string>
+    <string name="empty_store_no_enter">주변 2km 이내에 가게가 없어요.</string>
+    <string name="empty_store">주변 2km 이내에\n가게가 없어요.</string>
+    <string name="empty_store_msg">다른 주소로 검색하거나 직접 제보해보세요!</string>
+    <string name="fragment_home_all_menu">전체 메뉴</string>
+    <string name="fragment_home_filter_distance">거리순 보기</string>
+    <string name="fragment_home_filter_latest">최근 등록순 보기</string>
+    <string name="fragment_home_filter_conditions">🔥 최근 활동</string>
+    <string name="fragment_home_boss_filter">👨‍🍳 사장님 직영점만</string>
+    <string name="fragment_home_list_view">리스트뷰</string>
+    <string name="fragment_home_map_view">지도뷰</string>
+    <string name="recent_search_title">최근검색 위치</string>
+    <string name="retry_search">현재 지도에서 가게 재검색</string>
+    <string name="speech_bubble_title">최근 활동이 있는 가게만 볼 수 있어요!</string>
+    <string name="speech_bubble_body_1">•최근 한 달 내에 방문 인증 성공 내역이 있어요.</string>
+    <string name="speech_bubble_body_2">•신규로 생성된 가게에요.</string>
+    
+    <!-- Store Info -->
+    <string name="store_name">가게 이름</string>
+    <string name="store_name_empty">가게 이름을 입력해주세요!</string>
+    <string name="store_location">가게 위치</string>
+    <string name="store_info">가게 정보 &amp; 메뉴</string>
+    <string name="store_distance"> 이내에 위치한\n음식점입니다.</string>
+    <string name="store_distance_long">1km+에 위치한\n음식점입니다.</string>
+    <string name="store_empty">제보한 가게가 없어요!</string>
+    <string name="store_empty_sub">발견한 가게를 제보해 보세요 :)</string>
+    <string name="exist_store_error">삭제되거나 존재하지 않는 가게입니다</string>
+    <string name="creator">%s님 제보</string>
+    <string name="writer">님이\n제보한 음식점입니다.</string>
+    <string name="only_boss">사장님 직영</string>
+    <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
+    <string name="resent_visit_count">최근 방문 %d명</string>
+    <string name="last_visit">최근 한달 %d명이 방문 성공</string>
+    
+    <!-- Store Edit -->
+    <string name="edit_info">정보수정</string>
+    <string name="edit_store">가게 정보 수정</string>
+    <string name="edit_store_finish">수정하기</string>
+    <string name="edit_store_success">수정 완료!</string>
+    <string name="select_store_location">맛집 위치는 바로 여기!</string>
+    <string name="finish_select_store_location">이 위치로 하기</string>
+    <string name="hint_menu_name">ex) 슈크림</string>
+    <string name="hint_menu_price">ex) 3개 2천원</string>
+    <string name="hint_menu_location">ex) 강남역 2번 출구 </string>
+    
+    <!-- Store Add -->
+    <string name="add_store_finish">가게 등록하기</string>
+    <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
+    <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="dialog_near_exist_title">10m이내에 이미 제보된\n가게가 있어요!</string>
+    <string name="dialog_near_exist_subtitle">중복된 가게 제보인지 확인해 주세요</string>
+    <string name="dialog_near_exist_button_finish">여기가 확실해요</string>
+    
+    <!-- Store Delete -->
+    <string name="request_delete">신고하기</string>
+    <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>
+    <string name="request_delete_description">3건 이상의 요청이 들어오면 자동 삭제됩니다</string>
+    <string name="request_delete_reason1">없어진 가게예요</string>
+    <string name="request_delete_reason2">허위 제보로 요청된 가게에요</string>
+    <string name="request_delete_reason3">가게가 중복으로 등록되어 있어요.</string>
+    <string name="already_request_delete">이미 삭제 요청을 보낸 가게입니다.</string>
+    <string name="failed_delete_store">가게 정보 삭제 요청이 실패했습니다. 다시 시도해주세요.</string>
+    <string name="success_delete_store">가게 삭제 요청을 보냈습니다. 3건 이상의 삭제 요청이 들어오면 자동 삭제됩니다.</string>
+    <string name="failed_edit_store">가게 정보 추가에 실패했습니다. 다시 시도해주세요.</string>
+    
+    <!-- Menu -->
+    <string name="category">메뉴 카테고리</string>
+    <string name="category_delete_all">전체 삭제</string>
+    <string name="category_menu">카테고리 및 메뉴 %d개</string>
+    <string name="category_select">카테고리 선택</string>
+    <string name="finish_select_store_menu_category">카테고리 선택 완료</string>
+    <string name="menu_detail">상세메뉴</string>
+    <string name="menu_info">메뉴 정보</string>
+    <string name="no_menu_info">상세 메뉴 없음</string>
+    <string name="no_category_msg">한 개 이상의 카테고리를 선택해주세요.</string>
+    <string name="no_menu_msg">메뉴 정보를 한개 이상 입력해주세요!</string>
+    <string name="enable_multi_select">*다중선택 가능</string>
+    <string name="food_truck_price">%s원</string>
+    <string name="food_truck_menu_empty">아직 등록된 정보가 없어요.</string>
+    <string name="store_detail_menu_more">메뉴 %d개 더보기</string>
+    
+    <!-- Review -->
+    <string name="no_review">아직 리뷰가 없어요!</string>
+    <string name="add_review">리뷰쓰기</string>
+    <string name="recommend_store">이 가게를\n추천하시나요?</string>
+    <string name="recommend_store_hint">리뷰를 남겨주세요!(100자 이내)</string>
+    <string name="recommend_store_finish">리뷰 등록하기</string>
+    <string name="edit_review">리뷰 수정</string>
+    <string name="delete_review">리뷰 삭제</string>
+    <string name="success_add_review">리뷰가 등록되었습니다.</string>
+    <string name="success_edit_review">리뷰가 수정되었습니다.</string>
+    <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
+    <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
+    <string name="input_content">내용을 입력해주세요.</string>
     <string name="review_toast">소중한 리뷰가 사장님께 전달되었습니다!</string>
-    <string name="empty_data">아직 등록된 정보가 없어요.</string>
-    <string name="loading">로딩 중...</string>
+    <string name="review_count">리뷰 %d개</string>
+    <string name="review_write">리뷰 쓰기</string>
+    <string name="review">리뷰</string>
+    <string name="review_title">리뷰 남기기</string>
+    <string name="review_complete">리뷰 남기기 완료!</string>
+    <string name="review_edit">수정</string>
+    <string name="review_report">신고</string>
+    <string name="review_sort_latest">최신순</string>
+    <string name="review_sort_highest_rating">별점 높은순</string>
+    <string name="review_sort_lowest_rating">별점 낮은순</string>
+    <string name="review_blind">규정 위반으로 블라인드 처리되었습니다.</string>
+    <string name="review_more_write">리뷰 작성하기</string>
+    <string name="review_empty">리뷰를 작성해주세요.</string>
+    <string name="rating_avg">평균 별점</string>
+    <string name="store_detail_review_more">리뷰 %d개 더보기</string>
+    <string name="str_review_more">리뷰 %d개 더보기</string>
+    <string name="how_was_the_food">음식은 어떠셨나요?</string>
+    <string name="select_multi_review">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="str_review_write">리뷰 작성하기</string>
+    <string name="str_review_description">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="str_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="food_truck_review_count">%d개</string>
+    <string name="review_user_tab_title">유저 제보 가게</string>
+    <string name="review_boss_tab_title">사장님 직영점</string>
+    <string name="review_report_dialog_title">신고</string>
+    <string name="review_report_already_message">이미 신고한 댓글입니다!</string>
+    <string name="report_confirm">확인</string>
+    <string name="report_completed">신고 완료!</string>
+    
+    <!-- Boss Review -->
+    <string name="boss_review_feedback_question">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="boss_review_choice_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="boss_review_recommend_question">이 가게를 추천하시나요?</string>
+    <string name="boss_review_content_hint">리뷰를 남겨주세요(300자 이내)</string>
+    <string name="boss_review_add_photo">사진 추가하기</string>
+    <string name="boss_review_submit">리뷰 남기기 완료!</string>
+    <string name="boss_review_feedback_required">피드백을 선택해주세요.</string>
+    <string name="boss_review_rating_required">별점을 선택해주세요.</string>
+    <string name="boss_review_content_required">리뷰 내용을 입력해주세요.</string>
+    <string name="boss_review_image_todo">이미지 선택 기능은 추후 구현 예정입니다.</string>
+    <string name="boss_review_max_images_error">최대 %d장까지 선택할 수 있습니다.</string>
+    <string name="boss_review_image_size_error">10MB 이하의 이미지만 업로드 가능합니다.</string>
+    <string name="boss_review_image_selection_error">이미지 선택에 실패했습니다.</string>
+    <string name="boss_review_image_count" formatted="false">%d/%d</string>
+    <string name="boss_review_submitting">리뷰 등록하는 중...</string>
+    <string name="boss_review_uploading_images">이미지 등록중</string>
+    <string name="boss_review_image_upload_failed">이미지 업로드에 실패했습니다.</string>
+    <string name="boss_review_image_upload_error">이미지 업로드 중 오류가 발생했습니다.</string>
+    <string name="boss_review_success">리뷰가 성공적으로 등록되었습니다!</string>
+    <string name="already_reviewed_today">오늘 이미 리뷰를 남겼습니다.\n다른 날 다시 리뷰를 남겨주세요 :)</string>
+    <string name="str_boss_review_write_title">이 가게에서 가장 좋았던 점은 무엇인가요?</string>
+    <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
+    <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
+    <string name="str_like">좋아요 %d</string>
+    
+    <!-- Photo -->
+    <string name="add_photo">사진제보</string>
+    <string name="add_photo_finish">사진 등록</string>
+    <string name="upload_image">이미지를 업로드하는 중입니다...</string>
+    <string name="photo_count">가게사진 %d개</string>
+    <string name="delete_photo_title">사진을 삭제하시겠습니까?</string>
+    <string name="delete_photo_msg">사진 삭제시 복구할 수 없습니다.</string>
+    <string name="delete_photo_failed">삭제 요청이 실패했습니다. 다시 시도해주세요. 😭</string>
+    <string name="store_photo">가게 사진</string>
+    <string name="photo_summit">사진 제보</string>
+    <string name="photo">사진</string>
+    <string name="photo_submit">사진 제보하기</string>
+    <string name="photo_empty">사진을 제보해주세요!</string>
+    
+    <!-- Certification -->
+    <string name="certification">방문 인증</string>
+    <string name="add_certification">방문 인증하기</string>
+    <string name="visit_success">방문 성공</string>
+    <string name="visit_failed">방문 실패</string>
+    <string name="add_certification_success">방문 인증이 완료되었습니다. 감사합니다!</string>
+    <string name="failed_certification">방문 인증에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="already_certification">오늘 이미 방문 인증한 가게입니다.\n다음에 다시 인증해주세요.</string>
+    <string name="visit_certified_store">방문 인증 가게</string>
+    <string name="certification_title">가게 근처에서\n 방문을 인증할 수 있어요</string>
+    <string name="certification_distance">인증까지 %dm</string>
+    <string name="certification_available_title">가게 근처에서\n 방문을 인증할 수 있어요</string>
+    <string name="visit_history_title">이번 달 방문 인증 내역</string>
+    <string name="visit_history_empty_title">아직 방문 인증 내역이 없어요 :(</string>
+    <string name="visit_history_success">방문 성공 %d명</string>
+    <string name="visit_history_fail">방문 실패 %d명</string>
+    <string name="visit_extra">+ 그 외 %d명이 다녀갔어요!</string>
+    
+    <!-- My Page Feature -->
+    <string name="title_mypage">마이페이지</string>
+    <string name="my_page_edit_name">닉네임 수정</string>
+    <string name="my_page_edit_name1">를</string>
+    <string name="my_page_edit_name3">수정할래요</string>
+    <string name="my_store">제보한 가게</string>
+    <string name="my_review">내가 쓴 리뷰</string>
+    <string name="my_review_empty">아직 작성한 리뷰가 없어요!</string>
+    <string name="my_visit_history">방문 인증 내역</string>
+    <string name="no_visit_history">방문 인증 내역이 없어요!</string>
+    <string name="no_visit_history_msg">방문 인증으로 정확도를 높혀봐요.</string>
+    <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
+    <string name="my_medal">내 칭호</string>
+    <string name="about_medal">칭호 살펴보기</string>
+    <string name="change_medal">장착중인 칭호를 변경하시겠어요?</string>
+    <string name="my_certification_message">최근 내가 들린 가게는?</string>
+    <string name="str_nickname">닉네임</string>
+    <string name="str_nickname_changed">로 바꿀래요</string>
+    
+    <!-- Favorite -->
+    <string name="favorite">즐겨찾기</string>
+    <string name="mypage_favorite_title">내 음식 플리 들어볼래?</string>
+    <string name="mypage_favorite_empty_title">즐겨찾기 리스트가 없어요!</string>
+    <string name="mypage_favorite_empty_body">가게 상세에서 추가해주세요.</string>
+    <string name="toast_favorite_add">즐겨찾기가 추가 되었습니다!</string>
+    <string name="toast_favorite_delete">즐겨찾기가 삭제 되었습니다!</string>
+    <string name="info_edit">정보 수정하기</string>
+    <string name="do_delete">삭제하기</string>
+    <string name="all_delete">전체 삭제</string>
+    <string name="favorite_title">%s님의\n%s</string>
+    <string name="favorite_user_name">%s님의 즐겨찾기</string>
+    <string name="count_list">%d개의 리스트</string>
+    <string name="favorite_empty">즐겨찾기 리스트가 없어요.\n가게 상세에서 추가해주세요!</string>
+    <string name="favorite_body_edit_hint">리스트에 대한 한줄평을 입력해주세요! 공유 시 사용됩니다.</string>
+    <string name="favorite_title_max">%d/36</string>
+    <string name="favorite_body_max">%d/150</string>
+    <string name="dialog_all_delete_favorite_title">나의 즐겨찾기 리스트를\n모두 삭제할까요?</string>
+    
+    <!-- Settings -->
+    <string name="title_setting">설정</string>
+    <string name="ask">문의사항</string>
+    <string name="faq">FAQ</string>
+    <string name="feedback">1:1 문의</string>
+    <string name="faq_message">어떤 점이 궁금하셨나요?</string>
+    <string name="question">Q. %s</string>
+    <string name="str_feedback_title">피드백</string>
+    <string name="str_feedback_write">피드백/리뷰 작성하기</string>
+    <string name="str_feedback_count_html">피드백 %d개</string>
+    <string name="str_feedback_count">%d개</string>
+    <string name="team_introduce">가슴속 3천원 팀원 소개</string>
+    
+    <!-- Login Feature -->
+    <string name="login_kakao">카카오 계정으로 로그인</string>
+    <string name="login_google">구글 계정으로 로그인</string>
+    <string name="login_name">닉네임 입력!</string>
+    <string name="login_name1">저는 닉네임</string>
+    <string name="login_name2">로</string>
+    <string name="login_name3">시작할래요</string>
+    <string name="login_name_fail">시작못해요</string>
+    <string name="login_user_request">로그인을 하시면\n더 많은 정보가</string>
+    <string name="login_name_already_exist">중복된 닉네임</string>
+    <string name="invalidate_name">잘못된 형식의 닉네임</string>
+    <string name="login_failed">로그인에 실패했습니다. 네트워크 연결 상태를 확인해주세요!</string>
+    <string name="name_empty">닉네임을 입력해주세요</string>
+    <string name="set_name_failed">닉네임 변경에 실패했습니다. 다시 시도해주세요!</string>
+    <string name="set_name_success">닉네임이 변경되었습니다!</string>
+    <string name="kakao_user">카카오 계정 회원</string>
+    <string name="google_user">구글 계정 회원</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_message">로그아웃이 완료되었습니다. 앱을 이용하려면 재시작해주세요.</string>
+    <string name="delete_account">회원탈퇴</string>
+    <string name="delete_account_btn">회원탈퇴하기 →</string>
+    <string name="delete_account_success">탈퇴가 완료되었습니다. 이용해주셔서 감사합니다!</string>
+    <string name="failed_delete_account">회원탈퇴에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="delete_account_confirm">회원을 탈퇴하시겠습니까? 탈퇴하면 계정에 다시 접근할 수 없습니다.</string>
+    
+    <!-- Terms -->
+    <string name="term_of_service">이용약관</string>
+    <string name="all_agree">전체 동의하기</string>
+    <string name="term_1">(필수) 이용약관 동의</string>
+    <string name="term_2">(선택) 마케팅 활용 및 광고성 정보 수신 동의</string>
+    <string name="agree_continue">동의하고 계속하기</string>
+    
+    <!-- Push Notifications -->
+    <string name="push">투표 및 댓글 등 활동 알림</string>
+    <string name="push_marketing">마케팅 푸시 알림</string>
+    <string name="marketing_deny_title">혜택 알림 수신 거부</string>
+    <string name="marketing_deny_msg">알림을 받지 않으면 선물과 혜택을 드리는 이벤트 정보를 받으실 수 없어요. 그래도 거부하시겠어요?</string>
+    <string name="marketing_deny_toast">%s에 가슴속3천원 혜택 알림 수신 동의를 철회했어요</string>
+    <string name="marketing_approve_toast">%s에 가슴속3천원 혜택 알림 수신에 동의했어요</string>
+    
+    <!-- Map & Navigation -->
+    <string name="find_location">놀러가기</string>
+    <string name="dest">방문하기</string>
+    <string name="directions">길 안내</string>
+    <string name="directions_view">길 안내보기</string>
+    <string name="map_view">지도 보기</string>
+    <string name="naver_map">네이버 지도</string>
+    <string name="kakao_map">카카오 지도</string>
+    
+    <!-- Opening Hours -->
+    <string name="show_type">출몰시기</string>
+    <string name="opening_hour">출몰 시간대</string>
+    <string name="appearance_day">영업 일정</string>
+    
+    <!-- Food Truck -->
+    <string name="phone_number">연락처</string>
+    <string name="sns">SNS</string>
+    <string name="owner_one_word">사장님 한마디</string>
+    <string name="shortcut">바로가기</string>
+    <string name="store_feedback">가게 평가 </string>
+    <string name="ready_ing">준비중</string>
+    <string name="getting_ready_now">지금은 준비중이에요! 🧑‍🍳</string>
+    <string name="food_truck_tool_tip">여기를 눌러 푸드트럭 위치를 볼 수 있어요!\n이제 푸드트럭 음식도 즐겨보세요💚</string>
+    
+    <!-- Sharing -->
+    <string name="share_kakao_food_truck_title">[푸드트럭] %s</string>
+    <string name="share_kakao_food_truck">%s 푸드트럭 보러가기</string>
+    <string name="share_kakao_road_food_title">[길거리음식] %s</string>
+    <string name="share_kakao_road_food">%s 길거리음식 보러가기</string>
+    
+    <!-- Popup -->
+    <string name="disable_popup">앞으로 보지않기</string>
+    <string name="popup">팝업</string>
+    
+    <!-- Ad -->
+    <string name="ad">광고</string>
+    <string name="detail"><![CDATA[자세히 보기 >]]></string>
+    <string name="evaluation">리뷰 남기기</string>
+    <string name="str_setting_ad_title">가슴속 3천원 앱에 광고하고 싶다면?</string>
+    <string name="str_setting_boss_title">직접 사장님 직영점을 운영하고 싶다면?</string>
+    <string name="str_setting_boss_sub_title"><![CDATA[가슴속 3천원 사장님앱 다운받기 >]]></string>
+    <string name="str_setting_ad_sub_title"><![CDATA[광고소개서 보러 가기 >]]></string>
+    
+    <!-- URLs -->
+    <string name="kakao_map_format">https://map.kakao.com/link/map/</string>
+    <string name="terms_of_service_url">https://massive-iguana-121.notion.site/3-37f521af4ac842ccba75a4fb590c506d</string>
+    <string name="privacy_policy_url">https://pool-battery-996.notion.site/3-3d0a9c55ddd74086b63582c308ca285e</string>
+    <string name="terms_of_marketing_url">https://massive-iguana-121.notion.site/3-91156528267e426b9609d3ed57acb27d</string>
+    <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
+    <string name="official_email">3dollarinmypocket@gmail.com</string>
+    <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>
+    
+    <!-- Scheme -->
+    <string name="scheme_host_main">main</string>
+    <string name="scheme_host_kakao_link">kakaolink</string>
+    <string name="scheme_host_kakao_link_food_truck_type">foodTruck</string>
+    <string name="scheme_host_kakao_link_road_food_type">streetFood</string>
+    <string name="scheme_host_kakao_link_store_id">storeId</string>
+    <string name="scheme_host_kakao_link_store_type">storeType</string>
+    
+    <!-- Copy Messages -->
+    <string name="address_copied">주소가 복사됐습니다.</string>
+    <string name="account_number_copied">계좌번호가 복사되었습니다.</string>
+    <string name="account">계좌정보</string>
+    
+    <!-- AdMob IDs -->
+    <string name="admob_list_banner">ca-app-pub-5385646520024289/8009257851</string>
+    <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
+    <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
+    <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
+    
+    <!-- UI Common Strings (Legacy) -->
+    <string name="go_download">다운로드 하러 가기</string>
+    
+    <!-- Community Feature Strings -->
+    <string name="str_poll_list_title"><![CDATA[맛짱 투표 >]]></string>
+    <string name="str_report">신고</string>
+    <string name="str_comment_blind">규정 위반으로 블라인드 처리되었습니다.</string>
+    <string name="str_vote_count">%d명 투표</string>
+    <string name="str_neighbor_title">어디 인기 가게를 볼까요?</string>
+    <string name="str_create_count">투표만들기 %d/%d회</string>
+    <string name="str_create_poll_hint">투표 제목을 입력하세요.</string>
+    <string name="admob_community_comment_banner">ca-app-pub-5385646520024289/4196241163</string>
+    <string name="admob_community_tab_banner">ca-app-pub-5385646520024289/3222264361</string>
+    <string name="select_neighborhood_default">📍 %s</string>
+    
+    <!-- My Page Feature Strings -->
+    <string name="str_mypage_count">%d개</string>
+    <string name="str_mypage_vote_count">총 %d명</string>
+    <string name="str_mypage_vote_count_description">내가 만든 투표에 참여</string>
+    <string name="str_vote_percent">%s %d%%</string>
+    <string name="str_button_create_store">제보한 가게</string>
+    <string name="str_button_write_review">리뷰와 평가</string>
+    <string name="str_button_medal">획득한 칭호</string>
+    <string name="str_section_title_visite">방문인증</string>
+    <string name="str_section_title_favorit">즐겨찾기</string>
+    <string name="str_section_title_vote">맛대맛 투표</string>
+    <string name="str_section_bottom_visite">내가 방문한 가게 알아보기</string>
+    <string name="str_section_bottom_favorit">내가 좋아하는 가게는?</string>
+    <string name="str_section_bottom_vote">내가 만든 투표의 히스토리</string>
+    <string name="str_visit_empty_title">방문 인증 내역이 없어요</string>
+    <string name="str_visit_empty_message">방문 인증으로 정확도를 높혀봐요</string>
+    <string name="str_favorite_empty_title">즐겨찾기 리스트가 없어요</string>
+    <string name="str_favorite_empty_message">가게 상세에서 추가해 보세요</string>
+    <string name="str_vote_empty_title">내가 올린 투표가 없어요</string>
+    <string name="str_vote_empty_message">가게 상세에서 추가해 보세요</string>
+    <string name="str_team_title">팀원소개</string>
 </resources>

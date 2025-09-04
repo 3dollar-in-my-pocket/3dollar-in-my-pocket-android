@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDetailViewModel>() {
@@ -114,7 +115,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 deviceLongitude = it.longitude,
                                 filterVisitStartDate = getMonthFirstDate(),
                             )
-                            showToast(R.string.edit_store_success)
+                            showToast(CommonR.string.edit_store_success)
                             requireActivity().supportFragmentManager.popBackStack()
                         }
                     }
@@ -264,7 +265,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         }
         binding.submitButton.setOnClickListener {
             if (binding.storeNameEditTextView.text.isNullOrBlank()) {
-                showToast(R.string.store_name_empty)
+                showToast(CommonR.string.store_name_empty)
                 return@setOnClickListener
             }
             val bundle = Bundle().apply {

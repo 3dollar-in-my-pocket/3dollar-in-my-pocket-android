@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FAQViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
@@ -34,7 +35,7 @@ class FAQViewModel @Inject constructor(private val userDataSource: UserDataSourc
             if (data.isSuccessful) {
                 _faqsByTag.postValue(data.body())
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                _msgTextId.postValue(CommonR.string.connection_failed)
             }
         }
     }

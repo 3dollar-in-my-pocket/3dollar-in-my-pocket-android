@@ -20,6 +20,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 interface OnReviewEditCallback {
     fun onReviewEdited(updatedReview: ReviewContentModel)
@@ -68,7 +69,7 @@ class AddReviewDialog(
         }
         binding.btnFinish.onSingleClick {
             if (binding.rating.rating == 0f) {
-                showToast(R.string.over_rating_1)
+                showToast(CommonR.string.over_rating_1)
                 return@onSingleClick
             }
             val bundle = Bundle().apply {

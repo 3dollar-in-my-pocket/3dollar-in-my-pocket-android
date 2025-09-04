@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.ItemFoodTruckReviewMoreBinding
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 private const val TYPE_REVIEW = 0
 private const val TYPE_MORE = 1
@@ -82,7 +83,7 @@ class FoodTruckReviewAdapter(
 class MoreViewHolder(private val binding: ItemFoodTruckReviewMoreBinding, private val listener: (() -> Unit)?) :
     ViewHolder(binding.root) {
     fun bind(count: Int) {
-        binding.twReviewMore.text = binding.root.context.getString(R.string.str_review_more, count)
+        binding.twReviewMore.text = binding.root.context.getString(CommonR.string.str_review_more, count)
         listener?.let {
             binding.root.setOnClickListener { it() }
         }
@@ -106,10 +107,10 @@ class FoodTruckReviewViewHolder(
             twNickNameTitle.text = item.reviewWriter.name
             twReviewDate.text = "${item.review.updatedAt.convertUpdateAt()} · "
             if (item.review.isOwner) {
-                twReviewReport.text = binding.root.context.getString(R.string.review_edit)
+                twReviewReport.text = binding.root.context.getString(CommonR.string.review_edit)
                 twReviewReport.onSingleClick { onReviewEditClickListener.onClick(item) }
             } else {
-                twReviewReport.text = binding.root.context.getString(R.string.review_report)
+                twReviewReport.text = binding.root.context.getString(CommonR.string.review_report)
                 twReviewReport.onSingleClick { onReviewReportClickListener.onClick(item) }
             }
             imgMedal.loadUrlImg(item.reviewWriter.medal.iconUrl)
@@ -118,7 +119,7 @@ class FoodTruckReviewViewHolder(
             recyclerReviewImage.adapter = photoAdapter
             photoAdapter.submitList(item.review.images)
             twReviewContent.text = item.review.contents
-            twReviewLike.text = binding.root.context.getString(R.string.str_like, item.stickers.find { it.stickerId == "LIKE" }?.count ?: 0)
+            twReviewLike.text = binding.root.context.getString(CommonR.string.str_like, item.stickers.find { it.stickerId == "LIKE" }?.count ?: 0)
             twReviewLike.isSelected = item.stickers.any { it.stickerId == "LIKE" && it.reactedByMe }
             twReviewLike.onSingleClick { onReviewLikeClickListener.onClick(item) }
             groupReply.isVisible = item.comments.isNotEmpty()

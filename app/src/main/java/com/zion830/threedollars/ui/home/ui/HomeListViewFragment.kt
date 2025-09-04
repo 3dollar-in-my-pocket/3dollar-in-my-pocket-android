@@ -48,6 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewModel>() {
@@ -188,7 +189,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private fun getCategoryViewAttributes(category: CategoryModel): Triple<String, Int, Int> {
         return if (category.categoryId.isEmpty()) {
             Triple(
-                getString(R.string.fragment_home_all_menu),
+                getString(CommonR.string.fragment_home_all_menu),
                 R.color.gray70,
                 DesignSystemR.drawable.rect_white_radius10_stroke_gray30
             )
@@ -204,7 +205,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private suspend fun collectAroundStoreModelsFlow() {
         viewModel.aroundStoreModels.collect { adAndStoreItems ->
             binding.listTitleTextView.text = viewModel.selectCategory.value.description.ifEmpty {
-                getString(R.string.fragment_home_all_menu)
+                getString(CommonR.string.fragment_home_all_menu)
             }
             val resultList = mutableListOf<AdAndStoreItem>().apply {
                 addAll(adAndStoreItems)
@@ -239,9 +240,9 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                 setBackgroundResource(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
             filterTextView.text = if (filterEvent.homeSortType == HomeSortType.DISTANCE_ASC) {
-                getString(R.string.fragment_home_filter_distance)
+                getString(CommonR.string.fragment_home_filter_distance)
             } else {
-                getString(R.string.fragment_home_filter_latest)
+                getString(CommonR.string.fragment_home_filter_latest)
             }
             certifiedStoreTextView.isVisible = filterEvent.homeStoreType != HomeStoreType.BOSS_STORE
         }

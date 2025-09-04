@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.ItemPhotoAddBinding
 import com.zion830.threedollars.databinding.ItemPhotoAddFullBinding
 import com.zion830.threedollars.databinding.ItemPhotoSelectedBinding
 import zion830.com.common.base.loadRoundUrlImg
+import com.threedollar.common.R as CommonR
 
 sealed class PhotoItem {
     data class AddPhoto(
@@ -107,7 +108,7 @@ class PhotoAdapter(
         fun bind(item: PhotoItem.AddPhoto) {
             val context = binding.root.context
             val fullText = context.getString(
-                R.string.boss_review_image_count,
+                CommonR.string.boss_review_image_count,
                 item.currentCount,
                 item.maxCount
             )

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -48,7 +49,7 @@ class SplashViewModel @Inject constructor(
                     LegacySharedPrefUtils.saveCategories(categoriesModelList.filter { it.classification.description == "간식류" })
                     LegacySharedPrefUtils.saveTruckCategories(categoriesModelList.filter { it.classification.description == "식사류" })
                 } else {
-                    _msgTextId.postValue(R.string.connection_failed)
+                    _msgTextId.postValue(CommonR.string.connection_failed)
                 }
             }
             loginRepository.getFeedbackTypes(targetType = BOSS_STORE).collect {

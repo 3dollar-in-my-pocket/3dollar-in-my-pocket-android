@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
@@ -52,7 +53,7 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
                 val userActivity = response.body()?.data
                 _userActivity.postValue(userActivity)
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                _msgTextId.postValue(CommonR.string.connection_failed)
             }
         }
     }
@@ -79,7 +80,7 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
                 if (it.ok) {
                     requestUserActivity()
                 } else {
-                    _msgTextId.postValue(R.string.error_change_medal)
+                    _msgTextId.postValue(CommonR.string.error_change_medal)
                     _msgTextId.postValue(-1)
                 }
             }

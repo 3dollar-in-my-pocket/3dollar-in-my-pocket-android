@@ -37,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class SignUpActivity :
@@ -68,7 +69,7 @@ class SignUpActivity :
             }
         }
         viewModel.isAvailable.observe(this) {
-            binding.btnFinish.text = if (it) getString(R.string.login_name3) else getString(R.string.login_name_fail)
+            binding.btnFinish.text = if (it) getString(CommonR.string.login_name3) else getString(CommonR.string.login_name_fail)
             binding.tvAlreadyExist.visibility = if (it) View.INVISIBLE else View.VISIBLE
         }
     }
@@ -144,7 +145,7 @@ class SignUpActivity :
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(localClassName, "로그인 실패", error)
-                showToast(R.string.error_no_kakao_login)
+                showToast(CommonR.string.error_no_kakao_login)
             } else if (token != null) {
                 Log.d(localClassName, token.toString())
                 tryLoginBySocialType(token)
@@ -208,11 +209,11 @@ class SignUpActivity :
                 loginWithGoogle(account)
             } else {
                 Log.e("LoginActivity", "account is null")
-                showToast(R.string.login_failed)
+                showToast(CommonR.string.login_failed)
             }
         } catch (e: ApiException) {
             e.printStackTrace()
-            showToast(R.string.login_failed)
+            showToast(CommonR.string.login_failed)
         }
     }
 

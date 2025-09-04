@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.my.presentation.R
+import com.threedollar.common.R as CommonR
 import com.my.presentation.page.data.TeamRow
 import zion830.com.common.base.compose.Gray40
 import zion830.com.common.base.compose.Pink
@@ -108,7 +109,7 @@ fun MyPageTeamTitle(clickBack: () -> Unit = {}) {
                 .padding(end = 16.dp)
         )
         Text(
-            text = stringResource(id = R.string.str_team_title), fontSize = dpToSp(dp = 16),
+            text = stringResource(id = CommonR.string.str_team_title), fontSize = dpToSp(dp = 16),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W400,
             color = Color.White, modifier = Modifier.align(Alignment.Center)

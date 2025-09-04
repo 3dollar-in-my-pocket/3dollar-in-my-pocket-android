@@ -17,6 +17,7 @@ import com.naver.maps.map.NaverMapSdk
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
+import com.threedollar.common.R as CommonR
 
 @HiltAndroidApp
 class GlobalApplication : Application() {

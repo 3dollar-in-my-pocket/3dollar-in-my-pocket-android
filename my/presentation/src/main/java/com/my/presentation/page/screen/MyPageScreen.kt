@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.my.presentation.R
+import com.threedollar.common.R as CommonR
 import com.my.presentation.page.MyPageViewModel
 import com.my.domain.model.*
 import com.my.presentation.page.commponent.MyPageShopInfoView
@@ -120,17 +121,17 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             Spacer(modifier = Modifier.height(44.dp))
             // 내가 방문한 가게
             MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(R.string.str_section_title_visite),
+                topTitle = stringResource(CommonR.string.str_section_title_visite),
                 topIcon = zion830.com.common.R.drawable.ic_badge_gray,
-                bottomTitle = stringResource(R.string.str_section_bottom_visite),
+                bottomTitle = stringResource(CommonR.string.str_section_bottom_visite),
                 count = userInfo.activity.storesCount
             ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             if (myVisitsShop.isEmpty()) {
                 MyPageEmptyView(
                     zion830.com.common.R.drawable.img_empty,
-                    stringResource(R.string.str_visit_empty_title),
-                    stringResource(R.string.str_visit_empty_message)
+                    stringResource(CommonR.string.str_visit_empty_title),
+                    stringResource(CommonR.string.str_visit_empty_message)
                 )
             } else {
                 MyPageVisitedShopItem(myVisitsShop, true) { myPageShop -> viewModel.clickStore(myPageShop) }
@@ -139,17 +140,17 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
 
             // 내가 좋아하는 가게
             MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(R.string.str_section_title_favorit),
+                topTitle = stringResource(CommonR.string.str_section_title_favorit),
                 topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
-                bottomTitle = stringResource(R.string.str_section_bottom_favorit),
+                bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
                 count = userInfo.activity.favoriteStoresCount
             ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
                 MyPageEmptyView(
                     zion830.com.common.R.drawable.img_empty,
-                    stringResource(R.string.str_favorite_empty_title),
-                    stringResource(R.string.str_favorite_empty_message)
+                    stringResource(CommonR.string.str_favorite_empty_title),
+                    stringResource(CommonR.string.str_favorite_empty_message)
                 )
             } else {
                 MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop -> viewModel.clickStore(myPageShop) }
@@ -158,16 +159,16 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
 
             // 맛대맛 투표
             MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(R.string.str_section_title_vote),
+                topTitle = stringResource(CommonR.string.str_section_title_vote),
                 topIcon = zion830.com.common.R.drawable.ic_fire,
-                bottomTitle = stringResource(R.string.str_section_bottom_vote)
+                bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
             ) {})
             Spacer(modifier = Modifier.height(16.dp))
             if (myVoteHistory.isEmpty()) {
                 MyPageEmptyView(
                     zion830.com.common.R.drawable.ic_fire_disabled,
-                    stringResource(R.string.str_vote_empty_title),
-                    stringResource(R.string.str_vote_empty_message)
+                    stringResource(CommonR.string.str_vote_empty_title),
+                    stringResource(CommonR.string.str_vote_empty_message)
                 )
                 Spacer(modifier = Modifier.height(44.dp))
             } else {
@@ -337,7 +338,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
             if (myPageSectionTitle.count != null && myPageSectionTitle.count > 0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = stringResource(id = R.string.str_mypage_count, myPageSectionTitle.count),
+                        text = stringResource(id = CommonR.string.str_mypage_count, myPageSectionTitle.count),
                         fontSize = dpToSp(dp = 14),
                         fontFamily = PretendardFontFamily,
                         fontWeight = FontWeight(600),
@@ -501,7 +502,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
             contentDescription = "투표"
         )
         Text(
-            text = stringResource(id = R.string.str_mypage_count, count),
+            text = stringResource(id = CommonR.string.str_mypage_count, count),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W700,
             color = Color.White,
@@ -509,7 +510,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = stringResource(id = R.string.str_mypage_vote_count_description),
+            text = stringResource(id = CommonR.string.str_mypage_vote_count_description),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W500,
             color = Color.White,
@@ -574,7 +575,7 @@ fun MyPageVoteItem(modifier: Modifier = Modifier, option: MyVoteHistory.Option) 
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(
-                    id = R.string.str_vote_percent,
+                    id = CommonR.string.str_vote_percent,
                     if (option.isTopVote) "\uD83E\uDD23" else "\uD83D\uDE1E",
                     option.ratio
                 ),

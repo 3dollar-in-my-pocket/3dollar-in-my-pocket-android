@@ -13,6 +13,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(), OnBackPressedListener {
@@ -44,8 +45,8 @@ class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(), OnBac
             data = Uri.parse("mailto:")
         }
         val intent = Intent(Intent.ACTION_SEND).apply {
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.help_feedback_title))
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.official_email)))
+            putExtra(Intent.EXTRA_SUBJECT, getString(CommonR.string.help_feedback_title))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(CommonR.string.official_email)))
             putExtra(Intent.EXTRA_TEXT, requireContext().getInstalledInfo())
             selector = selectorIntent
         }

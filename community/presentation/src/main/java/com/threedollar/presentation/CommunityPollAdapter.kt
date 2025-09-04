@@ -18,6 +18,8 @@ import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
 import com.threedollar.presentation.utils.hasVotingPeriodEnded
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.presentation.R
+import com.threedollar.common.R as CommonR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 
@@ -132,7 +134,7 @@ class CommunityPollViewHolder(private val binding: ItemPollBinding) : ViewHolder
         binding.twPollNickName.text = pollItem.pollWriter.name
         binding.twMedalName.text = pollItem.pollWriter.medal.name
         binding.twPollComment.text = pollItem.meta.totalCommentsCount.toString()
-        binding.twPollVote.text = context.getString(R.string.str_vote_count, pollItem.meta.totalParticipantsCount)
+        binding.twPollVote.text = context.getString(CommonR.string.str_vote_count, pollItem.meta.totalParticipantsCount)
         binding.twPollEndDate.text = getDeadlineString(pollItem.poll.period.endDateTime)
 
         binding.imgMedal.loadUrlImg(pollItem.pollWriter.medal.iconUrl)

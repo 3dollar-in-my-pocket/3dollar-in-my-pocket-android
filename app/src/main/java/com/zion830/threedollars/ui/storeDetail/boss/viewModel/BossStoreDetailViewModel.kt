@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class BossStoreDetailViewModel @Inject constructor(
@@ -124,11 +125,11 @@ class BossStoreDetailViewModel @Inject constructor(
 
                             uploadedFiles.add(uploadFile)
                         } else {
-                            _serverError.emit(result?.message ?: getString(R.string.boss_review_image_upload_failed))
+                            _serverError.emit(result?.message ?: getString(CommonR.string.boss_review_image_upload_failed))
                             return@launch
                         }
                     } else {
-                        _serverError.emit(getString(R.string.boss_review_image_upload_error))
+                        _serverError.emit(getString(CommonR.string.boss_review_image_upload_error))
                         return@launch
                     }
                 }
@@ -136,7 +137,7 @@ class BossStoreDetailViewModel @Inject constructor(
                 _uploadProgress.value = Pair(originalUris.size, originalUris.size)
                 _uploadedImages.value = uploadedFiles
             } catch (e: Exception) {
-                _serverError.emit(getString(R.string.boss_review_image_upload_error))
+                _serverError.emit(getString(CommonR.string.boss_review_image_upload_error))
             } finally {
                 _uploadImageStatus.value = false
                 _uploadProgress.value = null
@@ -155,7 +156,7 @@ class BossStoreDetailViewModel @Inject constructor(
             homeRepository.postBossStoreReview(storeId, contents, rating, images, feedbacks).collect {
                 if (it.ok) {
                     _postStoreReview.value = it
-                    showCustomBlackToast(getString(R.string.boss_review_success))
+                    showCustomBlackToast(getString(CommonR.string.boss_review_success))
                 } else {
                     _serverError.emit(it.message)
                 }
@@ -167,7 +168,7 @@ class BossStoreDetailViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putFavorite(storeId).collect { model ->
                 if (model.ok) {
-                    showCustomBlackToast(getString(R.string.toast_favorite_add))
+                    showCustomBlackToast(getString(CommonR.string.toast_favorite_add))
                     _favoriteModel.update {
                         it.copy(isFavorite = true, totalSubscribersCount = it.totalSubscribersCount + 1)
                     }
@@ -182,7 +183,7 @@ class BossStoreDetailViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.deleteFavorite(storeId).collect { model ->
                 if (model.ok) {
-                    showCustomBlackToast(getString(R.string.toast_favorite_delete))
+                    showCustomBlackToast(getString(CommonR.string.toast_favorite_delete))
                     _favoriteModel.update {
                         it.copy(isFavorite = false, totalSubscribersCount = it.totalSubscribersCount - 1)
                     }
@@ -234,7 +235,7 @@ class BossStoreDetailViewModel @Inject constructor(
             homeRepository.putStoreReview(reviewId, content, rating).collect {
                 if (it.ok) {
                     _reviewEditSuccess.value = true
-                    showCustomBlackToast(getString(R.string.success_edit_review))
+                    showCustomBlackToast(getString(CommonR.string.success_edit_review))
                 } else {
                     _reviewEditSuccess.value = false
                     _serverError.emit(it.message)
@@ -261,7 +262,7 @@ class BossStoreDetailViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {
-                    showToast(getString(R.string.report_completed))
+                    showToast(getString(CommonR.string.report_completed))
                     _bossStoreDetailModel.update { storeDetail ->
                         storeDetail.copy(
                             reviews = storeDetail.reviews.filter { reviewContent ->

@@ -78,6 +78,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -129,7 +130,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = it ?: getString(R.string.location_no_address)
+            binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
         }
     }
 
@@ -337,7 +338,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.selectCategory.collect {
-                        val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
+                        val text = if (it.categoryId.isEmpty()) getString(CommonR.string.fragment_home_all_menu) else it.name
                         val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
                         val background =
                             if (it.categoryId.isEmpty()) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
@@ -421,9 +422,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                             }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(R.string.fragment_home_filter_distance)
+                                getString(CommonR.string.fragment_home_filter_distance)
                             } else {
-                                getString(R.string.fragment_home_filter_latest)
+                                getString(CommonR.string.fragment_home_filter_latest)
                             }
                         }
                     }
@@ -440,7 +441,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     searchViewModel.searchResultLocation.collect {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
-                            getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+                            getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
                 }
             }
@@ -569,13 +570,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     
     private fun showLocationPermissionDialog() {
         locationPermissionDialog = AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.location_permission_title))
-            .setMessage(getString(R.string.location_permission_message))
+            .setTitle(getString(CommonR.string.location_permission_title))
+            .setMessage(getString(CommonR.string.location_permission_message))
             .setPositiveButton(
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    getString(R.string.location_permission_grant)
+                    getString(CommonR.string.location_permission_grant)
                 } else {
-                    getString(R.string.location_permission_settings)
+                    getString(CommonR.string.location_permission_settings)
                 }
             ) { dialog, _ ->
                 dialog.dismiss()
@@ -587,7 +588,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     requireContext().goToPermissionSetting()
                 }
             }
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+            .setNegativeButton(getString(CommonR.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
                 useDefaultLocation()
             }

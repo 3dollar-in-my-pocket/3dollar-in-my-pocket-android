@@ -20,6 +20,7 @@ import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
@@ -87,7 +88,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
         }
         viewModel.favoriteViewer.observe(this) {
             adapter.submitList(it.favorites)
-            binding.favoriteCountText.text = getString(R.string.count_list, adapter.itemCount)
+            binding.favoriteCountText.text = getString(CommonR.string.count_list, adapter.itemCount)
             binding.favoriteTitleText.textFavoriteTitle(it)
             binding.favoriteUserMedalText.text = it.user.medal.name
             binding.favoriteUserMedalImage.loadImage(it.user.medal.iconUrl)

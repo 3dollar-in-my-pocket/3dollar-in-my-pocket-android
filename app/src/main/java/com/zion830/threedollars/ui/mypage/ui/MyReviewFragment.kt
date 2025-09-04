@@ -14,6 +14,7 @@ import com.zion830.threedollars.databinding.FragmentMyReviewBinding
 import com.zion830.threedollars.ui.mypage.adapter.ReviewPagerFragmentStateAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel>(), OnBackPressedListener {
@@ -40,7 +41,7 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
         }
         binding.reviewViewPager.adapter = fragmentAdapter
         TabLayoutMediator(binding.sortTabLayout, binding.reviewViewPager) { tab, position ->
-            tab.setText(if (position == 0) R.string.review_user_tab_title else R.string.review_boss_tab_title)
+            tab.setText(CommonR.string.review_boss_tab_title)
         }.attach()
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()

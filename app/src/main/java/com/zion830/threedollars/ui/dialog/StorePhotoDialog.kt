@@ -23,6 +23,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {
@@ -115,8 +116,8 @@ class StorePhotoDialog : DialogFragment() {
                     dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .setTitle(R.string.delete_photo_title)
-                .setMessage(R.string.delete_photo_msg)
+                .setTitle(CommonR.string.delete_photo_title)
+                .setMessage(CommonR.string.delete_photo_msg)
                 .create()
                 .show()
         }

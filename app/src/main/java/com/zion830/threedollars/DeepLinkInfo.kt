@@ -7,20 +7,21 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.StringRes
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
+import com.threedollar.common.R as CommonR
 
 enum class DeepLinkInfo(@StringRes val hostStringResId: Int) {
 
-    MAIN(R.string.scheme_host_main) {
+    MAIN(CommonR.string.scheme_host_main) {
         override fun getIntent(context: Context, deepLinkUri: Uri) =
             getMainIntent(context)
     },
 
-    DETAIL(R.string.scheme_host_kakao_link) {
+    DETAIL(CommonR.string.scheme_host_kakao_link) {
         override fun getIntent(context: Context, deepLinkUri: Uri): Intent {
             return SplashActivity.getIntent(
                 context,
                 deepLinkUri,
-                deepLinkUri.getQueryParameter(context.getString(R.string.scheme_host_kakao_link_store_type))
+                deepLinkUri.getQueryParameter(context.getString(CommonR.string.scheme_host_kakao_link_store_type))
             )
         }
     };

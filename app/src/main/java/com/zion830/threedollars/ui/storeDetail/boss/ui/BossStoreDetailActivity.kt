@@ -72,6 +72,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -231,12 +232,12 @@ class BossStoreDetailActivity :
                     }
                 }
             } else {
-                showToast(getString(R.string.exist_location_error))
+                showToast(getString(CommonR.string.exist_location_error))
                 finish()
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
-            showToast(getString(R.string.exist_location_error))
+            showToast(getString(CommonR.string.exist_location_error))
             finish()
         }
     }
@@ -304,7 +305,7 @@ class BossStoreDetailActivity :
         binding.addressTextView.onSingleClick {
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
-            showToast(getString(R.string.address_copied))
+            showToast(getString(CommonR.string.address_copied))
         }
         binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
@@ -341,7 +342,7 @@ class BossStoreDetailActivity :
 
                         val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
 
-                        if (isClosed && viewModel.isInitialLoad.value) showCustomBlackToast(getString(R.string.getting_ready_now))
+                        if (isClosed && viewModel.isInitialLoad.value) showCustomBlackToast(getString(CommonR.string.getting_ready_now))
 
                         if (bossStoreDetailModel.store.location != null) {
                             val latLng = LatLng(bossStoreDetailModel.store.location!!.latitude, bossStoreDetailModel.store.location!!.longitude)
@@ -375,7 +376,7 @@ class BossStoreDetailActivity :
                         } else if (bossStoreDetailModel.store.menus.size > 5) {
                             val sublist = bossStoreDetailModel.store.menus.subList(0, 5)
                             val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
-                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menus.size - 5),
+                                moreTitle = getString(CommonR.string.store_detail_menu_more, bossStoreDetailModel.store.menus.size - 5),
                             )
                             foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
@@ -395,19 +396,19 @@ class BossStoreDetailActivity :
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
                             distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
-                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
+                            reviewTextView.text = getString(CommonR.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
                             if (bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
                                 phoneTextView.text = bossStoreDetailModel.store.contactsNumbers.first().number
                             }
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
                             feedbackCountTextView.text =
-                                getString(R.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
+                                getString(CommonR.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             storeInfoUpdateAtTextView.text =
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
                             reviewRatingBar.rating = bossStoreDetailModel.store.rating
-                            reviewRatingAvgTextView.text = getString(R.string.score, bossStoreDetailModel.store.rating)
+                            reviewRatingAvgTextView.text = getString(CommonR.string.score, bossStoreDetailModel.store.rating)
                         }
 
                         initAccount(bossStoreDetailModel)
@@ -430,7 +431,7 @@ class BossStoreDetailActivity :
                     viewModel.feedbackExists.collect { exists ->
                         exists?.let {
                             if (it) {
-                                showToast(getString(R.string.already_reviewed_today))
+                                showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 val intent = BossReviewWriteActivity.getIntent(this@BossStoreDetailActivity, storeId)
                                 startActivity(intent)
@@ -453,7 +454,7 @@ class BossStoreDetailActivity :
             binding.accountCopyButton.onSingleClick {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
-                showToast(getString(R.string.account_number_copied))
+                showToast(getString(CommonR.string.account_number_copied))
             }
         } else {
             binding.accountCardView.isVisible = false
@@ -467,23 +468,23 @@ class BossStoreDetailActivity :
         }
         EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val shareFormat = ShareFormat(
-            getString(R.string.kakao_map_format),
+            getString(CommonR.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
             LatLng(latitude, longitude),
         )
         shareWithKakao(
             shareFormat = shareFormat,
             title = getString(
-                R.string.share_kakao_food_truck_title,
+                CommonR.string.share_kakao_food_truck_title,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
             description = getString(
-                R.string.share_kakao_food_truck,
+                CommonR.string.share_kakao_food_truck,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
             imageUrl = viewModel.bossStoreDetailModel.value.store.representativeImages.first().imageUrl,
             storeId = storeId,
-            type = getString(R.string.scheme_host_kakao_link_food_truck_type),
+            type = getString(CommonR.string.scheme_host_kakao_link_food_truck_type),
         )
     }
 
@@ -537,9 +538,9 @@ class BossStoreDetailActivity :
 
     private fun showAlreadyReportDialog() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.review_report_dialog_title))
-        builder.setMessage(getString(R.string.review_report_already_message))
-        builder.setPositiveButton(R.string.report_confirm) { dialog, _ -> dialog.dismiss() }
+        builder.setTitle(getString(CommonR.string.review_report_dialog_title))
+        builder.setMessage(getString(CommonR.string.review_report_already_message))
+        builder.setPositiveButton(CommonR.string.report_confirm) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 

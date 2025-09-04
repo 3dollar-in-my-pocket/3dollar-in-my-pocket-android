@@ -78,3 +78,29 @@ The app is a location-based service for finding street food vendors ("3달러 �
 - Push notifications via Firebase Cloud Messaging
 - AdMob integration for monetization
 - Social login with Kakao and Google SDKs
+
+## Resource Migration Guidelines
+
+This project follows Clean Architecture with strict resource management rules.
+See `MIGRATION_RULES.md` for comprehensive migration guidelines.
+
+### Quick Reference
+- **ALL strings**: `core:common/strings.xml` (centralized)
+- **Colors/Drawables**: `core:designsystem`
+- **Reusable UI**: `core:ui`
+- **ScaleRatingBar**: Access only through `core:ui`
+
+### Module Dependencies Template
+```gradle
+dependencies {
+    implementation project(':core:common')      
+    implementation project(':core:ui')          
+    implementation project(':core:designsystem')
+}
+```
+
+### Important Migration Notes
+- Never create new resources without checking existing ones
+- Follow Clean Architecture dependency rules
+- Maintain module independence
+- See MIGRATION_RULES.md for detailed patterns

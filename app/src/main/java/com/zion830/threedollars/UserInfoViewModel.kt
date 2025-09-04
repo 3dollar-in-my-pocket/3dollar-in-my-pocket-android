@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
@@ -70,7 +71,7 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
                 if (!it.ok) {
                     _isAlreadyUsed.postValue(it.message.toStringDefault("-"))
                 } else {
-                    _msgTextId.postValue(R.string.set_name_success)
+                    _msgTextId.postValue(CommonR.string.set_name_success)
                     _isAlreadyUsed.postValue("")
                     _isNameUpdated.emit(Unit)
                 }
@@ -93,7 +94,7 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
                 if (result.isSuccessful) {
                     onSuccess()
                 } else {
-                    _msgTextId.postValue(R.string.failed_delete_account)
+                    _msgTextId.postValue(CommonR.string.failed_delete_account)
                 }
             }
         }
@@ -115,6 +116,6 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
 
     override fun handleError(t: Throwable) {
         super.handleError(t)
-        _msgTextId.postValue(R.string.connection_failed)
+        _msgTextId.postValue(CommonR.string.connection_failed)
     }
 }

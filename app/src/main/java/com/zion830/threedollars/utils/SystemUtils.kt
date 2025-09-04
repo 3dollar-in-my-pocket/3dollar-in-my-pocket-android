@@ -53,6 +53,7 @@ import org.json.JSONObject
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.threedollar.common.R as CommonR
 
 
 fun showToast(@StringRes resId: Int) {
@@ -121,7 +122,7 @@ fun isGpsAvailable(): Boolean {
 }
 
 fun getCurrentLocationName(location: LatLng?): String? {
-    val notFindMsg = GlobalApplication.getContext().getString(R.string.location_no_address)
+    val notFindMsg = GlobalApplication.getContext().getString(CommonR.string.location_no_address)
     if (location == null) {
         return notFindMsg
     }
@@ -155,8 +156,8 @@ private fun Activity.openPermissionSettingPage() {
 fun Context.getInstalledInfo() =
     """
         -------------------------------------------------------
-        ${getString(R.string.app_name_3dollar)}
-        ${getString(R.string.android_version)}: ${Build.VERSION.SDK_INT}
+        ${getString(CommonR.string.app_name_3dollar)}
+        ${getString(CommonR.string.android_version)}: ${Build.VERSION.SDK_INT}
         ------------------------------------------------------- 
     """.trimIndent()
 
@@ -183,11 +184,11 @@ fun Context.shareWithKakao(
                 title = title ?: "",
                 description = description,
                 imageUrl = imageUrl ?: "",
-                link = Link(getString(R.string.download_url), getString(R.string.download_url))
+                link = Link(getString(CommonR.string.download_url), getString(CommonR.string.download_url))
             ),
             buttons = listOf(
                 Button(
-                    title = getString(R.string.find_location),
+                    title = getString(CommonR.string.find_location),
                     link = Link(
                         webUrl = shareFormat.shareUrl,
                         mobileWebUrl = shareFormat.shareUrl,

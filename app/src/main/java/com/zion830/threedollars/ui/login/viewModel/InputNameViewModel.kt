@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class InputNameViewModel @Inject constructor(private val loginRepository: LoginRepository, private val userDataSource: UserDataSource) :
@@ -43,12 +44,12 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
 
     fun trySignUp(token: String) {
         if (userName.value.isNullOrBlank()) {
-            _msgTextId.value = R.string.name_empty
+            _msgTextId.value = CommonR.string.name_empty
             return
         }
 
         if (latestSocialType.value == null) {
-            _msgTextId.postValue(R.string.connection_failed)
+            _msgTextId.postValue(CommonR.string.connection_failed)
             return
         }
 
@@ -64,9 +65,9 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
                 _isNameUpdated.postValue(true)
             } else {
                 when (signUpResult.code()) {
-                    409 -> _isAlreadyUsed.postValue(R.string.login_name_already_exist)
-                    400 -> _isAlreadyUsed.postValue(R.string.invalidate_name)
-                    else -> _msgTextId.postValue(R.string.connection_failed)
+                    409 -> _isAlreadyUsed.postValue(CommonR.string.login_name_already_exist)
+                    400 -> _isAlreadyUsed.postValue(CommonR.string.invalidate_name)
+                    else -> _msgTextId.postValue(CommonR.string.connection_failed)
                 }
             }
         }

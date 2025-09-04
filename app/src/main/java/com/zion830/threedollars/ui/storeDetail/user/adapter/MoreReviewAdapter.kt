@@ -16,6 +16,7 @@ import com.zion830.threedollars.databinding.ItemMoreReviewBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 class MoreReviewAdapter(private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>) :
     PagingDataAdapter<ReviewContentModel, MoreReviewViewHolder>(BaseDiffUtilCallback()) {
@@ -54,8 +55,8 @@ class MoreReviewViewHolder(private val binding: ItemMoreReviewBinding) : Recycle
 
             binding.reportAndEditTextView.onSingleClick { reviewEditOrDeleteClickEvent.onClick(item) }
             binding.reportAndEditTextView.text =
-                if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
-                    .getString(R.string.review_report)
+                if (item.review.isOwner) GlobalApplication.getContext().getString(CommonR.string.review_edit) else GlobalApplication.getContext()
+                    .getString(CommonR.string.review_report)
         }
     }
 }

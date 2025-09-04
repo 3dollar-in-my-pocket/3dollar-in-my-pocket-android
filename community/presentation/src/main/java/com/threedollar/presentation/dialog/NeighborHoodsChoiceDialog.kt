@@ -10,6 +10,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.data.NeighborhoodModel
 import com.threedollar.domain.data.Neighborhoods
 import com.threedollar.presentation.R
+import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.DialogNeighborChoiceBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
@@ -65,7 +66,7 @@ class NeighborHoodsChoiceDialog : BottomSheetDialogFragment() {
             binding.districtBackImageView.isVisible = false
             binding.recyclerDescription.isVisible = true
             binding.recyclerDistrict.isVisible = false
-            binding.titleTextView.text = getString(R.string.str_neighbor_title)
+            binding.titleTextView.text = getString(CommonR.string.str_neighbor_title)
         }
     }
 

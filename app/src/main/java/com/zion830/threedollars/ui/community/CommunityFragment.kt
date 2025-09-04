@@ -47,6 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewModel>() {
@@ -201,7 +202,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
             NeighborHoodsChoiceDialog()
                 .setNeighborhoodModels(viewModel.neighborhoods.value)
                 .setItemClick {
-                    binding.selectNeighborhoodTextView.text = getString(R.string.select_neighborhood_default, it.description)
+                    binding.selectNeighborhoodTextView.text = getString(CommonR.string.select_neighborhood_default, it.description)
                     viewModel.getPopularStores(
                         if (binding.twPopularMostReview.isSelected) PopularStoreCriteria.MostReview.type else PopularStoreCriteria.MostVisits.type,
                         it.district
@@ -297,7 +298,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                             sharedPrefUtils.saveSelectNeighborhoodDistrict(selectNeighborhood.districts.first().district)
                         }
                         binding.selectNeighborhoodTextView.text =
-                            getString(R.string.select_neighborhood_default, sharedPrefUtils.getSelectNeighborhoodDescription())
+                            getString(CommonR.string.select_neighborhood_default, sharedPrefUtils.getSelectNeighborhoodDescription())
                         viewModel.getPopularStores(PopularStoreCriteria.MostReview.type, sharedPrefUtils.getSelectNeighborhoodDistrict())
                     }
                 }

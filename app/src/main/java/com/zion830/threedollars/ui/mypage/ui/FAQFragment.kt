@@ -18,6 +18,7 @@ import com.zion830.threedollars.ui.mypage.viewModel.FAQViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(), OnBackPressedListener {
@@ -73,7 +74,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(), OnBackPres
 
     private fun showDeleteAccountDialog() {
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.delete_account_confirm)
+            .setMessage(CommonR.string.delete_account_confirm)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
             .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
@@ -83,7 +84,7 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(), OnBackPres
 
     private fun tryDeleteAccount() {
         userViewModel.deleteUser {
-            showToast(R.string.delete_account_success)
+            showToast(CommonR.string.delete_account_success)
             LegacySharedPrefUtils.clearUserInfo()
             requireActivity().finish()
         }

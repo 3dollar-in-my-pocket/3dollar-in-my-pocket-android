@@ -23,6 +23,7 @@ import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 class AroundStoreListViewRecyclerAdapter(
@@ -114,13 +115,13 @@ class NearStoreListViewViewHolder(
         bossOrResentVisitTextView.apply {
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
-                text = GlobalApplication.getContext().getString(R.string.resent_visit_count, visitCount)
+                text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
                 setTextAppearance(R.style.apple_gothic_medium_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray70))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
                 setBackgroundResource(DesignSystemR.drawable.rect_radius_18_gray_10)
             } else {
-                text = StringUtils.getString(R.string.only_boss)
+                text = StringUtils.getString(CommonR.string.only_boss)
                 setTextAppearance(R.style.apple_gothic_bold_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
                 val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)

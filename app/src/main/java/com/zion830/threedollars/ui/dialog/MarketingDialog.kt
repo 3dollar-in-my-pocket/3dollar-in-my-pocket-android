@@ -14,6 +14,7 @@ import com.zion830.threedollars.databinding.DialogMarketingBinding
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
@@ -159,10 +160,10 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 }
             }
             term1ImageView.onSingleClick {
-                goWebView(R.string.terms_of_service_url)
+                goWebView(CommonR.string.terms_of_service_url)
             }
             term2ImageView.onSingleClick {
-                goWebView(R.string.terms_of_marketing_url)
+                goWebView(CommonR.string.terms_of_marketing_url)
             }
             agreeContinueTextView.onSingleClick {
                 eventTracker.setUserProperty("isPushEnable", "true")

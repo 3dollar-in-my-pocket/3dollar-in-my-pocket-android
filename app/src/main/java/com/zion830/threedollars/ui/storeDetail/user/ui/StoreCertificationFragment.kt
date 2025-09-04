@@ -24,6 +24,7 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import kotlin.math.abs
 import kotlin.math.min
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>() {
@@ -94,7 +95,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         if (distance <= MIN_DISTANCE) {
             startCertification()
         }
-        binding.tvDistance.text = getString(R.string.certification_distance, (distance - MIN_DISTANCE).toInt())
+        binding.tvDistance.text = getString(CommonR.string.certification_distance, (distance - MIN_DISTANCE).toInt())
         progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
         binding.progressIndicator.progress = progress
         return distance

@@ -41,4 +41,7 @@ dependencies {
     // Custom Views & Animation
     implementation 'com.airbnb.android:lottie:5.2.0'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    
+    // ScaleRatingBar - CRITICAL: Must be accessed through core:ui only
+    api "com.github.ome450901:SimpleRatingBar:1.5.1"
 }

@@ -10,6 +10,7 @@ import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FavoriteViewerViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
@@ -35,7 +36,7 @@ class FavoriteViewerViewModel @Inject constructor(private val userDataSource: Us
                     _favoriteViewer.value = it
                 }
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                _msgTextId.postValue(CommonR.string.connection_failed)
             }
         }
     }

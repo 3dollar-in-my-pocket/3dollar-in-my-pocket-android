@@ -26,6 +26,7 @@ import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.R
+import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollDetailBinding
 import com.threedollar.presentation.dialog.ReportChoiceDialog
 import com.threedollar.presentation.utils.calculatePercentages
@@ -349,7 +350,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         binding.twPollTitle.text = pollItem.poll.content.title
         binding.twPollNickName.text = pollItem.pollWriter.name
         binding.twMedalName.text = pollItem.pollWriter.medal.name
-        binding.twPollUserCount.text = getString(R.string.str_vote_count, pollItem.meta.totalParticipantsCount)
+        binding.twPollUserCount.text = getString(CommonR.string.str_vote_count, pollItem.meta.totalParticipantsCount)
         binding.twPollEndDate.text = getDeadlineString(pollItem.poll.period.endDateTime)
 
         binding.imgMedal.loadUrlImg(pollItem.pollWriter.medal.iconUrl)

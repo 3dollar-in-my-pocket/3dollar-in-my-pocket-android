@@ -17,6 +17,7 @@ import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreRe
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
@@ -109,7 +110,7 @@ class BossMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding
 
         fun bind(item: MenuModel) {
             binding.menuNameTextView.text = item.name
-            binding.priceTextView.text = GlobalApplication.getContext().getString(R.string.food_truck_price, item.price.toFormattedNumber())
+            binding.priceTextView.text = GlobalApplication.getContext().getString(CommonR.string.food_truck_price, item.price.toFormattedNumber())
             binding.menuImageView.loadCircleImage(item.imageUrl)
         }
     }

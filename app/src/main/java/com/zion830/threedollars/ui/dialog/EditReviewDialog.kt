@@ -17,6 +17,7 @@ import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class EditReviewDialog(
@@ -52,11 +53,11 @@ class EditReviewDialog(
         binding.btnFinish.onSingleClick {
             when {
                 binding.rating.rating == 0f -> {
-                    showToast(R.string.over_rating_1)
+                    showToast(CommonR.string.over_rating_1)
                 }
 
                 binding.etContent.text.isBlank() -> {
-                    showToast(R.string.input_content)
+                    showToast(CommonR.string.input_content)
                 }
 
                 else -> {

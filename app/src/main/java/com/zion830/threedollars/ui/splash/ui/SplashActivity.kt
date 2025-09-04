@@ -37,6 +37,7 @@ import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class SplashActivity :
@@ -171,7 +172,7 @@ class SplashActivity :
     private fun tryLogin() {
         val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
         when {
-            deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
+            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) -> {
                 startActivity(
                     BossStoreDetailActivity.getIntent(
                         this@SplashActivity,
@@ -180,7 +181,7 @@ class SplashActivity :
                 )
             }
 
-            deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
+            deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
                 startActivity(
                     StoreDetailActivity.getIntent(
                         this@SplashActivity,
@@ -209,8 +210,8 @@ class SplashActivity :
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 finish()
             }
-            .setTitle(msg ?: getString(R.string.server_500))
-            .setMessage(msg ?: getString(R.string.server_500_msg))
+            .setTitle(msg ?: getString(CommonR.string.server_500))
+            .setMessage(msg ?: getString(CommonR.string.server_500_msg))
             .setCancelable(false)
             .create()
             .show()

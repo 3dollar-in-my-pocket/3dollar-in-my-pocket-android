@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 @AndroidEntryPoint
@@ -119,11 +120,11 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                 loginWithGoogle(account)
             } else {
                 Log.e("LoginActivity", "account is null")
-                showToast(R.string.login_failed)
+                showToast(CommonR.string.login_failed)
             }
         } catch (e: ApiException) {
             e.printStackTrace()
-            showToast(R.string.login_failed)
+            showToast(CommonR.string.login_failed)
         }
     }
 
@@ -155,11 +156,11 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
 
                             is ResultWrapper.GenericError -> {
                                 when (it.code) {
-                                    400 -> showToast(R.string.connection_failed)
+                                    400 -> showToast(CommonR.string.connection_failed)
                                     404 -> callBack.invoke(false)
-                                    503 -> showToast(R.string.server_500)
-                                    500, 502 -> showToast(R.string.connection_failed)
-                                    else -> showToast(R.string.connection_failed)
+                                    503 -> showToast(CommonR.string.server_500)
+                                    500, 502 -> showToast(CommonR.string.connection_failed)
+                                    else -> showToast(CommonR.string.connection_failed)
                                 }
                             }
 
@@ -182,7 +183,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     private fun tryKakaoLogin() {
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
-                showToast(R.string.error_no_kakao_login)
+                showToast(CommonR.string.error_no_kakao_login)
             } else if (token != null) {
                 LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
                 tryLoginBySocialType(token)

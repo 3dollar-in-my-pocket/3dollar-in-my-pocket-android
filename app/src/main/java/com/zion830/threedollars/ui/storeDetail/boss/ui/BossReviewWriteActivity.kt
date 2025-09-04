@@ -33,6 +33,7 @@ import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class BossReviewWriteActivity :
@@ -82,11 +83,11 @@ class BossReviewWriteActivity :
 
         binding.btnSubmit.onSingleClick {
             if (selectReviewSet.isEmpty()) {
-                showToast(getString(R.string.boss_review_feedback_required))
+                showToast(getString(CommonR.string.boss_review_feedback_required))
             } else if (currentRating == 0) {
-                showToast(getString(R.string.boss_review_rating_required))
+                showToast(getString(CommonR.string.boss_review_rating_required))
             } else if (binding.etReview.text.toString().trim().isEmpty()) {
-                showToast(getString(R.string.boss_review_content_required))
+                showToast(getString(CommonR.string.boss_review_content_required))
             } else {
                 val bundle = Bundle().apply {
                     putString("screen", "boss_store_review")
@@ -131,7 +132,7 @@ class BossReviewWriteActivity :
                     viewModel.postStoreReview.collect {
                         hideLoadingDialog()
                         if (it?.ok == true) {
-                            showCustomBlackToast(getString(R.string.review_toast))
+                            showCustomBlackToast(getString(CommonR.string.review_toast))
                             finish()
                         }
                     }
@@ -200,7 +201,7 @@ class BossReviewWriteActivity :
         val remainingCount = MAX_IMAGE_COUNT - selectedImageUris.size
         
         if (remainingCount <= 0) {
-            showToast(getString(R.string.boss_review_max_images_error, MAX_IMAGE_COUNT))
+            showToast(getString(CommonR.string.boss_review_max_images_error, MAX_IMAGE_COUNT))
             return
         }
 
@@ -211,7 +212,7 @@ class BossReviewWriteActivity :
                 if (error.message?.startsWith("permission") == true) {
                     showPermissionDialog()
                 } else {
-                    showToast(getString(R.string.boss_review_image_selection_error))
+                    showToast(getString(CommonR.string.boss_review_image_selection_error))
                 }
             }
             .startMultiImage { uriList ->
@@ -222,7 +223,7 @@ class BossReviewWriteActivity :
     private fun addPhotos(uriList: List<Uri>) {
         val invalidUris = uriList.filter { !ImageUtils.isFileSizeValid(this, it) }
         if (invalidUris.isNotEmpty()) {
-            showToast(getString(R.string.boss_review_image_size_error))
+            showToast(getString(CommonR.string.boss_review_image_size_error))
             return
         }
 
@@ -259,9 +260,9 @@ class BossReviewWriteActivity :
 
     private fun showPermissionDialog() {
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.request_permission))
-            .setMessage(getString(R.string.request_permission_msg))
-            .setPositiveButton(getString(R.string.request_permission_ok)) { _, _ ->
+            .setTitle(getString(CommonR.string.request_permission))
+            .setMessage(getString(CommonR.string.request_permission_msg))
+            .setPositiveButton(getString(CommonR.string.request_permission_ok)) { _, _ ->
                 goToPermissionSetting()
             }
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
@@ -291,7 +292,7 @@ class BossReviewWriteActivity :
             loadingDialog = LoadingProgressDialog(this)
         }
         loadingDialog?.setHorizontalMode(
-            getString(R.string.boss_review_uploading_images),
+            getString(CommonR.string.boss_review_uploading_images),
             current,
             total
         )
@@ -304,7 +305,7 @@ class BossReviewWriteActivity :
         if (loadingDialog == null) {
             loadingDialog = LoadingProgressDialog(this)
         }
-        loadingDialog?.setCircularMode(getString(R.string.boss_review_submitting))
+        loadingDialog?.setCircularMode(getString(CommonR.string.boss_review_submitting))
         if (loadingDialog?.isShowing != true) {
             loadingDialog?.show()
         }

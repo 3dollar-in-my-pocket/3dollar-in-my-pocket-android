@@ -12,6 +12,7 @@ import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :
@@ -63,7 +64,7 @@ class FavoriteMyInfoEditActivity :
 
             override fun onTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {
                 binding.saveButton.isEnabled = true
-                binding.favoriteTitleMaxLengthTextView.text = getString(R.string.favorite_title_max, text.length)
+                binding.favoriteTitleMaxLengthTextView.text = getString(CommonR.string.favorite_title_max, text.length)
             }
         })
         binding.favoriteBodyEditTextView.addTextChangedListener(object : TextWatcher {
@@ -81,7 +82,7 @@ class FavoriteMyInfoEditActivity :
 
             override fun onTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {
                 binding.saveButton.isEnabled = true
-                binding.favoriteBodyMaxLengthTextView.text = getString(R.string.favorite_body_max, text.length)
+                binding.favoriteBodyMaxLengthTextView.text = getString(CommonR.string.favorite_body_max, text.length)
             }
         })
     }
@@ -91,8 +92,8 @@ class FavoriteMyInfoEditActivity :
         val body = intent.getStringExtra(BODY)
         binding.favoriteTitleEditTextView.setText(title)
         binding.favoriteBodyEditTextView.setText(body)
-        binding.favoriteTitleMaxLengthTextView.text = getString(R.string.favorite_title_max, title?.length)
-        binding.favoriteBodyMaxLengthTextView.text = getString(R.string.favorite_body_max, body?.length)
+        binding.favoriteTitleMaxLengthTextView.text = getString(CommonR.string.favorite_title_max, title?.length)
+        binding.favoriteBodyMaxLengthTextView.text = getString(CommonR.string.favorite_body_max, body?.length)
     }
 
     private fun showKeyboard() {

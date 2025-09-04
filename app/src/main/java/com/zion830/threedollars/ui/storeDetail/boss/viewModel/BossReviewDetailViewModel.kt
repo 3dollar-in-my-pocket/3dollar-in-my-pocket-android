@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class BossReviewDetailViewModel @Inject constructor(private val homeRepository: HomeRepository) :
@@ -93,7 +94,7 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.reportStoreReview(storeId, reviewId, request).collect { res ->
                 if (res.ok) {
-                    showToast(getString(R.string.report_completed))
+                    showToast(getString(CommonR.string.report_completed))
                     _reviewPagingData.value = _reviewPagingData.value?.map {
                         if (it.review.reviewId == reviewId) {
                             it.copy(review = it.review.copy(status = ReviewStatusType.FILTERED))

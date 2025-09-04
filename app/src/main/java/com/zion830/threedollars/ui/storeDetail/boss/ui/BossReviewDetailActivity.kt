@@ -26,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class BossReviewDetailActivity :
@@ -145,7 +146,7 @@ class BossReviewDetailActivity :
                     viewModel.feedbackExists.collect { exists ->
                         exists?.let {
                             if (it) {
-                                showToast(getString(R.string.already_reviewed_today))
+                                showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 val intent = BossReviewWriteActivity.getIntent(this@BossReviewDetailActivity, storeId.toString())
                                 startActivity(intent)
@@ -166,9 +167,9 @@ class BossReviewDetailActivity :
 
     private fun showAlreadyReportDialog() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.review_report_dialog_title))
-        builder.setMessage(getString(R.string.review_report_already_message))
-        builder.setPositiveButton(R.string.report_confirm) { dialog, _ -> dialog.dismiss() }
+        builder.setTitle(getString(CommonR.string.review_report_dialog_title))
+        builder.setMessage(getString(CommonR.string.review_report_already_message))
+        builder.setPositiveButton(CommonR.string.report_confirm) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 

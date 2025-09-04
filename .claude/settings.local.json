@@ -21,7 +21,8 @@
       "Bash(sed:*)",
       "Bash(for:*)",
       "Bash(do)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

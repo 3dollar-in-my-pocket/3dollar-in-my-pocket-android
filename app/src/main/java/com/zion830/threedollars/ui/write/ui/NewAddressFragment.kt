@@ -26,6 +26,7 @@ import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
@@ -112,7 +113,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                 launch {
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
-                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
+                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
                             val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
                             val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
                             viewModel.requestStoreInfo(

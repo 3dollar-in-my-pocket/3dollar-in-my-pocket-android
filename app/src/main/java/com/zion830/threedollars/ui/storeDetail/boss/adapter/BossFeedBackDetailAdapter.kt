@@ -8,6 +8,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackDetailBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.common.R as CommonR
 
 class BossFeedBackDetailAdapter : ListAdapter<FeedbackModel?, BossFeedBackDetailViewHolder>(BaseDiffUtilCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BossFeedBackDetailViewHolder {
@@ -30,7 +31,7 @@ class BossFeedBackDetailAdapter : ListAdapter<FeedbackModel?, BossFeedBackDetail
 class BossFeedBackDetailViewHolder(private val binding: ItemFoodTruckFeedbackDetailBinding) : ViewHolder(binding.root) {
     fun bind(item: FeedbackModel) {
         binding.titleTextView.text = "${item.emoji} ${item.description}"
-        binding.reviewCountTextView.text = binding.root.context.getString(R.string.str_feedback_count, item.count)
+        binding.reviewCountTextView.text = binding.root.context.getString(CommonR.string.str_feedback_count, item.count)
     }
 
     fun setBar(item: FeedbackModel, position: Int) {

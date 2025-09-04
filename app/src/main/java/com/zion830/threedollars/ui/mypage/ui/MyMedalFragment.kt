@@ -19,6 +19,7 @@ import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.loadUrlImg
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(), OnBackPressedListener {
@@ -80,7 +81,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(),
 
     private fun showChangeMyMedalDialog(medalId: Int) {
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.change_medal)
+            .setMessage(CommonR.string.change_medal)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
             .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> viewModel.updateMedal(medalId) }

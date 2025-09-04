@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreViewModel>() {
@@ -134,7 +135,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                     viewModel.postUserStoreModel.collect {
                         it?.let {
                             findNavController().navigateSafe(R.id.action_navigation_write_detail_to_home)
-                            showToast(R.string.add_store_success)
+                            showToast(CommonR.string.add_store_success)
                         }
                     }
                 }
@@ -226,11 +227,11 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
 
     private fun saveStore() {
         if (editCategoryMenuRecyclerAdapter.items.isEmpty()) {
-            showToast(R.string.no_category_msg)
+            showToast(CommonR.string.no_category_msg)
             return
         }
         if (getMenuList().isEmpty()) {
-            showToast(R.string.no_menu_msg)
+            showToast(CommonR.string.no_menu_msg)
             return
         }
 
