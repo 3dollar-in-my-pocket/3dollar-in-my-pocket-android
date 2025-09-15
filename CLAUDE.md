@@ -99,6 +99,25 @@ dependencies {
 }
 ```
 
+### Current Migration Status
+
+**Phase 2-1: String Resource Centralization** ✅ **COMPLETED**
+- All string resources have been moved to `core:common/strings.xml`
+- All modules now reference strings via `import com.threedollar.common.R as CommonR`
+- Feature modules (`home`, `my`, `community`, `login`) use `CommonR.string.xxx` syntax
+- App module manifest strings (`app_name_3dollar*`) remain in app module for AndroidManifest.xml
+- Google Services strings (`default_web_client_id`) remain in app module (auto-generated)
+
+### String Resource Usage
+```kotlin
+// In any module (except core:common itself):
+import com.threedollar.common.R as CommonR
+
+// Usage:
+getString(CommonR.string.your_string_name)
+showToast(CommonR.string.your_string_name)
+```
+
 ### Important Migration Notes
 - Never create new resources without checking existing ones
 - Follow Clean Architecture dependency rules
