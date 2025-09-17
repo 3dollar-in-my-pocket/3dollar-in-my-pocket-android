@@ -1,5 +1,7 @@
 package com.login.data.di
 
+import com.login.data.datasource.LoginDataSource
+import com.login.data.datasource.LoginDataSourceImpl
 import com.login.data.datasource.LoginRemoteDataSource
 import com.login.data.datasource.LoginRemoteDataSourceImpl
 import dagger.Binds
@@ -15,4 +17,8 @@ abstract class LoginDataSourceModule {
     @Singleton
     @Binds
     abstract fun bindLoginRemoteDataSource(impl: LoginRemoteDataSourceImpl): LoginRemoteDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindLoginDataSource(impl: LoginDataSourceImpl): LoginDataSource
 }

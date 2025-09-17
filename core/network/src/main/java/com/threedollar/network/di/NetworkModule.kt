@@ -6,6 +6,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
 import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
+import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
 import dagger.Module
 import dagger.Provides
@@ -125,5 +126,15 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(KakaoLoginApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLoginApi(@OkhttpClient okHttpClient: OkHttpClient): LoginApi =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(LoginApi::class.java)
 
 }

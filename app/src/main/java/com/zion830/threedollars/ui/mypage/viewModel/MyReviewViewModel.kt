@@ -8,28 +8,29 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.zion830.threedollars.datasource.MyFeedbacksDataSourceImpl
-import com.zion830.threedollars.datasource.MyReviewDataSourceImpl
+import com.my.data.datasource.MyFeedbacksDataSourceImpl
+import com.my.data.datasource.MyReviewDataSourceImpl
 import com.zion830.threedollars.datasource.StoreDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MyReviewViewModel @Inject constructor(
-    private val serviceApi: ServerApi,
+    private val myReviewDataSource: MyReviewDataSourceImpl,
+    private val myFeedbacksDataSource: MyFeedbacksDataSourceImpl,
     sharedPrefUtils: SharedPrefUtils
 ) : BaseViewModel() {
 
     val myReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        MyReviewDataSourceImpl(serviceApi)
+        myReviewDataSource
     }.flow
 
     val userStoreReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        MyReviewDataSourceImpl(serviceApi)
+        myReviewDataSource
     }.flow
 
     val myFeedbacksPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        MyFeedbacksDataSourceImpl(serviceApi)
+        myFeedbacksDataSource
     }.flow
 
     private val _updateReview: MutableLiveData<Boolean> = MutableLiveData()

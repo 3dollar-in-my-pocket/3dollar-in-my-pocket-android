@@ -7,18 +7,20 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.api.ServerApi
-import com.zion830.threedollars.datasource.MyStoreDataSourceImpl
-import com.zion830.threedollars.datasource.UserDataSource
+import com.my.data.datasource.MyStoreDataSourceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyStoreViewModel @Inject constructor(private val serverApi: ServerApi) : BaseViewModel() {
+class MyStoreViewModel @Inject constructor(
+    private val serverApi: ServerApi,
+    private val myStoreDataSource: MyStoreDataSourceImpl
+) : BaseViewModel() {
 
     val myStorePager =
-        Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { MyStoreDataSourceImpl(serverApi) }.flow
+        Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { myStoreDataSource }.flow
 
     private val _totalCount: MutableLiveData<Int> = MutableLiveData()
     val totalCount: LiveData<Int> = _totalCount
