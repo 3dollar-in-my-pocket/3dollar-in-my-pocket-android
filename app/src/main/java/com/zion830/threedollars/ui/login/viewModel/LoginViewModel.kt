@@ -1,13 +1,13 @@
 package com.zion830.threedollars.ui.login.viewModel
 
 import androidx.lifecycle.viewModelScope
+import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
+import com.threedollar.network.data.auth.LoginRequest
+import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
-import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _loginResult: MutableSharedFlow<ResultWrapper<SignUser?>> = MutableSharedFlow()
     val loginResult: SharedFlow<ResultWrapper<SignUser?>> get() = _loginResult
@@ -34,14 +34,18 @@ class LoginViewModel @Inject constructor(private val userDataSource: UserDataSou
         latestSocialType.value = socialType
         LegacySharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val loginResult = userDataSource.login(LoginRequest(socialType.socialName, accessToken))
-            _loginResult.emit(safeApiCall(loginResult))
+            try {
+                val result = loginRepository.login(LoginRequest(socialType.socialName, accessToken))
+                _loginResult.emit(ResultWrapper.Success(result.data))
+            } catch (e: Exception) {
+                _loginResult.emit(ResultWrapper.GenericError(msg = e.message ?: "Login failed"))
+            }
         }
     }
 
     fun putPushInformation(informationRequest: PushInformationRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userDataSource.putPushInformation(informationRequest)
+            loginRepository.putPushInformation(informationRequest)
         }
     }
 

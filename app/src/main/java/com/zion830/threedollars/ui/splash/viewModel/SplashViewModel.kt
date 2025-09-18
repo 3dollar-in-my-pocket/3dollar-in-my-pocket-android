@@ -110,7 +110,7 @@ class SplashViewModel @Inject constructor(
 
     fun putPushInformation(informationRequest: PushInformationRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            userDataSource.putPushInformation(informationRequest)
+            loginRepository.putPushInformation(informationRequest)
         }
     }
 }

@@ -9,7 +9,7 @@ import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
+import com.threedollar.network.data.auth.SignUpRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -59,14 +59,15 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
                 latestSocialType.value!!.socialName,
                 token
             )
-            val signUpResult = userDataSource.signUp(request)
-            if (signUpResult.isSuccessful) {
-                LegacySharedPrefUtils.saveAccessToken(signUpResult.body()?.data?.token ?: "")
+            try {
+                val signUpResult = loginRepository.signUp(request)
+                LegacySharedPrefUtils.saveAccessToken(signUpResult.data.token)
                 _isNameUpdated.postValue(true)
-            } else {
-                when (signUpResult.code()) {
-                    409 -> _isAlreadyUsed.postValue(CommonR.string.login_name_already_exist)
-                    400 -> _isAlreadyUsed.postValue(CommonR.string.invalidate_name)
+            } catch (e: Exception) {
+                val errorMessage = e.message ?: ""
+                when {
+                    errorMessage.contains("409") -> _isAlreadyUsed.postValue(CommonR.string.login_name_already_exist)
+                    errorMessage.contains("400") -> _isAlreadyUsed.postValue(CommonR.string.invalidate_name)
                     else -> _msgTextId.postValue(CommonR.string.connection_failed)
                 }
             }

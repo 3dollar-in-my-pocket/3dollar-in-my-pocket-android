@@ -29,9 +29,6 @@ abstract class SourceModule {
     @Binds
     abstract fun bindUserDataSource(impl: UserDataSourceImpl): UserDataSource
 
-    @Singleton
-    @Binds
-    abstract fun bindKakaoLoginDataSource(impl: KakaoLoginDataSourceImpl): KakaoLoginDataSource
 
     @Singleton
     @Binds

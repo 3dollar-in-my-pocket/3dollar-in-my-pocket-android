@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.my.domain.model.UserInfoModel
 import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
+import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
@@ -22,7 +23,11 @@ import javax.inject.Inject
 import com.threedollar.common.R as CommonR
 
 @HiltViewModel
-class UserInfoViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
+class UserInfoViewModel @Inject constructor(
+    private val userDataSource: UserDataSource,
+    private val myRepository: MyRepository,
+    private val loginRepository: LoginRepository
+) : BaseViewModel() {
 
     private val _userInfo: MutableLiveData<UserInfoModel> = MutableLiveData()
 
@@ -86,14 +91,19 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
     fun deleteUser(onSuccess: () -> Unit) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val result = userDataSource.signOut()
-
-            withContext(Dispatchers.Main) {
-                hideLoading()
-
-                if (result.isSuccessful) {
-                    onSuccess()
-                } else {
+            try {
+                val result = loginRepository.signOut()
+                withContext(Dispatchers.Main) {
+                    hideLoading()
+                    if (result.ok) {
+                        onSuccess()
+                    } else {
+                        _msgTextId.postValue(CommonR.string.failed_delete_account)
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    hideLoading()
                     _msgTextId.postValue(CommonR.string.failed_delete_account)
                 }
             }
@@ -102,8 +112,12 @@ class UserInfoViewModel @Inject constructor(private val userDataSource: UserData
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = userDataSource.logout()
-            _logoutResult.postValue(response.isSuccessful)
+            try {
+                val response = loginRepository.logout()
+                _logoutResult.postValue(response.ok)
+            } catch (e: Exception) {
+                _logoutResult.postValue(false)
+            }
         }
     }
 
