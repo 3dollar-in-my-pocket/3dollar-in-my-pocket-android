@@ -22,7 +22,8 @@
       "Bash(for:*)",
       "Bash(do)",
       "Bash(done)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "mcp__serena__find_referencing_symbols"
     ],
     "deny": [],
     "ask": []

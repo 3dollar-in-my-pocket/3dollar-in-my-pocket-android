@@ -122,18 +122,6 @@ interface NewServiceApi {
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
 
-    // 사용자
-    @DELETE("/api/v2/signout")
-    suspend fun signOut(): Response<BaseResponse<String>>
-
-    @POST("/api/v2/signup")
-    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
-
-    @POST("/api/v2/login")
-    suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
-
-    @POST("/api/v2/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
 
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<MyInfoResponse>

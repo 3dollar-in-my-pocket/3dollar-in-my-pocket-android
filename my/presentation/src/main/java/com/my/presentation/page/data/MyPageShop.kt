@@ -71,8 +71,27 @@ fun VisitHistoryModel.toMyPageShops(): List<MyPageShop> {
 }
 
 fun formatDateString(originalDateString: String): String {
-    val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    // 여러 날짜 포맷 지원
+    val possibleFormats = listOf(
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()),
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    )
+
     val targetFormat = SimpleDateFormat("MM월 dd일 HH:mm:ss", Locale.KOREAN)
-    val date = originalFormat.parse(originalDateString)
-    return date?.let { targetFormat.format(it) } ?: originalDateString
+
+    // 각 포맷으로 파싱 시도
+    for (format in possibleFormats) {
+        try {
+            val date = format.parse(originalDateString)
+            date?.let {
+                return targetFormat.format(it)
+            }
+        } catch (e: Exception) {
+            // 다음 포맷으로 시도
+            continue
+        }
+    }
+
+    // 모든 포맷 실패 시 원본 문자열 반환
+    return originalDateString
 }

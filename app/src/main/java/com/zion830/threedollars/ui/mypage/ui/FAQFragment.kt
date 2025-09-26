@@ -84,7 +84,6 @@ class FAQFragment : BaseFragment<FragmentFaqBinding, FAQViewModel>(), OnBackPres
 
     private fun tryDeleteAccount() {
         userViewModel.deleteUser {
-            showToast(CommonR.string.delete_account_success)
             LegacySharedPrefUtils.clearUserInfo()
             requireActivity().finish()
         }

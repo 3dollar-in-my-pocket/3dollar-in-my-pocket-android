@@ -14,24 +14,18 @@ import retrofit2.http.PUT
 
 interface LoginApi {
 
-    @POST("/api/v1/user/signup")
-    suspend fun signUp(
-        @Body signUpRequest: SignUpRequest
-    ): Response<SignResponse>
-
-    @POST("/api/v1/user/signin")
-    suspend fun login(
-        @Body loginRequest: LoginRequest
-    ): Response<BaseResponse<SignUser>>
-
-    @DELETE("/api/v1/user/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
-
-    @DELETE("/api/v1/user/signout")
+    @DELETE("/api/v2/signout")
     suspend fun signOut(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/user/device/push-information")
-    suspend fun putPushInformation(
-        @Body pushInformationRequest: PushInformationRequest
-    ): Response<BaseResponse<String>>
+    @POST("/api/v2/signup")
+    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
+
+    @POST("/api/v2/login")
+    suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
+
+    @POST("/api/v2/logout")
+    suspend fun logout(): Response<BaseResponse<String>>
+
+    @PUT("/api/v2/device")
+    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 }

@@ -81,7 +81,6 @@ class MyPageSettingFragment :
         viewModel.logoutResult.observe(viewLifecycleOwner) {
             if (it) {
                 LegacySharedPrefUtils.clearUserInfo()
-                showToast(CommonR.string.logout_message)
                 startActivity(Intent(requireContext(), SplashActivity::class.java))
                 requireActivity().finish()
             } else {
@@ -212,7 +211,6 @@ class MyPageSettingFragment :
     private fun tryDeleteAccount() {
         EventTracker.logEvent(Constants.SIGNOUT_WITHDRAW_BTN_CLICKED)
         viewModel.deleteUser {
-            showToast(CommonR.string.delete_account_success)
             LegacySharedPrefUtils.clearUserInfo()
             GlobalApplication.googleClient.signOut()
             requireActivity().finish()
