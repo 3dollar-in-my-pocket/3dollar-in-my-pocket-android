@@ -172,7 +172,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 )
                 Spacer(modifier = Modifier.height(44.dp))
             } else {
-                MyPageVoteCountItem(userPollList.contents.size)
+                MyPageVoteCountItem(userPollList.contents.firstOrNull()?.totalParticipantsCount ?: 0)
                 Spacer(modifier = Modifier.height(8.dp))
                 Column(
                     modifier = Modifier
