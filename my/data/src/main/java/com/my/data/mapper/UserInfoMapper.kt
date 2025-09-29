@@ -27,6 +27,7 @@ object UserInfoMapper {
                 reviewsCount = response.activities.writeReviewCount,
                 storesCount = response.activities.createStoreCount,
                 pollsCount = 0, // Poll count not available in Activities
+                medalCount = response.ownedMedals.size,
                 favoriteStoresCount = response.activities.favoriteStoreCount,
                 existsFavoriteFolder = response.activities.favoriteStoreCount > 0,
                 totalFeedbacksCounts = response.activities.visitStoreCount

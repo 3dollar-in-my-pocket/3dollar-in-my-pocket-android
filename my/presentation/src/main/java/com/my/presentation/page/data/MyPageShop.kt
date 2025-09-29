@@ -49,10 +49,10 @@ fun FavoriteStoresModel.toMyPageShops(): List<MyPageShop> {
         MyPageShop(
             title = it.storeName,
             imageUrl = it.categories.firstOrNull()?.imageUrl ?: "",
-            tags = it.categories.map { it.name },
+            tags = it.categories.map { "#${it.name}" },
             storeType = it.storeType,
             storeId = it.storeId,
-            visitedData = MyPageShop.ShopVisitedData(false, "10월 1일 19:23:00")
+            visitedData = MyPageShop.ShopVisitedData(false, "")
         )
     }
 }
@@ -62,10 +62,10 @@ fun VisitHistoryModel.toMyPageShops(): List<MyPageShop> {
         MyPageShop(
             title = it.store.storeName,
             imageUrl = it.store.categories.firstOrNull()?.imageUrl ?: "",
-            tags = it.store.categories.map { it.name },
+            tags = it.store.categories.map { "#${it.name}" },
             storeType = it.store.storeType,
             storeId = it.store.storeId,
-            visitedData = MyPageShop.ShopVisitedData(true, formatDateString(it.dateOfVisit))
+            visitedData = MyPageShop.ShopVisitedData(true, it.dateOfVisit)
         )
     }
 }

@@ -84,7 +84,7 @@ import zion830.com.common.base.compose.dpToSp
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {
 
-    val userInfo by viewModel.userInfo.collectAsState(UserInfoModel("", "", "", null, UserActivityModel(0, 0, 0, 0, false, 0), UserSettingsModel(false, "")))
+    val userInfo by viewModel.userInfo.collectAsState(UserInfoModel("", "", "", null, UserActivityModel(0, 0, 0, 0, 0,false, 0), UserSettingsModel(false, "")))
     val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(FavoriteStoresModel(emptyList(), null))
     val myVisitsStore by viewModel.myVisitsStore.collectAsState(VisitHistoryModel(emptyList(), null))
     val userPollList by viewModel.userPollList.collectAsState(UserPollsModel(emptyList(), null))
@@ -124,7 +124,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 topTitle = stringResource(CommonR.string.str_section_title_visite),
                 topIcon = zion830.com.common.R.drawable.ic_badge_gray,
                 bottomTitle = stringResource(CommonR.string.str_section_bottom_visite),
-                count = userInfo.activity.storesCount
+                count = userInfo.activity.totalFeedbacksCounts
             ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             if (myVisitsShop.isEmpty()) {

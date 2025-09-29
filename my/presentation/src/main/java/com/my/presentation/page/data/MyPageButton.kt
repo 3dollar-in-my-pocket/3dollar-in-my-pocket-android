@@ -28,6 +28,6 @@ fun UserInfoModel.toMyPageButtons(
     return listOf(
         MyPageButton(activity.storesCount.toString(), stringResource(CommonR.string.str_button_create_store), clickCreateStore),
         MyPageButton(activity.reviewsCount.toString(), stringResource(CommonR.string.str_button_write_review), clickWriteReview),
-        MyPageButton("0", stringResource(CommonR.string.str_button_medal), clickMedals), // TODO: medals count 필드 추가 필요
+        MyPageButton(activity.medalCount.toString(), stringResource(CommonR.string.str_button_medal), clickMedals), // TODO: medals count 필드 추가 필요
     )
 }

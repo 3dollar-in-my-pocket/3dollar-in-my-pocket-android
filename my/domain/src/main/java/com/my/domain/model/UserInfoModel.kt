@@ -20,6 +20,7 @@ data class UserActivityModel(
     val reviewsCount: Int,
     val storesCount: Int,
     val pollsCount: Int,
+    val medalCount: Int,
     val favoriteStoresCount: Int,
     val existsFavoriteFolder: Boolean,
     val totalFeedbacksCounts: Int
