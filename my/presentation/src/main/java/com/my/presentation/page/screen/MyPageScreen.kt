@@ -84,9 +84,28 @@ import zion830.com.common.base.compose.dpToSp
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {
 
-    val userInfo by viewModel.userInfo.collectAsState(UserInfoModel("", "", "", null, UserActivityModel(0, 0, 0, 0, 0,false, 0), UserSettingsModel(false, "")))
-    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(FavoriteStoresModel(emptyList(), null))
-    val myVisitsStore by viewModel.myVisitsStore.collectAsState(VisitHistoryModel(emptyList(), null))
+    val userInfo by viewModel.userInfo.collectAsState(
+        UserInfoModel(
+            "",
+            "",
+            "",
+            null,
+            UserActivityModel(0, 0, 0, 0, 0, false, 0),
+            UserSettingsModel(false, "")
+        )
+    )
+    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(
+        FavoriteStoresModel(
+            emptyList(),
+            null
+        )
+    )
+    val myVisitsStore by viewModel.myVisitsStore.collectAsState(
+        VisitHistoryModel(
+            emptyList(),
+            null
+        )
+    )
     val userPollList by viewModel.userPollList.collectAsState(UserPollsModel(emptyList(), null))
 
     val myPageUserInformation by remember(userInfo) {
@@ -97,7 +116,8 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             )
         }
     }
-    val myPageButtons = userInfo.toMyPageButtons({ viewModel.addFragments(MyFragments.MyStore) },
+    val myPageButtons = userInfo.toMyPageButtons(
+        { viewModel.addFragments(MyFragments.MyStore) },
         { viewModel.addFragments(MyFragments.MyReview) },
         { viewModel.addFragments(MyFragments.MyMedal) })
     val myVisitsShop by remember(myVisitsStore) { mutableStateOf(myVisitsStore.toMyPageShops()) }
@@ -105,8 +125,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     val myVoteHistory by remember(userPollList) { mutableStateOf(userPollList.contents.map { it.toMyVoteHistory() }) }
 
 
-    Scaffold(modifier = Modifier
-        .fillMaxSize(1f),
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize(1f),
         backgroundColor = Gray100,
         topBar = { MyPageTitle { viewModel.addFragments(MyFragments.MyPageSetting) } })
     {
@@ -116,16 +137,17 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 .padding(it)
                 .verticalScroll(rememberScrollState())
         ) {
-            MyPageUserInformation(myPageUserInformation)
+            MyPageUserInformation(myPageUserInformation) { viewModel.addFragments(MyFragments.MyMedal) }
             MyPageInformationButtons(myPageButtons)
             Spacer(modifier = Modifier.height(44.dp))
             // 내가 방문한 가게
-            MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(CommonR.string.str_section_title_visite),
-                topIcon = zion830.com.common.R.drawable.ic_badge_gray,
-                bottomTitle = stringResource(CommonR.string.str_section_bottom_visite),
-                count = userInfo.activity.totalFeedbacksCounts
-            ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
+            MyPageSectionTitle(
+                MyPageSectionTitleData(
+                    topTitle = stringResource(CommonR.string.str_section_title_visite),
+                    topIcon = zion830.com.common.R.drawable.ic_badge_gray,
+                    bottomTitle = stringResource(CommonR.string.str_section_bottom_visite),
+                    count = userInfo.activity.totalFeedbacksCounts
+                ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             if (myVisitsShop.isEmpty()) {
                 MyPageEmptyView(
@@ -134,17 +156,22 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                     stringResource(CommonR.string.str_visit_empty_message)
                 )
             } else {
-                MyPageVisitedShopItem(myVisitsShop, true) { myPageShop -> viewModel.clickStore(myPageShop) }
+                MyPageVisitedShopItem(myVisitsShop, true) { myPageShop ->
+                    viewModel.clickStore(
+                        myPageShop
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 내가 좋아하는 가게
-            MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(CommonR.string.str_section_title_favorit),
-                topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
-                bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
-                count = userInfo.activity.favoriteStoresCount
-            ) { viewModel.clickFavorite() })
+            MyPageSectionTitle(
+                MyPageSectionTitleData(
+                    topTitle = stringResource(CommonR.string.str_section_title_favorit),
+                    topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
+                    bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
+                    count = userInfo.activity.favoriteStoresCount
+                ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
                 MyPageEmptyView(
@@ -153,16 +180,21 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                     stringResource(CommonR.string.str_favorite_empty_message)
                 )
             } else {
-                MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop -> viewModel.clickStore(myPageShop) }
+                MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop ->
+                    viewModel.clickStore(
+                        myPageShop
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(36.dp))
 
             // 맛대맛 투표
-            MyPageSectionTitle(MyPageSectionTitleData(
-                topTitle = stringResource(CommonR.string.str_section_title_vote),
-                topIcon = zion830.com.common.R.drawable.ic_fire,
-                bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
-            ) {})
+            MyPageSectionTitle(
+                MyPageSectionTitleData(
+                    topTitle = stringResource(CommonR.string.str_section_title_vote),
+                    topIcon = zion830.com.common.R.drawable.ic_fire,
+                    bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
+                ) {})
             Spacer(modifier = Modifier.height(16.dp))
             if (myVoteHistory.isEmpty()) {
                 MyPageEmptyView(
@@ -172,7 +204,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 )
                 Spacer(modifier = Modifier.height(44.dp))
             } else {
-                MyPageVoteCountItem(userPollList.contents.firstOrNull()?.totalParticipantsCount ?: 0)
+                MyPageVoteCountItem(
+                    userPollList.contents.firstOrNull()?.totalParticipantsCount ?: 0
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Column(
                     modifier = Modifier
@@ -225,7 +259,10 @@ fun MyPageTitle(clickSetting: () -> Unit = {}) {
 
 @Preview
 @Composable
-fun MyPageUserInformation(myPageUserInformation: MyPageUserInformationData = myPageUserInformationDataPreview) {
+fun MyPageUserInformation(
+    myPageUserInformation: MyPageUserInformationData = myPageUserInformationDataPreview,
+    onMedalClick: () -> Unit = {}
+) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Image(
             painter = painterResource(id = zion830.com.common.R.drawable.img_back_gray),
@@ -238,7 +275,8 @@ fun MyPageUserInformation(myPageUserInformation: MyPageUserInformationData = myP
             Spacer(modifier = Modifier.height(28.dp))
             AsyncImage(
                 modifier = Modifier
-                    .size(90.dp),
+                    .size(90.dp)
+                    .clickable { onMedalClick() },
                 model = myPageUserInformation.medal?.iconUrl ?: "",
                 contentDescription = "내 칭호 사진",
                 placeholder = painterResource(id = zion830.com.common.R.drawable.ic_no_store),
@@ -338,7 +376,10 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
             if (myPageSectionTitle.count != null && myPageSectionTitle.count > 0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = stringResource(id = CommonR.string.str_mypage_count, myPageSectionTitle.count),
+                        text = stringResource(
+                            id = CommonR.string.str_mypage_count,
+                            myPageSectionTitle.count
+                        ),
                         fontSize = dpToSp(dp = 14),
                         fontFamily = PretendardFontFamily,
                         fontWeight = FontWeight(600),
@@ -400,7 +441,11 @@ fun MyPageEmptyView(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(modifier = Modifier.size(32.dp), painter = painterResource(id = icon), contentDescription = "icon")
+        Image(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = icon),
+            contentDescription = "icon"
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = title, fontFamily = PretendardFontFamily,
@@ -540,7 +585,10 @@ fun MyPageVoteHistoryItem(vote: MyVoteHistory) {
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             vote.options.forEach {
                 MyPageVoteItem(modifier = Modifier.weight(1f), it)
             }
@@ -614,7 +662,11 @@ fun MyPageTeamMoveScreen(clickTeam: () -> Unit = {}) {
             fontSize = dpToSp(dp = 14)
         )
         Spacer(modifier = Modifier.weight(1f))
-        Image(painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow), contentDescription = "", modifier = Modifier.size(20.dp))
+        Image(
+            painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+            contentDescription = "",
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
