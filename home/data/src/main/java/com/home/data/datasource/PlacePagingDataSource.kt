@@ -19,8 +19,12 @@ class PlacePagingDataSource(private val placeType: PlaceType, private val server
 
                 LoadResult.Page(
                     data = placeResponse.contents.map { it.asModel() },
-                    null,
-                    placeResponse.cursor.nextCursor
+                    prevKey = null,
+                    nextKey = if (placeResponse.cursor.hasMore && !placeResponse.cursor.nextCursor.isNullOrEmpty()) {
+                        placeResponse.cursor.nextCursor
+                    } else {
+                        null
+                    }
                 )
             } else {
                 LoadResult.Error(Exception(response.errorBody()?.string()))
