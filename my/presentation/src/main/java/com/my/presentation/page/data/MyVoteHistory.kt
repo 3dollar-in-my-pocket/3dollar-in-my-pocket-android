@@ -19,6 +19,7 @@ data class MyVoteHistory(
 }
 
 fun UserPollModel.toMyVoteHistory(): MyVoteHistory {
+    val maxCount = this.options.maxOfOrNull { it.count } ?: 0
     return MyVoteHistory(
         title = this.title,
         date = this.createdAt.convertUpdateAt(),
@@ -27,7 +28,7 @@ fun UserPollModel.toMyVoteHistory(): MyVoteHistory {
                 name = it.name,
                 choiceCount = it.count,
                 ratio = (it.ratio * 100).toInt(),
-                isTopVote = false // TODO: Domain 모델에 isSelected 필드 추가 필요
+                isTopVote = it.count == maxCount
             )
         }
     )

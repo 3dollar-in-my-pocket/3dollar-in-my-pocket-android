@@ -547,7 +547,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
             contentDescription = "투표"
         )
         Text(
-            text = stringResource(id = CommonR.string.str_mypage_count, count),
+            text = stringResource(id = CommonR.string.str_mypage_vote_count, count),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W700,
             color = Color.White,
