@@ -10,9 +10,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyVisitHistoryViewModel @Inject constructor(
-    private val myVisitHistoryDataSource: MyVisitHistoryDataSourceImpl
+    private val serverApi: ServerApi
 ) : BaseViewModel() {
 
     val myHistoryPager =
-        Pager(PagingConfig(MyVisitHistoryDataSourceImpl.LOAD_SIZE)) { myVisitHistoryDataSource }.flow
+        Pager(PagingConfig(MyVisitHistoryDataSourceImpl.LOAD_SIZE)) {
+            MyVisitHistoryDataSourceImpl(serverApi)
+        }.flow
 }

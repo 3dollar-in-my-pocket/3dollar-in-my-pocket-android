@@ -7,9 +7,9 @@ import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.utils.getErrorMessage
 
-class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
-
-    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
+class FavoriteMyFolderDataSourceImpl(
+    private val newServiceApi: NewServiceApi
+) : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
 
     override fun getRefreshKey(state: PagingState<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>): String? = null
 

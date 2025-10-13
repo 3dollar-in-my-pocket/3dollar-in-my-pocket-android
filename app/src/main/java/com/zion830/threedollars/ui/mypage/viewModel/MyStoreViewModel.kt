@@ -15,12 +15,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyStoreViewModel @Inject constructor(
-    private val serverApi: ServerApi,
-    private val myStoreDataSource: MyStoreDataSourceImpl
+    private val serverApi: ServerApi
 ) : BaseViewModel() {
 
     val myStorePager =
-        Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) { myStoreDataSource }.flow
+        Pager(PagingConfig(MyStoreDataSourceImpl.LOAD_SIZE)) {
+            MyStoreDataSourceImpl(serverApi)
+        }.flow
 
     private val _totalCount: MutableLiveData<Int> = MutableLiveData()
     val totalCount: LiveData<Int> = _totalCount
