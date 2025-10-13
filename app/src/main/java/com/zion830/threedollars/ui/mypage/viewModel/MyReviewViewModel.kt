@@ -16,21 +16,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyReviewViewModel @Inject constructor(
-    private val myReviewDataSource: MyReviewDataSourceImpl,
-    private val myFeedbacksDataSource: MyFeedbacksDataSourceImpl,
+    private val serverApi: ServerApi,
     sharedPrefUtils: SharedPrefUtils
 ) : BaseViewModel() {
 
     val myReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        myReviewDataSource
+        MyReviewDataSourceImpl(serverApi)
     }.flow
 
     val userStoreReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        myReviewDataSource
+        MyReviewDataSourceImpl(serverApi)
     }.flow
 
     val myFeedbacksPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
-        myFeedbacksDataSource
+        MyFeedbacksDataSourceImpl(serverApi)
     }.flow
 
     private val _updateReview: MutableLiveData<Boolean> = MutableLiveData()

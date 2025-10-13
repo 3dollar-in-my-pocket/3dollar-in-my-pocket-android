@@ -30,8 +30,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(private val userDataSource: UserDataSource,private val homeRepository: HomeRepository) : BaseViewModel() {
-    val favoriteMyFolderPager = Pager(PagingConfig(FavoriteMyFolderDataSourceImpl.LOAD_SIZE)) { FavoriteMyFolderDataSourceImpl() }.flow
+class FavoriteViewModel @Inject constructor(
+    private val userDataSource: UserDataSource,
+    private val homeRepository: HomeRepository,
+    private val newServiceApi: com.zion830.threedollars.network.NewServiceApi
+) : BaseViewModel() {
+    val favoriteMyFolderPager = Pager(PagingConfig(FavoriteMyFolderDataSourceImpl.LOAD_SIZE)) {
+        FavoriteMyFolderDataSourceImpl(newServiceApi)
+    }.flow
 
     private val _myFavoriteFolderResponse: MutableLiveData<MyFavoriteFolderResponse> = MutableLiveData()
     val myFavoriteFolderResponse: LiveData<MyFavoriteFolderResponse> get() = _myFavoriteFolderResponse
