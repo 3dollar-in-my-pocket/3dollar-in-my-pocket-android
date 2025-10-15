@@ -28,11 +28,11 @@ class MyVisitHistoryRecyclerAdapter(
         val categories = item.store.categories.orEmpty().map { it.name }.joinToString(" ") { "#$it" }
 
         holder.binding.apply {
-            tvCreatedAt.text = StringUtils.getTimeString(item.store.createdAt, "yy.MM.dd")
+            tvCreatedAt.text = StringUtils.getTimeString(item.visit.createdAt, "yy.MM.dd")
 
-            layoutDate.isVisible = !(position > 0 && StringUtils.getTimeString(beforeItem?.store?.createdAt, "yy.MM.dd") == tvCreatedAt.text)
-            tvCreatedAt.text = StringUtils.getTimeString(item.store.createdAt, "HH:MM:ss")
-            tvDate.text = StringUtils.getTimeString(item.store.createdAt, "MM월 d일 E요일")
+            layoutDate.isVisible = !(position > 0 && StringUtils.getTimeString(beforeItem?.visit?.createdAt, "yy.MM.dd") == tvCreatedAt.text)
+            tvCreatedAt.text = StringUtils.getTimeString(item.visit.createdAt, "HH:MM:ss")
+            tvDate.text = StringUtils.getTimeString(item.visit.createdAt, "MM월 d일 E요일")
             tvCategories.text = categories
         }
     }
