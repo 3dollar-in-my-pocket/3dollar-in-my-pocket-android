@@ -162,6 +162,11 @@ class NearStoreAdMapViewViewHolder(
     private val adClickListener: OnItemClickListener<AdvertisementModelV2>,
 ) :
     ViewHolder(binding.root) {
+
+    companion object {
+        private val adRequest = AdRequest.Builder().build()
+    }
+
     @SuppressLint("Range")
     fun bind(item: AdvertisementModelV2) {
         binding.groupAd.isVisible = true
@@ -192,7 +197,6 @@ class NearStoreAdMapViewViewHolder(
         binding.rootConstraintLayout.removeAllViews()
         binding.rootConstraintLayout.addView(adView, layoutParams)
 
-        val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }
 
