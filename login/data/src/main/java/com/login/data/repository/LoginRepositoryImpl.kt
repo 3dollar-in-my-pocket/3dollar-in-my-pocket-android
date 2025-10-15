@@ -14,6 +14,7 @@ import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.Response
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -49,23 +50,19 @@ class LoginRepositoryImpl @Inject constructor(
         return response.body() ?: throw Exception("Sign up failed")
     }
 
-    override suspend fun login(loginRequest: LoginRequest): BaseResponse<SignUser> {
-        val response = loginDataSource.login(loginRequest)
-        return response.body() ?: throw Exception("Login failed")
+    override suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>> {
+        return loginDataSource.login(loginRequest)
     }
 
-    override suspend fun logout(): BaseResponse<String> {
-        val response = loginDataSource.logout()
-        return response.body() ?: throw Exception("Logout failed")
+    override suspend fun logout(): Response<BaseResponse<String>> {
+        return loginDataSource.logout()
     }
 
-    override suspend fun signOut(): BaseResponse<String> {
-        val response = loginDataSource.signOut()
-        return response.body() ?: throw Exception("Sign out failed")
+    override suspend fun signOut(): Response<BaseResponse<String>> {
+        return loginDataSource.signOut()
     }
 
-    override suspend fun putPushInformation(informationRequest: PushInformationRequest): BaseResponse<String> {
-        val response = loginDataSource.putPushInformation(informationRequest)
-        return response.body() ?: throw Exception("Put push information failed")
+    override suspend fun putPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> {
+        return loginDataSource.putPushInformation(informationRequest)
     }
 }

@@ -9,6 +9,7 @@ import com.threedollar.network.data.auth.SignResponse
 import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 
 interface LoginRepository {
     fun getFeedbackTypes(targetType: String): Flow<BaseResponse<List<FeedbackTypeModel>>>
@@ -21,11 +22,11 @@ interface LoginRepository {
 
     suspend fun signUp(signUpRequest: SignUpRequest): SignResponse
 
-    suspend fun login(loginRequest: LoginRequest): BaseResponse<SignUser>
+    suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
 
-    suspend fun logout(): BaseResponse<String>
+    suspend fun logout(): Response<BaseResponse<String>>
 
-    suspend fun signOut(): BaseResponse<String>
+    suspend fun signOut(): Response<BaseResponse<String>>
 
-    suspend fun putPushInformation(informationRequest: PushInformationRequest): BaseResponse<String>
+    suspend fun putPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>>
 }

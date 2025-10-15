@@ -34,12 +34,9 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         latestSocialType.value = socialType
         LegacySharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            try {
-                val result = loginRepository.login(LoginRequest(socialType.socialName, accessToken))
-                _loginResult.emit(ResultWrapper.Success(result.data))
-            } catch (e: Exception) {
-                _loginResult.emit(ResultWrapper.GenericError(msg = e.message ?: "Login failed"))
-            }
+            val response = loginRepository.login(LoginRequest(socialType.socialName, accessToken))
+            val result = safeApiCall(response)
+            _loginResult.emit(result)
         }
     }
 

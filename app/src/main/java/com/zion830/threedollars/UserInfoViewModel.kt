@@ -91,19 +91,13 @@ class UserInfoViewModel @Inject constructor(
     fun deleteUser(onSuccess: () -> Unit) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            try {
-                val result = loginRepository.signOut()
-                withContext(Dispatchers.Main) {
-                    hideLoading()
-                    if (result.ok) {
-                        onSuccess()
-                    } else {
-                        _msgTextId.postValue(CommonR.string.failed_delete_account)
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    hideLoading()
+            val response = loginRepository.signOut()
+            val result = safeApiCall(response)
+            withContext(Dispatchers.Main) {
+                hideLoading()
+                if (result is com.threedollar.common.base.ResultWrapper.Success) {
+                    onSuccess()
+                } else {
                     _msgTextId.postValue(CommonR.string.failed_delete_account)
                 }
             }
@@ -112,12 +106,9 @@ class UserInfoViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            try {
-                val response = loginRepository.logout()
-                _logoutResult.postValue(response.ok)
-            } catch (e: Exception) {
-                _logoutResult.postValue(false)
-            }
+            val response = loginRepository.logout()
+            val result = safeApiCall(response)
+            _logoutResult.postValue(result is com.threedollar.common.base.ResultWrapper.Success)
         }
     }
 
