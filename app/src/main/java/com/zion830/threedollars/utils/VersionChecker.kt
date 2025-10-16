@@ -31,7 +31,7 @@ object VersionChecker {
     fun checkForceUpdateAvailable(activity: Activity, needUpdate: (String, String) -> Unit, alreadyUpdate: () -> Unit) {
         getMinimumVersionCode(activity) { minimumVersion ->
             val packageName = activity.applicationContext.packageName
-            val currentVersion = activity.applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
+            val currentVersion = activity.applicationContext.packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
 
             when {
                 currentVersion == minimumVersion -> {
