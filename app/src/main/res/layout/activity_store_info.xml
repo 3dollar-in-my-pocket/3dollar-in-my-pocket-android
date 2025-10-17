@@ -10,7 +10,7 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="54dp"
+        android:layout_marginBottom="16dp"
         android:descendantFocusability="beforeDescendants"
         android:fillViewport="true"
         android:paddingHorizontal="20dp"
