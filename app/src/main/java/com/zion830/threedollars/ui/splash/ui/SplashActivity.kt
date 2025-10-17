@@ -47,6 +47,7 @@ class SplashActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
+        setDarkSystemBars()
         initAdvertisements()
         initPushToken()
         initFlow()

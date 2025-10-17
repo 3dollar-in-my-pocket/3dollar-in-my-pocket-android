@@ -72,6 +72,7 @@ class BossReviewWriteActivity :
     private var loadingDialog: LoadingProgressDialog? = null
 
     override fun initView() {
+        setLightSystemBars()
 
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
 

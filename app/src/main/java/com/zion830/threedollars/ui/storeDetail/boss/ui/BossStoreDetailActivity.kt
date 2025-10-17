@@ -173,6 +173,7 @@ class BossStoreDetailActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initMap()
         initViewModels()

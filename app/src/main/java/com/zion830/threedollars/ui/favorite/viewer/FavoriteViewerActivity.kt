@@ -54,6 +54,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     }
 
     override fun initView() {
+        setDarkSystemBars()
         requestPermissionFirst()
         initObserve()
         initButton()

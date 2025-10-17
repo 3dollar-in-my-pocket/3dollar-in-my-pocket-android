@@ -31,6 +31,7 @@ class BossFeedBackDetailActivity :
     private val feedbackAdapter by lazy { BossFeedBackDetailAdapter() }
 
     override fun initView() {
+        setLightSystemBars()
         binding.btnBack.onSingleClick { finish() }
         binding.twFeedbackWrite.onSingleClick {
             moveFoodTruckReviewWriteActivity()

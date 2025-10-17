@@ -46,6 +46,7 @@ class SignUpActivity :
     override val viewModel: InputNameViewModel by viewModels()
 
     override fun initView() {
+        setDarkSystemBars()
         initEditTextView()
         initButton()
         initFlow()

@@ -95,6 +95,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     }
 
     override fun initView() {
+        setLightSystemBars()
         initViewModel()
         initAdapter()
         initButton()

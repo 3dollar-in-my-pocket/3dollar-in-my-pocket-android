@@ -58,6 +58,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     }
 
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initViewModel()
         initAdapter()

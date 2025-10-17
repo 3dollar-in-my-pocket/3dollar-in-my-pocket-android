@@ -6,6 +6,10 @@ import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.viewbinding.ViewBinding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -26,6 +30,17 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
         binding = bindingFactory(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(
+                top = insets.top,
+                bottom = insets.bottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
+
         initView()
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         viewModel.msgTextId.observe(this) {
@@ -62,7 +77,8 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
         return ret
     }
-    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
+
+    fun setFirebaseAnalyticsLogEvent(className: String, screenName: String?) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
             param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
             screenName?.let {
@@ -70,10 +86,27 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
             }
         }
     }
+
     private fun hideKeyboard() {
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(window.currentFocus!!.windowToken, 0)
     }
 
     fun isBindingInitialized() = ::binding.isInitialized
+
+    // 밝은 시스템바 (어두운 아이콘/텍스트) - 흰색 배경용
+    protected fun setLightSystemBars() {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
+    }
+
+    // 어두운 시스템바 (밝은 아이콘/텍스트) - 검은색 배경용
+    protected fun setDarkSystemBars() {
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
+    }
 }

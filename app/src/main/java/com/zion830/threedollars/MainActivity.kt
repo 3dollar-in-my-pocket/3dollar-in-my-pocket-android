@@ -52,6 +52,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
+        setDarkSystemBars()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
         if (isLocationAvailable() && isGpsAvailable()) {

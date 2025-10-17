@@ -79,6 +79,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
     }
 
     override fun initView() {
+        setLightSystemBars()
         categoryId = intent.getStringExtra("category").orEmpty()
         if (categoryId.isEmpty()) {
             finish()

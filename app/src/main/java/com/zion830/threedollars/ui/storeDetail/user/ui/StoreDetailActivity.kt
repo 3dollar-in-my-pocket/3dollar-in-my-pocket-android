@@ -165,6 +165,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         activityResultLauncher = registerForActivityResult(

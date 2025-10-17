@@ -74,6 +74,7 @@ class StoreReviewDetailActivity :
     }
 
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initButton()
         initViewModel()

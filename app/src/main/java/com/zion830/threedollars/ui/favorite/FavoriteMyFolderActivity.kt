@@ -53,6 +53,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     }
 
     override fun initView() {
+        setDarkSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         activityResultLauncher = registerForActivityResult(

@@ -84,6 +84,7 @@ class BossReviewDetailActivity :
     }
 
     override fun initView() {
+        setLightSystemBars()
         binding.reviewRecyclerView.adapter = foodTruckReviewAdapter
         binding.btnBack.onSingleClick { finish() }
         binding.twReviewWrite.onSingleClick { 

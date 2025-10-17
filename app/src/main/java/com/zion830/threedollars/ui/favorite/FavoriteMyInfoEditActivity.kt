@@ -20,6 +20,7 @@ class FavoriteMyInfoEditActivity :
     override val viewModel: FavoriteMyInfoEditViewModel by viewModels()
 
     override fun initView() {
+        setDarkSystemBars()
         initText()
 
         showKeyboard()

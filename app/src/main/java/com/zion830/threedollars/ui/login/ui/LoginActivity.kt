@@ -50,6 +50,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     }
 
     override fun initView() {
+        setDarkSystemBars()
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
             val bundle = Bundle().apply {
