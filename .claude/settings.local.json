@@ -28,7 +28,9 @@
       "Bash(curl:*)",
       "Bash(echo \"DELETE /v1/poll/{pollId}\nDELETE /v1/poll/{pollId}/comment/{commentId}/pins\nDELETE /v2/signout\nDELETE /v2/store/visit/{visitId}\nGET /health/readiness\nGET /test-token\nGET /v1/advertisement-positions\nGET /v1/enums\nGET /v1/feed-ticket/{ticketId}/feeds\nGET /v1/my/issued-coupons\nGET /v1/search/stores\nGET /v1/store/{storeId}/coupon/{couponId}\nGET /v1/store/{storeId}/news-post/{postId}\nGET /v1/store/{storeId}/news-posts\nGET /v2/my/devices\nGET /v4/store/{storeId}/review/{reviewId}\nGET /v4/store/{storeId}/visit/exists\nGET /v4/store/{storeId}/visits\nGET /v5/store/{storeId}\nGET /version\nPATCH /v3/store/{storeId}\nPOST /login/demo\nPOST /v1/event/click/{ticket}/{targetId}\nPOST /v1/nonce\nPOST /v1/signup/anonymous\nPOST /v1/store/{storeId}/coupon/{couponId}/issue\nPOST /v3/store\nPUT /v1/connect/account\nPUT /v1/issued-coupon/{issuedKey}/use\nPUT /v1/poll/{pollId}/comment/{commentId}/pins\nPUT /v1/poll/{pollId}/comment/{commentId}/stickers\nPUT /v1/store/{storeId}/news-post/{postId}/stickers\")",
       "Bash(echo:*)",
-      "WebSearch"
+      "WebSearch",
+      "Read(//Users/jeongjin-yong/.gradle/caches/**)",
+      "Bash(readelf:*)"
     ],
     "deny": [],
     "ask": []

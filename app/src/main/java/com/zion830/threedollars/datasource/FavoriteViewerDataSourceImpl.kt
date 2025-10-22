@@ -24,8 +24,12 @@ class FavoriteViewerDataSourceImpl(private val id:String) : PagingSource<String,
                 val myFavoriteFolderResponse = response.body()?.data ?: return LoadResult.Error(NullPointerException())
                 LoadResult.Page(
                     data = myFavoriteFolderResponse.favorites,
-                    null,
-                    myFavoriteFolderResponse.cursor.nextCursor
+                    prevKey = null,
+                    nextKey = if (!myFavoriteFolderResponse.cursor.nextCursor.isNullOrEmpty()) {
+                        myFavoriteFolderResponse.cursor.nextCursor
+                    } else {
+                        null
+                    }
                 )
             } else {
                 LoadResult.Error(Exception(response.message()))

@@ -18,8 +18,12 @@ class ImagePagingDataSource(private val storeId: Int, private val serverApi: Ser
 
                 LoadResult.Page(
                     data = imagesResponse.contents?.map { it.image?.asModel() ?: ImageContentModel() } ?: listOf(),
-                    null,
-                    imagesResponse.cursor?.nextCursor
+                    prevKey = null,
+                    nextKey = if (!imagesResponse.cursor?.nextCursor.isNullOrEmpty()) {
+                        imagesResponse.cursor?.nextCursor
+                    } else {
+                        null
+                    }
                 )
             } else {
                 LoadResult.Error(Exception(response.errorBody()?.string()))

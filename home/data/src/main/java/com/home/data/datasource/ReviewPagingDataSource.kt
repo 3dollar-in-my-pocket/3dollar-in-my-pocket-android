@@ -18,8 +18,12 @@ class ReviewPagingDataSource(private val storeId: Int, private val sort: String,
 
                 LoadResult.Page(
                     data = reviews.contents?.map { it.asModel() } ?: listOf(),
-                    null,
-                    reviews.cursor?.nextCursor
+                    prevKey = null,
+                    nextKey = if (!reviews.cursor?.nextCursor.isNullOrEmpty()) {
+                        reviews.cursor?.nextCursor
+                    } else {
+                        null
+                    }
                 )
             } else {
                 LoadResult.Error(Exception(response.errorBody()?.string()))
