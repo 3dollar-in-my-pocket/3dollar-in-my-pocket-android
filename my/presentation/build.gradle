@@ -43,8 +43,8 @@ dependencies {
     implementation project(':common')
     implementation project(':core:common')
     implementation project(':core:network')
-    implementation project(':my:data')
-    implementation project(':my:domain')
+    implementation project(':data')
+    implementation project(':domain')
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'

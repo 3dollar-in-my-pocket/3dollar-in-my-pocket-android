@@ -1,7 +1,7 @@
 package com.my.presentation.page.data
 
-import com.my.domain.model.FavoriteStoresModel
-import com.my.domain.model.VisitHistoryModel
+import com.threedollar.domain.my.model.FavoriteStoresModel
+import com.threedollar.domain.my.model.VisitHistoryModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 

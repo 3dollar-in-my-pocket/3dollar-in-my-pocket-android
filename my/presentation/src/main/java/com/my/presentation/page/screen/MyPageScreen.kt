@@ -49,7 +49,7 @@ import coil.compose.AsyncImage
 import com.my.presentation.R
 import com.threedollar.common.R as CommonR
 import com.my.presentation.page.MyPageViewModel
-import com.my.domain.model.*
+import com.threedollar.domain.my.model.*
 import com.my.presentation.page.commponent.MyPageShopInfoView
 import com.my.presentation.page.data.MyPageButton
 import com.my.presentation.page.data.MyPageSectionTitleData

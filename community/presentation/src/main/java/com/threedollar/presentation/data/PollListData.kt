@@ -1,7 +1,7 @@
 package com.threedollar.presentation.data
 
-import com.threedollar.domain.data.AdvertisementModelV2
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.AdvertisementModelV2
+import com.threedollar.domain.community.data.PollItem
 
 sealed class PollListData {
     class Poll(val pollItem: PollItem) : PollListData()

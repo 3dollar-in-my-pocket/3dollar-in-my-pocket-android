@@ -2,11 +2,11 @@ package com.threedollar.presentation.polls
 
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.domain.data.CreatePolicy
-import com.threedollar.domain.data.PollId
-import com.threedollar.domain.data.PollList
-import com.threedollar.domain.model.PollCreateModel
-import com.threedollar.domain.repository.CommunityRepository
+import com.threedollar.domain.community.data.CreatePolicy
+import com.threedollar.domain.community.data.PollId
+import com.threedollar.domain.community.data.PollList
+import com.threedollar.domain.community.model.PollCreateModel
+import com.threedollar.domain.community.repository.CommunityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

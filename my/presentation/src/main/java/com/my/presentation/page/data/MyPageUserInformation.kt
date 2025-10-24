@@ -1,6 +1,6 @@
 package com.my.presentation.page.data
 
-import com.my.domain.model.MedalModel
+import com.threedollar.domain.my.model.MedalModel
 
 data class MyPageUserInformationData(val name: String, val medal: MedalModel?)
 

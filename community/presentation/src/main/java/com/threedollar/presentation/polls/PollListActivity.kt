@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.domain.data.PollItem
-import com.threedollar.domain.data.PollList
-import com.threedollar.domain.model.PollCreateModel
+import com.threedollar.domain.community.data.PollItem
+import com.threedollar.domain.community.data.PollList
+import com.threedollar.domain.community.model.PollCreateModel
 import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollListBinding

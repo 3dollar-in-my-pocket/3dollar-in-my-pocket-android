@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.gms.ads.AdRequest
-import com.home.domain.data.place.PlaceModel
-import com.home.domain.request.PlaceRequest
+import com.threedollar.domain.home.data.place.PlaceModel
+import com.threedollar.domain.home.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener

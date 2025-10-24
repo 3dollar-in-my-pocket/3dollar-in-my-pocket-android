@@ -6,8 +6,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.AppearanceDayModel
-import com.home.domain.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.AppearanceDayModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemAppearanceDayBinding

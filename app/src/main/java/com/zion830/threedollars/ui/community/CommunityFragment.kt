@@ -29,8 +29,8 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_AD_CARD
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.domain.data.AdvertisementModelV2
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.AdvertisementModelV2
+import com.threedollar.domain.community.data.PollItem
 import com.threedollar.presentation.CommunityPollAdapter
 import com.threedollar.presentation.CommunityStoreAdapter
 import com.threedollar.presentation.CommunityViewModel

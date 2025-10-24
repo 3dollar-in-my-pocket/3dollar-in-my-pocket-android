@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.my.presentation.R
 import com.threedollar.common.R as CommonR
-import com.my.domain.model.UserInfoModel
+import com.threedollar.domain.my.model.UserInfoModel
 
 data class MyPageButton(
     val topText: String,

@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.data.NeighborhoodModel
-import com.threedollar.domain.data.Neighborhoods
+import com.threedollar.domain.community.data.NeighborhoodModel
+import com.threedollar.domain.community.data.Neighborhoods
 import com.threedollar.presentation.databinding.ItemChoiceDistrictBinding
 import com.threedollar.presentation.databinding.ItemChoiceNameBinding
 import zion830.com.common.base.BaseDiffUtilCallback

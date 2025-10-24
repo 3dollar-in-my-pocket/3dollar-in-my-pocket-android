@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.api.ServerApi
-import com.my.data.datasource.MyVisitHistoryDataSourceImpl
+import com.threedollar.data.my.datasource.MyVisitHistoryDataSourceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

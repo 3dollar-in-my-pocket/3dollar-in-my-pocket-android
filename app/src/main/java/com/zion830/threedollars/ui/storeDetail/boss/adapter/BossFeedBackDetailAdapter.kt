@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.boss.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.FeedbackModel
+import com.threedollar.domain.home.data.store.FeedbackModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackDetailBinding

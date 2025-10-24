@@ -2,8 +2,8 @@ package com.zion830.threedollars.ui.map.viewModel
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.repository.HomeRepository
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition

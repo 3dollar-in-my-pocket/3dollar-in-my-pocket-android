@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.domain.data.NeighborhoodModel
-import com.threedollar.domain.data.Neighborhoods
+import com.threedollar.domain.community.data.NeighborhoodModel
+import com.threedollar.domain.community.data.Neighborhoods
 import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.DialogNeighborChoiceBinding

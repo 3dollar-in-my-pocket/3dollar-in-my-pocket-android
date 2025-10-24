@@ -6,8 +6,8 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.ReviewStatusType
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.ReviewStatusType
 import com.my.presentation.page.data.convertUpdateAt
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R

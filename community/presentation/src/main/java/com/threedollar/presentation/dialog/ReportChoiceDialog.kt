@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.threedollar.domain.model.ReportReason
+import com.threedollar.domain.community.model.ReportReason
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
 import zion830.com.common.base.onSingleClick

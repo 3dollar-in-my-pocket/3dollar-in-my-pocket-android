@@ -75,15 +75,11 @@ dependencies {
     implementation project(':core:common')
     implementation project(':core:ui')
     implementation project(':core:designsystem')
-    implementation project(':home:domain')
-    implementation project(':home:data')
+    implementation project(':domain')
+    implementation project(':data')
     implementation project(':home:presentation')
     implementation project(':my:presentation')
-    implementation project(':my:domain')
-    implementation project(':my:data')
     implementation project(':community:presentation')
-    implementation project(':login:domain')
-    implementation project(':login:data')
 
     implementation 'com.google.firebase:firebase-config:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.0.5'
@@ -101,5 +97,4 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.webkit:webkit:1.5.0"
-    implementation project(':community:domain')
 }

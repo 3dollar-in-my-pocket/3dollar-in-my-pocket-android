@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.data.PopularStore
+import com.threedollar.domain.community.data.PopularStore
 import com.threedollar.presentation.databinding.ItemStoreBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.loadUrlImg

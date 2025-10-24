@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.model.ReportReason
+import com.threedollar.domain.community.model.ReportReason
 import com.threedollar.presentation.databinding.ItemChoiceNameBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick

@@ -2,12 +2,12 @@ package com.zion830.threedollars.ui.home.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.user.UserModel
-import com.home.domain.repository.HomeRepository
-import com.home.domain.request.FilterConditionsTypeModel
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.user.UserModel
+import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeFilterEvent
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType

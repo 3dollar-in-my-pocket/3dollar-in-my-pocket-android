@@ -7,7 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.api.ServerApi
-import com.my.data.datasource.MyStoreDataSourceImpl
+import com.threedollar.data.my.datasource.MyStoreDataSourceImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

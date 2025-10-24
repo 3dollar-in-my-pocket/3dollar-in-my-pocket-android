@@ -1,6 +1,6 @@
 package com.threedollar.presentation.utils
 
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.PollItem
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

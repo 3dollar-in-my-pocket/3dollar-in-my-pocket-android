@@ -40,9 +40,10 @@ android {
 }
 
 dependencies {
-    // Feature domain
-    implementation project(':home:domain')
-    
+    // Unified modules
+    implementation project(':domain')
+    implementation project(':data')
+
     // Core modules - MIGRATION_RULES.md compliance
     implementation project(':core:common')      // All strings, base classes
     implementation project(':core:ui')          // UI components, ScaleRatingBar

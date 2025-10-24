@@ -22,8 +22,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.store.MarkerModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate

@@ -1,18 +1,18 @@
 package com.zion830.threedollars.ui.storeDetail.boss.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.ReasonModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UploadFileModel
-import com.home.domain.repository.HomeRepository
-import com.home.domain.request.ReportReviewModelRequest
-import com.home.domain.request.ReportReasonsGroupType
+import com.threedollar.domain.home.data.store.BossStoreDetailModel
+import com.threedollar.domain.home.data.store.FavoriteModel
+import com.threedollar.domain.home.data.store.ReasonModel
+import com.threedollar.domain.home.data.store.SaveImagesModel
+import com.threedollar.domain.home.data.store.UploadFileModel
+import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.ReportReviewModelRequest
+import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.home.domain.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.FileTypeConstants

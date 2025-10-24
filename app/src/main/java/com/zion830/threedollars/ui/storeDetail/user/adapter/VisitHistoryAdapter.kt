@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.HistoriesContentModel
+import com.threedollar.domain.home.data.store.HistoriesContentModel
 import com.threedollar.common.ext.convertCreatedAt
 import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR

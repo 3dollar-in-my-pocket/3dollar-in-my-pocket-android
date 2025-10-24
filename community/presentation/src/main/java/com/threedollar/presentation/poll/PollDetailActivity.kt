@@ -17,14 +17,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
-import com.threedollar.domain.model.ReportReason
+import com.threedollar.domain.community.model.ReportReason
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.domain.data.PollComment
-import com.threedollar.domain.data.PollCommentList
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.PollComment
+import com.threedollar.domain.community.data.PollCommentList
+import com.threedollar.domain.community.data.PollItem
 import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollDetailBinding

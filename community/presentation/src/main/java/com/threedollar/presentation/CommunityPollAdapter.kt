@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.domain.data.AdvertisementModelV2
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.AdvertisementModelV2
+import com.threedollar.domain.community.data.PollItem
 import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.ItemPollAdBinding
 import com.threedollar.presentation.databinding.ItemPollBinding

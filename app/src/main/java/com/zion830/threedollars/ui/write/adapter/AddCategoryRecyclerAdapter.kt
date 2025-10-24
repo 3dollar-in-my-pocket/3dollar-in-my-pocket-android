@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.AddCategoryModel
-import com.home.domain.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.AddCategoryModel
+import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.GlobalApplication

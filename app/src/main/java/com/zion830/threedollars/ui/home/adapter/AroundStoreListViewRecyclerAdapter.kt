@@ -7,8 +7,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.store.ContentModel
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener

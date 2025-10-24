@@ -16,10 +16,10 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.advertisement.AdvertisementModelV2Empty
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.store.MarkerModel
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage

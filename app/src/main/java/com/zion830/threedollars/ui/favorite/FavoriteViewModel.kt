@@ -12,7 +12,7 @@ import com.google.firebase.dynamiclinks.ktx.iosParameters
 import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
 import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
 import com.google.firebase.ktx.Firebase
-import com.home.domain.repository.HomeRepository
+import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.BuildConfig

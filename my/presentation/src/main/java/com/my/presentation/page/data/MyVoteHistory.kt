@@ -1,6 +1,6 @@
 package com.my.presentation.page.data
 
-import com.my.domain.model.UserPollModel
+import com.threedollar.domain.my.model.UserPollModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 

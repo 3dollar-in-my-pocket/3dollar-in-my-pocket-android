@@ -30,7 +30,10 @@
       "Bash(echo:*)",
       "WebSearch",
       "Read(//Users/jeongjin-yong/.gradle/caches/**)",
-      "Bash(readelf:*)"
+      "Bash(readelf:*)",
+      "Bash(tree -L 4 -d:*)",
+      "Bash(ls:*)",
+      "Bash(du:*)"
     ],
     "deny": [],
     "ask": []

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.data.PollComment
+import com.threedollar.domain.community.data.PollComment
 import com.threedollar.presentation.databinding.ItemPollCommentBinding
 import com.threedollar.presentation.databinding.ItemPollCommentBlindBinding
 import zion830.com.common.base.BaseDiffUtilCallback

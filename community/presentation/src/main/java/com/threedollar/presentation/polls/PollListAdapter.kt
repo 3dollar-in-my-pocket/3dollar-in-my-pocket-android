@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.community.data.PollItem
 import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ItemPollListBinding

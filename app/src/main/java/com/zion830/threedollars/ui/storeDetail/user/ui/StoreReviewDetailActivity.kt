@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.material.tabs.TabLayout
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.ReviewSortType
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants

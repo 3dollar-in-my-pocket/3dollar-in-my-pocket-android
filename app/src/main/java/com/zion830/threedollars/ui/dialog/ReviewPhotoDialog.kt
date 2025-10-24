@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import com.home.domain.data.store.ImageModel
+import com.threedollar.domain.home.data.store.ImageModel
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.zion830.threedollars.databinding.FragmentReviewPhotoBinding
