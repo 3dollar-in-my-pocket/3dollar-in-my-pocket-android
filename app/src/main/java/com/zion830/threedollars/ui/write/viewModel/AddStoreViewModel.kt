@@ -9,7 +9,7 @@ import com.threedollar.domain.home.data.store.PostUserStoreModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.home.presentation.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource

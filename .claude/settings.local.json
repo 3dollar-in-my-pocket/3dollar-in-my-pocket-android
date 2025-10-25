@@ -33,7 +33,15 @@
       "Bash(readelf:*)",
       "Bash(tree -L 4 -d:*)",
       "Bash(ls:*)",
-      "Bash(du:*)"
+      "Bash(du:*)",
+      "mcp__serena__get_symbols_overview",
+      "Bash(tree:*)",
+      "Bash(git log:*)",
+      "Bash(cat:*)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then basename \"$file\")",
+      "Bash(fi)",
+      "Bash(tee:*)"
     ],
     "deny": [],
     "ask": []

@@ -8,9 +8,9 @@ import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeFilterEvent
-import com.home.presentation.data.HomeSortType
-import com.home.presentation.data.HomeStoreType
+import com.zion830.threedollars.ui.home.data.HomeFilterEvent
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.ReviewStatusType
-import com.my.presentation.page.data.convertUpdateAt
+import com.zion830.threedollars.ui.my.page.data.convertUpdateAt
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewBinding

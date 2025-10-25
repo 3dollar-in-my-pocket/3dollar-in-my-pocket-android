@@ -8,7 +8,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.my.presentation.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener

@@ -66,6 +66,11 @@ android {
     buildFeatures{
         viewBinding = true
         buildConfig = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.0"
     }
 }
 
@@ -77,9 +82,6 @@ dependencies {
     implementation project(':core:designsystem')
     implementation project(':domain')
     implementation project(':data')
-    implementation project(':home:presentation')
-    implementation project(':my:presentation')
-    implementation project(':community:presentation')
 
     implementation 'com.google.firebase:firebase-config:21.1.1'
     implementation 'com.google.firebase:firebase-database:20.0.5'
@@ -97,4 +99,14 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.webkit:webkit:1.5.0"
+
+    // Compose (from my:presentation module - compatible with Kotlin 1.8.0)
+    implementation 'androidx.compose.ui:ui:1.4.0'
+    implementation 'androidx.compose.material:material:1.4.0'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.4.0'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+    debugImplementation 'androidx.compose.ui:ui-tooling:1.4.0'
+
+    // Coil for Compose image loading (compatible with Compose 1.4.0)
+    implementation 'io.coil-kt:coil-compose:2.2.2'
 }

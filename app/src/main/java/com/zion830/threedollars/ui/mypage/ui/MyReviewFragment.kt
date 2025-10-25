@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
-import com.my.presentation.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R

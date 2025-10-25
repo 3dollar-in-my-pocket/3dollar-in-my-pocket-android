@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
-import com.my.presentation.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener

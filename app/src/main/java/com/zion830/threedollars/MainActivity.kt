@@ -16,7 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.my.presentation.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
