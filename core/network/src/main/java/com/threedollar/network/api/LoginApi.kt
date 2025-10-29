@@ -1,11 +1,10 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.data.auth.LoginRequest
 import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignResponse
 import com.threedollar.network.data.auth.SignUser
+import com.threedollar.network.request.PushInformationRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -18,7 +17,7 @@ interface LoginApi {
     suspend fun signOut(): Response<BaseResponse<String>>
 
     @POST("/api/v2/signup")
-    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
+    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<SignUser>>
 
     @POST("/api/v2/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>

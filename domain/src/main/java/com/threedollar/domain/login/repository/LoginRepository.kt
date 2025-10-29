@@ -5,7 +5,6 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.domain.login.model.FeedbackTypeModel
 import com.threedollar.network.data.auth.LoginRequest
 import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignResponse
 import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +19,7 @@ interface LoginRepository {
 
     fun getUserInfo(): Flow<AccessCheckModel>
 
-    suspend fun signUp(signUpRequest: SignUpRequest): SignResponse
+    suspend fun signUp(signUpRequest: SignUpRequest): Response<BaseResponse<SignUser>>
 
     suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
 

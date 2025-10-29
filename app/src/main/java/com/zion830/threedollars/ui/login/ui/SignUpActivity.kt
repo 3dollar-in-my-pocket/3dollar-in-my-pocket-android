@@ -21,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.BaseActivity
+import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants.CLICK_SIGN_UP
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.EventTracker
@@ -50,11 +51,6 @@ class SignUpActivity :
         initEditTextView()
         initButton()
         initFlow()
-        viewModel.isNameUpdated.observe(this) {
-            if (it) {
-                showMarketingDialog()
-            }
-        }
         viewModel.isAlreadyUsed.observe(this) {
             binding.tvAlreadyExist.isVisible = it > 0
             if (it != -1) {
@@ -116,6 +112,31 @@ class SignUpActivity :
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.signUpResult.collect {
+                        when (it) {
+                            is ResultWrapper.Success -> {
+                                LegacySharedPrefUtils.saveUserId(it.value?.userId ?: 0)
+                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
+                                showMarketingDialog()
+                            }
+                            is ResultWrapper.GenericError -> {
+                                when (it.code) {
+                                    409 -> {
+                                        binding.tvAlreadyExist.isVisible = true
+                                        binding.tvAlreadyExist.text = getString(CommonR.string.login_name_already_exist)
+                                    }
+                                    400 -> {
+                                        binding.tvAlreadyExist.isVisible = true
+                                        binding.tvAlreadyExist.text = getString(CommonR.string.invalidate_name)
+                                    }
+                                    else -> showToast(CommonR.string.connection_failed)
+                                }
+                            }
+                            ResultWrapper.NetworkError -> showToast(CommonR.string.connection_failed)
                         }
                     }
                 }

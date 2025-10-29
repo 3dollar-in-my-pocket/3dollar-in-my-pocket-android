@@ -1,12 +1,11 @@
 package com.threedollar.data.login.datasource
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.api.LoginApi
 import com.threedollar.network.data.auth.LoginRequest
 import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignResponse
 import com.threedollar.network.data.auth.SignUser
-import com.threedollar.network.api.LoginApi
+import com.threedollar.network.request.PushInformationRequest
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -14,7 +13,7 @@ class LoginDataSourceImpl @Inject constructor(
     private val loginApi: LoginApi
 ) : LoginDataSource {
 
-    override suspend fun signUp(signUpRequest: SignUpRequest): Response<SignResponse> {
+    override suspend fun signUp(signUpRequest: SignUpRequest): Response<BaseResponse<SignUser>> {
         return loginApi.signUp(signUpRequest)
     }
 
