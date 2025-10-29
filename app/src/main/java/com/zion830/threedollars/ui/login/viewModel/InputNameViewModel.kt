@@ -6,14 +6,18 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.base.ResultWrapper
+import com.threedollar.network.data.auth.SignUpRequest
+import com.threedollar.network.data.auth.SignUser
 import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
-import com.threedollar.network.data.auth.SignUpRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,15 +36,15 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
     private val _isAlreadyUsed: MutableLiveData<Int> = MutableLiveData()
     val isAlreadyUsed: LiveData<Int>
         get() = _isAlreadyUsed
-    private val _isNameUpdated: MutableLiveData<Boolean> = MutableLiveData()
-    val isNameUpdated: LiveData<Boolean>
-        get() = _isNameUpdated
     private val _isAvailable: MutableLiveData<Boolean> = MutableLiveData(true)
     val isAvailable: LiveData<Boolean>
         get() = _isAvailable
 
     private val _isMarketing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isMarketing: StateFlow<Boolean> get() = _isMarketing
+
+    private val _signUpResult: MutableSharedFlow<ResultWrapper<SignUser?>> = MutableSharedFlow()
+    val signUpResult: SharedFlow<ResultWrapper<SignUser?>> get() = _signUpResult
 
     fun trySignUp(token: String) {
         if (userName.value.isNullOrBlank()) {
@@ -59,18 +63,9 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
                 latestSocialType.value!!.socialName,
                 token
             )
-            try {
-                val signUpResult = loginRepository.signUp(request)
-                LegacySharedPrefUtils.saveAccessToken(signUpResult.data.token)
-                _isNameUpdated.postValue(true)
-            } catch (e: Exception) {
-                val errorMessage = e.message ?: ""
-                when {
-                    errorMessage.contains("409") -> _isAlreadyUsed.postValue(CommonR.string.login_name_already_exist)
-                    errorMessage.contains("400") -> _isAlreadyUsed.postValue(CommonR.string.invalidate_name)
-                    else -> _msgTextId.postValue(CommonR.string.connection_failed)
-                }
-            }
+            val response = loginRepository.signUp(request)
+            val result = safeApiCall(response)
+            _signUpResult.emit(result)
         }
     }
 

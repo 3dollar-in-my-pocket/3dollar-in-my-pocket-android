@@ -2,14 +2,13 @@ package com.login.data.repository
 
 import com.login.data.datasource.LoginDataSource
 import com.login.data.datasource.LoginRemoteDataSource
+import com.login.data.mapper.FeedbackTypeMapper
 import com.login.domain.data.AccessCheckModel
+import com.login.domain.model.FeedbackTypeModel
 import com.login.domain.repository.LoginRepository
 import com.threedollar.common.base.BaseResponse
-import com.login.domain.model.FeedbackTypeModel
-import com.login.data.mapper.FeedbackTypeMapper
 import com.threedollar.network.data.auth.LoginRequest
 import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignResponse
 import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
@@ -45,9 +44,8 @@ class LoginRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun signUp(signUpRequest: SignUpRequest): SignResponse {
-        val response = loginDataSource.signUp(signUpRequest)
-        return response.body() ?: throw Exception("Sign up failed")
+    override suspend fun signUp(signUpRequest: SignUpRequest): Response<BaseResponse<SignUser>> {
+        return loginDataSource.signUp(signUpRequest)
     }
 
     override suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>> {
