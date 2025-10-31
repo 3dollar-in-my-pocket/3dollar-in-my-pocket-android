@@ -25,6 +25,7 @@ import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel

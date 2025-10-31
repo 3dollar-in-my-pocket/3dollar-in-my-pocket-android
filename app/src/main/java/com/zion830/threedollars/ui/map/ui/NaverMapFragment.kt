@@ -38,6 +38,7 @@ import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
 import com.zion830.threedollars.utils.NaverMapUtils

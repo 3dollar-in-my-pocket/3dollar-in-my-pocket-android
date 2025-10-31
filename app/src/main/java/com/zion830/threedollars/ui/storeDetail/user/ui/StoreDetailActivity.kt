@@ -176,7 +176,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         }
 
-        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(R.color.pink, null))
+        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(DesignSystemR.color.pink, null))
         refreshStoreInfo()
         initMap()
         initButton()
@@ -628,7 +628,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 null,
                 null,
             )
-            setTextColor(getColor(R.color.gray70))
+            setTextColor(getColor(DesignSystemR.color.gray70))
         }
     }
 
@@ -672,7 +672,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             listOf(mondayTextView, tuesdayTextView, wednesdayTextView, thursdayTextView, fridayTextView, saturdayTextView, sundayTextView).forEach {
                 it.apply {
                     setBackgroundResource(DesignSystemR.drawable.circle_gray10_24dp)
-                    setTextColor(getColor(R.color.gray40))
+                    setTextColor(getColor(DesignSystemR.color.gray40))
                 }
             }
         }
@@ -681,7 +681,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
             setBackgroundResource(DesignSystemR.drawable.circle_gray70_24dp)
-            setTextColor(getColor(R.color.color_white))
+            setTextColor(getColor(DesignSystemR.color.color_white))
         }
     }
 
@@ -700,7 +700,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
-        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+        val favoriteIcon = if (isFavorite) DesignSystemR.drawable.ic_food_truck_favorite_on else DesignSystemR.drawable.ic_food_truck_favorite_off
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
@@ -795,7 +795,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 ForegroundColorSpan(
                     ContextCompat.getColor(
                         applicationContext,
-                        R.color.color_main_red,
+                        DesignSystemR.color.color_main_red,
                     ),
                 ),
                 0,

@@ -53,7 +53,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
         binding.editPollName.addTextChangedListener {
             checkCreateEnable()
             val textLength = it.toString().length
-            val colorForN = if (textLength > 0) resources.getColor(R.color.pink, null) else resources.getColor(R.color.gray60, null)
+            val colorForN = if (textLength > 0) resources.getColor(DesignSystemR.color.pink, null) else resources.getColor(DesignSystemR.color.gray60, null)
             val spannableString = SpannableString("$textLength/20")
 
             spannableString.setSpan(
@@ -64,7 +64,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
             )
 
             spannableString.setSpan(
-                ForegroundColorSpan(resources.getColor(R.color.gray30, null)),
+                ForegroundColorSpan(resources.getColor(DesignSystemR.color.gray30, null)),
                 spannableString.indexOf("/"),
                 spannableString.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -85,7 +85,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
         val spannableString = SpannableString(fullText)
 
         spannableString.setSpan(
-            ForegroundColorSpan(resources.getColor(R.color.gray50)),
+            ForegroundColorSpan(resources.getColor(DesignSystemR.color.gray50)),
             0,
             fullText.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -94,7 +94,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
         val span1Start = fullText.indexOf("3일 동안")
         val span1End = span1Start + "3일 동안".length
         spannableString.setSpan(
-            ForegroundColorSpan(resources.getColor(R.color.gray100,null)),
+            ForegroundColorSpan(resources.getColor(DesignSystemR.color.gray100,null)),
             span1Start,
             span1End,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -103,7 +103,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
         val span2Start = fullText.indexOf("1일 1회")
         val span2End = span2Start + "1일 1회".length
         spannableString.setSpan(
-            ForegroundColorSpan(resources.getColor(R.color.gray100,null)),
+            ForegroundColorSpan(resources.getColor(DesignSystemR.color.gray100,null)),
             span2Start,
             span2End,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

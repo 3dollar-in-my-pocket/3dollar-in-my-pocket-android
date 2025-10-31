@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemPhotoAddBinding
 import com.zion830.threedollars.databinding.ItemPhotoAddFullBinding
 import com.zion830.threedollars.databinding.ItemPhotoSelectedBinding
@@ -119,7 +120,7 @@ class PhotoAdapter(
             
             if (startIndex != -1) {
                 val endIndex = startIndex + currentCountText.length
-                val pinkColor = ContextCompat.getColor(context, R.color.pink)
+                val pinkColor = ContextCompat.getColor(context, DesignSystemR.color.pink)
                 spannableText.setSpan(
                     ForegroundColorSpan(pinkColor),
                     startIndex,

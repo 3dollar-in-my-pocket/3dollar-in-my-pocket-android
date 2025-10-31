@@ -21,6 +21,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 interface OnReviewEditCallback {
     fun onReviewEdited(updatedReview: ReviewContentModel)
@@ -36,7 +37,7 @@ class AddReviewDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, DesignSystemR.style.CustomBottomSheetDialogTheme)
     }
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

@@ -10,6 +10,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemCategoryBtnBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
@@ -77,9 +78,9 @@ class CategoryViewHolder(parent: ViewGroup, private val onClickListener: (Catego
             newImageView.isVisible = item.isNew
             selectCircleImageView.isVisible = item.isSelected
             if (item.isSelected) {
-                categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.pink))
+                categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(DesignSystemR.color.pink))
             } else {
-                categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray70))
+                categoryNameTextView.setTextColor(GlobalApplication.getContext().getColor(DesignSystemR.color.gray70))
             }
         }
     }

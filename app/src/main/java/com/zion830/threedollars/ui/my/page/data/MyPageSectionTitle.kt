@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.my.page.data
 
 import androidx.annotation.DrawableRes
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 data class MyPageSectionTitleData(
     val topTitle: String,
@@ -13,13 +14,13 @@ data class MyPageSectionTitleData(
 val myPageSectionTitlePreview = listOf(
     MyPageSectionTitleData(
         topTitle = "방문인증",
-        topIcon = zion830.com.common.R.drawable.ic_badge_gray,
+        topIcon = DesignSystemR.drawable.ic_badge_gray,
         bottomTitle = "내가 방문한 가게 알아보기",
         count = 5
     ) {},
     MyPageSectionTitleData(
         topTitle = "줄겨찾기",
-        topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
+        topIcon = DesignSystemR.drawable.ic_favorite_gray,
         bottomTitle = "내가 좋아하는 가게는?",
         count = 11
     ) {},

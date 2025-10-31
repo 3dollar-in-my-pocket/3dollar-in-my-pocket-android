@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.threedollar.common.R as CommonR
+import zion830.com.common.R as LegacyCommonR
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.domain.my.model.*
 import com.zion830.threedollars.ui.my.page.commponent.MyPageShopInfoView
@@ -79,6 +80,7 @@ import zion830.com.common.base.compose.Pink
 import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.Red
 import zion830.com.common.base.compose.dpToSp
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {
@@ -143,14 +145,14 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             MyPageSectionTitle(
                 MyPageSectionTitleData(
                     topTitle = stringResource(CommonR.string.str_section_title_visite),
-                    topIcon = zion830.com.common.R.drawable.ic_badge_gray,
+                    topIcon = DesignSystemR.drawable.ic_badge_gray,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_visite),
                     count = userInfo.activity.totalFeedbacksCounts
                 ) { viewModel.addFragments(MyFragments.MyVisitHistory) })
             Spacer(modifier = Modifier.height(16.dp))
             if (myVisitsShop.isEmpty()) {
                 MyPageEmptyView(
-                    zion830.com.common.R.drawable.img_empty,
+                    DesignSystemR.drawable.img_empty,
                     stringResource(CommonR.string.str_visit_empty_title),
                     stringResource(CommonR.string.str_visit_empty_message)
                 )
@@ -167,14 +169,14 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             MyPageSectionTitle(
                 MyPageSectionTitleData(
                     topTitle = stringResource(CommonR.string.str_section_title_favorit),
-                    topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
+                    topIcon = DesignSystemR.drawable.ic_favorite_gray,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
                     count = userInfo.activity.favoriteStoresCount
                 ) { viewModel.clickFavorite() })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
                 MyPageEmptyView(
-                    zion830.com.common.R.drawable.img_empty,
+                    DesignSystemR.drawable.img_empty,
                     stringResource(CommonR.string.str_favorite_empty_title),
                     stringResource(CommonR.string.str_favorite_empty_message)
                 )
@@ -191,13 +193,13 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             MyPageSectionTitle(
                 MyPageSectionTitleData(
                     topTitle = stringResource(CommonR.string.str_section_title_vote),
-                    topIcon = zion830.com.common.R.drawable.ic_fire,
+                    topIcon = LegacyCommonR.drawable.ic_fire,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
                 ) {})
             Spacer(modifier = Modifier.height(16.dp))
             if (myVoteHistory.isEmpty()) {
                 MyPageEmptyView(
-                    zion830.com.common.R.drawable.ic_fire_disabled,
+                    LegacyCommonR.drawable.ic_fire_disabled,
                     stringResource(CommonR.string.str_vote_empty_title),
                     stringResource(CommonR.string.str_vote_empty_message)
                 )
@@ -249,7 +251,7 @@ fun MyPageTitle(clickSetting: () -> Unit = {}) {
                 .align(Alignment.CenterEnd)
         ) {
             Image(
-                painter = painterResource(id = zion830.com.common.R.drawable.ic_setting),
+                painter = painterResource(id = DesignSystemR.drawable.ic_setting),
                 contentDescription = "마이페이지 셋팅 아이콘"
             )
         }
@@ -264,7 +266,7 @@ fun MyPageUserInformation(
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Image(
-            painter = painterResource(id = zion830.com.common.R.drawable.img_back_gray),
+            painter = painterResource(id = DesignSystemR.drawable.img_back_gray),
             contentDescription = "내 정보 배경"
         )
         Column(
@@ -278,7 +280,7 @@ fun MyPageUserInformation(
                     .clickable { onMedalClick() },
                 model = myPageUserInformation.medal?.iconUrl ?: "",
                 contentDescription = "내 칭호 사진",
-                placeholder = painterResource(id = zion830.com.common.R.drawable.ic_no_store),
+                placeholder = painterResource(id = DesignSystemR.drawable.ic_no_store),
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -386,7 +388,7 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
-                        painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+                        painter = painterResource(id = DesignSystemR.drawable.ic_white_arrow),
                         tint = Color.White,
                         contentDescription = "화살표",
                         modifier = Modifier.size(12.dp)
@@ -428,7 +430,7 @@ fun MyPageInformationButton(
 @Preview
 @Composable
 fun MyPageEmptyView(
-    @DrawableRes icon: Int = zion830.com.common.R.drawable.img_empty,
+    @DrawableRes icon: Int = DesignSystemR.drawable.img_empty,
     title: String = "가게 상세에서 추가해 보세요",
     message: String = "가게 상세에서 추가해 보세요"
 ) {
@@ -474,7 +476,7 @@ fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPr
     ) {
         Image(
             modifier = Modifier.size(14.dp),
-            painter = painterResource(id = if (visitedData.isExists) zion830.com.common.R.drawable.ic_face_smile else zion830.com.common.R.drawable.ic_face_sad),
+            painter = painterResource(id = if (visitedData.isExists) LegacyCommonR.drawable.ic_face_smile else LegacyCommonR.drawable.ic_face_sad),
             contentDescription = "방문 상태"
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -542,7 +544,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
     ) {
         Image(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = zion830.com.common.R.drawable.ic_fire),
+            painter = painterResource(id = LegacyCommonR.drawable.ic_fire),
             contentDescription = "투표"
         )
         Text(
@@ -662,7 +664,7 @@ fun MyPageTeamMoveScreen(clickTeam: () -> Unit = {}) {
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+            painter = painterResource(id = DesignSystemR.drawable.ic_white_arrow),
             contentDescription = "",
             modifier = Modifier.size(20.dp)
         )

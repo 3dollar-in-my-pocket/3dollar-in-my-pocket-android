@@ -50,11 +50,11 @@ class BossReviewSummitRecyclerAdapter(
             if (isSelected) {
                 binding.root.setBackgroundResource(DesignSystemR.drawable.rect_radius12_pink100_stroke_pink)
                 binding.reviewCheckBox.typeface = Typeface.DEFAULT_BOLD
-                binding.reviewCheckBox.setTextColor(context.getColor(R.color.pink))
+                binding.reviewCheckBox.setTextColor(context.getColor(DesignSystemR.color.pink))
             } else {
                 binding.root.setBackgroundResource(DesignSystemR.drawable.rect_white_radius12_stroke_gray20)
                 binding.reviewCheckBox.typeface = Typeface.DEFAULT
-                binding.reviewCheckBox.setTextColor(context.getColor(R.color.gray95))
+                binding.reviewCheckBox.setTextColor(context.getColor(DesignSystemR.color.gray95))
             }
         }
     }

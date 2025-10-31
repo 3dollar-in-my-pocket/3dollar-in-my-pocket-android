@@ -18,6 +18,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
@@ -74,7 +75,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         binding.navView.setupWithNavController(navController)
 
         viewModel.msgTextId.observe(this) {
-            binding.container.showSnack(it, color = R.color.color_main_red)
+            binding.container.showSnack(it, color = DesignSystemR.color.color_main_red)
         }
         initFlow()
         initNavController(navController)
@@ -166,7 +167,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             }
             binding.divider.setBackgroundColor(
                 if (destination.id == R.id.navigation_mypage) {
-                    ContextCompat.getColor(this, R.color.gray90)
+                    ContextCompat.getColor(this, DesignSystemR.color.gray90)
                 } else {
                     Color.TRANSPARENT
                 }

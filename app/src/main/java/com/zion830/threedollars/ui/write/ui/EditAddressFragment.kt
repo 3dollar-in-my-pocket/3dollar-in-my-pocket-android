@@ -10,6 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.dialog.NearExistDialog
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
@@ -70,7 +71,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
                 }
                 launch {
                     viewModel.aroundStoreModels.collect { res ->
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_mappin_focused_off, res ?: listOf())
+                        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_mappin_focused_off, res ?: listOf())
                     }
                 }
                 launch {

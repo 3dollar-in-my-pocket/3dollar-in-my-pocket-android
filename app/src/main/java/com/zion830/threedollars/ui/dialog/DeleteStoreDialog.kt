@@ -17,6 +17,7 @@ import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_REPORT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
@@ -45,7 +46,7 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     }
 
     override fun initView() {
-        binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(R.color.gray80))
+        binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(DesignSystemR.color.gray80))
 
         initButton()
         initFlow()
@@ -85,25 +86,25 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
             when (checkedId) {
                 R.id.btn_reason1 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(R.color.gray100))
-                    binding.btnReason2.setTextColor(requireContext().getColor(R.color.gray40))
-                    binding.btnReason3.setTextColor(requireContext().getColor(R.color.gray40))
+                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
+                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
+                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
                     deleteType = DeleteType.NOSTORE
                 }
 
                 R.id.btn_reason2 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(R.color.gray40))
-                    binding.btnReason2.setTextColor(requireContext().getColor(R.color.gray100))
-                    binding.btnReason3.setTextColor(requireContext().getColor(R.color.gray40))
+                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
+                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
+                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
                     deleteType = DeleteType.WRONGNOPOSITION
                 }
 
                 R.id.btn_reason3 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(R.color.gray40))
-                    binding.btnReason2.setTextColor(requireContext().getColor(R.color.gray40))
-                    binding.btnReason3.setTextColor(requireContext().getColor(R.color.gray100))
+                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
+                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
+                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
                     deleteType = DeleteType.OVERLAPSTORE
                 }
             }

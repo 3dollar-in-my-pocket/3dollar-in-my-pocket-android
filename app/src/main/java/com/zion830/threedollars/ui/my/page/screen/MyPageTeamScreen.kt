@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.threedollar.common.R as CommonR
+import zion830.com.common.R as LegacyCommonR
 import com.zion830.threedollars.ui.my.page.data.TeamRow
 import zion830.com.common.base.compose.Gray40
 import zion830.com.common.base.compose.Pink
@@ -38,6 +39,7 @@ import zion830.com.common.base.compose.Pink200
 import zion830.com.common.base.compose.Pink500
 import zion830.com.common.base.compose.PretendardFontFamily
 import zion830.com.common.base.compose.dpToSp
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
 fun MyPageTeamScreen(clickBack: () -> Unit, clickAd: () -> Unit = {}, clickTeam: () -> Unit = {}) {
@@ -57,7 +59,7 @@ fun MyPageTeamScreen(clickBack: () -> Unit, clickAd: () -> Unit = {}, clickTeam:
     ) {
         MyPageTeamTitle { clickBack() }
         Image(
-            painter = painterResource(id = zion830.com.common.R.drawable.ic_3dollars_logo),
+            painter = painterResource(id = LegacyCommonR.drawable.ic_3dollars_logo),
             contentDescription = "로고",
             modifier = Modifier.padding(top = 66.dp, bottom = 40.dp, start = 47.dp, end = 47.dp)
         )
@@ -79,7 +81,7 @@ fun MyPageTeamScreen(clickBack: () -> Unit, clickAd: () -> Unit = {}, clickTeam:
         }
         Spacer(modifier = Modifier.weight(1f))
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { clickTeam() }) {
-            Image(painter = painterResource(id = zion830.com.common.R.drawable.ic_instagram), contentDescription = "instagrem")
+            Image(painter = painterResource(id = DesignSystemR.drawable.ic_instagram), contentDescription = "instagrem")
             Text(
                 text = "가슴속 3천원 인스타그램 바로가기",
                 fontFamily = PretendardFontFamily,
@@ -100,7 +102,7 @@ fun MyPageTeamTitle(clickBack: () -> Unit = {}) {
             .height(56.dp),
     ) {
         Image(
-            painter = painterResource(id = zion830.com.common.R.drawable.ic_back_white),
+            painter = painterResource(id = LegacyCommonR.drawable.ic_back_white),
             contentDescription = "뒤로가기",
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -182,7 +184,7 @@ fun AdButton(clickAd: () -> Unit = {}) {
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Image(
-                    painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+                    painter = painterResource(id = DesignSystemR.drawable.ic_white_arrow),
                     contentDescription = "",
                     modifier = Modifier
                         .size(12.dp)

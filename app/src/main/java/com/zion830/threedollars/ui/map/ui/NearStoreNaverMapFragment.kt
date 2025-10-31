@@ -8,6 +8,7 @@ import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
@@ -62,7 +63,7 @@ class NearStoreNaverMapFragment(
                 moveToCurrentLocation()
             }
             Constants.MODE_ROAD_FOOD -> {
-                binding.btnFindLocation.setImageResource(R.drawable.ic_search)
+                binding.btnFindLocation.setImageResource(DesignSystemR.drawable.ic_search)
             }
         }
     }

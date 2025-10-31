@@ -255,13 +255,13 @@ class NearStoreMapViewViewHolder(
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
                 text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
-                setTextAppearance(R.style.apple_gothic_medium_size_12dp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
+                setTextAppearance(DesignSystemR.style.apple_gothic_medium_size_12dp)
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.color_white))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
             } else {
                 text = StringUtils.getString(CommonR.string.only_boss)
-                setTextAppearance(R.style.apple_gothic_bold_size_12dp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
+                setTextAppearance(DesignSystemR.style.apple_gothic_bold_size_12dp)
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.pink))
                 val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)
                 setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
             }

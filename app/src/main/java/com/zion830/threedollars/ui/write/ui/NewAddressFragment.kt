@@ -15,6 +15,7 @@ import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.dialog.NearExistDialog
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
@@ -94,7 +95,7 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.aroundStoreModels.collect { res ->
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_mappin_focused_off, res ?: listOf())
+                        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_mappin_focused_off, res ?: listOf())
                     }
                 }
                 launch {

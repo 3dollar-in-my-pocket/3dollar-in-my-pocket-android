@@ -12,6 +12,7 @@ import com.zion830.threedollars.databinding.ItemMyStoreBinding
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class MyStoreRecyclerAdapter(
     private val listener: OnItemClickListener<MyReportedStore>
@@ -35,7 +36,7 @@ class MyStoreRecyclerAdapter(
             tvRating.text = rating
             tvVisitCount.text = visitCount
             tvVisitCount.setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(root.context, if (item?.store?.isDeleted == true) R.drawable.ic_badge_off else R.drawable.ic_badge_mini),
+                ContextCompat.getDrawable(root.context, if (item?.store?.isDeleted == true) DesignSystemR.drawable.ic_badge_off else DesignSystemR.drawable.ic_badge_mini),
                 null,
                 null,
                 null
@@ -43,7 +44,7 @@ class MyStoreRecyclerAdapter(
             ivStar.imageTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
                     root.context,
-                    if (item?.store?.isDeleted == true) R.color.gray60 else R.color.color_white
+                    if (item?.store?.isDeleted == true) DesignSystemR.color.gray60 else DesignSystemR.color.color_white
                 )
             )
         }

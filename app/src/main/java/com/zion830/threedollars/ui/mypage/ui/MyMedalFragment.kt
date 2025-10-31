@@ -13,6 +13,7 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
 import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
@@ -65,7 +66,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(),
             binding.ivMyMedal.loadUrlImg(it?.iconUrl)
             binding.tvMyMedal.text = buildSpannedString {
                 append("현재 ")
-                color(ContextCompat.getColor(requireContext(), R.color.color_sub_red)) {
+                color(ContextCompat.getColor(requireContext(), DesignSystemR.color.color_sub_red)) {
                     append(it?.name)
                 }
                 append(" 장착 중")

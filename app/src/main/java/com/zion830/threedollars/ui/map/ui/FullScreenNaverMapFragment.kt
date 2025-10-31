@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.utils.SizeUtils
 
 class FullScreenNaverMapFragment : NaverMapFragment() {
@@ -19,6 +20,6 @@ class FullScreenNaverMapFragment : NaverMapFragment() {
 
     fun initMap(latLng: LatLng, isClosed: Boolean) {
         moveCamera(latLng)
-        addMarker(if (isClosed) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
+        addMarker(if (isClosed) DesignSystemR.drawable.ic_mappin_focused_off else DesignSystemR.drawable.ic_mappin_focused_on, latLng)
     }
 }

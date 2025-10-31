@@ -154,14 +154,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             이동후 포커싱 되는 부분에서는 position을 통해 markerModel을 가져온다.
                              */
                             naverMapFragment.updateMarkerIcon(
-                                drawableRes = R.drawable.ic_store_off,
+                                drawableRes = DesignSystemR.drawable.ic_store_off,
                                 position = adapter.focusedIndex,
                                 markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                                 isSelected = false
                             )
                             adapter.focusedIndex = if (position > 0) position - 1 else position
                             naverMapFragment.updateMarkerIcon(
-                                drawableRes = R.drawable.ic_mappin_focused_on,
+                                drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                                 position = adapter.focusedIndex,
                                 markerModel = adapter.getItemMarker(position),
                                 isSelected = true
@@ -339,7 +339,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectCategory.collect {
                         val text = if (it.categoryId.isEmpty()) getString(CommonR.string.fragment_home_all_menu) else it.name
-                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
+                        val textColor = if (it.categoryId.isEmpty()) DesignSystemR.color.gray70 else DesignSystemR.color.pink
                         val background =
                             if (it.categoryId.isEmpty()) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
 
@@ -349,7 +349,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             allMenuTextView.setBackgroundResource(background)
                             if (it.imageUrl.isEmpty()) {
                                 allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                                    ContextCompat.getDrawable(requireContext(), DesignSystemR.drawable.ic_category), null, null, null
                                 )
                             } else {
                                 loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
@@ -384,11 +384,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         resultList.add(1, viewModel.advertisementModel.value ?: AdvertisementModelV2Empty())
                         adapter.submitList(resultList)
                         val list = adAndStoreItems.filterIsInstance<ContentModel>()
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
+                        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_store_off, list) {
                             onStoreClicked(it)
                         }
                         naverMapFragment.updateMarkerIcon(
-                            drawableRes = R.drawable.ic_mappin_focused_on,
+                            drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                             position = 0,
                             markerModel = list.firstOrNull()?.markerModel,
                             isSelected = true
@@ -408,17 +408,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
                         binding.run {
                             if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
                             } else {
-                                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                             }
                             if (it.homeStoreType == HomeStoreType.BOSS_STORE) {
-                                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
                             } else {
-                                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                             }
                             filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
@@ -483,14 +483,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
             EventTracker.logEvent(CLICK_MARKER, bundle)
             naverMapFragment.updateMarkerIcon(
-                drawableRes = R.drawable.ic_store_off,
+                drawableRes = DesignSystemR.drawable.ic_store_off,
                 position = adapter.focusedIndex,
                 markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                 isSelected = false
             )
             adapter.focusedIndex = if (position > 0) position - 1 else position
             naverMapFragment.updateMarkerIcon(
-                drawableRes = R.drawable.ic_mappin_focused_on,
+                drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                 position = adapter.focusedIndex,
                 markerModel = adapter.getItemMarker(position),
                 isSelected = true

@@ -10,6 +10,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAllDeleteFavoriteBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBinding>() {
@@ -31,7 +32,7 @@ class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBindin
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return Dialog(requireContext(), R.style.TransparentDialog)
+        return Dialog(requireContext(), DesignSystemR.style.TransparentDialog)
     }
 
     override fun initViews() {

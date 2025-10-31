@@ -15,6 +15,7 @@ import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +54,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
             EventTracker.logEvent(Constants.NICKNAME_ALREADY_EXISTED)
             binding.groupAlreadyExist.isVisible = it.isNotEmpty()
             if (it.isNotEmpty()) {
-                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), DesignSystemR.color.red))
                 binding.tvAlreadyExist.text = it
             }
         }
@@ -88,7 +89,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 viewModel.userName.value = charSequence.toString()
-                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), R.color.pink))
+                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), DesignSystemR.color.pink))
                 if (binding.groupAlreadyExist.isVisible) {
                     binding.groupAlreadyExist.isVisible = false
                 }

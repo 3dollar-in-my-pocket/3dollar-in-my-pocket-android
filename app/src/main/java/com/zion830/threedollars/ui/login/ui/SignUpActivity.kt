@@ -27,6 +27,7 @@ import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.dialog.MarketingDialog
@@ -61,8 +62,8 @@ class SignUpActivity :
         viewModel.isNameEmpty.observe(this) {
             binding.btnFinish.apply {
                 isClickable = !it
-                setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (it) R.drawable.ic_start_off else R.drawable.ic_start, 0)
-                setTextColor(resources.getColor(if (it) R.color.color_gray2 else R.color.color_main_red, null))
+                setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (it) DesignSystemR.drawable.ic_start_off else DesignSystemR.drawable.ic_start, 0)
+                setTextColor(resources.getColor(if (it) DesignSystemR.color.color_gray2 else DesignSystemR.color.color_main_red, null))
             }
         }
         viewModel.isAvailable.observe(this) {

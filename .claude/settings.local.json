@@ -41,7 +41,11 @@
       "Bash(do if [ -f \"$file\" ])",
       "Bash(then basename \"$file\")",
       "Bash(fi)",
-      "Bash(tee:*)"
+      "Bash(tee:*)",
+      "Bash(test:*)",
+      "Bash(while read -r file)",
+      "Bash(do:*)",
+      "Bash(/tmp/fix_resources.sh \"$file\")"
     ],
     "deny": [],
     "ask": []

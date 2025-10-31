@@ -65,13 +65,13 @@ class AddCategoryViewHolder(private val binding: ItemCategoryAddBinding, private
     fun bind(item: AddCategoryModel) {
         if (item.isEnabled) {
             binding.addImageView.setBackgroundResource(DesignSystemR.drawable.circle_gray100)
-            binding.addImageView.setImageResource(R.drawable.ic_plus)
-            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray80))
+            binding.addImageView.setImageResource(DesignSystemR.drawable.ic_plus)
+            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(DesignSystemR.color.gray80))
             binding.btnAddNew.setOnClickListener { onClickListener() }
         } else {
             binding.addImageView.setBackgroundResource(DesignSystemR.drawable.circle_solid_gray30)
-            binding.addImageView.setImageResource(R.drawable.ic_plus_gray10)
-            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(R.color.gray40))
+            binding.addImageView.setImageResource(DesignSystemR.drawable.ic_plus_gray10)
+            binding.addTextView.setTextColor(GlobalApplication.getContext().getColor(DesignSystemR.color.gray40))
         }
     }
 }

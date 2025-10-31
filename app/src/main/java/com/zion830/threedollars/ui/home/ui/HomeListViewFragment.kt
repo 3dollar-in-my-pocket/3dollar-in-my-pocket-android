@@ -150,7 +150,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(
             ContextCompat.getDrawable(
                 requireContext(),
-                if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
+                if (isFilterCertifiedStores) DesignSystemR.drawable.ic_certification_check_on else DesignSystemR.drawable.ic_certification_check_off
             ), null, null, null
         )
         getNearStore()
@@ -190,13 +190,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         return if (category.categoryId.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),
-                R.color.gray70,
+                DesignSystemR.color.gray70,
                 DesignSystemR.drawable.rect_white_radius10_stroke_gray30
             )
         } else {
             Triple(
                 category.name,
-                R.color.pink,
+                DesignSystemR.color.pink,
                 DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
             )
         }
@@ -229,14 +229,14 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             filterConditionsTextView.apply {
                 setTextColor(
                     resources.getColor(
-                        if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
+                        if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.color.pink else DesignSystemR.color.gray40,
                         null
                     )
                 )
                 setBackgroundResource(if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
             bossFilterTextView.apply {
-                setTextColor(resources.getColor(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
+                setTextColor(resources.getColor(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) DesignSystemR.color.pink else DesignSystemR.color.gray40, null))
                 setBackgroundResource(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
             filterTextView.text = if (filterEvent.homeSortType == HomeSortType.DISTANCE_ASC) {
