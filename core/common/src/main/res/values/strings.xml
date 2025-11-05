@@ -78,7 +78,7 @@
         <item>토요일</item>
         <item>일요일</item>
     </string-array>
-    
+
     <!-- Store Types -->
     <string name="road">길거리</string>
     <string name="road_food">길거리음식</string>
@@ -154,6 +154,13 @@
     <string name="exit_confirm_message">지금까지 입력한 정보가 저장되지 않아요.</string>
     <string name="exit_confirm_dismiss">닫기</string>
     <string name="exit_confirm_exit">나가기</string>
+    <string-array name="boss_benefit">
+        <item>💌 단골 손님에게 메세지 보내기</item>
+        <item>✏️ 가게 정보 관리하기</item>
+        <item>📢 가게 소식 공지하기</item>
+        <item>🗳️ 리뷰 관리하기</item>
+        <item>🚚 실시간 가게 영업 정보 관리하기</item>
+    </string-array>
 
     <!-- Store Delete -->
     <string name="request_delete">신고하기</string>
