@@ -65,21 +65,21 @@ import com.zion830.threedollars.ui.my.page.data.toMyPageButtons
 import com.zion830.threedollars.ui.my.page.data.toMyPageShops
 import com.zion830.threedollars.ui.my.page.data.toMyVoteHistory
 import com.threedollar.common.listener.MyFragments
-import zion830.com.common.base.compose.ColorWhite
-import zion830.com.common.base.compose.Gray10
-import zion830.com.common.base.compose.Gray100
-import zion830.com.common.base.compose.Gray30
-import zion830.com.common.base.compose.Gray40
-import zion830.com.common.base.compose.Gray50
-import zion830.com.common.base.compose.Gray60
-import zion830.com.common.base.compose.Gray70
-import zion830.com.common.base.compose.Gray80
-import zion830.com.common.base.compose.Gray90
-import zion830.com.common.base.compose.Gray95
-import zion830.com.common.base.compose.Pink
-import zion830.com.common.base.compose.PretendardFontFamily
-import zion830.com.common.base.compose.Red
-import zion830.com.common.base.compose.dpToSp
+import base.compose.ColorWhite
+import base.compose.Gray10
+import base.compose.Gray100
+import base.compose.Gray30
+import base.compose.Gray40
+import base.compose.Gray50
+import base.compose.Gray60
+import base.compose.Gray70
+import base.compose.Gray80
+import base.compose.Gray90
+import base.compose.Gray95
+import base.compose.Pink
+import base.compose.PretendardFontFamily
+import base.compose.Red
+import base.compose.dpToSp
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable

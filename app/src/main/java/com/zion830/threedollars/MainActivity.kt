@@ -151,11 +151,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         navigateToMedalPageWithDeepLink(intent)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent?.let {
-            navigateToMedalPageWithDeepLink(it)
-        }
+        navigateToMedalPageWithDeepLink(intent)
     }
 
     private fun initNavController(navController: NavController) {
@@ -200,7 +198,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
         if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_popup) {
             binding.navHostFragment.findNavController().navigateUp()
-        } else if (binding.navHostFragment.findNavController().currentDestination?.id != R.id.navigation_home) {
+        } else if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_write) {
+            super.onBackPressed()
+        }  else if (binding.navHostFragment.findNavController().currentDestination?.id != R.id.navigation_home) {
             binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
         } else {
             super.onBackPressed()

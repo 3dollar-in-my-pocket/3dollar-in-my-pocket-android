@@ -106,7 +106,8 @@ dependencies {
 
     // naver4
     implementation "com.naver.maps:map-sdk:3.21.0"
-
+    implementation 'io.github.fornewid:naver-map-location:21.0.2'
+    implementation 'io.github.fornewid:naver-map-compose:1.7.4'
     // image slider
     implementation "com.github.ome450901:SimpleRatingBar:1.5.1"
 

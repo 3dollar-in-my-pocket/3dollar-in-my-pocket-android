@@ -45,7 +45,9 @@
       "Bash(test:*)",
       "Bash(while read -r file)",
       "Bash(do:*)",
-      "Bash(/tmp/fix_resources.sh \"$file\")"
+      "Bash(/tmp/fix_resources.sh \"$file\")",
+      "WebFetch(domain:github.com)",
+      "mcp__serena__replace_symbol_body"
     ],
     "deny": [],
     "ask": []

@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import base.compose.Gray40
+import base.compose.PretendardFontFamily
+import base.compose.dpToSp
 import coil.compose.AsyncImage
 import com.zion830.threedollars.ui.my.page.data.MyPageShop
 import com.zion830.threedollars.ui.my.page.data.myPageShopPreview
-import zion830.com.common.base.compose.Gray40
-import zion830.com.common.base.compose.PretendardFontFamily
-import zion830.com.common.base.compose.dpToSp
 
 @Preview
 @Composable

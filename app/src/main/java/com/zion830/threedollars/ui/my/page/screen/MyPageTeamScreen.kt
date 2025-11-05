@@ -33,12 +33,12 @@ import androidx.compose.ui.unit.dp
 import com.threedollar.common.R as CommonR
 import zion830.com.common.R as LegacyCommonR
 import com.zion830.threedollars.ui.my.page.data.TeamRow
-import zion830.com.common.base.compose.Gray40
-import zion830.com.common.base.compose.Pink
-import zion830.com.common.base.compose.Pink200
-import zion830.com.common.base.compose.Pink500
-import zion830.com.common.base.compose.PretendardFontFamily
-import zion830.com.common.base.compose.dpToSp
+import base.compose.Gray40
+import base.compose.Pink
+import base.compose.Pink200
+import base.compose.Pink500
+import base.compose.PretendardFontFamily
+import base.compose.dpToSp
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable

@@ -150,7 +150,11 @@
     <string name="dialog_near_exist_title">10m이내에 이미 제보된\n가게가 있어요!</string>
     <string name="dialog_near_exist_subtitle">중복된 가게 제보인지 확인해 주세요</string>
     <string name="dialog_near_exist_button_finish">여기가 확실해요</string>
-    
+    <string name="exit_confirm_title">다음에 할까요?</string>
+    <string name="exit_confirm_message">지금까지 입력한 정보가 저장되지 않아요.</string>
+    <string name="exit_confirm_dismiss">닫기</string>
+    <string name="exit_confirm_exit">나가기</string>
+
     <!-- Store Delete -->
     <string name="request_delete">신고하기</string>
     <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>

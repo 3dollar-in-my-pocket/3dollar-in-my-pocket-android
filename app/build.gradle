@@ -102,13 +102,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.webkit:webkit:1.5.0"
 
-    // Compose (from my:presentation module - compatible with Kotlin 1.8.0)
-    implementation 'androidx.compose.ui:ui:1.4.0'
-    implementation 'androidx.compose.material:material:1.4.0'
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.4.0'
+    // Compose (compatible with Kotlin 1.8.0)
+    implementation 'androidx.compose.ui:ui:1.7.8'
+    implementation 'androidx.compose.material:material:1.7.8'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.7.8'
     implementation 'androidx.activity:activity-compose:1.7.2'
-    debugImplementation 'androidx.compose.ui:ui-tooling:1.4.0'
+    debugImplementation 'androidx.compose.ui:ui-tooling:1.7.8'
 
     // Coil for Compose image loading (compatible with Compose 1.4.0)
-    implementation 'io.coil-kt:coil-compose:2.2.2'
+    implementation 'io.coil-kt:coil-compose:2.4.0'
 }
