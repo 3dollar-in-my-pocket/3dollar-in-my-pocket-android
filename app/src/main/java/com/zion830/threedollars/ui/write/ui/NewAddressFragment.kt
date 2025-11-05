@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import base.compose.ColorWhite
 import base.compose.Gray10
@@ -54,8 +57,12 @@ import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.compose.rememberFusedLocationSource
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.compose.dialog.CommonDialog
 import com.threedollar.common.compose.dialog.DialogButton
+import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.NearExistDialog
@@ -66,6 +73,7 @@ import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -94,9 +102,16 @@ class NewAddressFragment : Fragment() {
                         findNavController().navigate(R.id.navigation_home)
                     },
                     onBackClick = { showExitDialog.value = true },
-                    onFinishClick = {
+                    onFinishClick = { address ->
+                        val bundle = Bundle().apply {
+                            putString("screen", "write_address")
+                            putString("address", address)
+                        }
+                        EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
                         viewModel.selectedLocation.value?.let { location ->
-                            viewModel.getStoreNearExists(location)
+                            viewModel.getStoreNearExists(
+                                location
+                            )
                         }
                     },
                     onShowNearExistDialog = { lat, lng ->
@@ -152,7 +167,7 @@ fun NewAddressScreen(
     onDismissDialog: () -> Unit,
     onConfirmExit: () -> Unit,
     onBackClick: () -> Unit,
-    onFinishClick: () -> Unit,
+    onFinishClick: (String) -> Unit,
     onShowNearExistDialog: (Double, Double) -> Unit,
     onNavigateToDetail: () -> Unit
 ) {
@@ -281,14 +296,15 @@ fun NaverMapSection(
         // Naver Map (Compose Native)
         NaverMap(
             modifier = Modifier.fillMaxSize(),
+            locationSource = rememberFusedLocationSource(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(
-                locationTrackingMode = LocationTrackingMode.Follow
+                locationTrackingMode = LocationTrackingMode.Follow,
             ),
             uiSettings = MapUiSettings(
-                isLocationButtonEnabled = false,
+                isLocationButtonEnabled = true,
                 isZoomControlEnabled = false,
-            )
+            ),
         )
 
         // 중앙 고정 핀 마커 (오버레이)
@@ -305,7 +321,7 @@ fun NaverMapSection(
 fun BottomAddressSheet(
     modifier: Modifier = Modifier,
     address: String,
-    onFinishClick: () -> Unit
+    onFinishClick: (String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -318,7 +334,7 @@ fun BottomAddressSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Gray10, shape = RoundedCornerShape(12.dp))
-                .padding(vertical = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 12.dp),
             text = address,
             textAlign = TextAlign.Center,
             fontFamily = PretendardFontFamily,
@@ -331,7 +347,7 @@ fun BottomAddressSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Pink, shape = RoundedCornerShape(12.dp))
-                .clickable(onClick = onFinishClick)
+                .clickable(onClick = { onFinishClick(address) })
                 .padding(vertical = 14.dp),
             text = "현위치로 가게 제보",
             textAlign = TextAlign.Center,
