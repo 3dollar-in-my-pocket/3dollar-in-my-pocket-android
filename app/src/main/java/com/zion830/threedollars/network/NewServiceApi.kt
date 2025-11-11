@@ -33,7 +33,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDeta
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
@@ -88,13 +87,6 @@ interface NewServiceApi {
         @Path("storeId") storeId: Int,
         @Body editStoreRequest: NewStoreRequest
     ): Response<NewStoreResponse>
-
-    @GET("/api/v1/stores/near/exists")
-    suspend fun getNearExists(
-        @Query("distance") distance: Double = 10.0,
-        @Query("mapLatitude") latitude: Double,
-        @Query("mapLongitude") longitude: Double
-    ): Response<NearExistResponse>
 
     // 가게 검색
     @GET("/api/v2/store")

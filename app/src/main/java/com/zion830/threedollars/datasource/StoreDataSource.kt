@@ -13,7 +13,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDeta
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
@@ -67,11 +66,6 @@ interface StoreDataSource {
         storeId: Int,
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse>
-
-    suspend fun getNearExist(
-        latitude: Double,
-        longitude: Double,
-    ): Response<NearExistResponse>
 
     fun getCategories(): Flow<Response<CategoriesResponse>>
 

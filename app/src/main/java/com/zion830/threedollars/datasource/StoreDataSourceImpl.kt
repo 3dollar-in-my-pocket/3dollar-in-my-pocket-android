@@ -15,7 +15,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
@@ -90,12 +89,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
         storeId: Int,
         newStoreRequest: NewStoreRequest,
     ): Response<NewStoreResponse> = newService.editStore(storeId, newStoreRequest)
-
-    override suspend fun getNearExist(
-        latitude: Double,
-        longitude: Double,
-    ): Response<NearExistResponse> =
-        newService.getNearExists(latitude = latitude, longitude = longitude)
 
     override fun getCategories() = flow { emit(newService.getCategories()) }
 

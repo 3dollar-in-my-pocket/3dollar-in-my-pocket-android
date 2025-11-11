@@ -1,6 +1,9 @@
 package com.zion830.threedollars.ui.write.ui
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,9 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import base.compose.ColorWhite
 import base.compose.Gray10
@@ -58,7 +58,6 @@ import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
-import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.compose.dialog.CommonDialog
 import com.threedollar.common.compose.dialog.DialogButton
 import com.threedollar.common.utils.Constants
@@ -73,7 +72,6 @@ import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -119,6 +117,26 @@ class NewAddressFragment : Fragment() {
                     },
                     onNavigateToDetail = {
                         findNavController().navigateSafe(R.id.action_navigation_write_to_navigation_write_detail)
+                    },
+                    onBossDownloadClick = {
+                        BossDownloadDialog.newInstance()
+                            .setOnConfirmListener {
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = Uri.parse("market://details?id=app.threedollars.manager")
+                                    setPackage("com.android.vending")
+                                }
+                                try {
+                                    startActivity(intent)
+                                } catch (_: ActivityNotFoundException) {
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager")
+                                        )
+                                    )
+                                }
+                            }
+                            .show(parentFragmentManager, "BossDownloadDialog")
                     }
                 )
             }
@@ -168,8 +186,9 @@ fun NewAddressScreen(
     onConfirmExit: () -> Unit,
     onBackClick: () -> Unit,
     onFinishClick: (String) -> Unit,
+    onBossDownloadClick: () -> Unit,
     onShowNearExistDialog: (Double, Double) -> Unit,
-    onNavigateToDetail: () -> Unit
+    onNavigateToDetail: () -> Unit,
 ) {
     val selectedLocation by viewModel.selectedLocation.collectAsState(initial = null)
     val isNearStoreExist by viewModel.isNearStoreExist.collectAsState(initial = null)
@@ -213,13 +232,13 @@ fun NewAddressScreen(
             selectedLocation = selectedLocation,
             onCameraIdle = { latLng, distance ->
                 viewModel.updateLocation(latLng)
-                viewModel.requestStoreInfo(latLng, distance)
             }
         )
 
         BottomAddressSheet(
             address = address,
-            onFinishClick = onFinishClick
+            onFinishClick = onFinishClick,
+            onBossDownloadClick = onBossDownloadClick
         )
     }
 }
@@ -321,7 +340,8 @@ fun NaverMapSection(
 fun BottomAddressSheet(
     modifier: Modifier = Modifier,
     address: String,
-    onFinishClick: (String) -> Unit
+    onFinishClick: (String) -> Unit,
+    onBossDownloadClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -357,21 +377,28 @@ fun BottomAddressSheet(
             color = ColorWhite
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "\uD83D\uDC69\u200D\uD83C\uDF73 혹시 제보할 가게의 사장님이라면?",
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W400,
-            fontSize = 14.sp,
-            color = Gray60
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "더 편하게 가게 관리하기",
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp,
-            color = Green
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = { onBossDownloadClick() }),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "\uD83D\uDC69\u200D\uD83C\uDF73 혹시 제보할 가게의 사장님이라면?",
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W400,
+                fontSize = 14.sp,
+                color = Gray60
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "더 편하게 가게 관리하기",
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = 14.sp,
+                color = Green
+            )
+        }
     }
 }
 

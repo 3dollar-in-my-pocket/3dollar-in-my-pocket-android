@@ -14,7 +14,6 @@ import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
 import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.domain.home.data.store.UploadFileModel
@@ -102,7 +101,7 @@ interface HomeRemoteDataSource {
 
     fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 
-    fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>>
+    fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<AroundStoreResponse>>
 
     fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>>
 

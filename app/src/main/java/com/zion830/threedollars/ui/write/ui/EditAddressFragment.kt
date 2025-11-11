@@ -60,18 +60,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
-                            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-                            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-                            viewModel.requestStoreInfo(
-                                latLng,
-                                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-                            )
                         }
-                    }
-                }
-                launch {
-                    viewModel.aroundStoreModels.collect { res ->
-                        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_mappin_focused_off, res ?: listOf())
                     }
                 }
                 launch {

@@ -24,7 +24,6 @@ import com.threedollar.domain.home.data.store.ReportReasonsModel
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.ReviewSortType
 import com.threedollar.domain.home.data.store.SaveImagesModel
-import com.threedollar.domain.home.data.store.StoreNearExistsModel
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.user.UserModel
@@ -285,7 +284,7 @@ class HomeRepositoryImpl @Inject constructor(
         ReviewPagingDataSource(storeId = storeId, sort = reviewSortType.name, serverApi = serverApi)
     }.flow
 
-    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistsModel>> =
+    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<AroundStoreModel>> =
         homeRemoteDataSource.getStoreNearExists(distance, mapLatitude, mapLongitude).map {
             BaseResponse(
                 ok = it.ok,

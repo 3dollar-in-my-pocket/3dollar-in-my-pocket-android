@@ -49,9 +49,6 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _isNearStoreExist = MutableSharedFlow<Boolean>()
     val isNearStoreExist: SharedFlow<Boolean> get() = _isNearStoreExist
 
-    private val _aroundStoreModels: MutableStateFlow<List<ContentModel>?> = MutableStateFlow(null)
-    val aroundStoreModels: StateFlow<List<ContentModel>?> get() = _aroundStoreModels
-
     fun addNewStore(userStoreModelRequest: UserStoreModelRequest) {
         showLoading()
 
@@ -86,38 +83,11 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
         }
     }
 
-    fun requestStoreInfo(location: LatLng?, distanceM: Double) {
-        if (location == null || location == NaverMapUtils.DEFAULT_LOCATION) {
-            return
-        }
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.getAroundStores(
-                distanceM = distanceM,
-                categoryIds = null,
-                targetStores = null,
-                sortType = HomeSortType.DISTANCE_ASC.name,
-                filterCertifiedStores = false,
-                filterConditionsTypeModel = listOf(),
-                mapLatitude = location.latitude,
-                mapLongitude = location.longitude,
-                deviceLatitude = location.latitude,
-                deviceLongitude = location.longitude,
-            ).collect {
-                if (it.ok) {
-                    _aroundStoreModels.value = it.data?.contentModels
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-        }
-    }
-
     fun getStoreNearExists(location: LatLng) {
         viewModelScope.launch {
             homeRepository.getStoreNearExists(distance = 10.0, mapLatitude = location.latitude, mapLongitude = location.longitude).collect {
                 if (it.ok) {
-                    _isNearStoreExist.emit(it.data?.isExists ?: false)
+                    _isNearStoreExist.emit(it.data?.contentModels?.isNotEmpty() ?: false)
                 } else {
                     _serverError.emit(it.message)
                 }

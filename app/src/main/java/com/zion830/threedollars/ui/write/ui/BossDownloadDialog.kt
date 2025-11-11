@@ -53,8 +53,6 @@ class BossDownloadDialog : BottomSheetDialogFragment() {
 
     private var onDismissCallback: (() -> Unit)? = null
     private var onConfirmCallback: (() -> Unit)? = null
-    private var storeData: StoreData? = null
-    private var address: String = ""
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -80,10 +78,8 @@ class BossDownloadDialog : BottomSheetDialogFragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                val benefits = stringArrayResource(R.array.boss_benefit)
+                val benefits = stringArrayResource(R.array.boss_benefit).toList()
                 BossDownloadDialogContent(
-                    storeData = storeData,
-                    address = address,
                     benefits = benefits,
                     onDismiss = {
                         onDismissCallback?.invoke()
@@ -104,31 +100,10 @@ class BossDownloadDialog : BottomSheetDialogFragment() {
             param(FirebaseAnalytics.Param.SCREEN_NAME, "duplicate_store_check")
         }
     }
-
-    fun setOnDismissListener(callback: () -> Unit): BossDownloadDialog {
-        onDismissCallback = callback
-        return this
-    }
-
     fun setOnConfirmListener(callback: () -> Unit): BossDownloadDialog {
         onConfirmCallback = callback
         return this
     }
-
-    fun setStoresData(): BossDownloadDialog {
-        return this
-    }
-
-    fun setAddress(address: String): BossDownloadDialog {
-        this.address = address
-        return this
-    }
-
-    data class StoreData(
-        val storeName: String? = null,
-        val address: String? = null,
-        val distance: Double? = null
-    )
 
     companion object {
         fun newInstance(): BossDownloadDialog {
@@ -140,9 +115,7 @@ class BossDownloadDialog : BottomSheetDialogFragment() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BossDownloadDialogContent(
-    storeData: BossDownloadDialog.StoreData?,
-    address: String,
-    benefits: Array<String>,
+    benefits: List<String>,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -205,10 +178,10 @@ fun BossDownloadDialogContent(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = Pink, shape = RoundedCornerShape(12.dp))
-                .clickable(onClick = { onConfirm })
+                .background(color = Green, shape = RoundedCornerShape(12.dp))
+                .clickable(onClick = { onConfirm() })
                 .padding(vertical = 14.dp),
-            text = "이 장소가 확실해요",
+            text = "사장님 앱 설치하기",
             textAlign = TextAlign.Center,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,

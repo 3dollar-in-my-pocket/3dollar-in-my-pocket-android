@@ -61,7 +61,6 @@ import com.threedollar.domain.home.data.store.StatusType
 import com.threedollar.domain.home.data.store.StickerModel
 import com.threedollar.domain.home.data.store.StoreMarkerImageModel
 import com.threedollar.domain.home.data.store.StoreModel
-import com.threedollar.domain.home.data.store.StoreNearExistsModel
 import com.threedollar.domain.home.data.store.TagsModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
@@ -135,7 +134,6 @@ import com.threedollar.network.data.store.Sticker
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.Store
 import com.threedollar.network.data.store.StoreMarkerImageResponse
-import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.Tags
 import com.threedollar.network.data.store.UserStore
@@ -729,10 +727,6 @@ fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
     storeId = storeId ?: 0,
     updatedAt = updatedAt ?: "",
     userId = userId ?: 0,
-)
-
-fun StoreNearExistResponse.asModel() = StoreNearExistsModel(
-    isExists = isExists,
 )
 
 fun UserStoreModelRequest.asRequest() = UserStoreRequest(

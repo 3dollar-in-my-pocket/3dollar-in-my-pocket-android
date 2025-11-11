@@ -15,7 +15,6 @@ import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
 import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.domain.home.data.store.UploadFileModel
@@ -181,8 +180,17 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.putStoreReview(reviewId, storeReviewRequest)))
     }
 
-    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<StoreNearExistResponse>> = flow {
-        emit(apiResult(serverApi.getStoreNearExists(distance, mapLatitude, mapLongitude)))
+    override fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<AroundStoreResponse>> = flow {
+        emit(apiResult(serverApi.getAroundStores(
+            distanceM = distance,
+            mapLatitude = mapLatitude,
+            mapLongitude = mapLongitude,
+            deviceLatitude = mapLatitude,
+            deviceLongitude = mapLongitude,
+            sortType = "DISTANCE_ASC",
+            filterCertifiedStores = null,
+            categoryIds = null
+        )))
     }
 
     override fun postUserStore(userStoreRequest: UserStoreRequest): Flow<BaseResponse<PostUserStoreResponse>> = flow {
