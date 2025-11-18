@@ -1,19 +1,25 @@
 package com.zion830.threedollars.ui.write.ui.compose
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,12 +31,12 @@ object AddStoreRoute {
     const val REQUIRED_INFO = "required_info"
     const val MENU_CATEGORY = "menu_category"
     const val MENU_DETAIL = "menu_detail"
-    const val STORE_DETAIL = ""
+    const val STORE_DETAIL = "store_detail"
     const val COMPLETION = "completion"
 }
 
 @Composable
-fun AddStoreFlowScreen(store_detail
+fun AddStoreFlowScreen(
     viewModel: AddStoreViewModel,
     onNavigateBack: () -> Unit,
     onComplete: () -> Unit,
@@ -40,17 +46,29 @@ fun AddStoreFlowScreen(store_detail
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
+    val progress = when (currentRoute) {
+        AddStoreRoute.REQUIRED_INFO -> 0.25f
+        AddStoreRoute.MENU_CATEGORY -> 0.5f
+        AddStoreRoute.MENU_DETAIL -> 0.75f
+        AddStoreRoute.STORE_DETAIL -> 1f
+        else -> 0f
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            AddStoreTopBar(
-                title = "가게 제보",
-                onBackClick = {
-                    if (!navController.popBackStack()) {
-                        onNavigateBack()
-                    }
-                }
-            )
+            if (currentRoute != AddStoreRoute.COMPLETION) {
+                AddStoreTopBar(
+                    title = "가게 제보",
+                    progress = progress,
+                    onBackClick = {
+                        if (!navController.popBackStack()) {
+                            onNavigateBack()
+                        }
+                    },
+                    onCloseClick = onNavigateBack
+                )
+            }
         }
     ) { padding ->
         NavHost(
@@ -95,22 +113,52 @@ fun AddStoreFlowScreen(store_detail
 @Composable
 private fun AddStoreTopBar(
     title: String,
+    progress: Float,
     onBackClick: () -> Unit,
+    onCloseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(
-        modifier = modifier,
-        title = { Text(text = title) },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "뒤로 가기"
+    Column(modifier = modifier) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
-            }
-        },
-        backgroundColor = Color.White,
-        contentColor = Color.Black,
-        elevation = 0.dp
-    )
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "뒤로 가기"
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = onCloseClick) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "닫기"
+                    )
+                }
+            },
+            backgroundColor = Color.White,
+            contentColor = Color.Black,
+            elevation = 0.dp
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .background(Color.Gray)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progress)
+                    .height(4.dp)
+                    .background(Color(0xFFFF69B4))
+            )
+        }
+    }
 }
