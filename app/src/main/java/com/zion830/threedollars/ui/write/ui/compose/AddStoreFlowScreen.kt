@@ -119,8 +119,7 @@ fun AddStoreFlowScreen(
             }
             composable(AddStoreRoute.MENU_CATEGORY) {
                 MenuCategoryScreen(
-                    viewModel = viewModel,
-                    onNavigateToNext = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
+                    viewModel = viewModel
                 )
             }
             composable(AddStoreRoute.MENU_DETAIL) {
