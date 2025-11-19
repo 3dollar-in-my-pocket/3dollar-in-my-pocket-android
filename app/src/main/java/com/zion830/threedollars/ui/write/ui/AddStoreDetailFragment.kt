@@ -55,6 +55,7 @@ class AddStoreDetailFragment : Fragment() {
                     AddStoreFlowScreen(
                         viewModel = viewModel,
                         onNavigateBack = { navigateBack() },
+                        onCloseClick = { navigateToHome() },
                         onComplete = { navigateToHome() }
                     )
                 }
