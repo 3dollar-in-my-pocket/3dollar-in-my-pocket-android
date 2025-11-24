@@ -29,6 +29,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
+import com.zion830.threedollars.ui.webview.WebActivity
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
@@ -220,6 +221,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             binding.navView.post {
                 binding.navView.selectedItemId = R.id.navigation_home
             }
+        } else if (intent.getStringExtra(DynamicLinkActivity.BROWSERS).isNotNullOrEmpty()) {
+            val url = intent.getStringExtra(DynamicLinkActivity.BROWSERS).orEmpty()
+            startActivity(WebActivity.getIntent(this, url))
         }
     }
 

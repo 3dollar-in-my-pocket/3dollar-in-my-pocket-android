@@ -66,6 +66,10 @@ android {
     buildFeatures{
         viewBinding = true
         buildConfig = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0'
     }
 }
 
@@ -103,4 +107,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.webkit:webkit:1.5.0"
     implementation project(':community:domain')
+
+    implementation 'androidx.activity:activity-compose:1.6.2'
+    implementation 'androidx.compose.ui:ui:1.6.2'
+    implementation 'androidx.compose.material:material:1.6.2'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.6.2'
 }
