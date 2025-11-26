@@ -110,7 +110,9 @@ dependencies {
     // image slider
     implementation "com.github.ome450901:SimpleRatingBar:1.5.1"
 
-    implementation "com.github.greenfrvr:hashtag-view:1.3.1"
+    implementation("com.github.greenfrvr:hashtag-view:1.3.1") {
+        exclude group: 'com.google.guava'
+    }
 
     // image picker
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.4.2'
