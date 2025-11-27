@@ -193,13 +193,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    private fun HomeStoreType.getTargetStoresArray(): Array<String>? {
-        return when (this) {
-            HomeStoreType.ALL -> null
-            else -> arrayOf(this.name)
-        }
-    }
-
     private fun CategoryModel.getCategoryIdArray(): Array<String>? {
         return if (this.categoryId.isEmpty()) null else arrayOf(this.categoryId)
     }
