@@ -1,9 +1,7 @@
 package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -18,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
@@ -27,6 +24,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.advertisement.AdvertisementModelV2Empty
+import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeSortType
@@ -66,8 +64,6 @@ import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
-import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.isLocationAvailable
@@ -75,6 +71,7 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
@@ -179,10 +176,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.getUserInfo()
         val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
         val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-        viewModel.requestHomeItem(
-            naverMapFragment.getMapCenterLatLng(),
-            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-        )
         viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
@@ -255,6 +248,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         naverMapFragment.currentPosition.observe(viewLifecycleOwner) {
             viewModel.updateCurrentLocation(it)
         }
+
+        naverMapFragment.mapPosition.observe(viewLifecycleOwner) {
+            viewModel.updateMapPosition(it)
+        }
+
+        naverMapFragment.mapViewPortDistance.observe(viewLifecycleOwner) {
+            viewModel.updateDistanceM(it)
+        }
     }
 
     private fun initButton() {
@@ -322,12 +323,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             findNavController().navigate(R.id.action_home_to_home_list_view)
         }
         binding.tvRetrySearch.onSingleClick {
-            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-            viewModel.requestHomeItem(
-                naverMapFragment.getMapCenterLatLng(),
-                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-            )
+            viewModel.fetchAroundStores()
             viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
@@ -337,33 +333,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.selectCategory.collect {
-                        val text = if (it.categoryId.isEmpty()) getString(CommonR.string.fragment_home_all_menu) else it.name
-                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
-                        val background =
-                            if (it.categoryId.isEmpty()) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
-
-                        binding.run {
-                            allMenuTextView.text = text
-                            allMenuTextView.setTextColor(resources.getColor(textColor, null))
-                            allMenuTextView.setBackgroundResource(background)
-                            if (it.imageUrl.isEmpty()) {
-                                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
-                                )
-                            } else {
-                                loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
-                                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                                }
-                            }
+                    viewModel.uiState
+                        .map { it.selectedCategory }
+                        .collect {
+                            collectSelectedCategory(it)
                         }
-                        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-                        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-                        viewModel.requestHomeItem(
-                            naverMapFragment.getMapCenterLatLng(),
-                            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-                        )
-                    }
                 }
                 launch {
                     viewModel.userInfo.collect {
@@ -375,61 +349,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                     }
                 }
-
                 launch {
-                    viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        if (adAndStoreItems.isEmpty()) return@collect
-                        val resultList = mutableListOf<AdAndStoreItem>()
-                        resultList.addAll(adAndStoreItems)
-                        resultList.add(1, viewModel.advertisementModel.value ?: AdvertisementModelV2Empty())
-                        adapter.submitList(resultList)
-                        val list = adAndStoreItems.filterIsInstance<ContentModel>()
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
-                            onStoreClicked(it)
+                    viewModel.uiState
+                        .map { it.carouselItemList }
+                        .collect {
+                            collectCarouselItemList(it)
                         }
-                        naverMapFragment.updateMarkerIcon(
-                            drawableRes = R.drawable.ic_mappin_focused_on,
-                            position = 0,
-                            markerModel = list.firstOrNull()?.markerModel,
-                            isSelected = true
-                        )
-                        delay(200L)
-                        binding.aroundStoreRecyclerView.scrollToPosition(0)
-                    }
                 }
                 launch {
-                    viewModel.homeFilterEvent.collect {
-                        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-                        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-                        viewModel.requestHomeItem(
-                            naverMapFragment.getMapCenterLatLng(),
-                            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-                        )
-
-                        binding.run {
-                            if (it.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
-                                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-                            } else {
-                                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
-                                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-                            }
-                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) {
-                                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
-                                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-                            } else {
-                                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
-                                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-                            }
-                            filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(CommonR.string.fragment_home_filter_distance)
-                            } else {
-                                getString(CommonR.string.fragment_home_filter_latest)
-                            }
+                    viewModel.uiState
+                        .map { it.homeSortType }
+                        .collect {
+                            collectHomeSortType(it)
                         }
-                    }
                 }
-
+                launch {
+                    viewModel.uiState
+                        .map { it.homeStoreType }
+                        .collect {
+                            collectHomeStoreType(it)
+                        }
+                }
+                launch {
+                    viewModel.uiState
+                        .map { it.filterConditionsType }
+                        .collect {
+                            collectFilterConditionsType(it)
+                        }
+                }
                 launch {
                     viewModel.serverError.collect {
                         it?.let {
@@ -529,6 +476,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             isLocationAvailable() -> {
                 // 권한 있음: 현재 위치로
                 naverMapFragment.moveToCurrentLocation(false)
+                viewModel.fetchAroundStores()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 // 이전에 거부했지만 재요청 가능: 바로 권한 요청
@@ -558,13 +506,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     
     private fun useDefaultLocation() {
         naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
-        
-        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-        viewModel.requestHomeItem(
-            NaverMapUtils.DEFAULT_LOCATION,
-            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-        )
+
+        viewModel.fetchAroundStores()
         viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
     }
     
@@ -605,13 +548,87 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             delay(1000L)
             val currentLocation = naverMapFragment.currentPosition.value
             if (currentLocation != null) {
-                val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-                val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-                viewModel.requestHomeItem(
-                    currentLocation,
-                    if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-                )
+                viewModel.fetchAroundStores()
                 viewModel.getAdvertisement(latLng = currentLocation)
+            }
+        }
+    }
+
+    private fun collectSelectedCategory(category: CategoryModel?) {
+        val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
+        val textColor = if (category == null) R.color.gray70 else R.color.pink
+        val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
+
+        binding.run {
+            allMenuTextView.text = text
+            allMenuTextView.setTextColor(resources.getColor(textColor, null))
+            allMenuTextView.setBackgroundResource(background)
+
+            if (category == null) {
+                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                )
+            } else {
+                loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
+                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                }
+            }
+        }
+    }
+
+    private suspend fun collectCarouselItemList(itemList: List<AdAndStoreItem>) {
+        if (itemList.isEmpty()) return
+        val resultList = mutableListOf<AdAndStoreItem>()
+        resultList.addAll(itemList)
+        resultList.add(
+            1,
+            viewModel.advertisementModel.value ?: AdvertisementModelV2Empty()
+        )
+        adapter.submitList(resultList)
+        val list = itemList.filterIsInstance<ContentModel>()
+        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
+            onStoreClicked(it)
+        }
+        naverMapFragment.updateMarkerIcon(
+            drawableRes = R.drawable.ic_mappin_focused_on,
+            position = 0,
+            markerModel = list.firstOrNull()?.markerModel,
+            isSelected = true
+        )
+        delay(200L)
+        binding.aroundStoreRecyclerView.scrollToPosition(0)
+    }
+
+    private fun collectHomeSortType(sortType: HomeSortType) {
+        binding.run {
+            filterTextView.text = if (sortType == HomeSortType.DISTANCE_ASC) {
+                getString(CommonR.string.fragment_home_filter_distance)
+            } else {
+                getString(CommonR.string.fragment_home_filter_latest)
+            }
+        }
+    }
+
+    private fun collectHomeStoreType(storeType: HomeStoreType) {
+        binding.run {
+            if (storeType == HomeStoreType.BOSS_STORE) {
+                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
+            } else {
+                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+            }
+        }
+    }
+
+    private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
+        binding.run {
+            if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
+                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
+            } else {
+                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
         }
     }

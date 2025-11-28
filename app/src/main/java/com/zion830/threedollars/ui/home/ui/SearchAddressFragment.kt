@@ -88,7 +88,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                         roadAddressName = item.roadAddressName
                     )
                 )
-                viewModel.requestHomeItem(location, DEFAULT_DISTANCE_M)
+                viewModel.fetchAroundStores()
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
@@ -115,7 +115,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                         roadAddressName = item.roadAddressName
                     )
                 )
-                viewModel.requestHomeItem(location, DEFAULT_DISTANCE_M)
+                viewModel.fetchAroundStores()
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()

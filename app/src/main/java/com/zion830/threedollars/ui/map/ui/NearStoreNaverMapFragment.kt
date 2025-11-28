@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.map.ui
 
 import android.content.Intent
+import android.util.Log
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
@@ -47,12 +48,7 @@ class NearStoreNaverMapFragment(
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        val northWest = naverMap?.contentBounds?.northWest
-        val southEast = naverMap?.contentBounds?.southEast
-        viewModel.requestHomeItem(
-            position,
-            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-        )
+        viewModel.updateUserLocation(position)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
