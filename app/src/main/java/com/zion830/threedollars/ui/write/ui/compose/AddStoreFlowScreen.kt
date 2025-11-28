@@ -92,19 +92,19 @@ fun AddStoreFlowScreen(
             }
         },
         bottomBar = {
-            AddStoreBottomBar(
-                buttonText = buttonText,
-                onClick = {
-                    when (currentRoute) {
-                        AddStoreRoute.REQUIRED_INFO -> navController.navigate(AddStoreRoute.MENU_CATEGORY)
-                        AddStoreRoute.MENU_CATEGORY -> navController.navigate(AddStoreRoute.MENU_DETAIL)
-                        AddStoreRoute.MENU_DETAIL -> navController.navigate(AddStoreRoute.STORE_DETAIL)
-                        AddStoreRoute.STORE_DETAIL -> navController.navigate(AddStoreRoute.COMPLETION)
-                        AddStoreRoute.COMPLETION -> onComplete()
-                        else -> {}
+            if (currentRoute != AddStoreRoute.MENU_DETAIL && currentRoute != AddStoreRoute.COMPLETION) {
+                AddStoreBottomBar(
+                    buttonText = buttonText,
+                    onClick = {
+                        when (currentRoute) {
+                            AddStoreRoute.REQUIRED_INFO -> navController.navigate(AddStoreRoute.MENU_CATEGORY)
+                            AddStoreRoute.MENU_CATEGORY -> navController.navigate(AddStoreRoute.MENU_DETAIL)
+                            AddStoreRoute.STORE_DETAIL -> navController.navigate(AddStoreRoute.COMPLETION)
+                            else -> {}
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     ) { padding ->
         NavHost(
@@ -125,7 +125,8 @@ fun AddStoreFlowScreen(
             composable(AddStoreRoute.MENU_DETAIL) {
                 MenuDetailScreen(
                     viewModel = viewModel,
-                    onNavigateToNext = { navController.navigate(AddStoreRoute.STORE_DETAIL) }
+                    onNavigateToNext = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
+                    onNavigateToCompletion = { navController.navigate(AddStoreRoute.COMPLETION) }
                 )
             }
             composable(AddStoreRoute.STORE_DETAIL) {

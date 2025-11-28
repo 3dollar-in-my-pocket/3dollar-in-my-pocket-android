@@ -14,6 +14,7 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,9 +46,26 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _selectCategoryList: MutableStateFlow<List<SelectCategoryModel>> = MutableStateFlow(listOf())
     val selectCategoryList: StateFlow<List<SelectCategoryModel>> get() = _selectCategoryList.asStateFlow()
 
+    private val _availableSnackCategories: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(emptyList())
+    val availableSnackCategories: StateFlow<List<CategoryModel>> get() = _availableSnackCategories.asStateFlow()
+
+    private val _availableMealCategories: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(emptyList())
+    val availableMealCategories: StateFlow<List<CategoryModel>> get() = _availableMealCategories.asStateFlow()
+
+    // Temporary storage for removed categories to restore data if re-selected
+    private val _removedCategoriesData: MutableMap<String, List<com.threedollar.domain.home.data.store.UserStoreMenuModel>> = mutableMapOf()
 
     private val _isNearStoreExist = MutableSharedFlow<Boolean>()
     val isNearStoreExist: SharedFlow<Boolean> get() = _isNearStoreExist
+
+    init {
+        loadAvailableCategories()
+    }
+
+    private fun loadAvailableCategories() {
+        _availableSnackCategories.value = LegacySharedPrefUtils.getCategories()
+        _availableMealCategories.value = LegacySharedPrefUtils.getTruckCategories()
+    }
 
     fun addNewStore(userStoreModelRequest: UserStoreModelRequest) {
         showLoading()
@@ -112,10 +130,27 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun changeSelectCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
             if (!categoryModel.isSelected) {
+                // Store menu data before removing category
+                val categoryToRemove = list.find { it.menuType.categoryId == categoryModel.categoryId }
+                categoryToRemove?.menuDetail?.let { menuList ->
+                    if (menuList.isNotEmpty()) {
+                        _removedCategoriesData[categoryModel.categoryId] = menuList
+                    }
+                }
                 list.filter { it.menuType.name != categoryModel.name }
             } else {
-                if (list.size < 3) {
-                    list + SelectCategoryModel(menuType = categoryModel)
+                if (list.size < 10) {
+                    // Restore previously saved menu data if exists
+                    val savedMenus = _removedCategoriesData[categoryModel.categoryId]
+                    val menuDetail = savedMenus ?: listOf(
+                        com.threedollar.domain.home.data.store.UserStoreMenuModel(
+                            category = categoryModel,
+                            menuId = 0,
+                            name = "",
+                            price = ""
+                        )
+                    )
+                    list + SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
                 } else {
                     list
                 }
@@ -125,5 +160,73 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     fun setSelectCategoryModelList(selectCategoryModelList: List<SelectCategoryModel>) {
         _selectCategoryList.value = selectCategoryModelList
+    }
+
+    fun addMenuToCategory(categoryId: String) {
+        _selectCategoryList.update { list ->
+            list.map { selectCategory ->
+                if (selectCategory.menuType.categoryId == categoryId) {
+                    val currentMenus = selectCategory.menuDetail ?: emptyList()
+                    val newMenu = com.threedollar.domain.home.data.store.UserStoreMenuModel(
+                        category = selectCategory.menuType,
+                        menuId = 0,
+                        name = "",
+                        price = ""
+                    )
+                    selectCategory.copy(menuDetail = currentMenus + newMenu)
+                } else {
+                    selectCategory
+                }
+            }
+        }
+    }
+
+    fun removeMenuFromCategory(categoryId: String, menuIndex: Int) {
+        _selectCategoryList.update { list ->
+            list.map { selectCategory ->
+                if (selectCategory.menuType.categoryId == categoryId) {
+                    val currentMenus = selectCategory.menuDetail ?: emptyList()
+                    if (currentMenus.size > 1) {
+                        selectCategory.copy(menuDetail = currentMenus.filterIndexed { index, _ -> index != menuIndex })
+                    } else {
+                        selectCategory
+                    }
+                } else {
+                    selectCategory
+                }
+            }
+        }
+    }
+
+    fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String) {
+        _selectCategoryList.update { list ->
+            list.map { selectCategory ->
+                if (selectCategory.menuType.categoryId == categoryId) {
+                    val currentMenus = selectCategory.menuDetail ?: emptyList()
+                    val updatedMenus = currentMenus.mapIndexed { index, menu ->
+                        if (index == menuIndex) {
+                            menu.copy(name = name, price = price)
+                        } else {
+                            menu
+                        }
+                    }
+                    selectCategory.copy(menuDetail = updatedMenus)
+                } else {
+                    selectCategory
+                }
+            }
+        }
+    }
+
+    fun validateMenuDetail(): Boolean {
+        val categories = _selectCategoryList.value
+        if (categories.isEmpty()) return false
+
+        return categories.all { category ->
+            val menus = category.menuDetail ?: emptyList()
+            menus.isNotEmpty() && menus.all { menu ->
+                !menu.name.isNullOrBlank() && !menu.price.isNullOrBlank()
+            }
+        }
     }
 }
