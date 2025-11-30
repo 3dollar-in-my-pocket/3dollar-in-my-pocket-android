@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.map.ui
 
 import android.content.Intent
-import android.util.Log
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
@@ -10,8 +9,6 @@ import com.naver.maps.map.NaverMap
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
-import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 

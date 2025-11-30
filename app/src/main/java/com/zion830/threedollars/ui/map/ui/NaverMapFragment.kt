@@ -128,7 +128,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.addOnLocationChangeListener {
             map.locationOverlay.bearing = 0f
         }
-        map.addOnCameraChangeListener { reason, animated ->
+        map.addOnCameraChangeListener { _, _ ->
             mapPosition.value = map.cameraPosition.target
             map.contentBounds.let {
                 val northWest = it.northWest
