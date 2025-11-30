@@ -71,6 +71,7 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -330,11 +331,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState
                         .map { it.selectedCategory }
+                        .distinctUntilChanged()
                         .collect {
                             collectSelectedCategory(it)
                         }
@@ -352,6 +354,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.uiState
                         .map { it.carouselItemList }
+                        .distinctUntilChanged()
                         .collect {
                             collectCarouselItemList(it)
                         }
@@ -359,6 +362,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.uiState
                         .map { it.homeSortType }
+                        .distinctUntilChanged()
                         .collect {
                             collectHomeSortType(it)
                         }
@@ -366,6 +370,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.uiState
                         .map { it.homeStoreType }
+                        .distinctUntilChanged()
                         .collect {
                             collectHomeStoreType(it)
                         }
@@ -373,6 +378,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.uiState
                         .map { it.filterConditionsType }
+                        .distinctUntilChanged()
                         .collect {
                             collectFilterConditionsType(it)
                         }
