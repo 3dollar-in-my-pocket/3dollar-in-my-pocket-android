@@ -12,7 +12,6 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityBossReviewDetailBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.OnReviewEditCallback

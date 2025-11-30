@@ -9,7 +9,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.data.NeighborhoodModel
 import com.threedollar.domain.data.Neighborhoods
-import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.DialogNeighborChoiceBinding
 import dagger.hilt.android.AndroidEntryPoint

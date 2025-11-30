@@ -18,7 +18,6 @@ import com.threedollar.presentation.utils.calculatePercentages
 import com.threedollar.presentation.utils.getDeadlineString
 import com.threedollar.presentation.utils.hasVotingPeriodEnded
 import zion830.com.common.base.BaseDiffUtilCallback
-import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick

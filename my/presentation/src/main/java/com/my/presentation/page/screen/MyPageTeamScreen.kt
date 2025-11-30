@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.my.presentation.R
 import com.threedollar.common.R as CommonR
 import com.my.presentation.page.data.TeamRow
 import zion830.com.common.base.compose.Gray40

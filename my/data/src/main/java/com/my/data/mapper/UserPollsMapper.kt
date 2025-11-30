@@ -4,7 +4,6 @@ import com.my.domain.model.UserPollsModel
 import com.my.domain.model.UserPollModel
 import com.my.domain.model.CategoryModel
 import com.my.domain.model.PollOptionModel
-import com.my.domain.model.PhotoModel
 import com.my.domain.model.CursorModel
 import com.threedollar.network.data.poll.response.GetMyPollListResponse
 

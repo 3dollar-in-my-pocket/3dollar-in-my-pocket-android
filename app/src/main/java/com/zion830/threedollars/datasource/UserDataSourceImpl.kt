@@ -3,7 +3,6 @@ package com.zion830.threedollars.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.network.request.PatchPushInformationRequest
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest

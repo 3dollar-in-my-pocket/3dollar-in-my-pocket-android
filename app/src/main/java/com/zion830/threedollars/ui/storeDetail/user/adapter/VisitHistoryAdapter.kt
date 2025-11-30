@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.home.domain.data.store.HistoriesContentModel
 import com.threedollar.common.ext.convertCreatedAt
-import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemVisitHistoryBinding
 import zion830.com.common.base.BaseDiffUtilCallback

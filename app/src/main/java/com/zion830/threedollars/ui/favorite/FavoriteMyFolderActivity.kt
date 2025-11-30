@@ -11,7 +11,6 @@ import androidx.paging.LoadState
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog

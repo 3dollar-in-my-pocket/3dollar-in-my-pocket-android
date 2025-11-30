@@ -9,14 +9,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentFaqBinding
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategory
 import com.zion830.threedollars.ui.mypage.adapter.FaqRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.FAQViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
-import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import com.threedollar.common.R as CommonR
 

@@ -17,7 +17,6 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast

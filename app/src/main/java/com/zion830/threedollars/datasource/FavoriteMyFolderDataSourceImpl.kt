@@ -3,7 +3,6 @@ package com.zion830.threedollars.datasource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.di.LegacyNetworkModule
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.utils.getErrorMessage
 
