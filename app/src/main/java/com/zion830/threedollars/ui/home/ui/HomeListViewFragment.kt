@@ -22,7 +22,6 @@ import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeFilterEvent
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
@@ -45,6 +44,8 @@ import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
@@ -153,7 +154,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                 if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
             ), null, null, null
         )
-        getNearStore()
+        viewModel.fetchAroundStores()
     }
 
     private fun initFlows() {
@@ -161,17 +162,21 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch { collectCategoryFlow() }
                 launch { collectAroundStoreModelsFlow() }
-                launch { collectHomeFilterEventFlow() }
+                launch { collectSortType() }
+                launch { collectStoreType() }
+                launch { collectFilterConditionsType() }
                 launch { collectServerErrorFlow() }
             }
         }
     }
 
     private suspend fun collectCategoryFlow() {
-        viewModel.selectCategory.collect {
-            updateCategoryView(it)
-            getNearStore()
-        }
+        viewModel.uiState
+            .mapNotNull { it.selectedCategory }
+            .collect {
+                updateCategoryView(it)
+                viewModel.fetchAroundStores()
+            }
     }
 
     private fun updateCategoryView(category: CategoryModel) {
@@ -203,49 +208,68 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private suspend fun collectAroundStoreModelsFlow() {
-        viewModel.aroundStoreModels.collect { adAndStoreItems ->
-            binding.listTitleTextView.text = viewModel.selectCategory.value.description.ifEmpty {
-                getString(CommonR.string.fragment_home_all_menu)
+        viewModel.uiState
+            .map { it.carouselItemList }
+            .collect { adAndStoreItems ->
+                binding.listTitleTextView.text =
+                    viewModel.uiState.value.selectedCategory?.description?.ifEmpty {
+                        getString(CommonR.string.fragment_home_all_menu)
+                    }
+                val resultList = mutableListOf<AdAndStoreItem>().apply {
+                    addAll(adAndStoreItems)
+                    viewModel.advertisementListModel.value?.let { add(1, it) }
+                }
+                adapter.submitList(resultList)
+                delay(200L)
+                binding.listRecyclerView.scrollToPosition(0)
             }
-            val resultList = mutableListOf<AdAndStoreItem>().apply {
-                addAll(adAndStoreItems)
-                viewModel.advertisementListModel.value?.let { add(1, it) }
-            }
-            adapter.submitList(resultList)
-            delay(200L)
-            binding.listRecyclerView.scrollToPosition(0)
-        }
     }
 
-    private suspend fun collectHomeFilterEventFlow() {
-        viewModel.homeFilterEvent.collect {
-            getNearStore()
-            updateFilterViews(it)
-        }
+    private suspend fun collectSortType() {
+        viewModel.uiState
+            .map { it.homeSortType }
+            .collect {
+                binding.apply {
+                    filterTextView.text = if (it == HomeSortType.DISTANCE_ASC) {
+                        getString(CommonR.string.fragment_home_filter_distance)
+                    } else {
+                        getString(CommonR.string.fragment_home_filter_latest)
+                    }
+                }
+            }
     }
 
-    private fun updateFilterViews(filterEvent: HomeFilterEvent) {
-        binding.apply {
-            filterConditionsTextView.apply {
-                setTextColor(
-                    resources.getColor(
-                        if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
-                        null
-                    )
-                )
-                setBackgroundResource(if (filterEvent.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+    private suspend fun collectStoreType() {
+        viewModel.uiState
+            .map { it.homeStoreType }
+            .collect {
+                binding.apply {
+                    bossFilterTextView.apply {
+                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
+                        setBackgroundResource(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+                    }
+
+                    certifiedStoreTextView.isVisible = it != HomeStoreType.BOSS_STORE
+                }
             }
-            bossFilterTextView.apply {
-                setTextColor(resources.getColor(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
-                setBackgroundResource(if (filterEvent.homeStoreType == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+    }
+
+    private suspend fun collectFilterConditionsType() {
+        viewModel.uiState
+            .map { it.filterConditionsType }
+            .collect {
+                binding.apply {
+                    filterConditionsTextView.apply {
+                        setTextColor(
+                            resources.getColor(
+                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
+                                null
+                            )
+                        )
+                        setBackgroundResource(if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+                    }
+                }
             }
-            filterTextView.text = if (filterEvent.homeSortType == HomeSortType.DISTANCE_ASC) {
-                getString(CommonR.string.fragment_home_filter_distance)
-            } else {
-                getString(CommonR.string.fragment_home_filter_latest)
-            }
-            certifiedStoreTextView.isVisible = filterEvent.homeStoreType != HomeStoreType.BOSS_STORE
-        }
     }
 
     private suspend fun collectServerErrorFlow() {
@@ -289,16 +313,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun showSelectCategoryDialog() {
         SelectCategoryDialogFragment().show(parentFragmentManager, "")
-    }
-
-    private fun getNearStore() {
-        viewModel.mapLocation.value?.let {
-            viewModel.requestHomeItem(
-                location = it,
-                distanceM = viewModel.currentDistanceM.value ?: DEFAULT_DISTANCE_M,
-                filterCertifiedStores = isFilterCertifiedStores
-            )
-        }
     }
 
     private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {

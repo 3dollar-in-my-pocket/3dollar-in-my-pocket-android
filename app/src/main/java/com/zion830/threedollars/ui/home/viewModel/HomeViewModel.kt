@@ -4,19 +4,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ContentModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeFilterEvent
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
+import com.home.presentation.data.HomeUIState
+import com.home.presentation.data.toArray
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
-import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,28 +30,19 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
     val userInfo: StateFlow<UserModel> get() = _userInfo
 
-    private val _aroundStoreModels: MutableStateFlow<List<AdAndStoreItem>> = MutableStateFlow(listOf())
-    val aroundStoreModels: StateFlow<List<AdAndStoreItem>> get() = _aroundStoreModels
-
     val addressText: MutableLiveData<String> = MutableLiveData()
     val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
     val mapLocation: MutableLiveData<LatLng> = MutableLiveData()
     val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
 
-    private val _currentLocationFlow: MutableStateFlow<LatLng> = MutableStateFlow(LatLng.INVALID)
-    val currentLocationFlow = _currentLocationFlow.asStateFlow()
-
-    private val _selectCategory = MutableStateFlow(CategoryModel())
-    val selectCategory = _selectCategory.asStateFlow()
+    private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState())
+    val uiState = _uiState.asStateFlow()
 
     private val _advertisementModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val advertisementModel: StateFlow<AdvertisementModelV2?> get() = _advertisementModel
 
     private val _advertisementListModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val advertisementListModel: StateFlow<AdvertisementModelV2?> get() = _advertisementListModel
-
-    private val _homeFilterEvent: MutableStateFlow<HomeFilterEvent> = MutableStateFlow(HomeFilterEvent())
-    val homeFilterEvent: StateFlow<HomeFilterEvent> get() = _homeFilterEvent
 
     fun getUserInfo() {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -67,32 +57,45 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun updateCurrentLocation(latLng: LatLng) {
-        currentLocation.value = latLng
-        _currentLocationFlow.value = latLng
-        addressText.value = getCurrentLocationName(latLng) ?: "위치를 찾는 중..."
+        _uiState.update { it.copy(userLocation = latLng) }
     }
 
-    fun requestHomeItem(location: LatLng, distanceM: Double, filterCertifiedStores: Boolean = false) {
+    fun updateDistanceM(distanceM: Double) {
+        _uiState.update { it.copy(currentDistanceM = distanceM) }
+    }
+
+    fun updateMapPosition(mapPosition: LatLng) {
+        _uiState.update { it.copy(mapPosition = mapPosition)  }
+    }
+
+    fun updateUserLocation(latLng: LatLng) {
+        _uiState.update { it.copy(userLocation = latLng) }
+    }
+
+    fun fetchAroundStores() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val targetStores = homeFilterEvent.value.homeStoreType.getTargetStoresArray()
-            val categoryIds = selectCategory.value.getCategoryIdArray()
+            val uiState = uiState.value
 
             homeRepository.getAroundStores(
-                distanceM = distanceM,
-                categoryIds = categoryIds,
-                targetStores = targetStores,
-                sortType = homeFilterEvent.value.homeSortType.name,
-                filterCertifiedStores = filterCertifiedStores,
-                filterConditionsTypeModel = homeFilterEvent.value.filterConditionsType,
-                mapLatitude = location.latitude,
-                mapLongitude = location.longitude,
-                deviceLatitude = currentLocation.value?.latitude ?: location.latitude,
-                deviceLongitude = currentLocation.value?.longitude ?: location.longitude
+                distanceM = uiState.currentDistanceM,
+                categoryIds = uiState.selectedCategory?.categoryId?.let { arrayOf(it) },
+                targetStores = uiState.homeStoreType.toArray(),
+                sortType = uiState.homeSortType.name,
+                filterCertifiedStores = uiState.filterCertifiedStores,
+                filterConditionsTypeModel = uiState.filterConditionsType,
+                mapLatitude = uiState.mapPosition.latitude,
+                mapLongitude = uiState.mapPosition.longitude,
+                deviceLatitude = uiState.userLocation.latitude,
+                deviceLongitude = uiState.userLocation.longitude
             ).collect { response ->
                 if (response.ok) {
-                    mapLocation.value = location
-                    val resultList = getResultList(response.data?.contentModels)
-                    _aroundStoreModels.value = resultList
+                    val carouselItemList = if (response.data?.contentModels.isNullOrEmpty()) {
+                        arrayListOf(StoreEmptyResponse())
+                    } else {
+                        ArrayList(response.data?.contentModels as List<AdAndStoreItem>)
+                    }
+
+                    updateCarouselItemList(carouselItemList)
                 } else {
                     _serverError.emit(response.message)
                 }
@@ -112,15 +115,10 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(categoryModel: CategoryModel) {
+    fun changeSelectCategory(categoryModel: CategoryModel?) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            _selectCategory.emit(
-                if (selectCategory.value.categoryId == categoryModel.categoryId) {
-                    CategoryModel()
-                } else {
-                    categoryModel
-                }
-            )
+            _uiState.update { it.copy(selectedCategory = categoryModel) }
+            fetchAroundStores()
         }
     }
 
@@ -130,13 +128,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         filterConditionsType: List<FilterConditionsTypeModel>? = null,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            _homeFilterEvent.update {
-                it.copy(
-                    homeSortType = homeSortType ?: it.homeSortType,
-                    homeStoreType = homeStoreType ?: it.homeStoreType,
-                    filterConditionsType = filterConditionsType ?: it.filterConditionsType
-                )
-            }
+            _uiState.update { it.copy(
+                homeStoreType = homeStoreType ?: it.homeStoreType,
+                homeSortType = homeSortType ?: it.homeSortType,
+                filterConditionsType = filterConditionsType ?: it.filterConditionsType
+            ) }
+            fetchAroundStores()
         }
     }
 
@@ -185,22 +182,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    private fun getResultList(contentModels: List<ContentModel>?): ArrayList<AdAndStoreItem> {
-        return if (contentModels.isNullOrEmpty()) {
-            arrayListOf(StoreEmptyResponse())
-        } else {
-            ArrayList(contentModels)
-        }
-    }
-
-    private fun HomeStoreType.getTargetStoresArray(): Array<String>? {
-        return when (this) {
-            HomeStoreType.ALL -> null
-            else -> arrayOf(this.name)
-        }
-    }
-
-    private fun CategoryModel.getCategoryIdArray(): Array<String>? {
-        return if (this.categoryId.isEmpty()) null else arrayOf(this.categoryId)
+    private fun updateCarouselItemList(itemList: List<AdAndStoreItem>) {
+        _uiState.update { it.copy(carouselItemList = itemList) }
     }
 }

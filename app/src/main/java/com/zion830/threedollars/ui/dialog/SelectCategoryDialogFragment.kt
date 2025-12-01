@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.home.domain.data.store.CategoryModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
@@ -47,13 +48,18 @@ class SelectCategoryDialogFragment :
                     putString("screen", "category_filter")
                     putString(
                         "category_id",
-                        if (viewModel.selectCategory.value.categoryId == item.categoryId) null
+                        if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) null
                         else item.categoryId
                     )
                 }
+                var selectedCategory: CategoryModel? = if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) {
+                    null
+                } else {
+                    item
+                }
 
                 EventTracker.logEvent(CLICK_CATEGORY, bundle)
-                viewModel.changeSelectCategory(item)
+                viewModel.changeSelectCategory(selectedCategory)
                 dismiss()
             },
             onAdClickListener = { item ->
@@ -77,7 +83,7 @@ class SelectCategoryDialogFragment :
                 val bundle = Bundle().apply {
                     putString("screen", "category_filter")
                     putString(
-                        "category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null
+                        "category_id", if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) null
                         else item.categoryId
                     )
                 }
@@ -127,7 +133,7 @@ class SelectCategoryDialogFragment :
     private fun initAdapter() {
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
             val categories = LegacySharedPrefUtils.getCategories().map {
-                if (viewModel.selectCategory.value.name == it.name) {
+                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
@@ -137,7 +143,7 @@ class SelectCategoryDialogFragment :
         }
         binding.bossCategoryRecyclerView.adapter = bossCategoryAdapter.apply {
             val categories = LegacySharedPrefUtils.getTruckCategories().map {
-                if (viewModel.selectCategory.value.name == it.name) {
+                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
