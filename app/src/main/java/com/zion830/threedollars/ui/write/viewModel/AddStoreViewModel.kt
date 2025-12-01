@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.PaymentType
 import com.threedollar.domain.home.data.store.PostUserStoreModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.naver.maps.geometry.LatLng
@@ -57,6 +60,15 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     private val _isNearStoreExist = MutableSharedFlow<Boolean>()
     val isNearStoreExist: SharedFlow<Boolean> get() = _isNearStoreExist
+
+    private val _selectedPaymentMethods: MutableStateFlow<Set<PaymentType>> = MutableStateFlow(emptySet())
+    val selectedPaymentMethods: StateFlow<Set<PaymentType>> get() = _selectedPaymentMethods.asStateFlow()
+
+    private val _selectedDays: MutableStateFlow<Set<DayOfTheWeekType>> = MutableStateFlow(emptySet())
+    val selectedDays: StateFlow<Set<DayOfTheWeekType>> get() = _selectedDays.asStateFlow()
+
+    private val _openingHours: MutableStateFlow<OpeningHourRequest> = MutableStateFlow(OpeningHourRequest())
+    val openingHours: StateFlow<OpeningHourRequest> get() = _openingHours.asStateFlow()
 
     init {
         loadAvailableCategories()
@@ -228,5 +240,33 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 !menu.name.isNullOrBlank() && !menu.price.isNullOrBlank()
             }
         }
+    }
+
+    fun togglePaymentMethod(paymentType: PaymentType) {
+        _selectedPaymentMethods.update { current ->
+            if (current.contains(paymentType)) {
+                current - paymentType
+            } else {
+                current + paymentType
+            }
+        }
+    }
+
+    fun toggleDay(day: DayOfTheWeekType) {
+        _selectedDays.update { current ->
+            if (current.contains(day)) {
+                current - day
+            } else {
+                current + day
+            }
+        }
+    }
+
+    fun setStartTime(time: String) {
+        _openingHours.update { it.copy(startTime = time) }
+    }
+
+    fun setEndTime(time: String) {
+        _openingHours.update { it.copy(endTime = time) }
     }
 }
