@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,6 @@ import com.threedollar.presentation.CommunityPollAdapter
 import com.threedollar.presentation.CommunityStoreAdapter
 import com.threedollar.presentation.CommunityViewModel
 import com.threedollar.presentation.PopularStoreCriteria
-import com.threedollar.presentation.R
 import com.threedollar.presentation.data.PollListData
 import com.threedollar.presentation.databinding.FragmentCommunityBinding
 import com.threedollar.presentation.dialog.NeighborHoodsChoiceDialog

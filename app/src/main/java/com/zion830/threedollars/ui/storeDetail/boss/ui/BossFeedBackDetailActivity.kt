@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityBossFeedbackDetailBinding
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossFeedBackDetailAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel

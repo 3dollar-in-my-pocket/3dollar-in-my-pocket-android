@@ -30,6 +30,7 @@ object Constants {
     const val NICKNAME_ALREADY_EXISTED = "nickname_already_existed"
 
     // home
+    const val HOME_REOPEN = "home_reopen"
     const val CLICK_STORE = "click_store"
     const val CLICK_VISIT = "click_visit"
     const val CLICK_CURRENT_LOCATION = "click_current_location"

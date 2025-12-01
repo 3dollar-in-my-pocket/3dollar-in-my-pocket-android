@@ -1,9 +1,7 @@
 package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -18,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
@@ -49,6 +46,7 @@ import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_SORTING
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.Constants.CLICK_VISIT
+import com.threedollar.common.utils.Constants.HOME_REOPEN
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
@@ -97,9 +95,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
     private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
-    
+
     private var hasRequestedLocationPermission = false
     private var locationPermissionDialog: AlertDialog? = null
+
+    private var isFirstLoad = true
     
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -135,7 +135,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
+        // OnResume에서 로그를 보내기 위해 의도적으로 비워두었습니다.
     }
 
     private fun initScroll() {
@@ -631,6 +631,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (hasRequestedLocationPermission && isLocationAvailable()) {
             onLocationPermissionGranted()
         }
+
+        if (!isFirstLoad) {
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+            }
+            EventTracker.logEvent(HOME_REOPEN, bundle)
+        }
+        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
+        isFirstLoad = false
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =

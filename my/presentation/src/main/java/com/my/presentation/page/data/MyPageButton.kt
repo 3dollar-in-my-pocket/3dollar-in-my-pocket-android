@@ -2,7 +2,6 @@ package com.my.presentation.page.data
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.my.presentation.R
 import com.threedollar.common.R as CommonR
 import com.my.domain.model.UserInfoModel
 

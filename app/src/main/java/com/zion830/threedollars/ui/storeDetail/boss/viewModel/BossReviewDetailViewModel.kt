@@ -13,7 +13,6 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants.STORE
-import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel

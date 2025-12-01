@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick

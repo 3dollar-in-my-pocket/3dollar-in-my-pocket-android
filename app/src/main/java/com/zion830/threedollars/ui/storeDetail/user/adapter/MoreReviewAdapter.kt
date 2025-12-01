@@ -10,7 +10,6 @@ import com.home.domain.data.store.ReviewStatusType
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemMoreReviewBinding
 import com.zion830.threedollars.utils.StringUtils

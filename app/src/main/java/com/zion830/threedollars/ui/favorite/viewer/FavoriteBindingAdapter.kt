@@ -6,7 +6,6 @@ import android.text.Spanned
 import android.text.style.StyleSpan
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.zion830.threedollars.R
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.threedollar.common.R as CommonR
 

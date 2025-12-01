@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView
-import android.widget.ProgressBar
 import com.zion830.threedollars.core.ui.R
 
 /**

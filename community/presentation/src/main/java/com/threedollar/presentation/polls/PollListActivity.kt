@@ -16,7 +16,6 @@ import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.model.PollCreateModel
-import com.threedollar.presentation.R
 import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollListBinding
 import com.threedollar.presentation.dialog.CreatePollDialog
@@ -128,9 +127,6 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
         }
         binding.llPollCreate.onSingleClick {
             CreatePollDialog().setCreatePoll { title, first, second ->
-                val calendar = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                val formattedDate = dateFormat.format(calendar.time)
                 viewModel.createPoll(
                     PollCreateModel(
                         title = title,

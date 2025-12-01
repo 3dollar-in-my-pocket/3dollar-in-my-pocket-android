@@ -8,7 +8,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyReviewBinding
 import com.zion830.threedollars.ui.mypage.adapter.ReviewPagerFragmentStateAdapter
