@@ -7,16 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.listener.OnBackPressedListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentAskBinding
 import com.zion830.threedollars.utils.getInstalledInfo
 import dagger.hilt.android.AndroidEntryPoint
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
-class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>() {
+class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>(), OnBackPressedListener {
 
     override val viewModel: UserInfoViewModel by activityViewModels()
+
+    override fun onBackPressed() {
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     override fun initView() {
         binding.btnBack.setOnClickListener {
@@ -39,8 +45,8 @@ class AskFragment : BaseFragment<FragmentAskBinding, UserInfoViewModel>() {
             data = Uri.parse("mailto:")
         }
         val intent = Intent(Intent.ACTION_SEND).apply {
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.help_feedback_title))
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.official_email)))
+            putExtra(Intent.EXTRA_SUBJECT, getString(CommonR.string.help_feedback_title))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(CommonR.string.official_email)))
             putExtra(Intent.EXTRA_TEXT, requireContext().getInstalledInfo())
             selector = selectorIntent
         }

@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.dialog
 
-import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.databinding.DialogBottomDirectionBinding
+import zion830.com.common.base.onSingleClick
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 
@@ -46,16 +44,16 @@ class DirectionBottomDialog : BaseBottomSheetDialogFragment<DialogBottomDirectio
     }
 
     private fun initButton() {
-        binding.kakaoMapTextView.setOnClickListener {
+        binding.kakaoMapTextView.onSingleClick {
             openKakaoMap()
             dismiss()
         }
 
-        binding.naverMapTextView.setOnClickListener {
+        binding.naverMapTextView.onSingleClick {
             openNaverMap()
             dismiss()
         }
-        binding.closeTextView.setOnClickListener {
+        binding.closeTextView.onSingleClick {
             dismiss()
         }
     }

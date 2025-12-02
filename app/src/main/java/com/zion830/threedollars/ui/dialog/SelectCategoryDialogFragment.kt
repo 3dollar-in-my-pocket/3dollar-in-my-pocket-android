@@ -15,10 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.home.domain.data.store.CategoryModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_CATEGORY
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
@@ -29,6 +31,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class SelectCategoryDialogFragment :
@@ -39,29 +42,58 @@ class SelectCategoryDialogFragment :
     private val popupViewModel: PopupViewModel by viewModels()
 
     private val streetCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            val bundle = Bundle().apply {
-                putString("screen", "category_filter")
-                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
-            }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                val bundle = Bundle().apply {
+                    putString("screen", "category_filter")
+                    putString(
+                        "category_id",
+                        if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) null
+                        else item.categoryId
+                    )
+                }
+                var selectedCategory: CategoryModel? = if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) {
+                    null
+                } else {
+                    item
+                }
 
-            EventTracker.logEvent(CLICK_CATEGORY, bundle)
-            viewModel.changeSelectCategory(item)
-            dismiss()
-        }
+                EventTracker.logEvent(CLICK_CATEGORY, bundle)
+                viewModel.changeSelectCategory(selectedCategory)
+                dismiss()
+            },
+            onAdClickListener = { item ->
+                if (item.link.type == "APP_SCHEME") {
+                    startActivity(
+                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                            putExtra("link", item.link.url)
+                        },
+                    )
+                } else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
+                dismiss()
+            }
+        )
     }
 
     private val bossCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            val bundle = Bundle().apply {
-                putString("screen", "category_filter")
-                putString("category_id", if (viewModel.selectCategory.value.categoryId == item.categoryId) null else item.categoryId)
-            }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                val bundle = Bundle().apply {
+                    putString("screen", "category_filter")
+                    putString(
+                        "category_id", if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) null
+                        else item.categoryId
+                    )
+                }
 
-            EventTracker.logEvent(CLICK_CATEGORY, bundle)
-            viewModel.changeSelectCategory(item)
-            dismiss()
-        }
+                EventTracker.logEvent(CLICK_CATEGORY, bundle)
+                viewModel.changeSelectCategory(item)
+                dismiss()
+            },
+            onAdClickListener = {}
+        )
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomSelectCategoryBinding =
@@ -80,31 +112,44 @@ class SelectCategoryDialogFragment :
     }
 
     override fun initView() {
-        popupViewModel.getPopups(AdvertisementsPosition.MENU_CATEGORY_BANNER)
+        initAd()
         initAdapter()
         initFlow()
     }
 
+    private fun initAd() {
+        viewModel.currentLocation.value?.let { latLng ->
+            popupViewModel.getPopups(
+                position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
+                latLng = latLng
+            )
+            popupViewModel.getPopups(
+                position = AdvertisementsPosition.MENU_CATEGORY_ICON,
+                latLng = latLng
+            )
+        }
+    }
+
     private fun initAdapter() {
         binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getCategories()
-            submitList(categories.map {
-                if (viewModel.selectCategory.value.name == it.name) {
+            val categories = LegacySharedPrefUtils.getCategories().map {
+                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
                 }
-            })
+            }
+            submitList(categories)
         }
         binding.bossCategoryRecyclerView.adapter = bossCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getTruckCategories()
-            submitList(categories.map {
-                if (viewModel.selectCategory.value.name == it.name) {
+            val categories = LegacySharedPrefUtils.getTruckCategories().map {
+                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
                     it.copy(isSelected = true)
                 } else {
                     it
                 }
-            })
+            }
+            submitList(categories)
         }
     }
 
@@ -136,16 +181,36 @@ class SelectCategoryDialogFragment :
 
                             binding.ivAdImage.loadUrlImg(popup.image.url)
 
-                            binding.cdAdCategory.setOnClickListener {
+                            binding.cdAdCategory.onSingleClick {
                                 val bundle = Bundle().apply {
                                     putString("screen", "category_filter")
                                     putString("advertisement_id", popup.advertisementId.toString())
                                 }
                                 EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
+                                if (popup.link.type == "APP_SCHEME") {
+                                    startActivity(
+                                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                                            putExtra("link", popup.link.url)
+                                        },
+                                    )
+                                    dismiss()
+                                } else {
+                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
+                                }
+                                dismiss()
                             }
                         }
                         binding.cdAdCategory.isVisible = popups.isNotEmpty()
+                    }
+                }
+
+                launch {
+                    popupViewModel.categoryIconAd.collect { advertisementModelV2List ->
+                        advertisementModelV2List?.let {
+                            if (it.isNotEmpty()) {
+                                streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
+                            }
+                        }
                     }
                 }
                 launch {

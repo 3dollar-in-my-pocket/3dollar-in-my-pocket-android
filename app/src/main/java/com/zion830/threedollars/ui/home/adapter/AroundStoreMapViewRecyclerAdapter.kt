@@ -1,28 +1,41 @@
 package com.zion830.threedollars.ui.home.adapter
 
 import android.annotation.SuppressLint
+import android.util.DisplayMetrics
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.advertisement.AdvertisementModelV2Empty
 import com.home.domain.data.store.ContentModel
+import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.common.R as CommonR
 
 
 class AroundStoreMapViewRecyclerAdapter(
@@ -45,6 +58,23 @@ class AroundStoreMapViewRecyclerAdapter(
         }
     }
 
+    fun getItemMarker(position: Int): MarkerModel? {
+        if (position !in 0 until itemCount) {
+            return null
+        }
+        return when (getItem(position)) {
+
+            is ContentModel -> {
+                val contentModel = (getItem(position) as ContentModel)
+                contentModel.markerModel
+            }
+
+            else -> {
+                null
+            }
+        }
+    }
+
     fun getItemPosition(item: AdAndStoreItem) = currentList.indexOfFirst {
         if (it is ContentModel && item is ContentModel) {
             it.storeModel.storeId == item.storeModel.storeId
@@ -58,7 +88,7 @@ class AroundStoreMapViewRecyclerAdapter(
             VIEW_TYPE_STORE
         }
 
-        is AdvertisementModelV2 -> {
+        is AdvertisementModelV2, is AdvertisementModelV2Empty -> {
             VIEW_TYPE_AD
         }
 
@@ -94,7 +124,10 @@ class AroundStoreMapViewRecyclerAdapter(
             }
 
             is NearStoreAdMapViewViewHolder -> {
-                holder.bind(getItem(position) as AdvertisementModelV2)
+                if (getItem(position) is AdvertisementModelV2)
+                    holder.bind(getItem(position) as AdvertisementModelV2)
+                else if (getItem(position) is AdvertisementModelV2Empty)
+                    holder.bind(getItem(position) as AdvertisementModelV2Empty)
             }
 
             is NearStoreEmptyMapViewViewHolder -> {
@@ -129,14 +162,63 @@ class NearStoreAdMapViewViewHolder(
     private val adClickListener: OnItemClickListener<AdvertisementModelV2>,
 ) :
     ViewHolder(binding.root) {
+
+    companion object {
+        private val adRequest = AdRequest.Builder().build()
+    }
+
     @SuppressLint("Range")
     fun bind(item: AdvertisementModelV2) {
+        binding.groupAd.isVisible = true
         binding.run {
             setOnclick(item)
             setText(item)
             setImage(item)
         }
     }
+
+    fun bind(item: AdvertisementModelV2Empty) {
+        binding.groupAd.isVisible = false
+        val adView = AdView(binding.root.context).apply {
+            id = View.generateViewId()
+            setAdSize(getAdSize(binding.rootConstraintLayout))
+            adUnitId = binding.root.context.getString(CommonR.string.admob_map_banner)
+        }
+
+        val layoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+            endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+            topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+            bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+        }
+        binding.rootConstraintLayout.removeAllViews()
+        binding.rootConstraintLayout.addView(adView, layoutParams)
+
+        adView.loadAd(adRequest)
+    }
+
+    private fun getAdSize(adContainerView: View): AdSize {
+        // Determine the screen width (less decorations) to use for the ad width.
+        val display: Display = getSystemService(adContainerView.context, WindowManager::class.java)!!.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        display.getMetrics(outMetrics)
+
+        val density = outMetrics.density
+
+        var adWidthPixels: Float = adContainerView.getWidth().toFloat()
+
+        // If the ad hasn't been laid out, default to the full screen width.
+        if (adWidthPixels == 0f) {
+            adWidthPixels = outMetrics.widthPixels.toFloat()
+        }
+
+        val adWidth = (adWidthPixels / density).toInt()
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(adContainerView.context, adWidth)
+    }
+
 
     private fun ItemNearStoreAdBinding.setOnclick(item: AdvertisementModelV2) {
         rootConstraintLayout.setOnClickListener {
@@ -172,15 +254,15 @@ class NearStoreMapViewViewHolder(
         bossOrResentVisitTextView.apply {
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
-                text = GlobalApplication.getContext().getString(R.string.resent_visit_count, visitCount)
-                setTextAppearance(R.style.apple_gothic_medium_size_12sp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.white))
+                text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
+                setTextAppearance(R.style.apple_gothic_medium_size_12dp)
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
             } else {
-                text = StringUtils.getString(R.string.only_boss)
-                setTextAppearance(R.style.apple_gothic_bold_size_12sp)
+                text = StringUtils.getString(CommonR.string.only_boss)
+                setTextAppearance(R.style.apple_gothic_bold_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
-                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), R.drawable.ic_check_pink_16)
+                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)
                 setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
             }
         }
@@ -203,8 +285,9 @@ class NearStoreMapViewViewHolder(
     }
 
     private fun ItemStoreLocationBinding.setText(item: ContentModel) {
-        tagTextView.text = item.storeModel.categories.joinToString(" ") { "#${it.name}" }
-        distanceTextView.text = if (item.distanceM < 1000) "${item.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        val categoryList = item.storeModel.categories.take(3)
+        tagTextView.text = categoryList.joinToString(" ") { "#${it.name}" }
+        distanceTextView.text = root.context.getDistanceText(item.distanceM)
         storeNameTextView.text = item.storeModel.storeName
         reviewTextView.text = "${item.extraModel.reviewsCount}개"
     }

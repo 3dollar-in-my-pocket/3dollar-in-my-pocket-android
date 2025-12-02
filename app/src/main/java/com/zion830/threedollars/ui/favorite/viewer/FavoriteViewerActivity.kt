@@ -9,9 +9,8 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.ui.SignUpActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
@@ -19,6 +18,8 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
@@ -52,13 +53,14 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     }
 
     override fun initView() {
+        setDarkSystemBars()
         requestPermissionFirst()
         initObserve()
         initButton()
     }
 
     private fun initButton() {
-        binding.closeImage.setOnClickListener {
+        binding.closeImage.onSingleClick {
             viewModel.onEventClick(FavoriteViewerViewModel.Event.Close)
         }
     }
@@ -86,7 +88,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
         }
         viewModel.favoriteViewer.observe(this) {
             adapter.submitList(it.favorites)
-            binding.favoriteCountText.text = getString(R.string.count_list, adapter.itemCount)
+            binding.favoriteCountText.text = getString(CommonR.string.count_list, adapter.itemCount)
             binding.favoriteTitleText.textFavoriteTitle(it)
             binding.favoriteUserMedalText.text = it.user.medal.name
             binding.favoriteUserMedalImage.loadImage(it.user.medal.iconUrl)

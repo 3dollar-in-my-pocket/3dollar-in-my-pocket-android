@@ -21,12 +21,12 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 @AndroidEntryPoint
@@ -98,7 +99,6 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                         "oauth2:https://www.googleapis.com/auth/plus.me"
                     )
                 LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-                LegacySharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
             }
         } catch (e: Exception) {
@@ -120,18 +120,17 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                 loginWithGoogle(account)
             } else {
                 Log.e("LoginActivity", "account is null")
-                showToast(R.string.login_failed)
+                showToast(CommonR.string.login_failed)
             }
         } catch (e: ApiException) {
             e.printStackTrace()
-            showToast(R.string.login_failed)
+            showToast(CommonR.string.login_failed)
         }
     }
 
     private fun tryLoginBySocialType(token: OAuthToken) {
         UserApiClient.instance.me { user, _ ->
             user?.let {
-                LegacySharedPrefUtils.saveGoogleToken(token.accessToken)
                 viewModel.tryLogin(LoginType.KAKAO, token.accessToken)
             }
         }
@@ -148,7 +147,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                                 LegacySharedPrefUtils.saveAccessToken(it.value?.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
-                                        viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                                        viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
                                     }
                                 }
                                 callBack.invoke(true)
@@ -157,13 +156,15 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
 
                             is ResultWrapper.GenericError -> {
                                 when (it.code) {
-                                    400 -> showToast(R.string.connection_failed)
+                                    400 -> showToast(CommonR.string.connection_failed)
                                     404 -> callBack.invoke(false)
-                                    503 -> showToast(R.string.server_500)
-                                    500, 502 -> showToast(R.string.connection_failed)
-                                    else -> showToast(R.string.connection_failed)
+                                    503 -> showToast(CommonR.string.server_500)
+                                    500, 502 -> showToast(CommonR.string.connection_failed)
+                                    else -> showToast(CommonR.string.connection_failed)
                                 }
                             }
+
+                            ResultWrapper.NetworkError -> {}
                         }
                     }
                 }
@@ -182,10 +183,9 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
     private fun tryKakaoLogin() {
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
-                showToast(R.string.error_no_kakao_login)
+                showToast(CommonR.string.error_no_kakao_login)
             } else if (token != null) {
                 LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                LegacySharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 tryLoginBySocialType(token)
             }
         }

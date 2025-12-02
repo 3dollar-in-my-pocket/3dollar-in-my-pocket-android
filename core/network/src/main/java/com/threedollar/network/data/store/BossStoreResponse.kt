@@ -12,7 +12,11 @@ data class BossStoreResponse(
     @SerializedName("openStatus")
     val openStatus: OpenStatus? = OpenStatus(),
     @SerializedName("store")
-    val store: BossStore? = BossStore(),
+    val store: BossStore = BossStore(),
     @SerializedName("tags")
-    val tags: Tags? = Tags()
+    val tags: Tags? = Tags(),
+    @SerializedName("newsPosts")
+    val newsPosts: ContentsWithCursorWithTotalCountResponse<NewsPost>? = ContentsWithCursorWithTotalCountResponse(),
+    @SerializedName("reviews")
+    val reviews: ContentsWithCursorWithTotalCountResponse<StoreReviewDetailResponse>? = ContentsWithCursorWithTotalCountResponse()
 )

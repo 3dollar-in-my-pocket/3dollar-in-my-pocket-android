@@ -30,6 +30,7 @@ object Constants {
     const val NICKNAME_ALREADY_EXISTED = "nickname_already_existed"
 
     // home
+    const val HOME_REOPEN = "home_reopen"
     const val CLICK_STORE = "click_store"
     const val CLICK_VISIT = "click_visit"
     const val CLICK_CURRENT_LOCATION = "click_current_location"
@@ -40,6 +41,8 @@ object Constants {
     const val CLICK_SORTING = "click_sorting"
     const val CLICK_AD_CARD = "click_ad_card"
     const val CLICK_AD_MARKER = "click_ad_marker"
+    const val CLICK_RECENT_ACTIVITY_FILTER = "click_recent_activity_filter"
+    const val CLICK_ADDRESS = "click_address"
     const val CLICK_ONLY_VISIT = "click_only_visit"
 
     // category
@@ -78,6 +81,7 @@ object Constants {
 
     // boss_store_detail
     const val CLICK_SNS = "click_sns"
+    const val CLICK_NUMBER = "click_number"
 
     // write_address
     const val CLICK_SET_ADDRESS = "click_set_address"
@@ -119,6 +123,7 @@ object Constants {
     const val INQUIRY_BTN_CLICKED = "inquiry_button_clicked"
     const val TERMS_OF_USE_BTN_CLICKED = "terms_of_use_button_clicked"
     const val PRIVACY_POLICY_OF_USE_BTN_CLICKED = "privacy_policy_of_use_button_clicked"
+    const val TEAM_INTRODUCE_BTN_CLICKED = "team_introduce_button_clicked"
     const val FIREBASE_INTERVAL: Long = 3600L
 
     // orderType
@@ -130,6 +135,7 @@ object Constants {
     //storeType
     const val BOSS_STORE = "BOSS_STORE"
     const val USER_STORE = "USER_STORE"
+    const val STORE = "STORE"
 
     const val FAVORITE_STORE = "FAVORITE_STORE"
 }

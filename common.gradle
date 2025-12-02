@@ -4,9 +4,15 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 36
     signingConfigs {
         release {
+            keyAlias '3dollor'
+            keyPassword '3dollor'
+            storeFile file('3dollor-android-key.jks')
+            storePassword '3dollor'
+        }
+        debug {
             keyAlias '3dollor'
             keyPassword '3dollor'
             storeFile file('3dollor-android-key.jks')
@@ -15,9 +21,9 @@ android {
     }
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 34
-        versionCode 76
-        versionName "4.1.1"
+        targetSdkVersion 36
+        versionCode 106
+        versionName project.property("version_name")
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,8 +31,8 @@ android {
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility kotlin_version
+        targetCompatibility kotlin_version
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -40,11 +46,12 @@ repositories {
     google()
     mavenCentral()
 }
+
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.5.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "com.google.android.material:material:1.7.0"
     implementation "androidx.core:core-ktx:1.9.0"
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
@@ -74,8 +81,8 @@ dependencies {
 
     // 도전 정신
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-    implementation "com.google.dagger:hilt-android:2.42"
-    kapt "com.google.dagger:hilt-android-compiler:2.42"
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-android-compiler:2.44"
 
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-all:2.12.0"
@@ -83,7 +90,7 @@ dependencies {
     // google
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services-ads:21.3.0'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
@@ -93,18 +100,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
-    implementation 'com.google.android.play:core:1.10.3'
-    implementation 'com.google.android.play:core-ktx:1.8.1'
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
 
     // naver4
-    implementation "com.naver.maps:map-sdk:3.12.0"
+    implementation "com.naver.maps:map-sdk:3.21.0"
 
     // image slider
     implementation "com.github.ome450901:SimpleRatingBar:1.5.1"
 
-    implementation "com.github.greenfrvr:hashtag-view:1.3.1"
+    implementation("com.github.greenfrvr:hashtag-view:1.3.1") {
+        exclude group: 'com.google.guava'
+    }
 
     // image picker
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.4.2'

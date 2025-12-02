@@ -2,13 +2,13 @@ package com.threedollar.presentation.poll
 
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.store.ReportReasonsModel
-import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CommentId
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
+import com.threedollar.domain.model.ReportReasonsGroupType
+import com.threedollar.domain.model.ReportReasonsModel
 import com.threedollar.domain.repository.CommunityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

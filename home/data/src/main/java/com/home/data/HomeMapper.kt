@@ -1,8 +1,11 @@
 package com.home.data
 
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AccountModel
 import com.home.domain.data.store.AccountNumberModel
+import com.home.domain.data.store.ActivitiesStatus
+import com.home.domain.data.store.AdditionalInfo
 import com.home.domain.data.store.AddressModel
 import com.home.domain.data.store.AppearanceDayModel
 import com.home.domain.data.store.AroundStoreModel
@@ -11,6 +14,10 @@ import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.BossStoreModel
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ClassificationModel
+import com.home.domain.data.store.CommentModel
+import com.home.domain.data.store.CommentStatus
+import com.home.domain.data.store.CommentWriter
+import com.home.domain.data.store.ContactNumberModel
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.CountsModel
 import com.home.domain.data.store.CreatorModel
@@ -20,15 +27,19 @@ import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.EditStoreReviewModel
 import com.home.domain.data.store.ExtraModel
 import com.home.domain.data.store.FavoriteModel
+import com.home.domain.data.store.FeedbackExistsModel
 import com.home.domain.data.store.FeedbackModel
 import com.home.domain.data.store.FeedbackType
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.HistoriesContentModel
 import com.home.domain.data.store.HistoriesModel
 import com.home.domain.data.store.ImageContentModel
+import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ImagesModel
 import com.home.domain.data.store.LocationModel
+import com.home.domain.data.store.MarkerModel
 import com.home.domain.data.store.MenuModel
+import com.home.domain.data.store.NewsPostModel
 import com.home.domain.data.store.OpenStatusModel
 import com.home.domain.data.store.OpeningHoursModel
 import com.home.domain.data.store.PaymentType
@@ -43,7 +54,12 @@ import com.home.domain.data.store.ReviewWriterModel
 import com.home.domain.data.store.ReviewsModel
 import com.home.domain.data.store.SalesType
 import com.home.domain.data.store.SaveImagesModel
+import com.home.domain.data.store.SectionModel
+import com.home.domain.data.store.UploadFileModel
+import com.home.domain.data.store.SectionTypeModel
 import com.home.domain.data.store.StatusType
+import com.home.domain.data.store.StickerModel
+import com.home.domain.data.store.StoreMarkerImageModel
 import com.home.domain.data.store.StoreModel
 import com.home.domain.data.store.StoreNearExistsModel
 import com.home.domain.data.store.TagsModel
@@ -54,21 +70,28 @@ import com.home.domain.data.store.VisitCountsModel
 import com.home.domain.data.store.VisitModel
 import com.home.domain.data.store.VisitorModel
 import com.home.domain.data.store.VisitsModel
+import com.home.domain.data.store.WriterType
 import com.home.domain.data.user.AcquisitionModel
 import com.home.domain.data.user.DeviceModel
 import com.home.domain.data.user.MedalModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.domain.request.MenuModelRequest
 import com.home.domain.request.OpeningHourRequest
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
+import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.network.data.Reason
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.Account
 import com.threedollar.network.data.store.AccountNumber
+import com.threedollar.network.data.store.AdditionalInfoResponse
 import com.threedollar.network.data.store.Address
 import com.threedollar.network.data.store.AppearanceDay
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -77,7 +100,10 @@ import com.threedollar.network.data.store.BossStore
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.Category
 import com.threedollar.network.data.store.Classification
+import com.threedollar.network.data.store.CommentItemResponse
+import com.threedollar.network.data.store.ContactNumber
 import com.threedollar.network.data.store.Content
+import com.threedollar.network.data.store.ContentListCommentResponse
 import com.threedollar.network.data.store.Counts
 import com.threedollar.network.data.store.Creator
 import com.threedollar.network.data.store.Cursor
@@ -91,18 +117,26 @@ import com.threedollar.network.data.store.HistoriesContent
 import com.threedollar.network.data.store.Image
 import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.Location
+import com.threedollar.network.data.store.Marker
 import com.threedollar.network.data.store.Menu
+import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.OpenStatus
 import com.threedollar.network.data.store.OpeningHours
 import com.threedollar.network.data.store.PostUserStoreResponse
+import com.threedollar.network.data.store.RepresentativeImage
 import com.threedollar.network.data.store.Review
-import com.threedollar.network.data.store.ReviewContent
 import com.threedollar.network.data.store.ReviewReport
 import com.threedollar.network.data.store.ReviewWriter
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
+import com.threedollar.network.data.store.Section
+import com.threedollar.network.data.store.SectionType
+import com.threedollar.network.data.store.Sticker
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.Store
+import com.threedollar.network.data.store.StoreMarkerImageResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.Tags
 import com.threedollar.network.data.store.UserStore
 import com.threedollar.network.data.store.UserStoreMenu
@@ -111,10 +145,12 @@ import com.threedollar.network.data.store.Visit
 import com.threedollar.network.data.store.VisitCounts
 import com.threedollar.network.data.store.Visitor
 import com.threedollar.network.data.store.Visits
+import com.threedollar.network.data.store.WriterResponse
 import com.threedollar.network.data.user.Acquisition
 import com.threedollar.network.data.user.Device
 import com.threedollar.network.data.user.Medal
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MenuRequest
 import com.threedollar.network.request.ReportReviewRequest
 import com.threedollar.network.request.UserStoreRequest
@@ -200,7 +236,6 @@ fun Category.asModel() = CategoryModel(
     categoryId = categoryId ?: "",
     classificationModel = classification?.asModel() ?: ClassificationModel(),
     description = description ?: "",
-    disableImageUrl = disableImageUrl ?: "",
     imageUrl = imageUrl ?: "",
     isNew = isNew ?: false,
     name = name ?: "",
@@ -212,14 +247,28 @@ fun Classification.asModel() = ClassificationModel(
 )
 
 fun Content.asModel() = ContentModel(
+    storeModel = store?.asModel() ?: StoreModel(),
+    markerModel = marker?.asModel(),
+    openStatusModel = openStatus.asModel(),
     distanceM = distanceM ?: 0,
     extraModel = extra?.asModel() ?: ExtraModel(),
-    storeModel = store?.asModel() ?: StoreModel(),
+)
+
+fun Marker.asModel() = MarkerModel(
+    selected = selected.asModel(),
+    unSelected = unSelected.asModel()
+)
+
+fun StoreMarkerImageResponse.asModel() = StoreMarkerImageModel(
+    imageUrl = imageUrl,
+    width = width,
+    height = height
 )
 
 fun Cursor.asModel() = CursorModel(
     hasMore = hasMore ?: false,
     nextCursor = nextCursor,
+    totalCount = totalCount.toDefaultInt()
 )
 
 fun Extra.asModel() = ExtraModel(
@@ -241,6 +290,7 @@ fun Store.asModel() = StoreModel(
     createdAt = createdAt ?: "",
     isDeleted = isDeleted ?: false,
     locationModel = location?.asModel() ?: LocationModel(),
+    activitiesStatus = if (activitiesStatus == "RECENT_ACTIVITY") FilterConditionsTypeModel.RECENT_ACTIVITY else FilterConditionsTypeModel.NO_RECENT_ACTIVITY,
     storeId = storeId ?: "",
     storeName = storeName ?: "",
     storeType = storeType ?: "",
@@ -269,20 +319,35 @@ fun OpeningHours.asModel() = OpeningHoursModel(
 )
 
 fun BossStore.asModel() = BossStoreModel(
-    address = address?.asModel() ?: AddressModel(),
-    appearanceDayModels = appearanceDays?.map { it.asModel() } ?: listOf(),
-    categories = categories?.map { it.asModel() } ?: listOf(),
-    createdAt = createdAt ?: "",
+    storeId             = storeId,
+    isOwner             = isOwner,
+    name                = name,
+    rating              = rating,
+    location            = location?.asModel() ?: LocationModel(),
+    address             = address.asModel(),
+    representativeImages= representativeImages.map { it.asModel() },
+    introduction        = introduction ?: "",
+    snsUrl              = snsUrl ?: "",
+    menus               = menus.map { it.asModel() },
+    appearanceDays      = appearanceDays.map { it.asModel() },
+    categories          = categories.map { it.asModel() },
+    accountNumbers      = accountNumbers.map { it.asModel() },
+    contactsNumbers     = contactsNumbers.map { it.asModel() },
+    activitiesStatus    = ActivitiesStatus.from(activitiesStatus.name),
+    createdAt           = createdAt,
+    updatedAt           = updatedAt
+)
+
+fun ContactNumber.asModel() = ContactNumberModel(
+    number = number,
+    description = description ?: "",
+)
+
+fun RepresentativeImage.asModel() = ImageModel(
     imageUrl = imageUrl,
-    introduction = introduction,
-    location = location?.asModel(),
-    menuModels = menus?.map { it.asModel() } ?: listOf(),
-    name = name ?: "",
-    snsUrl = snsUrl,
-    storeId = storeId ?: "",
-    updatedAt = updatedAt ?: "",
-    isOwner = isOwner ?: false,
-    accountNumbers = accountNumbers?.map { it.asModel() } ?: listOf(),
+    width    = width,
+    height   = height,
+    ratio    = ratio
 )
 
 fun AccountNumber.asModel() = AccountNumberModel(
@@ -308,8 +373,38 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     favoriteModel = favorite?.asModel() ?: FavoriteModel(),
     feedbackModels = feedbacks?.map { it.asModel() } ?: listOf(),
     openStatusModel = openStatus?.asModel() ?: OpenStatusModel(),
-    store = store?.asModel() ?: BossStoreModel(),
+    store = store.asModel(),
     tags = tags?.asModel() ?: TagsModel(),
+    newsPosts = newsPosts?.contents?.map { it.asModel() } ?: listOf(),
+    reviews = reviews?.contents?.map { it.asModel() } ?: listOf(),
+    reviewTotalCount = reviews?.cursor?.totalCount ?: 0,
+    hasMoreReviews = reviews?.cursor?.hasMore ?: false
+)
+
+fun NewsPost.asModel(): NewsPostModel = NewsPostModel(
+    postId = postId,
+    body = body,
+    sections = sections.map { it.asModel() },
+    isOwner = isOwner,
+    stickers = stickers.map { it.asModel() },
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+fun Section.asModel(): SectionModel = SectionModel(
+    sectionType = when (this.sectionType) {
+        SectionType.IMAGE -> SectionTypeModel.IMAGE
+        else -> SectionTypeModel.UNKNOWN
+    },
+    url = url,
+    ratio = ratio
+)
+
+fun Sticker.asModel(): StickerModel = StickerModel(
+    stickerId = stickerId,
+    emoji = emoji,
+    count = count,
+    reactedByMe = reactedByMe
 )
 
 fun Favorite.asModel() = FavoriteModel(
@@ -320,7 +415,9 @@ fun Favorite.asModel() = FavoriteModel(
 fun Feedback.asModel() = FeedbackModel(
     count = count ?: 0,
     feedbackType = feedbackType?.asFeedbackType() ?: FeedbackType.BOSS_IS_KIND,
-    ratio = ratio ?: 0.0,
+    ratio = ratio ?: 0.0f,
+    emoji = emoji ?: "",
+    description = description ?: "",
 )
 
 fun OpenStatus.asModel() = OpenStatusModel(
@@ -439,7 +536,7 @@ fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
     tags = tags?.asModel() ?: TagsModel(),
     visits = visits?.asModel() ?: VisitsModel(),
 
-)
+    )
 
 fun Creator.asModel(): CreatorModel = CreatorModel(
     medal = medal?.asModel() ?: MedalModel(),
@@ -462,23 +559,52 @@ fun Image.asModel() = ImageContentModel(
 
 fun Reviews.asModel() = ReviewsModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
+    cursor = cursor?.asModel() ?: CursorModel(),
 )
 
-fun ReviewContent.asModel() = ReviewContentModel(
+fun StoreReviewDetailResponse.asModel() = ReviewContentModel(
     review = review?.asModel() ?: ReviewModel(),
     reviewReport = reviewReport?.asModel() ?: ReviewReportModel(),
     reviewWriter = reviewWriter?.asModel() ?: ReviewWriterModel(),
+    stickers = stickers?.map { it.asModel() } ?: listOf(),
+    comments = comments.asModel()
+)
 
+
+fun ContentListCommentResponse.asModel(): List<CommentModel> =
+    contents.map { it.asModel() }
+
+fun CommentItemResponse.asModel(): CommentModel = CommentModel(
+    commentId = commentId,
+    content = content,
+    status = CommentStatus.from(status),
+    writer = writer.asModel(),
+    isOwner = isOwner,
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+fun WriterResponse.asModel(): CommentWriter = CommentWriter(
+    writerId = writerId,
+    writerType = WriterType.from(writerType),
+    name = name,
+    additionalInfo = additionalInfo?.asModel() ?: AdditionalInfo()
+)
+
+fun AdditionalInfoResponse.asModel(): AdditionalInfo = AdditionalInfo(
+    type = type,
+    medal = medal.asModel()
 )
 
 fun Review.asModel() = ReviewModel(
     contents = contents,
     createdAt = createdAt ?: "",
-    rating = rating ?: 0,
+    rating = rating ?: 0.0f,
     reviewId = reviewId ?: 0,
     status = status?.asReviewStatusType() ?: ReviewStatusType.POSTED,
     updatedAt = updatedAt ?: "",
     isOwner = isOwner ?: false,
+    images = images.map { it.asModel() },
 )
 
 fun ReviewReport.asModel() = ReviewReportModel(
@@ -537,7 +663,8 @@ fun UserStoreMenu.asModel() = UserStoreMenuModel(
     menuId = menuId ?: 0,
     name = name,
     price = price,
-)
+
+    )
 
 fun Visits.asModel() = VisitsModel(
     counts = counts?.asModel() ?: CountsModel(),
@@ -584,6 +711,13 @@ fun SaveImagesResponse.asModel() = SaveImagesModel(
     imageId = imageId ?: 0,
     updatedAt = updatedAt ?: "",
     url = url ?: "",
+)
+
+fun UploadFileResponse.asModel() = UploadFileModel(
+    imageUrl = imageUrl,
+    width = width,
+    height = height,
+    ratio = ratio
 )
 
 fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
@@ -651,4 +785,35 @@ fun Reason.asModel() = ReasonModel(
     description = description ?: "",
     hasReasonDetail = hasReasonDetail ?: false,
     type = type ?: "",
+)
+
+fun com.threedollar.network.data.place.Content.asModel() = PlaceModel(
+    addressName = addressName ?: "",
+    createdAt = createdAt,
+    location = PlaceModel.Location(longitude = location.longitude ?: 0.0, latitude = location.latitude ?: 0.0),
+    placeId = placeId,
+    placeName = placeName,
+    roadAddressName = roadAddressName ?: "",
+    updatedAt = updatedAt
+
+)
+
+fun PlaceRequest.asRequest() = com.threedollar.network.request.PlaceRequest(
+    location = com.threedollar.network.request.PlaceRequest.Location(longitude = location.longitude, latitude = location.latitude),
+    placeName = placeName,
+    addressName = addressName,
+    roadAddressName = roadAddressName
+)
+
+fun PlaceType.asType() = when (this) {
+    PlaceType.RECENT_SEARCH -> com.threedollar.network.request.PlaceType.RECENT_SEARCH
+}
+
+fun FilterConditionsTypeModel.asType() = when (this) {
+    FilterConditionsTypeModel.RECENT_ACTIVITY -> FilterConditionsType.RECENT_ACTIVITY
+    FilterConditionsTypeModel.NO_RECENT_ACTIVITY -> FilterConditionsType.NO_RECENT_ACTIVITY
+}
+
+fun FeedbackExistsResponse.asModel() = FeedbackExistsModel(
+    exists = exists
 )

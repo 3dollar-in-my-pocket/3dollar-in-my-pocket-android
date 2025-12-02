@@ -12,9 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class VersionUpdateDialog(private val currentVersion: String) : DialogFragment() {
@@ -29,7 +30,7 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
         dialog?.setCancelable(false)
         dialog?.setCanceledOnTouchOutside(false)
 
-        binding.btnOk.setOnClickListener {
+        binding.btnOk.onSingleClick {
             requireContext().startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -39,7 +40,7 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
             requireActivity().finish()
         }
         binding.tvDescription.text =
-            getString(R.string.update_available_desc).format(currentVersion)
+            getString(CommonR.string.update_available_desc).format(currentVersion)
         return binding.root
     }
 

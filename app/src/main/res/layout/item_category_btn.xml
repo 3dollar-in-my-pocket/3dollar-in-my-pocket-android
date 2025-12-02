@@ -14,9 +14,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_select_circle"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/categoryImageView"
             app:layout_constraintEnd_toEndOf="@id/categoryImageView"
-            android:visibility="gone"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="@id/categoryImageView"
             app:layout_constraintTop_toTopOf="@id/categoryImageView" />
@@ -35,10 +35,11 @@
 
         <TextView
             android:id="@+id/categoryNameTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:gravity="center"
             android:textColor="@color/gray70"
             app:layout_constraintEnd_toEndOf="@id/categoryImageView"
             app:layout_constraintStart_toStartOf="@id/categoryImageView"

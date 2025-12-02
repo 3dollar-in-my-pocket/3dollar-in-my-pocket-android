@@ -58,6 +58,9 @@
             android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -110,7 +113,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewActivity"
+            android:name=".ui.storeDetail.boss.ui.BossReviewWriteActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -147,22 +150,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="link.threedollars.co.kr"
-                    android:pathPattern=".*"
-                    android:scheme="https" />
-                <data
-                    android:host="link.threedollars.co.kr"
-                    android:pathPattern=".*"
-                    android:scheme="http" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*"
-                    android:scheme="dollars-dev" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*"
-                    android:scheme="dollars" />
+                <data android:scheme="https"/>
+                <data android:host="link.threedollars.co.kr"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="http"/>
+                <data android:host="link.threedollars.co.kr"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="dollars-dev"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*"/>
+                <data android:scheme="dollars"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*"/>
             </intent-filter>
         </activity>
         <activity
@@ -192,12 +191,17 @@
         <activity android:name="com.threedollar.presentation.polls.PollListActivity" />
         <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
+        <activity android:name="com.my.presentation.page.team.MyPageTeamActivity" />
+
+        <activity
+            android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${google_map_key}" />
         <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
+            android:name="com.naver.maps.map.NCP_KEY_ID"
             android:value="${nmf_client_id}" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -205,5 +209,8 @@
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
     </application>
 </manifest>

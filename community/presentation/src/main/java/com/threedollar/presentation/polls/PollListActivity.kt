@@ -15,8 +15,8 @@ import com.threedollar.common.listener.EventTrackerListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
-import com.threedollar.network.data.poll.request.PollCreateApiRequest
-import com.threedollar.presentation.R
+import com.threedollar.domain.model.PollCreateModel
+import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollListBinding
 import com.threedollar.presentation.dialog.CreatePollDialog
 import com.threedollar.presentation.poll.PollDetailActivity
@@ -78,6 +78,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
     }
 
     override fun initView() {
+        setLightSystemBars()
         categoryId = intent.getStringExtra("category").orEmpty()
         if (categoryId.isEmpty()) {
             finish()
@@ -126,15 +127,14 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
         }
         binding.llPollCreate.onSingleClick {
             CreatePollDialog().setCreatePoll { title, first, second ->
-                val calendar = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                val formattedDate = dateFormat.format(calendar.time)
                 viewModel.createPoll(
-                    PollCreateApiRequest(
+                    PollCreateModel(
                         title = title,
-                        options = listOf(PollCreateApiRequest.Option(first), PollCreateApiRequest.Option(second)),
+                        content = "",
+                        options = listOf(first, second),
                         categoryId = categoryId,
-                        startDateTime = formattedDate
+                        period = 0,
+                        isAllowMultipleChoice = false
                     )
                 )
                 val bundle = Bundle().apply {
@@ -159,7 +159,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
                 viewModel.userPollPolicy.collect {
                     binding.llPollCreate.isEnabled = it.currentCount < it.limitCount
                     binding.llPollCreate.isSelected = it.currentCount < it.limitCount
-                    binding.twCreateCount.text = getString(R.string.str_create_count, it.currentCount, it.limitCount)
+                    binding.twCreateCount.text = getString(CommonR.string.str_create_count, it.currentCount, it.limitCount)
                 }
             }
             launch {

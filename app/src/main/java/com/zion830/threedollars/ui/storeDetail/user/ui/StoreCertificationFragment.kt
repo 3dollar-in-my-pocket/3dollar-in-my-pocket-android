@@ -14,15 +14,17 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationBinding
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.map.ui.StoreCertificationNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import kotlin.math.abs
 import kotlin.math.min
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, StoreCertificationViewModel>() {
@@ -72,12 +74,12 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
             userStoreModel?.location?.latitude ?: 0.0,
             userStoreModel?.location?.longitude ?: 0.0
         )
-        naverMapFragment = StoreCertificationNaverMapFragment(storeLatLng)
+        naverMapFragment = StoreCertificationNaverMapFragment.newInstance(latLng = storeLatLng)
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
     }
 
     private fun initButton() {
-        binding.ibClose.setOnClickListener {
+        binding.ibClose.onSingleClick {
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -93,7 +95,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         if (distance <= MIN_DISTANCE) {
             startCertification()
         }
-        binding.tvDistance.text = getString(R.string.certification_distance, (distance - MIN_DISTANCE).toInt())
+        binding.tvDistance.text = getString(CommonR.string.certification_distance, (distance - MIN_DISTANCE).toInt())
         progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
         binding.progressIndicator.progress = progress
         return distance

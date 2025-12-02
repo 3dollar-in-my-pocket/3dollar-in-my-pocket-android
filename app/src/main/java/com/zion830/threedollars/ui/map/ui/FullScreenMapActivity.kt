@@ -29,6 +29,7 @@ class FullScreenMapActivity :
     private var isClosed = false
 
     override fun initView() {
+        setLightSystemBars()
         initIntent()
         initButton()
     }

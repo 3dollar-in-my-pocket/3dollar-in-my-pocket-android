@@ -12,15 +12,12 @@ import java.lang.reflect.Type
 
 object LegacySharedPrefUtils {
     private const val PREFERENCE_FILE_KEY = "preference_file_key"
-    private const val KAKAO_ACCESS_TOKEN = "kakao_access_token"
-    private const val KAKAO_REFRESH_TOKEN = "kakao_refresh_token"
     private const val USER_ID_KEY = "user_id_key"
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
     private const val CATEGORY_LIST = "category_list"
     private const val TRUCK_CATEGORY_LIST = "truck_category_list"
     private const val LOGIN_TYPE = "login_type"
-    private const val GOOGLE_TOKEN = "google_token"
     private const val FIRST_MARKETING = "first_marketing"
 
     private val sharedPreferences = GlobalApplication.getContext()
@@ -47,19 +44,7 @@ object LegacySharedPrefUtils {
         commit()
     }
 
-    fun saveKakaoToken(accessToken: String?, refreshToken: String?) = sharedPreferences.edit {
-        putString(KAKAO_ACCESS_TOKEN, accessToken)
-        if (!refreshToken.isNullOrBlank()) {
-            putString(KAKAO_REFRESH_TOKEN, refreshToken)
-        }
-        commit()
-    }
-
     fun getAccessToken() = sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
-
-    fun getKakaoAccessToken() = sharedPreferences.getString(KAKAO_ACCESS_TOKEN, null)
-
-    fun getKakaoRefreshToken() = sharedPreferences.getString(KAKAO_REFRESH_TOKEN, null)
 
     fun saveCategories(categoryInfo: List<CategoriesModel>) {
         saveList(categoryInfo, CATEGORY_LIST)
@@ -75,13 +60,6 @@ object LegacySharedPrefUtils {
     }
 
     fun getLoginType() = sharedPreferences.getString(LOGIN_TYPE, "")
-
-    fun saveGoogleToken(token: String) = sharedPreferences.edit {
-        putString(GOOGLE_TOKEN, token)
-        commit()
-    }
-
-    fun getGoogleToken() = sharedPreferences.getString(GOOGLE_TOKEN, "")
 
     fun getCategories(): List<CategoryModel> {
         return try {
@@ -128,8 +106,6 @@ object LegacySharedPrefUtils {
 
     fun clearUserInfo() {
         saveAccessToken("")
-        saveKakaoToken("", "")
-        saveGoogleToken("")
         saveLoginType(null)
         saveUserId(-1)
     }

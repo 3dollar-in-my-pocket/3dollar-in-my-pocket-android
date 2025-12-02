@@ -14,9 +14,13 @@ import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.dialog.NearExistDialog
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
+import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewModel>() {
@@ -28,10 +32,10 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     override fun initView() {
         initMap()
         initFlow()
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             viewModel.getStoreNearExists(viewModel.selectedLocation.value ?: LatLng(0.0, 0.0))
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
@@ -54,8 +58,13 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
                 launch {
                     viewModel.selectedLocation.collect { latLng ->
                         if (latLng != null) {
-                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(R.string.location_no_address)
-                            viewModel.requestStoreInfo(latLng)
+                            binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
+                            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+                            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+                            viewModel.requestStoreInfo(
+                                latLng,
+                                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
+                            )
                         }
                     }
                 }

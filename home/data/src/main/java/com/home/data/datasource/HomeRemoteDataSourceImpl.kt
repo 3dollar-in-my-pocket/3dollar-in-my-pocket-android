@@ -2,28 +2,38 @@ package com.home.data.datasource
 
 import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
 import com.threedollar.network.data.store.EditStoreReviewResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
-import com.threedollar.network.data.store.ReviewContent
+import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.StoreNearExistResponse
+import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.home.domain.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
+import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
+import com.threedollar.network.request.PlaceRequest
+import com.threedollar.network.request.PlaceType
 import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
+import com.threedollar.network.request.BossStoreReviewRequest
+import com.threedollar.network.request.FeedbackRequest
+import com.threedollar.network.request.ImageRequest
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
-import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -32,10 +42,12 @@ import javax.inject.Inject
 
 class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
     override fun getAroundStores(
+        distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsType: List<FilterConditionsType>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -44,10 +56,12 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(
             apiResult(
                 serverApi.getAroundStores(
+                    distanceM = if (distanceM.isNaN() || distanceM <= 0) 100000.0 else distanceM,
                     categoryIds = categoryIds,
                     targetStores = targetStores,
                     sortType = sortType,
                     filterCertifiedStores = filterCertifiedStores,
+                    filterConditions = filterConditionsType.map { it.name },
                     mapLatitude = mapLatitude,
                     mapLongitude = mapLongitude,
                     deviceLatitude = deviceLatitude,
@@ -102,20 +116,32 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.putMarketingConsent(marketingConsentRequest)))
     }
 
-    override fun postPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.postPushInformation(informationRequest)))
+    override fun putPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putPushInformation(informationRequest)))
     }
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<AdvertisementResponse>> = flow {
-        emit(apiResult(serverApi.getAdvertisements(position.name)))
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double
+    ): Flow<BaseResponse<AdvertisementResponse>> = flow {
+        emit(
+            apiResult(
+                serverApi.getAdvertisements(
+                    position = position.name,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude
+                )
+            )
+        )
     }
 
-    override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.putFavorite(storeType, storeId)))
+    override fun putFavorite(storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putFavorite(storeId)))
     }
 
-    override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.deleteFavorite(storeType, storeId)))
+    override fun deleteFavorite(storeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deleteFavorite(storeId)))
     }
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>> = flow {
@@ -138,11 +164,16 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
         emit(apiResult(serverApi.deleteImage(imageId)))
     }
 
-    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesResponse>>> = flow {
-        emit(apiResult(serverApi.saveImages(images, storeId)))
-    }
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>> =
+        apiResult(serverApi.saveImages(images, storeId))
 
-    override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<ReviewContent>> = flow {
+    override suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileResponse>> =
+        apiResult(serverApi.uploadFilesBulk(fileType, files))
+
+    override suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileResponse> =
+        apiResult(serverApi.uploadFile(fileType, file))
+
+    override fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))
     }
 
@@ -168,5 +199,42 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
 
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>> = flow {
         emit(apiResult(serverApi.getReportReasons(reportReasonsGroupType.name)))
+    }
+
+    override fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.postPlace(placeRequest = placeRequest, placeType = placeType.name)))
+    }
+
+    override fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deletePlace(placeType = placeType.name, placeId = placeId)))
+    }
+
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>> = flow {
+        emit(
+            apiResult(
+                serverApi.putStickers(
+                    storeId = storeId,
+                    reviewId = reviewId,
+                    stickerRequest = StickerRequest(stickers.map { sticker -> StickerRequest.Sticker(sticker) })
+                )
+            )
+        )
+    }
+
+    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
+        val imageRequests = images.map { ImageRequest(url = it.imageUrl, width = it.width, height = it.height) }
+        val feedbackRequests = feedbacks.map { FeedbackRequest(it) }
+        val request = BossStoreReviewRequest(
+            storeId = storeId,
+            contents = contents,
+            rating = rating,
+            images = imageRequests,
+            feedbacks = feedbackRequests
+        )
+        emit(apiResult(serverApi.postBossStoreReview(request)))
+    }
+
+    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsResponse>> = flow {
+        emit(apiResult(serverApi.checkFeedbackExists(targetType, targetId)))
     }
 }

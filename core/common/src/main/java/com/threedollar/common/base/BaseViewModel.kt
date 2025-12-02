@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.Gson
 import com.threedollar.common.BuildConfig
 import com.threedollar.common.R
 import kotlinx.coroutines.CoroutineDispatcher
@@ -53,7 +54,18 @@ open class BaseViewModel : ViewModel() {
                 if (apiCall.isSuccessful) {
                     handleSuccessEvent(apiCall)
                 } else {
-                    ResultWrapper.GenericError(apiCall.code(), apiCall.message())
+                    val errorMessage = try {
+                        val errorBodyString = apiCall.errorBody()?.string()
+                        if (!errorBodyString.isNullOrEmpty()) {
+                            val errorResponse = Gson().fromJson(errorBodyString, BaseResponse::class.java)
+                            errorResponse.message ?: apiCall.message()
+                        } else {
+                            apiCall.message()
+                        }
+                    } catch (e: Exception) {
+                        apiCall.message()
+                    }
+                    ResultWrapper.GenericError(apiCall.code(), errorMessage)
                 }
             } catch (throwable: Throwable) {
                 ResultWrapper.NetworkError

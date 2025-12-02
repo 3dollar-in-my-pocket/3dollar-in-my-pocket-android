@@ -1,16 +1,22 @@
 package com.threedollar.network.di
 
 import android.os.Build
+import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
 import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
+import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Authenticator
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,10 +48,19 @@ object NetworkModule {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    @Provides
+    @Singleton
+    fun authInterceptor() = Authenticator { _, response ->
+        if(response.code == 401){
+            GlobalEvent.triggerLogout()
+        }
+        return@Authenticator null
+    }
+
     @Singleton
     @Provides
     @OkhttpClient
-    fun provideOkHttpClient(sharedPrefUtils: SharedPrefUtils, interceptor: HttpLoggingInterceptor): OkHttpClient =
+    fun provideOkHttpClient(sharedPrefUtils: SharedPrefUtils, interceptor: HttpLoggingInterceptor, authenticator: Authenticator): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addInterceptor {
@@ -53,7 +68,9 @@ object NetworkModule {
                     .removeHeader("User-Agent")
                     .addHeader(
                         "User-Agent",
-                        BuildConfig.VERSION_NAME + " (${BuildConfig.APPLICATION_ID}); " + Build.VERSION.SDK_INT
+                        BuildConfig.VERSION_NAME +
+                                " (${if (BuildConfig.BUILD_TYPE == "debug") "com.zion830.threedollars.dev" else "com.zion830.threedollars"}); " +
+                                Build.VERSION.SDK_INT
                     )
                     .addHeader(
                         "Authorization",
@@ -67,6 +84,7 @@ object NetworkModule {
 
                 it.proceed(request)
             }
+            .authenticator(authenticator)
             .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
             .build()
 
@@ -108,5 +126,15 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(KakaoLoginApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideLoginApi(@OkhttpClient okHttpClient: OkHttpClient): LoginApi =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(LoginApi::class.java)
 
 }

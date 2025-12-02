@@ -65,16 +65,29 @@
             app:layout_constraintTop_toBottomOf="@id/twPollListTitle"
             tools:listitem="@layout/item_poll" />
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/admob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rect_gray"
+            android:visibility="visible"
+            app:adSize="BANNER"
+            app:adUnitId="@string/admob_community_tab_banner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerPoll" />
+
         <View
             android:id="@+id/vwCommunityContentsBack"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="12dp"
             android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerPoll" />
+            app:layout_constraintTop_toBottomOf="@id/admob" />
 
         <TextView
             android:id="@+id/twCommunityContentsTitle"
@@ -86,40 +99,22 @@
             android:textColor="@color/black"
             android:textSize="16dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/twAreaChoice"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/vwCommunityContentsBack" />
 
         <TextView
-            android:id="@+id/twCommunityContentsMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="아직 서울만 볼 수 있어요! 조금만 기다려 주세요 :)"
-            android:textColor="@color/gray60"
-            android:textSize="12dp"
-            app:layout_constraintEnd_toEndOf="@id/twCommunityContentsTitle"
-            app:layout_constraintStart_toStartOf="@id/twCommunityContentsTitle"
-            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsTitle" />
-
-        <TextView
-            android:id="@+id/twAreaChoice"
+            android:id="@+id/selectNeighborhoodTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/rect_round8"
-            android:backgroundTint="@color/gray10"
-            android:clipToOutline="true"
-            android:drawableEnd="@drawable/ic_arrow_down_16"
-            android:gravity="center"
-            android:padding="8dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="8dp"
+            android:textSize="16dp"
             android:textColor="@color/gray80"
-            android:textSize="14dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/vwCommunityContentsBack"
-            tools:targetApi="s"
-            tools:text="관악구" />
+            android:textStyle="bold"
+            android:text="@string/select_neighborhood_default"
+            android:drawableEnd="@drawable/ic_arrow_down_16_black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsTitle" />
 
         <View
             android:layout_width="0dp"
@@ -137,7 +132,7 @@
             android:layout_marginTop="12dp"
             app:layout_constraintEnd_toStartOf="@id/clPopularMostVisits"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage">
+            app:layout_constraintTop_toBottomOf="@id/selectNeighborhoodTextView">
 
             <TextView
                 android:id="@+id/twPopularMostReview"
@@ -172,7 +167,7 @@
             android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/clPopularMostReview"
-            app:layout_constraintTop_toBottomOf="@id/twCommunityContentsMessage">
+            app:layout_constraintTop_toBottomOf="@id/selectNeighborhoodTextView">
 
             <TextView
                 android:id="@+id/twPopularMostVisits"

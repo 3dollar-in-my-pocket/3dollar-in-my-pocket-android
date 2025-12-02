@@ -1,19 +1,47 @@
 package com.zion830.threedollars.network
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
-import com.zion830.threedollars.datasource.model.v2.request.*
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.store.StoreReviewDetailResponse
+import com.threedollar.network.request.BossStoreReviewRequest
+import com.threedollar.network.request.PatchPushInformationRequest
+import com.threedollar.network.request.PushInformationRequest
+import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
+import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
+import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
+import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.*
-import com.zion830.threedollars.datasource.model.v2.response.store.*
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.Medal
+import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.MyStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.my.User
+import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface NewServiceApi {
 
@@ -22,6 +50,11 @@ interface NewServiceApi {
     suspend fun saveReview(
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
+
+    @POST("/api/v3/store/review")
+    suspend fun postBossStoreReview(
+        @Body bossStoreReviewRequest: BossStoreReviewRequest
+    ): Response<BaseResponse<StoreReviewDetailResponse>>
 
     @GET("/api/v3/store/reviews/me")
     suspend fun getMyReviews(
@@ -85,30 +118,12 @@ interface NewServiceApi {
         @Query("size") size: Int = 20,
     ): Response<MyStoreResponse>
 
-    // 사용자
-    @DELETE("/api/v2/signout")
-    suspend fun signOut(): Response<BaseResponse<String>>
-
-    @POST("/api/v2/signup")
-    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<SignResponse>
-
-    @POST("/api/v2/login")
-    suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
-
-    @POST("/api/v2/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
 
     @GET("/api/v2/user/me")
     suspend fun getMyInfo(): Response<MyInfoResponse>
 
     @GET("/api/v1/user/activity")
     suspend fun getUserActivity(): Response<UserActivityResponse>
-
-    @GET("/api/v2/store/visits/me")
-    suspend fun getMyVisitHistory(
-        @Query("cursor") cursor: Int?,
-        @Query("size") size: Int
-    ): Response<MyVisitHistoryResponse>
 
     @PUT("/api/v2/user/me")
     suspend fun editNickname(@Body editNameRequest: EditNameRequest): Response<MyInfoResponse>
@@ -177,24 +192,24 @@ interface NewServiceApi {
         @Body feedbackTypes: BossStoreFeedbackRequest
     ): Response<BaseResponse<String>>
 
-    @POST("/api/v1/device")
-    suspend fun postPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+    @PUT("/api/v2/device")
+    suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
+
+    @PATCH("/api/v4/my/user-settings")
+    suspend fun patchPushInformation(@Body patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>>
 
     @DELETE("/api/v1/device")
     suspend fun deletePushInformation(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/device/token")
-    suspend fun putPushInformationToken(@Body informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>>
-
-    @GET("/api/v1/favorite/store/folder/my")
+    @GET("/api/v2/my/favorite-stores")
     suspend fun getMyFavoriteFolder(
         @Query("cursor") cursor: String?,
         @Query("size") size: Int
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
 
-    @GET("/api/v1/favorite/store/folder/target/{favoriteFolderId}")
+    @GET("/api/v2/folder/{folderId}/favorite-stores")
     suspend fun getFavoriteViewer(
-        @Path("favoriteFolderId") id: String,
+        @Path("folderId") id: String,
         @Query("cursor") cursor: String?,
         @Query("size") size: Int = 20
     ): Response<BaseResponse<MyFavoriteFolderResponse>>
@@ -202,10 +217,10 @@ interface NewServiceApi {
     @POST("/api/v1/event/click/{targetType}/{targetId}")
     suspend fun eventClick(@Path("targetType") targetType: String, @Path("targetId") targetId: String): Response<BaseResponse<String>>
 
-    @DELETE("/api/v1/favorite/{favoriteType}/folder")
-    suspend fun allDeleteFavorite(@Path("favoriteType") favoriteType: String = FAVORITE_STORE): Response<BaseResponse<String>>
+    @DELETE("/api/v2/my/favorite-stores")
+    suspend fun allDeleteFavorite(): Response<BaseResponse<String>>
 
-    @PUT("/api/v1/favorite/{favoriteType}/folder")
+    @PUT("/api/v2/{favoriteType}/folder")
     suspend fun updateFavoriteInfo(
         @Path("favoriteType") favoriteType: String = FAVORITE_STORE,
         @Body favoriteInfoRequest: FavoriteInfoRequest

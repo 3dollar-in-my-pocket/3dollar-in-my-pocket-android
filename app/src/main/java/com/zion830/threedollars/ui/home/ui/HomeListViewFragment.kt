@@ -19,7 +19,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
@@ -27,56 +29,46 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_STORE
+import com.threedollar.common.utils.SharedPrefUtils
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
+import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewModel>() {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
+
     override val viewModel: HomeViewModel by activityViewModels()
 
     private var homeStoreType: HomeStoreType = HomeStoreType.ALL
     private var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC
+    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
     private var isFilterCertifiedStores = false
 
     private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
-        AroundStoreListViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
-            override fun onClick(item: ContentModel) {
-                val bundle = Bundle().apply {
-                    putString("screen", "home_list")
-                    putString("store_id", item.storeModel.storeId)
-                    putString("type", item.storeModel.storeType)
-                }
-                EventTracker.logEvent(CLICK_STORE, bundle)
-                if (item.storeModel.storeType == Constants.BOSS_STORE) {
-                    val intent =
-                        BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                } else {
-                    val intent =
-                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                }
-            }
-        }, object : OnItemClickListener<AdvertisementModelV2> {
-            override fun onClick(item: AdvertisementModelV2) {
-                val bundle = Bundle().apply {
-                    putString("screen", "home_list")
-                    putString("advertisement_id", item.advertisementId.toString())
-                }
-                EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
-            }
-        })
+        AroundStoreListViewRecyclerAdapter(
+            clickListener = getStoreItemClickListener(),
+            clickAdListener = getAdvertisementClickListener()
+        )
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeListViewBinding =
@@ -84,162 +76,243 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     override fun initView() {
         initAdmob()
-        initFlow()
-        initButton()
-        binding.listRecyclerView.adapter = adapter
+        initFlows()
+        initButtons()
+        setupRecyclerView()
+    }
 
+    private fun setupRecyclerView() {
+        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
+        binding.listRecyclerView.adapter = adapter
     }
 
     private fun initAdmob() {
-        val adRequest = AdRequest.Builder().build()
-        binding.admob.loadAd(adRequest)
+        binding.admob.loadAd(AdRequest.Builder().build())
     }
 
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "HomeListViewFragment", screenName = "home_list")
     }
 
-    private fun initButton() {
-        binding.mapViewTextView.setOnClickListener {
-            it.findNavController().popBackStack()
+    private fun initButtons() {
+        binding.apply {
+            mapViewTextView.onSingleClick { navigateBack() }
+            allMenuTextView.onSingleClick { onCategoryFilterClick() }
+            filterTextView.onSingleClick { onSortFilterClick() }
+            filterConditionsTextView.onSingleClick { onRecentActivityFilterClick() }
+            bossFilterTextView.onSingleClick { onBossFilterClick() }
+            certifiedStoreTextView.onSingleClick { onCertifiedStoreFilterClick() }
         }
+    }
+    private fun navigateBack() {
+        view?.findNavController()?.popBackStack()
+    }
 
-        binding.allMenuTextView.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-            }
-            EventTracker.logEvent(Constants.CLICK_CATEGORY_FILTER, bundle)
-            showSelectCategoryDialog()
-        }
+    private fun onCategoryFilterClick() {
+        EventTracker.logEvent(Constants.CLICK_CATEGORY_FILTER, Bundle().apply { putString("screen", "home_list") })
+        showSelectCategoryDialog()
+    }
 
-        binding.filterTextView.setOnClickListener {
-            homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
-                HomeSortType.LATEST
-            } else {
-                HomeSortType.DISTANCE_ASC
-            }
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("type", homeSortType.name)
-            }
-            EventTracker.logEvent(Constants.CLICK_SORTING, bundle)
-            viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
-        }
+    private fun onSortFilterClick() {
+        homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) HomeSortType.LATEST else HomeSortType.DISTANCE_ASC
+        EventTracker.logEvent(Constants.CLICK_SORTING, Bundle().apply {
+            putString("screen", "home_list")
+            putString("type", homeSortType.name)
+        })
+        viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
+    }
 
-        binding.bossFilterTextView.setOnClickListener {
-            homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
-            }
-            EventTracker.logEvent(Constants.CLICK_BOSS_FILTER, bundle)
-            viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
-        }
+    private fun onRecentActivityFilterClick() {
+        sharedPrefUtils.setIsClickFilterConditions()
+        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
+        filterConditionsType = if (filterConditionsType.isEmpty()) listOf(FilterConditionsTypeModel.RECENT_ACTIVITY) else listOf()
+        EventTracker.logEvent(Constants.CLICK_RECENT_ACTIVITY_FILTER, Bundle().apply {
+            putString("screen", "home_list")
+            putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
+        })
+        viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
+    }
 
-        binding.certifiedStoreTextView.setOnClickListener {
-            isFilterCertifiedStores = !isFilterCertifiedStores
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("value", if (isFilterCertifiedStores) "true" else "false")
-            }
-            EventTracker.logEvent(Constants.CLICK_ONLY_VISIT, bundle)
-            val drawableStart = ContextCompat.getDrawable(
+    private fun onBossFilterClick() {
+        homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
+        EventTracker.logEvent(Constants.CLICK_BOSS_FILTER, Bundle().apply {
+            putString("screen", "home_list")
+            putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
+        })
+        viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
+    }
+
+    private fun onCertifiedStoreFilterClick() {
+        isFilterCertifiedStores = !isFilterCertifiedStores
+        EventTracker.logEvent(Constants.CLICK_ONLY_VISIT, Bundle().apply {
+            putString("screen", "home_list")
+            putString("value", if (isFilterCertifiedStores) "true" else "false")
+        })
+        binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(
+            ContextCompat.getDrawable(
                 requireContext(),
                 if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
-            )
-            binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
+            ), null, null, null
+        )
+        viewModel.fetchAroundStores()
+    }
+
+    private fun initFlows() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch { collectCategoryFlow() }
+                launch { collectAroundStoreModelsFlow() }
+                launch { collectSortType() }
+                launch { collectStoreType() }
+                launch { collectFilterConditionsType() }
+                launch { collectServerErrorFlow() }
+            }
         }
     }
 
-    private fun initFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch {
-                    viewModel.selectCategory.collect {
-                        val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
-                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
-                        val background =
-                            if (it.categoryId.isEmpty()) R.drawable.rect_white_radius10_stroke_gray30 else R.drawable.rect_white_radius10_stroke_black_fill_black
+    private suspend fun collectCategoryFlow() {
+        viewModel.uiState
+            .mapNotNull { it.selectedCategory }
+            .collect {
+                updateCategoryView(it)
+                viewModel.fetchAroundStores()
+            }
+    }
 
-                        binding.run {
-                            allMenuTextView.text = text
-                            allMenuTextView.setTextColor(resources.getColor(textColor, null))
-                            allMenuTextView.setBackgroundResource(background)
-                            if (it.imageUrl.isEmpty()) {
-                                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
-                                )
-                            } else {
-                                loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
-                                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                                }
-                            }
-                        }
-                        getNearStore()
-                    }
-                }
+    private fun updateCategoryView(category: CategoryModel) {
+        val (text, textColor, background) = getCategoryViewAttributes(category)
+        binding.allMenuTextView.apply {
+            this.text = text
+            setTextColor(resources.getColor(textColor, null))
+            setBackgroundResource(background)
+            loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
+                setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+            }
+        }
+    }
 
-                launch {
-                    viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        binding.listTitleTextView.text = viewModel.selectCategory.value.description.ifEmpty {
-                            getString(R.string.fragment_home_all_menu)
-                        }
-                        val resultList = mutableListOf<AdAndStoreItem>()
-                        resultList.addAll(adAndStoreItems)
-                        viewModel.advertisementListModel.value?.let { advertisementModel ->
-                            resultList.add(1, advertisementModel)
-                        }
-                        adapter.submitList(resultList)
-                        delay(200L)
-                        binding.listRecyclerView.scrollToPosition(0)
-                    }
-                }
-                launch {
-                    viewModel.homeFilterEvent.collect {
-                        getNearStore()
+    private fun getCategoryViewAttributes(category: CategoryModel): Triple<String, Int, Int> {
+        return if (category.categoryId.isEmpty()) {
+            Triple(
+                getString(CommonR.string.fragment_home_all_menu),
+                R.color.gray70,
+                DesignSystemR.drawable.rect_white_radius10_stroke_gray30
+            )
+        } else {
+            Triple(
+                category.name,
+                R.color.pink,
+                DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
+            )
+        }
+    }
 
-                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
-                        val drawableStart = ContextCompat.getDrawable(
-                            requireContext(),
-                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
-                        )
-                        binding.run {
-                            certifiedStoreTextView.isVisible = it.homeStoreType != HomeStoreType.BOSS_STORE
-                            bossFilterTextView.setTextColor(textColor)
-                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-                            filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(R.string.fragment_home_filter_distance)
-                            } else {
-                                getString(R.string.fragment_home_filter_latest)
-                            }
-                        }
+    private suspend fun collectAroundStoreModelsFlow() {
+        viewModel.uiState
+            .map { it.carouselItemList }
+            .collect { adAndStoreItems ->
+                binding.listTitleTextView.text =
+                    viewModel.uiState.value.selectedCategory?.description?.ifEmpty {
+                        getString(CommonR.string.fragment_home_all_menu)
                     }
+                val resultList = mutableListOf<AdAndStoreItem>().apply {
+                    addAll(adAndStoreItems)
+                    viewModel.advertisementListModel.value?.let { add(1, it) }
                 }
-                launch {
-                    viewModel.advertisementListModel.collect {
-                        adapter.setAd(advertisementModelV2 = it)
-                    }
-                }
-                launch {
-                    viewModel.serverError.collect {
-                        it?.let {
-                            showToast(it)
-                        }
+                adapter.submitList(resultList)
+                delay(200L)
+                binding.listRecyclerView.scrollToPosition(0)
+            }
+    }
+
+    private suspend fun collectSortType() {
+        viewModel.uiState
+            .map { it.homeSortType }
+            .collect {
+                binding.apply {
+                    filterTextView.text = if (it == HomeSortType.DISTANCE_ASC) {
+                        getString(CommonR.string.fragment_home_filter_distance)
+                    } else {
+                        getString(CommonR.string.fragment_home_filter_latest)
                     }
                 }
             }
+    }
+
+    private suspend fun collectStoreType() {
+        viewModel.uiState
+            .map { it.homeStoreType }
+            .collect {
+                binding.apply {
+                    bossFilterTextView.apply {
+                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
+                        setBackgroundResource(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+                    }
+
+                    certifiedStoreTextView.isVisible = it != HomeStoreType.BOSS_STORE
+                }
+            }
+    }
+
+    private suspend fun collectFilterConditionsType() {
+        viewModel.uiState
+            .map { it.filterConditionsType }
+            .collect {
+                binding.apply {
+                    filterConditionsTextView.apply {
+                        setTextColor(
+                            resources.getColor(
+                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
+                                null
+                            )
+                        )
+                        setBackgroundResource(if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+                    }
+                }
+            }
+    }
+
+    private suspend fun collectServerErrorFlow() {
+        viewModel.serverError.collect {
+            it?.let { showToast(it) }
+        }
+    }
+
+    private fun getStoreItemClickListener() = object : OnItemClickListener<ContentModel> {
+        override fun onClick(item: ContentModel) {
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putString("store_id", item.storeModel.storeId)
+                putString("type", item.storeModel.storeType)
+            }
+            EventTracker.logEvent(CLICK_STORE, bundle)
+            val intent = if (item.storeModel.storeType == Constants.BOSS_STORE) {
+                BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
+            } else {
+                StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
+            }
+            startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+        }
+    }
+
+    private fun getAdvertisementClickListener() = object : OnItemClickListener<AdvertisementModelV2> {
+        override fun onClick(item: AdvertisementModelV2) {
+            val bundle = Bundle().apply {
+                putString("screen", "home_list")
+                putString("advertisement_id", item.advertisementId.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+            val intent = if (item.link.type == "APP_SCHEME") {
+                Intent(requireContext(), DynamicLinkActivity::class.java).apply { putExtra("link", item.link.url) }
+            } else {
+                Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url))
+            }
+            startActivity(intent)
         }
     }
 
     private fun showSelectCategoryDialog() {
-        val dialog = SelectCategoryDialogFragment()
-        dialog.show(parentFragmentManager, "")
-    }
-
-    private fun getNearStore() {
-        viewModel.currentLocation.value?.let {
-            viewModel.requestHomeItem(location = it, filterCertifiedStores = isFilterCertifiedStores)
-        }
+        SelectCategoryDialogFragment().show(parentFragmentManager, "")
     }
 
     private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {

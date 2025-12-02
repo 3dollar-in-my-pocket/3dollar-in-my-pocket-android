@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.home.domain.data.store.DeleteType
 import com.home.domain.data.store.FavoriteModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.ReasonModel
@@ -16,8 +17,6 @@ import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.R
-import com.home.domain.data.store.DeleteType
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
@@ -67,7 +67,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
 
     private val _reviewSuccessEvent = MutableSharedFlow<Boolean>()
-    val reviewSuccessEvent : SharedFlow<Boolean> get() = _reviewSuccessEvent
+    val reviewSuccessEvent: SharedFlow<Boolean> get() = _reviewSuccessEvent
 
     init {
         getReportReasons()
@@ -130,7 +130,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putStoreReview(reviewId, content, rating).collect {
                 if (it.ok) {
-                    _msgTextId.postValue(R.string.success_edit_review)
+                    _msgTextId.postValue(CommonR.string.success_edit_review)
                     _addReviewResult.postValue(true)
                 } else {
                     _serverError.emit(it.message)
@@ -146,10 +146,16 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
 
         viewModelScope.launch(coroutineExceptionHandler) {
             _uploadImageStatus.emit(true)
-            homeRepository.saveImages(images, storeId).collect {
+            val result = homeRepository.saveImages(
+                images = images,
+                storeId = storeId
+            )
+            if (result == null) {
+                _serverError.emit("인터넷이 불안정해요.")
+            } else {
                 getImage(storeId)
-                _uploadImageStatus.emit(false)
             }
+            _uploadImageStatus.emit(false)
         }
     }
 
@@ -165,11 +171,11 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun putFavorite(storeType: String, storeId: String) {
+    fun putFavorite(storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putFavorite(storeType, storeId).collect { model ->
+            homeRepository.putFavorite(storeId).collect { model ->
                 if (model.ok) {
-                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_add))
+                    showCustomBlackToast(StringUtils.getString(CommonR.string.toast_favorite_add))
                     _favoriteModel.update {
                         it.copy(isFavorite = true, totalSubscribersCount = it.totalSubscribersCount + 1)
                     }
@@ -180,11 +186,11 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun deleteFavorite(storeType: String, storeId: String) {
+    fun deleteFavorite(storeId: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteFavorite(storeType, storeId).collect { model ->
+            homeRepository.deleteFavorite(storeId).collect { model ->
                 if (model.ok) {
-                    showCustomBlackToast(StringUtils.getString(R.string.toast_favorite_delete))
+                    showCustomBlackToast(StringUtils.getString(CommonR.string.toast_favorite_delete))
                     _favoriteModel.update {
                         it.copy(isFavorite = false, totalSubscribersCount = it.totalSubscribersCount - 1)
                     }
@@ -209,8 +215,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                 homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
                     if (it.ok) {
                         _reviewSuccessEvent.emit(true)
-                    }
-                    else{
+                    } else {
                         _serverError.emit(it.message)
                     }
                 }
@@ -254,7 +259,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
 
     override fun handleError(t: Throwable) {
         super.handleError(t)
-        _msgTextId.postValue(R.string.connection_failed)
+        _msgTextId.postValue(CommonR.string.connection_failed)
         hideLoading()
     }
 }

@@ -5,7 +5,7 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.ErrorResponse
 import retrofit2.Response
 
-fun <T> apiResult(response: Response<BaseResponse<T>>) : BaseResponse<T> =
+fun <T> apiResult(response: Response<BaseResponse<T>>): BaseResponse<T> =
     if (response.isSuccessful) {
         response.body()!!
     } else {

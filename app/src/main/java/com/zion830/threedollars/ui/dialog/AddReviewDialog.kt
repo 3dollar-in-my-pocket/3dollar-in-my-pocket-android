@@ -19,9 +19,19 @@ import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
+
+interface OnReviewEditCallback {
+    fun onReviewEdited(updatedReview: ReviewContentModel)
+}
 
 @AndroidEntryPoint
-class AddReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
+class AddReviewDialog(
+    private val content: ReviewContentModel?, 
+    private val storeId: Int?,
+    private val onEditCallback: OnReviewEditCallback? = null
+) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,13 +64,13 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener {
+        binding.closeImageButton.onSingleClick {
             dismiss()
         }
-        binding.btnFinish.setOnClickListener {
+        binding.btnFinish.onSingleClick {
             if (binding.rating.rating == 0f) {
-                showToast(R.string.over_rating_1)
-                return@setOnClickListener
+                showToast(CommonR.string.over_rating_1)
+                return@onSingleClick
             }
             val bundle = Bundle().apply {
                 putString("screen", "review_bottom_sheet")
@@ -77,6 +87,14 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
                 dismiss()
             } else {
                 viewModel.putStoreReview(content.review.reviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
+                // 수정된 리뷰 데이터 생성 후 콜백 호출
+                val updatedReview = content.copy(
+                    review = content.review.copy(
+                        contents = binding.etContent.text.toString(),
+                        rating = binding.rating.rating
+                    )
+                )
+                onEditCallback?.onReviewEdited(updatedReview)
                 dismiss()
             }
         }
@@ -86,6 +104,7 @@ class AddReviewDialog(private val content: ReviewContentModel?, private val stor
     }
 
     companion object {
-        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null) = AddReviewDialog(content, storeId)
+        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null, onEditCallback: OnReviewEditCallback? = null) = 
+            AddReviewDialog(content, storeId, onEditCallback)
     }
 }

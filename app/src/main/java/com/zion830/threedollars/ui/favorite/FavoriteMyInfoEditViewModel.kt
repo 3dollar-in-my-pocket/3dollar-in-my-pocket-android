@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FavoriteMyInfoEditViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
@@ -22,7 +22,7 @@ class FavoriteMyInfoEditViewModel @Inject constructor(private val userDataSource
             if (response.isSuccessful) {
                 _isSuccess.value = true
             } else {
-                _msgTextId.postValue(R.string.connection_failed)
+                _msgTextId.postValue(CommonR.string.connection_failed)
             }
         }
     }

@@ -13,20 +13,23 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemListViewAdBinding
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemListViewBinding
 import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 class AroundStoreListViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val clickAdListener:OnItemClickListener<AdvertisementModelV2>
 ) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
-    private var emptyAd: AdvertisementModelV2? = null
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ContentModel -> {
             VIEW_TYPE_STORE
@@ -54,7 +57,7 @@ class AroundStoreListViewRecyclerAdapter(
         }
 
         else -> {
-            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false),clickAdListener)
+            NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
     }
 
@@ -68,14 +71,8 @@ class AroundStoreListViewRecyclerAdapter(
                 holder.bind(getItem(position) as AdvertisementModelV2)
             }
 
-            is NearStoreEmptyListViewViewHolder -> {
-                holder.bind(emptyAd)
-            }
+            is NearStoreEmptyListViewViewHolder -> {}
         }
-    }
-
-    fun setAd(advertisementModelV2: AdvertisementModelV2?) {
-        emptyAd = advertisementModelV2
     }
 
     companion object {
@@ -85,24 +82,11 @@ class AroundStoreListViewRecyclerAdapter(
     }
 }
 
-class NearStoreEmptyListViewViewHolder(private val binding: ItemListViewEmptyBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
-    fun bind(advertisementModelV2: AdvertisementModelV2?) {
-        binding.itemListViewAd.root.isVisible = advertisementModelV2 == null
-        advertisementModelV2?.let {
-            binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
-            binding.itemListViewAd.imgAd.loadImage(it.image.url)
-            binding.itemListViewAd.tvAdTitle.text = it.title.content
-            binding.itemListViewAd.tvAdBody.text = it.subTitle.content
-            it.title.fontColor.let { if(it.isNotEmpty()) binding.itemListViewAd.tvAdBody.setTextColor(Color.parseColor(it)) }
-            it.subTitle.fontColor.let { if(it.isNotEmpty()) binding.itemListViewAd.tvAdBody.setTextColor(Color.parseColor(it)) }
-            it.background.color.let { if(it.isNotEmpty()) binding.itemListViewAd.constraintAd.setBackgroundColor(Color.parseColor(it)) }
-        }
-    }
-}
+class NearStoreEmptyListViewViewHolder(binding: ItemListViewEmptyBinding) : ViewHolder(binding.root)
 
 class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2) {
-        binding.root.setOnClickListener { clickAdListener.onClick(advertisementModelV2) }
+        binding.root.onSingleClick { clickAdListener.onClick(advertisementModelV2) }
         binding.imgAd.loadImage(advertisementModelV2.image.url)
         binding.tvAdTitle.text = advertisementModelV2.title.content
         binding.tvAdBody.text = advertisementModelV2.subTitle.content
@@ -131,18 +115,18 @@ class NearStoreListViewViewHolder(
         bossOrResentVisitTextView.apply {
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
-                text = GlobalApplication.getContext().getString(R.string.resent_visit_count, visitCount)
-                setTextAppearance(R.style.apple_gothic_medium_size_12sp)
+                text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
+                setTextAppearance(R.style.apple_gothic_medium_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray70))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
-                setBackgroundResource(R.drawable.rect_radius_18_gray_10)
+                setBackgroundResource(DesignSystemR.drawable.rect_radius_18_gray_10)
             } else {
-                text = StringUtils.getString(R.string.only_boss)
-                setTextAppearance(R.style.apple_gothic_bold_size_12sp)
+                text = StringUtils.getString(CommonR.string.only_boss)
+                setTextAppearance(R.style.apple_gothic_bold_size_12dp)
                 setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
-                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), R.drawable.ic_check_pink_16)
+                val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)
                 setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-                setBackgroundResource(R.drawable.rect_radius_18_pink_100)
+                setBackgroundResource(DesignSystemR.drawable.rect_radius_18_pink_100)
             }
         }
     }
@@ -165,7 +149,7 @@ class NearStoreListViewViewHolder(
     private fun ItemListViewBinding.setText(item: ContentModel) {
         ratingTextView.text = (item.extraModel.rating ?: 0).toString()
         tagTextView.text = item.storeModel.categories.joinToString(" ") { "#${it.name}" }
-        distanceTextView.text = if (item.distanceM < 1000) "${item.distanceM}m" else StringUtils.getString(R.string.more_1km)
+        distanceTextView.text = root.context.getDistanceText(item.distanceM)
         storeNameTextView.text = item.storeModel.storeName
         reviewTextView.text = "${item.extraModel.reviewsCount}개"
     }

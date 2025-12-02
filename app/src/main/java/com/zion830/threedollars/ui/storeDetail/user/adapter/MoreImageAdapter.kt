@@ -9,6 +9,7 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ItemMorePhotoBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
 
 class MoreImageAdapter(private val photoClickListener: OnItemClickListener<Int>) :
     PagingDataAdapter<ImageContentModel, MoreImageViewHolder>(BaseDiffUtilCallback()) {
@@ -25,7 +26,7 @@ class MoreImageViewHolder(private val binding: ItemMorePhotoBinding) : RecyclerV
     fun bind(item: ImageContentModel?, photoClickListener: OnItemClickListener<Int>, position: Int) {
         item?.let {
             binding.photoImageView.loadImage(item.url)
-            binding.photoImageView.setOnClickListener {
+            binding.photoImageView.onSingleClick {
                 photoClickListener.onClick(position)
             }
         }

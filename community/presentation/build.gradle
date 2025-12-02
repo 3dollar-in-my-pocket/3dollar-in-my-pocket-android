@@ -14,13 +14,12 @@ android {
 
     defaultConfig {
         minSdk 24
-        targetSdk 34
+        targetSdk 36
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
         resValue "string", "admob_id", properties.getProperty("admob_id")
-        resValue "string", "admob_unit_id", properties.getProperty("admob_unit_id")
     }
 
     buildTypes {
@@ -30,14 +29,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
     viewBinding {
         enabled = true
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 
@@ -49,16 +49,17 @@ dependencies {
     implementation project(':community:domain')
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.9.0'
     implementation "androidx.fragment:fragment-ktx:1.5.4"
 
     // 힐트
-    implementation "com.google.dagger:hilt-android:2.42"
+    implementation "com.google.dagger:hilt-android:2.44"
     implementation project(path: ':home:domain')
-    kapt "com.google.dagger:hilt-android-compiler:2.42"
+    kapt "com.google.dagger:hilt-android-compiler:2.44"
 
     implementation 'com.google.android.gms:play-services-ads:21.3.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     implementation "androidx.paging:paging-runtime-ktx:3.1.1"
 

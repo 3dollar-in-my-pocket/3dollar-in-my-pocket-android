@@ -7,10 +7,11 @@ import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.threedollar.common.base.BaseActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteMyInfoEditActivity :
@@ -18,15 +19,16 @@ class FavoriteMyInfoEditActivity :
     override val viewModel: FavoriteMyInfoEditViewModel by viewModels()
 
     override fun initView() {
+        setDarkSystemBars()
         initText()
 
         showKeyboard()
 
         changeText()
 
-        binding.backImageView.setOnClickListener { finish() }
+        binding.backImageView.onSingleClick { finish() }
 
-        binding.saveButton.setOnClickListener {
+        binding.saveButton.onSingleClick {
             val favoriteInfoRequest = FavoriteInfoRequest(
                 introduction = binding.favoriteBodyEditTextView.text.toString(),
                 name = binding.favoriteTitleEditTextView.text.toString()
@@ -62,7 +64,7 @@ class FavoriteMyInfoEditActivity :
 
             override fun onTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {
                 binding.saveButton.isEnabled = true
-                binding.favoriteTitleMaxLengthTextView.text = getString(R.string.favorite_title_max, text.length)
+                binding.favoriteTitleMaxLengthTextView.text = getString(CommonR.string.favorite_title_max, text.length)
             }
         })
         binding.favoriteBodyEditTextView.addTextChangedListener(object : TextWatcher {
@@ -80,7 +82,7 @@ class FavoriteMyInfoEditActivity :
 
             override fun onTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {
                 binding.saveButton.isEnabled = true
-                binding.favoriteBodyMaxLengthTextView.text = getString(R.string.favorite_body_max, text.length)
+                binding.favoriteBodyMaxLengthTextView.text = getString(CommonR.string.favorite_body_max, text.length)
             }
         })
     }
@@ -90,8 +92,8 @@ class FavoriteMyInfoEditActivity :
         val body = intent.getStringExtra(BODY)
         binding.favoriteTitleEditTextView.setText(title)
         binding.favoriteBodyEditTextView.setText(body)
-        binding.favoriteTitleMaxLengthTextView.text = getString(R.string.favorite_title_max, title?.length)
-        binding.favoriteBodyMaxLengthTextView.text = getString(R.string.favorite_body_max, body?.length)
+        binding.favoriteTitleMaxLengthTextView.text = getString(CommonR.string.favorite_title_max, title?.length)
+        binding.favoriteBodyMaxLengthTextView.text = getString(CommonR.string.favorite_body_max, body?.length)
     }
 
     private fun showKeyboard() {

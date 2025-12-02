@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -13,7 +14,7 @@
             type="com.threedollar.common.listener.OnItemClickListener" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -21,29 +22,49 @@
         android:orientation="vertical"
         android:paddingHorizontal="24dp">
 
-        <TextView
-            android:id="@+id/tv_address"
+        <ImageView
+            android:id="@+id/addressResultImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:src="@drawable/ic_address_result"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_address"
+            style="@style/apple_gothic_semi_bold.size_14dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
             android:text="@{item.placeName}"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/addressResultImageView"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="서울시" />
 
         <TextView
             android:id="@+id/tv_address_detail"
+            style="@style/apple_gothic_regular.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="16dp"
             android:text="@{item.roadAddressName}"
-            android:textColor="#727272"
+            android:textColor="@color/gray50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/addressResultImageView"
+            app:layout_constraintTop_toBottomOf="@id/tv_address"
             tools:text="서울시" />
 
         <View
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="#f4f4f4" />
-    </LinearLayout>
+            android:background="@color/gray20"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

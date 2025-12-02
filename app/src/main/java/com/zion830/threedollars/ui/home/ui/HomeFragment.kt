@@ -1,11 +1,14 @@
 package com.zion830.threedollars.ui.home.ui
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
@@ -13,14 +16,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.advertisement.AdvertisementModelV2Empty
+import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
+import com.home.domain.request.FilterConditionsTypeModel
 import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
@@ -37,12 +43,17 @@ import com.threedollar.common.utils.Constants.CLICK_AD_CARD
 import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
 import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_MARKER
+import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
 import com.threedollar.common.utils.Constants.CLICK_SORTING
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.Constants.CLICK_VISIT
+import com.threedollar.common.utils.Constants.HOME_REOPEN
+import com.threedollar.common.utils.SharedPrefUtils
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
@@ -53,15 +64,26 @@ import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
+import com.zion830.threedollars.utils.goToPermissionSetting
+import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
+import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: HomeViewModel by activityViewModels()
 
@@ -73,6 +95,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
+    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
+
+    private var hasRequestedLocationPermission = false
+    private var locationPermissionDialog: AlertDialog? = null
+
+    private var isFirstLoad = true
+    
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        when {
+            isGranted -> {
+                onLocationPermissionGranted()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // 재요청 가능 상태: 다이얼로그 없이 기본 위치 사용
+                useDefaultLocation()
+            }
+            else -> {
+                // "다시 묻지 않음" 상태: 설명 다이얼로그 표시
+                showLocationPermissionDialog()
+            }
+        }
+    }
 
     override fun initView() {
         initMap()
@@ -82,18 +128,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initButton()
         initScroll()
 
+        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
+
         viewModel.addressText.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = it ?: getString(R.string.location_no_address)
-        }
-        searchViewModel.searchResultLocation.observe(viewLifecycleOwner) {
-            naverMapFragment.moveCamera(it)
-            binding.tvAddress.text =
-                getCurrentLocationName(it) ?: getString(R.string.location_no_address)
+            binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
         }
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
+        // OnResume에서 로그를 보내기 위해 의도적으로 비워두었습니다.
     }
 
     private fun initScroll() {
@@ -105,9 +148,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
                         if (adapter.getItemLocation(position) != null) {
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+                            /*
+                            광고가 index를 하나 차지하고 있어서 focusedIndex는 position에 -1을 해준다.
+                            하지만 adapter.getItemMarker에서 markerModel을 가져올 때는 position 기준으로 가져와야 된다.
+                            그러므로 가게 이동전 포커싱 돼 있던 아이콘을 비활성화 하기 위해 adapter.focusedIndex에 +1를 해준 값을 넣어주고
+                            이동후 포커싱 되는 부분에서는 position을 통해 markerModel을 가져온다.
+                             */
+                            naverMapFragment.updateMarkerIcon(
+                                drawableRes = R.drawable.ic_store_off,
+                                position = adapter.focusedIndex,
+                                markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
+                                isSelected = false
+                            )
                             adapter.focusedIndex = if (position > 0) position - 1 else position
-                            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
+                            naverMapFragment.updateMarkerIcon(
+                                drawableRes = R.drawable.ic_mappin_focused_on,
+                                position = adapter.focusedIndex,
+                                markerModel = adapter.getItemMarker(position),
+                                isSelected = true
+                            )
                             adapter.getItemLocation(position)?.let {
                                 naverMapFragment.moveCameraWithAnim(it)
                             }
@@ -119,7 +178,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
+        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
+        viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
     private fun initAdapter() {
@@ -149,7 +210,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     putString("advertisement_id", item.advertisementId.toString())
                 }
                 EventTracker.logEvent(CLICK_AD_CARD, bundle)
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                if (item.link.type == "APP_SCHEME") {
+                    startActivity(
+                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                            putExtra("link", item.link.url)
+                        },
+                    )
+                } else {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
+                }
             }
         }) { item ->
             val bundle = Bundle().apply {
@@ -164,18 +233,37 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initMap() {
-        naverMapFragment = NearStoreNaverMapFragment {
-            binding.tvRetrySearch.isVisible = true
-        }
+        naverMapFragment = NearStoreNaverMapFragment(
+            cameraMoved = {
+                binding.tvRetrySearch.isVisible = true
+            },
+            onLocationButtonClicked = {
+                checkLocationPermissionForButton()
+            }
+        )
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        
+        // Check and request location permission after login
         lifecycleScope.launch {
             delay(500L)
-            naverMapFragment.moveToCurrentLocation(false)
+            checkAndRequestLocationPermission()
+        }
+        
+        naverMapFragment.currentPosition.observe(viewLifecycleOwner) {
+            viewModel.updateCurrentLocation(it)
+        }
+
+        naverMapFragment.mapPosition.observe(viewLifecycleOwner) {
+            viewModel.updateMapPosition(it)
+        }
+
+        naverMapFragment.mapViewPortDistance.observe(viewLifecycleOwner) {
+            viewModel.updateDistanceM(it)
         }
     }
 
     private fun initButton() {
-        binding.layoutAddress.setOnClickListener {
+        binding.layoutAddress.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "home")
             }
@@ -187,7 +275,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         }
 
-        binding.allMenuTextView.setOnClickListener {
+        binding.allMenuTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "home")
             }
@@ -195,7 +283,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             showSelectCategoryDialog()
         }
 
-        binding.filterTextView.setOnClickListener {
+        binding.filterConditionsTextView.onSingleClick {
+            sharedPrefUtils.setIsClickFilterConditions()
+            binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
+            filterConditionsType = if (filterConditionsType.isEmpty()) {
+                listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
+            } else {
+                listOf()
+            }
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+                putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
+            }
+            EventTracker.logEvent(CLICK_RECENT_ACTIVITY_FILTER, bundle)
+
+            viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
+        }
+        binding.filterTextView.onSingleClick {
             homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
                 HomeSortType.LATEST
             } else {
@@ -209,7 +313,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
-        binding.bossFilterTextView.setOnClickListener {
+        binding.bossFilterTextView.onSingleClick {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
             val bundle = Bundle().apply {
                 putString("screen", "home")
@@ -219,41 +323,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
-        binding.listViewTextView.setOnClickListener {
-            it.findNavController().navigate(R.id.action_home_to_home_list_view)
+        binding.listViewTextView.onSingleClick {
+            findNavController().navigate(R.id.action_home_to_home_list_view)
         }
-        binding.tvRetrySearch.setOnClickListener {
-            viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
+        binding.tvRetrySearch.onSingleClick {
+            viewModel.fetchAroundStores()
+            viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
     }
 
     private fun initFlow() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.selectCategory.collect {
-                        val text = if (it.categoryId.isEmpty()) getString(R.string.fragment_home_all_menu) else it.name
-                        val textColor = if (it.categoryId.isEmpty()) R.color.gray70 else R.color.pink
-                        val background =
-                            if (it.categoryId.isEmpty()) R.drawable.rect_white_radius10_stroke_gray30 else R.drawable.rect_white_radius10_stroke_black_fill_black
-
-                        binding.run {
-                            allMenuTextView.text = text
-                            allMenuTextView.setTextColor(resources.getColor(textColor, null))
-                            allMenuTextView.setBackgroundResource(background)
-                            if (it.imageUrl.isEmpty()) {
-                                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
-                                )
-                            } else {
-                                loadImageUriIntoDrawable(it.imageUrl.toUri()) { drawable ->
-                                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                                }
-                            }
+                    viewModel.uiState
+                        .map { it.selectedCategory }
+                        .distinctUntilChanged()
+                        .collect {
+                            collectSelectedCategory(it)
                         }
-                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
-                    }
                 }
                 launch {
                     viewModel.userInfo.collect {
@@ -265,49 +354,50 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                     }
                 }
-
                 launch {
-                    viewModel.aroundStoreModels.collect { adAndStoreItems ->
-                        val resultList = mutableListOf<AdAndStoreItem>()
-                        resultList.addAll(adAndStoreItems)
-                        viewModel.advertisementModel.value?.let { advertisementModel ->
-                            resultList.add(1, advertisementModel)
+                    viewModel.uiState
+                        .map { it.carouselItemList }
+                        .distinctUntilChanged()
+                        .collect {
+                            collectCarouselItemList(it)
                         }
-                        adapter.submitList(resultList)
-                        val list = adAndStoreItems.filterIsInstance<ContentModel>()
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
-                            onStoreClicked(it)
-                        }
-                        delay(200L)
-                        binding.aroundStoreRecyclerView.scrollToPosition(0)
-                    }
                 }
                 launch {
-                    viewModel.homeFilterEvent.collect {
-                        viewModel.requestHomeItem(naverMapFragment.getMapCenterLatLng())
-
-                        val textColor = resources.getColor(if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.color.gray70 else R.color.gray40, null)
-                        val drawableStart = ContextCompat.getDrawable(
-                            requireContext(),
-                            if (it.homeStoreType == HomeStoreType.BOSS_STORE) R.drawable.ic_check_gray_16 else R.drawable.ic_uncheck
-                        )
-                        binding.run {
-                            bossFilterTextView.setTextColor(textColor)
-                            bossFilterTextView.setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
-                            filterTextView.text = if (it.homeSortType == HomeSortType.DISTANCE_ASC) {
-                                getString(R.string.fragment_home_filter_distance)
-                            } else {
-                                getString(R.string.fragment_home_filter_latest)
-                            }
+                    viewModel.uiState
+                        .map { it.homeSortType }
+                        .distinctUntilChanged()
+                        .collect {
+                            collectHomeSortType(it)
                         }
-                    }
                 }
-
+                launch {
+                    viewModel.uiState
+                        .map { it.homeStoreType }
+                        .distinctUntilChanged()
+                        .collect {
+                            collectHomeStoreType(it)
+                        }
+                }
+                launch {
+                    viewModel.uiState
+                        .map { it.filterConditionsType }
+                        .distinctUntilChanged()
+                        .collect {
+                            collectFilterConditionsType(it)
+                        }
+                }
                 launch {
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
                         }
+                    }
+                }
+                launch {
+                    searchViewModel.searchResultLocation.collect {
+                        naverMapFragment.moveCamera(it)
+                        binding.tvAddress.text =
+                            getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
                 }
             }
@@ -348,9 +438,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
             EventTracker.logEvent(CLICK_MARKER, bundle)
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_store_off, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(
+                drawableRes = R.drawable.ic_store_off,
+                position = adapter.focusedIndex,
+                markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
+                isSelected = false
+            )
             adapter.focusedIndex = if (position > 0) position - 1 else position
-            naverMapFragment.updateMarkerIcon(R.drawable.ic_mappin_focused_on, adapter.focusedIndex)
+            naverMapFragment.updateMarkerIcon(
+                drawableRes = R.drawable.ic_mappin_focused_on,
+                position = adapter.focusedIndex,
+                markerModel = adapter.getItemMarker(position),
+                isSelected = true
+            )
             naverMapFragment.moveCameraWithAnim(
                 if (adAndStoreItem is ContentModel) {
                     LatLng(adAndStoreItem.storeModel.locationModel.latitude, adAndStoreItem.storeModel.locationModel.longitude)
@@ -372,13 +472,176 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             override fun accept(isMarketing: Boolean) {
                 FirebaseMessaging.getInstance().token.addOnCompleteListener {
                     if (it.isSuccessful) {
-                        viewModel.postPushInformation(pushToken = it.result, isMarketing = isMarketing)
+                        viewModel.putPushInformation(pushToken = it.result, isMarketing = isMarketing)
                     }
                 }
             }
         })
         dialog.show(parentFragmentManager, dialog.tag)
     }
+    
+    private fun checkAndRequestLocationPermission() {
+        when {
+            isLocationAvailable() -> {
+                // 권한 있음: 현재 위치로
+                naverMapFragment.moveToCurrentLocation(false)
+                viewModel.fetchAroundStores()
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
+                // 이전에 거부했지만 재요청 가능: 바로 권한 요청
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            hasRequestedLocationPermission -> {
+                // "다시 묻지 않음" 상태: 설명 다이얼로그
+                showLocationPermissionDialog()
+            }
+            else -> {
+                // 첫 요청: 바로 권한 요청
+                hasRequestedLocationPermission = true
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+    
+    private fun checkLocationPermissionForButton() {
+        if (isLocationAvailable()) {
+            // 권한 있음: 현재 위치로
+            naverMapFragment.moveToCurrentLocation(true)
+        } else {
+            // 권한 없음: 항상 설명 다이얼로그 표시
+            showLocationPermissionDialog()
+        }
+    }
+    
+    private fun useDefaultLocation() {
+        naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+
+        viewModel.fetchAroundStores()
+        viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
+    }
+    
+    private fun showLocationPermissionDialog() {
+        locationPermissionDialog = AlertDialog.Builder(requireContext())
+            .setTitle(getString(CommonR.string.location_permission_title))
+            .setMessage(getString(CommonR.string.location_permission_message))
+            .setPositiveButton(
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    getString(CommonR.string.location_permission_grant)
+                } else {
+                    getString(CommonR.string.location_permission_settings)
+                }
+            ) { dialog, _ ->
+                dialog.dismiss()
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // 재요청 가능한 상태: 권한 요청
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                } else {
+                    // "다시 묻지 않음" 상태: 설정 페이지로
+                    requireContext().goToPermissionSetting()
+                }
+            }
+            .setNegativeButton(getString(CommonR.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+                useDefaultLocation()
+            }
+            .setCancelable(false)
+            .create()
+        
+        locationPermissionDialog?.show()
+    }
+    
+    private fun onLocationPermissionGranted() {
+        naverMapFragment.moveToCurrentLocation(true)
+        
+        lifecycleScope.launch {
+            delay(1000L)
+            val currentLocation = naverMapFragment.currentPosition.value
+            if (currentLocation != null) {
+                viewModel.fetchAroundStores()
+                viewModel.getAdvertisement(latLng = currentLocation)
+            }
+        }
+    }
+
+    private fun collectSelectedCategory(category: CategoryModel?) {
+        val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
+        val textColor = if (category == null) R.color.gray70 else R.color.pink
+        val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
+
+        binding.run {
+            allMenuTextView.text = text
+            allMenuTextView.setTextColor(resources.getColor(textColor, null))
+            allMenuTextView.setBackgroundResource(background)
+
+            if (category == null) {
+                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                )
+            } else {
+                loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
+                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                }
+            }
+        }
+    }
+
+    private suspend fun collectCarouselItemList(itemList: List<AdAndStoreItem>) {
+        if (itemList.isEmpty()) return
+        val resultList = mutableListOf<AdAndStoreItem>()
+        resultList.addAll(itemList)
+        resultList.add(
+            1,
+            viewModel.advertisementModel.value ?: AdvertisementModelV2Empty()
+        )
+        adapter.submitList(resultList)
+        val list = itemList.filterIsInstance<ContentModel>()
+        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
+            onStoreClicked(it)
+        }
+        naverMapFragment.updateMarkerIcon(
+            drawableRes = R.drawable.ic_mappin_focused_on,
+            position = 0,
+            markerModel = list.firstOrNull()?.markerModel,
+            isSelected = true
+        )
+        delay(200L)
+        binding.aroundStoreRecyclerView.scrollToPosition(0)
+    }
+
+    private fun collectHomeSortType(sortType: HomeSortType) {
+        binding.run {
+            filterTextView.text = if (sortType == HomeSortType.DISTANCE_ASC) {
+                getString(CommonR.string.fragment_home_filter_distance)
+            } else {
+                getString(CommonR.string.fragment_home_filter_latest)
+            }
+        }
+    }
+
+    private fun collectHomeStoreType(storeType: HomeStoreType) {
+        binding.run {
+            if (storeType == HomeStoreType.BOSS_STORE) {
+                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
+            } else {
+                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+            }
+        }
+    }
+
+    private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
+        binding.run {
+            if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
+                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
+            } else {
+                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
+            }
+        }
+    }
+    
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -387,7 +650,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
     }
+    
+    override fun onResume() {
+        super.onResume()
+        // Check if permission was granted from settings
+        if (hasRequestedLocationPermission && isLocationAvailable()) {
+            onLocationPermissionGranted()
+        }
+
+        if (!isFirstLoad) {
+            val bundle = Bundle().apply {
+                putString("screen", "home")
+            }
+            EventTracker.logEvent(HOME_REOPEN, bundle)
+        }
+        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
+        isFirstLoad = false
+    }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =
         FragmentHomeBinding.inflate(inflater, container, false)
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        locationPermissionDialog?.dismiss()
+        locationPermissionDialog = null
+    }
 }

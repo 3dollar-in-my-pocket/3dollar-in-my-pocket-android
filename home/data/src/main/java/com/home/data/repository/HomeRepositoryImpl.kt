@@ -5,14 +5,18 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.home.data.asModel
 import com.home.data.asRequest
+import com.home.data.asType
 import com.home.data.datasource.HomeRemoteDataSource
 import com.home.data.datasource.ImagePagingDataSource
+import com.home.data.datasource.PlacePagingDataSource
 import com.home.data.datasource.ReviewPagingDataSource
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.EditStoreReviewModel
+import com.home.domain.data.store.FeedbackExistsModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.PostUserStoreModel
@@ -21,9 +25,13 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StoreNearExistsModel
+import com.home.domain.data.store.UploadFileModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
+import com.home.domain.request.FilterConditionsTypeModel
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
@@ -32,6 +40,7 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest
@@ -50,19 +59,23 @@ class HomeRepositoryImpl @Inject constructor(
 ) :
     HomeRepository {
     override fun getAroundStores(
+        distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
     ): Flow<BaseResponse<AroundStoreModel>> = homeRemoteDataSource.getAroundStores(
+        distanceM = distanceM,
         categoryIds = categoryIds,
         targetStores = targetStores,
         sortType = sortType,
         filterCertifiedStores = filterCertifiedStores,
+        filterConditionsType = filterConditionsTypeModel.map { it.asType() },
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,
@@ -128,11 +141,19 @@ class HomeRepositoryImpl @Inject constructor(
     override fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.putMarketingConsent(MarketingConsentRequest(marketingConsent))
 
-    override fun postPushInformation(pushToken: String): Flow<BaseResponse<String>> =
-        homeRemoteDataSource.postPushInformation(PushInformationRequest(pushToken = pushToken))
+    override fun putPushInformation(pushToken: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.putPushInformation(PushInformationRequest(pushToken = pushToken))
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> =
-        homeRemoteDataSource.getAdvertisements(position).map {
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>> =
+        homeRemoteDataSource.getAdvertisements(
+            position = position,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude
+        ).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.advertisements?.map { response -> response.asModel() }.orEmpty(),
@@ -142,10 +163,10 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> = homeRemoteDataSource.putFavorite(storeType, storeId)
+    override fun putFavorite(storeId: String): Flow<BaseResponse<String>> = homeRemoteDataSource.putFavorite(storeId)
 
-    override fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>> =
-        homeRemoteDataSource.deleteFavorite(storeType, storeId)
+    override fun deleteFavorite(storeId: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.deleteFavorite(storeId)
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>> {
         val feedbackTypeResponseList = sharedPrefUtils.getList<FeedbackTypeResponse>(BOSS_FEED_BACK_LIST)
@@ -183,8 +204,10 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = homeRemoteDataSource.deleteImage(imageId)
 
-    override fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>> =
-        homeRemoteDataSource.saveImages(images, storeId).map {
+    override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>? = runCatching {
+        homeRemoteDataSource.saveImages(images, storeId)
+    }.fold(
+        onSuccess = {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.map { response -> response.asModel() },
@@ -192,7 +215,45 @@ class HomeRepositoryImpl @Inject constructor(
                 resultCode = it.resultCode,
                 error = it.error,
             )
+        },
+        onFailure = {
+            null
         }
+    )
+
+    override suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileModel>>? = runCatching {
+        homeRemoteDataSource.uploadFilesBulk(fileType, files)
+    }.fold(
+        onSuccess = {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.map { response -> response.asModel() },
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        },
+        onFailure = {
+            null
+        }
+    )
+
+    override suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileModel>? = runCatching {
+        homeRemoteDataSource.uploadFile(fileType, file)
+    }.fold(
+        onSuccess = {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        },
+        onFailure = {
+            null
+        }
+    )
 
     override fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>> = Pager(PagingConfig(20)) {
         ImagePagingDataSource(storeId, serverApi)
@@ -268,6 +329,40 @@ class HomeRepositoryImpl @Inject constructor(
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,
+            )
+        }
+
+    override fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.postPlace(placeRequest = placeRequest.asRequest(), placeType = placeType.asType())
+
+    override fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.deletePlace(placeType = placeType.asType(), placeId = placeId)
+
+    override fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>> = Pager(PagingConfig(20)) {
+        PlacePagingDataSource(placeType = placeType.asType(), serverApi = serverApi)
+    }.flow
+
+    override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>>
+        = homeRemoteDataSource.putStickers(storeId, reviewId, stickers)
+
+    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>> =
+        homeRemoteDataSource.postBossStoreReview(storeId, contents, rating, images, feedbacks).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>> =
+        homeRemoteDataSource.checkFeedbackExists(targetType, targetId).map { response ->
+            BaseResponse(
+                ok = response.ok,
+                error = response.error,
+                message = response.message,
+                data = response.data?.asModel()
             )
         }
 }

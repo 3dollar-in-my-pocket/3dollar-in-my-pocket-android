@@ -6,9 +6,10 @@ import androidx.paging.PagingDataAdapter
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFavoritePageBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
+import zion830.com.common.base.onSingleClick
 
 class FavoriteMyFolderRecyclerAdapter(
     private val listener: OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>,
@@ -37,10 +38,10 @@ class FavoriteMyFolderRecyclerAdapter(
             holder.binding.deleteImageView.isVisible = isDelete
             holder.binding.storeCategoriesTextView.text =
                 item.categories.joinToString(" ") { "#${it.name}" }
-            holder.binding.deleteImageView.setOnClickListener {
+            holder.binding.deleteImageView.onSingleClick {
                 deleteListener.onClick(item)
             }
-            holder.binding.itemLinearLayout.setOnClickListener {
+            holder.binding.itemLinearLayout.onSingleClick {
                 if (!item.isDeleted && isDelete.not()) {
                     listener.onClick(item)
                 }

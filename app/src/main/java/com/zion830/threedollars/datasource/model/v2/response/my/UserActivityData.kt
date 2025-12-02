@@ -3,7 +3,7 @@ package com.zion830.threedollars.datasource.model.v2.response.my
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.Activity
+import com.threedollar.network.data.visit_history.Activity
 
 @JsonClass(generateAdapter = true)
 data class UserActivityData(

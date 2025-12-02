@@ -9,13 +9,14 @@ import com.home.domain.data.store.MenuModel
 import com.threedollar.common.ext.loadCircleImage
 import com.threedollar.common.ext.toFormattedNumber
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
 import zion830.com.common.base.BaseDiffUtilCallback
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
@@ -96,7 +97,7 @@ class BossMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding
         private val clickListener: () -> Unit,
     ) : ViewHolder(binding.root) {
         fun bind(item: BossStoreMenuMoreResponse) {
-            binding.menuLayout.setOnClickListener {
+            binding.menuLayout.onSingleClick {
                 clickListener()
             }
             binding.menuNameTextView.text = item.moreTitle
@@ -108,7 +109,7 @@ class BossMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding
 
         fun bind(item: MenuModel) {
             binding.menuNameTextView.text = item.name
-            binding.priceTextView.text = GlobalApplication.getContext().getString(R.string.food_truck_price, item.price.toFormattedNumber())
+            binding.priceTextView.text = GlobalApplication.getContext().getString(CommonR.string.food_truck_price, item.price.toFormattedNumber())
             binding.menuImageView.loadCircleImage(item.imageUrl)
         }
     }

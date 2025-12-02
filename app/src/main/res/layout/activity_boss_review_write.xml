@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/twReviewWriteTitle"
+        style="@style/pretendard_medium.size_16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/str_review_write"
+        android:textColor="@color/gray100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/btnSubmit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/twReviewWriteTitle">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/twBossReviewWriteTitle"
+                style="@style/pretendard_bold.size_20dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/str_boss_review_write_title"
+                android:textColor="@color/gray100"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/twBossReviewWriteDescription"
+                style="@style/pretendard_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/str_choice_review_description"
+                android:textColor="@color/gray50"
+                app:layout_constraintStart_toStartOf="@id/twBossReviewWriteTitle"
+                app:layout_constraintTop_toBottomOf="@id/twBossReviewWriteTitle" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReviewOptions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="36dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/twBossReviewWriteTitle"
+                app:spanCount="2" />
+
+            <TextView
+                android:id="@+id/twRecommendQuestion"
+                style="@style/pretendard_medium.size_16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
+                android:text="@string/str_boss_review_write_description"
+                android:textColor="@color/gray100"
+                app:layout_constraintStart_toStartOf="@id/rvReviewOptions"
+                app:layout_constraintTop_toBottomOf="@id/rvReviewOptions" />
+
+
+            <com.willy.ratingbar.ScaleRatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="@id/twRecommendQuestion"
+                app:layout_constraintTop_toBottomOf="@id/twRecommendQuestion"
+                app:srb_clickable="false"
+                app:srb_drawableEmpty="@drawable/ic_star_solid_gray20_12"
+                app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
+                app:srb_isIndicator="true"
+                app:srb_numStars="5"
+                app:srb_starHeight="32dp"
+                app:srb_starPadding="2dp"
+                app:srb_starWidth="32dp" />
+
+            <EditText
+                android:id="@+id/etReviewContent"
+                style="@style/pretendard_medium.size_14dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/selector_boss_reivew_wirte_bg"
+                android:gravity="top"
+                android:hint="리뷰를 남겨주세요(300자 이내)"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp"
+                android:textColor="@color/gray100"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/barrierPhoto"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingBar" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPhotos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="29dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/btnAddPhotos"
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="52dp"
+                android:background="@drawable/rect_gray_radius10"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:src="@drawable/ic_camera" />
+
+                <TextView
+                    style="@style/pretendard_medium.size_14dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사진 추가하기"
+                    android:textColor="@color/gray60" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="top"
+                app:constraint_referenced_ids="btnAddPhotos, rvPhotos" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnSubmit"
+        style="@style/pretendard_bold.size_16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_button_pink_gray30"
+        android:enabled="false"
+        android:text="리뷰 남기기 완료!"
+        android:textColor="@color/color_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

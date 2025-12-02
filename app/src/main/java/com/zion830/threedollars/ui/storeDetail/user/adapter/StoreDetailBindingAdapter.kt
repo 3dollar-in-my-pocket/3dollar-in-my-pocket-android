@@ -11,10 +11,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils
-import com.willy.ratingbar.ScaleRatingBar
-import com.zion830.threedollars.R
 import com.home.domain.data.store.StoreImage
+import com.willy.ratingbar.ScaleRatingBar
 import com.zion830.threedollars.utils.StringUtils.getString
+import com.threedollar.common.R as CommonR
 
 @BindingAdapter("bindRating")
 fun ScaleRatingBar.bindRating(value: Float) {
@@ -41,9 +41,9 @@ fun ImageView.loadRoundStoreImage(storeImage: StoreImage?) {
 @BindingAdapter("storeType")
 fun TextView.storeType(storeType: String?) {
     text = when (storeType) {
-        "STORE" -> getString(R.string.store)
-        "CONVENIENCE_STORE" -> getString(R.string.convenience_store)
-        "ROAD" -> getString(R.string.road)
+        "STORE" -> getString(CommonR.string.store)
+        "CONVENIENCE_STORE" -> getString(CommonR.string.convenience_store)
+        "ROAD" -> getString(CommonR.string.road)
         else -> {
             isVisible = false
             ""

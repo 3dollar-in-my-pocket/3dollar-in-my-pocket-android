@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/menuNameTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gray60"

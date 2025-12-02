@@ -1,16 +1,17 @@
 package com.threedollar.data.repository
 
 
-import com.home.domain.data.store.ReportReasonsModel
-import com.home.domain.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.data.datasource.CommunityDataSource
 import com.threedollar.data.mapper.asModel
 import com.threedollar.data.mapper.toCommentIdMapper
 import com.threedollar.data.mapper.toCreatePolicyMapper
+import com.threedollar.data.mapper.toDomainModel
 import com.threedollar.data.mapper.toListCategoryMapper
 import com.threedollar.data.mapper.toNeighborhoodsMapper
+import com.threedollar.data.mapper.toNetworkGroupType
+import com.threedollar.data.mapper.toNetworkRequest
 import com.threedollar.data.mapper.toPollCommentListMapper
 import com.threedollar.data.mapper.toPollIdMapper
 import com.threedollar.data.mapper.toPollItemMapper
@@ -28,19 +29,21 @@ import com.threedollar.domain.data.PollItem
 import com.threedollar.domain.data.PollList
 import com.threedollar.domain.data.PopularStores
 import com.threedollar.domain.data.UserPollItemList
+import com.threedollar.domain.model.PollCreateModel
+import com.threedollar.domain.model.ReportReasonsGroupType
 import com.threedollar.domain.repository.CommunityRepository
 import com.threedollar.network.data.poll.request.PollChoiceApiRequest
 import com.threedollar.network.data.poll.request.PollCommentApiRequest
-import com.threedollar.network.data.poll.request.PollCreateApiRequest
 import com.threedollar.network.data.poll.request.PollReportCreateApiRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import com.threedollar.domain.model.ReportReasonsModel as DomainReportReasonsModel
 
 class CommunityRepositoryImpl @Inject constructor(private val communityDataSource: CommunityDataSource) :
     CommunityRepository {
-    override fun createPoll(pollCreateApiRequest: PollCreateApiRequest): Flow<BaseResponse<PollId>> =
-        communityDataSource.createPoll(pollCreateApiRequest).map {
+    override fun createPoll(pollCreateModel: PollCreateModel): Flow<BaseResponse<PollId>> =
+        communityDataSource.createPoll(pollCreateModel.toNetworkRequest()).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data.toPollIdMapper(),
@@ -215,18 +218,26 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
             )
         }
 
-    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>> =
-        communityDataSource.getReportReasons(reportReasonsGroupType).map {
+    override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<DomainReportReasonsModel>> =
+        communityDataSource.getReportReasons(reportReasonsGroupType.toNetworkGroupType()).map {
             BaseResponse(
                 ok = it.ok,
-                data = it.data?.asModel(),
+                data = it.data?.asModel()?.toDomainModel(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error
             )
         }
 
-    override fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(position).map {
+    override fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(
+        position = position,
+        deviceLatitude = deviceLatitude,
+        deviceLongitude = deviceLongitude,
+    ).map {
         BaseResponse(
             ok = it.ok,
             data = it.data?.advertisements.orEmpty().map { it.asModel() },

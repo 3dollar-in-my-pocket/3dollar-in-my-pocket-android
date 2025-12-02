@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.zion830.threedollars.datasource.model.v2.response.visit_history.VisitHistoryContent" />
+            type="com.threedollar.network.data.visit_history.MyVisitHistoryV2" />
 
         <variable
             name="listener"
@@ -55,7 +55,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/rect_radius12_opacity"
-            android:backgroundTint="@{item.exist ? @color/green : @color/color_main_red}"
+            android:backgroundTint="@{item.visit.exist ? @color/green : @color/color_main_red}"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
@@ -71,7 +71,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginBottom="6dp"
-                android:src="@{item.exist ? @drawable/ic_good : @drawable/ic_bad}" />
+                android:src="@{item.visit.exist ? @drawable/ic_good : @drawable/ic_bad}" />
 
             <TextView
                 android:id="@+id/tv_created_at"

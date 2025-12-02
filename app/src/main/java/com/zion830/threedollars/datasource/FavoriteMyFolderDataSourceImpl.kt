@@ -2,14 +2,13 @@ package com.zion830.threedollars.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
-import com.zion830.threedollars.di.LegacyNetworkModule
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.network.NewServiceApi
 import com.zion830.threedollars.utils.getErrorMessage
 
-class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
-
-    private val newServiceApi: NewServiceApi = LegacyNetworkModule.newServiceApi
+class FavoriteMyFolderDataSourceImpl(
+    private val newServiceApi: NewServiceApi
+) : PagingSource<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>() {
 
     override fun getRefreshKey(state: PagingState<String, MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel>): String? = null
 
@@ -26,8 +25,12 @@ class FavoriteMyFolderDataSourceImpl : PagingSource<String, MyFavoriteFolderResp
 
                 LoadResult.Page(
                     data = myFavoriteFolderResponse.favorites,
-                    null,
-                    myFavoriteFolderResponse.cursor.nextCursor
+                    prevKey = null,
+                    nextKey = if (!myFavoriteFolderResponse.cursor.nextCursor.isNullOrEmpty()) {
+                        myFavoriteFolderResponse.cursor.nextCursor
+                    } else {
+                        null
+                    }
                 )
             } else {
                 LoadResult.Error(Exception(response.errorBody()?.string()?.getErrorMessage()))

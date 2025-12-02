@@ -1,0 +1,71 @@
+<resources>
+    <!-- Card Base Style -->
+    <style name="ThreeDollars.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">@dimen/corner_radius_md</item>
+        <item name="cardBackgroundColor">@color/color_white</item>
+        <item name="strokeColor">@color/gray20</item>
+        <item name="strokeWidth">@dimen/stroke_width_normal</item>
+        <item name="android:layout_margin">@dimen/spacing_sm</item>
+    </style>
+
+    <!-- Elevated Card -->
+    <style name="ThreeDollars.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/corner_radius_md</item>
+        <item name="cardBackgroundColor">@color/color_white</item>
+        <item name="cardElevation">@dimen/elevation_md</item>
+        <item name="android:layout_margin">@dimen/spacing_sm</item>
+    </style>
+
+    <!-- Filled Card (Gray Background) -->
+    <style name="ThreeDollars.Card.Filled">
+        <item name="cardBackgroundColor">@color/gray95</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Store Card -->
+    <style name="ThreeDollars.Card.Store">
+        <item name="cardCornerRadius">@dimen/corner_radius_lg</item>
+        <item name="cardBackgroundColor">@color/gray95</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:layout_margin">@dimen/spacing_md</item>
+    </style>
+
+    <!-- Menu Card -->
+    <style name="ThreeDollars.Card.Menu">
+        <item name="cardCornerRadius">@dimen/corner_radius_sm</item>
+        <item name="strokeColor">@color/gray30</item>
+        <item name="android:layout_margin">@dimen/spacing_xs</item>
+    </style>
+
+    <!-- Review Card -->
+    <style name="ThreeDollars.Card.Review">
+        <item name="cardCornerRadius">@dimen/corner_radius_md</item>
+        <item name="cardBackgroundColor">@color/gray95</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:padding">@dimen/spacing_lg</item>
+    </style>
+
+    <!-- Clickable Card -->
+    <style name="ThreeDollars.Card.Clickable">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Container Style -->
+    <style name="ThreeDollars.Container">
+        <item name="android:background">@drawable/rect_white_radius_12</item>
+        <item name="android:padding">@dimen/spacing_lg</item>
+        <item name="android:layout_margin">@dimen/spacing_md</item>
+    </style>
+
+    <!-- Gray Container -->
+    <style name="ThreeDollars.Container.Gray">
+        <item name="android:background">@drawable/rect_gray95_radius16</item>
+    </style>
+
+    <!-- Rounded Container -->
+    <style name="ThreeDollars.Container.Rounded">
+        <item name="android:background">@drawable/rect_white_radius20</item>
+    </style>
+</resources>

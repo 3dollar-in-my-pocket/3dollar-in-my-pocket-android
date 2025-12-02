@@ -1,46 +1,24 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.request.PushInformationRequest
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.request.PatchPushInformationRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.datasource.model.v2.response.my.User
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
-import com.zion830.threedollars.datasource.model.v2.response.visit_history.MyVisitHistoryResponse
 import com.zion830.threedollars.network.NewServiceApi
 import retrofit2.Response
 import javax.inject.Inject
 
 class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi) : UserDataSource {
-
-    override suspend fun signOut(): Response<BaseResponse<String>> {
-        return service.signOut()
-    }
-
-    override suspend fun signUp(signUpRequest: SignUpRequest): Response<SignResponse> {
-        return service.signUp(signUpRequest)
-    }
-
-    override suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>> {
-        return service.login(loginRequest)
-    }
-
-    override suspend fun logout(): Response<BaseResponse<String>> {
-        return service.logout()
-    }
 
     override suspend fun getMyInfo(): Response<MyInfoResponse> {
         return service.getMyInfo()
@@ -62,13 +40,6 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
         return service.getMyStore(cursor, size)
     }
 
-    override suspend fun getMyVisitHistory(
-        cursor: Int?,
-        size: Int
-    ): Response<MyVisitHistoryResponse> {
-        return service.getMyVisitHistory(cursor, size)
-    }
-
     override suspend fun getFAQCategory(): Response<FAQCategoryResponse> = service.getFAQCategory()
 
     override suspend fun getFAQList(category: String): Response<FAQByCategoryResponse> =
@@ -84,14 +55,12 @@ class UserDataSourceImpl @Inject constructor(private val service: NewServiceApi)
     override suspend fun updateMyMedals(updateMedalRequest: UpdateMedalRequest): Response<BaseResponse<User>> =
         service.updateMyMedals(updateMedalRequest)
 
-    override suspend fun postPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> =
-        service.postPushInformation(informationRequest)
+
+    override suspend fun patchPushInformation(patchPushInformationRequest: PatchPushInformationRequest): Response<BaseResponse<String>> =
+        service.patchPushInformation(patchPushInformationRequest)
 
     override suspend fun deletePushInformation(): Response<BaseResponse<String>> =
         service.deletePushInformation()
-
-    override suspend fun putPushInformationToken(informationTokenRequest: PushInformationTokenRequest): Response<BaseResponse<String>> =
-        service.putPushInformationToken(informationTokenRequest)
 
     override suspend fun getFavoriteViewer(favoriteId: String, cursor: String?): Response<BaseResponse<MyFavoriteFolderResponse>> =
         service.getFavoriteViewer(favoriteId, cursor)

@@ -11,9 +11,8 @@ import androidx.paging.LoadState
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
@@ -21,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, FavoriteViewModel>({ ActivityFavoriteMyFolderBinding.inflate(it) }) {
@@ -37,7 +37,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
-                viewModel.deleteFavorite(item.storeType, item.storeId)
+                viewModel.deleteFavorite(item.storeId)
             }
         })
     }
@@ -52,6 +52,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     }
 
     override fun initView() {
+        setDarkSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         activityResultLauncher = registerForActivityResult(
@@ -69,23 +70,23 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         binding.shareImageView.onSingleClick {
             viewModel.createShareUrl()
         }
-        binding.backImageView.setOnClickListener {
+        binding.backImageView.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.deleteTextView.setOnClickListener {
+        binding.deleteTextView.onSingleClick {
             binding.deleteTextView.isVisible = false
             binding.doingDeleteLinearLayout.isVisible = true
             adapter.setDelete(true)
         }
 
-        binding.deleteCompleteTextView.setOnClickListener {
+        binding.deleteCompleteTextView.onSingleClick {
             binding.deleteTextView.isVisible = true
             binding.doingDeleteLinearLayout.isVisible = false
             adapter.setDelete(false)
         }
 
-        binding.allDeleteTextView.setOnClickListener {
+        binding.allDeleteTextView.onSingleClick {
             val dialog = AllDeleteFavoriteDialog()
             dialog.setDialogListener(object : AllDeleteFavoriteDialog.DialogListener {
                 override fun click() {
@@ -94,7 +95,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             })
             dialog.show(supportFragmentManager, dialog.tag)
         }
-        binding.infoEditTextView.setOnClickListener {
+        binding.infoEditTextView.onSingleClick {
             activityResultLauncher.launch(
                 FavoriteMyInfoEditActivity.getIntent(
                     this,
@@ -115,7 +116,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             }
         }
         viewModel.myFavoriteFolderResponse.observe(this) {
-            val title = it.name.ifEmpty { getString(R.string.favorite_title, it.user.name, getString(R.string.favorite)) }
+            val title = it.name.ifEmpty { getString(CommonR.string.favorite_title, it.user.name, getString(CommonR.string.favorite)) }
             binding.favoriteTitleTextView.text = title
             binding.favoriteBodyTextView.text = it.introduction
         }
@@ -130,7 +131,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                     if (loadState.refresh is LoadState.NotLoading) {
                         val isEmpty = adapter.itemCount == 0
 
-                        binding.itemCountTextView.text = getString(R.string.count_list, adapter.itemCount)
+                        binding.itemCountTextView.text = getString(CommonR.string.count_list, adapter.itemCount)
                         binding.favoriteListRecyclerView.isVisible = isEmpty.not()
                         binding.emptyLinearLayout.isVisible = isEmpty
                     }

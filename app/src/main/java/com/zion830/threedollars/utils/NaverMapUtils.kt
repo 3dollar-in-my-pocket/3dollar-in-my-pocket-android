@@ -6,6 +6,7 @@ import com.naver.maps.geometry.LatLng
 
 object NaverMapUtils {
     val DEFAULT_LOCATION = LatLng(37.56, 126.97) // 서울
+    val DEFAULT_DISTANCE_M = 100000.0
     const val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     fun calculateDistance(first: LatLng?, second: LatLng?): Float {

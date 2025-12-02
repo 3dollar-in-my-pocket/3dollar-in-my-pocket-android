@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.UserRecoverableAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -20,13 +21,12 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ ActivityLoginBinding.inflate(it) }) {
@@ -48,6 +49,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     }
 
     override fun initView() {
+        setDarkSystemBars()
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
             val bundle = Bundle().apply {
@@ -96,26 +98,51 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     private fun loginWithGoogle(account: GoogleSignInAccount?) {
         try {
             lifecycleScope.launch(Dispatchers.IO) {
-                val token =
-                    GoogleAuthUtil.getToken(
+                try {
+                    val token = GoogleAuthUtil.getToken(
                         GlobalApplication.getContext(),
                         account?.account!!,
                         "oauth2:https://www.googleapis.com/auth/plus.me",
                     )
                 LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
-                LegacySharedPrefUtils.saveGoogleToken(token)
                 viewModel.tryLogin(LoginType.GOOGLE, token)
+                } catch (e: UserRecoverableAuthException) {
+                    withContext(Dispatchers.Main) {
+                        e.intent?.let { startActivityForResult(it, GOOGLE_SIGN_IN) }
+                    }
+                }
             }
         } catch (e: Exception) {
+            e.printStackTrace()
+            showToast(CommonR.string.login_failed)
         }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GOOGLE_SIGN_IN) {
-            handleSignInResult(GoogleSignIn.getSignedInAccountFromIntent(data))
+        if (requestCode == GOOGLE_SIGN_IN && resultCode == RESULT_OK) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val account = GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
+                    if (account != null && account.idToken != null) {
+                        val token = GoogleAuthUtil.getToken(
+                            GlobalApplication.getContext(),
+                            account.account!!,
+                            "oauth2:https://www.googleapis.com/auth/plus.me",
+                        )
+                        viewModel.tryLogin(LoginType.GOOGLE, token)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        showToast(CommonR.string.login_failed)
+                    }
+                }
+            }
         }
     }
+
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>?) {
         try {
@@ -124,11 +151,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                 loginWithGoogle(account)
             } else {
                 Log.e("LoginActivity", "account is null")
-                showToast(R.string.login_failed)
+                showToast(CommonR.string.login_failed)
             }
         } catch (e: ApiException) {
             e.printStackTrace()
-            showToast(R.string.login_failed)
+            showToast(CommonR.string.login_failed)
         }
     }
 
@@ -136,7 +163,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
         UserApiClient.instance.me { user, _ ->
             user?.let {
                 Log.d(localClassName, it.groupUserToken.toString())
-                LegacySharedPrefUtils.saveGoogleToken(token.accessToken)
                 viewModel.tryLogin(LoginType.KAKAO, token.accessToken)
             }
         }
@@ -153,7 +179,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                                 LegacySharedPrefUtils.saveAccessToken(it.value?.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
-                                        viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = firebaseToken.result))
+                                        viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
                                     }
                                 }
                                 startActivity(MainActivity.getIntent(this@LoginActivity))
@@ -162,13 +188,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
 
                             is ResultWrapper.GenericError -> {
                                 when (it.code) {
-                                    400 -> showToast(R.string.connection_failed)
+                                    400 -> showToast(CommonR.string.connection_failed)
                                     404 -> inputNameLauncher.launch(Intent(this@LoginActivity, SignUpActivity::class.java))
-                                    503 -> showToast(R.string.server_500)
-                                    500, 502 -> showToast(R.string.connection_failed)
-                                    else -> showToast(R.string.connection_failed)
+                                    503 -> showToast(CommonR.string.server_500)
+                                    500, 502 -> showToast(CommonR.string.connection_failed)
+                                    else -> showToast(CommonR.string.connection_failed)
                                 }
                             }
+
+                            ResultWrapper.NetworkError -> {}
                         }
                     }
                 }
@@ -188,10 +216,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(localClassName, "로그인 실패", error)
-                showToast(R.string.error_no_kakao_login)
+                showToast(CommonR.string.error_no_kakao_login)
             } else if (token != null) {
-                LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
-                LegacySharedPrefUtils.saveKakaoToken(token.accessToken, token.refreshToken)
                 Log.d(localClassName, token.toString())
                 tryLoginBySocialType(token)
             }

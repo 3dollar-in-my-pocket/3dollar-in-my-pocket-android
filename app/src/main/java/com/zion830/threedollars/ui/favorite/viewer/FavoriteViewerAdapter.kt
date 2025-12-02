@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.favorite.viewer
 import com.zion830.threedollars.BR
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFavoriteViewerBinding
-import com.zion830.threedollars.datasource.model.v2.response.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import zion830.com.common.base.BaseRecyclerView
 import zion830.com.common.base.BaseViewHolder
 

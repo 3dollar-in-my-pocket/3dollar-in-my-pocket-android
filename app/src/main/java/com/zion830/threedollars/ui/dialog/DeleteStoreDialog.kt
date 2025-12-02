@@ -10,18 +10,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.home.domain.data.store.DeleteType
+import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.utils.Constants.CLICK_REPORT
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
-import com.home.domain.data.store.DeleteType
-import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.threedollar.common.utils.Constants.CLICK_REPORT
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
@@ -65,11 +66,11 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     }
 
     private fun initButton() {
-        binding.ibClose.setOnClickListener {
+        binding.ibClose.onSingleClick {
             EventTracker.logEvent(Constants.DELETE_POPUP_CLOSE_BTN_CLICKED)
             dismiss()
         }
-        binding.btnFinish.setOnClickListener {
+        binding.btnFinish.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "report_store")
                 putString("store_id", viewModel.userStoreDetailModel.value?.store?.storeId.toString())

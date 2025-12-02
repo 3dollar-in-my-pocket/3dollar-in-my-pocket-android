@@ -8,13 +8,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_ADDRESS_OK
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogNearExistBinding
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 
 @AndroidEntryPoint
@@ -53,15 +54,15 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
 
         if (latitude != null && longitude != null) {
             binding.addressTextView.text = getCurrentLocationName(LatLng(latitude, longitude))
-                ?: getString(R.string.location_no_address)
+                ?: getString(CommonR.string.location_no_address)
         }
 
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener { dismiss() }
+        binding.closeImageButton.onSingleClick { dismiss() }
 
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "write_address_popup")
                 putString("address", binding.addressTextView.text.toString())

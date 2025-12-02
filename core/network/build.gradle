@@ -14,7 +14,8 @@ android {
 
     defaultConfig {
         minSdk 24
-        targetSdk 34
+        targetSdk 36
+        versionName project.property("version_name")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -22,35 +23,39 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_release'),
-                                    appName3dollar : "@string/app_name_3dollar"]
+            manifestPlaceholders = [kakao_key     : properties.getProperty('kakao_key_release'),
+                                    appName3dollar: "@string/app_name_3dollar"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_release')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('release_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key_release')}\""
             buildConfigField "String", "APPLICATION_ID", "\"${properties.getProperty('application_id_release')}\""
             buildConfigField "String", "VERSION_CODE", "\"${properties.getProperty('version_code')}\""
-            buildConfigField "String", "VERSION_NAME", "\"${properties.getProperty('version_name')}\""
+            buildConfigField "String", "VERSION_NAME", "\"${project['version_name']}\""
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable true
-            manifestPlaceholders = [kakao_key: properties.getProperty('kakao_key_dev'),
-                                    appName3dollar : "@string/app_name_3dollar_debug"]
+            manifestPlaceholders = [kakao_key     : properties.getProperty('kakao_key_dev'),
+                                    appName3dollar: "@string/app_name_3dollar_debug"]
             buildConfigField "String", "KAKAO_KEY", "\"${properties.getProperty('kakao_key_dev')}\""
             buildConfigField "String", "BASE_URL", "\"${properties.getProperty('develop_url')}\""
             buildConfigField "String", "MAP_KEY", "\"${properties.getProperty('kakao_map_key')}\""
             buildConfigField "String", "APPLICATION_ID", "\"${properties.getProperty('application_id_dev')}\""
             buildConfigField "String", "VERSION_CODE", "\"${properties.getProperty('version_code')}\""
-            buildConfigField "String", "VERSION_NAME", "\"${properties.getProperty('version_name')}\""
+            buildConfigField "String", "VERSION_NAME", "\"${project['version_name']}\""
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -58,7 +63,7 @@ dependencies {
     implementation project(':core:common')
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.9.0'
     implementation project(path: ':common')
     testImplementation 'junit:junit:4.13.2'
@@ -72,8 +77,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.1"
 
     // 힐트
-    implementation "com.google.dagger:hilt-android:2.42"
-    kapt "com.google.dagger:hilt-android-compiler:2.42"
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-android-compiler:2.44"
 
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-user:2.0.3"

@@ -1,26 +1,37 @@
 package com.zion830.threedollars.ui.home.ui
 
-import android.view.KeyEvent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
+import com.google.android.gms.ads.AdRequest
+import com.home.domain.data.place.PlaceModel
+import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.kakao.Document
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
+import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter
+import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
-import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
-import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeViewModel>() {
@@ -29,26 +40,27 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
-    private lateinit var adapter: SearchAddressRecyclerAdapter
+    private lateinit var searchAddressRecyclerAdapter: SearchAddressRecyclerAdapter
+
+    private lateinit var recentSearchAdapter: RecentSearchAdapter
 
     override fun initView() {
         binding.etSearch.requestFocus()
+        searchViewModel.getPlace()
 
         initAdapter()
         initButton()
         initFlow()
-        searchViewModel.searchResult.observe(viewLifecycleOwner) {
-            adapter.submitList(it?.documents ?: emptyList())
-            binding.tvEmpty.isVisible = it?.documents.isNullOrEmpty()
-        }
-
-        binding.etSearch.setOnEditorActionListener { _, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (keyEvent != null && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER)
-            ) {
-                binding.btnSearch.performClick()
+        initAdmob()
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            if (text.isNullOrEmpty()) {
+                binding.recentSearchLinearLayout.isVisible = true
+                binding.searchResultLinearLayout.isVisible = false
+            } else {
+                binding.recentSearchLinearLayout.isVisible = false
+                binding.searchResultLinearLayout.isVisible = true
+                searchViewModel.updateSearchAddress(binding.etSearch.text.toString())
             }
-            false
         }
     }
 
@@ -57,31 +69,76 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     }
 
     private fun initAdapter() {
-        adapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
+        searchAddressRecyclerAdapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
+                val bundle = Bundle().apply {
+                    putString("screen", "search_address")
+                    putString("building_name", item.placeName)
+                    putString("address", item.addressName)
+                    putString("type", "SEARCH")
+                }
+                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
-                viewModel.requestHomeItem(location)
+                searchViewModel.postPlace(
+                    placeRequest = PlaceRequest(
+                        location = PlaceRequest.Location(latitude = location.latitude, longitude = location.longitude),
+                        placeName = item.placeName,
+                        addressName = item.addressName,
+                        roadAddressName = item.roadAddressName
+                    )
+                )
+                viewModel.fetchAroundStores()
                 searchViewModel.updateLatLng(location)
                 activity?.supportFragmentManager?.popBackStack()
                 searchViewModel.clear()
             }
         })
-        binding.rvSearchResult.adapter = adapter
+        binding.rvSearchResult.adapter = searchAddressRecyclerAdapter
+
+        recentSearchAdapter = RecentSearchAdapter(searchClickListener = object : OnItemClickListener<PlaceModel> {
+            override fun onClick(item: PlaceModel) {
+                val bundle = Bundle().apply {
+                    putString("screen", "search_address")
+                    putString("building_name", item.placeName)
+                    putString("address", item.addressName)
+                    putString("type", "RECENT")
+                }
+                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+
+                val location = LatLng(item.location.latitude, item.location.longitude)
+                searchViewModel.postPlace(
+                    placeRequest = PlaceRequest(
+                        location = PlaceRequest.Location(latitude = location.latitude, longitude = location.longitude),
+                        placeName = item.placeName,
+                        addressName = item.addressName,
+                        roadAddressName = item.roadAddressName
+                    )
+                )
+                viewModel.fetchAroundStores()
+                searchViewModel.updateLatLng(location)
+                activity?.supportFragmentManager?.popBackStack()
+                searchViewModel.clear()
+            }
+        },
+            deleteClickListener = object : OnItemClickListener<PlaceModel> {
+                override fun onClick(item: PlaceModel) {
+                    searchViewModel.deletePlace(item.placeId)
+                }
+
+            }
+        )
+
+        binding.recentSearchRecyclerView.adapter = recentSearchAdapter
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             requireActivity().onBackPressed()
-        }
-        binding.btnSearch.setOnClickListener {
-            if (binding.etSearch.text.isNullOrBlank()) {
-                showToast("검색어가 없습니다.")
-            } else {
-                searchViewModel.search(binding.etSearch.text.toString(), viewModel.currentLocation.value ?: NaverMapUtils.DEFAULT_LOCATION)
-            }
         }
     }
 
+    @OptIn(FlowPreview::class)
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -92,8 +149,35 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                         }
                     }
                 }
+                launch {
+                    searchViewModel.searchResult.collect {
+                        searchAddressRecyclerAdapter.submitList(it?.documents ?: emptyList())
+                        binding.tvEmpty.isVisible = it?.documents.isNullOrEmpty()
+                    }
+                }
+                launch {
+                    searchViewModel.searchAddress.debounce(1000L).collect {
+                        searchViewModel.search(it)
+                    }
+                }
+                launch {
+                    searchViewModel.recentSearchPagingData.collectLatest {
+                        it?.let { pagingData ->
+                            recentSearchAdapter.submitData(PagingData.empty())
+                            recentSearchAdapter.submitData(pagingData)
+                            binding.recentSearchRecyclerView.postDelayed({
+                                binding.recentSearchRecyclerView.smoothScrollToPosition(0)
+                            }, 500)
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchByAddressBinding =

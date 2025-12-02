@@ -11,7 +11,7 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="54dp"
+        android:layout_marginBottom="16dp"
         android:descendantFocusability="beforeDescendants"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/bottomConstraintLayout"
@@ -47,7 +47,7 @@
 
             <TextView
                 android:id="@+id/tagTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -60,7 +60,7 @@
 
             <TextView
                 android:id="@+id/storeNameTextView"
-                style="@style/apple_gothic_semi_bold.size_20sp"
+                style="@style/apple_gothic_semi_bold.size_20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -84,7 +84,7 @@
 
             <TextView
                 android:id="@+id/bossTextView"
-                style="@style/apple_gothic_bold.size_12sp"
+                style="@style/apple_gothic_bold.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -112,7 +112,7 @@
 
                 <TextView
                     android:id="@+id/reviewTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
@@ -129,7 +129,7 @@
 
                 <TextView
                     android:id="@+id/distanceTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="2dp"
@@ -160,7 +160,7 @@
 
                     <Button
                         android:id="@+id/favoriteButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -186,7 +186,7 @@
 
                     <Button
                         android:id="@+id/shareButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -212,7 +212,7 @@
 
                     <Button
                         android:id="@+id/directionsButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -238,7 +238,7 @@
 
                     <Button
                         android:id="@+id/snsButton"
-                        style="@style/apple_gothic_medium.size_12sp"
+                        style="@style/apple_gothic_medium.size_12dp"
                         android:layout_width="67dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -265,7 +265,7 @@
 
             <TextView
                 android:id="@+id/addressTextView"
-                style="@style/apple_gothic_medium.size_12sp"
+                style="@style/apple_gothic_medium.size_12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -289,19 +289,32 @@
                 app:layout_constraintBottom_toBottomOf="@id/map"
                 app:layout_constraintEnd_toEndOf="@id/map" />
 
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/admob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rect_gray"
+                android:visibility="visible"
+                app:adSize="BANNER"
+                app:adUnitId="@string/admob_store_detail_banner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/map" />
+
             <LinearLayout
                 android:id="@+id/storeInfoLinearLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/map">
+                app:layout_constraintTop_toBottomOf="@id/admob">
 
                 <TextView
                     android:id="@+id/storeInfoTitleTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/store_info"
@@ -309,7 +322,7 @@
 
                 <TextView
                     android:id="@+id/storeInfoUpdateAtTextView"
-                    style="@style/apple_gothic_medium.size_12sp"
+                    style="@style/apple_gothic_medium.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
@@ -340,19 +353,18 @@
 
                         <TextView
                             android:id="@+id/snsTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="@string/sns"
                             android:textColor="@color/gray100"
-                            app:layout_constraintBottom_toTopOf="@id/ownerOneWordTitleTextView"
                             app:layout_constraintEnd_toStartOf="@id/snsTextView"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
                             android:id="@+id/snsTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -365,8 +377,34 @@
                             tools:text="https://www.instagram.com/merl..." />
 
                         <TextView
+                            android:id="@+id/phoneTitleTextView"
+                            style="@style/apple_gothic_bold.size_12dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/phone_number"
+                            android:textColor="@color/gray100"
+                            app:layout_constraintEnd_toStartOf="@id/phoneTextView"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/snsTextView" />
+
+                        <TextView
+                            android:id="@+id/phoneTextView"
+                            style="@style/apple_gothic_medium.size_12dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/pink"
+                            app:layout_constraintBottom_toBottomOf="@id/phoneTitleTextView"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/phoneTitleTextView"
+                            app:layout_constraintTop_toTopOf="@id/phoneTitleTextView"
+                            tools:text="010-4425-8447" />
+
+                        <TextView
                             android:id="@+id/ownerOneWordTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -374,12 +412,12 @@
                             android:textColor="@color/gray100"
                             app:layout_constraintBottom_toTopOf="@id/ownerOneWordTitleTextView"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/snsTitleTextView" />
+                            app:layout_constraintTop_toBottomOf="@id/phoneTextView" />
 
 
                         <TextView
                             android:id="@+id/ownerOneWordTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -409,7 +447,7 @@
 
                         <TextView
                             android:id="@+id/accountTitleTextView"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -421,7 +459,7 @@
 
                         <TextView
                             android:id="@+id/accountNumberTextView"
-                            style="@style/apple_gothic_medium.size_12sp"
+                            style="@style/apple_gothic_medium.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -433,7 +471,7 @@
 
                         <Button
                             android:id="@+id/accountCopyButton"
-                            style="@style/apple_gothic_bold.size_12sp"
+                            style="@style/apple_gothic_bold.size_12dp"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:background="@drawable/rect_radius_10_gray_80"
@@ -489,7 +527,7 @@
                 android:id="@+id/appearanceDayLinearLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="34dp"
+                android:layout_marginTop="32dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -497,7 +535,7 @@
 
                 <TextView
                     android:id="@+id/appearanceDayTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/apple_gothic_bold.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/appearance_day"
@@ -548,17 +586,17 @@
 
                 <TextView
                     android:id="@+id/feedbackTextView"
-                    style="@style/apple_gothic_bold.size_16sp"
+                    style="@style/pretendard_medium.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/store_feedback"
+                    android:text="@string/review"
                     android:textColor="@color/gray100"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/feedbackCountTextView"
-                    style="@style/apple_gothic_medium.size_16sp"
+                    style="@style/apple_gothic_medium.size_16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -569,7 +607,7 @@
 
                 <TextView
                     android:id="@+id/feedbackReviewTextView"
-                    style="@style/apple_gothic_bold.size_12sp"
+                    style="@style/apple_gothic_bold.size_12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="16dp"
@@ -580,38 +618,114 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/feedbackTextView" />
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/feedbackCardView"
+                <!-- TODO 여기서 부터 사장님 리뷰 작업 하면 됨. -->
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ratingLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    app:cardBackgroundColor="@color/gray0"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
+                    android:background="@drawable/rect_pink100_radius12"
+                    android:paddingVertical="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/feedbackTextView"
-                    tools:ignore="UnusedAttribute">
+                    app:layout_constraintTop_toBottomOf="@id/feedbackTextView">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/ratingAverageTitle"
+                        style="@style/pretendard_medium.size_10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rating_avg"
+                        android:textColor="@color/gray50"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/foodTruckReviewRecyclerView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:clipToPadding="false"
-                            android:orientation="vertical"
-                            android:overScrollMode="never"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:listitem="@layout/item_food_truck_review_detail" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
+                    <com.willy.ratingbar.ScaleRatingBar
+                        android:id="@+id/reviewRatingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.33"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/ratingAverageTitle"
+                        app:srb_clickable="false"
+                        app:srb_drawableEmpty="@drawable/ic_star_solid_light_pink_24"
+                        app:srb_drawableFilled="@drawable/ic_star_solid_pink_24"
+                        app:srb_isIndicator="true"
+                        app:srb_numStars="5"
+                        app:srb_starHeight="24dp"
+                        app:srb_starPadding="2dp"
+                        app:srb_starWidth="24dp"
+                        tools:ignore="UnusedAttribute" />
+
+                    <TextView
+                        android:id="@+id/reviewRatingAvgTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/app_pretendard_font"
+                        android:textColor="@color/gray80"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/reviewRatingBar"
+                        app:layout_constraintStart_toEndOf="@id/reviewRatingBar"
+                        app:layout_constraintTop_toTopOf="@id/reviewRatingBar"
+                        tools:text="4.9점" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/feedbackLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/rect_pink100_radius12"
+                    android:paddingVertical="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ratingLayout">
+
+                    <TextView
+                        android:id="@+id/feedbackTitle"
+                        style="@style/apple_gothic_medium.size_10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/str_feedback_title"
+                        android:textColor="@color/gray50"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/feedbackRecyclerView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/feedbackTitle"
+                        tools:itemCount="4"
+                        tools:listitem="@layout/item_feedback_tag">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/foodTruckReviewRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/feedbackLayout"
+                    app:spanCount="4"
+                    tools:listitem="@layout/item_food_truck_review" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -635,7 +749,7 @@
 
         <Button
             android:id="@+id/bottomFavoriteButton"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -651,7 +765,7 @@
 
         <Button
             android:id="@+id/bottomReviewTextView"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

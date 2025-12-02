@@ -10,20 +10,20 @@ data class AdvertisementResponse(
     data class Advertisement(
         @SerializedName("advertisementId")
         val advertisementId: Int? = null, // 99
-        @SerializedName("background")
-        val background: Background? = null,
-        @SerializedName("extra")
-        val extra: Extra? = null,
-        @SerializedName("image")
-        val image: Image? = null,
-        @SerializedName("link")
-        val link: Link? = null,
-        @SerializedName("metadata")
-        val metadata: MetaData? = null, // null
+        @SerializedName("title")
+        val title: Title? = null,
         @SerializedName("subTitle")
         val subTitle: SubTitle? = null,
-        @SerializedName("title")
-        val title: Title? = null
+        @SerializedName("extra")
+        val extra: Extra? = null,
+        @SerializedName("background")
+        val background: Background? = null,
+        @SerializedName("link")
+        val link: Link? = null,
+        @SerializedName("image")
+        val image: Image? = null,
+        @SerializedName("metadata")
+        val metadata: MetaData? = null, // null
     ) {
 
         data class MetaData(

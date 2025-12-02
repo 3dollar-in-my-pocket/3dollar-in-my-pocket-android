@@ -22,6 +22,8 @@ import com.zion830.threedollars.ui.storeDetail.user.adapter.StoreImageSliderAdap
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StorePhotoDialog : DialogFragment() {
@@ -87,7 +89,7 @@ class StorePhotoDialog : DialogFragment() {
     }
 
     private fun initButton() {
-        binding.leftButton.setOnClickListener {
+        binding.leftButton.onSingleClick {
             if (currentPosition > 0) {
                 currentPosition -= 1
                 binding.slider.smoothScrollToPosition(currentPosition)
@@ -97,7 +99,7 @@ class StorePhotoDialog : DialogFragment() {
             }
         }
 
-        binding.rightButton.setOnClickListener {
+        binding.rightButton.onSingleClick {
             if (currentPosition < adapter.itemCount - 1) {
                 currentPosition += 1
                 binding.slider.smoothScrollToPosition(currentPosition)
@@ -106,20 +108,20 @@ class StorePhotoDialog : DialogFragment() {
                 binding.slider.scrollToPosition(currentPosition)
             }
         }
-        binding.deleteButton.setOnClickListener {
+        binding.deleteButton.onSingleClick {
             AlertDialog.Builder(requireContext())
-                .setPositiveButton(R.string.ok) { _, _ ->
+                .setPositiveButton(zion830.com.common.R.string.ok) { _, _ ->
                     val selectedPosition = (binding.slider.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition() ?: 0
                     viewModel.deletePhoto(adapter.peek(selectedPosition))
                     dismiss()
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                .setTitle(R.string.delete_photo_title)
-                .setMessage(R.string.delete_photo_msg)
+                .setTitle(CommonR.string.delete_photo_title)
+                .setMessage(CommonR.string.delete_photo_msg)
                 .create()
                 .show()
         }
-        binding.backButton.setOnClickListener { dismiss() }
+        binding.backButton.onSingleClick { dismiss() }
     }
 
     private fun initFlow() {

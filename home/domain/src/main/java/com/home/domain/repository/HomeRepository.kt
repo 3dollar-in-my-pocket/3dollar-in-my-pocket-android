@@ -2,10 +2,12 @@ package com.home.domain.repository
 
 import androidx.paging.PagingData
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.home.domain.data.place.PlaceModel
 import com.home.domain.data.store.AroundStoreModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DeleteResultModel
 import com.home.domain.data.store.EditStoreReviewModel
+import com.home.domain.data.store.FeedbackExistsModel
 import com.home.domain.data.store.FoodTruckReviewModel
 import com.home.domain.data.store.ImageContentModel
 import com.home.domain.data.store.PostUserStoreModel
@@ -14,8 +16,12 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.home.domain.data.store.SaveImagesModel
 import com.home.domain.data.store.StoreNearExistsModel
+import com.home.domain.data.store.UploadFileModel
 import com.home.domain.data.store.UserStoreDetailModel
 import com.home.domain.data.user.UserModel
+import com.home.domain.request.FilterConditionsTypeModel
+import com.home.domain.request.PlaceRequest
+import com.home.domain.request.PlaceType
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.UserStoreModelRequest
@@ -23,14 +29,18 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Body
+import retrofit2.http.Path
 
 interface HomeRepository {
 
     fun getAroundStores(
+        distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
         sortType: String,
         filterCertifiedStores: Boolean?,
+        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
@@ -52,13 +62,17 @@ interface HomeRepository {
 
     fun putMarketingConsent(marketingConsent: String): Flow<BaseResponse<String>>
 
-    fun postPushInformation(pushToken: String): Flow<BaseResponse<String>>
+    fun putPushInformation(pushToken: String): Flow<BaseResponse<String>>
 
-    fun getAdvertisements(position: AdvertisementsPosition): Flow<BaseResponse<List<AdvertisementModelV2>>>
+    fun getAdvertisements(
+        position: AdvertisementsPosition,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ): Flow<BaseResponse<List<AdvertisementModelV2>>>
 
-    fun putFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun putFavorite(storeId: String): Flow<BaseResponse<String>>
 
-    fun deleteFavorite(storeType: String, storeId: String): Flow<BaseResponse<String>>
+    fun deleteFavorite(storeId: String): Flow<BaseResponse<String>>
 
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>>
 
@@ -70,7 +84,11 @@ interface HomeRepository {
 
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
-    fun saveImages(images: List<MultipartBody.Part>, storeId: Int): Flow<BaseResponse<List<SaveImagesModel>>>
+    suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>?
+
+    suspend fun uploadFilesBulk(fileType: String, files: List<MultipartBody.Part>): BaseResponse<List<UploadFileModel>>?
+
+    suspend fun uploadFile(fileType: String, file: MultipartBody.Part): BaseResponse<UploadFileModel>?
 
     fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
 
@@ -90,4 +108,16 @@ interface HomeRepository {
     fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
+
+    fun postPlace(placeRequest: PlaceRequest, placeType: PlaceType): Flow<BaseResponse<String>>
+
+    fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
+
+    fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>>
+
+    fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
+
+    fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>>
+
+    fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>>
 }

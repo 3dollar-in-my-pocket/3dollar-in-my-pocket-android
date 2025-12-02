@@ -7,6 +7,8 @@ import android.text.style.StyleSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.threedollar.network.data.store.Category
 import com.zion830.threedollars.datasource.model.MenuType
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
 
@@ -21,12 +23,12 @@ fun ImageView.bindMenuIcon(category: String?) {
 }
 
 @BindingAdapter("bindMenuIcons", "isSelected", requireAll = false)
-fun ImageView.bindMenuIcons(category: List<String>? = emptyList(), isSelected: Boolean? = true) {
+fun ImageView.bindMenuIcons(category: List<Category>? = emptyList(), isSelected: Boolean? = true) {
     if (category.isNullOrEmpty()) {
         return
     }
 
-    val menu = MenuType.of(category.first())
+    val menu = MenuType.of(category.first().categoryId)
     setImageResource(if (isSelected == null || isSelected) menu.colorIcon else menu.grayIcon)
 }
 
@@ -101,4 +103,11 @@ fun ImageView.bindSmallMenuIcon(category: MenuType?) {
     }
 
     setImageResource(MenuType.of(category.key).colorIcon)
+}
+
+@BindingAdapter("feedBacks")
+fun RecyclerView.setFeedBacks(feedBacks: List<String>? = emptyList()) {
+    val feedBackItemAdapter = FeedBackItemAdapter()
+    feedBackItemAdapter.submitList(feedBacks)
+    this.adapter = feedBackItemAdapter
 }

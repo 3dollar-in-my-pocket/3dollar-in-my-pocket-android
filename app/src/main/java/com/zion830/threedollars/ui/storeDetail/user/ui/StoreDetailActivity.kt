@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -22,17 +23,35 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.*
+import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.PaymentType
+import com.home.domain.data.store.ReviewContentModel
+import com.home.domain.data.store.StoreImage
+import com.home.domain.data.store.UserStoreDetailEmptyItem
+import com.home.domain.data.store.UserStoreDetailModel
+import com.home.domain.data.store.UserStoreMenuModel
+import com.home.domain.data.store.UserStoreMoreResponse
+import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.ext.*
+import com.threedollar.common.ext.addNewFragment
+import com.threedollar.common.ext.convertUpdateAt
+import com.threedollar.common.ext.getMonthFirstDate
+import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.loadImage
+import com.threedollar.common.ext.showSnack
+import com.threedollar.common.ext.textPartColor
+import com.threedollar.common.ext.textPartTypeface
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.USER_STORE
+import com.threedollar.common.utils.getDistanceText
+import com.threedollar.common.utils.toDefaultInt
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
@@ -47,7 +66,17 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.FileUtils
+import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.StringUtils
+import com.zion830.threedollars.utils.goToPermissionSetting
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
+import com.zion830.threedollars.utils.shareWithKakao
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.delay
@@ -59,6 +88,7 @@ import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -101,7 +131,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
                         } else {
-                            ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                            ReportReviewDialog.getInstance(item, storeId).apply {
+                                setReportReasons(viewModel.reportReasons.value ?: emptyList())
+                                setOnReportClickListener { sId, rId, request ->
+                                    viewModel.reportReview(sId, rId, request)
+                                }
+                            }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
                 }
@@ -130,6 +165,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         activityResultLauncher = registerForActivityResult(
@@ -140,11 +176,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         }
 
+        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(R.color.pink, null))
         refreshStoreInfo()
         initMap()
         initButton()
         initAdapter()
         initFlows()
+        initAdmob()
 
         viewModel.addReviewResult.observe(this) {
             viewModel.getUserStoreDetail(
@@ -154,6 +192,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 filterVisitStartDate = getMonthFirstDate(),
             )
         }
+    }
+
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     override fun initFirebaseAnalytics() {
@@ -179,11 +222,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.deleteButton.setOnClickListener {
+        binding.deleteButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -191,16 +234,16 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             EventTracker.logEvent(Constants.CLICK_REPORT, bundle)
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
-        binding.photoSummitTextView.setOnClickListener {
+        binding.photoSummitTextView.onSingleClick {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
                 if (it.message?.startsWith("permission") == true) {
                     AlertDialog.Builder(this)
-                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+                        .setPositiveButton(CommonR.string.request_permission_ok) { _, _ ->
                             goToPermissionSetting()
                         }
                         .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setTitle(getString(R.string.request_permission))
-                        .setMessage(getString(R.string.request_permission_msg))
+                        .setTitle(getString(CommonR.string.request_permission))
+                        .setMessage(getString(CommonR.string.request_permission_msg))
                         .create()
                         .show()
                 }
@@ -219,10 +262,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
             }
         }
-        binding.shareButton.setOnClickListener {
+        binding.shareButton.onSingleClick {
             initShared()
         }
-        binding.writeReviewTextView.setOnClickListener {
+        binding.writeReviewTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -232,7 +275,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
 
-        binding.reviewButton.setOnClickListener {
+        binding.reviewButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -241,7 +284,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
-        binding.editStoreInfoButton.setOnClickListener {
+        binding.editStoreInfoButton.onSingleClick {
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 EditStoreDetailFragment(),
@@ -249,7 +292,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 false,
             )
         }
-        binding.addCertificationButton.setOnClickListener {
+        binding.addCertificationButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -263,10 +306,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.fullScreenButton.setOnClickListener {
+        binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
         }
-        binding.addressTextView.setOnClickListener {
+        binding.addressTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "store_detail")
                 putString("store_id", storeId.toString())
@@ -276,7 +319,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             manager.text = binding.addressTextView.text
             showToast("주소가 복사됐습니다.")
         }
-        binding.directionsButton.setOnClickListener {
+        binding.directionsButton.onSingleClick {
             showDirectionBottomDialog()
         }
     }
@@ -290,23 +333,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val shareFormat = ShareFormat(
-            getString(R.string.kakao_map_format),
+            getString(CommonR.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
             LatLng(userStoreModel?.location?.latitude ?: 0.0, userStoreModel?.location?.longitude ?: 0.0),
         )
         shareWithKakao(
             shareFormat = shareFormat,
             title = getString(
-                R.string.share_kakao_road_food_title,
+                CommonR.string.share_kakao_road_food_title,
                 userStoreModel?.name,
             ),
             description = getString(
-                R.string.share_kakao_road_food,
+                CommonR.string.share_kakao_road_food,
                 userStoreModel?.name,
             ),
             imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
             storeId = storeId.toString(),
-            type = getString(R.string.scheme_host_kakao_link_road_food_type),
+            type = getString(CommonR.string.scheme_host_kakao_link_road_food_type),
         )
     }
 
@@ -351,7 +394,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                                 filterVisitStartDate = getMonthFirstDate(),
                             )
                         } else {
-                            binding.root.showSnack(getString(R.string.delete_photo_failed))
+                            binding.root.showSnack(getString(CommonR.string.delete_photo_failed))
                         }
                     }
                 }
@@ -394,13 +437,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val reviewContentModelList = it.reviews.contents
 
         if (reviewContentModelList.isEmpty()) {
-            reviewAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.review_empty))))
+            reviewAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(CommonR.string.review_empty))))
         } else if (reviewContentModelList.size < 4) {
             reviewAdapter.submitList(reviewContentModelList)
         } else {
             val subList = reviewContentModelList.take(3)
             val userStoreMoreResponse = UserStoreMoreResponse(
-                moreTitle = getString(R.string.store_detail_review_more, reviewContentModelList.size - 3),
+                moreTitle = getString(CommonR.string.store_detail_review_more, it.reviews.cursor.totalCount.toDefaultInt() - 3),
             )
             reviewAdapter.submitList(subList + userStoreMoreResponse)
         }
@@ -409,8 +452,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initPhotoLayout(it: UserStoreDetailModel) {
         val imageContentModelList = it.images.contents
         if (imageContentModelList.isEmpty()) {
-            photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(R.string.photo_empty))))
+            photoAdapter.submitList(listOf(UserStoreDetailEmptyItem(getString(CommonR.string.photo_empty))))
         } else {
+            photoAdapter.setTotalCount(it.images.cursor.totalCount.toDefaultInt())
             photoAdapter.submitList(listOf())
             photoAdapter.submitList(
                 it.images.contents.mapIndexed { index, image ->
@@ -447,7 +491,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             val subKeys = menuGroup.keys.take(2)
             val subMenuGroup = menuGroup.getValue(subKeys[0]) + menuGroup.getValue(subKeys[1])
             val userStoreMoreResponse = UserStoreMoreResponse(
-                moreTitle = getString(R.string.store_detail_menu_more, menuGroup.keys.size - 2),
+                moreTitle = getString(CommonR.string.store_detail_menu_more, menuGroup.keys.size - 2),
             )
             lifecycleScope.launch {
                 userStoreMenuAdapter.submitList(listOf())
@@ -460,24 +504,24 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initVisitHistory(visits: VisitsModel?) {
         if (visits == null) {
-            binding.visitHistoryTitleTextView.text = getString(R.string.visit_history_empty_title)
+            binding.visitHistoryTitleTextView.text = getString(CommonR.string.visit_history_empty_title)
             binding.smileTextView.apply {
-                text = getString(R.string.visit_history_success, 0)
+                text = getString(CommonR.string.visit_history_success, 0)
                 textPartTypeface("0명", Typeface.BOLD)
             }
             binding.sadTextView.apply {
-                text = getString(R.string.visit_history_fail, 0)
+                text = getString(CommonR.string.visit_history_fail, 0)
                 textPartTypeface("0명", Typeface.BOLD)
             }
         } else {
             binding.visitHistoryTitleTextView.text =
-                if (visits.counts.isCertified) getString(R.string.visit_history_title) else getString(R.string.visit_history_empty_title)
+                if (visits.counts.isCertified) getString(CommonR.string.visit_history_title) else getString(CommonR.string.visit_history_empty_title)
             binding.smileTextView.apply {
-                text = getString(R.string.visit_history_success, visits.counts.existsCounts)
+                text = getString(CommonR.string.visit_history_success, visits.counts.existsCounts)
                 textPartTypeface("${visits.counts.existsCounts}명", Typeface.BOLD)
             }
             binding.sadTextView.apply {
-                text = getString(R.string.visit_history_fail, visits.counts.notExistsCounts)
+                text = getString(CommonR.string.visit_history_fail, visits.counts.notExistsCounts)
                 textPartTypeface("${visits.counts.notExistsCounts}명", Typeface.BOLD)
             }
             val historiesContentModelList = visits.histories.contents
@@ -486,12 +530,16 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     visitHistoryAdapter.submitList(historiesContentModelList.subList(0, 5))
                     binding.visitExtraTextView.apply {
                         isVisible = true
-                        text = getString(R.string.visit_extra, visits.counts.existsCounts + visits.counts.notExistsCounts - 5)
+                        text = getString(CommonR.string.visit_extra, visits.counts.existsCounts + visits.counts.notExistsCounts - 5)
                     }
                 } else {
                     visitHistoryAdapter.submitList(historiesContentModelList)
                 }
                 binding.visitHistoryCardView.isVisible = true
+                binding.visitHistoryNotiLinearLayout.isVisible = false
+            } else {
+                binding.visitHistoryNotiLinearLayout.isVisible = true
+                binding.visitHistoryCardView.isVisible = false
             }
         }
     }
@@ -506,19 +554,18 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
         binding.storeNameTextView.text = userStoreDetailModel.store.name
-        binding.creatorTextView.text = getString(R.string.creator, userStoreDetailModel.creator.name)
-        binding.distanceTextView.text =
-            if (userStoreDetailModel.distanceM < 1000) "${userStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
-        binding.reviewTextView.text = getString(R.string.food_truck_review_count, userStoreDetailModel.reviews.contents.size)
+        binding.creatorTextView.text = getString(CommonR.string.creator, userStoreDetailModel.creator.name)
+        binding.distanceTextView.text = getDistanceText(userStoreDetailModel.distanceM)
+        binding.reviewTextView.text = getString(CommonR.string.food_truck_review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
-        binding.visitTextView.text = getString(R.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
+        binding.visitTextView.text = getString(CommonR.string.last_visit, userStoreDetailModel.visits.counts.existsCounts)
         binding.visitTextView.textPartTypeface(userStoreDetailModel.visits.counts.existsCounts.toString(), Typeface.BOLD)
         binding.addressTextView.text = userStoreDetailModel.store.address.fullAddress
         binding.storeInfoUpdatedAtTextView.text = userStoreDetailModel.store.updatedAt.convertUpdateAt(this)
         binding.storeTypeTextView.text = userStoreDetailModel.store.salesType.title
-        binding.reviewTitleTextView.text = getString(R.string.review_count, userStoreDetailModel.reviews.contents.size)
+        binding.reviewTitleTextView.text = getString(CommonR.string.review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.reviewTitleTextView.textPartTypeface("${userStoreDetailModel.reviews.contents.size}개", Typeface.NORMAL)
-        binding.reviewRatingAvgTextView.text = getString(R.string.score, userStoreDetailModel.store.rating)
+        binding.reviewRatingAvgTextView.text = getString(CommonR.string.score, userStoreDetailModel.store.rating)
         binding.reviewRatingBar.rating = userStoreDetailModel.store.rating.toFloat()
         try {
             binding.openingHourTextView.text =
@@ -576,7 +623,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initPayment(textView: TextView) {
         textView.apply {
             setCompoundDrawablesWithIntrinsicBounds(
-                ContextCompat.getDrawable(this@StoreDetailActivity, R.drawable.circle_gray70_4dp),
+                ContextCompat.getDrawable(this@StoreDetailActivity, DesignSystemR.drawable.circle_gray70_4dp),
                 null,
                 null,
                 null,
@@ -624,7 +671,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.run {
             listOf(mondayTextView, tuesdayTextView, wednesdayTextView, thursdayTextView, fridayTextView, saturdayTextView, sundayTextView).forEach {
                 it.apply {
-                    setBackgroundResource(R.drawable.circle_gray10_24dp)
+                    setBackgroundResource(DesignSystemR.drawable.circle_gray10_24dp)
                     setTextColor(getColor(R.color.gray40))
                 }
             }
@@ -633,8 +680,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
-            setBackgroundResource(R.drawable.circle_gray70_24dp)
-            setTextColor(getColor(R.color.white))
+            setBackgroundResource(DesignSystemR.drawable.circle_gray70_24dp)
+            setTextColor(getColor(R.color.color_white))
         }
     }
 
@@ -646,9 +693,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
         if (viewModel.favoriteModel.value.isFavorite) {
-            viewModel.deleteFavorite(USER_STORE, storeId.toString())
+            viewModel.deleteFavorite(storeId.toString())
         } else {
-            viewModel.putFavorite(USER_STORE, storeId.toString())
+            viewModel.putFavorite(storeId.toString())
         }
     }
 
@@ -663,7 +710,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val distance = NaverMapUtils.calculateDistance(
-            naverMapFragment.currentPosition,
+            naverMapFragment.currentPosition.value,
             LatLng(userStoreModel?.location?.latitude ?: 0.0, userStoreModel?.location?.longitude ?: 0.0),
         )
         supportFragmentManager.addNewFragment(
@@ -724,17 +771,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             filterVisitStartDate = getMonthFirstDate(),
                         )
                     } else {
-                        showToast(getString(R.string.exist_location_error))
+                        showToast(getString(CommonR.string.exist_location_error))
                         finish()
                     }
                 }
             } else {
-                showToast(getString(R.string.exist_location_error))
+                showToast(getString(CommonR.string.exist_location_error))
                 finish()
             }
         } catch (e: SecurityException) {
             Log.e(this::class.java.name, e.message ?: "")
-            showToast(getString(R.string.exist_location_error))
+            showToast(getString(CommonR.string.exist_location_error))
             finish()
         }
     }
@@ -743,7 +790,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         menuInflater.inflate(R.menu.review_menu, menu)
         val editReviewItem = menu?.getItem(0)
         if (editReviewItem?.itemId == R.id.menu_edit_review) {
-            val spannableString = SpannableString(getString(R.string.edit_review))
+            val spannableString = SpannableString(getString(CommonR.string.edit_review))
             spannableString.setSpan(
                 ForegroundColorSpan(
                     ContextCompat.getColor(
@@ -764,7 +811,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         val imageList = ArrayList<MultipartBody.Part>()
         data.forEach {
             if (!FileUtils.isAvailable(it)) {
-                binding.root.showSnack(R.string.error_file_size)
+                binding.root.showSnack(CommonR.string.error_file_size)
                 return null
             }
 

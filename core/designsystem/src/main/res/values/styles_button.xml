@@ -1,0 +1,72 @@
+<resources>
+    <!-- Button Base Style -->
+    <style name="ThreeDollars.Button" parent="Widget.Material3.Button">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_lg</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="cornerRadius">@dimen/corner_radius_sm</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Primary Button (Pink Background) -->
+    <style name="ThreeDollars.Button.Primary">
+        <item name="backgroundTint">@color/color_main_red</item>
+        <item name="android:textColor">@color/color_white</item>
+        <item name="rippleColor">@color/color_sub_red</item>
+    </style>
+
+    <!-- Secondary Button (White Background with Pink Border) -->
+    <style name="ThreeDollars.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_lg</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="cornerRadius">@dimen/corner_radius_sm</item>
+        <item name="strokeColor">@color/color_main_red</item>
+        <item name="strokeWidth">@dimen/stroke_width_normal</item>
+        <item name="android:textColor">@color/color_main_red</item>
+        <item name="rippleColor">@color/pink_100</item>
+    </style>
+
+    <!-- Text Button (No Background) -->
+    <style name="ThreeDollars.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+        <item name="android:textColor">@color/color_main_red</item>
+        <item name="rippleColor">@color/pink_100</item>
+    </style>
+
+    <!-- Small Button -->
+    <style name="ThreeDollars.Button.Small">
+        <item name="android:minHeight">@dimen/button_height_sm</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+    </style>
+
+    <!-- Large Button -->
+    <style name="ThreeDollars.Button.Large">
+        <item name="android:minHeight">@dimen/button_height_lg</item>
+        <item name="android:textSize">@dimen/text_size_xl</item>
+    </style>
+
+    <!-- Disabled Button -->
+    <style name="ThreeDollars.Button.Disabled">
+        <item name="backgroundTint">@color/gray30</item>
+        <item name="android:textColor">@color/gray60</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+    <!-- Icon Button -->
+    <style name="ThreeDollars.IconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="tint">@color/color_black</item>
+    </style>
+
+    <!-- Floating Action Button -->
+    <style name="ThreeDollars.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/color_main_red</item>
+        <item name="tint">@color/color_white</item>
+        <item name="rippleColor">@color/color_sub_red</item>
+    </style>
+</resources>

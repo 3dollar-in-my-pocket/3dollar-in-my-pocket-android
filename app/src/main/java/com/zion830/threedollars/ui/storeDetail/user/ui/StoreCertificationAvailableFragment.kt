@@ -24,6 +24,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreCertification
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 
 @AndroidEntryPoint
@@ -70,15 +71,15 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             userStoreModel?.location?.latitude ?: 0.0,
             userStoreModel?.location?.longitude ?: 0.0
         )
-        naverMapFragment = StoreCertificationNaverMapFragment(storeLatLng)
+        naverMapFragment = StoreCertificationNaverMapFragment.newInstance(latLng = storeLatLng)
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.map_container, naverMapFragment)?.commit()
     }
 
     private fun initButton() {
-        binding.ibClose.setOnClickListener {
+        binding.ibClose.onSingleClick {
             requireActivity().supportFragmentManager.popBackStack()
         }
-        binding.layoutSuccess.setOnClickListener {
+        binding.layoutSuccess.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "visit_store")
                 putString("store_id", userStoreModel?.storeId.toString())
@@ -86,7 +87,7 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             EventTracker.logEvent(CLICK_VISIT_SUCCESS, bundle)
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, true)
         }
-        binding.layoutFailed.setOnClickListener {
+        binding.layoutFailed.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "visit_store")
                 putString("store_id", userStoreModel?.storeId.toString())

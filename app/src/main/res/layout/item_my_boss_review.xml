@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.threedollar.network.data.user.MyFeedbacksData" />
+
+        <variable
+            name="listener"
+            type="com.threedollar.common.listener.OnItemClickListener" />
+
+        <variable
+            name="feedBackItem"
+            type="java.util.List&lt;String>" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{()-> listener.onClick(item)}">
+
+        <ImageView
+            android:id="@+id/iv_category"
+            bindMenuIcons="@{item.store.categories}"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/icon_menu_hodduck_selected"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_store_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{item.store.storeName}"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_category"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/iv_category"
+            app:layout_constraintTop_toTopOf="@id/iv_category"
+            app:layout_constraintWidth="wrap_content" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="8dp"
+            android:background="@color/gray80"
+            app:layout_constraintBottom_toBottomOf="@id/tv_store_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_store_name"
+            app:layout_constraintTop_toTopOf="@id/tv_store_name" />
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rect_white_radius_4"
+            android:backgroundTint="@color/gray90"
+            android:drawablePadding="4dp"
+            android:padding="4dp"
+            android:textColor="@color/pink"
+            android:textSize="10dp"
+            app:drawableStartCompat="@drawable/ic_review_comment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_category"
+            tools:text="2개" />
+
+        <TextView
+            android:id="@+id/tv_created_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/gray30"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvCount"
+            tools:text="20.30.11" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCount"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:feedBacks="@{feedBackItem}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

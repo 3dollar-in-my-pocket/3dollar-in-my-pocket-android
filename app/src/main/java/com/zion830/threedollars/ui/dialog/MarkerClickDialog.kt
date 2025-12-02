@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
@@ -26,7 +29,7 @@ import zion830.com.common.base.onSingleClick
 
 
 @AndroidEntryPoint
-class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
+class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerClickBinding>() {
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarkerClickBinding =
         DialogMarkerClickBinding.inflate(inflater, container, false)
 
@@ -42,7 +45,9 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
 
     override fun initViews() {
         dialog?.window?.setGravity(Gravity.BOTTOM)
-        viewModel.getPopups()
+        if (latLng.isValid) {
+            viewModel.getPopups(latLng = latLng)
+        }
 
         binding.downloadTextView.onSingleClick {
             viewModel.popupsResponse.value?.let { advertisementModel ->
@@ -52,12 +57,20 @@ class MarkerClickDialog : BaseDialogFragment<DialogMarkerClickBinding>() {
                 }
                 EventTracker.logEvent(Constants.CLICK_BOTTOM_BUTTON, bundle)
                 if (advertisementModel.link.url.isNotNullOrEmpty()) {
-                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.link.url)))
+                    if (advertisementModel.link.type == "APP_SCHEME") {
+                        startActivity(
+                            Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                                putExtra("link", advertisementModel.link.url)
+                            },
+                        )
+                    } else {
+                        context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(advertisementModel.link.url)))
+                    }
                 }
             }
         }
 
-        binding.closeImageView.setOnClickListener {
+        binding.closeImageView.onSingleClick {
             dismiss()
         }
 

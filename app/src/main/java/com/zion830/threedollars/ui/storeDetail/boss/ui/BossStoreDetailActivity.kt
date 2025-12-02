@@ -12,40 +12,67 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.PagingData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.home.domain.data.store.AppearanceDayModel
 import com.home.domain.data.store.BossStoreDetailModel
 import com.home.domain.data.store.DayOfTheWeekType
+import com.home.domain.data.store.FeedbackType
+import com.home.domain.data.store.ImageModel
+import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
+import com.threedollar.common.utils.Constants.CLICK_NUMBER
 import com.threedollar.common.utils.Constants.CLICK_SNS
+import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
+import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
+import com.zion830.threedollars.ui.dialog.OnReviewEditCallback
+import com.zion830.threedollars.ui.dialog.ReportReviewDialog
+import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
-import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapter
+import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
-import com.zion830.threedollars.utils.*
+import com.zion830.threedollars.utils.OnMapTouchListener
+import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.SizeUtils.dpToPx
+import com.zion830.threedollars.utils.SpaceItemDecoration
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
+import com.zion830.threedollars.utils.shareWithKakao
+import com.zion830.threedollars.utils.showCustomBlackToast
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import java.util.*
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -57,14 +84,67 @@ class BossStoreDetailActivity :
 
     private val foodTruckMenuAdapter: BossMenuRecyclerAdapter by lazy {
         BossMenuRecyclerAdapter {
-            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menuModels)
+            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
         }
     }
     private val appearanceDayAdapter: AppearanceDayRecyclerAdapter by lazy {
         AppearanceDayRecyclerAdapter()
     }
-    private val bossReviewRecyclerAdapter: BossReviewRecyclerAdapter by lazy {
-        BossReviewRecyclerAdapter()
+    private val feedbackRecyclerAdapter: FeedbackRecyclerAdapter by lazy {
+        FeedbackRecyclerAdapter(onFeedBackMoreClick = object : OnItemClickListener<Unit> {
+            override fun onClick(item: Unit) {
+                moveBossFeedBackActivity()
+            }
+
+        })
+    }
+    private val foodTruckReviewAdapter: FoodTruckReviewAdapter by lazy {
+        FoodTruckReviewAdapter(
+            onReviewImageClickListener = object : OnReviewImageClickListener {
+                override fun onImageClick(clickedImage: ImageModel, allImages: List<ImageModel>, clickedIndex: Int) {
+                    ReviewPhotoDialog.getInstance(allImages, clickedIndex)
+                        .show(supportFragmentManager, "ReviewPhotoDialog")
+                }
+            },
+            onReviewReportClickListener = object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+                    if (item.reviewReport.reportedByMe) {
+                        showAlreadyReportDialog()
+                    } else {
+                        val sid = storeId.toIntOrNull() ?: -1
+                        ReportReviewDialog.getInstance(item, sid).apply {
+                            setReportReasons(viewModel.reportReasons.value ?: emptyList())
+                            setOnReportClickListener { sId, rId, request ->
+                                viewModel.reportReview(sId, rId, request)
+                            }
+                        }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                    }
+                }
+            },
+            onReviewEditClickListener = object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+                    val dialog = AddReviewDialog.getInstance(
+                        item, 
+                        storeId.toIntOrNull(),
+                        object : OnReviewEditCallback {
+                            override fun onReviewEdited(updatedReview: ReviewContentModel) {
+                                viewModel.updateReviewInList(updatedReview)
+                            }
+                        }
+                    )
+                    dialog.show(supportFragmentManager, "AddReviewDialog")
+                }
+            },
+            onReviewLikeClickListener = object : OnItemClickListener<ReviewContentModel> {
+                override fun onClick(item: ReviewContentModel) {
+                    val sticker = item.stickers.firstOrNull()
+                    if (sticker != null) {
+                        viewModel.putLike(storeId, item.review.reviewId.toString(), if (sticker.reactedByMe) "" else sticker.stickerId)
+                    }
+                }
+            },
+            onMoreClickListener = { moveBossReviewActivity() }
+        )
     }
 
     private var storeId = ""
@@ -93,12 +173,19 @@ class BossStoreDetailActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initMap()
         initViewModels()
         initButton()
         initFlows()
         initAdapter()
+        initAdmob()
+    }
+
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
     }
 
     override fun initFirebaseAnalytics() {
@@ -108,7 +195,17 @@ class BossStoreDetailActivity :
     private fun initAdapter() {
         binding.menuInfoRecyclerView.adapter = foodTruckMenuAdapter
         binding.appearanceDayRecyclerView.adapter = appearanceDayAdapter
-        binding.foodTruckReviewRecyclerView.adapter = bossReviewRecyclerAdapter
+        val space = dpToPx(4f)
+        binding.feedbackRecyclerView.apply {
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                flexWrap = FlexWrap.WRAP
+                justifyContent = JustifyContent.CENTER
+            }
+            adapter = feedbackRecyclerAdapter
+            addItemDecoration(SpaceItemDecoration(space, space))
+        }
+        binding.foodTruckReviewRecyclerView.adapter = foodTruckReviewAdapter
     }
 
     private fun initMap() {
@@ -124,38 +221,44 @@ class BossStoreDetailActivity :
     private fun initViewModels() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getStringExtra(STORE_ID).toString()
-        if (isLocationAvailable() && isGpsAvailable()) {
-            val locationResult = fusedLocationProviderClient.lastLocation
-            locationResult.addOnSuccessListener {
-                if (it != null) {
-                    viewModel.getFoodTruckStoreDetail(
-                        bossStoreId = storeId,
-                        latitude = it.latitude,
-                        longitude = it.longitude,
-                    )
+        try {
+            if (isLocationAvailable() && isGpsAvailable()) {
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        viewModel.getFoodTruckStoreDetail(
+                            bossStoreId = storeId,
+                            latitude = location.latitude,
+                            longitude = location.longitude,
+                        )
+                    }
                 }
+            } else {
+                showToast(getString(CommonR.string.exist_location_error))
+                finish()
             }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            showToast(getString(CommonR.string.exist_location_error))
+            finish()
         }
-
-        viewModel.getBossStoreFeedbackFull(bossStoreId = storeId)
     }
 
     private fun initButton() {
-        binding.btnBack.setOnClickListener {
+        binding.btnBack.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.bottomReviewTextView.setOnClickListener {
-            moveFoodTruckReviewActivity()
+        binding.bottomReviewTextView.onSingleClick {
+            moveFoodTruckReviewWriteActivity()
         }
-        binding.feedbackReviewTextView.setOnClickListener {
-            moveFoodTruckReviewActivity()
+        binding.feedbackReviewTextView.onSingleClick {
+            moveFoodTruckReviewWriteActivity()
         }
-        binding.shareButton.setOnClickListener {
+        binding.shareButton.onSingleClick {
             initShared()
         }
 
-        binding.snsButton.setOnClickListener {
+        binding.snsButton.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "boss_store_detail")
                 putString("store_id", storeId)
@@ -165,7 +268,7 @@ class BossStoreDetailActivity :
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
             }
         }
-        binding.snsTextView.setOnClickListener {
+        binding.snsTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
                 val bundle = Bundle().apply {
                     putString("screen", "boss_store_detail")
@@ -175,7 +278,22 @@ class BossStoreDetailActivity :
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
         }
-        binding.directionsButton.setOnClickListener {
+        binding.phoneTextView.onSingleClick {
+            if (viewModel.bossStoreDetailModel.value.store.contactsNumbers.isNotEmpty()) {
+                Bundle().apply {
+                    putString("screen", "boss_store_detail")
+                    putString("store_id", storeId)
+                    EventTracker.logEvent(CLICK_NUMBER, this)
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("tel://${viewModel.bossStoreDetailModel.value.store.contactsNumbers.first().number}")
+                        )
+                    )
+                }
+            }
+        }
+        binding.directionsButton.onSingleClick {
             showDirectionBottomDialog()
         }
 
@@ -185,12 +303,12 @@ class BossStoreDetailActivity :
         binding.bottomFavoriteButton.onSingleClick {
             clickFavoriteButton()
         }
-        binding.addressTextView.setOnClickListener {
+        binding.addressTextView.onSingleClick {
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
-            showToast("주소가 복사됐습니다.")
+            showToast(getString(CommonR.string.address_copied))
         }
-        binding.fullScreenButton.setOnClickListener {
+        binding.fullScreenButton.onSingleClick {
             moveFullScreenMap()
         }
     }
@@ -225,7 +343,7 @@ class BossStoreDetailActivity :
 
                         val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
 
-                        if (isClosed) showCustomBlackToast(getString(R.string.getting_ready_now))
+                        if (isClosed && viewModel.isInitialLoad.value) showCustomBlackToast(getString(CommonR.string.getting_ready_now))
 
                         if (bossStoreDetailModel.store.location != null) {
                             val latLng = LatLng(bossStoreDetailModel.store.location!!.latitude, bossStoreDetailModel.store.location!!.longitude)
@@ -234,44 +352,64 @@ class BossStoreDetailActivity :
 
                         appearanceDayAdapter.submitList(
                             appearanceDayModels.map { appearanceDayModel ->
-                                bossStoreDetailModel.store.appearanceDayModels.find {
+                                bossStoreDetailModel.store.appearanceDays.find {
                                     appearanceDayModel.dayOfTheWeek == it.dayOfTheWeek
                                 } ?: appearanceDayModel
                             },
                         )
-
-                        if (bossStoreDetailModel.store.menuModels.isEmpty()) {
+                        feedbackRecyclerAdapter.submitList(bossStoreDetailModel.feedbackModels.take(4).mapIndexed { index, feedbackModel ->
+                            if (index == 3) feedbackModel.copy(feedbackType = FeedbackType.MORE)
+                            else feedbackModel
+                        })
+                        foodTruckReviewAdapter.setTotalCount(bossStoreDetailModel.reviewTotalCount)
+                        val filteredReviews = bossStoreDetailModel.reviews.filter { !it.reviewReport.reportedByMe }
+                        val hasMoreReviews = bossStoreDetailModel.hasMoreReviews
+                        foodTruckReviewAdapter.updateMoreButtonVisibility(hasMoreReviews)
+                        val reviewListForAdapter = if (hasMoreReviews) {
+                            filteredReviews + ReviewContentModel()
+                        } else {
+                            filteredReviews
+                        }
+                        val pagingData = PagingData.from(reviewListForAdapter)
+                        foodTruckReviewAdapter.submitData(lifecycle, pagingData)
+                        if (bossStoreDetailModel.store.menus.isEmpty()) {
                             foodTruckMenuAdapter.submitList(listOf(FoodTruckMenuEmptyResponse()))
-                        } else if (bossStoreDetailModel.store.menuModels.size > 5) {
-                            val sublist = bossStoreDetailModel.store.menuModels.subList(0, 5)
+                        } else if (bossStoreDetailModel.store.menus.size > 5) {
+                            val sublist = bossStoreDetailModel.store.menus.subList(0, 5)
                             val bossStoreMenuMoreResponse = BossStoreMenuMoreResponse(
-                                moreTitle = getString(R.string.store_detail_menu_more, bossStoreDetailModel.store.menuModels.size - 5),
+                                moreTitle = getString(CommonR.string.store_detail_menu_more, bossStoreDetailModel.store.menus.size - 5),
                             )
                             foodTruckMenuAdapter.submitList(sublist + bossStoreMenuMoreResponse)
                         } else {
-                            foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menuModels)
+                            foodTruckMenuAdapter.submitList(bossStoreDetailModel.store.menus)
                         }
 
                         binding.run {
                             if (bossStoreDetailModel.store.categories.isNotEmpty()) {
                                 binding.menuIconImageView.loadImage(bossStoreDetailModel.store.categories.first().imageUrl)
                             }
-                            Glide.with(binding.storeImageView)
-                                .load(bossStoreDetailModel.store.imageUrl)
-                                .transform(FitCenter(), RoundedCorners(12))
-                                .into(binding.storeImageView)
-
+                            if (bossStoreDetailModel.store.representativeImages.isNotEmpty()) {
+                                Glide.with(binding.storeImageView)
+                                    .load(bossStoreDetailModel.store.representativeImages.first().imageUrl)
+                                    .transform(FitCenter(), RoundedCorners(12))
+                                    .into(binding.storeImageView)
+                            }
                             tagTextView.text = bossStoreDetailModel.store.categories.joinToString(" ") { "#${it.name}" }
-                            distanceTextView.text =
-                                if (bossStoreDetailModel.distanceM < 1000) "${bossStoreDetailModel.distanceM}m" else StringUtils.getString(R.string.more_1km)
+                            distanceTextView.text = getDistanceText(bossStoreDetailModel.distanceM)
                             storeNameTextView.text = bossStoreDetailModel.store.name
-                            reviewTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            reviewTextView.text = getString(CommonR.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             snsTextView.text = bossStoreDetailModel.store.snsUrl
+                            if (bossStoreDetailModel.store.contactsNumbers.isNotEmpty()) {
+                                phoneTextView.text = bossStoreDetailModel.store.contactsNumbers.first().number
+                            }
                             ownerOneWordTextView.text = bossStoreDetailModel.store.introduction
-                            feedbackCountTextView.text = getString(R.string.food_truck_review_count, bossStoreDetailModel.feedbackModels.size)
+                            feedbackCountTextView.text =
+                                getString(CommonR.string.food_truck_review_count, bossStoreDetailModel.reviewTotalCount)
                             storeInfoUpdateAtTextView.text =
                                 bossStoreDetailModel.store.updatedAt.convertUpdateAt(context = this@BossStoreDetailActivity)
                             addressTextView.text = bossStoreDetailModel.store.address.fullAddress
+                            reviewRatingBar.rating = bossStoreDetailModel.store.rating
+                            reviewRatingAvgTextView.text = getString(CommonR.string.score, bossStoreDetailModel.store.rating)
                         }
 
                         initAccount(bossStoreDetailModel)
@@ -284,14 +422,23 @@ class BossStoreDetailActivity :
                     }
                 }
                 launch {
-                    viewModel.foodTruckReviewModelList.collect { foodTruckReviewModelList ->
-                        bossReviewRecyclerAdapter.submitList(foodTruckReviewModelList)
-                    }
-                }
-                launch {
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.feedbackExists.collect { exists ->
+                        exists?.let {
+                            if (it) {
+                                showToast(getString(CommonR.string.already_reviewed_today))
+                            } else {
+                                val intent = BossReviewWriteActivity.getIntent(this@BossStoreDetailActivity, storeId)
+                                startActivity(intent)
+                            }
+                            // Reset the state after handling
+                            viewModel.resetFeedbackExistsState()
                         }
                     }
                 }
@@ -305,10 +452,10 @@ class BossStoreDetailActivity :
             binding.accountCardView.isVisible = true
             binding.accountNumberTextView.text =
                 "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
-            binding.accountCopyButton.setOnClickListener {
+            binding.accountCopyButton.onSingleClick {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
-                showToast("계좌번호가 복사되었습니다.")
+                showToast(getString(CommonR.string.account_number_copied))
             }
         } else {
             binding.accountCardView.isVisible = false
@@ -322,33 +469,44 @@ class BossStoreDetailActivity :
         }
         EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val shareFormat = ShareFormat(
-            getString(R.string.kakao_map_format),
+            getString(CommonR.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
             LatLng(latitude, longitude),
         )
         shareWithKakao(
             shareFormat = shareFormat,
             title = getString(
-                R.string.share_kakao_food_truck_title,
+                CommonR.string.share_kakao_food_truck_title,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
             description = getString(
-                R.string.share_kakao_food_truck,
+                CommonR.string.share_kakao_food_truck,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
-            imageUrl = viewModel.bossStoreDetailModel.value.store.imageUrl,
+            imageUrl = viewModel.bossStoreDetailModel.value.store.representativeImages.first().imageUrl,
             storeId = storeId,
-            type = getString(R.string.scheme_host_kakao_link_food_truck_type),
+            type = getString(CommonR.string.scheme_host_kakao_link_food_truck_type),
         )
     }
 
-    private fun moveFoodTruckReviewActivity() {
+    private fun moveFoodTruckReviewWriteActivity() {
         val bundle = Bundle().apply {
             putString("screen", "boss_store_detail")
             putString("store_id", storeId)
         }
         EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-        val intent = BossReviewActivity.getIntent(this, storeId)
+        
+        // 피드백 존재 여부 확인
+        viewModel.checkFeedbackExists(storeId)
+    }
+
+    private fun moveBossReviewActivity() {
+        val intent = BossReviewDetailActivity.getIntent(this, storeId)
+        startActivity(intent)
+    }
+
+    private fun moveBossFeedBackActivity() {
+        val intent = BossFeedBackDetailActivity.getIntent(this, storeId)
         startActivity(intent)
     }
 
@@ -359,10 +517,10 @@ class BossStoreDetailActivity :
         }
         if (viewModel.favoriteModel.value.isFavorite) {
             bundle.putString("value", "off")
-            viewModel.deleteFavorite(Constants.BOSS_STORE, storeId)
+            viewModel.deleteFavorite(storeId)
         } else {
             bundle.putString("value", "on")
-            viewModel.putFavorite(Constants.BOSS_STORE, storeId)
+            viewModel.putFavorite(storeId)
         }
         EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }
@@ -377,6 +535,14 @@ class BossStoreDetailActivity :
     override fun finish() {
         navigateToMainActivityOnCloseIfNeeded()
         super.finish()
+    }
+
+    private fun showAlreadyReportDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle(getString(CommonR.string.review_report_dialog_title))
+        builder.setMessage(getString(CommonR.string.review_report_already_message))
+        builder.setPositiveButton(CommonR.string.report_confirm) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
     }
 
     companion object {

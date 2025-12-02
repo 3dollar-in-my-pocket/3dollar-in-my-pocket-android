@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rect_white_radius12_stroke_gray20">
+
+    <CheckBox
+        android:id="@+id/reviewCheckBox"
+        style="@style/pretendard_medium.size_12dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:button="@null"
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:drawablePadding="8dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:textColor="@color/gray95"
+        tools:text="음식이 맛있어요" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,6 +29,7 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class StoreReviewDetailActivity :
@@ -53,7 +54,12 @@ class StoreReviewDetailActivity :
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
                         } else {
-                            ReportReviewDialog.getInstance(item, storeId).show(supportFragmentManager, ReportReviewDialog::class.java.name)
+                            ReportReviewDialog.getInstance(item, storeId).apply {
+                                setReportReasons(viewModel.reportReasons.value ?: emptyList())
+                                setOnReportClickListener { sId, rId, request ->
+                                    viewModel.reportReview(sId, rId, request)
+                                }
+                            }.show(supportFragmentManager, ReportReviewDialog::class.java.name)
                         }
                     }
                 }
@@ -68,6 +74,7 @@ class StoreReviewDetailActivity :
     }
 
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initButton()
         initViewModel()
@@ -81,12 +88,12 @@ class StoreReviewDetailActivity :
     }
 
     private fun initButton() {
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
 
-        binding.reviewWriteTextView.setOnClickListener {
+        binding.reviewWriteTextView.onSingleClick {
             val bundle = Bundle().apply {
                 putString("screen", "review_list")
             }
@@ -139,7 +146,6 @@ class StoreReviewDetailActivity :
                 launch {
                     viewModel.reviewPagingData.collectLatest {
                         it?.let { pagingData ->
-                            moreReviewAdapter.submitData(PagingData.empty())
                             moreReviewAdapter.submitData(pagingData)
                             binding.reviewRecyclerView.postDelayed({
                                 binding.reviewRecyclerView.smoothScrollToPosition(0)

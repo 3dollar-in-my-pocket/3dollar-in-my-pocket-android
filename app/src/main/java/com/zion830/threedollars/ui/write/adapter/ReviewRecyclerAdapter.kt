@@ -13,12 +13,13 @@ import com.home.domain.data.store.UserStoreMoreResponse
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemReviewBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailReviewMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreEmptyPhotoReviewBinding
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.threedollar.common.R as CommonR
 
 class ReviewRecyclerAdapter(
     private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
@@ -100,19 +101,19 @@ class ReviewViewHolder(private val binding: ItemReviewBinding) : ViewHolder(bind
             binding.reviewRatingBar.rating = item.review.rating.toFloat()
 
             if (position % 2 == 0) {
-                binding.reviewConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_gray_0)
-                binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
-                binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_pink_100)
+                binding.reviewConstraintLayout.setBackgroundResource(DesignSystemR.drawable.rect_radius_12_gray_0)
+                binding.medalLayout.setBackgroundResource(DesignSystemR.drawable.rect_radius_4_pink_100)
+                binding.reviewRatingBar.setBackgroundResource(DesignSystemR.drawable.rect_radius_4_pink_100)
             } else {
-                binding.reviewConstraintLayout.setBackgroundResource(R.drawable.rect_radius_12_pink_100)
-                binding.medalLayout.setBackgroundResource(R.drawable.rect_radius_4_white)
-                binding.reviewRatingBar.setBackgroundResource(R.drawable.rect_radius_4_white)
+                binding.reviewConstraintLayout.setBackgroundResource(DesignSystemR.drawable.rect_radius_12_pink_100)
+                binding.medalLayout.setBackgroundResource(DesignSystemR.drawable.rect_radius_4_white)
+                binding.reviewRatingBar.setBackgroundResource(DesignSystemR.drawable.rect_radius_4_white)
             }
 
             binding.reportAndEditTextView.setOnClickListener { reviewEditOrDeleteClickEvent.onClick(item) }
             binding.reportAndEditTextView.text =
-                if (item.review.isOwner) GlobalApplication.getContext().getString(R.string.review_edit) else GlobalApplication.getContext()
-                    .getString(R.string.review_report)
+                if (item.review.isOwner) GlobalApplication.getContext().getString(CommonR.string.review_edit) else GlobalApplication.getContext()
+                    .getString(CommonR.string.review_report)
         }
     }
 }

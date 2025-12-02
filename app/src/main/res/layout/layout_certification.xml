@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/tv_title"
-        style="@style/apple_gothic_regular.size_24sp"
+        style="@style/apple_gothic_regular.size_24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -55,7 +55,7 @@
 
         <TextView
             android:id="@+id/storeNameTextView"
-            style="@style/apple_gothic_bold.size_16sp"
+            style="@style/apple_gothic_bold.size_16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -68,7 +68,7 @@
 
         <TextView
             android:id="@+id/storeCategoryTextView"
-            style="@style/apple_gothic_medium.size_12sp"
+            style="@style/apple_gothic_medium.size_12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -148,7 +148,7 @@
 
         <TextView
             android:id="@+id/tv_distance"
-            style="@style/apple_gothic_semi_bold.size_14sp"
+            style="@style/apple_gothic_semi_bold.size_14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

@@ -9,8 +9,6 @@ data class Category(
     val classification: Classification? = Classification(),
     @SerializedName("description")
     val description: String? = "",
-    @SerializedName("disableImageUrl")
-    val disableImageUrl: String? = "",
     @SerializedName("imageUrl")
     val imageUrl: String? = "",
     @SerializedName("isNew")

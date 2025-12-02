@@ -16,15 +16,24 @@ import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
-import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import zion830.com.common.base.onSingleClick
 
-@AndroidEntryPoint
-class ReportReviewDialog(private val content: ReviewContentModel?, private val storeId: Int?) :
-    BaseBottomSheetDialogFragment<DialogReportReviewBinding>() {
-    private val viewModel: StoreDetailViewModel by activityViewModels()
-
+class ReportReviewDialog(
+    private val content: ReviewContentModel?,
+    private val storeId: Int?
+) : BaseBottomSheetDialogFragment<DialogReportReviewBinding>() {
+    private var reportReasons: List<ReasonModel> = emptyList()
     private var reportReviewModelRequest = ReportReviewModelRequest()
+
+    private var onReportClick: ((storeId: Int, reviewId: Int, request: ReportReviewModelRequest) -> Unit)? = null
+
+    fun setOnReportClickListener(listener: (storeId: Int, reviewId: Int, request: ReportReviewModelRequest) -> Unit) {
+        onReportClick = listener
+    }
+
+    fun setReportReasons(reasons: List<ReasonModel>) {
+        reportReasons = reasons
+    }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogReportReviewBinding =
         DialogReportReviewBinding.inflate(inflater, container, false)
@@ -44,7 +53,8 @@ class ReportReviewDialog(private val content: ReviewContentModel?, private val s
     override fun initView() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         initButton()
-        viewModel.reportReasons.value?.let { reasons ->
+        if (reportReasons.isNotEmpty()) {
+            val reasons = reportReasons
             val radioButtonList = listOf(
                 binding.reasonButton1,
                 binding.reasonButton2,
@@ -109,12 +119,12 @@ class ReportReviewDialog(private val content: ReviewContentModel?, private val s
     }
 
     private fun initButton() {
-        binding.closeImageButton.setOnClickListener {
+        binding.closeImageButton.onSingleClick {
             dismiss()
         }
 
-        binding.finishButton.setOnClickListener {
-            viewModel.reportReview(storeId = storeId ?: -1, content?.review?.reviewId ?: -1, reportReviewModelRequest)
+        binding.finishButton.onSingleClick {
+            onReportClick?.invoke(storeId ?: -1, content?.review?.reviewId ?: -1, reportReviewModelRequest)
             dismiss()
         }
     }

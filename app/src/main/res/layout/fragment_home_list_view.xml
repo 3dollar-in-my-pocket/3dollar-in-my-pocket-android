@@ -5,57 +5,116 @@
     android:layout_height="match_parent"
     android:background="@color/gray0">
 
-    <TextView
-        android:id="@+id/allMenuTextView"
-        style="@style/apple_gothic_medium.size_12sp"
-        android:layout_width="wrap_content"
+    <HorizontalScrollView
+        android:id="@+id/filterScrollView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/rect_white_radius10_stroke_gray30"
-        android:drawablePadding="4dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="8dp"
-        android:text="@string/fragment_home_all_menu"
-        app:drawableStartCompat="@drawable/ic_category"
-        app:layout_constraintEnd_toStartOf="@id/filterTextView"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/filterTextView"
-        style="@style/apple_gothic_medium.size_12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/rect_white_radius10_stroke_gray30"
-        android:drawablePadding="4dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="8dp"
-        android:text="@string/fragment_home_filter_distance"
-        app:drawableStartCompat="@drawable/ic_change"
-        app:layout_constraintEnd_toStartOf="@id/bossFilterTextView"
-        app:layout_constraintStart_toEndOf="@id/allMenuTextView"
-        app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
-
-    <TextView
-        android:id="@+id/bossFilterTextView"
-        style="@style/apple_gothic_medium.size_12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/rect_white_radius10_stroke_gray30"
-        android:drawablePadding="4dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="8dp"
-        android:text="@string/fragment_home_boss_filter"
-        android:textColor="@color/gray40"
-        app:drawableStartCompat="@drawable/ic_uncheck"
+        android:layout_marginTop="14dp"
+        android:overScrollMode="never"
+        android:paddingHorizontal="22dp"
+        android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/filterTextView"
-        app:layout_constraintTop_toTopOf="@id/allMenuTextView" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/allMenuTextView"
+                style="@style/apple_gothic_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_all_menu"
+                app:drawableStartCompat="@drawable/ic_category"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/filterConditionsTextView"
+                style="@style/apple_gothic_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_filter_conditions"
+                android:textColor="@color/gray40"
+                app:layout_constraintStart_toEndOf="@id/allMenuTextView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/filterConditionsSpeechBubbleLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/shape_speech_bubble"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="@id/filterConditionsTextView"
+                app:layout_constraintStart_toStartOf="@id/filterConditionsTextView"
+                app:layout_constraintTop_toBottomOf="@id/filterConditionsTextView">
+
+                <TextView
+                    style="@style/apple_gothic_semi_bold.size_14dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/speech_bubble_title"
+                    android:textColor="@color/color_white" />
+
+                <TextView
+                    style="@style/apple_gothic_medium.size_12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/speech_bubble_body_1"
+                    android:textColor="@color/color_white" />
+
+                <TextView
+                    style="@style/apple_gothic_medium.size_12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/speech_bubble_body_2"
+                    android:textColor="@color/color_white" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/filterTextView"
+                style="@style/apple_gothic_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:drawablePadding="4dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_filter_distance"
+                app:drawableStartCompat="@drawable/ic_change"
+                app:layout_constraintStart_toEndOf="@id/filterConditionsTextView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/bossFilterTextView"
+                style="@style/apple_gothic_medium.size_12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/rect_white_radius10_stroke_gray30"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:text="@string/fragment_home_boss_filter"
+                android:textColor="@color/gray40"
+                app:layout_constraintStart_toEndOf="@id/filterTextView"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </HorizontalScrollView>
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/admob"
@@ -65,14 +124,14 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/rect_gray"
         app:adSize="BANNER"
-        app:adUnitId="@string/admob_unit_id"
+        app:adUnitId="@string/admob_list_banner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/allMenuTextView" />
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
 
     <TextView
         android:id="@+id/listTitleTextView"
-        style="@style/apple_gothic_semi_bold.size_20sp"
+        style="@style/apple_gothic_semi_bold.size_20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -83,7 +142,7 @@
 
     <TextView
         android:id="@+id/certifiedStoreTextView"
-        style="@style/apple_gothic_regular.size_14sp"
+        style="@style/apple_gothic_regular.size_14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -109,7 +168,7 @@
 
     <TextView
         android:id="@+id/mapViewTextView"
-        style="@style/apple_gothic_bold.size_12sp"
+        style="@style/apple_gothic_bold.size_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"

@@ -40,7 +40,7 @@ class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBindin
             listener?.click()
             dismiss()
         }
-        binding.cancelTextView.setOnClickListener {
+        binding.cancelTextView.onSingleClick {
             dismiss()
         }
     }

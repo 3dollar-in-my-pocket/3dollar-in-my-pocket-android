@@ -1,5 +1,6 @@
 package com.threedollar.presentation.poll
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -15,7 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.ReasonModel
+import com.google.android.gms.ads.AdRequest
+import com.threedollar.domain.model.ReportReason
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
@@ -24,6 +26,7 @@ import com.threedollar.domain.data.PollComment
 import com.threedollar.domain.data.PollCommentList
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.R
+import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ActivityPollDetailBinding
 import com.threedollar.presentation.dialog.ReportChoiceDialog
 import com.threedollar.presentation.utils.calculatePercentages
@@ -48,8 +51,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     private lateinit var pollItem: PollItem
     private var isCommentEdit = false
     private var editCommentId = ""
-    private val pollReports = mutableListOf<ReasonModel>()
-    private val pollCommentReports = mutableListOf<ReasonModel>()
+    private val pollReports = mutableListOf<ReportReason>()
+    private val pollCommentReports = mutableListOf<ReportReason>()
     private val pollComment = mutableListOf<PollComment>()
     private var pollComments: PollCommentList? = null
     private var isLoading = false
@@ -67,8 +70,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 eventTrackerListener.logEvent(Constants.CLICK_EDIT_REVIEW, bundle)
             } else {
                 ReportChoiceDialog().setType(ReportChoiceDialog.Type.COMMENT).setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
-                    if (reasonModel.type == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.type, s)
-                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.type)
+                    if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
+                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
                     if (::pollItem.isInitialized) {
                         val bundle = Bundle().apply {
                             putString("screen", "report_review")
@@ -92,10 +95,12 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     }
 
     override fun initView() {
+        setLightSystemBars()
         initViewModel()
         initAdapter()
         initButton()
         initFlow()
+        initAdmob()
     }
 
     private fun initAdapter() {
@@ -128,6 +133,12 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         viewModel.pollDetail()
     }
 
+    private fun initAdmob() {
+        val adRequest = AdRequest.Builder().build()
+        binding.admob.loadAd(adRequest)
+    }
+
+    @SuppressLint("MissingPermission")
     private fun initButton() {
         binding.imgClose.onSingleClick { finish() }
         binding.imgCommentWrite.onSingleClick {
@@ -147,8 +158,8 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         }
         binding.btnReport.onSingleClick {
             ReportChoiceDialog().setType(ReportChoiceDialog.Type.POLL).setReportList(pollReports).setReportCallback { reasonModel, s ->
-                if (reasonModel.type == "POLL_OTHER") viewModel.report(reasonModel.type, s)
-                else viewModel.report(reasonModel.type)
+                if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
+                else viewModel.report(reasonModel.id)
                 if (::pollItem.isInitialized) {
                     val bundle = Bundle().apply {
                         putString("screen", "report_poll")
@@ -224,12 +235,12 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 }
                 launch {
                     viewModel.pollReportList.collect {
-                        pollReports.addAll(it.reasonModels)
+                        pollReports.addAll(it.reasons)
                     }
                 }
                 launch {
                     viewModel.pollCommentReportList.collect {
-                        pollCommentReports.addAll(it.reasonModels)
+                        pollCommentReports.addAll(it.reasons)
                     }
                 }
                 launch {
@@ -340,7 +351,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         binding.twPollTitle.text = pollItem.poll.content.title
         binding.twPollNickName.text = pollItem.pollWriter.name
         binding.twMedalName.text = pollItem.pollWriter.medal.name
-        binding.twPollUserCount.text = getString(R.string.str_vote_count, pollItem.meta.totalParticipantsCount)
+        binding.twPollUserCount.text = getString(CommonR.string.str_vote_count, pollItem.meta.totalParticipantsCount)
         binding.twPollEndDate.text = getDeadlineString(pollItem.poll.period.endDateTime)
 
         binding.imgMedal.loadUrlImg(pollItem.pollWriter.medal.iconUrl)

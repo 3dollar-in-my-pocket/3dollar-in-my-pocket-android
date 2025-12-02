@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.data.PollItem
 import com.threedollar.presentation.R
+import com.threedollar.common.R as CommonR
 import com.threedollar.presentation.databinding.ItemPollListBinding
 import com.threedollar.presentation.databinding.ItemRealtimeTitleBinding
 import com.threedollar.presentation.utils.calculatePercentages
@@ -117,7 +118,7 @@ class PollListViewHolder(private val binding: ItemPollListBinding) : ViewHolder(
         binding.twPollNickName.text = pollItem.pollWriter.name
         binding.twMedalName.text = pollItem.pollWriter.medal.name
         binding.twPollComment.text = pollItem.meta.totalCommentsCount.toString()
-        binding.twPollVote.text = context.getString(R.string.str_vote_count, pollItem.meta.totalParticipantsCount)
+        binding.twPollVote.text = context.getString(CommonR.string.str_vote_count, pollItem.meta.totalParticipantsCount)
         binding.twPollEndDate.text = getDeadlineString(pollItem.poll.period.endDateTime)
 
         binding.imgMedal.loadUrlImg(pollItem.pollWriter.medal.iconUrl)

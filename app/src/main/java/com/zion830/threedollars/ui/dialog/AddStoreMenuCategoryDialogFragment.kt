@@ -1,7 +1,6 @@
 package com.zion830.threedollars.ui.dialog
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,8 @@ import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
 
 @AndroidEntryPoint
@@ -34,17 +33,23 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val truckCategories by lazy { LegacySharedPrefUtils.getTruckCategories() }
 
     private val streetCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            viewModel.changeSelectCategory(item)
-            initStreetAdapterSubmit()
-        }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                viewModel.changeSelectCategory(item)
+                initStreetAdapterSubmit()
+            },
+            onAdClickListener = {}
+        )
     }
 
     private val bossCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter { item ->
-            viewModel.changeSelectCategory(item)
-            initTruckAdapterSubmit()
-        }
+        SelectCategoryRecyclerAdapter(
+            onCategoryClickListener = { item ->
+                viewModel.changeSelectCategory(item)
+                initTruckAdapterSubmit()
+            },
+            onAdClickListener = {}
+        )
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomAddStoreMenuCategoryBinding =
@@ -105,7 +110,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     }
 
     private fun initButton() {
-        binding.finishButton.setOnClickListener {
+        binding.finishButton.onSingleClick {
             if (viewModel.selectCategoryList.value.isNotNullOrEmpty()) {
                 val bundle = Bundle().apply {
                     putString("screen", "category_selection")

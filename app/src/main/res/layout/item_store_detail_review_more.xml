@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/menuNameTextView"
-        style="@style/apple_gothic_medium.size_12sp"
+        style="@style/apple_gothic_medium.size_12dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"

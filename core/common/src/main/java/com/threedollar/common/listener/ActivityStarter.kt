@@ -16,5 +16,7 @@ interface ActivityStarter {
 
     fun startBossDetailActivity(context: Context, storeId: String? = null, deepLinkStoreId: String? = null)
 
+    fun startFavoriteActivity(context: Context)
+
     fun activityNavigateToMainActivityOnCloseIfNeeded(activity: Activity)
 }

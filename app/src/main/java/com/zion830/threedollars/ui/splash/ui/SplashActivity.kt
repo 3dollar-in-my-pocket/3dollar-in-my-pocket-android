@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.splash.ui
 
-import android.animation.Animator
-import android.animation.Animator.AnimatorListener
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,87 +8,104 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.auth.UserRecoverableAuthException
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.base.ResultWrapper
+import com.threedollar.common.ext.loadImage
+import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
-import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
+import com.zion830.threedollars.utils.VersionChecker
+import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class SplashActivity :
     BaseActivity<ActivitySplashBinding, SplashViewModel>({ ActivitySplashBinding.inflate(it) }) {
 
     override val viewModel: SplashViewModel by viewModels()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun initView() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (it.isSuccessful) {
-                viewModel.putPushInformationToken(PushInformationTokenRequest(pushToken = it.result))
-            }
-        }
-        binding.lottieAnimationView.playAnimation()
-        binding.lottieAnimationView.addAnimatorListener(object : AnimatorListener {
-            override fun onAnimationEnd(p0: Animator) {
-                lifecycleScope.launch {
-                    delay(2000L)
-                    if (BuildConfig.DEBUG) {
-                        initLogin()
-                    } else {
-                        val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
-                        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-                        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                            ) {
-                                appUpdateManager.startUpdateFlowForResult(
-                                    appUpdateInfo,
-                                    AppUpdateType.IMMEDIATE,
-                                    this@SplashActivity,
-                                    APP_UPDATE_CODE
-                                )
-                            } else {
-                                initLogin()
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onAnimationStart(p0: Animator) {}
-            override fun onAnimationCancel(p0: Animator) {}
-            override fun onAnimationRepeat(p0: Animator) {}
-        })
+        setDarkSystemBars()
+        initAdvertisements()
+        initPushToken()
         initFlow()
+        initAppUpdate()
     }
 
-    private fun initLogin() {
-        if (LegacySharedPrefUtils.getLoginType().isNullOrBlank()) {
-            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-            finish()
-        } else {
-            tryServiceLogin()
+    private fun initAppUpdate() {
+        lifecycleScope.launch {
+            delay(2000L)
+            if (BuildConfig.DEBUG) {
+                checkForceUpdate()
+            } else {
+                val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
+                val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+                appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                        appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                    ) {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.IMMEDIATE,
+                            this@SplashActivity,
+                            APP_UPDATE_CODE
+                        )
+                    } else {
+                        checkForceUpdate()
+                    }
+                }
+                appUpdateInfoTask.addOnFailureListener {
+                    checkForceUpdate()
+                }
+            }
+        }
+    }
+
+    private fun initPushToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                viewModel.putPushInformation(PushInformationRequest(pushToken = it.result))
+            }
+        }
+    }
+
+    private fun initAdvertisements() {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this)
+        if (isLocationAvailable() && isGpsAvailable()) {
+            val locationResult = fusedLocationProviderClient.lastLocation
+            locationResult.addOnSuccessListener {
+                if (it != null) {
+                    viewModel.getStoreMarkerAdvertisements(
+                        latLng = LatLng(it.latitude, it.longitude)
+                    )
+                    viewModel.getSplashAdvertisements(
+                        latLng = LatLng(it.latitude, it.longitude)
+                    )
+                }
+            }
         }
     }
 
@@ -108,135 +123,87 @@ class SplashActivity :
                         }
                     }
                 }
+                launch {
+                    viewModel.splashAdvertisement.collect { advertisement ->
+                        advertisement?.let {
+                            binding.advertisementImageView.loadImage(advertisement.image.url)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.accessCheckModel.collect { accessCheckModel ->
+                        accessCheckModel?.let {
+                            if (accessCheckModel.ok) {
+                                tryLogin()
+                            } else {
+                                when (accessCheckModel.resultCode) {
+                                    "503" -> showAlertDialog()
+                                    else -> {
+                                        if (accessCheckModel.resultCode != "UA000") {
+                                            accessCheckModel.message?.let {
+                                                showToast(it)
+                                            }
+                                        }
+                                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                        finish()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GOOGLE_LOGIN_ERROR_REQUEST_CODE) {
-            if (resultCode == 200) {
-                val account =
-                    GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
-                if (account != null && account.idToken != null) {
-                    try {
-                        viewModel.refreshGoogleToken(account)
-                    } catch (e: UserRecoverableAuthException) {
-                        e.intent?.let {
-                            startActivityForResult(it, GOOGLE_LOGIN_ERROR_REQUEST_CODE)
-                        }
-                    }
-                }
-            }
-        } else if (requestCode == APP_UPDATE_CODE) {
+        if (requestCode == APP_UPDATE_CODE) {
             if (resultCode != RESULT_OK) {
-                showToast("앱 업데이트에 실패했습니다. 다시시도해주세요.")
-                initLogin()
+                // 인앱업데이트 취소/실패 시 강제업데이트 확인
+                showToast("앱 업데이트에 실패했습니다.")
+                checkForceUpdate()
             } else {
-                initLogin()
+                // 인앱업데이트 성공 시 정상 진행
+                viewModel.checkAccessToken()
             }
         }
     }
 
-    private fun tryServiceLogin() {
-        when (LegacySharedPrefUtils.getLoginType()) {
-            LoginType.KAKAO.socialName -> {
-                viewModel.refreshKakaoToken()
+    private fun tryLogin() {
+        val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
+        when {
+            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) -> {
+                startActivity(
+                    BossStoreDetailActivity.getIntent(
+                        this@SplashActivity,
+                        deepLinkStoreId = intent.getStringExtra(STORE_ID),
+                    ),
+                )
             }
 
-            LoginType.GOOGLE.socialName -> {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val account =
-                        GoogleSignIn.getLastSignedInAccount(GlobalApplication.getContext())
-                    if (account != null && account.idToken != null) {
-                        try {
-                            viewModel.refreshGoogleToken(account)
-                        } catch (e: UserRecoverableAuthException) {
-                            e.intent?.let {
-                                startActivityForResult(it, 1001)
-                            }
-                        }
-                    } else {
-                        withContext(Dispatchers.Main) {
-                            startActivity(Intent(applicationContext, LoginActivity::class.java))
-                            finish()
-                        }
-                    }
-                }
+            deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
+                startActivity(
+                    StoreDetailActivity.getIntent(
+                        this@SplashActivity,
+                        deepLinkStoreId = intent.getStringExtra(STORE_ID),
+                    ),
+                )
             }
-        }
 
-        collectFlows()
-    }
+            deepLink.contains("dollars") -> {
+                startActivity(
+                    Intent(this@SplashActivity, DynamicLinkActivity::class.java).apply {
+                        putExtra("link", deepLink)
+                    },
+                )
+            }
 
-    private fun collectFlows() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch {
-                    viewModel.loginResult.collect {
-                        when (it) {
-                            is ResultWrapper.Success -> {
-                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
-                                val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
-                                when {
-                                    deepLink == getString(R.string.scheme_host_kakao_link_food_truck_type) -> {
-                                        startActivity(
-                                            BossStoreDetailActivity.getIntent(
-                                                this@SplashActivity,
-                                                deepLinkStoreId = intent.getStringExtra(STORE_ID),
-                                            ),
-                                        )
-                                    }
-
-                                    deepLink == getString(R.string.scheme_host_kakao_link_road_food_type) -> {
-                                        startActivity(
-                                            StoreDetailActivity.getIntent(
-                                                this@SplashActivity,
-                                                deepLinkStoreId = intent.getStringExtra(STORE_ID),
-                                            ),
-                                        )
-                                    }
-
-                                    deepLink.contains("dollars") -> {
-                                        startActivity(
-                                            Intent(this@SplashActivity, DynamicLinkActivity::class.java).apply {
-                                                putExtra("link", deepLink)
-                                            },
-                                        )
-                                    }
-
-                                    else -> {
-                                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                                    }
-                                }
-                                finish()
-                            }
-
-                            is ResultWrapper.GenericError -> {
-                                if (it.code == 400) {
-                                    showToast(R.string.login_failed)
-                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                                }
-                                if (it.code in 401..499) {
-                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                                    finish()
-                                }
-                                if (it.code == 503) {
-                                    showAlertDialog()
-                                }
-                                if (it.code in 500..599) {
-                                    showAlertDialog(it.msg)
-                                }
-                            }
-
-                            is ResultWrapper.NetworkError -> {
-                                showToast(R.string.login_failed)
-                            }
-                        }
-                    }
-                }
+            else -> {
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
             }
         }
+        finish()
     }
 
     private fun showAlertDialog(msg: String? = null) {
@@ -244,11 +211,24 @@ class SplashActivity :
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 finish()
             }
-            .setTitle(msg ?: getString(R.string.server_500))
-            .setMessage(msg ?: getString(R.string.server_500_msg))
+            .setTitle(msg ?: getString(CommonR.string.server_500))
+            .setMessage(msg ?: getString(CommonR.string.server_500_msg))
             .setCancelable(false)
             .create()
             .show()
+    }
+
+    private fun checkForceUpdate() {
+        VersionChecker.checkForceUpdateAvailable(
+            this@SplashActivity,
+            { _, current ->
+                VersionUpdateDialog.getInstance(current)
+                    .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+            },
+            {
+                viewModel.checkAccessToken()
+            }
+        )
     }
 
     companion object {

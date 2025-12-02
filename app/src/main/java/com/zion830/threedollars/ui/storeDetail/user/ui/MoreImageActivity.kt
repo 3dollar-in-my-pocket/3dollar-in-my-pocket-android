@@ -30,6 +30,8 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailViewModel>({ ActivityMoreImageBinding.inflate(it) }) {
@@ -56,6 +58,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     }
 
     override fun initView() {
+        setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
         initViewModel()
         initAdapter()
@@ -75,20 +78,20 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     }
 
     private fun initButton() {
-        binding.backButton.setOnClickListener {
+        binding.backButton.onSingleClick {
             setResult(RESULT_OK)
             finish()
         }
-        binding.submitPhotoTextView.setOnClickListener {
+        binding.submitPhotoTextView.onSingleClick {
             TedImagePicker.with(this).zoomIndicator(false).errorListener {
                 if (it.message?.startsWith("permission") == true) {
                     AlertDialog.Builder(this)
-                        .setPositiveButton(R.string.request_permission_ok) { _, _ ->
+                        .setPositiveButton(CommonR.string.request_permission_ok) { _, _ ->
                             goToPermissionSetting()
                         }
                         .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setTitle(getString(R.string.request_permission))
-                        .setMessage(getString(R.string.request_permission_msg))
+                        .setTitle(getString(CommonR.string.request_permission))
+                        .setMessage(getString(CommonR.string.request_permission_msg))
                         .create()
                         .show()
                 }
@@ -144,7 +147,7 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         val imageList = ArrayList<MultipartBody.Part>()
         data.forEach {
             if (!FileUtils.isAvailable(it)) {
-                binding.root.showSnack(R.string.error_file_size)
+                binding.root.showSnack(CommonR.string.error_file_size)
                 return null
             }
 

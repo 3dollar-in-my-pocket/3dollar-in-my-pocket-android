@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.TaskStackBuilder
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
@@ -13,8 +14,10 @@ import com.threedollar.common.ext.toStringDefault
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,6 +28,8 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val MEDAL = "medal"
         const val STORE = "store"
         const val POLL = "pollDetail"
+        const val COMMUNITY = "community"
+        const val REVIEW_LIST = "reviewList"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,9 +95,11 @@ class DynamicLinkActivity : AppCompatActivity() {
                     putExtra("favoriteId", id)
                 })
             }
+
             MEDAL -> {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(MEDAL, MEDAL)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
             }
 
@@ -115,12 +122,59 @@ class DynamicLinkActivity : AppCompatActivity() {
                     )
                 }
             }
+
             POLL -> {
                 val id = deeplink.getQueryParameter("pollId").toStringDefault()
                 startActivity(Intent(this, PollDetailActivity::class.java).apply {
                     putExtra("id", id)
                 })
             }
+
+            COMMUNITY -> {
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(COMMUNITY, COMMUNITY)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
+
+            HOME -> {
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(HOME, HOME)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
+
+            REVIEW_LIST -> {
+                val storeId = deeplink.getQueryParameter("storeId")
+                val storeType = deeplink.getQueryParameter("storeType")
+                
+                if (storeId != null && storeType != null) {
+                    val stackBuilder = TaskStackBuilder.create(this)
+                    
+                    // MainActivity 추가 (홈 백스택)
+                    stackBuilder.addNextIntent(MainActivity.getIntent(this))
+                    
+                    // 상점 상세 Activity 추가
+                    val storeDetailIntent = when (storeType) {
+                        "BOSS_STORE" -> BossStoreDetailActivity.getIntent(this, storeId = storeId)
+                        else -> StoreDetailActivity.getIntent(this, storeId = storeId.toIntOrNull())
+                    }
+                    stackBuilder.addNextIntent(storeDetailIntent)
+                    
+                    // 리뷰 Activity 추가
+                    val reviewIntent = when (storeType) {
+                        "BOSS_STORE" -> BossReviewDetailActivity.getIntent(this, storeId = storeId)
+                        else -> StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0)
+                    }
+                    stackBuilder.addNextIntent(reviewIntent)
+                    
+                    // 백스택 시작
+                    stackBuilder.startActivities()
+                    finish()
+                    return
+                }
+            }
+
             else -> {
                 startActivity(MainActivity.getIntent(this))
             }

@@ -7,6 +7,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.databinding.DialogOpeningHourNumberPickerBinding
+import zion830.com.common.base.onSingleClick
 
 interface OnClickDoneListener {
     fun onClickDoneButton(hour: Int?)
@@ -19,11 +20,11 @@ class OpeningHourNumberPickerDialog :
         DialogOpeningHourNumberPickerBinding.inflate(inflater, container, false)
 
     override fun initView() {
-        binding.doneTextView.setOnClickListener {
+        binding.doneTextView.onSingleClick {
             listener?.onClickDoneButton(binding.hourNumberPicker.value)
             dismiss()
         }
-        binding.deleteTextView.setOnClickListener {
+        binding.deleteTextView.onSingleClick {
             listener?.onClickDoneButton(null)
             dismiss()
         }
