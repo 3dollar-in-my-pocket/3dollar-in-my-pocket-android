@@ -221,8 +221,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             binding.navView.post {
                 binding.navView.selectedItemId = R.id.navigation_home
             }
-        } else if (intent.getStringExtra(DynamicLinkActivity.BROWSERS).isNotNullOrEmpty()) {
-            val url = intent.getStringExtra(DynamicLinkActivity.BROWSERS).orEmpty()
+        } else if (intent.getStringExtra(DynamicLinkActivity.BROWSER).isNotNullOrEmpty()) {
+            val url = intent.getStringExtra(DynamicLinkActivity.BROWSER).orEmpty()
             startActivity(WebActivity.getIntent(this, url))
         }
     }

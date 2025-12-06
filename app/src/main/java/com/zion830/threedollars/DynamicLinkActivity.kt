@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Browser
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import androidx.databinding.DataBindingUtil
@@ -31,7 +30,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val POLL = "pollDetail"
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
-        const val BROWSERS = "browsers"
+        const val BROWSER = "browser"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,10 +175,10 @@ class DynamicLinkActivity : AppCompatActivity() {
                     return
                 }
             }
-            BROWSERS -> {
+            BROWSER -> {
                 val url = deeplink.getQueryParameter("url").toStringDefault()
                 startActivity(MainActivity.getIntent(this).apply {
-                    putExtra(BROWSERS, url)
+                    putExtra(BROWSER, url)
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
             }
