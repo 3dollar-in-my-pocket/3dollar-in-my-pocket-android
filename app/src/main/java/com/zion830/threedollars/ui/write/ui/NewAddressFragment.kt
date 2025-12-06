@@ -106,6 +106,7 @@ class NewAddressFragment : Fragment() {
                             putString("address", address)
                         }
                         EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
+                        viewModel.setAddress(address)
                         viewModel.selectedLocation.value?.let { location ->
                             viewModel.getStoreNearExists(
                                 location

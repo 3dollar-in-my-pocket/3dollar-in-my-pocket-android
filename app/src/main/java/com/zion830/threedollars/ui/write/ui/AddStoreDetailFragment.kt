@@ -56,7 +56,8 @@ class AddStoreDetailFragment : Fragment() {
                         viewModel = viewModel,
                         onNavigateBack = { navigateBack() },
                         onCloseClick = { navigateToHome() },
-                        onComplete = { navigateToHome() }
+                        onComplete = { navigateToHome() },
+                        onLocationChangeClick = { navigateToLocationChange() }
                     )
                 }
             }
@@ -70,6 +71,10 @@ class AddStoreDetailFragment : Fragment() {
     }
 
     private fun navigateBack() {
+        findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
+    }
+
+    private fun navigateToLocationChange() {
         findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
     }
 

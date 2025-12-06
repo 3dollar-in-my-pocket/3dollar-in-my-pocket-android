@@ -109,7 +109,7 @@ fun MenuDetailScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun MenuDetailScreenContent(
     selectCategoryList: List<SelectCategoryModel>,
@@ -173,22 +173,23 @@ private fun MenuDetailScreenContent(
                 Text(
                     text = "음식 카테고리",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.W600,
+                    fontWeight = FontWeight.W400,
                     fontFamily = PretendardFontFamily,
                     color = Gray100
                 )
-
-                TextButton(onClick = onCategoryClick) {
-                    Text(
-                        text = "선택",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W400,
-                        fontFamily = PretendardFontFamily,
-                        color = Pink
+            }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                selectCategoryList.forEach { category ->
+                    CategoryChip(
+                        category = category.menuType,
+                        onClick = { onCategoryClick(category.menuType) }
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
@@ -586,7 +587,7 @@ private fun CategoryEditBottomSheet(
 }
 
 @Composable
-private fun CategoryChip(
+fun CategoryChip(
     category: CategoryModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

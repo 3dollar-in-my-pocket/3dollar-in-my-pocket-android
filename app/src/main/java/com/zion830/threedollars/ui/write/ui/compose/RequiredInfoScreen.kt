@@ -22,10 +22,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import base.compose.Red
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,22 +45,43 @@ import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.domain.home.data.store.SalesType
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.utils.getCurrentLocationName
 
 @Composable
 fun RequiredInfoScreen(
     viewModel: AddStoreViewModel,
+    onLocationChangeClick: () -> Unit = {}
 ) {
-    var storeName by remember { mutableStateOf("") }
-    var selectedStoreType by remember { mutableStateOf<SalesType?>(null) }
+    val storeName by viewModel.storeName.collectAsState()
+    val storeType by viewModel.storeType.collectAsState()
+    val address by viewModel.address.collectAsState()
+    val selectedLocation by viewModel.selectedLocation.collectAsState()
+
+    val displayAddress = remember(selectedLocation, address) {
+        if (address.isNotBlank()) {
+            address
+        } else {
+            selectedLocation?.let { getCurrentLocationName(it) } ?: ""
+        }
+    }
+
+    LaunchedEffect(selectedLocation) {
+        selectedLocation?.let {
+            val computedAddress = getCurrentLocationName(it) ?: ""
+            if (computedAddress.isNotBlank() && address.isBlank()) {
+                viewModel.setAddress(computedAddress)
+            }
+        }
+    }
 
     RequiredInfoContent(
         modifier = Modifier,
         storeName = storeName,
-        onStoreNameChange = { storeName = it },
-        selectedStoreType = selectedStoreType,
-        onStoreTypeSelect = { selectedStoreType = it },
-        address = "서울특별시 관악구 독립문로 14길",
-        onLocationChangeClick = { },
+        onStoreNameChange = { viewModel.setStoreName(it) },
+        selectedStoreType = storeType?.let { SalesType.valueOf(it) },
+        onStoreTypeSelect = { viewModel.setStoreType(it.name) },
+        address = displayAddress,
+        onLocationChangeClick = onLocationChangeClick,
     )
 }
 

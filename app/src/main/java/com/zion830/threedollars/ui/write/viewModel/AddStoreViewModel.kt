@@ -1,10 +1,9 @@
 package com.zion830.threedollars.ui.write.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.geometry.LatLng
+import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.home.data.store.CategoryModel
-import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
 import com.threedollar.domain.home.data.store.PostUserStoreModel
@@ -12,20 +11,18 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.naver.maps.geometry.LatLng
-import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.MenuType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
-import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,10 +35,6 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     private val _selectedLocation: MutableStateFlow<LatLng?> = MutableStateFlow(null)
     val selectedLocation: StateFlow<LatLng?> get() = _selectedLocation
-
-    private val _category: MutableLiveData<MenuType> = MutableLiveData(MenuType.BUNGEOPPANG)
-    val category: LiveData<MenuType>
-        get() = _category
 
     private val _postUserStoreModel: MutableSharedFlow<PostUserStoreModel?> = MutableSharedFlow()
     val postUserStoreModel: SharedFlow<PostUserStoreModel?> get() = _postUserStoreModel
@@ -91,6 +84,18 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _address: MutableStateFlow<String> = MutableStateFlow("")
     val address: StateFlow<String> get() = _address.asStateFlow()
 
+    val isRequiredInfoValid: StateFlow<Boolean> = combine(
+        _storeName,
+        _storeType,
+        _selectedLocation
+    ) { name, type, location ->
+        name.isNotBlank() && type != null && location != null
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
     init {
         loadAvailableCategories()
     }
@@ -107,6 +112,10 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
             homeRepository.postUserStore(userStoreModelRequest).collect {
                 if (it.ok) {
                     _postUserStoreModel.emit(it.data)
+                    it.data?.let { data ->
+                        _createdStoreId.value = data.storeId
+                        _createdStoreInfo.value = data
+                    }
                 } else {
                     _serverError.emit(it.message)
                 }
@@ -368,5 +377,55 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                 hideLoading()
             }
         }
+    }
+
+    fun submitNewStore() {
+        val location = _selectedLocation.value ?: return
+        val name = _storeName.value
+        val salesType = _storeType.value
+        val categories = _selectCategoryList.value
+
+        if (name.isBlank()) return
+
+        val menuRequests = categories.flatMap { category ->
+            category.menuDetail?.mapNotNull { menu ->
+                if (!menu.name.isNullOrBlank()) {
+                    com.threedollar.domain.home.request.MenuModelRequest(
+                        name = menu.name ?: "",
+                        count = extractCount(menu.price),
+                        price = extractPriceValue(menu.price),
+                        category = category.menuType.categoryId,
+                        description = null
+                    )
+                } else null
+            } ?: emptyList()
+        }
+
+        val request = UserStoreModelRequest(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            storeName = name,
+            salesType = salesType,
+            appearanceDays = _selectedDays.value.toList(),
+            openingHours = _openingHours.value.takeIf {
+                !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
+            },
+            paymentMethods = _selectedPaymentMethods.value.toList(),
+            menuRequests = menuRequests,
+        )
+
+        addNewStore(request)
+    }
+
+    private fun extractCount(priceString: String?): Int? {
+        if (priceString.isNullOrBlank()) return null
+        val parts = priceString.split(" ")
+        return if (parts.size >= 2) parts[0].toIntOrNull() else null
+    }
+
+    private fun extractPriceValue(priceString: String?): Int? {
+        if (priceString.isNullOrBlank()) return null
+        val parts = priceString.split(" ")
+        return if (parts.size >= 2) parts[1].toIntOrNull() else parts[0].toIntOrNull()
     }
 }

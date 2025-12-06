@@ -19,6 +19,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,11 +59,23 @@ fun AddStoreFlowScreen(
     onNavigateBack: () -> Unit,
     onCloseClick: () -> Unit,
     onComplete: () -> Unit,
+    onLocationChangeClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
+
+    val isRequiredInfoValid by viewModel.isRequiredInfoValid.collectAsState()
+    val createdStoreId by viewModel.createdStoreId.collectAsState()
+
+    LaunchedEffect(createdStoreId) {
+        createdStoreId?.let {
+            if (currentRoute == AddStoreRoute.STORE_DETAIL) {
+                navController.navigate(AddStoreRoute.COMPLETION)
+            }
+        }
+    }
 
     val progress = when (currentRoute) {
         AddStoreRoute.REQUIRED_INFO -> 0.25f
@@ -97,11 +111,21 @@ fun AddStoreFlowScreen(
             if (currentRoute != AddStoreRoute.MENU_DETAIL && currentRoute != AddStoreRoute.COMPLETION) {
                 AddStoreBottomBar(
                     buttonText = buttonText,
+                    enabled = when (currentRoute) {
+                        AddStoreRoute.REQUIRED_INFO -> isRequiredInfoValid
+                        else -> true
+                    },
                     onClick = {
                         when (currentRoute) {
-                            AddStoreRoute.REQUIRED_INFO -> navController.navigate(AddStoreRoute.MENU_CATEGORY)
+                            AddStoreRoute.REQUIRED_INFO -> {
+                                if (isRequiredInfoValid) {
+                                    navController.navigate(AddStoreRoute.MENU_CATEGORY)
+                                }
+                            }
                             AddStoreRoute.MENU_CATEGORY -> navController.navigate(AddStoreRoute.MENU_DETAIL)
-                            AddStoreRoute.STORE_DETAIL -> navController.navigate(AddStoreRoute.COMPLETION)
+                            AddStoreRoute.STORE_DETAIL -> {
+                                viewModel.submitNewStore()
+                            }
                             else -> {}
                         }
                     }
@@ -116,7 +140,8 @@ fun AddStoreFlowScreen(
         ) {
             composable(AddStoreRoute.REQUIRED_INFO) {
                 RequiredInfoScreen(
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onLocationChangeClick = onLocationChangeClick
                 )
             }
             composable(AddStoreRoute.MENU_CATEGORY) {
@@ -279,14 +304,16 @@ private fun AddStoreTopBarProgress100Preview() {
 private fun AddStoreBottomBar(
     buttonText: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
+    val backgroundColor = if (enabled) Pink else Gray30
     Column(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(color = Pink)
-            .clickable(onClick = onClick),
+            .background(color = backgroundColor)
+            .clickable(enabled = enabled, onClick = onClick),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

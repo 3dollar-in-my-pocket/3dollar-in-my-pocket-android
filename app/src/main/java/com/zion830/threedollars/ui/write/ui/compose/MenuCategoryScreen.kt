@@ -1,9 +1,7 @@
 package com.zion830.threedollars.ui.write.ui.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,11 +27,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray50
 import base.compose.Pink
-import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import com.threedollar.domain.home.data.store.CategoryModel
@@ -148,8 +142,7 @@ private fun MenuCategoryContent(
             ) {
                 section.categories.forEach { category ->
                     CategoryChip(
-                        text = category.name,
-                        isSelected = category.isSelected,
+                        category = category,
                         onClick = { onCategoryClick(category) }
                     )
                 }
@@ -162,39 +155,18 @@ private fun MenuCategoryContent(
     }
 }
 
-@Composable
-private fun CategoryChip(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val boxColor = if (isSelected) Pink200 else Gray10
-    val textColor = if (isSelected) Pink else Gray100
-
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .background(boxColor)
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 10.dp)
-    ) {
-        Text(
-            text = text,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp,
-            color = textColor
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun CategoryChipPreview() {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        CategoryChip(text = "🥖 붕어빵", isSelected = true, onClick = {})
-        CategoryChip(text = "🍖 문어빵", isSelected = false, onClick = {})
+        CategoryChip(
+            category = CategoryModel(categoryId = "1", name = "붕어빵", isSelected = true),
+            onClick = {}
+        )
+        CategoryChip(
+            category = CategoryModel(categoryId = "2", name = "꼬치", isSelected = false),
+            onClick = {}
+        )
     }
 }
 
