@@ -9,14 +9,12 @@ import com.threedollar.common.utils.Constants.TOTAL_FEEDBACKS_COUNTS_DESC
 import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDetailResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import com.zion830.threedollars.network.NewServiceApi
 import kotlinx.coroutines.flow.Flow
@@ -80,15 +78,6 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     override suspend fun deleteReview(
         reviewId: Int,
     ): Response<BaseResponse<String>> = newService.deleteReview(reviewId)
-
-    override suspend fun saveStore(
-        newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse> = newService.saveStore(newStoreRequest)
-
-    override suspend fun updateStore(
-        storeId: Int,
-        newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse> = newService.editStore(storeId, newStoreRequest)
 
     override fun getCategories() = flow { emit(newService.getCategories()) }
 

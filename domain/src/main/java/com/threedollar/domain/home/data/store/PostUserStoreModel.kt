@@ -1,16 +1,29 @@
 package com.threedollar.domain.home.data.store
 
 data class PostUserStoreModel(
-    val address: AddressModel = AddressModel(),
-    val categories: List<String> = listOf(),
-    val createdAt: String = "",
-    val isDeleted: Boolean = false,
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
-    val rating: Double = 0.0,
-    val salesType: SalesType = SalesType.NONE,
     val storeId: Int = 0,
-    val storeName: String = "",
-    val updatedAt: String = "",
-    val userId: Int = 0
+    val isOwner: Boolean = false,
+    val name: String = "",
+    val salesType: SalesType = SalesType.NONE,
+    val salesTypeDescription: String = "",
+    val rating: Double = 0.0,
+    val location: LocationModel = LocationModel(),
+    val address: AddressModel = AddressModel(),
+    val categories: List<CategoryModel> = listOf(),
+    val appearanceDays: List<String> = listOf(),
+    val openingHours: OpeningHoursModel? = null,
+    val paymentMethods: List<String> = listOf(),
+    val menus: List<MenuV3Model> = listOf(),
+    val isDeleted: Boolean = false,
+    val activitiesStatus: String = "",
+    val createdAt: String = "",
+    val updatedAt: String = ""
+)
+
+data class MenuV3Model(
+    val name: String = "",
+    val price: Int = 0,
+    val count: Int = 0,
+    val description: String = "",
+    val category: CategoryModel = CategoryModel()
 )

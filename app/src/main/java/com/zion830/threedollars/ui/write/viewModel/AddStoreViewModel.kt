@@ -327,27 +327,29 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
         val menuRequests = categories.flatMap { category ->
             category.menuDetail?.mapNotNull { menu ->
-                if (!menu.name.isNullOrBlank() && !menu.price.isNullOrBlank()) {
+                if (!menu.name.isNullOrBlank()) {
                     com.threedollar.domain.home.request.MenuModelRequest(
-                        category = category.menuType.categoryId,
                         name = menu.name ?: "",
-                        price = menu.price ?: ""
+                        count = null,
+                        price = menu.price?.toIntOrNull(),
+                        category = category.menuType.categoryId,
+                        description = null
                     )
                 } else null
             } ?: emptyList()
         }
 
         val request = UserStoreModelRequest(
-            appearanceDays = _selectedDays.value.toList(),
             latitude = location.latitude,
             longitude = location.longitude,
-            menuRequests = menuRequests,
-            paymentMethods = _selectedPaymentMethods.value.toList(),
+            storeName = name,
+            salesType = _storeType.value,
+            appearanceDays = _selectedDays.value.toList(),
             openingHours = _openingHours.value.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
             },
-            storeName = name,
-            storeType = _storeType.value
+            paymentMethods = _selectedPaymentMethods.value.toList(),
+            menuRequests = menuRequests,
         )
 
         showLoading()

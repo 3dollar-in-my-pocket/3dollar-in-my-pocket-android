@@ -111,8 +111,8 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                         it?.let {
                             viewModel.getUserStoreDetail(
                                 storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
-                                deviceLatitude = it.latitude,
-                                deviceLongitude = it.longitude,
+                                deviceLatitude = it.location.latitude,
+                                deviceLongitude = it.location.longitude,
                                 filterVisitStartDate = getMonthFirstDate(),
                             )
                             showToast(CommonR.string.edit_store_success)
@@ -284,7 +284,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                         endTime = endTime,
                     ),
                     storeName = binding.storeNameEditTextView.text.toString(),
-                    storeType = getStoreType(),
+                    salesType = getStoreType(),
                 ),
                 viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
             )
@@ -385,13 +385,13 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                     val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
 
                     if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MenuModelRequest(category, name, price))
+                        menuList.add(MenuModelRequest(name = name, price = price.toIntOrNull(), category = category))
                         isEmptyCategory = false
                     }
                 }
 
                 if (isEmptyCategory) {
-                    menuList.add(MenuModelRequest(category, "", ""))
+                    menuList.add(MenuModelRequest(name = "", price = null, category = category))
                 }
             }
         }

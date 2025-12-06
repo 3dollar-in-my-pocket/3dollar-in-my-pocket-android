@@ -39,6 +39,7 @@ import com.threedollar.domain.home.data.store.ImagesModel
 import com.threedollar.domain.home.data.store.LocationModel
 import com.threedollar.domain.home.data.store.MarkerModel
 import com.threedollar.domain.home.data.store.MenuModel
+import com.threedollar.domain.home.data.store.MenuV3Model
 import com.threedollar.domain.home.data.store.NewsPostModel
 import com.threedollar.domain.home.data.store.OpenStatusModel
 import com.threedollar.domain.home.data.store.OpeningHoursModel
@@ -118,6 +119,7 @@ import com.threedollar.network.data.store.Images
 import com.threedollar.network.data.store.Location
 import com.threedollar.network.data.store.Marker
 import com.threedollar.network.data.store.Menu
+import com.threedollar.network.data.store.MenuV2
 import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.OpenStatus
 import com.threedollar.network.data.store.OpeningHours
@@ -730,14 +732,14 @@ fun EditStoreReviewResponse.asModel() = EditStoreReviewModel(
 )
 
 fun UserStoreModelRequest.asRequest() = UserStoreRequest(
-    appearanceDays = appearanceDays.map { it.name },
     latitude = latitude,
     longitude = longitude,
-    menuRequests = menuRequests.map { it.asRequest() },
-    paymentMethods = paymentMethods.map { it.name },
-    openingHours = openingHours?.asRequest(),
     storeName = storeName,
-    storeType = storeType,
+    salesType = salesType,
+    appearanceDays = appearanceDays.map { it.name },
+    openingHours = openingHours?.asRequest(),
+    paymentMethods = paymentMethods.map { it.name },
+    menuRequests = menuRequests.map { it.asRequest() },
 )
 
 fun OpeningHourRequest.asRequest() = com.threedollar.network.request.OpeningHourRequest(
@@ -746,24 +748,42 @@ fun OpeningHourRequest.asRequest() = com.threedollar.network.request.OpeningHour
 )
 
 fun MenuModelRequest.asRequest() = MenuRequest(
-    category = category,
     name = name,
+    count = count,
     price = price,
+    category = category,
+    description = description,
 )
 
 fun PostUserStoreResponse.asModel() = PostUserStoreModel(
-    address = address.asModel(),
-    categories = categories,
-    createdAt = createdAt ?: "",
-    isDeleted = isDeleted ?: false,
-    latitude = latitude ?: 0.0,
-    longitude = longitude ?: 0.0,
-    rating = rating ?: 0.0,
-    salesType = salesType?.asSalesType() ?: SalesType.NONE,
     storeId = storeId ?: 0,
-    storeName = storeName ?: "",
+    isOwner = isOwner ?: false,
+    name = name ?: "",
+    salesType = salesTypeV2?.type?.name?.asSalesType() ?: SalesType.NONE,
+    salesTypeDescription = salesTypeV2?.description ?: "",
+    rating = rating ?: 0.0,
+    location = LocationModel(
+        latitude = location?.latitude ?: 0.0,
+        longitude = location?.longitude ?: 0.0
+    ),
+    address = address.asModel(),
+    categories = categories?.map { it.asModel() } ?: listOf(),
+    appearanceDays = appearanceDays ?: listOf(),
+    openingHours = openingHours?.asModel(),
+    paymentMethods = paymentMethods ?: listOf(),
+    menus = menusV3?.map { it.asMenuV3Model() } ?: listOf(),
+    isDeleted = isDeleted ?: false,
+    activitiesStatus = activitiesStatus ?: "",
+    createdAt = createdAt ?: "",
     updatedAt = updatedAt ?: "",
-    userId = userId ?: 0,
+)
+
+fun MenuV2.asMenuV3Model() = MenuV3Model(
+    name = name,
+    price = price,
+    count = count,
+    description = description,
+    category = category.asModel()
 )
 
 fun ReportReviewModelRequest.asRequest() = ReportReviewRequest(

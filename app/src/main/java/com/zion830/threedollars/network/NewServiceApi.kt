@@ -12,10 +12,7 @@ import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackReq
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
-import com.zion830.threedollars.datasource.model.v2.request.LoginRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
-import com.zion830.threedollars.datasource.model.v2.request.SignUpRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
@@ -24,8 +21,6 @@ import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.MyInfoResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyReviewResponse
 import com.zion830.threedollars.datasource.model.v2.response.my.MyStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignResponse
-import com.zion830.threedollars.datasource.model.v2.response.my.SignUser
 import com.zion830.threedollars.datasource.model.v2.response.my.User
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -34,7 +29,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeed
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -75,18 +69,6 @@ interface NewServiceApi {
     suspend fun deleteReview(
         @Path("reviewId") reviewId: Int,
     ): Response<BaseResponse<String>>
-
-    // 가게
-    @POST("/api/v2/store")
-    suspend fun saveStore(
-        @Body newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse>
-
-    @PUT("/api/v2/store/{storeId}")
-    suspend fun editStore(
-        @Path("storeId") storeId: Int,
-        @Body editStoreRequest: NewStoreRequest
-    ): Response<NewStoreResponse>
 
     // 가게 검색
     @GET("/api/v2/store")
