@@ -70,6 +70,27 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _openingHours: MutableStateFlow<OpeningHourRequest> = MutableStateFlow(OpeningHourRequest())
     val openingHours: StateFlow<OpeningHourRequest> get() = _openingHours.asStateFlow()
 
+    private val _createdStoreId: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val createdStoreId: StateFlow<Int?> get() = _createdStoreId.asStateFlow()
+
+    private val _createdStoreInfo: MutableStateFlow<PostUserStoreModel?> = MutableStateFlow(null)
+    val createdStoreInfo: StateFlow<PostUserStoreModel?> get() = _createdStoreInfo.asStateFlow()
+
+    private val _isMenuDetailCompleted: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isMenuDetailCompleted: StateFlow<Boolean> get() = _isMenuDetailCompleted.asStateFlow()
+
+    private val _isStoreDetailCompleted: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isStoreDetailCompleted: StateFlow<Boolean> get() = _isStoreDetailCompleted.asStateFlow()
+
+    private val _storeName: MutableStateFlow<String> = MutableStateFlow("")
+    val storeName: StateFlow<String> get() = _storeName.asStateFlow()
+
+    private val _storeType: MutableStateFlow<String?> = MutableStateFlow(null)
+    val storeType: StateFlow<String?> get() = _storeType.asStateFlow()
+
+    private val _address: MutableStateFlow<String> = MutableStateFlow("")
+    val address: StateFlow<String> get() = _address.asStateFlow()
+
     init {
         loadAvailableCategories()
     }
@@ -268,5 +289,82 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     fun setEndTime(time: String) {
         _openingHours.update { it.copy(endTime = time) }
+    }
+
+    fun setStoreName(name: String) {
+        _storeName.value = name
+    }
+
+    fun setStoreType(type: String?) {
+        _storeType.value = type
+    }
+
+    fun setAddress(address: String) {
+        _address.value = address
+    }
+
+    fun setCreatedStoreId(id: Int) {
+        _createdStoreId.value = id
+    }
+
+    fun setCreatedStoreInfo(info: PostUserStoreModel) {
+        _createdStoreInfo.value = info
+    }
+
+    fun markMenuDetailCompleted() {
+        _isMenuDetailCompleted.value = true
+    }
+
+    fun markStoreDetailCompleted() {
+        _isStoreDetailCompleted.value = true
+    }
+
+    fun updateStoreWithDetails(onSuccess: () -> Unit) {
+        val storeId = _createdStoreId.value ?: return
+        val location = _selectedLocation.value ?: return
+        val categories = _selectCategoryList.value
+        val name = _storeName.value
+
+        val menuRequests = categories.flatMap { category ->
+            category.menuDetail?.mapNotNull { menu ->
+                if (!menu.name.isNullOrBlank() && !menu.price.isNullOrBlank()) {
+                    com.threedollar.domain.home.request.MenuModelRequest(
+                        category = category.menuType.categoryId,
+                        name = menu.name ?: "",
+                        price = menu.price ?: ""
+                    )
+                } else null
+            } ?: emptyList()
+        }
+
+        val request = UserStoreModelRequest(
+            appearanceDays = _selectedDays.value.toList(),
+            latitude = location.latitude,
+            longitude = location.longitude,
+            menuRequests = menuRequests,
+            paymentMethods = _selectedPaymentMethods.value.toList(),
+            openingHours = _openingHours.value.takeIf {
+                !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
+            },
+            storeName = name,
+            storeType = _storeType.value
+        )
+
+        showLoading()
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putUserStore(request, storeId).collect {
+                if (it.ok) {
+                    it.data?.let { data -> _createdStoreInfo.value = data }
+                    withContext(Dispatchers.Main) {
+                        onSuccess()
+                    }
+                } else {
+                    _serverError.emit(it.message)
+                }
+            }
+            withContext(Dispatchers.Main) {
+                hideLoading()
+            }
+        }
     }
 }

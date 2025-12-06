@@ -47,7 +47,9 @@
       "Bash(do:*)",
       "Bash(/tmp/fix_resources.sh \"$file\")",
       "WebFetch(domain:github.com)",
-      "mcp__serena__replace_symbol_body"
+      "mcp__serena__replace_symbol_body",
+      "mcp__serena__initial_instructions",
+      "mcp__serena__list_memories"
     ],
     "deny": [],
     "ask": []

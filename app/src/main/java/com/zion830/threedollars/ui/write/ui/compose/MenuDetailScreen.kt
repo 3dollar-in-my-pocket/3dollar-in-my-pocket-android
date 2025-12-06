@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -77,7 +78,8 @@ fun MenuDetailScreen(
     viewModel: AddStoreViewModel,
     onNavigateToNext: () -> Unit,
     onNavigateToCompletion: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompletionMode: Boolean = false
 ) {
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
     val availableSnackCategories by viewModel.availableSnackCategories.collectAsState()
@@ -102,7 +104,8 @@ fun MenuDetailScreen(
         onNavigateToCompletion = onNavigateToCompletion,
         bottomSheetState = bottomSheetState,
         onDismissBottomSheet = { scope.launch { bottomSheetState.hide() } },
-        modifier = modifier
+        modifier = modifier,
+        isCompletionMode = isCompletionMode
     )
 }
 
@@ -121,7 +124,8 @@ private fun MenuDetailScreenContent(
     onNavigateToCompletion: () -> Unit,
     bottomSheetState: ModalBottomSheetState,
     onDismissBottomSheet: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompletionMode: Boolean = false
 ) {
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
@@ -219,11 +223,14 @@ private fun MenuDetailScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
-                SkipButton(onClick = onNavigateToCompletion)
-                Spacer(modifier = Modifier.height(12.dp))
+                if (!isCompletionMode) {
+                    SkipButton(onClick = onNavigateToCompletion)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
                 NextButton(
                     onClick = onNavigateToNext,
-                    enabled = selectCategoryList.isNotEmpty()
+                    enabled = selectCategoryList.isNotEmpty(),
+                    buttonText = if (isCompletionMode) "작성 완료" else "다음"
                 )
             }
         }
@@ -359,7 +366,12 @@ private fun MenuInputRow(
             ),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle.Default.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
+                fontFamily = PretendardFontFamily,
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -649,7 +661,8 @@ private fun SkipButton(
 private fun NextButton(
     onClick: () -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    buttonText: String = "다음"
 ) {
     Box(
         modifier = modifier
@@ -660,7 +673,7 @@ private fun NextButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "다음",
+            text = buttonText,
             fontSize = 16.sp,
             fontWeight = FontWeight.W700,
             fontFamily = PretendardFontFamily,

@@ -47,6 +47,8 @@ object AddStoreRoute {
     const val MENU_DETAIL = "menu_detail"
     const val STORE_DETAIL = "store_detail"
     const val COMPLETION = "completion"
+    const val COMPLETION_MENU_DETAIL = "completion_menu_detail"
+    const val COMPLETION_STORE_DETAIL = "completion_store_detail"
 }
 
 @Composable
@@ -138,7 +140,43 @@ fun AddStoreFlowScreen(
             composable(AddStoreRoute.COMPLETION) {
                 CompletionScreen(
                     viewModel = viewModel,
-                    onComplete = onComplete
+                    onComplete = onComplete,
+                    onNavigateToMenuDetail = {
+                        navController.navigate(AddStoreRoute.COMPLETION_MENU_DETAIL)
+                    },
+                    onNavigateToStoreDetail = {
+                        navController.navigate(AddStoreRoute.COMPLETION_STORE_DETAIL)
+                    }
+                )
+            }
+            composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
+                MenuDetailScreen(
+                    viewModel = viewModel,
+                    onNavigateToNext = {
+                        viewModel.updateStoreWithDetails {
+                            viewModel.markMenuDetailCompleted()
+                        }
+                        navController.popBackStack()
+                    },
+                    onNavigateToCompletion = {
+                        navController.popBackStack()
+                    },
+                    isCompletionMode = true
+                )
+            }
+            composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
+                StoreDetailScreen(
+                    viewModel = viewModel,
+                    onNavigateToNext = {
+                        viewModel.updateStoreWithDetails {
+                            viewModel.markStoreDetailCompleted()
+                        }
+                        navController.popBackStack()
+                    },
+                    onSkip = {
+                        navController.popBackStack()
+                    },
+                    isCompletionMode = true
                 )
             }
         }

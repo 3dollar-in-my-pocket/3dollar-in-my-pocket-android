@@ -66,7 +66,8 @@ fun StoreDetailScreen(
     viewModel: AddStoreViewModel,
     onNavigateToNext: () -> Unit,
     onSkip: () -> Unit = onNavigateToNext,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompletionMode: Boolean = false
 ) {
     val selectedPaymentMethods by viewModel.selectedPaymentMethods.collectAsState()
     val selectedDays by viewModel.selectedDays.collectAsState()
@@ -114,7 +115,8 @@ fun StoreDetailScreen(
             },
             onSkip = onSkip,
             onComplete = onNavigateToNext,
-            modifier = modifier
+            modifier = modifier,
+            isCompletionMode = isCompletionMode
         )
     }
 }
@@ -131,7 +133,8 @@ fun StoreDetailContent(
     onEndTimeClick: () -> Unit,
     onSkip: () -> Unit,
     onComplete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isCompletionMode: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -198,9 +201,14 @@ fun StoreDetailContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(12.dp))
-            SkipButton(onClick = onSkip)
-            Spacer(modifier = Modifier.height(12.dp))
-            CompleteButton(onClick = onComplete)
+            if (!isCompletionMode) {
+                SkipButton(onClick = onSkip)
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+            CompleteButton(
+                onClick = onComplete,
+                buttonText = if (isCompletionMode) "작성 완료" else "제보 완료"
+            )
         }
     }
 }
@@ -523,7 +531,8 @@ private fun SkipButton(
 @Composable
 private fun CompleteButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    buttonText: String = "제보 완료"
 ) {
     Box(
         modifier = modifier
@@ -534,7 +543,7 @@ private fun CompleteButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "제보 완료",
+            text = buttonText,
             fontSize = 16.sp,
             fontWeight = FontWeight.W700,
             fontFamily = PretendardFontFamily,
