@@ -116,19 +116,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </HorizontalScrollView>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/admob"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rect_gray"
-        app:adSize="BANNER"
-        app:adUnitId="@string/admob_list_banner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
-
     <TextView
         android:id="@+id/listTitleTextView"
         style="@style/apple_gothic_semi_bold.size_20dp"
@@ -138,7 +125,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/fragment_home_all_menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/admob" />
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
 
     <TextView
         android:id="@+id/certifiedStoreTextView"
@@ -152,7 +139,7 @@
         android:textColor="@color/gray60"
         app:drawableStartCompat="@drawable/ic_certification_check_off"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/admob" />
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listRecyclerView"
