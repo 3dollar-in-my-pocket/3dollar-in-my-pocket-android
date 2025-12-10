@@ -32,6 +32,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,12 +77,11 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 @Composable
 fun MenuDetailScreen(
     viewModel: AddStoreViewModel,
-    onNavigateToNext: () -> Unit,
-    onNavigateToCompletion: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
+    val selectedCategoryId by viewModel.selectedCategoryId.collectAsState()
     val availableSnackCategories by viewModel.availableSnackCategories.collectAsState()
     val availableMealCategories by viewModel.availableMealCategories.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
@@ -89,9 +89,11 @@ fun MenuDetailScreen(
 
     MenuDetailScreenContent(
         selectCategoryList = selectCategoryList,
+        selectedCategoryId = selectedCategoryId,
         availableSnackCategories = availableSnackCategories,
         availableMealCategories = availableMealCategories,
         onCategoryClick = { scope.launch { bottomSheetState.show() } },
+        onSelectCategory = { categoryId -> viewModel.setSelectedCategoryId(categoryId) },
         onAddMenu = { categoryId -> viewModel.addMenuToCategory(categoryId) },
         onRemoveMenu = { categoryId, menuIndex ->
             viewModel.removeMenuFromCategory(categoryId, menuIndex)
@@ -100,8 +102,6 @@ fun MenuDetailScreen(
             viewModel.updateMenuInCategory(categoryId, menuIndex, name, price)
         },
         onCategoryChange = { category -> viewModel.changeSelectCategory(category) },
-        onNavigateToNext = onNavigateToNext,
-        onNavigateToCompletion = onNavigateToCompletion,
         bottomSheetState = bottomSheetState,
         onDismissBottomSheet = { scope.launch { bottomSheetState.hide() } },
         modifier = modifier,
@@ -113,20 +113,26 @@ fun MenuDetailScreen(
 @Composable
 private fun MenuDetailScreenContent(
     selectCategoryList: List<SelectCategoryModel>,
+    selectedCategoryId: String?,
     availableSnackCategories: List<CategoryModel>,
     availableMealCategories: List<CategoryModel>,
     onCategoryClick: () -> Unit,
+    onSelectCategory: (String) -> Unit,
     onAddMenu: (String) -> Unit,
     onRemoveMenu: (String, Int) -> Unit,
     onUpdateMenu: (String, Int, String, String) -> Unit,
     onCategoryChange: (CategoryModel) -> Unit,
-    onNavigateToNext: () -> Unit,
-    onNavigateToCompletion: () -> Unit,
     bottomSheetState: ModalBottomSheetState,
     onDismissBottomSheet: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
+    LaunchedEffect(selectCategoryList, selectedCategoryId) {
+        if (selectCategoryList.isNotEmpty() && selectedCategoryId == null) {
+            onSelectCategory(selectCategoryList.first().menuType.categoryId)
+        }
+    }
+
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -178,17 +184,24 @@ private fun MenuDetailScreenContent(
                     color = Gray100
                 )
             }
+
             FlowRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 selectCategoryList.forEach { category ->
                     CategoryChip(
                         category = category.menuType,
-                        onClick = { onCategoryClick(category.menuType) }
+                        isSelected = selectedCategoryId == category.menuType.categoryId,
+                        onClick = { onSelectCategory(category.menuType.categoryId) }
                     )
                 }
+
+                CategoryEditChip(
+                    onClick = onCategoryClick
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -199,40 +212,29 @@ private fun MenuDetailScreenContent(
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                items(selectCategoryList) { selectCategory ->
-                    MenuCategorySection(
-                        selectCategory = selectCategory,
-                        onAddMenu = { onAddMenu(selectCategory.menuType.categoryId) },
-                        onRemoveMenu = { menuIndex ->
-                            onRemoveMenu(selectCategory.menuType.categoryId, menuIndex)
-                        },
-                        onUpdateMenu = { menuIndex, name, price ->
-                            onUpdateMenu(
-                                selectCategory.menuType.categoryId,
-                                menuIndex,
-                                name,
-                                price
-                            )
-                        }
-                    )
+                val selectedCategory = selectCategoryList.find {
+                    it.menuType.categoryId == selectedCategoryId
                 }
-            }
 
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                if (!isCompletionMode) {
-                    SkipButton(onClick = onNavigateToCompletion)
-                    Spacer(modifier = Modifier.height(12.dp))
+                selectedCategory?.let { selectCategory ->
+                    item {
+                        MenuCategorySection(
+                            selectCategory = selectCategory,
+                            onAddMenu = { onAddMenu(selectCategory.menuType.categoryId) },
+                            onRemoveMenu = { menuIndex ->
+                                onRemoveMenu(selectCategory.menuType.categoryId, menuIndex)
+                            },
+                            onUpdateMenu = { menuIndex, name, price ->
+                                onUpdateMenu(
+                                    selectCategory.menuType.categoryId,
+                                    menuIndex,
+                                    name,
+                                    price
+                                )
+                            }
+                        )
+                    }
                 }
-                NextButton(
-                    onClick = onNavigateToNext,
-                    enabled = selectCategoryList.isNotEmpty(),
-                    buttonText = if (isCompletionMode) "작성 완료" else "다음"
-                )
             }
         }
     }
@@ -591,8 +593,11 @@ fun CategoryChip(
     category: CategoryModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showBorder: Boolean = false
+    showBorder: Boolean = false,
+    isSelected: Boolean? = null
 ) {
+    val selected = isSelected ?: category.isSelected
+
     Row(
         modifier = modifier
             .clip(CircleShape)
@@ -606,7 +611,7 @@ fun CategoryChip(
             .background(
                 when {
                     showBorder -> Color.Transparent
-                    category.isSelected -> Pink200
+                    selected -> Pink200
                     else -> Gray10
                 }
             )
@@ -626,59 +631,30 @@ fun CategoryChip(
             fontSize = 14.sp,
             fontWeight = FontWeight.W400,
             fontFamily = PretendardFontFamily,
-            color = if (category.isSelected) Pink else Gray100
+            color = if (selected) Pink else Gray100
         )
     }
 }
 
 @Composable
-private fun SkipButton(
+private fun CategoryEditChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = "건너뛰기",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray70
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Icon(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_right),
-            contentDescription = null,
-            tint = Gray70,
-            modifier = Modifier.size(16.dp)
-        )
-    }
-}
-
-@Composable
-private fun NextButton(
-    onClick: () -> Unit,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-    buttonText: String = "다음"
-) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .background(if (enabled) Pink else Gray30)
-            .clickable(enabled = enabled) { onClick() },
-        contentAlignment = Alignment.Center
+            .clip(RoundedCornerShape(100.dp))
+            .background(Gray10)
+            .border(1.dp, Gray30, RoundedCornerShape(100.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
         Text(
-            text = buttonText,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W700,
+            text = "카테고리 수정",
             fontFamily = PretendardFontFamily,
-            color = Color.White
+            fontWeight = FontWeight.W600,
+            fontSize = 14.sp,
+            color = Gray70
         )
     }
 }
@@ -695,21 +671,6 @@ private fun CategoryChipPreview() {
             category = CategoryModel(categoryId = "2", name = "꼬치", isSelected = false),
             onClick = {}
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SkipButtonPreview() {
-    SkipButton(onClick = {})
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NextButtonPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        NextButton(onClick = {}, enabled = true)
-        NextButton(onClick = {}, enabled = false)
     }
 }
 
@@ -833,15 +794,15 @@ private fun MenuDetailScreenContentPreview() {
 
     MenuDetailScreenContent(
         selectCategoryList = mockSelectCategoryList,
+        selectedCategoryId = "1",
         availableSnackCategories = mockSnackCategories,
         availableMealCategories = mockMealCategories,
         onCategoryClick = {},
+        onSelectCategory = {},
         onAddMenu = {},
         onRemoveMenu = { _, _ -> },
         onUpdateMenu = { _, _, _, _ -> },
         onCategoryChange = {},
-        onNavigateToNext = {},
-        onNavigateToCompletion = {},
         bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
         onDismissBottomSheet = {}
     )

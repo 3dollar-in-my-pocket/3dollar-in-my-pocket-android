@@ -42,6 +42,9 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     private val _selectCategoryList: MutableStateFlow<List<SelectCategoryModel>> = MutableStateFlow(listOf())
     val selectCategoryList: StateFlow<List<SelectCategoryModel>> get() = _selectCategoryList.asStateFlow()
 
+    private val _selectedCategoryId: MutableStateFlow<String?> = MutableStateFlow(null)
+    val selectedCategoryId: StateFlow<String?> get() = _selectedCategoryId.asStateFlow()
+
     private val _availableSnackCategories: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(emptyList())
     val availableSnackCategories: StateFlow<List<CategoryModel>> get() = _availableSnackCategories.asStateFlow()
 
@@ -172,17 +175,21 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun changeSelectCategory(categoryModel: CategoryModel) {
         _selectCategoryList.update { list ->
             if (!categoryModel.isSelected) {
-                // Store menu data before removing category
                 val categoryToRemove = list.find { it.menuType.categoryId == categoryModel.categoryId }
                 categoryToRemove?.menuDetail?.let { menuList ->
                     if (menuList.isNotEmpty()) {
                         _removedCategoriesData[categoryModel.categoryId] = menuList
                     }
                 }
+
+                if (_selectedCategoryId.value == categoryModel.categoryId) {
+                    val remaining = list.filter { it.menuType.name != categoryModel.name }
+                    _selectedCategoryId.value = remaining.firstOrNull()?.menuType?.categoryId
+                }
+
                 list.filter { it.menuType.name != categoryModel.name }
             } else {
                 if (list.size < 10) {
-                    // Restore previously saved menu data if exists
                     val savedMenus = _removedCategoriesData[categoryModel.categoryId]
                     val menuDetail = savedMenus ?: listOf(
                         com.threedollar.domain.home.data.store.UserStoreMenuModel(
@@ -192,7 +199,13 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                             price = ""
                         )
                     )
-                    list + SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
+                    val newList = list + SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
+
+                    if (list.isEmpty()) {
+                        _selectedCategoryId.value = categoryModel.categoryId
+                    }
+
+                    newList
                 } else {
                     list
                 }
@@ -310,6 +323,10 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     fun setAddress(address: String) {
         _address.value = address
+    }
+
+    fun setSelectedCategoryId(categoryId: String?) {
+        _selectedCategoryId.value = categoryId
     }
 
     fun setCreatedStoreId(id: Int) {

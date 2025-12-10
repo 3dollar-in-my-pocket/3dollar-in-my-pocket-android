@@ -5,11 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -37,6 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import base.compose.Gray100
 import base.compose.Gray30
+import base.compose.Gray70
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
@@ -68,6 +72,7 @@ fun AddStoreFlowScreen(
 
     val isRequiredInfoValid by viewModel.isRequiredInfoValid.collectAsState()
     val createdStoreId by viewModel.createdStoreId.collectAsState()
+    val selectCategoryList by viewModel.selectCategoryList.collectAsState()
 
     LaunchedEffect(createdStoreId) {
         createdStoreId?.let {
@@ -108,28 +113,72 @@ fun AddStoreFlowScreen(
             }
         },
         bottomBar = {
-            if (currentRoute != AddStoreRoute.MENU_DETAIL && currentRoute != AddStoreRoute.COMPLETION) {
-                AddStoreBottomBar(
-                    buttonText = buttonText,
-                    enabled = when (currentRoute) {
-                        AddStoreRoute.REQUIRED_INFO -> isRequiredInfoValid
-                        else -> true
-                    },
-                    onClick = {
-                        when (currentRoute) {
-                            AddStoreRoute.REQUIRED_INFO -> {
+            if (currentRoute != AddStoreRoute.COMPLETION) {
+                when (currentRoute) {
+                    AddStoreRoute.REQUIRED_INFO -> {
+                        AddStoreBottomBar(
+                            buttonText = buttonText,
+                            enabled = isRequiredInfoValid,
+                            onClick = {
                                 if (isRequiredInfoValid) {
                                     navController.navigate(AddStoreRoute.MENU_CATEGORY)
                                 }
                             }
-                            AddStoreRoute.MENU_CATEGORY -> navController.navigate(AddStoreRoute.MENU_DETAIL)
-                            AddStoreRoute.STORE_DETAIL -> {
-                                viewModel.submitNewStore()
-                            }
-                            else -> {}
-                        }
+                        )
                     }
-                )
+                    AddStoreRoute.MENU_CATEGORY -> {
+                        AddStoreBottomBar(
+                            buttonText = buttonText,
+                            enabled = true,
+                            onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
+                        )
+                    }
+                    AddStoreRoute.MENU_DETAIL -> {
+                        AddStoreBottomBar(
+                            buttonText = "다음",
+                            enabled = selectCategoryList.isNotEmpty(),
+                            showSkipButton = true,
+                            onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
+                            onSkipClick = { navController.navigate(AddStoreRoute.COMPLETION) }
+                        )
+                    }
+                    AddStoreRoute.STORE_DETAIL -> {
+                        AddStoreBottomBar(
+                            buttonText = "다음",
+                            enabled = true,
+                            showSkipButton = true,
+                            onClick = { viewModel.submitNewStore() },
+                            onSkipClick = { navController.navigate(    AddStoreRoute.COMPLETION) }
+                        )
+                    }
+                    AddStoreRoute.COMPLETION_MENU_DETAIL -> {
+                        AddStoreBottomBar(
+                            buttonText = "제보 완료",
+                            enabled = selectCategoryList.isNotEmpty(),
+                            showSkipButton = false,
+                            onClick = {
+                                viewModel.updateStoreWithDetails {
+                                    viewModel.markMenuDetailCompleted()
+                                }
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                    AddStoreRoute.COMPLETION_STORE_DETAIL -> {
+                        AddStoreBottomBar(
+                            buttonText = "완료",
+                            enabled = true,
+                            showSkipButton = false,
+                            onClick = {
+                                viewModel.updateStoreWithDetails {
+                                    viewModel.markStoreDetailCompleted()
+                                }
+                                navController.popBackStack()
+                            }
+                        )
+                    }
+                    else -> {}
+                }
             }
         }
     ) { padding ->
@@ -151,15 +200,12 @@ fun AddStoreFlowScreen(
             }
             composable(AddStoreRoute.MENU_DETAIL) {
                 MenuDetailScreen(
-                    viewModel = viewModel,
-                    onNavigateToNext = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
-                    onNavigateToCompletion = { navController.navigate(AddStoreRoute.COMPLETION) }
+                    viewModel = viewModel
                 )
             }
             composable(AddStoreRoute.STORE_DETAIL) {
                 StoreDetailScreen(
-                    viewModel = viewModel,
-                    onNavigateToNext = { navController.navigate(AddStoreRoute.COMPLETION) }
+                    viewModel = viewModel
                 )
             }
             composable(AddStoreRoute.COMPLETION) {
@@ -177,30 +223,12 @@ fun AddStoreFlowScreen(
             composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
                 MenuDetailScreen(
                     viewModel = viewModel,
-                    onNavigateToNext = {
-                        viewModel.updateStoreWithDetails {
-                            viewModel.markMenuDetailCompleted()
-                        }
-                        navController.popBackStack()
-                    },
-                    onNavigateToCompletion = {
-                        navController.popBackStack()
-                    },
                     isCompletionMode = true
                 )
             }
             composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
                 StoreDetailScreen(
                     viewModel = viewModel,
-                    onNavigateToNext = {
-                        viewModel.updateStoreWithDetails {
-                            viewModel.markStoreDetailCompleted()
-                        }
-                        navController.popBackStack()
-                    },
-                    onSkip = {
-                        navController.popBackStack()
-                    },
                     isCompletionMode = true
                 )
             }
@@ -305,6 +333,39 @@ private fun AddStoreBottomBar(
     buttonText: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    showSkipButton: Boolean = false,
+    onSkipClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    if (showSkipButton) {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SkipButton(onClick = onSkipClick)
+            Spacer(modifier = Modifier.height(12.dp))
+            MainButton(
+                buttonText = buttonText,
+                onClick = onClick,
+                enabled = enabled
+            )
+        }
+    } else {
+        MainButton(
+            buttonText = buttonText,
+            onClick = onClick,
+            enabled = enabled,
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+private fun MainButton(
+    buttonText: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (enabled) Pink else Gray30
@@ -323,6 +384,33 @@ private fun AddStoreBottomBar(
             fontWeight = FontWeight.W700,
             fontSize = 16.sp,
             color = Color.White
+        )
+    }
+}
+
+@Composable
+private fun SkipButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = "건너뛰기",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = PretendardFontFamily,
+            color = Gray70
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = null,
+            tint = Gray70,
+            modifier = Modifier.size(16.dp)
         )
     }
 }

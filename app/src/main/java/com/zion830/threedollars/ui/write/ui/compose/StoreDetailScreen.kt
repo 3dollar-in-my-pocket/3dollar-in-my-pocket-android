@@ -64,8 +64,6 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 @Composable
 fun StoreDetailScreen(
     viewModel: AddStoreViewModel,
-    onNavigateToNext: () -> Unit,
-    onSkip: () -> Unit = onNavigateToNext,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
@@ -113,8 +111,6 @@ fun StoreDetailScreen(
                 currentTimeType = TimeType.END
                 scope.launch { sheetState.show() }
             },
-            onSkip = onSkip,
-            onComplete = onNavigateToNext,
             modifier = modifier,
             isCompletionMode = isCompletionMode
         )
@@ -131,8 +127,6 @@ fun StoreDetailContent(
     onDayToggle: (DayOfTheWeekType) -> Unit,
     onStartTimeClick: () -> Unit,
     onEndTimeClick: () -> Unit,
-    onSkip: () -> Unit,
-    onComplete: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
@@ -193,21 +187,6 @@ fun StoreDetailContent(
                 endTime = endTime,
                 onStartTimeClick = onStartTimeClick,
                 onEndTimeClick = onEndTimeClick
-            )
-        }
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
-            if (!isCompletionMode) {
-                SkipButton(onClick = onSkip)
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-            CompleteButton(
-                onClick = onComplete,
-                buttonText = if (isCompletionMode) "작성 완료" else "제보 완료"
             )
         }
     }
@@ -501,57 +480,6 @@ private fun TimePickerBottomSheet(
     }
 }
 
-@Composable
-private fun SkipButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = "건너뛰기",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray70
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Icon(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_right),
-            contentDescription = null,
-            tint = Gray70,
-            modifier = Modifier.size(16.dp)
-        )
-    }
-}
-
-@Composable
-private fun CompleteButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    buttonText: String = "제보 완료"
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .background(Pink)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = buttonText,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W700,
-            fontFamily = PretendardFontFamily,
-            color = Color.White
-        )
-    }
-}
-
 private enum class TimeType {
     START, END
 }
@@ -573,9 +501,7 @@ private fun StoreDetailContentPreview() {
         onPaymentMethodToggle = {},
         onDayToggle = {},
         onStartTimeClick = {},
-        onEndTimeClick = {},
-        onSkip = {},
-        onComplete = {}
+        onEndTimeClick = {}
     )
 }
 
@@ -590,9 +516,7 @@ private fun StoreDetailContentEmptyPreview() {
         onPaymentMethodToggle = {},
         onDayToggle = {},
         onStartTimeClick = {},
-        onEndTimeClick = {},
-        onSkip = {},
-        onComplete = {}
+        onEndTimeClick = {}
     )
 }
 
