@@ -50,7 +50,8 @@
       "mcp__serena__replace_symbol_body",
       "mcp__serena__initial_instructions",
       "mcp__serena__list_memories",
-      "mcp__serena__think_about_whether_you_are_done"
+      "mcp__serena__think_about_whether_you_are_done",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

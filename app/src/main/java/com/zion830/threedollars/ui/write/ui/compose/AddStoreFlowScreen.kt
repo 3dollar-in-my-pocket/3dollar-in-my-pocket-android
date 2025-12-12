@@ -16,15 +16,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +54,14 @@ import base.compose.PretendardFontFamily
 import base.compose.Red
 import com.zion830.threedollars.core.designsystem.R
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import kotlinx.coroutines.launch
+
+enum class BottomSheetType {
+    NONE,
+    CATEGORY_EDIT,
+    TIME_PICKER_START,
+    TIME_PICKER_END
+}
 
 object AddStoreRoute {
     const val REQUIRED_INFO = "required_info"
@@ -57,6 +73,7 @@ object AddStoreRoute {
     const val COMPLETION_STORE_DETAIL = "completion_store_detail"
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddStoreFlowScreen(
     viewModel: AddStoreViewModel,
@@ -73,10 +90,20 @@ fun AddStoreFlowScreen(
     val isRequiredInfoValid by viewModel.isRequiredInfoValid.collectAsState()
     val createdStoreId by viewModel.createdStoreId.collectAsState()
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
+    val availableSnackCategories by viewModel.availableSnackCategories.collectAsState()
+    val availableMealCategories by viewModel.availableMealCategories.collectAsState()
+    val openingHours by viewModel.openingHours.collectAsState()
+
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
+    var currentBottomSheetType by remember { mutableStateOf(BottomSheetType.NONE) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(createdStoreId) {
         createdStoreId?.let {
-            if (currentRoute == AddStoreRoute.STORE_DETAIL) {
+            if (currentRoute == AddStoreRoute.STORE_DETAIL || currentRoute == AddStoreRoute.MENU_DETAIL) {
                 navController.navigate(AddStoreRoute.COMPLETION)
             }
         }
@@ -96,141 +123,206 @@ fun AddStoreFlowScreen(
         else -> "다음"
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = {
-            if (currentRoute != AddStoreRoute.COMPLETION) {
-                AddStoreTopBar(
-                    title = "가게 제보",
-                    progress = progress,
-                    onBackClick = {
-                        if (!navController.popBackStack()) {
-                            onNavigateBack()
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        sheetContent = {
+            when (currentBottomSheetType) {
+                BottomSheetType.CATEGORY_EDIT -> {
+                    CategoryEditBottomSheet(
+                        selectCategoryList = selectCategoryList,
+                        availableSnackCategories = availableSnackCategories,
+                        availableMealCategories = availableMealCategories,
+                        onCategoryChange = { category ->
+                            viewModel.changeSelectCategory(category)
+                        },
+                        onDismiss = {
+                            coroutineScope.launch { sheetState.hide() }
                         }
-                    },
-                    onCloseClick = onCloseClick
-                )
-            }
-        },
-        bottomBar = {
-            if (currentRoute != AddStoreRoute.COMPLETION) {
-                when (currentRoute) {
-                    AddStoreRoute.REQUIRED_INFO -> {
-                        AddStoreBottomBar(
-                            buttonText = buttonText,
-                            enabled = isRequiredInfoValid,
-                            onClick = {
-                                if (isRequiredInfoValid) {
-                                    navController.navigate(AddStoreRoute.MENU_CATEGORY)
-                                }
-                            }
-                        )
-                    }
-                    AddStoreRoute.MENU_CATEGORY -> {
-                        AddStoreBottomBar(
-                            buttonText = buttonText,
-                            enabled = true,
-                            onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
-                        )
-                    }
-                    AddStoreRoute.MENU_DETAIL -> {
-                        AddStoreBottomBar(
-                            buttonText = "다음",
-                            enabled = selectCategoryList.isNotEmpty(),
-                            showSkipButton = true,
-                            onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
-                            onSkipClick = { navController.navigate(AddStoreRoute.COMPLETION) }
-                        )
-                    }
-                    AddStoreRoute.STORE_DETAIL -> {
-                        AddStoreBottomBar(
-                            buttonText = "다음",
-                            enabled = true,
-                            showSkipButton = true,
-                            onClick = { viewModel.submitNewStore() },
-                            onSkipClick = { navController.navigate(    AddStoreRoute.COMPLETION) }
-                        )
-                    }
-                    AddStoreRoute.COMPLETION_MENU_DETAIL -> {
-                        AddStoreBottomBar(
-                            buttonText = "제보 완료",
-                            enabled = selectCategoryList.isNotEmpty(),
-                            showSkipButton = false,
-                            onClick = {
-                                viewModel.updateStoreWithDetails {
-                                    viewModel.markMenuDetailCompleted()
-                                }
-                                navController.popBackStack()
-                            }
-                        )
-                    }
-                    AddStoreRoute.COMPLETION_STORE_DETAIL -> {
-                        AddStoreBottomBar(
-                            buttonText = "완료",
-                            enabled = true,
-                            showSkipButton = false,
-                            onClick = {
-                                viewModel.updateStoreWithDetails {
-                                    viewModel.markStoreDetailCompleted()
-                                }
-                                navController.popBackStack()
-                            }
-                        )
-                    }
-                    else -> {}
+                    )
+                }
+                BottomSheetType.TIME_PICKER_START -> {
+                    TimePickerBottomSheet(
+                        selectedTime = openingHours?.startTime,
+                        onTimeSelected = { time ->
+                            viewModel.setStartTime(time)
+                            coroutineScope.launch { sheetState.hide() }
+                        }
+                    )
+                }
+                BottomSheetType.TIME_PICKER_END -> {
+                    TimePickerBottomSheet(
+                        selectedTime = openingHours?.endTime,
+                        onTimeSelected = { time ->
+                            viewModel.setEndTime(time)
+                            coroutineScope.launch { sheetState.hide() }
+                        }
+                    )
+                }
+                BottomSheetType.NONE -> {
+                    Spacer(modifier = Modifier.height(1.dp))
                 }
             }
         }
-    ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = AddStoreRoute.REQUIRED_INFO,
-            modifier = Modifier.padding(padding)
-        ) {
-            composable(AddStoreRoute.REQUIRED_INFO) {
-                RequiredInfoScreen(
-                    viewModel = viewModel,
-                    onLocationChangeClick = onLocationChangeClick
-                )
-            }
-            composable(AddStoreRoute.MENU_CATEGORY) {
-                MenuCategoryScreen(
-                    viewModel = viewModel
-                )
-            }
-            composable(AddStoreRoute.MENU_DETAIL) {
-                MenuDetailScreen(
-                    viewModel = viewModel
-                )
-            }
-            composable(AddStoreRoute.STORE_DETAIL) {
-                StoreDetailScreen(
-                    viewModel = viewModel
-                )
-            }
-            composable(AddStoreRoute.COMPLETION) {
-                CompletionScreen(
-                    viewModel = viewModel,
-                    onComplete = onComplete,
-                    onNavigateToMenuDetail = {
-                        navController.navigate(AddStoreRoute.COMPLETION_MENU_DETAIL)
-                    },
-                    onNavigateToStoreDetail = {
-                        navController.navigate(AddStoreRoute.COMPLETION_STORE_DETAIL)
+    ) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            topBar = {
+                if (currentRoute != AddStoreRoute.COMPLETION) {
+                    AddStoreTopBar(
+                        title = "가게 제보",
+                        progress = progress,
+                        onBackClick = {
+                            if (!navController.popBackStack()) {
+                                onNavigateBack()
+                            }
+                        },
+                        onCloseClick = onCloseClick
+                    )
+                }
+            },
+            bottomBar = {
+                if (currentRoute != AddStoreRoute.COMPLETION) {
+                    when (currentRoute) {
+                        AddStoreRoute.REQUIRED_INFO -> {
+                            AddStoreBottomBar(
+                                buttonText = buttonText,
+                                enabled = isRequiredInfoValid,
+                                onClick = {
+                                    if (isRequiredInfoValid) {
+                                        navController.navigate(AddStoreRoute.MENU_CATEGORY)
+                                    }
+                                }
+                            )
+                        }
+                        AddStoreRoute.MENU_CATEGORY -> {
+                            AddStoreBottomBar(
+                                buttonText = buttonText,
+                                enabled = true,
+                                onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
+                            )
+                        }
+                        AddStoreRoute.MENU_DETAIL -> {
+                            AddStoreBottomBar(
+                                buttonText = "다음",
+                                enabled = selectCategoryList.isNotEmpty(),
+                                showSkipButton = true,
+                                onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
+                                onSkipClick = { viewModel.submitNewStore() }
+                            )
+                        }
+                        AddStoreRoute.STORE_DETAIL -> {
+                            AddStoreBottomBar(
+                                buttonText = "다음",
+                                enabled = true,
+                                showSkipButton = true,
+                                onClick = { viewModel.submitNewStore() },
+                                onSkipClick = { viewModel.submitNewStore() }
+                            )
+                        }
+                        AddStoreRoute.COMPLETION_MENU_DETAIL -> {
+                            AddStoreBottomBar(
+                                buttonText = "작성 완료",
+                                enabled = selectCategoryList.isNotEmpty(),
+                                showSkipButton = false,
+                                onClick = {
+                                    viewModel.updateStoreWithDetails {
+                                        viewModel.markMenuDetailCompleted()
+                                        navController.popBackStack()
+                                    }
+                                }
+                            )
+                        }
+                        AddStoreRoute.COMPLETION_STORE_DETAIL -> {
+                            AddStoreBottomBar(
+                                buttonText = "작성 완료",
+                                enabled = true,
+                                showSkipButton = false,
+                                onClick = {
+                                    viewModel.updateStoreWithDetails {
+                                        viewModel.markStoreDetailCompleted()
+                                        navController.popBackStack()
+                                    }
+                                }
+                            )
+                        }
+                        else -> {}
                     }
-                )
+                }
             }
-            composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
-                MenuDetailScreen(
-                    viewModel = viewModel,
-                    isCompletionMode = true
-                )
-            }
-            composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
-                StoreDetailScreen(
-                    viewModel = viewModel,
-                    isCompletionMode = true
-                )
+        ) { padding ->
+            NavHost(
+                navController = navController,
+                startDestination = AddStoreRoute.REQUIRED_INFO,
+                modifier = Modifier.padding(padding)
+            ) {
+                composable(AddStoreRoute.REQUIRED_INFO) {
+                    RequiredInfoScreen(
+                        viewModel = viewModel,
+                        onLocationChangeClick = onLocationChangeClick
+                    )
+                }
+                composable(AddStoreRoute.MENU_CATEGORY) {
+                    MenuCategoryScreen(
+                        viewModel = viewModel
+                    )
+                }
+                composable(AddStoreRoute.MENU_DETAIL) {
+                    MenuDetailScreen(
+                        viewModel = viewModel,
+                        onShowCategoryEditSheet = {
+                            currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
+                            coroutineScope.launch { sheetState.show() }
+                        }
+                    )
+                }
+                composable(AddStoreRoute.STORE_DETAIL) {
+                    StoreDetailScreen(
+                        viewModel = viewModel,
+                        onShowTimePickerSheet = { timeType ->
+                            currentBottomSheetType = when (timeType) {
+                                TimeType.START -> BottomSheetType.TIME_PICKER_START
+                                TimeType.END -> BottomSheetType.TIME_PICKER_END
+                            }
+                            coroutineScope.launch { sheetState.show() }
+                        }
+                    )
+                }
+                composable(AddStoreRoute.COMPLETION) {
+                    CompletionScreen(
+                        viewModel = viewModel,
+                        onComplete = onComplete,
+                        onNavigateToMenuDetail = {
+                            navController.navigate(AddStoreRoute.COMPLETION_MENU_DETAIL)
+                        },
+                        onNavigateToStoreDetail = {
+                            navController.navigate(AddStoreRoute.COMPLETION_STORE_DETAIL)
+                        }
+                    )
+                }
+                composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
+                    MenuDetailScreen(
+                        viewModel = viewModel,
+                        onShowCategoryEditSheet = {
+                            currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
+                            coroutineScope.launch { sheetState.show() }
+                        },
+                        isCompletionMode = true
+                    )
+                }
+                composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
+                    StoreDetailScreen(
+                        viewModel = viewModel,
+                        onShowTimePickerSheet = { timeType ->
+                            currentBottomSheetType = when (timeType) {
+                                TimeType.START -> BottomSheetType.TIME_PICKER_START
+                                TimeType.END -> BottomSheetType.TIME_PICKER_END
+                            }
+                            coroutineScope.launch { sheetState.show() }
+                        },
+                        isCompletionMode = true
+                    )
+                }
             }
         }
     }

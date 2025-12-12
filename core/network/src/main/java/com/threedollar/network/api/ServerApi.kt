@@ -316,10 +316,10 @@ interface ServerApi {
         @Query("sort") sort: String,
     ): Response<BaseResponse<Reviews>>
 
-    @POST("/v3/store")
+    @POST("/api/v3/store")
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 
-    @PATCH("/v3/store/{storeId}")
+    @PATCH("/api/v3/store/{storeId}")
     suspend fun putUserStore(
         @Body userStoreRequest: UserStoreRequest,
         @Path("storeId") storeId: Int

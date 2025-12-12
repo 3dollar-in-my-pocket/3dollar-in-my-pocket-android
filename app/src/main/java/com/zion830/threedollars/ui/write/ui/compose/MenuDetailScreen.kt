@@ -15,16 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -37,13 +32,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -70,29 +63,27 @@ import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
-import kotlinx.coroutines.launch
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MenuDetailScreen(
     viewModel: AddStoreViewModel,
+    onShowCategoryEditSheet: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
     val selectCategoryList by viewModel.selectCategoryList.collectAsState()
     val selectedCategoryId by viewModel.selectedCategoryId.collectAsState()
-    val availableSnackCategories by viewModel.availableSnackCategories.collectAsState()
-    val availableMealCategories by viewModel.availableMealCategories.collectAsState()
-    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(selectCategoryList, selectedCategoryId) {
+        if (selectCategoryList.isNotEmpty() && selectedCategoryId == null) {
+            viewModel.setSelectedCategoryId(selectCategoryList.first().menuType.categoryId)
+        }
+    }
 
     MenuDetailScreenContent(
         selectCategoryList = selectCategoryList,
         selectedCategoryId = selectedCategoryId,
-        availableSnackCategories = availableSnackCategories,
-        availableMealCategories = availableMealCategories,
-        onCategoryClick = { scope.launch { bottomSheetState.show() } },
+        onCategoryClick = onShowCategoryEditSheet,
         onSelectCategory = { categoryId -> viewModel.setSelectedCategoryId(categoryId) },
         onAddMenu = { categoryId -> viewModel.addMenuToCategory(categoryId) },
         onRemoveMenu = { categoryId, menuIndex ->
@@ -101,144 +92,118 @@ fun MenuDetailScreen(
         onUpdateMenu = { categoryId, menuIndex, name, price ->
             viewModel.updateMenuInCategory(categoryId, menuIndex, name, price)
         },
-        onCategoryChange = { category -> viewModel.changeSelectCategory(category) },
-        bottomSheetState = bottomSheetState,
-        onDismissBottomSheet = { scope.launch { bottomSheetState.hide() } },
         modifier = modifier,
         isCompletionMode = isCompletionMode
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MenuDetailScreenContent(
     selectCategoryList: List<SelectCategoryModel>,
     selectedCategoryId: String?,
-    availableSnackCategories: List<CategoryModel>,
-    availableMealCategories: List<CategoryModel>,
     onCategoryClick: () -> Unit,
     onSelectCategory: (String) -> Unit,
     onAddMenu: (String) -> Unit,
     onRemoveMenu: (String, Int) -> Unit,
     onUpdateMenu: (String, Int, String, String) -> Unit,
-    onCategoryChange: (CategoryModel) -> Unit,
-    bottomSheetState: ModalBottomSheetState,
-    onDismissBottomSheet: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
-    LaunchedEffect(selectCategoryList, selectedCategoryId) {
-        if (selectCategoryList.isNotEmpty() && selectedCategoryId == null) {
-            onSelectCategory(selectCategoryList.first().menuType.categoryId)
-        }
-    }
-
-    ModalBottomSheetLayout(
-        sheetState = bottomSheetState,
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetContent = {
-            CategoryEditBottomSheet(
-                selectCategoryList = selectCategoryList,
-                availableSnackCategories = availableSnackCategories,
-                availableMealCategories = availableMealCategories,
-                onCategoryChange = onCategoryChange,
-                onDismiss = onDismissBottomSheet
-            )
-        }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(vertical = 20.dp)
     ) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(vertical = 20.dp)
+        Text(
+            text = buildAnnotatedString {
+                append("메뉴 상세 정보 추가 ")
+                withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
+                    append("선택")
+                }
+            },
+            fontSize = 24.sp,
+            fontWeight = FontWeight.W600,
+            fontFamily = PretendardFontFamily,
+            color = Gray100,
+            modifier = Modifier.padding(horizontal = 20.dp),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = buildAnnotatedString {
-                    append("메뉴 상세 정보 추가 ")
-                    withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                        append("선택")
-                    }
-                },
-                fontSize = 24.sp,
-                fontWeight = FontWeight.W600,
+                text = "음식 카테고리",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
                 fontFamily = PretendardFontFamily,
-                color = Gray100,
-                modifier = Modifier.padding(horizontal = 20.dp),
-                textAlign = TextAlign.Center
+                color = Gray100
             )
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "음식 카테고리",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.W400,
-                    fontFamily = PretendardFontFamily,
-                    color = Gray100
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            selectCategoryList.forEach { category ->
+                CategoryChip(
+                    category = category.menuType,
+                    isSelected = selectedCategoryId == category.menuType.categoryId,
+                    onClick = { onSelectCategory(category.menuType.categoryId) }
                 )
             }
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                selectCategoryList.forEach { category ->
-                    CategoryChip(
-                        category = category.menuType,
-                        isSelected = selectedCategoryId == category.menuType.categoryId,
-                        onClick = { onSelectCategory(category.menuType.categoryId) }
+            CategoryEditChip(
+                onClick = onCategoryClick
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .background(Gray10)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            val selectedCategory = selectCategoryList.find {
+                it.menuType.categoryId == selectedCategoryId
+            }
+
+            selectedCategory?.let { selectCategory ->
+                item {
+                    MenuCategorySection(
+                        selectCategory = selectCategory,
+                        onAddMenu = { onAddMenu(selectCategory.menuType.categoryId) },
+                        onRemoveMenu = { menuIndex ->
+                            onRemoveMenu(selectCategory.menuType.categoryId, menuIndex)
+                        },
+                        onUpdateMenu = { menuIndex, name, price ->
+                            onUpdateMenu(
+                                selectCategory.menuType.categoryId,
+                                menuIndex,
+                                name,
+                                price
+                            )
+                        }
                     )
-                }
-
-                CategoryEditChip(
-                    onClick = onCategoryClick
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Gray10)
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                val selectedCategory = selectCategoryList.find {
-                    it.menuType.categoryId == selectedCategoryId
-                }
-
-                selectedCategory?.let { selectCategory ->
-                    item {
-                        MenuCategorySection(
-                            selectCategory = selectCategory,
-                            onAddMenu = { onAddMenu(selectCategory.menuType.categoryId) },
-                            onRemoveMenu = { menuIndex ->
-                                onRemoveMenu(selectCategory.menuType.categoryId, menuIndex)
-                            },
-                            onUpdateMenu = { menuIndex, name, price ->
-                                onUpdateMenu(
-                                    selectCategory.menuType.categoryId,
-                                    menuIndex,
-                                    name,
-                                    price
-                                )
-                            }
-                        )
-                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun MenuCategorySection(
@@ -473,7 +438,7 @@ private fun MenuInputRow(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CategoryEditBottomSheet(
+fun CategoryEditBottomSheet(
     selectCategoryList: List<SelectCategoryModel>,
     availableSnackCategories: List<CategoryModel>,
     availableMealCategories: List<CategoryModel>,
@@ -795,16 +760,11 @@ private fun MenuDetailScreenContentPreview() {
     MenuDetailScreenContent(
         selectCategoryList = mockSelectCategoryList,
         selectedCategoryId = "1",
-        availableSnackCategories = mockSnackCategories,
-        availableMealCategories = mockMealCategories,
         onCategoryClick = {},
         onSelectCategory = {},
         onAddMenu = {},
         onRemoveMenu = { _, _ -> },
-        onUpdateMenu = { _, _, _, _ -> },
-        onCategoryChange = {},
-        bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-        onDismissBottomSheet = {}
+        onUpdateMenu = { _, _, _, _ -> }
     )
 }
 
