@@ -89,20 +89,19 @@ dependencies {
 
     // google
     implementation 'com.android.support:multidex:1.0.3'
-    implementation("com.google.android.gms:play-services-ads:23.6.0")
+    implementation "com.google.android.gms:play-services-ads:$play_services_ads_version"
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation platform('com.google.firebase:firebase-bom:31.0.2')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
-
-    implementation 'com.google.firebase:firebase-auth:21.1.0'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-config-ktx'
-    implementation 'com.google.android.play:app-update-ktx:2.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
-    implementation 'com.google.firebase:firebase-config-ktx:21.2.0'
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
+
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-dynamic-links'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-config'
 
     // naver4
     implementation "com.naver.maps:map-sdk:3.21.0"
@@ -116,5 +115,4 @@ dependencies {
 
     // image picker
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.4.2'
-
 }
