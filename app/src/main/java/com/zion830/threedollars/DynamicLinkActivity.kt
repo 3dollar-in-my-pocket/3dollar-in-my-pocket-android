@@ -30,6 +30,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val POLL = "pollDetail"
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
+        const val BROWSER = "browser"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,6 +174,13 @@ class DynamicLinkActivity : AppCompatActivity() {
                     finish()
                     return
                 }
+            }
+            BROWSER -> {
+                val url = deeplink.getQueryParameter("url").toStringDefault()
+                startActivity(MainActivity.getIntent(this).apply {
+                    putExtra(BROWSER, url)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
             }
 
             else -> {

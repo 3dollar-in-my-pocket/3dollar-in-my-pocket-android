@@ -17,7 +17,6 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
 import com.home.domain.data.store.ContentModel
@@ -26,6 +25,7 @@ import com.home.presentation.data.HomeSortType
 import com.home.presentation.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.data.AdMobItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_STORE
@@ -75,7 +75,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         FragmentHomeListViewBinding.inflate(inflater, container, false)
 
     override fun initView() {
-        initAdmob()
         initFlows()
         initButtons()
         setupRecyclerView()
@@ -84,10 +83,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private fun setupRecyclerView() {
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
         binding.listRecyclerView.adapter = adapter
-    }
-
-    private fun initAdmob() {
-        binding.admob.loadAd(AdRequest.Builder().build())
     }
 
     override fun initFirebaseAnalytics() {
@@ -216,8 +211,9 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                         getString(CommonR.string.fragment_home_all_menu)
                     }
                 val resultList = mutableListOf<AdAndStoreItem>().apply {
+                    add(AdMobItem) // AdMob을 첫 번째 아이템으로 추가
                     addAll(adAndStoreItems)
-                    viewModel.advertisementListModel.value?.let { add(1, it) }
+                    viewModel.advertisementListModel.value?.let { add(2, it) } // 광고 배너 위치를 2번째로 조정
                 }
                 adapter.submitList(resultList)
                 delay(200L)

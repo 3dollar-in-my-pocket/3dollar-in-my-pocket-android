@@ -196,6 +196,7 @@
         <activity
             android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
             android:exported="false" />
+        <activity android:name="com.zion830.threedollars.ui.webview.WebActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
