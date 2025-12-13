@@ -19,14 +19,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -65,7 +70,8 @@ import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
-import com.zion830.threedollars.ui.dialog.NearExistDialog
+import com.zion830.threedollars.ui.dialog.NearExistBottomSheetLayout
+import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
@@ -74,6 +80,7 @@ import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -113,9 +120,6 @@ class NewAddressFragment : Fragment() {
                         viewModel.state.value.selectedLocation?.let { location ->
                             viewModel.processIntent(AddStoreContract.Intent.CheckNearStore(location))
                         }
-                    },
-                    onShowNearExistDialog = { lat, lng ->
-                        showNearExistDialog(lat, lng)
                     },
                     onNavigateToDetail = {
                         findNavController().navigateSafe(R.id.action_navigation_write_to_navigation_write_detail)
@@ -166,20 +170,9 @@ class NewAddressFragment : Fragment() {
             (requireActivity() as MainActivity).showBottomNavigation(false)
         }
     }
-
-    private fun showNearExistDialog(lat: Double, lng: Double) {
-        NearExistDialog.getInstance(lat, lng)
-            .apply {
-                setDialogListener(object : NearExistDialog.DialogListener {
-                    override fun accept() {
-                        findNavController().navigateSafe(R.id.action_navigation_write_to_navigation_write_detail)
-                    }
-                })
-            }.show(parentFragmentManager, NearExistDialog().tag)
-    }
 }
 
-@OptIn(ExperimentalNaverMapApi::class)
+@OptIn(ExperimentalNaverMapApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun NewAddressScreen(
     viewModel: AddStoreViewModel,
@@ -189,22 +182,26 @@ fun NewAddressScreen(
     onBackClick: () -> Unit,
     onFinishClick: (String) -> Unit,
     onBossDownloadClick: () -> Unit,
-    onShowNearExistDialog: (Double, Double) -> Unit,
     onNavigateToDetail: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
     val selectedLocation = state.selectedLocation
-    val currentSelectedLocation by rememberUpdatedState(selectedLocation)
     val address = selectedLocation?.let { getCurrentLocationName(it) } ?: ""
+
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
+    val nearStoresState = remember { mutableStateOf<List<NearStoreInfo>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is AddStoreContract.Effect.NearStoreExists -> {
                     if (effect.exists) {
-                        currentSelectedLocation?.let {
-                            onShowNearExistDialog(it.latitude, it.longitude)
-                        }
+                        nearStoresState.value = effect.nearStores
+                        sheetState.show()
                     } else {
                         onNavigateToDetail()
                     }
@@ -231,25 +228,38 @@ fun NewAddressScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopTitleBar(
-            onBackClick = onBackClick
-        )
-        NaverMapSection(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            selectedLocation = selectedLocation,
-            onCameraIdle = { latLng, distance ->
-                viewModel.processIntent(AddStoreContract.Intent.UpdateLocation(latLng))
-            }
-        )
+    NearExistBottomSheetLayout(
+        sheetState = sheetState,
+        nearStores = nearStoresState.value,
+        address = address,
+        onDismiss = {
+            coroutineScope.launch { sheetState.hide() }
+        },
+        onConfirm = {
+            coroutineScope.launch { sheetState.hide() }
+            onNavigateToDetail()
+        }
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TopTitleBar(
+                onBackClick = onBackClick
+            )
+            NaverMapSection(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                selectedLocation = selectedLocation,
+                onCameraIdle = { latLng, distance ->
+                    viewModel.processIntent(AddStoreContract.Intent.UpdateLocation(latLng))
+                }
+            )
 
-        BottomAddressSheet(
-            address = address,
-            onFinishClick = onFinishClick,
-            onBossDownloadClick = onBossDownloadClick
-        )
+            BottomAddressSheet(
+                address = address,
+                onFinishClick = onFinishClick,
+                onBossDownloadClick = onBossDownloadClick
+            )
+        }
     }
 }
 

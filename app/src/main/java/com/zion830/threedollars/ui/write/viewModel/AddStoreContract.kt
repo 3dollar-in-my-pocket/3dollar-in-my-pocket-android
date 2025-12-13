@@ -8,6 +8,7 @@ import com.threedollar.domain.home.data.store.PostUserStoreModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import com.zion830.threedollars.ui.dialog.NearStoreInfo
 
 object AddStoreContract {
 
@@ -72,6 +73,9 @@ object AddStoreContract {
         data class ShowError(val message: String) : Effect()
         data class StoreCreated(val storeId: Int, val storeInfo: PostUserStoreModel) : Effect()
         object StoreUpdated : Effect()
-        data class NearStoreExists(val exists: Boolean) : Effect()
+        data class NearStoreExists(
+            val exists: Boolean,
+            val nearStores: List<NearStoreInfo> = emptyList()
+        ) : Effect()
     }
 }

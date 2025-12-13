@@ -12,7 +12,7 @@ import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
-import com.zion830.threedollars.ui.dialog.NearExistDialog
+import com.zion830.threedollars.ui.dialog.NearExistBottomSheetDialogFragment
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
@@ -83,14 +83,16 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     }
 
     private fun showNearExistDialog() {
-        NearExistDialog.getInstance(viewModel.state.value.selectedLocation?.latitude ?: 0.0, viewModel.state.value.selectedLocation?.longitude ?: 0.0)
-            .apply {
-                setDialogListener(object : NearExistDialog.DialogListener {
-                    override fun accept() {
-                        moveAddStoreDetailFragment()
-                    }
-                })
-            }.show(parentFragmentManager, "")
+        NearExistBottomSheetDialogFragment.getInstance(
+            viewModel.state.value.selectedLocation?.latitude ?: 0.0,
+            viewModel.state.value.selectedLocation?.longitude ?: 0.0
+        ).apply {
+            setDialogListener(object : NearExistBottomSheetDialogFragment.DialogListener {
+                override fun accept() {
+                    moveAddStoreDetailFragment()
+                }
+            })
+        }.show(parentFragmentManager, "")
     }
 
     private fun moveAddStoreDetailFragment() {

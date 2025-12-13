@@ -11,6 +11,7 @@ import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -443,12 +444,18 @@ class AddStoreViewModel @Inject constructor(
     private fun checkNearStore(location: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getStoreNearExists(
-                distance = 30.0,
+                distance = 10.0,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude
             ).collect { response ->
-                val exists = response.data?.contentModels?.isNotEmpty() == true
-                _effect.emit(AddStoreContract.Effect.NearStoreExists(exists))
+                val stores = response.data?.contentModels ?: emptyList()
+                val nearStoreInfos = NearStoreInfo.fromContentModels(stores)
+                _effect.emit(
+                    AddStoreContract.Effect.NearStoreExists(
+                        exists = stores.isNotEmpty(),
+                        nearStores = nearStoreInfos
+                    )
+                )
             }
         }
     }
