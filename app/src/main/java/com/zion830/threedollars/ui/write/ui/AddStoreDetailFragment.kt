@@ -240,7 +240,7 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
                 appearanceDays = getAppearanceDays(),
                 latitude = viewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                 longitude = viewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                menuRequests = getMenuList().reversed(),
+                menuRequests = getMenuList().asReversed(),
                 paymentMethods = getPaymentMethod(),
                 openingHours = OpeningHourRequest(startTime = startTime, endTime = endTime),
                 storeName = binding.storeNameEditTextView.text.toString(),
