@@ -23,21 +23,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -62,28 +55,24 @@ import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
-import kotlinx.coroutines.launch
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
 fun StoreDetailScreen(
-    viewModel: AddStoreViewModel,
+    state: AddStoreContract.State,
+    onIntent: (AddStoreContract.Intent) -> Unit,
     onShowTimePickerSheet: (TimeType) -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
-    val selectedPaymentMethods by viewModel.selectedPaymentMethods.collectAsState()
-    val selectedDays by viewModel.selectedDays.collectAsState()
-    val openingHours by viewModel.openingHours.collectAsState()
-
     StoreDetailContent(
-        selectedPaymentMethods = selectedPaymentMethods,
-        selectedDays = selectedDays,
-        startTime = openingHours.startTime,
-        endTime = openingHours.endTime,
-        onPaymentMethodToggle = viewModel::togglePaymentMethod,
-        onDayToggle = viewModel::toggleDay,
+        selectedPaymentMethods = state.selectedPaymentMethods,
+        selectedDays = state.selectedDays,
+        startTime = state.openingHours.startTime,
+        endTime = state.openingHours.endTime,
+        onPaymentMethodToggle = { onIntent(AddStoreContract.Intent.TogglePaymentMethod(it)) },
+        onDayToggle = { onIntent(AddStoreContract.Intent.ToggleDay(it)) },
         onStartTimeClick = { onShowTimePickerSheet(TimeType.START) },
         onEndTimeClick = { onShowTimePickerSheet(TimeType.END) },
         modifier = modifier,

@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.write.ui.compose.AddStoreFlowScreen
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.navigateSafe
 import com.zion830.threedollars.utils.showToast
@@ -79,6 +80,7 @@ class AddStoreDetailFragment : Fragment() {
     }
 
     private fun navigateToHome() {
+        viewModel.processIntent(AddStoreContract.Intent.ResetState)
         findNavController().navigateSafe(R.id.action_navigation_write_detail_to_home)
         showToast(CommonR.string.add_store_success)
     }

@@ -6,174 +6,104 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
-import com.threedollar.domain.home.data.store.PostUserStoreModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
+import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.repository.HomeRepository
-import com.threedollar.domain.home.request.OpeningHourRequest
+import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepository, private val repository: StoreDataSource) :
-    BaseViewModel() {
+class AddStoreViewModel @Inject constructor(
+    private val homeRepository: HomeRepository
+) : BaseViewModel() {
 
+    private val _state = MutableStateFlow(AddStoreContract.State())
+    val state: StateFlow<AddStoreContract.State> = _state.asStateFlow()
 
-    private val _selectedLocation: MutableStateFlow<LatLng?> = MutableStateFlow(null)
-    val selectedLocation: StateFlow<LatLng?> get() = _selectedLocation
+    private val _effect = MutableSharedFlow<AddStoreContract.Effect>()
+    val effect: SharedFlow<AddStoreContract.Effect> = _effect.asSharedFlow()
 
-    private val _postUserStoreModel: MutableSharedFlow<PostUserStoreModel?> = MutableSharedFlow()
-    val postUserStoreModel: SharedFlow<PostUserStoreModel?> get() = _postUserStoreModel
-
-    private val _selectCategoryList: MutableStateFlow<List<SelectCategoryModel>> = MutableStateFlow(listOf())
-    val selectCategoryList: StateFlow<List<SelectCategoryModel>> get() = _selectCategoryList.asStateFlow()
-
-    private val _selectedCategoryId: MutableStateFlow<String?> = MutableStateFlow(null)
-    val selectedCategoryId: StateFlow<String?> get() = _selectedCategoryId.asStateFlow()
-
-    private val _availableSnackCategories: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(emptyList())
-    val availableSnackCategories: StateFlow<List<CategoryModel>> get() = _availableSnackCategories.asStateFlow()
-
-    private val _availableMealCategories: MutableStateFlow<List<CategoryModel>> = MutableStateFlow(emptyList())
-    val availableMealCategories: StateFlow<List<CategoryModel>> get() = _availableMealCategories.asStateFlow()
-
-    // Temporary storage for removed categories to restore data if re-selected
-    private val _removedCategoriesData: MutableMap<String, List<com.threedollar.domain.home.data.store.UserStoreMenuModel>> = mutableMapOf()
-
-    private val _isNearStoreExist = MutableSharedFlow<Boolean>()
-    val isNearStoreExist: SharedFlow<Boolean> get() = _isNearStoreExist
-
-    private val _selectedPaymentMethods: MutableStateFlow<Set<PaymentType>> = MutableStateFlow(emptySet())
-    val selectedPaymentMethods: StateFlow<Set<PaymentType>> get() = _selectedPaymentMethods.asStateFlow()
-
-    private val _selectedDays: MutableStateFlow<Set<DayOfTheWeekType>> = MutableStateFlow(emptySet())
-    val selectedDays: StateFlow<Set<DayOfTheWeekType>> get() = _selectedDays.asStateFlow()
-
-    private val _openingHours: MutableStateFlow<OpeningHourRequest> = MutableStateFlow(OpeningHourRequest())
-    val openingHours: StateFlow<OpeningHourRequest> get() = _openingHours.asStateFlow()
-
-    private val _createdStoreId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val createdStoreId: StateFlow<Int?> get() = _createdStoreId.asStateFlow()
-
-    private val _createdStoreInfo: MutableStateFlow<PostUserStoreModel?> = MutableStateFlow(null)
-    val createdStoreInfo: StateFlow<PostUserStoreModel?> get() = _createdStoreInfo.asStateFlow()
-
-    private val _isMenuDetailCompleted: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isMenuDetailCompleted: StateFlow<Boolean> get() = _isMenuDetailCompleted.asStateFlow()
-
-    private val _isStoreDetailCompleted: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isStoreDetailCompleted: StateFlow<Boolean> get() = _isStoreDetailCompleted.asStateFlow()
-
-    private val _storeName: MutableStateFlow<String> = MutableStateFlow("")
-    val storeName: StateFlow<String> get() = _storeName.asStateFlow()
-
-    private val _storeType: MutableStateFlow<String?> = MutableStateFlow(null)
-    val storeType: StateFlow<String?> get() = _storeType.asStateFlow()
-
-    private val _address: MutableStateFlow<String> = MutableStateFlow("")
-    val address: StateFlow<String> get() = _address.asStateFlow()
-
-    val isRequiredInfoValid: StateFlow<Boolean> = combine(
-        _storeName,
-        _storeType,
-        _selectedLocation
-    ) { name, type, location ->
-        name.isNotBlank() && type != null && location != null
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
-    )
+    private val _removedCategoriesData: MutableMap<String, List<UserStoreMenuModel>> = mutableMapOf()
 
     init {
         loadAvailableCategories()
     }
 
+    fun processIntent(intent: AddStoreContract.Intent) {
+        when (intent) {
+            is AddStoreContract.Intent.SetStoreName -> setStoreName(intent.name)
+            is AddStoreContract.Intent.SetStoreType -> setStoreType(intent.type)
+            is AddStoreContract.Intent.SetAddress -> setAddress(intent.address)
+            is AddStoreContract.Intent.UpdateLocation -> updateLocation(intent.location)
+            is AddStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
+            is AddStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
+            is AddStoreContract.Intent.RemoveAllCategories -> removeAllCategories()
+            is AddStoreContract.Intent.SetSelectedCategoryId -> setSelectedCategoryId(intent.categoryId)
+            is AddStoreContract.Intent.AddMenuToCategory -> addMenuToCategory(intent.categoryId)
+            is AddStoreContract.Intent.RemoveMenuFromCategory -> removeMenuFromCategory(intent.categoryId, intent.menuIndex)
+            is AddStoreContract.Intent.UpdateMenuInCategory -> updateMenuInCategory(intent.categoryId, intent.menuIndex, intent.name, intent.price, intent.count)
+            is AddStoreContract.Intent.TogglePaymentMethod -> togglePaymentMethod(intent.paymentType)
+            is AddStoreContract.Intent.ToggleDay -> toggleDay(intent.day)
+            is AddStoreContract.Intent.SetStartTime -> setStartTime(intent.time)
+            is AddStoreContract.Intent.SetEndTime -> setEndTime(intent.time)
+            is AddStoreContract.Intent.SubmitNewStore -> submitNewStore()
+            is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
+            is AddStoreContract.Intent.MarkMenuDetailCompleted -> markMenuDetailCompleted()
+            is AddStoreContract.Intent.MarkStoreDetailCompleted -> markStoreDetailCompleted()
+            is AddStoreContract.Intent.ClearError -> clearError()
+            is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
+            is AddStoreContract.Intent.EditStore -> editStore(intent.request, intent.storeId)
+            is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
+            is AddStoreContract.Intent.ResetState -> resetState()
+        }
+    }
+
     private fun loadAvailableCategories() {
-        _availableSnackCategories.value = LegacySharedPrefUtils.getCategories()
-        _availableMealCategories.value = LegacySharedPrefUtils.getTruckCategories()
-    }
-
-    fun addNewStore(userStoreModelRequest: UserStoreModelRequest) {
-        showLoading()
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.postUserStore(userStoreModelRequest).collect {
-                if (it.ok) {
-                    _postUserStoreModel.emit(it.data)
-                    it.data?.let { data ->
-                        _createdStoreId.value = data.storeId
-                        _createdStoreInfo.value = data
-                    }
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-            withContext(Dispatchers.Main) {
-                hideLoading()
-            }
+        _state.update {
+            it.copy(
+                availableSnackCategories = LegacySharedPrefUtils.getCategories(),
+                availableMealCategories = LegacySharedPrefUtils.getTruckCategories()
+            )
         }
     }
 
-    fun editStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int) {
-        showLoading()
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putUserStore(userStoreModelRequest, storeId).collect {
-                if (it.ok) {
-                    _postUserStoreModel.emit(it.data)
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-            withContext(Dispatchers.Main) {
-                hideLoading()
-            }
-        }
+    private fun setStoreName(name: String) {
+        _state.update { it.copy(storeName = name) }
     }
 
-    fun getStoreNearExists(location: LatLng) {
-        viewModelScope.launch {
-            homeRepository.getStoreNearExists(distance = 10.0, mapLatitude = location.latitude, mapLongitude = location.longitude).collect {
-                if (it.ok) {
-                    _isNearStoreExist.emit(it.data?.contentModels?.isNotEmpty() ?: false)
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-        }
+    private fun setStoreType(type: String?) {
+        _state.update { it.copy(storeType = type) }
     }
 
-    fun updateLocation(latLng: LatLng?) {
-        _selectedLocation.value = latLng
+    private fun setAddress(address: String) {
+        _state.update { it.copy(address = address) }
     }
 
-    fun removeCategory(categoryModel: CategoryModel) {
-        _selectCategoryList.update { list ->
-            list.filter { it.menuType.name != categoryModel.name }
-        }
+    private fun updateLocation(location: LatLng?) {
+        _state.update { it.copy(selectedLocation = location) }
     }
 
-    fun removeAllCategory() {
-        _selectCategoryList.value = listOf()
+    private fun setSelectedCategoryId(categoryId: String?) {
+        _state.update { it.copy(selectedCategoryId = categoryId) }
     }
 
-    fun changeSelectCategory(categoryModel: CategoryModel) {
-        _selectCategoryList.update { list ->
+    private fun changeSelectCategory(categoryModel: CategoryModel) {
+        _state.update { currentState ->
+            val list = currentState.selectCategoryList
+            val newList: List<SelectCategoryModel>
+            var newSelectedCategoryId = currentState.selectedCategoryId
+
             if (!categoryModel.isSelected) {
                 val categoryToRemove = list.find { it.menuType.categoryId == categoryModel.categoryId }
                 categoryToRemove?.menuDetail?.let { menuList ->
@@ -182,47 +112,58 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                     }
                 }
 
-                if (_selectedCategoryId.value == categoryModel.categoryId) {
+                if (currentState.selectedCategoryId == categoryModel.categoryId) {
                     val remaining = list.filter { it.menuType.name != categoryModel.name }
-                    _selectedCategoryId.value = remaining.firstOrNull()?.menuType?.categoryId
+                    newSelectedCategoryId = remaining.firstOrNull()?.menuType?.categoryId
                 }
 
-                list.filter { it.menuType.name != categoryModel.name }
+                newList = list.filter { it.menuType.name != categoryModel.name }
             } else {
                 if (list.size < 10) {
                     val savedMenus = _removedCategoriesData[categoryModel.categoryId]
                     val menuDetail = savedMenus ?: listOf(
-                        com.threedollar.domain.home.data.store.UserStoreMenuModel(
+                        UserStoreMenuModel(
                             category = categoryModel,
                             menuId = 0,
                             name = "",
                             price = ""
                         )
                     )
-                    val newList = list + SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
+                    newList = list + SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
 
                     if (list.isEmpty()) {
-                        _selectedCategoryId.value = categoryModel.categoryId
+                        newSelectedCategoryId = categoryModel.categoryId
                     }
-
-                    newList
                 } else {
-                    list
+                    newList = list
                 }
             }
+
+            currentState.copy(
+                selectCategoryList = newList,
+                selectedCategoryId = newSelectedCategoryId
+            )
         }
     }
 
-    fun setSelectCategoryModelList(selectCategoryModelList: List<SelectCategoryModel>) {
-        _selectCategoryList.value = selectCategoryModelList
+    private fun removeCategory(categoryModel: CategoryModel) {
+        _state.update { currentState ->
+            currentState.copy(
+                selectCategoryList = currentState.selectCategoryList.filter { it.menuType.name != categoryModel.name }
+            )
+        }
     }
 
-    fun addMenuToCategory(categoryId: String) {
-        _selectCategoryList.update { list ->
-            list.map { selectCategory ->
+    private fun removeAllCategories() {
+        _state.update { it.copy(selectCategoryList = emptyList()) }
+    }
+
+    private fun addMenuToCategory(categoryId: String) {
+        _state.update { currentState ->
+            val updatedList = currentState.selectCategoryList.map { selectCategory ->
                 if (selectCategory.menuType.categoryId == categoryId) {
                     val currentMenus = selectCategory.menuDetail ?: emptyList()
-                    val newMenu = com.threedollar.domain.home.data.store.UserStoreMenuModel(
+                    val newMenu = UserStoreMenuModel(
                         category = selectCategory.menuType,
                         menuId = 0,
                         name = "",
@@ -233,12 +174,13 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                     selectCategory
                 }
             }
+            currentState.copy(selectCategoryList = updatedList)
         }
     }
 
-    fun removeMenuFromCategory(categoryId: String, menuIndex: Int) {
-        _selectCategoryList.update { list ->
-            list.map { selectCategory ->
+    private fun removeMenuFromCategory(categoryId: String, menuIndex: Int) {
+        _state.update { currentState ->
+            val updatedList = currentState.selectCategoryList.map { selectCategory ->
                 if (selectCategory.menuType.categoryId == categoryId) {
                     val currentMenus = selectCategory.menuDetail ?: emptyList()
                     if (currentMenus.size > 1) {
@@ -250,17 +192,18 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                     selectCategory
                 }
             }
+            currentState.copy(selectCategoryList = updatedList)
         }
     }
 
-    fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String) {
-        _selectCategoryList.update { list ->
-            list.map { selectCategory ->
+    private fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String, count: Int?) {
+        _state.update { currentState ->
+            val updatedList = currentState.selectCategoryList.map { selectCategory ->
                 if (selectCategory.menuType.categoryId == categoryId) {
                     val currentMenus = selectCategory.menuDetail ?: emptyList()
                     val updatedMenus = currentMenus.mapIndexed { index, menu ->
                         if (index == menuIndex) {
-                            menu.copy(name = name, price = price)
+                            menu.copy(name = name, price = price, count = count)
                         } else {
                             menu
                         }
@@ -270,179 +213,249 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
                     selectCategory
                 }
             }
+            currentState.copy(selectCategoryList = updatedList)
         }
     }
 
-    fun validateMenuDetail(): Boolean {
-        val categories = _selectCategoryList.value
-        if (categories.isEmpty()) return false
-
-        return categories.all { category ->
-            val menus = category.menuDetail ?: emptyList()
-            menus.isNotEmpty() && menus.all { menu ->
-                !menu.name.isNullOrBlank() && !menu.price.isNullOrBlank()
-            }
-        }
-    }
-
-    fun togglePaymentMethod(paymentType: PaymentType) {
-        _selectedPaymentMethods.update { current ->
-            if (current.contains(paymentType)) {
+    private fun togglePaymentMethod(paymentType: PaymentType) {
+        _state.update { currentState ->
+            val current = currentState.selectedPaymentMethods
+            val updated = if (current.contains(paymentType)) {
                 current - paymentType
             } else {
                 current + paymentType
             }
+            currentState.copy(selectedPaymentMethods = updated)
         }
     }
 
-    fun toggleDay(day: DayOfTheWeekType) {
-        _selectedDays.update { current ->
-            if (current.contains(day)) {
+    private fun toggleDay(day: DayOfTheWeekType) {
+        _state.update { currentState ->
+            val current = currentState.selectedDays
+            val updated = if (current.contains(day)) {
                 current - day
             } else {
                 current + day
             }
+            currentState.copy(selectedDays = updated)
         }
     }
 
-    fun setStartTime(time: String) {
-        _openingHours.update { it.copy(startTime = time) }
+    private fun setStartTime(time: String) {
+        _state.update { currentState ->
+            currentState.copy(openingHours = currentState.openingHours.copy(startTime = time))
+        }
     }
 
-    fun setEndTime(time: String) {
-        _openingHours.update { it.copy(endTime = time) }
+    private fun setEndTime(time: String) {
+        _state.update { currentState ->
+            currentState.copy(openingHours = currentState.openingHours.copy(endTime = time))
+        }
     }
 
-    fun setStoreName(name: String) {
-        _storeName.value = name
+    private fun markMenuDetailCompleted() {
+        _state.update { it.copy(isMenuDetailCompleted = true) }
     }
 
-    fun setStoreType(type: String?) {
-        _storeType.value = type
+    private fun markStoreDetailCompleted() {
+        _state.update { it.copy(isStoreDetailCompleted = true) }
     }
 
-    fun setAddress(address: String) {
-        _address.value = address
+    private fun clearError() {
+        _state.update { it.copy(error = null) }
     }
 
-    fun setSelectedCategoryId(categoryId: String?) {
-        _selectedCategoryId.value = categoryId
+    private fun validateAndNormalizeMenu(menu: UserStoreMenuModel): UserStoreMenuModel {
+        val hasName = !menu.name.isNullOrBlank()
+        val hasPrice = !menu.price.isNullOrBlank()
+        val hasCount = menu.count != null
+
+        return when {
+            !hasName && (hasPrice || hasCount) -> {
+                menu.copy(price = "", count = null)
+            }
+
+            hasCount && !hasPrice -> {
+                menu.copy(price = "", count = null)
+            }
+
+            hasName && hasPrice && !hasCount -> {
+                menu.copy(count = 1)
+            }
+
+            else -> menu
+        }
     }
 
-    fun setCreatedStoreId(id: Int) {
-        _createdStoreId.value = id
-    }
-
-    fun setCreatedStoreInfo(info: PostUserStoreModel) {
-        _createdStoreInfo.value = info
-    }
-
-    fun markMenuDetailCompleted() {
-        _isMenuDetailCompleted.value = true
-    }
-
-    fun markStoreDetailCompleted() {
-        _isStoreDetailCompleted.value = true
-    }
-
-    fun updateStoreWithDetails(onSuccess: () -> Unit) {
-        val storeId = _createdStoreId.value ?: return
-        val location = _selectedLocation.value ?: return
-        val categories = _selectCategoryList.value
-        val name = _storeName.value
-
-        val menuRequests = categories.flatMap { category ->
-            category.menuDetail?.mapNotNull { menu ->
-                if (!menu.name.isNullOrBlank()) {
-                    com.threedollar.domain.home.request.MenuModelRequest(
-                        name = menu.name ?: "",
-                        count = null,
-                        price = menu.price?.toIntOrNull(),
-                        category = category.menuType.categoryId,
-                        description = null
-                    )
-                } else null
+    private fun buildValidatedMenuRequests(
+        categories: List<SelectCategoryModel>
+    ): List<MenuModelRequest> {
+        val validatedMenus = categories.flatMap { category ->
+            category.menuDetail?.map { menu ->
+                validateAndNormalizeMenu(menu) to category.menuType.categoryId
             } ?: emptyList()
         }
 
-        val request = UserStoreModelRequest(
-            latitude = location.latitude,
-            longitude = location.longitude,
-            storeName = name,
-            salesType = _storeType.value,
-            appearanceDays = _selectedDays.value.toList(),
-            openingHours = _openingHours.value.takeIf {
-                !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
-            },
-            paymentMethods = _selectedPaymentMethods.value.toList(),
-            menuRequests = menuRequests,
-        )
+        val menuRequests = validatedMenus.mapNotNull { (menu, categoryId) ->
+            if (!menu.name.isNullOrBlank()) {
+                MenuModelRequest(
+                    name = menu.name ?: "",
+                    count = menu.count,
+                    price = menu.price?.toIntOrNull(),
+                    category = categoryId,
+                    description = null
+                )
+            } else null
+        }
 
-        showLoading()
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putUserStore(request, storeId).collect {
-                if (it.ok) {
-                    it.data?.let { data -> _createdStoreInfo.value = data }
-                    withContext(Dispatchers.Main) {
-                        onSuccess()
-                    }
-                } else {
-                    _serverError.emit(it.message)
-                }
+        return if (menuRequests.isEmpty() && categories.isNotEmpty()) {
+            categories.map { category ->
+                MenuModelRequest(
+                    name = "",
+                    count = null,
+                    price = null,
+                    category = category.menuType.categoryId,
+                    description = null
+                )
             }
-            withContext(Dispatchers.Main) {
-                hideLoading()
-            }
+        } else {
+            menuRequests
         }
     }
 
-    fun submitNewStore() {
-        val location = _selectedLocation.value ?: return
-        val name = _storeName.value
-        val salesType = _storeType.value
-        val categories = _selectCategoryList.value
+    private fun submitNewStore() {
+        val currentState = _state.value
+        val location = currentState.selectedLocation ?: return
+        val name = currentState.storeName
 
         if (name.isBlank()) return
 
-        val menuRequests = categories.flatMap { category ->
-            category.menuDetail?.mapNotNull { menu ->
-                if (!menu.name.isNullOrBlank()) {
-                    com.threedollar.domain.home.request.MenuModelRequest(
-                        name = menu.name ?: "",
-                        count = extractCount(menu.price),
-                        price = extractPriceValue(menu.price),
-                        category = category.menuType.categoryId,
-                        description = null
-                    )
-                } else null
-            } ?: emptyList()
-        }
+        val finalMenuRequests = buildValidatedMenuRequests(currentState.selectCategoryList)
 
         val request = UserStoreModelRequest(
             latitude = location.latitude,
             longitude = location.longitude,
             storeName = name,
-            salesType = salesType,
-            appearanceDays = _selectedDays.value.toList(),
-            openingHours = _openingHours.value.takeIf {
+            salesType = currentState.storeType,
+            appearanceDays = currentState.selectedDays.toList(),
+            openingHours = currentState.openingHours.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
             },
-            paymentMethods = _selectedPaymentMethods.value.toList(),
-            menuRequests = menuRequests,
+            paymentMethods = currentState.selectedPaymentMethods.toList(),
+            menuRequests = finalMenuRequests,
         )
 
         addNewStore(request)
     }
 
-    private fun extractCount(priceString: String?): Int? {
-        if (priceString.isNullOrBlank()) return null
-        val parts = priceString.split(" ")
-        return if (parts.size >= 2) parts[0].toIntOrNull() else null
+    private fun addNewStore(userStoreModelRequest: UserStoreModelRequest) {
+        _state.update { it.copy(isLoading = true, error = null) }
+        showLoading()
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.postUserStore(userStoreModelRequest).collect {
+                if (it.ok) {
+                    it.data?.let { data ->
+                        _state.update { state ->
+                            state.copy(
+                                isLoading = false,
+                                createdStoreId = data.storeId,
+                                createdStoreInfo = data
+                            )
+                        }
+                        _effect.emit(AddStoreContract.Effect.StoreCreated(data.storeId, data))
+                    }
+                } else {
+                    _state.update { state -> state.copy(isLoading = false, error = it.message) }
+                    _effect.emit(AddStoreContract.Effect.ShowError(it.message ?: "Unknown error"))
+                    _serverError.emit(it.message)
+                }
+            }
+            hideLoading()
+        }
     }
 
-    private fun extractPriceValue(priceString: String?): Int? {
-        if (priceString.isNullOrBlank()) return null
-        val parts = priceString.split(" ")
-        return if (parts.size >= 2) parts[1].toIntOrNull() else parts[0].toIntOrNull()
+    private fun updateStoreWithDetails() {
+        val currentState = _state.value
+        val storeId = currentState.createdStoreId ?: return
+        val location = currentState.selectedLocation ?: return
+
+        val menuRequests = buildValidatedMenuRequests(currentState.selectCategoryList)
+
+        val request = UserStoreModelRequest(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            storeName = currentState.storeName,
+            salesType = currentState.storeType,
+            appearanceDays = currentState.selectedDays.toList(),
+            openingHours = currentState.openingHours.takeIf {
+                !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
+            },
+            paymentMethods = currentState.selectedPaymentMethods.toList(),
+            menuRequests = menuRequests,
+        )
+
+        _state.update { it.copy(isLoading = true, error = null) }
+        showLoading()
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putUserStore(request, storeId).collect {
+                if (it.ok) {
+                    it.data?.let { data ->
+                        _state.update { state -> state.copy(isLoading = false, createdStoreInfo = data) }
+                    }
+                    _effect.emit(AddStoreContract.Effect.StoreUpdated)
+                } else {
+                    _state.update { state -> state.copy(isLoading = false, error = it.message) }
+                    _effect.emit(AddStoreContract.Effect.ShowError(it.message ?: "Unknown error"))
+                    _serverError.emit(it.message)
+                }
+            }
+            hideLoading()
+        }
+    }
+
+    private fun setSelectCategoryModelList(list: List<SelectCategoryModel>) {
+        _state.update { it.copy(selectCategoryList = list) }
+    }
+
+    private fun editStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int) {
+        _state.update { it.copy(isLoading = true, error = null) }
+        showLoading()
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putUserStore(userStoreModelRequest, storeId).collect {
+                if (it.ok) {
+                    it.data?.let { data ->
+                        _state.update { state -> state.copy(isLoading = false, createdStoreInfo = data) }
+                    }
+                    _effect.emit(AddStoreContract.Effect.StoreUpdated)
+                } else {
+                    _state.update { state -> state.copy(isLoading = false, error = it.message) }
+                    _effect.emit(AddStoreContract.Effect.ShowError(it.message ?: "Unknown error"))
+                    _serverError.emit(it.message)
+                }
+            }
+            hideLoading()
+        }
+    }
+
+    private fun checkNearStore(location: LatLng) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.getStoreNearExists(
+                distance = 30.0,
+                mapLatitude = location.latitude,
+                mapLongitude = location.longitude
+            ).collect { response ->
+                val exists = response.data?.contentModels?.isNotEmpty() == true
+                _effect.emit(AddStoreContract.Effect.NearStoreExists(exists))
+            }
+        }
+    }
+
+    private fun resetState() {
+        _state.update { AddStoreContract.State() }
+        _removedCategoriesData.clear()
+        loadAvailableCategories()
     }
 }

@@ -25,8 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,28 +48,23 @@ import base.compose.PretendardFontFamily
 import coil.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
 fun CompletionScreen(
-    viewModel: AddStoreViewModel,
+    state: AddStoreContract.State,
+    onIntent: (AddStoreContract.Intent) -> Unit,
     onComplete: () -> Unit,
     onNavigateToMenuDetail: () -> Unit,
     onNavigateToStoreDetail: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val createdStoreInfo by viewModel.createdStoreInfo.collectAsState()
-    val isMenuDetailCompleted by viewModel.isMenuDetailCompleted.collectAsState()
-    val isStoreDetailCompleted by viewModel.isStoreDetailCompleted.collectAsState()
-    val selectCategoryList by viewModel.selectCategoryList.collectAsState()
-    val address by viewModel.address.collectAsState()
-
     CompletionScreenContent(
-        address = createdStoreInfo?.address?.fullAddress ?: address,
-        categories = selectCategoryList,
-        isMenuDetailCompleted = isMenuDetailCompleted,
-        isStoreDetailCompleted = isStoreDetailCompleted,
+        address = state.createdStoreInfo?.address?.fullAddress ?: state.address,
+        categories = state.selectCategoryList,
+        isMenuDetailCompleted = state.isMenuDetailCompleted,
+        isStoreDetailCompleted = state.isStoreDetailCompleted,
         onMenuDetailClick = onNavigateToMenuDetail,
         onStoreDetailClick = onNavigateToStoreDetail,
         onComplete = onComplete,

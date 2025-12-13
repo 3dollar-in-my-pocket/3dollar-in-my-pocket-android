@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,8 +21,6 @@ import androidx.compose.material.TextFieldDefaults
 import base.compose.Red
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray30
@@ -44,42 +39,38 @@ import base.compose.Gray70
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.domain.home.data.store.SalesType
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.utils.getCurrentLocationName
 
 @Composable
 fun RequiredInfoScreen(
-    viewModel: AddStoreViewModel,
+    state: AddStoreContract.State,
+    onIntent: (AddStoreContract.Intent) -> Unit,
     onLocationChangeClick: () -> Unit = {}
 ) {
-    val storeName by viewModel.storeName.collectAsState()
-    val storeType by viewModel.storeType.collectAsState()
-    val address by viewModel.address.collectAsState()
-    val selectedLocation by viewModel.selectedLocation.collectAsState()
-
-    val displayAddress = remember(selectedLocation, address) {
-        if (address.isNotBlank()) {
-            address
+    val displayAddress = remember(state.selectedLocation, state.address) {
+        if (state.address.isNotBlank()) {
+            state.address
         } else {
-            selectedLocation?.let { getCurrentLocationName(it) } ?: ""
+            state.selectedLocation?.let { getCurrentLocationName(it) } ?: ""
         }
     }
 
-    LaunchedEffect(selectedLocation) {
-        selectedLocation?.let {
+    LaunchedEffect(state.selectedLocation) {
+        state.selectedLocation?.let {
             val computedAddress = getCurrentLocationName(it) ?: ""
-            if (computedAddress.isNotBlank() && address.isBlank()) {
-                viewModel.setAddress(computedAddress)
+            if (computedAddress.isNotBlank() && state.address.isBlank()) {
+                onIntent(AddStoreContract.Intent.SetAddress(computedAddress))
             }
         }
     }
 
     RequiredInfoContent(
         modifier = Modifier,
-        storeName = storeName,
-        onStoreNameChange = { viewModel.setStoreName(it) },
-        selectedStoreType = storeType?.let { SalesType.valueOf(it) },
-        onStoreTypeSelect = { viewModel.setStoreType(it.name) },
+        storeName = state.storeName,
+        onStoreNameChange = { onIntent(AddStoreContract.Intent.SetStoreName(it)) },
+        selectedStoreType = state.storeType?.let { SalesType.valueOf(it) },
+        onStoreTypeSelect = { onIntent(AddStoreContract.Intent.SetStoreType(it.name)) },
         address = displayAddress,
         onLocationChangeClick = onLocationChangeClick,
     )

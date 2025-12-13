@@ -14,6 +14,7 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.dialog.NearExistDialog
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
@@ -37,7 +38,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.finishButton.onSingleClick {
-            viewModel.getStoreNearExists(viewModel.selectedLocation.value ?: LatLng(0.0, 0.0))
+            viewModel.processIntent(AddStoreContract.Intent.CheckNearStore(viewModel.state.value.selectedLocation ?: LatLng(0.0, 0.0)))
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             requireActivity().supportFragmentManager.popBackStack()
@@ -57,18 +58,23 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.selectedLocation.collect { latLng ->
-                        if (latLng != null) {
+                    viewModel.state.collect { state ->
+                        state.selectedLocation?.let { latLng ->
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
                         }
                     }
                 }
                 launch {
-                    viewModel.isNearStoreExist.collect {
-                        if (it) {
-                            showNearExistDialog()
-                        } else {
-                            moveAddStoreDetailFragment()
+                    viewModel.effect.collect { effect ->
+                        when (effect) {
+                            is AddStoreContract.Effect.NearStoreExists -> {
+                                if (effect.exists) {
+                                    showNearExistDialog()
+                                } else {
+                                    moveAddStoreDetailFragment()
+                                }
+                            }
+                            else -> {}
                         }
                     }
                 }
@@ -77,7 +83,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     }
 
     private fun showNearExistDialog() {
-        NearExistDialog.getInstance(viewModel.selectedLocation.value?.latitude ?: 0.0, viewModel.selectedLocation.value?.longitude ?: 0.0)
+        NearExistDialog.getInstance(viewModel.state.value.selectedLocation?.latitude ?: 0.0, viewModel.state.value.selectedLocation?.longitude ?: 0.0)
             .apply {
                 setDialogListener(object : NearExistDialog.DialogListener {
                     override fun accept() {

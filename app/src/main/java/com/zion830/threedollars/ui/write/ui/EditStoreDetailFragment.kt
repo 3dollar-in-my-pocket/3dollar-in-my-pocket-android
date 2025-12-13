@@ -35,6 +35,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -63,13 +64,13 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 )
             },
             {
-                addStoreViewModel.removeCategory(it)
+                addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveCategory(it))
             },
         )
     }
 
     private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
-        EditCategoryMenuRecyclerAdapter { addStoreViewModel.removeCategory(it) }
+        EditCategoryMenuRecyclerAdapter { addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveCategory(it)) }
     }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
@@ -97,33 +98,31 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    addStoreViewModel.selectedLocation.collect {
-                        binding.addressTextView.text = getCurrentLocationName(it)
-                        it?.let {
+                    addStoreViewModel.state.collect { state ->
+                        state.selectedLocation?.let { location ->
+                            binding.addressTextView.text = getCurrentLocationName(location)
                             delay(500L)
-                            val latLng = LatLng(it.latitude, it.longitude)
+                            val latLng = LatLng(location.latitude, location.longitude)
                             naverMapFragment.initMap(latLng, false)
                         }
-                    }
-                }
-                launch {
-                    addStoreViewModel.postUserStoreModel.collect {
-                        it?.let {
-                            viewModel.getUserStoreDetail(
-                                storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
-                                deviceLatitude = it.location.latitude,
-                                deviceLongitude = it.location.longitude,
-                                filterVisitStartDate = getMonthFirstDate(),
-                            )
-                            showToast(CommonR.string.edit_store_success)
-                            requireActivity().supportFragmentManager.popBackStack()
-                        }
-                    }
-                }
-                launch {
-                    addStoreViewModel.selectCategoryList.collect { categoryModelList ->
+
+                        val categoryModelList = state.selectCategoryList
                         addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(categoryModelList.size < 3)) + categoryModelList.map { it.menuType })
                         editCategoryMenuRecyclerAdapter.setItems(categoryModelList)
+                    }
+                }
+                launch {
+                    addStoreViewModel.effect.collect { effect ->
+                        when (effect) {
+                            is AddStoreContract.Effect.StoreUpdated -> {
+                                showToast(CommonR.string.edit_store_success)
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
+                            is AddStoreContract.Effect.ShowError -> {
+                                showToast(effect.message)
+                            }
+                            else -> {}
+                        }
                     }
                 }
                 launch {
@@ -136,9 +135,9 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 }
                                 SelectCategoryModel(menuType = model, menu)
                             }
-                            addStoreViewModel.setSelectCategoryModelList(selectCategoryModelList)
-                            if (addStoreViewModel.selectedLocation.value == null) {
-                                addStoreViewModel.updateLocation(LatLng(location.latitude, location.longitude))
+                            addStoreViewModel.processIntent(AddStoreContract.Intent.SetSelectCategoryList(selectCategoryModelList))
+                            if (addStoreViewModel.state.value.selectedLocation == null) {
+                                addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(LatLng(location.latitude, location.longitude)))
                             }
                             binding.storeNameEditTextView.setText(it.store.name)
 
@@ -258,7 +257,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         }
         binding.btnClearCategory.setOnClickListener {
             addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
-            addStoreViewModel.removeAllCategory()
+            addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveAllCategories)
         }
         binding.fullScreenButton.setOnClickListener {
             moveFullScreenMap()
@@ -272,21 +271,23 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 putString("screen", "write_address_detail")
             }
             EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
-            addStoreViewModel.editStore(
-                UserStoreModelRequest(
-                    appearanceDays = getAppearanceDays(),
-                    latitude = addStoreViewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    longitude = addStoreViewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    menuRequests = getMenuList().reversed(),
-                    paymentMethods = getPaymentMethod(),
-                    openingHours = OpeningHourRequest(
-                        startTime = startTime,
-                        endTime = endTime,
+            addStoreViewModel.processIntent(
+                AddStoreContract.Intent.EditStore(
+                    request = UserStoreModelRequest(
+                        appearanceDays = getAppearanceDays(),
+                        latitude = addStoreViewModel.state.value.selectedLocation?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                        longitude = addStoreViewModel.state.value.selectedLocation?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                        menuRequests = getMenuList().reversed(),
+                        paymentMethods = getPaymentMethod(),
+                        openingHours = OpeningHourRequest(
+                            startTime = startTime,
+                            endTime = endTime,
+                        ),
+                        storeName = binding.storeNameEditTextView.text.toString(),
+                        salesType = getStoreType(),
                     ),
-                    storeName = binding.storeNameEditTextView.text.toString(),
-                    salesType = getStoreType(),
-                ),
-                viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
+                    storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
+                )
             )
         }
         binding.openingHourStartTimeTextView.setOnClickListener {
@@ -326,7 +327,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
     }
 
     private fun moveFullScreenMap() {
-        val latLng = addStoreViewModel.selectedLocation.value
+        val latLng = addStoreViewModel.state.value.selectedLocation
         val intent = FullScreenMapActivity.getIntent(
             context = requireContext(),
             latitude = latLng?.latitude,

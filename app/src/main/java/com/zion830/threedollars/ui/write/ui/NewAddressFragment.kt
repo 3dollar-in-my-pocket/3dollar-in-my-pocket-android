@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +66,7 @@ import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.NearExistDialog
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
@@ -97,6 +99,7 @@ class NewAddressFragment : Fragment() {
                     onDismissDialog = { showExitDialog.value = false },
                     onConfirmExit = {
                         showExitDialog.value = false
+                        viewModel.processIntent(AddStoreContract.Intent.ResetState)
                         findNavController().navigate(R.id.navigation_home)
                     },
                     onBackClick = { showExitDialog.value = true },
@@ -106,11 +109,9 @@ class NewAddressFragment : Fragment() {
                             putString("address", address)
                         }
                         EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
-                        viewModel.setAddress(address)
-                        viewModel.selectedLocation.value?.let { location ->
-                            viewModel.getStoreNearExists(
-                                location
-                            )
+                        viewModel.processIntent(AddStoreContract.Intent.SetAddress(address))
+                        viewModel.state.value.selectedLocation?.let { location ->
+                            viewModel.processIntent(AddStoreContract.Intent.CheckNearStore(location))
                         }
                     },
                     onShowNearExistDialog = { lat, lng ->
@@ -191,17 +192,25 @@ fun NewAddressScreen(
     onShowNearExistDialog: (Double, Double) -> Unit,
     onNavigateToDetail: () -> Unit,
 ) {
-    val selectedLocation by viewModel.selectedLocation.collectAsState(initial = null)
-    val isNearStoreExist by viewModel.isNearStoreExist.collectAsState(initial = null)
+    val state by viewModel.state.collectAsState()
+    val selectedLocation = state.selectedLocation
+    val currentSelectedLocation by rememberUpdatedState(selectedLocation)
     val address = selectedLocation?.let { getCurrentLocationName(it) } ?: ""
 
-    LaunchedEffect(isNearStoreExist) {
-        if (isNearStoreExist == true) {
-            selectedLocation?.let {
-                onShowNearExistDialog(it.latitude, it.longitude)
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is AddStoreContract.Effect.NearStoreExists -> {
+                    if (effect.exists) {
+                        currentSelectedLocation?.let {
+                            onShowNearExistDialog(it.latitude, it.longitude)
+                        }
+                    } else {
+                        onNavigateToDetail()
+                    }
+                }
+                else -> {}
             }
-        } else if (isNearStoreExist == false) {
-            onNavigateToDetail()
         }
     }
 
@@ -232,7 +241,7 @@ fun NewAddressScreen(
                 .fillMaxWidth(),
             selectedLocation = selectedLocation,
             onCameraIdle = { latLng, distance ->
-                viewModel.updateLocation(latLng)
+                viewModel.processIntent(AddStoreContract.Intent.UpdateLocation(latLng))
             }
         )
 

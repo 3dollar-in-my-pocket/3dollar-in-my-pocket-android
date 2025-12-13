@@ -20,15 +20,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,35 +59,33 @@ import coil.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 
 @Composable
 fun MenuDetailScreen(
-    viewModel: AddStoreViewModel,
+    state: AddStoreContract.State,
+    onIntent: (AddStoreContract.Intent) -> Unit,
     onShowCategoryEditSheet: () -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
-    val selectCategoryList by viewModel.selectCategoryList.collectAsState()
-    val selectedCategoryId by viewModel.selectedCategoryId.collectAsState()
-
-    LaunchedEffect(selectCategoryList, selectedCategoryId) {
-        if (selectCategoryList.isNotEmpty() && selectedCategoryId == null) {
-            viewModel.setSelectedCategoryId(selectCategoryList.first().menuType.categoryId)
+    LaunchedEffect(state.selectCategoryList, state.selectedCategoryId) {
+        if (state.selectCategoryList.isNotEmpty() && state.selectedCategoryId == null) {
+            onIntent(AddStoreContract.Intent.SetSelectedCategoryId(state.selectCategoryList.first().menuType.categoryId))
         }
     }
 
     MenuDetailScreenContent(
-        selectCategoryList = selectCategoryList,
-        selectedCategoryId = selectedCategoryId,
+        selectCategoryList = state.selectCategoryList,
+        selectedCategoryId = state.selectedCategoryId,
         onCategoryClick = onShowCategoryEditSheet,
-        onSelectCategory = { categoryId -> viewModel.setSelectedCategoryId(categoryId) },
-        onAddMenu = { categoryId -> viewModel.addMenuToCategory(categoryId) },
+        onSelectCategory = { categoryId -> onIntent(AddStoreContract.Intent.SetSelectedCategoryId(categoryId)) },
+        onAddMenu = { categoryId -> onIntent(AddStoreContract.Intent.AddMenuToCategory(categoryId)) },
         onRemoveMenu = { categoryId, menuIndex ->
-            viewModel.removeMenuFromCategory(categoryId, menuIndex)
+            onIntent(AddStoreContract.Intent.RemoveMenuFromCategory(categoryId, menuIndex))
         },
-        onUpdateMenu = { categoryId, menuIndex, name, price ->
-            viewModel.updateMenuInCategory(categoryId, menuIndex, name, price)
+        onUpdateMenu = { categoryId, menuIndex, name, price, count ->
+            onIntent(AddStoreContract.Intent.UpdateMenuInCategory(categoryId, menuIndex, name, price, count))
         },
         modifier = modifier,
         isCompletionMode = isCompletionMode
@@ -106,7 +101,7 @@ private fun MenuDetailScreenContent(
     onSelectCategory: (String) -> Unit,
     onAddMenu: (String) -> Unit,
     onRemoveMenu: (String, Int) -> Unit,
-    onUpdateMenu: (String, Int, String, String) -> Unit,
+    onUpdateMenu: (String, Int, String, String, Int?) -> Unit,
     modifier: Modifier = Modifier,
     isCompletionMode: Boolean = false
 ) {
@@ -189,12 +184,13 @@ private fun MenuDetailScreenContent(
                         onRemoveMenu = { menuIndex ->
                             onRemoveMenu(selectCategory.menuType.categoryId, menuIndex)
                         },
-                        onUpdateMenu = { menuIndex, name, price ->
+                        onUpdateMenu = { menuIndex, name, price, count ->
                             onUpdateMenu(
                                 selectCategory.menuType.categoryId,
                                 menuIndex,
                                 name,
-                                price
+                                price,
+                                count
                             )
                         }
                     )
@@ -210,7 +206,7 @@ private fun MenuCategorySection(
     selectCategory: SelectCategoryModel,
     onAddMenu: () -> Unit,
     onRemoveMenu: (Int) -> Unit,
-    onUpdateMenu: (Int, String, String) -> Unit,
+    onUpdateMenu: (Int, String, String, Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -240,7 +236,7 @@ private fun MenuCategorySection(
                 color = Red,
                 modifier = Modifier
                     .padding(start = 4.dp)
-                    .clickable { /* TODO: Show confirmation for category removal */ }
+                    .clickable { }
             )
         }
 
@@ -251,8 +247,9 @@ private fun MenuCategorySection(
                 index = index,
                 menu = menu,
                 onRemove = { onRemoveMenu(index) },
-                onUpdateName = { name -> onUpdateMenu(index, name, menu.price ?: "") },
-                onUpdatePrice = { price -> onUpdateMenu(index, menu.name ?: "", price) },
+                onUpdateName = { name -> onUpdateMenu(index, name, menu.price ?: "", menu.count) },
+                onUpdatePrice = { price -> onUpdateMenu(index, menu.name ?: "", price, menu.count) },
+                onUpdateCount = { count -> onUpdateMenu(index, menu.name ?: "", menu.price ?: "", count) },
                 canRemove = (selectCategory.menuDetail?.size ?: 0) > 1
             )
 
@@ -283,6 +280,7 @@ private fun MenuInputRow(
     onRemove: () -> Unit,
     onUpdateName: (String) -> Unit,
     onUpdatePrice: (String) -> Unit,
+    onUpdateCount: (Int?) -> Unit,
     canRemove: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -348,19 +346,19 @@ private fun MenuInputRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            var quantityText by remember(menu.price) {
-                mutableStateOf(extractQuantity(menu.price ?: ""))
+            var countText by remember(menu.count) {
+                mutableStateOf(menu.count?.toString() ?: "")
             }
             var priceText by remember(menu.price) {
-                mutableStateOf(extractPrice(menu.price ?: ""))
+                mutableStateOf(menu.price?.takeIf { it != "-" } ?: "")
             }
 
             OutlinedTextField(
-                value = quantityText,
+                value = countText,
                 onValueChange = { newValue ->
                     if (newValue.all { it.isDigit() }) {
-                        quantityText = newValue
-                        onUpdatePrice(formatMenuPrice(newValue, priceText))
+                        countText = newValue
+                        onUpdateCount(newValue.toIntOrNull())
                     }
                 },
                 placeholder = {
@@ -399,7 +397,7 @@ private fun MenuInputRow(
                 onValueChange = { newValue ->
                     if (newValue.all { it.isDigit() }) {
                         priceText = newValue
-                        onUpdatePrice(formatMenuPrice(quantityText, newValue))
+                        onUpdatePrice(newValue)
                     }
                 },
                 placeholder = {
@@ -534,9 +532,7 @@ fun CategoryEditBottomSheet(
                 .clip(RoundedCornerShape(8.dp))
                 .background(if (selectCategoryList.isEmpty()) Gray30 else Pink)
                 .clickable(enabled = selectCategoryList.isNotEmpty()) {
-                    if (selectCategoryList.isEmpty()) {
-                        // TODO: Show toast "음식 카테고리 필수 등록"
-                    } else {
+                    if (selectCategoryList.isNotEmpty()) {
                         onDismiss()
                     }
                 },
@@ -653,11 +649,13 @@ private fun MenuInputRowPreview() {
                 category = CategoryModel(categoryId = "1", name = "붕어빵"),
                 menuId = 1,
                 name = "슈크림 붕어빵",
-                price = "1 2000"
+                price = "2000",
+                count = 1
             ),
             onRemove = {},
             onUpdateName = {},
             onUpdatePrice = {},
+            onUpdateCount = {},
             canRemove = true
         )
 
@@ -674,6 +672,7 @@ private fun MenuInputRowPreview() {
             onRemove = {},
             onUpdateName = {},
             onUpdatePrice = {},
+            onUpdateCount = {},
             canRemove = false
         )
     }
@@ -694,19 +693,21 @@ private fun MenuCategorySectionPreview() {
                     category = CategoryModel(categoryId = "1", name = "붕어빵"),
                     menuId = 1,
                     name = "슈크림 붕어빵",
-                    price = "1 2000"
+                    price = "2000",
+                    count = 1
                 ),
                 UserStoreMenuModel(
                     category = CategoryModel(categoryId = "1", name = "붕어빵"),
                     menuId = 2,
                     name = "팥 붕어빵",
-                    price = "1 1500"
+                    price = "1500",
+                    count = 1
                 )
             )
         ),
         onAddMenu = {},
         onRemoveMenu = {},
-        onUpdateMenu = { _, _, _ -> }
+        onUpdateMenu = { _, _, _, _ -> }
     )
 }
 
@@ -722,13 +723,15 @@ private fun MenuDetailScreenContentPreview() {
                     category = CategoryModel(categoryId = "1", name = "붕어빵"),
                     menuId = 1,
                     name = "슈크림 붕어빵",
-                    price = "1 2000"
+                    price = "2000",
+                    count = 1
                 ),
                 UserStoreMenuModel(
                     category = CategoryModel(categoryId = "1", name = "붕어빵"),
                     menuId = 2,
                     name = "팥 붕어빵",
-                    price = "1 1500"
+                    price = "1500",
+                    count = 1
                 )
             )
         ),
@@ -739,22 +742,11 @@ private fun MenuDetailScreenContentPreview() {
                     category = CategoryModel(categoryId = "2", name = "꼬치"),
                     menuId = 3,
                     name = "오뎅꼬치",
-                    price = "3 5000"
+                    price = "5000",
+                    count = 3
                 )
             )
         )
-    )
-
-    val mockSnackCategories = listOf(
-        CategoryModel(categoryId = "1", name = "붕어빵", imageUrl = ""),
-        CategoryModel(categoryId = "3", name = "떡볶이", imageUrl = ""),
-        CategoryModel(categoryId = "4", name = "타코야키", imageUrl = "")
-    )
-
-    val mockMealCategories = listOf(
-        CategoryModel(categoryId = "2", name = "꼬치", imageUrl = ""),
-        CategoryModel(categoryId = "5", name = "회", imageUrl = ""),
-        CategoryModel(categoryId = "6", name = "호떡", imageUrl = "")
     )
 
     MenuDetailScreenContent(
@@ -764,38 +756,6 @@ private fun MenuDetailScreenContentPreview() {
         onSelectCategory = {},
         onAddMenu = {},
         onRemoveMenu = { _, _ -> },
-        onUpdateMenu = { _, _, _, _ -> }
+        onUpdateMenu = { _, _, _, _, _ -> }
     )
-}
-
-private fun extractQuantity(price: String): String {
-    if (price.isBlank()) return ""
-    val parts = price.split(" ")
-    return if (parts.size >= 2) {
-        parts[0].filter { it.isDigit() }
-    } else {
-        ""
-    }
-}
-
-private fun extractPrice(price: String): String {
-    if (price.isBlank()) return ""
-    val parts = price.split(" ")
-    return if (parts.size >= 2) {
-        parts[1].filter { it.isDigit() }
-    } else {
-        price.filter { it.isDigit() }
-    }
-}
-
-private fun formatMenuPrice(quantity: String, price: String): String {
-    return buildString {
-        if (quantity.isNotBlank()) {
-            append(quantity)
-            append(" ")
-        }
-        if (price.isNotBlank()) {
-            append(price)
-        }
-    }.trim()
 }

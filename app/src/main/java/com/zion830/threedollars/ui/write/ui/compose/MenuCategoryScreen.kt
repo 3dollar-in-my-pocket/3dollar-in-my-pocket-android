@@ -15,8 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +31,7 @@ import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import com.threedollar.domain.home.data.store.CategoryModel
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 
 data class CategorySection(
@@ -43,11 +41,11 @@ data class CategorySection(
 
 @Composable
 fun MenuCategoryScreen(
-    viewModel: AddStoreViewModel,
+    state: AddStoreContract.State,
+    onIntent: (AddStoreContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectCategoryList by viewModel.selectCategoryList.collectAsState()
-    val selectedCategoryIds = selectCategoryList.map { it.menuType.categoryId }
+    val selectedCategoryIds = state.selectCategoryList.map { it.menuType.categoryId }
 
     val snackCategories = LegacySharedPrefUtils.getCategories().map { category ->
         category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
@@ -65,7 +63,7 @@ fun MenuCategoryScreen(
         categorySections = categorySections,
         onCategoryClick = { category ->
             val updatedCategory = category.copy(isSelected = !category.isSelected)
-            viewModel.changeSelectCategory(updatedCategory)
+            onIntent(AddStoreContract.Intent.ChangeSelectCategory(updatedCategory))
         },
         modifier = modifier
     )
