@@ -13,8 +13,9 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
+import com.zion830.threedollars.datasource.AppStatusRepository
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.UserDataSource
+import com.zion830.threedollars.datasource.model.AppUpdateDialog
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +31,8 @@ class SplashViewModel @Inject constructor(
     private val sharedPrefUtils: SharedPrefUtils,
     private val loginRepository: LoginRepository,
     private val storeDataSource: StoreDataSource,
-    private val userDataSource: UserDataSource,
     private val homeRepository: HomeRepository,
+    private val appStatusRepository: AppStatusRepository
 ) : BaseViewModel() {
 
     private val _splashAdvertisement: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
@@ -39,6 +40,16 @@ class SplashViewModel @Inject constructor(
 
     private val _accessCheckModel: MutableStateFlow<AccessCheckModel?> = MutableStateFlow(null)
     val accessCheckModel = _accessCheckModel.asStateFlow()
+
+    private val _shouldShowUpdateDialog = MutableStateFlow<AppUpdateDialog?>(null)
+    val shouldShowUpdateDialog = _shouldShowUpdateDialog.asStateFlow()
+
+    private val currentVersion by lazy {
+        GlobalApplication.instance.packageManager
+            .getPackageInfo(GlobalApplication.instance.packageName, 0)
+            .versionName
+            .orEmpty()
+    }
 
     init {
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -110,6 +121,20 @@ class SplashViewModel @Inject constructor(
     fun putPushInformation(informationRequest: PushInformationRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             loginRepository.putPushInformation(informationRequest)
+        }
+    }
+
+    fun checkForceUpdate() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            appStatusRepository.getMinimumVersion().collect { updateDialog ->
+                updateDialog.data?.let {
+                    if (it.enabled) {
+                        _shouldShowUpdateDialog.emit(it)
+                    } else {
+                        checkAccessToken()
+                    }
+                }
+            }
         }
     }
 }
