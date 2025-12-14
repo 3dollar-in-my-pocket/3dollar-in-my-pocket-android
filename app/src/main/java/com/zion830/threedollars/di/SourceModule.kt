@@ -29,6 +29,13 @@ abstract class SourceModule {
     @Binds
     abstract fun bindUserDataSource(impl: UserDataSourceImpl): UserDataSource
 
+    @Singleton
+    @Binds
+    abstract fun bindAppStatusDataSource(impl: AppStatusDataSourceImpl): AppStatusDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindAppStatusRepository(impl: AppStatusRepositoryImpl): AppStatusRepository
 
     @Singleton
     @Binds
