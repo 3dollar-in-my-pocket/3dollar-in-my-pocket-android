@@ -41,7 +41,8 @@ class VersionUpdateDialog(private val updateDialog: AppUpdateDialog) : DialogFra
             )
             requireActivity().finish()
         }
-        binding.tvDescription.text = updateDialog.message ?: getString(CommonR.string.update_available_desc).format(updateDialog)
+        binding.tvTitle.text = updateDialog.title ?: getString(CommonR.string.update_available)
+        binding.tvDescription.text = updateDialog.message ?: getString(CommonR.string.update_available_desc).format(updateDialog.currentVersion)
 
         return binding.root
     }

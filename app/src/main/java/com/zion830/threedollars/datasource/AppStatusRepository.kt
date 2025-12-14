@@ -18,8 +18,10 @@ class AppStatusRepositoryImpl @Inject constructor(private val dataSource: AppSta
             it.data?.let { response ->
                 appUpdateDialog = AppUpdateDialog(
                     enabled = response.forceUpdate.enabled,
+                    title = response.forceUpdate.title,
                     message = response.forceUpdate.message,
-                    linkUrl = response.forceUpdate.linkUrl
+                    linkUrl = response.forceUpdate.linkUrl,
+                    currentVersion = response.currentVersion
                 )
             }
 

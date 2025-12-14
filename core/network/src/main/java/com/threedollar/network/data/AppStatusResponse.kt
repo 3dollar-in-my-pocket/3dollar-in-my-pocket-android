@@ -17,6 +17,9 @@ data class AppForceUpdateResponse(
     @SerializedName("enabled")
     val enabled: Boolean,
 
+    @SerializedName("title")
+    val title: String?,
+
     @SerializedName("message")
     val message: String?,
 
