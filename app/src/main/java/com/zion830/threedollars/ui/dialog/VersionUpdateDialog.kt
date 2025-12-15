@@ -13,12 +13,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
+import com.zion830.threedollars.datasource.model.AppUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
-class VersionUpdateDialog(private val currentVersion: String) : DialogFragment() {
+class VersionUpdateDialog(private val updateDialog: AppUpdateDialog) : DialogFragment() {
+    val defaultUrl = "https://play.google.com/store/apps/details?id=com.zion830.threedollars"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +36,14 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
             requireContext().startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=com.zion830.threedollars")
+                    Uri.parse(updateDialog.linkUrl ?: defaultUrl)
                 )
             )
             requireActivity().finish()
         }
-        binding.tvDescription.text =
-            getString(CommonR.string.update_available_desc).format(currentVersion)
+        binding.tvTitle.text = updateDialog.title ?: getString(CommonR.string.update_available)
+        binding.tvDescription.text = updateDialog.message ?: getString(CommonR.string.update_available_desc).format(updateDialog.currentVersion)
+
         return binding.root
     }
 
@@ -67,9 +70,8 @@ class VersionUpdateDialog(private val currentVersion: String) : DialogFragment()
     }
 
     companion object {
-
-        fun getInstance(currentVersion: String) = VersionUpdateDialog(
-            currentVersion
+        fun getInstance(appUpdateDia: AppUpdateDialog) = VersionUpdateDialog(
+            appUpdateDia
         )
     }
 }
