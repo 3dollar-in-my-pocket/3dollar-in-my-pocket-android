@@ -31,12 +31,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import base.compose.Gray10
+import com.threedollar.common.R as CommonR
 import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray60
@@ -102,7 +104,7 @@ private fun CompletionScreenContent(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "새로운 길거리 음식점을\n제보했어요",
+                text = stringResource(CommonR.string.add_store_completion_title),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -120,7 +122,7 @@ private fun CompletionScreenContent(
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "이 업체에 대해 더 알려주세요!",
+                text = stringResource(CommonR.string.add_store_tell_us_more),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -133,8 +135,8 @@ private fun CompletionScreenContent(
 
             DetailOptionButton(
                 iconResId = DesignSystemR.drawable.ic_completion_menu,
-                title = "메뉴 상세 정보 추가하기",
-                subtitle = "메뉴명 • 메뉴 가격",
+                title = stringResource(CommonR.string.add_store_add_menu_detail),
+                subtitle = stringResource(CommonR.string.add_store_menu_detail_subtitle),
                 isCompleted = isMenuDetailCompleted,
                 onClick = onMenuDetailClick
             )
@@ -143,8 +145,8 @@ private fun CompletionScreenContent(
 
             DetailOptionButton(
                 iconResId = DesignSystemR.drawable.ic_completion_megaphone,
-                title = "가게 세부 정보 추가하기",
-                subtitle = "가게 형태 • 결제 방식 • 출몰 요일 • 출몰 시간대",
+                title = stringResource(CommonR.string.add_store_add_store_detail),
+                subtitle = stringResource(CommonR.string.add_store_detail_subtitle),
                 isCompleted = isStoreDetailCompleted,
                 onClick = onStoreDetailClick
             )
@@ -161,7 +163,7 @@ private fun CompletionScreenContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "완료",
+                text = stringResource(CommonR.string.complete),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -187,8 +189,9 @@ private fun StoreSummaryCard(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val noAddressText = stringResource(CommonR.string.add_store_no_address)
         Text(
-            text = address.ifEmpty { "주소 정보 없음" },
+            text = address.ifEmpty { noAddressText },
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -318,8 +321,9 @@ private fun DetailOptionButton(
                 color = Gray100
             )
             Spacer(modifier = Modifier.height(4.dp))
+            val completedText = stringResource(CommonR.string.add_store_write_complete)
             Text(
-                text = if (isCompleted) "작성 완료" else subtitle,
+                text = if (isCompleted) completedText else subtitle,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.W500,
                 fontFamily = PretendardFontFamily,

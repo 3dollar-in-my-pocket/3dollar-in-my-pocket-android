@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.threedollar.common.R as CommonR
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -150,7 +152,7 @@ fun DuplicateStoreCheckDialogContent(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "10m 이내에 이미 등록된 %d개의 가게가 있어요",
+                text = stringResource(CommonR.string.dialog_near_exist_title_format),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = 20.sp,
@@ -177,13 +179,13 @@ fun DuplicateStoreCheckDialogContent(
                 fontWeight = FontWeight.W700,
                 fontSize = 12.sp,
                 color = Gray70,
-                text = "근처 가게"
+                text = stringResource(CommonR.string.near_store_header)
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             Spacer(modifier = Modifier.height(3.dp))
             Text(
-                text = "외 %d개",
+                text = stringResource(CommonR.string.more_stores_format),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W500,
                 fontSize = 10.sp,
@@ -210,7 +212,7 @@ fun DuplicateStoreCheckDialogContent(
                 .background(color = Pink, shape = RoundedCornerShape(12.dp))
                 .clickable(onClick = { onConfirm })
                 .padding(vertical = 14.dp),
-            text = "이 장소가 확실해요",
+            text = stringResource(CommonR.string.dialog_near_exist_button_finish),
             textAlign = TextAlign.Center,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
@@ -244,7 +246,7 @@ fun StoreListItem(
 
         if (isBossStore) {
             Text(
-                text = "사장님 직영",
+                text = stringResource(CommonR.string.only_boss),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
                 fontSize = 12.sp,

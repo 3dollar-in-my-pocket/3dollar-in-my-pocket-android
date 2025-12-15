@@ -299,7 +299,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 binding.openingHourStartTimeTextView.text = ""
                                 startTime = null
                             } else {
-                                binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                binding.openingHourStartTimeTextView.text = if (hour < 13) getString(CommonR.string.time_format_am, hour) else getString(CommonR.string.time_format_pm, hour - 12)
                                 val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                                 startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
                             }
@@ -316,7 +316,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 binding.openingHourEndTimeTextView.text = ""
                                 endTime = null
                             } else {
-                                binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                binding.openingHourEndTimeTextView.text = if (hour < 13) getString(CommonR.string.time_format_am, hour) else getString(CommonR.string.time_format_pm, hour - 12)
                                 val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                                 endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
                             }

@@ -27,10 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import base.compose.Gray10
+import com.threedollar.common.R as CommonR
 import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray40
@@ -96,7 +98,7 @@ private fun RequiredInfoContent(
             .padding(20.dp)
     ) {
         Text(
-            text = "가게 정보 입력",
+            text = stringResource(CommonR.string.add_store_info_input_title),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W700,
             fontSize = 24.sp,
@@ -106,7 +108,7 @@ private fun RequiredInfoContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "지금 당장 가게 이름을 알 수 없다면, 근처의 랜드마크와 함께 입력해 보세요.",
+            text = stringResource(CommonR.string.add_store_name_hint_description),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W400,
             fontSize = 14.sp,
@@ -116,7 +118,7 @@ private fun RequiredInfoContent(
         Spacer(modifier = Modifier.height(36.dp))
 
         Text(
-            text = "가게 이름",
+            text = stringResource(CommonR.string.store_name),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
             fontSize = 14.sp,
@@ -131,7 +133,7 @@ private fun RequiredInfoContent(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
-                    text = "붕어빵역 2번 출구 삼거리 근처 붕어빵 집",
+                    text = stringResource(CommonR.string.add_store_name_placeholder),
                     fontFamily = PretendardFontFamily,
                     fontWeight = FontWeight.W400,
                     fontSize = 14.sp,
@@ -151,7 +153,7 @@ private fun RequiredInfoContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "가게형태",
+            text = stringResource(CommonR.string.store_type),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
             fontSize = 14.sp,
@@ -177,7 +179,7 @@ private fun RequiredInfoContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "가게 위치 확인",
+            text = stringResource(CommonR.string.add_store_location_confirm),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
             fontSize = 14.sp,
@@ -205,7 +207,7 @@ private fun RequiredInfoContent(
             )
 
             Text(
-                text = "위치 변경",
+                text = stringResource(CommonR.string.add_store_change_location),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = 14.sp,

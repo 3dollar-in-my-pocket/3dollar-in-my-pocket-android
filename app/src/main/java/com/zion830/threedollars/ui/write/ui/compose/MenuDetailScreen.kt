@@ -41,10 +41,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import base.compose.ColorWhite
+import com.threedollar.common.R as CommonR
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray30
@@ -111,11 +113,13 @@ private fun MenuDetailScreenContent(
             .background(Color.White)
             .padding(vertical = 20.dp)
     ) {
+        val menuDetailTitle = stringResource(CommonR.string.add_store_menu_detail_title)
+        val optionalText = stringResource(CommonR.string.add_store_optional)
         Text(
             text = buildAnnotatedString {
-                append("메뉴 상세 정보 추가 ")
+                append("$menuDetailTitle ")
                 withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                    append("선택")
+                    append(optionalText)
                 }
             },
             fontSize = 24.sp,
@@ -136,7 +140,7 @@ private fun MenuDetailScreenContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "음식 카테고리",
+                text = stringResource(CommonR.string.add_store_food_category),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
                 fontFamily = PretendardFontFamily,
@@ -221,7 +225,7 @@ private fun MenuCategorySection(
             )
 
             Text(
-                text = "${selectCategory.menuType.name} 메뉴",
+                text = stringResource(CommonR.string.add_store_menu_with_name, selectCategory.menuType.name),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 fontFamily = PretendardFontFamily,
@@ -229,7 +233,7 @@ private fun MenuCategorySection(
             )
 
             Text(
-                text = "삭제",
+                text = stringResource(CommonR.string.delete),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.W400,
                 fontFamily = PretendardFontFamily,
@@ -263,7 +267,7 @@ private fun MenuCategorySection(
                 .background(color = Gray90, shape = RoundedCornerShape(10.dp))
         ) {
             Text(
-                text = "메뉴 추가",
+                text = stringResource(CommonR.string.add_store_add_menu),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -291,7 +295,7 @@ private fun MenuInputRow(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "메뉴${index + 1}",
+                text = stringResource(CommonR.string.add_store_menu_format, index + 1),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W600,
                 fontFamily = PretendardFontFamily,
@@ -300,7 +304,7 @@ private fun MenuInputRow(
 
             if (canRemove) {
                 Text(
-                    text = "삭제",
+                    text = stringResource(CommonR.string.delete),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = PretendardFontFamily,
@@ -317,7 +321,7 @@ private fun MenuInputRow(
             onValueChange = onUpdateName,
             placeholder = {
                 Text(
-                    text = "슈크림 붕어빵",
+                    text = stringResource(CommonR.string.add_store_menu_name_placeholder),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W400,
                     fontFamily = PretendardFontFamily,
@@ -363,7 +367,7 @@ private fun MenuInputRow(
                 },
                 placeholder = {
                     Text(
-                        text = "1",
+                        text = stringResource(CommonR.string.add_store_count_placeholder),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         fontFamily = PretendardFontFamily,
@@ -372,7 +376,7 @@ private fun MenuInputRow(
                 },
                 trailingIcon = {
                     Text(
-                        text = "개",
+                        text = stringResource(CommonR.string.unit_count),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         fontFamily = PretendardFontFamily,
@@ -402,7 +406,7 @@ private fun MenuInputRow(
                 },
                 placeholder = {
                     Text(
-                        text = "5,000",
+                        text = stringResource(CommonR.string.add_store_price_placeholder),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         fontFamily = PretendardFontFamily,
@@ -411,7 +415,7 @@ private fun MenuInputRow(
                 },
                 trailingIcon = {
                     Text(
-                        text = "원",
+                        text = stringResource(CommonR.string.unit_currency_won),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W400,
                         fontFamily = PretendardFontFamily,
@@ -460,7 +464,7 @@ fun CategoryEditBottomSheet(
             .padding(20.dp)
     ) {
         Text(
-            text = "추가할 카테고리를 선택해 주세요 (${selectCategoryList.size}/10)",
+            text = stringResource(CommonR.string.add_store_select_category_count, selectCategoryList.size),
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -470,7 +474,7 @@ fun CategoryEditBottomSheet(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "간식",
+            text = stringResource(CommonR.string.category_snack),
             fontSize = 14.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -498,7 +502,7 @@ fun CategoryEditBottomSheet(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "식사",
+            text = stringResource(CommonR.string.category_meal),
             fontSize = 14.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -539,7 +543,7 @@ fun CategoryEditBottomSheet(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "수정 완료",
+                text = stringResource(CommonR.string.add_store_edit_complete),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600,
                 fontFamily = PretendardFontFamily,
@@ -611,7 +615,7 @@ private fun CategoryEditChip(
             .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
         Text(
-            text = "카테고리 수정",
+            text = stringResource(CommonR.string.add_store_edit_category),
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
             fontSize = 14.sp,

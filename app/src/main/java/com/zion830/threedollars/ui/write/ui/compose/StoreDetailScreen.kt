@@ -42,10 +42,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import base.compose.Gray10
+import com.threedollar.common.R as CommonR
 import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray40
@@ -104,11 +106,13 @@ fun StoreDetailContent(
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = 20.dp)
         ) {
+            val detailTitle = stringResource(CommonR.string.add_store_detail_title)
+            val optionalText = stringResource(CommonR.string.add_store_optional)
             Text(
                 text = buildAnnotatedString {
-                    append("가게 상세 정보 추가 ")
+                    append("$detailTitle ")
                     withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                        append("선택")
+                        append(optionalText)
                     }
                 },
                 fontSize = 24.sp,
@@ -121,7 +125,7 @@ fun StoreDetailContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "가게 세부 정보를 입력하고 더 알찬 정보를 제공해 보세요",
+                text = stringResource(CommonR.string.add_store_detail_description),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
                 fontFamily = PretendardFontFamily,
@@ -161,7 +165,7 @@ private fun PaymentMethodSection(
     selectedPaymentMethods: Set<PaymentType>,
     onToggle: (PaymentType) -> Unit
 ) {
-    SectionHeader(title = "결제방식", showMultiSelectHint = true)
+    SectionHeader(title = stringResource(CommonR.string.payment_type), showMultiSelectHint = true)
 
     Spacer(modifier = Modifier.height(12.dp))
 
@@ -187,7 +191,7 @@ private fun AppearanceDaySection(
     selectedDays: Set<DayOfTheWeekType>,
     onToggle: (DayOfTheWeekType) -> Unit
 ) {
-    SectionHeader(title = "출몰 요일", showMultiSelectHint = true)
+    SectionHeader(title = stringResource(CommonR.string.add_store_appearance_day), showMultiSelectHint = true)
 
     Spacer(modifier = Modifier.height(12.dp))
 
@@ -214,7 +218,7 @@ private fun OpeningHoursSection(
     onStartTimeClick: () -> Unit,
     onEndTimeClick: () -> Unit
 ) {
-    SectionHeader(title = "출몰 시간대", showMultiSelectHint = false)
+    SectionHeader(title = stringResource(CommonR.string.add_store_appearance_time), showMultiSelectHint = false)
 
     Spacer(modifier = Modifier.height(12.dp))
 
@@ -226,13 +230,13 @@ private fun OpeningHoursSection(
     ) {
         TimeSelector(
             selectedTime = startTime,
-            placeholder = "시작 시간",
+            placeholder = stringResource(CommonR.string.add_store_start_time_placeholder),
             onClick = onStartTimeClick,
             modifier = Modifier.weight(1f)
         )
 
         Text(
-            text = "부터",
+            text = stringResource(CommonR.string.time_from),
             fontSize = 14.sp,
             fontWeight = FontWeight.W400,
             fontFamily = PretendardFontFamily,
@@ -242,13 +246,13 @@ private fun OpeningHoursSection(
 
         TimeSelector(
             selectedTime = endTime,
-            placeholder = "종료 시간",
+            placeholder = stringResource(CommonR.string.add_store_end_time_placeholder),
             onClick = onEndTimeClick,
             modifier = Modifier.weight(1f)
         )
 
         Text(
-            text = "까지",
+            text = stringResource(CommonR.string.time_until),
             fontSize = 14.sp,
             fontWeight = FontWeight.W400,
             fontFamily = PretendardFontFamily,
@@ -280,7 +284,7 @@ private fun SectionHeader(
 
         if (showMultiSelectHint) {
             Text(
-                text = "*다중선택 가능",
+                text = stringResource(CommonR.string.enable_multi_select),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -386,7 +390,9 @@ fun TimePickerBottomSheet(
     selectedTime: String?,
     onTimeSelected: (String) -> Unit
 ) {
-    val periodOptions = listOf("오전", "오후")
+    val amText = stringResource(CommonR.string.time_am)
+    val pmText = stringResource(CommonR.string.time_pm)
+    val periodOptions = listOf(amText, pmText)
     val hourOptions = (1..12).toList()
     val minuteOptions = listOf(0, 10, 20, 30, 40, 50)
 
@@ -402,7 +408,7 @@ fun TimePickerBottomSheet(
             .padding(20.dp)
     ) {
         Text(
-            text = "시간 선택",
+            text = stringResource(CommonR.string.add_store_select_time),
             fontSize = 18.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -425,15 +431,17 @@ fun TimePickerBottomSheet(
                 modifier = Modifier.weight(1f)
             )
 
+            val hourFormat = stringResource(CommonR.string.time_hour_format)
             WheelPicker(
-                items = hourOptions.map { "${it}시" },
+                items = hourOptions.map { String.format(hourFormat, it) },
                 selectedIndex = selectedHourIndex,
                 onItemSelected = { selectedHourIndex = it },
                 modifier = Modifier.weight(1f)
             )
 
+            val minuteFormat = stringResource(CommonR.string.time_minute_format)
             WheelPicker(
-                items = minuteOptions.map { "${it.toString().padStart(2, '0')}분" },
+                items = minuteOptions.map { String.format(minuteFormat, it) },
                 selectedIndex = selectedMinuteIndex,
                 onItemSelected = { selectedMinuteIndex = it },
                 modifier = Modifier.weight(1f)
@@ -442,6 +450,8 @@ fun TimePickerBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        val confirmHourFormat = stringResource(CommonR.string.time_hour_format)
+        val confirmMinuteFormat = stringResource(CommonR.string.time_minute_format)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -452,13 +462,13 @@ fun TimePickerBottomSheet(
                     val period = periodOptions[selectedPeriodIndex]
                     val hour = hourOptions[selectedHourIndex]
                     val minute = minuteOptions[selectedMinuteIndex]
-                    val timeString = "$period ${hour}시 ${minute.toString().padStart(2, '0')}분"
+                    val timeString = "$period ${String.format(confirmHourFormat, hour)} ${String.format(confirmMinuteFormat, minute)}"
                     onTimeSelected(timeString)
                 },
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "확인",
+                text = stringResource(CommonR.string.add_store_confirm),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,

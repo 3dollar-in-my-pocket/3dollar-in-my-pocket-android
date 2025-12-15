@@ -288,7 +288,7 @@ fun TopTitleBar(
         ) {
             Icon(
                 painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
-                contentDescription = "닫기",
+                contentDescription = stringResource(CommonR.string.close),
                 tint = Color.Unspecified
             )
         }
@@ -349,7 +349,7 @@ fun NaverMapSection(
         // 중앙 고정 핀 마커 (오버레이)
         Icon(
             painter = painterResource(DesignSystemR.drawable.ic_mappin_focused_on),
-            contentDescription = "위치 선택 핀",
+            contentDescription = stringResource(CommonR.string.cd_location_pin),
             modifier = Modifier.align(Alignment.Center),
             tint = Color.Unspecified
         )
@@ -389,7 +389,7 @@ fun BottomAddressSheet(
                 .background(color = Pink, shape = RoundedCornerShape(12.dp))
                 .clickable(onClick = { onFinishClick(address) })
                 .padding(vertical = 14.dp),
-            text = "현위치로 가게 제보",
+            text = stringResource(CommonR.string.add_store_report_current_location),
             textAlign = TextAlign.Center,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
@@ -404,7 +404,7 @@ fun BottomAddressSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "\uD83D\uDC69\u200D\uD83C\uDF73 혹시 제보할 가게의 사장님이라면?",
+                text = stringResource(CommonR.string.add_store_boss_question),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W400,
                 fontSize = 14.sp,
@@ -412,7 +412,7 @@ fun BottomAddressSheet(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "더 편하게 가게 관리하기",
+                text = stringResource(CommonR.string.add_store_manage_easier),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = 14.sp,

@@ -39,12 +39,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
+import com.threedollar.common.R as CommonR
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -130,9 +132,9 @@ fun AddStoreFlowScreen(
     }
 
     val buttonText = when (currentRoute) {
-        AddStoreRoute.COMPLETION -> "완료"
-        AddStoreRoute.STORE_DETAIL -> "작성완료"
-        else -> "다음"
+        AddStoreRoute.COMPLETION -> stringResource(CommonR.string.complete)
+        AddStoreRoute.STORE_DETAIL -> stringResource(CommonR.string.add_store_submit)
+        else -> stringResource(CommonR.string.add_store_next)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -183,7 +185,7 @@ fun AddStoreFlowScreen(
                 topBar = {
                     if (currentRoute != AddStoreRoute.COMPLETION) {
                         AddStoreTopBar(
-                            title = "가게 제보",
+                            title = stringResource(CommonR.string.title_add_store),
                             progress = progress,
                             onBackClick = {
                                 if (!navController.popBackStack()) {
@@ -217,7 +219,7 @@ fun AddStoreFlowScreen(
                             }
                             AddStoreRoute.MENU_DETAIL -> {
                                 AddStoreBottomBar(
-                                    buttonText = "다음",
+                                    buttonText = stringResource(CommonR.string.add_store_next),
                                     enabled = state.selectCategoryList.isNotEmpty(),
                                     showSkipButton = true,
                                     onClick = {
@@ -227,7 +229,7 @@ fun AddStoreFlowScreen(
                                         if (hasValidMenu) {
                                             navController.navigate(AddStoreRoute.STORE_DETAIL)
                                         } else {
-                                            Toast.makeText(context, "메뉴를 입력해주세요", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, context.getString(CommonR.string.add_store_menu_required), Toast.LENGTH_SHORT).show()
                                         }
                                     },
                                     onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
@@ -235,7 +237,7 @@ fun AddStoreFlowScreen(
                             }
                             AddStoreRoute.STORE_DETAIL -> {
                                 AddStoreBottomBar(
-                                    buttonText = "다음",
+                                    buttonText = stringResource(CommonR.string.add_store_next),
                                     enabled = true,
                                     showSkipButton = true,
                                     onClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) },
@@ -244,7 +246,7 @@ fun AddStoreFlowScreen(
                             }
                             AddStoreRoute.COMPLETION_MENU_DETAIL -> {
                                 AddStoreBottomBar(
-                                    buttonText = "작성 완료",
+                                    buttonText = stringResource(CommonR.string.add_store_write_complete),
                                     enabled = state.selectCategoryList.isNotEmpty(),
                                     showSkipButton = false,
                                     onClick = {
@@ -255,7 +257,7 @@ fun AddStoreFlowScreen(
                             }
                             AddStoreRoute.COMPLETION_STORE_DETAIL -> {
                                 AddStoreBottomBar(
-                                    buttonText = "작성 완료",
+                                    buttonText = stringResource(CommonR.string.add_store_write_complete),
                                     enabled = true,
                                     showSkipButton = false,
                                     onClick = {
@@ -392,7 +394,7 @@ private fun AddStoreTopBar(
                     Icon(
                         painter = painterResource(R.drawable.ic_arrow_left),
                         modifier = Modifier.size(24.dp),
-                        contentDescription = "뒤로 가기",
+                        contentDescription = stringResource(CommonR.string.cd_back),
                         tint = Gray100
                     )
                 }
@@ -401,7 +403,7 @@ private fun AddStoreTopBar(
                 IconButton(onClick = onCloseClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_close_gray100_24),
-                        contentDescription = "닫기"
+                        contentDescription = stringResource(CommonR.string.close)
                     )
                 }
             },
@@ -529,7 +531,7 @@ private fun SkipButton(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = "건너뛰기",
+            text = stringResource(CommonR.string.add_store_skip),
             fontSize = 16.sp,
             fontWeight = FontWeight.W400,
             fontFamily = PretendardFontFamily,

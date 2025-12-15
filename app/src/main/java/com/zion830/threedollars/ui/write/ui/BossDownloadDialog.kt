@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -130,7 +131,7 @@ fun BossDownloadDialogContent(
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "사장님 앱을 설치하고\n더 편하게 가게를 관리해 보세요",
+                text = stringResource(R.string.boss_download_title),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = 20.sp,
@@ -152,13 +153,16 @@ fun BossDownloadDialogContent(
                 .border(1.dp, color = Green, shape = RoundedCornerShape(16.dp))
                 .padding(12.dp)
         ) {
+            val benefitPrefix = stringResource(R.string.boss_download_benefit_intro_prefix)
+            val benefitHighlight = stringResource(R.string.boss_download_benefit_intro_highlight)
+            val benefitSuffix = stringResource(R.string.boss_download_benefit_intro_suffix)
             Text(
                 text = buildAnnotatedString {
-                    append("아래의 기능을 ")
+                    append(benefitPrefix)
                     withStyle(style = SpanStyle(color = Green)) {
-                        append("모두 무료로")
+                        append(benefitHighlight)
                     }
-                    append(" 만나실 수 있어요")
+                    append(benefitSuffix)
                 },
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
@@ -181,7 +185,7 @@ fun BossDownloadDialogContent(
                 .background(color = Green, shape = RoundedCornerShape(12.dp))
                 .clickable(onClick = { onConfirm() })
                 .padding(vertical = 14.dp),
-            text = "사장님 앱 설치하기",
+            text = stringResource(R.string.boss_download_install),
             textAlign = TextAlign.Center,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,

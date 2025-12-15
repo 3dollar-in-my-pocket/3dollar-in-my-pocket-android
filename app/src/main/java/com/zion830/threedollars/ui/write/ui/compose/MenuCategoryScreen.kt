@@ -22,10 +22,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import base.compose.Gray100
+import com.threedollar.common.R as CommonR
 import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
@@ -54,9 +56,11 @@ fun MenuCategoryScreen(
         category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
     }
 
+    val snackTitle = stringResource(CommonR.string.category_snack)
+    val mealTitle = stringResource(CommonR.string.category_meal)
     val categorySections = listOf(
-        CategorySection(title = "간식", categories = snackCategories),
-        CategorySection(title = "식사", categories = mealCategories)
+        CategorySection(title = snackTitle, categories = snackCategories),
+        CategorySection(title = mealTitle, categories = mealCategories)
     )
 
     MenuCategoryContent(
@@ -92,7 +96,7 @@ private fun MenuCategoryContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "음식 카테고리 선택 ",
+                text = stringResource(CommonR.string.add_store_select_category_title),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
                 fontSize = 24.sp,
