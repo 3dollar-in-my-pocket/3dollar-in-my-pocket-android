@@ -89,9 +89,11 @@ dependencies {
     implementation project(':login:domain')
     implementation project(':login:data')
 
-    implementation 'com.google.firebase:firebase-config:21.1.1'
-    implementation 'com.google.firebase:firebase-database:20.0.5'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:21.0.0'
+    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+    implementation 'com.google.firebase:firebase-config'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-inappmessaging-display'
+
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
