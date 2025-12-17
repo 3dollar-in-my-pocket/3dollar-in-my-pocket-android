@@ -444,7 +444,7 @@ class AddStoreViewModel @Inject constructor(
     private fun checkNearStore(location: LatLng) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.getStoreNearExists(
-                distance = 10.0,
+                distance = 50.0,
                 mapLatitude = location.latitude,
                 mapLongitude = location.longitude
             ).collect { response ->
