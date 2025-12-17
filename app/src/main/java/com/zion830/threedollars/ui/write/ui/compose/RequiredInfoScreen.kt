@@ -51,9 +51,7 @@ fun RequiredInfoScreen(
     onLocationChangeClick: () -> Unit = {}
 ) {
     val displayAddress = remember(state.selectedLocation, state.address) {
-        if (state.address.isNotBlank()) {
-            state.address
-        } else {
+        state.address.ifBlank {
             state.selectedLocation?.let { getCurrentLocationName(it) } ?: ""
         }
     }

@@ -60,6 +60,7 @@ import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
@@ -127,6 +128,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         viewModel.addressText.observe(viewLifecycleOwner) {
             binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
+        }
+
+        arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
+            arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
+            startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
         }
     }
 

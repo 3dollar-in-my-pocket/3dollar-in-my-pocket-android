@@ -18,7 +18,6 @@ import com.zion830.threedollars.ui.write.ui.compose.AddStoreFlowScreen
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.navigateSafe
-import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import com.threedollar.common.R as CommonR
 
@@ -57,7 +56,7 @@ class AddStoreDetailFragment : Fragment() {
                         viewModel = viewModel,
                         onNavigateBack = { navigateBack() },
                         onCloseClick = { navigateToHome() },
-                        onComplete = { navigateToHome() },
+                        onComplete = { navigateToStoreDetail() },
                         onLocationChangeClick = { navigateToLocationChange() }
                     )
                 }
@@ -82,6 +81,19 @@ class AddStoreDetailFragment : Fragment() {
     private fun navigateToHome() {
         viewModel.processIntent(AddStoreContract.Intent.ResetState)
         findNavController().navigateSafe(R.id.action_navigation_write_detail_to_home)
-        showToast(CommonR.string.add_store_success)
+    }
+
+    private fun navigateToStoreDetail() {
+        val storeId = viewModel.state.value.createdStoreId
+        viewModel.processIntent(AddStoreContract.Intent.ResetState)
+
+        val bundle = Bundle().apply {
+            storeId?.let { putInt(NAVIGATE_STORE_ID, it) }
+        }
+        findNavController().navigateSafe(R.id.action_navigation_write_detail_to_home, bundle)
+    }
+
+    companion object {
+        const val NAVIGATE_STORE_ID = "navigateStoreId"
     }
 }
