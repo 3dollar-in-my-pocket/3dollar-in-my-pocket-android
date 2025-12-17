@@ -27,9 +27,8 @@ class MyStoreRecyclerAdapter(
         holder.binding.listener = if (item?.store?.isDeleted == false) listener else null
         val rating = "${item?.store?.rating ?: 0}점"
         val visitCount = ((item?.visits?.count?.existsCounts ?: 0) + (item?.visits?.count?.notExistsCounts ?: 0)).toString() + "명"
-        val categoryInfo = LegacySharedPrefUtils.getCategories()
         val categories =
-            item?.store?.categories?.joinToString(" ") { "#${categoryInfo.find { categoryInfo -> categoryInfo.categoryId == it.categoryId }?.name}" }
+            item?.store?.categories?.joinToString(" ") { "#${it.name}" }
         holder.binding.apply {
             tvStoreName.text = if (item?.store?.isDeleted == true) "없어진 가게에요 :(" else item?.store?.name
             tvCategories.text = categories
