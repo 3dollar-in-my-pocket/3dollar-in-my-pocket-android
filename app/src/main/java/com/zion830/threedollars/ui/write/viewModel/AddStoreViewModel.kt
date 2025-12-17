@@ -10,7 +10,11 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
+import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -254,6 +258,18 @@ class AddStoreViewModel @Inject constructor(
         }
     }
 
+    private fun convertTo24HourFormat(timeString: String?): String? {
+        if (timeString.isNullOrBlank()) return null
+
+        return try {
+            val inputFormatter = DateTimeFormatter.ofPattern("a h시 mm분", Locale.KOREAN)
+            val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            LocalTime.parse(timeString, inputFormatter).format(outputFormatter)
+        } catch (e: Exception) {
+            timeString
+        }
+    }
+
     private fun markMenuDetailCompleted() {
         _state.update { it.copy(isMenuDetailCompleted = true) }
     }
@@ -339,7 +355,12 @@ class AddStoreViewModel @Inject constructor(
             storeName = name,
             salesType = currentState.storeType,
             appearanceDays = currentState.selectedDays.toList(),
-            openingHours = currentState.openingHours.takeIf {
+            openingHours = currentState.openingHours.let {
+                OpeningHourRequest(
+                    startTime = convertTo24HourFormat(it.startTime),
+                    endTime = convertTo24HourFormat(it.endTime)
+                )
+            }.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
             },
             paymentMethods = currentState.selectedPaymentMethods.toList(),
@@ -389,7 +410,12 @@ class AddStoreViewModel @Inject constructor(
             storeName = currentState.storeName,
             salesType = currentState.storeType,
             appearanceDays = currentState.selectedDays.toList(),
-            openingHours = currentState.openingHours.takeIf {
+            openingHours = currentState.openingHours.let {
+                OpeningHourRequest(
+                    startTime = convertTo24HourFormat(it.startTime),
+                    endTime = convertTo24HourFormat(it.endTime)
+                )
+            }.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
             },
             paymentMethods = currentState.selectedPaymentMethods.toList(),
