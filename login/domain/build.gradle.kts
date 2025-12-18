@@ -5,29 +5,11 @@ plugins {
 
 android {
     namespace = "com.login.domain"
-    compileSdk = 34
+
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
-        targetSdk = 36
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 }
 
@@ -35,7 +17,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:network"))
 
-    // Retrofit dependency for Response type in repository interfaces
     implementation(libs.bundles.retrofit)
 
     implementation(libs.bundles.androidx.ui)

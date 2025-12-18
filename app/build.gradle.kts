@@ -5,17 +5,25 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.compose.compiler)
 }
 
 apply(from = "../common.gradle")
 
 android {
     namespace = "com.zion830.threedollars"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+
+        applicationId = "com.zion830.threedollars"
+        versionCode = 110
+        versionName = project.findProperty("version_name") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val properties = Properties()
@@ -31,6 +39,10 @@ android {
 
     buildTypes {
         getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.getByName("release")
+            
             val properties = Properties()
             properties.load(project.rootProject.file("local.properties").inputStream())
             
@@ -70,14 +82,9 @@ android {
         buildConfig = true
         compose = true
     }
-    
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
 }
 
 dependencies {
-    // Project modules
     implementation(project(":common"))
     implementation(project(":core:network"))
     implementation(project(":core:common"))
@@ -94,7 +101,6 @@ dependencies {
     implementation(project(":login:data"))
     implementation(project(":community:domain"))
 
-    // App-specific dependencies (not in common.gradle)
     implementation(libs.firebase.config)
     implementation(libs.firebase.database)
     implementation(libs.firebase.inappmessaging.display.ktx)
@@ -103,5 +109,8 @@ dependencies {
     implementation(libs.androidx.vectordrawable)
     implementation(libs.flexbox)
     implementation(libs.androidx.webkit)
+
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -3,16 +3,17 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.threedollar.network"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -51,14 +52,7 @@ android {
             buildConfigField("String", "VERSION_NAME", "\"${project.findProperty("version_name")}\"")
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    
     buildFeatures {
         buildConfig = true
     }
@@ -71,13 +65,10 @@ dependencies {
     implementation(project(":common"))
     testImplementation(libs.bundles.testing)
 
-    // 네트워크
     implementation(libs.bundles.retrofit)
 
-    // 힐트
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    // 카카오 로그인
     implementation(libs.kakao.login)
 }

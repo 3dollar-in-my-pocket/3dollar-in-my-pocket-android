@@ -3,12 +3,17 @@
  * TODO - Need to migrate to kts
  */
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.kotlin.kapt'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion 36
+    compileSdkVersion libs.versions.compileSdk.get().toInteger()
+
+    defaultConfig {
+        minSdkVersion libs.versions.minSdk.get().toInteger()
+    }
+
     signingConfigs {
         release {
             keyAlias '3dollor'
@@ -23,16 +28,7 @@ android {
             storePassword '3dollor'
         }
     }
-    defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 36
-        versionCode 110
-        versionName project.property("version_name")
-        multiDexEnabled true
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        archivesBaseName = "3dollor_${versionName}(${versionCode})"
-    }
+    
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
@@ -42,14 +38,14 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        dataBinding true
+        dataBinding = true
     }
 }
 
 dependencies {
     coreLibraryDesugaring libs.desugar.jdk.libs
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libs.kotlin.stdlib.jdk7
+    implementation libs.kotlin.stdlib
 
     implementation libs.bundles.androidx.ui
 
@@ -62,43 +58,36 @@ dependencies {
 
     implementation libs.lottie
 
-    implementation libs.bundles.paging
+    implementation libs.androidx.paging.runtime.ktx
 
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
+    testImplementation libs.bundles.testing
 
-    // 도전 정신
     implementation libs.kotlinx.coroutines.android
     implementation libs.hilt.android
     kapt libs.hilt.compiler
 
-    // 카카오 로그인
     implementation libs.kakao.login
 
-    // google
     implementation libs.multidex
     implementation libs.play.services.ads
     implementation libs.play.services.location
     implementation platform(libs.firebase.bom)
     
-    implementation libs.bundles.firebase
+    implementation libs.firebase.analytics.ktx
+    implementation libs.firebase.crashlytics.ktx
 
-    implementation libs.firebase.config.ktx
+
     implementation libs.play.app.update.ktx
     implementation libs.play.services.auth
 
-    // naver4
     implementation libs.naver.map
 
-    // image slider
     implementation libs.simple.rating.bar
 
     implementation(libs.hashtag.view) {
         exclude group: 'com.google.guava'
     }
 
-    // image picker
     implementation libs.tedimagepicker
 
 }
