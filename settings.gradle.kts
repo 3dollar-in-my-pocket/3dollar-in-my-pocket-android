@@ -19,9 +19,6 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://repository.map.naver.com/archive/maven")
         }
-        maven {
-            url = uri("https://dl.bintray.com/greenfrvr/maven/")
-        }
     }
 }
 

@@ -2,7 +2,7 @@
 [versions]
 # Build & SDK
 agp = "8.13.2"
-kotlin = "2.3.0"
+kotlin = "2.2.20"
 compileSdk = "36"
 targetSdk = "36"
 minSdk = "24"
@@ -17,6 +17,7 @@ recyclerview = "1.4.0"
 vectordrawable = "1.2.0"
 webkit = "1.14.0"
 viewpager2 = "1.1.0"
+fragment-ktx = "1.8.9"
 
 # AndroidX Lifecycle, Navigation, Paging
 lifecycle = "2.10.0"
@@ -30,6 +31,8 @@ coroutines = "1.10.2"
 # Compose
 compose-bom = "2025.12.01"
 coil-compose = "3.3.0"
+activity-compose = "1.12.1"
+material3 = "1.4.0"
 
 # Play services
 app-update = "2.1.0"
@@ -45,6 +48,7 @@ firebase-crashlytics-gradle = "3.0.6"
 firebase-config = "23.0.1"
 firebase-database = "22.0.1"
 firebase-inappmessaging = "21.0.2"
+firebase-messaging = "25.0.1"
 hilt = "2.57.2"
 
 # Network & Serialization
@@ -84,6 +88,7 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 androidx-vectordrawable = { group = "androidx.vectordrawable", name = "vectordrawable", version.ref = "vectordrawable" }
 androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment-ktx" }
 
 # --- Lifecycle, Navigation, Paging ---
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
@@ -100,7 +105,8 @@ androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
+androidx-activity-compose = {group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose"}
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil-compose" }
 
 # --- Hilt (DI) ---
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -109,17 +115,19 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 # --- Network & Serialization ---
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-kotlinx-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version = "1.0.0" }
+retrofit-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # --- Firebase ---
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
-firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
-firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config", version.ref = "firebase-config" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
 firebase-inappmessaging-display-ktx = { group = "com.google.firebase", name = "firebase-inappmessaging-display-ktx", version.ref = "firebase-inappmessaging" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebase-messaging"}
 
 # --- Other Libraries ---
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
@@ -152,7 +160,9 @@ androidx-ui = [
     "androidx-appcompat",
     "google-material",
     "androidx-constraintlayout",
-    "androidx-recyclerview"
+    "androidx-recyclerview",
+    "androidx-fragment-ktx",
+    "androidx-activity-compose"
 ]
 androidx-lifecycle = [
     "androidx-lifecycle-viewmodel-ktx",
@@ -170,6 +180,7 @@ compose = [
 retrofit = [
     "retrofit",
     "retrofit-converter-kotlinx-serialization",
+    "retrofit-converter-moshi",
     "okhttp-logging-interceptor"
 ]
 paging = [

@@ -21,11 +21,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -44,7 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.threedollar.common.R as CommonR
 import com.my.presentation.page.MyPageViewModel
 import com.my.domain.model.*
@@ -126,7 +126,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(1f),
-        backgroundColor = Gray100,
+        containerColor = Gray100,
         topBar = { MyPageTitle { viewModel.addFragments(MyFragments.MyPageSetting) } })
     {
         Column(

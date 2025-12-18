@@ -73,8 +73,8 @@ dependencies {
     implementation libs.play.services.location
     implementation platform(libs.firebase.bom)
     
-    implementation libs.firebase.analytics.ktx
-    implementation libs.firebase.crashlytics.ktx
+    implementation libs.firebase.analytics
+    implementation libs.firebase.crashlytics
 
 
     implementation libs.play.app.update.ktx

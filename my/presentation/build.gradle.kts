@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.coil.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)

@@ -18,17 +18,26 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
     implementation(libs.bundles.androidx.ui)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
     
     testImplementation(libs.bundles.testing)
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics.ktx)
-    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

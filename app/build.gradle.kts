@@ -82,7 +82,16 @@ android {
         buildConfig = true
         compose = true
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
+
+kotlin {
+    jvmToolchain(17)
+}
+
 
 dependencies {
     implementation(project(":common"))
@@ -101,6 +110,7 @@ dependencies {
     implementation(project(":login:data"))
     implementation(project(":community:domain"))
 
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config)
     implementation(libs.firebase.database)
     implementation(libs.firebase.inappmessaging.display.ktx)
@@ -112,5 +122,7 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.firebase.messaging)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
