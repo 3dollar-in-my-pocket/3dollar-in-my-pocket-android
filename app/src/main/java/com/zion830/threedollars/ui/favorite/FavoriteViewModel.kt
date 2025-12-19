@@ -71,8 +71,7 @@ class FavoriteViewModel @Inject constructor(
     }
 
     fun createShareUrl() {
-        // https://firebase.google.com/support/dynamic-links-faq?hl=ko#how_should_i_migrate_from_the_service
-        // 2025.08.25 기준 지원 중단
+        // TODO - TH-909
 //        val folderId = _myFavoriteFolderResponse.value?.folderId.toStringDefault()
 //        val folderName = _myFavoriteFolderResponse.value?.name.toStringDefault()
 //        Firebase.dynamicLinks.shortLinkAsync {
