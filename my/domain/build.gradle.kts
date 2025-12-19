@@ -33,7 +33,5 @@ dependencies {
     implementation(libs.bundles.androidx.ui)
     testImplementation(libs.bundles.testing)
 
-    implementation(libs.bundles.retrofit)
-
     implementation(libs.bundles.paging)
 }
