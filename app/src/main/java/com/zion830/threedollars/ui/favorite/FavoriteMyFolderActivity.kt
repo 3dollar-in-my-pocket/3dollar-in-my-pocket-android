@@ -1,18 +1,23 @@
 package com.zion830.threedollars.ui.favorite
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
@@ -51,6 +56,11 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        subscribeEvents()
+    }
+
     override fun initView() {
         setDarkSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
@@ -68,7 +78,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
         binding.favoriteListRecyclerView.adapter = adapter
         binding.shareImageView.onSingleClick {
-            viewModel.createShareUrl()
+            viewModel.share()
         }
         binding.backImageView.onSingleClick {
             setResult(RESULT_OK)
@@ -104,12 +114,6 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                 )
             )
         }
-        viewModel.dynamicLink.observe(this) {
-            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, it)
-            }, "가슴속삼천원 즐겨찾기 공유하기"))
-        }
         viewModel.isRefresh.observe(this) {
             if (it) {
                 adapter.refresh()
@@ -140,7 +144,45 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         }
     }
 
+    private fun subscribeEvents() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.effect.collect(::onEvent)
+            }
+        }
+    }
+
     override fun initFirebaseAnalytics() {
         setFirebaseAnalyticsLogEvent(className = "FavoriteMyFolderActivity", screenName = null)
+    }
+
+    private fun onEvent(event: FavoriteViewModel.Event) {
+        when (event) {
+            is FavoriteViewModel.Event.Share -> {
+                onShare(event)
+            }
+        }
+    }
+
+    private fun onShare(event: FavoriteViewModel.Event.Share) {
+        val shareUri = getString(R.string.dynamic_link_bookmark_folder)
+            .toUri()
+            .buildUpon()
+            .appendQueryParameter(SHARE_QUERY, event.folderId)
+            .build()
+            .toString()
+
+        Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, shareUri)
+        }.let {
+            startActivity(
+                Intent.createChooser(it, "가슴속삼천원 즐겨찾기 공유하기")
+            )
+        }
+    }
+
+    companion object {
+        private const val SHARE_QUERY = "folderId"
     }
 }

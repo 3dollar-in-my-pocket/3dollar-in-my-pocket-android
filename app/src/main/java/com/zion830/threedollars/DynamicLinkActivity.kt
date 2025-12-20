@@ -6,9 +6,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
-import com.google.firebase.Firebase
 import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.orEmpty
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.presentation.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
@@ -30,6 +31,17 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
         const val BROWSER = "browser"
+
+        private const val LINK = "link"
+        private const val SCHEME_DOLLARS = "dollars"
+        private const val FOLDER_ID = "folderId"
+        private const val FAVORITE_ID = "favoriteId"
+        private const val STORE_ID = "storeId"
+        private const val STORE_TYPE = "storeType"
+        private const val BOSS_STORE = "BOSS_STORE"
+        private const val POLL_ID = "pollId"
+        private const val ID = "id"
+        private const val URL = "url"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,37 +76,26 @@ class DynamicLinkActivity : AppCompatActivity() {
     }
 
     private fun handleDeepLink() {
-        val pushLink = intent.getStringExtra("link")
+        val pushLink = intent.getStringExtra(LINK)
         if (pushLink.isNotNullOrEmpty()) {
-            val deeplink = Uri.parse(pushLink)
-            handleDeepLinkNavigation(deeplink)
-        } else if (intent.data?.scheme.toStringDefault().contains("dollars")) {
-            intent.data?.let {
-                handleDeepLinkNavigation(it)
-            }
-        } else {
-            // TODO - TH-909
-            finish()
-//            Firebase.dynamicLinks
-//                .getDynamicLink(intent)
-//                .addOnSuccessListener(this) { pendingDynamicLinkData ->
-//                    var deeplink: Uri? = null
-//                    if (pendingDynamicLinkData != null) {
-//                        deeplink = pendingDynamicLinkData.link
-//                    }
-//                    if (deeplink != null) handleDeepLinkNavigation(deeplink)
-//                    else finish()
-//                }
-//                .addOnFailureListener(this) { finish() }
+            handleDeepLinkNavigation(pushLink?.toUri().orEmpty())
+            return
         }
+
+        if (intent.data?.scheme.toStringDefault().contains(SCHEME_DOLLARS)) {
+            handleDeepLinkNavigation(intent.data.orEmpty())
+            return
+        }
+
+        finish()
     }
 
     private fun handleDeepLinkNavigation(deeplink: Uri) {
         when (deeplink.lastPathSegment ?: deeplink.host ?: "") {
             BOOKMARK -> {
-                val id = deeplink.getQueryParameter("folderId").toStringDefault()
+                val id = deeplink.getQueryParameter(FOLDER_ID).toStringDefault()
                 startActivity(Intent(this, FavoriteViewerActivity::class.java).apply {
-                    putExtra("favoriteId", id)
+                    putExtra(FAVORITE_ID, id)
                 })
             }
 
@@ -106,9 +107,9 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             STORE -> {
-                val id = deeplink.getQueryParameter("storeId").toStringDefault()
-                val type = deeplink.getQueryParameter("storeType").toStringDefault()
-                if (type == "BOSS_STORE") {
+                val id = deeplink.getQueryParameter(STORE_ID).toStringDefault()
+                val type = deeplink.getQueryParameter(STORE_TYPE).toStringDefault()
+                if (type == BOSS_STORE) {
                     startActivity(
                         BossStoreDetailActivity.getIntent(
                             this,
@@ -126,9 +127,9 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             POLL -> {
-                val id = deeplink.getQueryParameter("pollId").toStringDefault()
+                val id = deeplink.getQueryParameter(POLL_ID).toStringDefault()
                 startActivity(Intent(this, PollDetailActivity::class.java).apply {
-                    putExtra("id", id)
+                    putExtra(ID, id)
                 })
             }
 
@@ -147,29 +148,29 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             REVIEW_LIST -> {
-                val storeId = deeplink.getQueryParameter("storeId")
-                val storeType = deeplink.getQueryParameter("storeType")
-                
+                val storeId = deeplink.getQueryParameter(STORE_ID)
+                val storeType = deeplink.getQueryParameter(STORE_TYPE)
+
                 if (storeId != null && storeType != null) {
                     val stackBuilder = TaskStackBuilder.create(this)
-                    
+
                     // MainActivity 추가 (홈 백스택)
                     stackBuilder.addNextIntent(MainActivity.getIntent(this))
-                    
+
                     // 상점 상세 Activity 추가
                     val storeDetailIntent = when (storeType) {
-                        "BOSS_STORE" -> BossStoreDetailActivity.getIntent(this, storeId = storeId)
+                        BOSS_STORE -> BossStoreDetailActivity.getIntent(this, storeId = storeId)
                         else -> StoreDetailActivity.getIntent(this, storeId = storeId.toIntOrNull())
                     }
                     stackBuilder.addNextIntent(storeDetailIntent)
-                    
+
                     // 리뷰 Activity 추가
                     val reviewIntent = when (storeType) {
-                        "BOSS_STORE" -> BossReviewDetailActivity.getIntent(this, storeId = storeId)
+                        BOSS_STORE -> BossReviewDetailActivity.getIntent(this, storeId = storeId)
                         else -> StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0)
                     }
                     stackBuilder.addNextIntent(reviewIntent)
-                    
+
                     // 백스택 시작
                     stackBuilder.startActivities()
                     finish()
@@ -177,7 +178,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                 }
             }
             BROWSER -> {
-                val url = deeplink.getQueryParameter("url").toStringDefault()
+                val url = deeplink.getQueryParameter(URL).toStringDefault()
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(BROWSER, url)
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -190,5 +191,4 @@ class DynamicLinkActivity : AppCompatActivity() {
         }
         finish()
     }
-
 }
