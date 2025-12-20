@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,9 +20,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.my.presentation.page.data.TeamRow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import zion830.com.common.R
 import zion830.com.common.base.compose.Gray40
 import zion830.com.common.base.compose.Pink
 import zion830.com.common.base.compose.Pink200
@@ -56,11 +58,12 @@ fun MyPageTeamScreen(
 ) {
     val teams = remember {
         persistentListOf(
-            TeamRow(role = "Design", members = persistentListOf("이윤이", "박은지")),
             TeamRow(role = "iOS", members = persistentListOf("유현식", "김하경")),
-            TeamRow(role = "Android", members = persistentListOf("정진용", "전두영")),
             TeamRow(role = "Backend", members = persistentListOf("강승호", "고예림")),
-            TeamRow(role = "Marketer", members = persistentListOf("윤다영", "이한나")),
+            TeamRow(role = "Android", members = persistentListOf("정진용", "전두영")),
+            TeamRow(role = "기획자", members = persistentListOf("이한나")),
+            TeamRow(role = "Marketer", members = persistentListOf("공서연")),
+            TeamRow(role = "Design", members = persistentListOf("이윤이", "박은지", "양민설", "조혜원")),
         )
     }
 
@@ -84,31 +87,48 @@ fun MyPageTeamScreen(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = zion830.com.common.R.drawable.ic_3dollars_logo),
-                contentDescription = "로고",
-                modifier = Modifier.padding(top = 20.dp, start = 47.dp, end = 47.dp)
+            Logo()
+            TeamGrid(
+                teams = teams,
+                onClickAd = clickAd
             )
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(
-                    start = 47.dp, end = 47.dp, top = 40.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(teams) {
-                    MyPageTeamMember(it.role, it.members)
-                }
-                item {
-                    AdButton {
-                        clickAd()
-                    }
-                }
-            }
+        }
+    }
+}
+
+@Composable
+private fun Logo() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_3dollars_logo),
+        contentDescription = "로고",
+        modifier = Modifier.padding(top = 20.dp, start = 47.dp, end = 47.dp)
+    )
+}
+
+@Composable
+private fun ColumnScope.TeamGrid(
+    teams: ImmutableList<TeamRow>,
+    onClickAd: () -> Unit
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        contentPadding = PaddingValues(
+            start = 47.dp, end = 47.dp, top = 40.dp
+        ),
+        verticalItemSpacing = 8.dp,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+    ) {
+        items(
+            items = teams,
+            key = { it.role }
+        ) {
+            TeamRow(it)
+        }
+        item(key = "AdButton") {
+            AdButton(onClickAd)
         }
     }
 }
@@ -121,6 +141,7 @@ private fun Footer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
+            .padding(bottom = 12.dp)
             .navigationBarsPadding()
             .clickable(onClick = onClick)
             .fillMaxWidth()
@@ -128,7 +149,7 @@ private fun Footer(
             .padding(vertical = 12.dp)
     ) {
         Image(
-            painter = painterResource(id = zion830.com.common.R.drawable.ic_instagram),
+            painter = painterResource(id = R.drawable.ic_instagram),
             contentDescription = "instagrem"
         )
         Text(
@@ -142,7 +163,9 @@ private fun Footer(
 }
 
 @Composable
-private fun TopBar(clickBack: () -> Unit = {}) {
+private fun TopBar(
+    clickBack: () -> Unit
+) {
     Box(
         modifier = Modifier
             .statusBarsPadding()
@@ -157,7 +180,7 @@ private fun TopBar(clickBack: () -> Unit = {}) {
                 .align(Alignment.CenterStart)
         ) {
             Image(
-                painter = painterResource(id = zion830.com.common.R.drawable.ic_back_white),
+                painter = painterResource(id = R.drawable.ic_back_white),
                 contentDescription = "뒤로가기"
             )
         }
@@ -171,9 +194,8 @@ private fun TopBar(clickBack: () -> Unit = {}) {
 }
 
 @Composable
-private fun MyPageTeamMember(
-    role: String,
-    members: ImmutableList<String>
+private fun TeamRow(
+    teamRow: TeamRow
 ) {
     Row(
         modifier = Modifier
@@ -187,7 +209,7 @@ private fun MyPageTeamMember(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = role,
+                text = teamRow.role,
                 fontSize = dpToSp(dp = 12),
                 color = Pink200,
                 fontFamily = PretendardFontFamily,
@@ -196,6 +218,25 @@ private fun MyPageTeamMember(
             Spacer(
                 modifier = Modifier.height(4.dp)
             )
+            MemberNameGrid(
+                names = teamRow.members
+            )
+        }
+    }
+}
+
+@Composable
+private fun MemberNameGrid(
+    names: ImmutableList<String>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        names.chunked(2).forEach { chunked ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(
                     space = 12.dp,
@@ -203,7 +244,7 @@ private fun MyPageTeamMember(
                 ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                members.forEach {
+                chunked.forEach {
                     Text(
                         text = it,
                         fontSize = dpToSp(dp = 16),
@@ -233,7 +274,7 @@ private fun AdButton(
         ) {
             Text(
                 text = "커피 ☕️ 사주기",
-                fontSize = dpToSp(dp = 12),
+                fontSize = dpToSp(dp = 10),
                 color = Pink,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W400,
@@ -256,7 +297,7 @@ private fun AdButton(
                     modifier = Modifier.width(2.dp)
                 )
                 Icon(
-                    painter = painterResource(id = zion830.com.common.R.drawable.ic_white_arrow),
+                    painter = painterResource(id = R.drawable.ic_white_arrow),
                     contentDescription = "",
                     modifier = Modifier.size(12.dp),
                     tint = Gray40
@@ -266,18 +307,12 @@ private fun AdButton(
     }
 }
 
-
 @Preview
 @Composable
-private fun PreviewAdButton() {
-    AdButton {  }
-}
-
-@Preview
-@Composable
-private fun PreviewMyPageTeamMember() {
-    MyPageTeamMember(
-        role = "Role",
-        members = persistentListOf("Member1", "Member2")
+private fun PreviewMyPageTeamScreen() {
+    MyPageTeamScreen(
+        clickBack = {},
+        clickAd = {},
+        clickTeam = {}
     )
 }
