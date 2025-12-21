@@ -50,7 +50,7 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
-    implementation(libs.coil.compose)
+    implementation(libs.bundles.coil.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.play.services.ads)

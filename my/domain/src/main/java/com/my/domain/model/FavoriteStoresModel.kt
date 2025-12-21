@@ -1,8 +1,8 @@
 package com.my.domain.model
 
 data class FavoriteStoresModel(
-    val contents: List<FavoriteStoreModel>,
-    val cursor: CursorModel?
+    val contents: List<FavoriteStoreModel> = emptyList(),
+    val cursor: CursorModel? = null
 )
 
 data class FavoriteStoreModel(

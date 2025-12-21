@@ -11,27 +11,44 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
 
-    private val _userInfo = MutableSharedFlow<UserInfoModel>(replay = 1)
-    val userInfo: SharedFlow<UserInfoModel> = _userInfo
-    private val _myFavoriteStores = MutableSharedFlow<FavoriteStoresModel>()
-    val myFavoriteStores: SharedFlow<FavoriteStoresModel> = _myFavoriteStores
-    private val _myVisitsStore = MutableSharedFlow<VisitHistoryModel>()
-    val myVisitsStore: SharedFlow<VisitHistoryModel> = _myVisitsStore
-    private val _userPollList = MutableSharedFlow<UserPollsModel>()
-    val userPollList: SharedFlow<UserPollsModel> = _userPollList
+    /**
+     * States
+     */
+    private val _userInfo = MutableStateFlow(value = UserInfoModel())
+    val userInfo: StateFlow<UserInfoModel> =_userInfo.asStateFlow()
+
+    private val _myFavoriteStores = MutableStateFlow(FavoriteStoresModel())
+    val myFavoriteStores: StateFlow<FavoriteStoresModel> = _myFavoriteStores.asStateFlow()
+
+    private val _myVisitsStore = MutableStateFlow(VisitHistoryModel())
+    val myVisitsStore: StateFlow<VisitHistoryModel> = _myVisitsStore.asStateFlow()
+
+    private val _userPollList = MutableStateFlow(UserPollsModel())
+    val userPollList: StateFlow<UserPollsModel> = _userPollList.asStateFlow()
+
+    /**
+     * Events
+     */
     private val _addFragments = MutableSharedFlow<MyFragments>()
     val addFragments: SharedFlow<MyFragments> = _addFragments
+
     private val _favoriteClick = MutableSharedFlow<Unit>()
     val favoriteClick: SharedFlow<Unit> = _favoriteClick
+
     private val _teamClick = MutableSharedFlow<Unit>()
     val teamClick: SharedFlow<Unit> = _teamClick
+
     private val _storeClick = MutableSharedFlow<MyPageShop>()
     val storeClick: SharedFlow<MyPageShop> = _storeClick
 
@@ -41,7 +58,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         myRepository.getUserInfo().collect {
             if (it.ok) {
                 it.data?.let { data ->
-                    _userInfo.emit(data)
+                    _userInfo.update { data }
                 }
             }
         }
@@ -51,7 +68,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         myRepository.getMyVisitsStore().collect {
             if (it.ok) {
                 it.data?.let { data ->
-                    _myVisitsStore.emit(data)
+                    _myVisitsStore.update { data }
                 }
             }
         }
@@ -61,7 +78,7 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         myRepository.getMyFavoriteStores().collect {
             if (it.ok) {
                 it.data?.let { data ->
-                    _myFavoriteStores.emit(data)
+                    _myFavoriteStores.update { data }
                 }
             }
         }
