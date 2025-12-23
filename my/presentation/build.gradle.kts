@@ -49,11 +49,10 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose)
-    implementation(libs.kotlinx.collections.immutable)
-    implementation(libs.coil.compose)
+    implementation(libs.bundles.coil.compose)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
+    implementation(libs.kotlinx.collections.immutable)
+    
     implementation(libs.play.services.ads)
 
     testImplementation(libs.bundles.testing)
