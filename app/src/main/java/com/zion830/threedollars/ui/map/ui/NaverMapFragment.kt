@@ -21,7 +21,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.analytics.logEvent
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng

@@ -7,8 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import androidx.databinding.DataBindingUtil
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.Firebase
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.presentation.poll.PollDetailActivity
@@ -74,17 +73,19 @@ class DynamicLinkActivity : AppCompatActivity() {
                 handleDeepLinkNavigation(it)
             }
         } else {
-            Firebase.dynamicLinks
-                .getDynamicLink(intent)
-                .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                    var deeplink: Uri? = null
-                    if (pendingDynamicLinkData != null) {
-                        deeplink = pendingDynamicLinkData.link
-                    }
-                    if (deeplink != null) handleDeepLinkNavigation(deeplink)
-                    else finish()
-                }
-                .addOnFailureListener(this) { finish() }
+            // TODO - TH-909
+            finish()
+//            Firebase.dynamicLinks
+//                .getDynamicLink(intent)
+//                .addOnSuccessListener(this) { pendingDynamicLinkData ->
+//                    var deeplink: Uri? = null
+//                    if (pendingDynamicLinkData != null) {
+//                        deeplink = pendingDynamicLinkData.link
+//                    }
+//                    if (deeplink != null) handleDeepLinkNavigation(deeplink)
+//                    else finish()
+//                }
+//                .addOnFailureListener(this) { finish() }
         }
     }
 

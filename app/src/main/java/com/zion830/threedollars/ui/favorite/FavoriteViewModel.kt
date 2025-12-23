@@ -6,12 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.dynamiclinks.ktx.iosParameters
-import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
-import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
-import com.google.firebase.ktx.Firebase
 import com.home.domain.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
@@ -77,25 +71,26 @@ class FavoriteViewModel @Inject constructor(
     }
 
     fun createShareUrl() {
-        val folderId = _myFavoriteFolderResponse.value?.folderId.toStringDefault()
-        val folderName = _myFavoriteFolderResponse.value?.name.toStringDefault()
-        Firebase.dynamicLinks.shortLinkAsync {
-            link = Uri.parse("${GlobalApplication.DYNAMIC_LINK}/bookmark?folderId=$folderId")
-            domainUriPrefix = BuildConfig.DEEP_LINK
-            androidParameters { }
-            iosParameters(if (BuildConfig.DEBUG) "com.macgongmon.-dollar-in-my-pocket-debug" else "com.macgongmon.-dollar-in-my-pocket") {
-                appStoreId = "1496099467"
-                minimumVersion = "3.3.0"
-            }
-            socialMetaTagParameters {
-                title = "내 음식 플리 들어볼래?"
-                description = folderName
-                imageUrl = Uri.parse("https://storage.threedollars.co.kr/share/favorite_share.png")
-            }
-        }.addOnCompleteListener {
-            if (it.isComplete) {
-                _dynamicLink.value = it.result.shortLink?.toString()
-            }
-        }
+        // TODO - TH-909
+//        val folderId = _myFavoriteFolderResponse.value?.folderId.toStringDefault()
+//        val folderName = _myFavoriteFolderResponse.value?.name.toStringDefault()
+//        Firebase.dynamicLinks.shortLinkAsync {
+//            link = Uri.parse("${GlobalApplication.DYNAMIC_LINK}/bookmark?folderId=$folderId")
+//            domainUriPrefix = BuildConfig.DEEP_LINK
+//            androidParameters { }
+//            iosParameters(if (BuildConfig.DEBUG) "com.macgongmon.-dollar-in-my-pocket-debug" else "com.macgongmon.-dollar-in-my-pocket") {
+//                appStoreId = "1496099467"
+//                minimumVersion = "3.3.0"
+//            }
+//            socialMetaTagParameters {
+//                title = "내 음식 플리 들어볼래?"
+//                description = folderName
+//                imageUrl = Uri.parse("https://storage.threedollars.co.kr/share/favorite_share.png")
+//            }
+//        }.addOnCompleteListener {
+//            if (it.isComplete) {
+//                _dynamicLink.value = it.result.shortLink?.toString()
+//            }
+//        }
     }
 }
