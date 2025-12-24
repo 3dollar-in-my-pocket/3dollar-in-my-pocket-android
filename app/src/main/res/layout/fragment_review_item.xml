@@ -28,8 +28,8 @@
 
     <com.zion830.threedollars.core.ui.component.EmptyStateView
         android:id="@+id/emptyStateView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
         android:visibility="gone"
         android:layout_marginTop="136dp"
         app:emptyStateTitle="@string/my_review_empty"
