@@ -1,0 +1,91 @@
+package com.threedollar.common.analytics
+
+enum class ScreenName(val value: String) {
+    // Basic Navigation
+    EMPTY("empty"),
+    SPLASH("splash"),
+
+    // Authentication
+    SIGN_IN("signIn"),
+    SIGN_UP("signUp"),
+    NICKNAME_INIT("nickname_init"),
+    ACCOUNT_INFO("accountInfo"),
+
+    // Home
+    HOME("home"),
+    HOME_LIST("homeList"),
+    HOME_MAP("home_map"),
+    CATEGORY_FILTER_SCREEN("categoryFilter"),
+    MAIN_AD_BANNER("mainAdBanner"),
+    SEARCH_ADDRESS("searchAddress"),
+
+    // Write/Store Creation
+    WRITE_ADDRESS("writeAddress"),
+    WRITE_ADDRESS_POPUP("writeAddressPopup"),
+    WRITE_ADDRESS_DETAIL("write_address_detail"),
+    WRITE_ADDRESS_BOSS_BOTTOM_SHEET("writeAddressBossBottomSheet"),
+    WRITE_DETAIL_COMPLETE("writeDetailComplete"),
+    WRITE_DETAIL_ADDITIONAL_INFO("writeDetailAdditionalInfo"),
+    WRITE_DETAIL_CATEGORY("writeDetailCategory"),
+    WRITE_DETAIL_CATEGORY_BOTTOM_SHEET("writeDetailCategoryBottomSheet"),
+    WRITE_DETAIL_INFO("writeDetailInfo"),
+    WRITE_DETAIL_MENU("writeDetailMenu"),
+    CATEGORY_SELECTION("categorySelection"),
+    CATEGORY("category"),
+    EDIT_STORE("editStore"),
+    EDIT_STORE_INFO("editStoreInfo"),
+    STORE_REGISTER("store_register"),
+    STORE_EDIT("store_edit"),
+
+    // Store Details
+    STORE_DETAIL("storeDetail"),
+    UPLOAD_PHOTO("uploadPhoto"),
+    REVIEW_LIST("reviewList"),
+    REPORT_STORE("reportStore"),
+    REVIEW_BOTTOM_SHEET("reviewBottomSheet"),
+    VISIT_STORE("visitStore"),
+    BOSS_STORE_DETAIL("bossStoreDetail"),
+    BOSS_STORE_REVIEW("bossStoreReview"),
+    BOSS_STORE_REVIEW_WRITE("bossStoreReviewWrite"),
+    BOSS_STORE_PHOTO("bossStorePhoto"),
+
+    // Community
+    COMMUNITY("community"),
+    POLL_DETAIL("pollDetail"),
+    POLL_LIST("pollList"),
+    REPORT_POLL("reportPoll"),
+    REPORT_REVIEW("reportReview"),
+    CREATE_POLL("createPoll"),
+
+    // Review
+    WRITE_REVIEW("write_review"),
+
+    // My Page
+    MY_PAGE("myPage"),
+    MY_STORE("my_store"),
+    REGISTERED_STORE("registeredStore"),
+    VISITED_LIST("visitedList"),
+    CLICK_REVIEW("clickReview"),
+    MY_REVIEW("myReview"),
+    MY_MEDAL("myMedal"),
+    MY_BOOKMARK_LIST("myBookmarkList"),
+    EDIT_BOOKMARK_LIST("editBookmarkList"),
+    BOOKMARK_LIST_VIEWER("bookmarkListViewer"),
+
+    // Settings
+    SETTING("setting"),
+    NICKNAME_CHANGE("editNickname"),
+    QNA("qna"),
+    FAQ("faq"),
+    TEAM_INFO("teamInfo"),
+
+    // Feed
+    FEED_LIST("feedList"),
+
+    // Dialogs & Popups
+    MARKER_POPUP("markerPopup"),
+    ADDRESS_POPUP("address_popup"),
+    ADDRESS("address");
+
+    override fun toString(): String = value
+}
