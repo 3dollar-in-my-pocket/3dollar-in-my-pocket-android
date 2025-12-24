@@ -2,9 +2,8 @@ package com.threedollar.common.analytics
 
 enum class LogObjectId(val value: String) {
     // Authentication
-    SIGN_IN_APPLE("sign_in_apple"),
     SIGN_IN_KAKAO("sign_in_kakao"),
-    SIGN_IN_ANONYMOUS("sign_in_anonymous"),
+    SIGN_IN_GOOGLE("sign_in_google"),
     SIGN_UP("sign_up"),
 
     // Home Actions
