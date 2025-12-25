@@ -71,6 +71,7 @@ class AddStoreDetailFragment : Fragment() {
     }
 
     private fun navigateBack() {
+        viewModel.processIntent(AddStoreContract.Intent.ResetState)
         findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
     }
 
