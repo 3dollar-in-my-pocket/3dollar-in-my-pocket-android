@@ -139,6 +139,8 @@ class BossStoreDetailActivity :
                 override fun onClick(item: ReviewContentModel) {
                     val sticker = item.stickers.firstOrNull()
                     if (sticker != null) {
+                        val isLiked = !sticker.reactedByMe
+                        viewModel.sendClickLikeReview(isLiked)
                         viewModel.putLike(storeId, item.review.reviewId.toString(), if (sticker.reactedByMe) "" else sticker.stickerId)
                     }
                 }
@@ -249,12 +251,15 @@ class BossStoreDetailActivity :
             finish()
         }
         binding.bottomReviewTextView.onSingleClick {
+            viewModel.sendClickWriteReview()
             moveFoodTruckReviewWriteActivity()
         }
         binding.feedbackReviewTextView.onSingleClick {
+            viewModel.sendClickWriteReview()
             moveFoodTruckReviewWriteActivity()
         }
         binding.shareButton.onSingleClick {
+            viewModel.sendClickShare()
             initShared()
         }
 
@@ -294,6 +299,7 @@ class BossStoreDetailActivity :
             }
         }
         binding.directionsButton.onSingleClick {
+            viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
 
@@ -304,11 +310,13 @@ class BossStoreDetailActivity :
             clickFavoriteButton()
         }
         binding.addressTextView.onSingleClick {
+            viewModel.sendClickCopyAddress()
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
             showToast(getString(CommonR.string.address_copied))
         }
         binding.fullScreenButton.onSingleClick {
+            viewModel.sendClickZoomMap()
             moveFullScreenMap()
         }
     }
@@ -326,11 +334,6 @@ class BossStoreDetailActivity :
     }
 
     private fun showDirectionBottomDialog() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(CLICK_NAVIGATION, bundle)
         val store = viewModel.bossStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
     }
@@ -463,11 +466,6 @@ class BossStoreDetailActivity :
     }
 
     private fun initShared() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val shareFormat = ShareFormat(
             getString(CommonR.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
@@ -490,13 +488,6 @@ class BossStoreDetailActivity :
     }
 
     private fun moveFoodTruckReviewWriteActivity() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-        
-        // 피드백 존재 여부 확인
         viewModel.checkFeedbackExists(storeId)
     }
 
@@ -511,18 +502,13 @@ class BossStoreDetailActivity :
     }
 
     private fun clickFavoriteButton() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
+        val isOn = !viewModel.favoriteModel.value.isFavorite
+        viewModel.sendClickFavorite(isOn)
         if (viewModel.favoriteModel.value.isFavorite) {
-            bundle.putString("value", "off")
             viewModel.deleteFavorite(storeId)
         } else {
-            bundle.putString("value", "on")
             viewModel.putFavorite(storeId)
         }
-        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {

@@ -9,6 +9,12 @@ import com.home.domain.data.store.UploadFileModel
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.ReportReviewModelRequest
 import com.home.domain.request.ReportReasonsGroupType
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.Constants.BOSS_STORE
@@ -35,6 +41,8 @@ import com.threedollar.common.R as CommonR
 class BossStoreDetailViewModel @Inject constructor(
     private val homeRepository: HomeRepository
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.BOSS_STORE_DETAIL
 
     private val _bossStoreDetailModel = MutableStateFlow(BossStoreDetailModel())
     val bossStoreDetailModel: StateFlow<BossStoreDetailModel> get() = _bossStoreDetailModel
@@ -303,5 +311,98 @@ class BossStoreDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    // GA Events - Store Detail
+    fun sendClickFavorite(isOn: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITE,
+                additionalParams = mapOf(ParameterName.VALUE to if (isOn) "on" else "off")
+            )
+        )
+    }
+
+    fun sendClickShare() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SHARE
+            )
+        )
+    }
+
+    fun sendClickWriteReview() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
+    }
+
+    fun sendClickNavigation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.NAVIGATION
+            )
+        )
+    }
+
+    fun sendClickZoomMap() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ZOOM_MAP
+            )
+        )
+    }
+
+    fun sendClickCopyAddress() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.COPY_ADDRESS
+            )
+        )
+    }
+
+    fun sendClickVisit() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISIT
+            )
+        )
+    }
+
+    fun sendClickReportButton() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT
+            )
+        )
+    }
+
+    fun sendClickLikeReview(isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
+            )
+        )
     }
 }
