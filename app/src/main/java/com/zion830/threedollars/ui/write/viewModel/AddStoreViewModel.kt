@@ -292,18 +292,18 @@ class AddStoreViewModel @Inject constructor(
         val hasCount = menu.count != null
 
         return when {
-            !hasName && (hasPrice || hasCount) -> {
+            // 메뉴명 없고 가격/수량 중 하나만 있으면 비어있게
+            !hasName && hasPrice && !hasCount -> {
                 menu.copy(price = "", count = null)
             }
-
-            hasCount && !hasPrice -> {
+            !hasName && !hasPrice && hasCount -> {
                 menu.copy(price = "", count = null)
             }
-
+            // 메뉴명 있고 가격 있는데 수량 없으면 수량 1로
             hasName && hasPrice && !hasCount -> {
                 menu.copy(count = 1)
             }
-
+            // 메뉴명 없고 가격/수량 둘 다 있으면 그대로 사용
             else -> menu
         }
     }
@@ -318,7 +318,10 @@ class AddStoreViewModel @Inject constructor(
         }
 
         val menuRequests = validatedMenus.mapNotNull { (menu, categoryId) ->
-            if (!menu.name.isNullOrBlank()) {
+            val hasName = !menu.name.isNullOrBlank()
+            val hasPrice = !menu.price.isNullOrBlank()
+            val hasCount = menu.count != null
+            if (hasName || (hasPrice && hasCount)) {
                 MenuModelRequest(
                     name = menu.name ?: "",
                     count = menu.count,
@@ -329,8 +332,11 @@ class AddStoreViewModel @Inject constructor(
             } else null
         }
 
-        return if (menuRequests.isEmpty() && categories.isNotEmpty()) {
-            categories.map { category ->
+        // 각 카테고리별로 최소 1개 메뉴 보장
+        val categoriesWithMenu = menuRequests.map { it.category }.toSet()
+        val missingCategoryMenus = categories
+            .filter { it.menuType.categoryId !in categoriesWithMenu }
+            .map { category ->
                 MenuModelRequest(
                     name = "",
                     count = null,
@@ -339,9 +345,8 @@ class AddStoreViewModel @Inject constructor(
                     description = null
                 )
             }
-        } else {
-            menuRequests
-        }
+
+        return menuRequests + missingCategoryMenus
     }
 
     private fun submitNewStore() {

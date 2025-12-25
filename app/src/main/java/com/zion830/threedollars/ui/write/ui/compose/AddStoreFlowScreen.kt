@@ -222,16 +222,7 @@ fun AddStoreFlowScreen(
                                     buttonText = stringResource(CommonR.string.add_store_next),
                                     enabled = state.selectCategoryList.isNotEmpty(),
                                     showSkipButton = true,
-                                    onClick = {
-                                        val hasValidMenu = state.selectCategoryList.any { category ->
-                                            category.menuDetail?.any { !it.name.isNullOrBlank() } == true
-                                        }
-                                        if (hasValidMenu) {
-                                            navController.navigate(AddStoreRoute.STORE_DETAIL)
-                                        } else {
-                                            Toast.makeText(context, context.getString(CommonR.string.add_store_menu_required), Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
+                                    onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
                                     onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
                                 )
                             }
