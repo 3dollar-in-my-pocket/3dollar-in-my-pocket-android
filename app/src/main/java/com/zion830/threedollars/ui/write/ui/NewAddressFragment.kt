@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
@@ -72,7 +74,11 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
             findNavController().navigate(R.id.navigation_home)
         }
         binding.finishButton.onSingleClick {
-            viewModel.sendClickSetAddress(binding.addressTextView.text.toString())
+            val bundle = Bundle().apply {
+                putString("screen", "write_address")
+                putString("address", binding.addressTextView.text.toString())
+            }
+            EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
             viewModel.selectedLocation.value?.let { location -> viewModel.getStoreNearExists(location) }
         }
     }
@@ -96,7 +102,10 @@ class NewAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreViewM
                         if (it) {
                             showNearExistDialog()
                         } else {
-                            viewModel.sendClickCurrentLocation()
+                            val bundle = Bundle().apply {
+                                putString("screen", "write_address")
+                            }
+                            EventTracker.logEvent(Constants.CLICK_CURRENT_LOCATION, bundle)
                             moveAddStoreDetailFragment()
                         }
                     }
