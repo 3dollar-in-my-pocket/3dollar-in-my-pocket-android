@@ -16,6 +16,12 @@ import com.home.domain.repository.HomeRepository
 import com.home.domain.request.ReportReasonsGroupType
 import com.home.domain.request.ReportReviewModelRequest
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
@@ -35,6 +41,8 @@ import com.threedollar.common.R as CommonR
 @HiltViewModel
 class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeRepository) :
     BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.STORE_DETAIL
 
     private val _userStoreDetailModel: MutableStateFlow<UserStoreDetailModel?> = MutableStateFlow(null)
     val userStoreDetailModel: StateFlow<UserStoreDetailModel?> get() = _userStoreDetailModel
@@ -256,6 +264,122 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
+    // GA Events - Review Bottom Sheet
+    fun sendClickWriteReviewSubmit(rating: Int) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_BOTTOM_SHEET,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW,
+                additionalParams = mapOf(ParameterName.VALUE to rating.toString())
+            )
+        )
+    }
+
+    // GA Events - Report Store
+    fun sendClickReportStore(reportType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REPORT_STORE,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT,
+                additionalParams = mapOf(ParameterName.VALUE to reportType)
+            )
+        )
+    }
+
+    // GA Events - Store Detail
+    fun sendClickFavorite(isOn: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITE,
+                additionalParams = mapOf(ParameterName.VALUE to if (isOn) "on" else "off")
+            )
+        )
+    }
+
+    fun sendClickShare() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SHARE
+            )
+        )
+    }
+
+    fun sendClickWriteReview() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
+    }
+
+    fun sendClickNavigation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.NAVIGATION
+            )
+        )
+    }
+
+    fun sendClickZoomMap() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ZOOM_MAP
+            )
+        )
+    }
+
+    fun sendClickCopyAddress() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.COPY_ADDRESS
+            )
+        )
+    }
+
+    fun sendClickVisit() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISIT
+            )
+        )
+    }
+
+    fun sendClickReportButton() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT
+            )
+        )
+    }
+
+    fun sendClickLikeReview(isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
+            )
+        )
+    }
 
     override fun handleError(t: Throwable) {
         super.handleError(t)

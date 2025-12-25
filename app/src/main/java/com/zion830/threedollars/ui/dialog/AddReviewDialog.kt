@@ -72,12 +72,7 @@ class AddReviewDialog(
                 showToast(CommonR.string.over_rating_1)
                 return@onSingleClick
             }
-            val bundle = Bundle().apply {
-                putString("screen", "review_bottom_sheet")
-                putString("store_id", storeId.toString())
-                putString("rating", binding.rating.rating.toString())
-            }
-            EventTracker.logEvent(CLICK_REVIEW_BOTTOM_BUTTON, bundle)
+            viewModel.sendClickWriteReviewSubmit(binding.rating.rating.toInt())
             if (content == null) {
                 viewModel.postStoreReview(
                     binding.etContent.text.toString(),
