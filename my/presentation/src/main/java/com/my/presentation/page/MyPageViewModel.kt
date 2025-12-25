@@ -7,6 +7,11 @@ import com.my.domain.model.FavoriteStoresModel
 import com.my.domain.model.VisitHistoryModel
 import com.my.domain.model.UserPollsModel
 import com.my.presentation.page.data.MyPageShop
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MY_PAGE
 
     /**
      * States
@@ -111,4 +118,45 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     }
 
     fun isNameUpdated() = getUserInfo()
+
+    // GA Events - MyPage
+    fun sendClickVisitedStore() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISITED_STORE
+            )
+        )
+    }
+
+    fun sendClickFavoritedStore() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITED_STORE
+            )
+        )
+    }
+
+    fun sendClickMedal() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.MEDAL
+            )
+        )
+    }
+
+    fun sendClickReview() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REVIEW
+            )
+        )
+    }
 }

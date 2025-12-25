@@ -96,12 +96,15 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     }
     val myPageButtons = userInfo.toMyPageButtons(
         clickCreateStore = {
+            viewModel.sendClickVisitedStore()
             viewModel.addFragments(MyFragments.MyStore)
         },
         clickWriteReview = {
+            viewModel.sendClickReview()
             viewModel.addFragments(MyFragments.MyReview)
         },
         clickMedals = {
+            viewModel.sendClickMedal()
             viewModel.addFragments(MyFragments.MyMedal)
         }
     )
@@ -161,7 +164,10 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                     topIcon = zion830.com.common.R.drawable.ic_favorite_gray,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
                     count = userInfo.activity.favoriteStoresCount
-                ) { viewModel.clickFavorite() })
+                ) {
+                    viewModel.sendClickFavoritedStore()
+                    viewModel.clickFavorite()
+                })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
                 MyPageEmptyView(

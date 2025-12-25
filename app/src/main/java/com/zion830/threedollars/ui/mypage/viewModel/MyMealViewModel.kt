@@ -6,6 +6,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
@@ -19,6 +20,8 @@ import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSource, private val myRepository: MyRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MY_MEDAL
 
     private val _userActivity: MutableLiveData<UserActivityData?> = MutableLiveData()
     val userActivity: LiveData<UserActivityData?> = _userActivity
