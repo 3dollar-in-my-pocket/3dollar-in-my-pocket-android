@@ -87,8 +87,4 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
             }
         }
     }
-
-    companion object {
-        const val TAG = "MarkerClickDialog"
-    }
 }

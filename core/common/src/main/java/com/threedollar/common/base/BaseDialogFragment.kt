@@ -80,19 +80,6 @@ abstract class BaseDialogFragment<B : ViewBinding> :
         }
     }
 
-    @Deprecated(
-        message = "Use sendScreenView(ScreenName) instead",
-        replaceWith = ReplaceWith("sendScreenView(screen)")
-    )
-    fun setFirebaseAnalyticsLogEvent(className: String, screenName : String?) {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
-            screenName?.let {
-                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            }
-        }
-    }
-
     fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
         LogManager.sendPageView(screen, this::class.java.simpleName, extraParameters)
     }
