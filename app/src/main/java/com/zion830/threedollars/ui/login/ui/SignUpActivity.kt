@@ -150,11 +150,7 @@ class SignUpActivity :
         }
 
         binding.btnFinish.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "sign_up")
-                putString("nickname", binding.etName.text.toString())
-            }
-            EventTracker.logEvent(CLICK_SIGN_UP, bundle)
+            viewModel.sendClickSignUp()
             if (LegacySharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
                 tryKakaoLogin()
             } else {
