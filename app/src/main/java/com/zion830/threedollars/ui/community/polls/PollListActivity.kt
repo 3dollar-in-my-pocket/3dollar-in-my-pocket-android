@@ -128,9 +128,6 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
         }
         binding.llPollCreate.onSingleClick {
             CreatePollDialog().setCreatePoll { title, first, second ->
-                val calendar = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                val formattedDate = dateFormat.format(calendar.time)
                 viewModel.createPoll(
                     PollCreateModel(
                         title = title,

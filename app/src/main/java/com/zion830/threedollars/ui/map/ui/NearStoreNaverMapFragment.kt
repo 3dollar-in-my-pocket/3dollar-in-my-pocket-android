@@ -10,8 +10,6 @@ import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
-import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,12 +46,7 @@ class NearStoreNaverMapFragment(
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
-        val northWest = naverMap?.contentBounds?.northWest
-        val southEast = naverMap?.contentBounds?.southEast
-        viewModel.requestHomeItem(
-            position,
-            if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-        )
+        viewModel.updateUserLocation(position)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

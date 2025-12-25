@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.threedollar.domain.my.model.UserInfoUpdateModel
 import com.threedollar.domain.my.repository.MyRepository
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.my.Medal
 import com.zion830.threedollars.datasource.model.v2.response.my.UserActivityData

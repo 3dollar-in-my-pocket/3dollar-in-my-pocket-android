@@ -7,8 +7,6 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyVisitHistoryBinding
-import com.threedollar.network.data.visit_history.VisitHistoryContent
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder

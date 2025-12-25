@@ -172,3 +172,4 @@ fabric.properties
 /app/release/
 
 3dollor-android-key.jks.txt
+google-services.json

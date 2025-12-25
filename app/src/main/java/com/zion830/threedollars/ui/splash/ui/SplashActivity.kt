@@ -3,6 +3,9 @@ package com.zion830.threedollars.ui.splash.ui
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
@@ -11,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,22 +25,20 @@ import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.MainActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivitySplashBinding
-import com.zion830.threedollars.datasource.model.v2.request.PushInformationTokenRequest
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
-import com.zion830.threedollars.utils.requestPermissionFirst
 import com.zion830.threedollars.utils.showToast
-import com.zion830.threedollars.utils.VersionChecker
 import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
@@ -45,6 +47,16 @@ class SplashActivity :
 
     override val viewModel: SplashViewModel by viewModels()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private val appUpdateLauncher: ActivityResultLauncher<IntentSenderRequest> =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode != RESULT_OK) {
+                showToast("앱 업데이트에 실패했습니다.")
+                viewModel.checkForceUpdate()
+            } else {
+                viewModel.checkAccessToken()
+            }
+        }
 
     override fun initView() {
         setDarkSystemBars()
@@ -58,27 +70,35 @@ class SplashActivity :
         lifecycleScope.launch {
             delay(2000L)
             if (BuildConfig.DEBUG) {
-                checkForceUpdate()
+                viewModel.checkForceUpdate()
             } else {
-                val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
-                val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-                appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                        appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                    ) {
-                        appUpdateManager.startUpdateFlowForResult(
-                            appUpdateInfo,
-                            AppUpdateType.IMMEDIATE,
-                            this@SplashActivity,
-                            APP_UPDATE_CODE
-                        )
-                    } else {
-                        checkForceUpdate()
-                    }
+                inAppUpdateIfNeeded()
+                viewModel.checkForceUpdate()
+            }
+        }
+    }
+
+    private suspend fun inAppUpdateIfNeeded() {
+        suspendCancellableCoroutine { continuation ->
+            val appUpdateManager = AppUpdateManagerFactory.create(this@SplashActivity)
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                    appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                ) {
+                    val updateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        appUpdateLauncher,
+                        updateOptions
+                    )
                 }
-                appUpdateInfoTask.addOnFailureListener {
-                    checkForceUpdate()
-                }
+                continuation.resume(Unit)
+            }
+
+            appUpdateInfoTask.addOnFailureListener {
+                continuation.resume(Unit)
             }
         }
     }
@@ -152,20 +172,14 @@ class SplashActivity :
                         }
                     }
                 }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == APP_UPDATE_CODE) {
-            if (resultCode != RESULT_OK) {
-                // 인앱업데이트 취소/실패 시 강제업데이트 확인
-                showToast("앱 업데이트에 실패했습니다.")
-                checkForceUpdate()
-            } else {
-                // 인앱업데이트 성공 시 정상 진행
-                viewModel.checkAccessToken()
+                launch {
+                    viewModel.shouldShowUpdateDialog.collect { updateDialog ->
+                        updateDialog?.let {
+                            VersionUpdateDialog.getInstance(it)
+                                .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
+                        }
+                    }
+                }
             }
         }
     }
@@ -218,25 +232,10 @@ class SplashActivity :
             .show()
     }
 
-    private fun checkForceUpdate() {
-        VersionChecker.checkForceUpdateAvailable(
-            this@SplashActivity,
-            { _, current ->
-                VersionUpdateDialog.getInstance(current)
-                    .show(supportFragmentManager, VersionUpdateDialog::class.java.name)
-            },
-            {
-                viewModel.checkAccessToken()
-            }
-        )
-    }
-
     companion object {
         private const val STORE_ID = "storeId"
         private const val STORE_TYPE = "STORE_TYPE"
         private const val PUSH_LINK = "link"
-        private const val GOOGLE_LOGIN_ERROR_REQUEST_CODE = 1001
-        private const val APP_UPDATE_CODE = 1002
 
         fun getIntent(
             context: Context,

@@ -9,7 +9,6 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.network.data.auth.SignUpRequest
 import com.threedollar.network.data.auth.SignUser
-import com.zion830.threedollars.R
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils

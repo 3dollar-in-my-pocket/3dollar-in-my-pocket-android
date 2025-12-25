@@ -19,16 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.threedollar.common.R as CommonR
 import zion830.com.common.R as LegacyCommonR
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
@@ -85,29 +84,10 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {
 
-    val userInfo by viewModel.userInfo.collectAsState(
-        UserInfoModel(
-            "",
-            "",
-            "",
-            null,
-            UserActivityModel(0, 0, 0, 0, 0, false, 0),
-            UserSettingsModel(false, "")
-        )
-    )
-    val myFavoriteStores by viewModel.myFavoriteStores.collectAsState(
-        FavoriteStoresModel(
-            emptyList(),
-            null
-        )
-    )
-    val myVisitsStore by viewModel.myVisitsStore.collectAsState(
-        VisitHistoryModel(
-            emptyList(),
-            null
-        )
-    )
-    val userPollList by viewModel.userPollList.collectAsState(UserPollsModel(emptyList(), null))
+    val userInfo by viewModel.userInfo.collectAsStateWithLifecycle()
+    val myFavoriteStores by viewModel.myFavoriteStores.collectAsStateWithLifecycle()
+    val myVisitsStore by viewModel.myVisitsStore.collectAsStateWithLifecycle()
+    val userPollList by viewModel.userPollList.collectAsStateWithLifecycle()
 
     val myPageUserInformation by remember(userInfo) {
         derivedStateOf {
@@ -118,18 +98,30 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
         }
     }
     val myPageButtons = userInfo.toMyPageButtons(
-        { viewModel.addFragments(MyFragments.MyStore) },
-        { viewModel.addFragments(MyFragments.MyReview) },
-        { viewModel.addFragments(MyFragments.MyMedal) })
-    val myVisitsShop by remember(myVisitsStore) { mutableStateOf(myVisitsStore.toMyPageShops()) }
-    val myFavoriteShop by remember(myFavoriteStores) { mutableStateOf(myFavoriteStores.toMyPageShops()) }
-    val myVoteHistory by remember(userPollList) { mutableStateOf(userPollList.contents.map { it.toMyVoteHistory() }) }
-
+        clickCreateStore = {
+            viewModel.addFragments(MyFragments.MyStore)
+        },
+        clickWriteReview = {
+            viewModel.addFragments(MyFragments.MyReview)
+        },
+        clickMedals = {
+            viewModel.addFragments(MyFragments.MyMedal)
+        }
+    )
+    val myVisitsShop by remember(myVisitsStore) {
+        mutableStateOf(myVisitsStore.toMyPageShops())
+    }
+    val myFavoriteShop by remember(myFavoriteStores) {
+        mutableStateOf(myFavoriteStores.toMyPageShops())
+    }
+    val myVoteHistory by remember(userPollList) {
+        mutableStateOf(userPollList.contents.map { it.toMyVoteHistory() })
+    }
 
     Scaffold(
         modifier = Modifier
             .fillMaxSize(1f),
-        backgroundColor = Gray100,
+        containerColor = Gray100,
         topBar = { MyPageTitle { viewModel.addFragments(MyFragments.MyPageSetting) } })
     {
         Column(

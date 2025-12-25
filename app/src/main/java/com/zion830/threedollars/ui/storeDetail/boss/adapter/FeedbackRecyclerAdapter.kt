@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.domain.home.data.store.FeedbackModel
 import com.threedollar.domain.home.data.store.FeedbackType
 import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFeedbackTagBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick

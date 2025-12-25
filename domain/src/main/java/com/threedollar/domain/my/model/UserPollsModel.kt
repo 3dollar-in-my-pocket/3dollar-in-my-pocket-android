@@ -1,8 +1,8 @@
 package com.threedollar.domain.my.model
 
 data class UserPollsModel(
-    val contents: List<UserPollModel>,
-    val cursor: CursorModel?
+    val contents: List<UserPollModel> = emptyList(),
+    val cursor: CursorModel? = null
 )
 
 data class UserPollModel(

@@ -1,12 +1,12 @@
 package com.threedollar.domain.my.model
 
 data class UserInfoModel(
-    val userId: String,
-    val name: String,
-    val socialType: String,
-    val medal: MedalModel?,
-    val activity: UserActivityModel,
-    val settings: UserSettingsModel
+    val userId: String = "",
+    val name: String = "",
+    val socialType: String = "",
+    val medal: MedalModel? = null,
+    val activity: UserActivityModel = UserActivityModel(),
+    val settings: UserSettingsModel = UserSettingsModel()
 )
 
 data class MedalModel(
@@ -17,16 +17,16 @@ data class MedalModel(
 )
 
 data class UserActivityModel(
-    val reviewsCount: Int,
-    val storesCount: Int,
-    val pollsCount: Int,
-    val medalCount: Int,
-    val favoriteStoresCount: Int,
-    val existsFavoriteFolder: Boolean,
-    val totalFeedbacksCounts: Int
+    val reviewsCount: Int = 0,
+    val storesCount: Int = 0,
+    val pollsCount: Int = 0,
+    val medalCount: Int = 0,
+    val favoriteStoresCount: Int = 0,
+    val existsFavoriteFolder: Boolean = false,
+    val totalFeedbacksCounts: Int = 0
 )
 
 data class UserSettingsModel(
-    val enableActivitiesPush: Boolean,
-    val marketingConsent: String
+    val enableActivitiesPush: Boolean = false,
+    val marketingConsent: String = ""
 )

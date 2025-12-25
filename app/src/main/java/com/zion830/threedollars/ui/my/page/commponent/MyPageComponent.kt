@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import base.compose.Gray40
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.zion830.threedollars.ui.my.page.data.MyPageShop
 import com.zion830.threedollars.ui.my.page.data.myPageShopPreview
 

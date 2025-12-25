@@ -42,6 +42,8 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
 import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
+import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.TouchableWrapper
 import com.zion830.threedollars.utils.isGpsAvailable
@@ -58,6 +60,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     var naverMap: NaverMap? = null
 
     var currentPosition: MutableLiveData<LatLng> = MutableLiveData()
+    var mapPosition: MutableLiveData<LatLng> = MutableLiveData()
+    var mapViewPortDistance: MutableLiveData<Double> = MutableLiveData(DEFAULT_DISTANCE_M)
 
     protected lateinit var binding: FragmentNaverMapBinding
 
@@ -124,6 +128,16 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.uiSettings.isScaleBarEnabled = false
         map.addOnLocationChangeListener {
             map.locationOverlay.bearing = 0f
+        }
+        map.addOnCameraChangeListener { _, _ ->
+            mapPosition.value = map.cameraPosition.target
+            map.contentBounds.let {
+                val northWest = it.northWest
+                val southEast = it.southEast
+                val distanceM = calculateDistance(northWest, southEast)
+
+                mapViewPortDistance.value = distanceM.toDouble()
+            }
         }
         if (isShowOverlay) {
             val storeMarker = GlobalApplication.storeMarker ?: return

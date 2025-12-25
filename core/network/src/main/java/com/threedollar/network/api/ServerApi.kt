@@ -1,6 +1,7 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.AppStatusResponse
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
@@ -374,4 +375,7 @@ interface ServerApi {
         @Path("reviewId") reviewId: String,
         @Body stickerRequest: StickerRequest
     ): Response<BaseResponse<String>>
+
+    @GET("/api/v1/app/status")
+    suspend fun getAppStatus(): Response<BaseResponse<AppStatusResponse>>
 }

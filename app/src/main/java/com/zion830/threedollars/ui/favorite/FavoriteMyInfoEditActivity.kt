@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import com.threedollar.common.base.BaseActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFavoriteMyInfoEditBinding
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import dagger.hilt.android.AndroidEntryPoint

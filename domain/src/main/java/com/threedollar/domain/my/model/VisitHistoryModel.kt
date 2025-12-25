@@ -1,8 +1,8 @@
 package com.threedollar.domain.my.model
 
 data class VisitHistoryModel(
-    val contents: List<VisitHistoryItemModel>,
-    val cursor: CursorModel?
+    val contents: List<VisitHistoryItemModel> = emptyList(),
+    val cursor: CursorModel? = null
 )
 
 data class VisitHistoryItemModel(

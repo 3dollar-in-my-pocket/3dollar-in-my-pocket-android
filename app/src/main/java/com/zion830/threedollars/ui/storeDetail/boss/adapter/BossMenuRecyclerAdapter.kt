@@ -9,7 +9,6 @@ import com.threedollar.domain.home.data.store.MenuModel
 import com.threedollar.common.ext.loadCircleImage
 import com.threedollar.common.ext.toFormattedNumber
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckMenuEmptyBinding
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding

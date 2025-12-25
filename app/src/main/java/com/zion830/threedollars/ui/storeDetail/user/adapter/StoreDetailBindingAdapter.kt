@@ -13,7 +13,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.internal.ViewUtils
 import com.threedollar.domain.home.data.store.StoreImage
 import com.willy.ratingbar.ScaleRatingBar
-import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.threedollar.common.R as CommonR
 

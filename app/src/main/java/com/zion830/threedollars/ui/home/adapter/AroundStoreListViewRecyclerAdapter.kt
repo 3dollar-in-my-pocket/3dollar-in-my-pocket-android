@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.ContentModel
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
 import com.threedollar.common.data.AdAndStoreItem
+import com.threedollar.common.data.AdMobItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
@@ -18,6 +22,7 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemListViewAdBinding
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.zion830.threedollars.databinding.ItemListViewAdmobBinding
 import com.zion830.threedollars.databinding.ItemListViewBinding
 import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
 import com.zion830.threedollars.utils.StringUtils
@@ -39,6 +44,10 @@ class AroundStoreListViewRecyclerAdapter(
             VIEW_TYPE_AD
         }
 
+        is AdMobItem -> {
+            VIEW_TYPE_ADMOB
+        }
+
         else -> {
             VIEW_TYPE_EMPTY
         }
@@ -56,6 +65,10 @@ class AroundStoreListViewRecyclerAdapter(
             NearStoreAdListViewViewHolder(ItemListViewAdBinding.inflate(LayoutInflater.from(parent.context), parent, false),clickAdListener)
         }
 
+        VIEW_TYPE_ADMOB -> {
+            NearStoreAdMobListViewViewHolder(ItemListViewAdmobBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        }
+
         else -> {
             NearStoreEmptyListViewViewHolder(ItemListViewEmptyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
@@ -71,6 +84,10 @@ class AroundStoreListViewRecyclerAdapter(
                 holder.bind(getItem(position) as AdvertisementModelV2)
             }
 
+            is NearStoreAdMobListViewViewHolder -> {
+                holder.bind()
+            }
+
             is NearStoreEmptyListViewViewHolder -> {}
         }
     }
@@ -79,10 +96,35 @@ class AroundStoreListViewRecyclerAdapter(
         private const val VIEW_TYPE_EMPTY = 0
         private const val VIEW_TYPE_STORE = 1
         private const val VIEW_TYPE_AD = 2
+        private const val VIEW_TYPE_ADMOB = 3
     }
 }
 
 class NearStoreEmptyListViewViewHolder(binding: ItemListViewEmptyBinding) : ViewHolder(binding.root)
+
+class NearStoreAdMobListViewViewHolder(private val binding: ItemListViewAdmobBinding) : ViewHolder(binding.root) {
+    private var isAdLoaded = false
+
+    fun bind() {
+        // 광고가 이미 로드되지 않은 경우에만 로드
+        if (!isAdLoaded) {
+            binding.admobView.adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    // 광고 로드 성공
+                    isAdLoaded = true
+                }
+
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    // 광고 로드 실패 시 재시도 가능하도록 플래그를 false로 유지
+                    isAdLoaded = false
+                }
+            }
+
+            val adRequest = AdRequest.Builder().build()
+            binding.admobView.loadAd(adRequest)
+        }
+    }
+}
 
 class NearStoreAdListViewViewHolder(private val binding: ItemListViewAdBinding, private val clickAdListener: OnItemClickListener<AdvertisementModelV2>) : ViewHolder(binding.root) {
     fun bind(advertisementModelV2: AdvertisementModelV2) {

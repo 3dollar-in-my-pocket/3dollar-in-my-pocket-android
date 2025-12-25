@@ -35,8 +35,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.FutureTarget
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
