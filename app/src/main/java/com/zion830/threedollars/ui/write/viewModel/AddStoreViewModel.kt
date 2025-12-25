@@ -15,6 +15,7 @@ import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId
 import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource
@@ -36,7 +37,8 @@ import javax.inject.Inject
 class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepository, private val repository: StoreDataSource) :
     BaseViewModel() {
 
-    override val screenName: ScreenName = ScreenName.EDIT_STORE
+    // Default to WRITE_ADDRESS for new store flow (can be EDIT_STORE for edit flow)
+    override val screenName: ScreenName = ScreenName.WRITE_ADDRESS
 
 
     private val _selectedLocation: MutableStateFlow<LatLng?> = MutableStateFlow(null)
@@ -164,11 +166,33 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
         _selectCategoryList.value = selectCategoryModelList
     }
 
+    // GA Events - Write Address
+    fun sendClickSetAddress(address: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.WRITE_ADDRESS,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SET_ADDRESS,
+                additionalParams = mapOf(ParameterName.ADDRESS to address)
+            )
+        )
+    }
+
+    fun sendClickCurrentLocation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.WRITE_ADDRESS,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CURRENT_LOCATION
+            )
+        )
+    }
+
     // GA Events - Edit Store
     fun sendClickLocation() {
         LogManager.sendEvent(
             ClickEvent(
-                screen = screenName,
+                screen = ScreenName.EDIT_STORE,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.LOCATION
             )
@@ -178,7 +202,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun sendClickInfo() {
         LogManager.sendEvent(
             ClickEvent(
-                screen = screenName,
+                screen = ScreenName.EDIT_STORE,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.INFO
             )
@@ -188,7 +212,7 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun sendClickMenu() {
         LogManager.sendEvent(
             ClickEvent(
-                screen = screenName,
+                screen = ScreenName.EDIT_STORE,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.MENU
             )
@@ -198,9 +222,41 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
     fun sendClickOk() {
         LogManager.sendEvent(
             ClickEvent(
-                screen = screenName,
+                screen = ScreenName.EDIT_STORE,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.OK
+            )
+        )
+    }
+
+    // GA Events - Write Detail screens
+    fun sendClickNextFromDetail() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.WRITE_DETAIL_INFO,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.NEXT
+            )
+        )
+    }
+
+    fun sendClickAddMenu() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.WRITE_DETAIL_MENU,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ADD_MENU
+            )
+        )
+    }
+
+    fun sendClickCategory(categoryName: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.WRITE_DETAIL_CATEGORY,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CATEGORY,
+                additionalParams = mapOf(ParameterName.CATEGORY_NAME to categoryName)
             )
         )
     }
