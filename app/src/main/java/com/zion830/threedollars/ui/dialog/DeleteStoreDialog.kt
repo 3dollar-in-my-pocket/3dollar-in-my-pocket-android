@@ -67,16 +67,10 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
 
     private fun initButton() {
         binding.ibClose.onSingleClick {
-            EventTracker.logEvent(Constants.DELETE_POPUP_CLOSE_BTN_CLICKED)
             dismiss()
         }
         binding.btnFinish.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "report_store")
-                putString("store_id", viewModel.userStoreDetailModel.value?.store?.storeId.toString())
-                putString("value", deleteType.key)
-            }
-            EventTracker.logEvent(CLICK_REPORT, bundle)
+            viewModel.sendClickReportStore(deleteType.key)
             viewModel.deleteStore(deleteType)
             dismiss()
             activity?.finish()
