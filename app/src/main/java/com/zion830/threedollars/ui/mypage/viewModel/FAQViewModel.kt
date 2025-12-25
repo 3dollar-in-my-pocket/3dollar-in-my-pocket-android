@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
@@ -16,6 +17,8 @@ import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FAQViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.FAQ
 
     val faqTags: LiveData<List<FAQCategory>> = liveData(Dispatchers.IO + coroutineExceptionHandler) {
         val result = userDataSource.getFAQCategory()
