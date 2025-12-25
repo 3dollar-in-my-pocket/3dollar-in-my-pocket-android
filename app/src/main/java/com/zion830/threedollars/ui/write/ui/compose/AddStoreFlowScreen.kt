@@ -213,7 +213,7 @@ fun AddStoreFlowScreen(
                             AddStoreRoute.MENU_CATEGORY -> {
                                 AddStoreBottomBar(
                                     buttonText = buttonText,
-                                    enabled = true,
+                                    enabled = state.selectCategoryList.isNotEmpty(),
                                     onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
                                 )
                             }
