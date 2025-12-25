@@ -15,11 +15,6 @@ import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.CLICK_EDIT_REVIEW
-import com.threedollar.common.utils.Constants.CLICK_REPORT
-import com.threedollar.common.utils.Constants.CLICK_SORT
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
@@ -43,14 +38,11 @@ class StoreReviewDetailActivity :
         MoreReviewAdapter(
             object : OnItemClickListener<ReviewContentModel> {
                 override fun onClick(item: ReviewContentModel) {
-                    val bundle = Bundle().apply {
-                        putString("screen", "review_list")
-                        putString("review_id", item.review.reviewId.toString())
-                    }
-                    EventTracker.logEvent(if (item.review.isOwner) CLICK_EDIT_REVIEW else CLICK_REPORT, bundle)
                     if (item.review.isOwner) {
+                        viewModel.sendClickDeleteReviewFromList()
                         AddReviewDialog.getInstance(item, storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
                     } else {
+                        viewModel.sendClickReportReviewFromList()
                         if (item.reviewReport.reportedByMe) {
                             showAlreadyReportDialog()
                         } else {
@@ -94,10 +86,7 @@ class StoreReviewDetailActivity :
         }
 
         binding.reviewWriteTextView.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "review_list")
-            }
-            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
+            viewModel.sendClickWriteReviewFromList()
             AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
     }
@@ -122,11 +111,7 @@ class StoreReviewDetailActivity :
                         ReviewSortType.LOWEST_RATING
                     }
                 }
-                val bundle = Bundle().apply {
-                    putString("screen", "review_list")
-                    putString("type", reviewSortType.name)
-                }
-                EventTracker.logEvent(CLICK_SORT, bundle)
+                viewModel.sendClickSortReviewList(reviewSortType.name)
                 viewModel.getReview(storeId, reviewSortType)
             }
 

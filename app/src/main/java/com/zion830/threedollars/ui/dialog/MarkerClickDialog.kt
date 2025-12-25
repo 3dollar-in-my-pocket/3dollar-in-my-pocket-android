@@ -17,9 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
-import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import com.zion830.threedollars.ui.map.viewModel.MarkerClickViewModel
@@ -51,11 +49,7 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
 
         binding.downloadTextView.onSingleClick {
             viewModel.popupsResponse.value?.let { advertisementModel ->
-                val bundle = Bundle().apply {
-                    putString("screen", "marker_popup")
-                    putString("advertisement_id", advertisementModel.advertisementId.toString())
-                }
-                EventTracker.logEvent(Constants.CLICK_BOTTOM_BUTTON, bundle)
+                viewModel.sendClickBottomButton(advertisementModel.advertisementId.toString())
                 if (advertisementModel.link.url.isNotNullOrEmpty()) {
                     if (advertisementModel.link.type == "APP_SCHEME") {
                         startActivity(

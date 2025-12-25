@@ -381,6 +381,59 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         )
     }
 
+    // GA Events - Review List
+    fun sendClickSortReviewList(sortType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SORT,
+                additionalParams = mapOf(ParameterName.VALUE to sortType)
+            )
+        )
+    }
+
+    fun sendClickWriteReviewFromList() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
+    }
+
+    fun sendClickReportReviewFromList() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT
+            )
+        )
+    }
+
+    fun sendClickLikeReviewFromList(isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
+            )
+        )
+    }
+
+    fun sendClickDeleteReviewFromList() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.DELETE_REVIEW
+            )
+        )
+    }
+
     override fun handleError(t: Throwable) {
         super.handleError(t)
         _msgTextId.postValue(CommonR.string.connection_failed)
