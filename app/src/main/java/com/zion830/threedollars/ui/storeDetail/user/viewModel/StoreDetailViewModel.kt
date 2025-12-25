@@ -434,6 +434,17 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         )
     }
 
+    // GA Events - Edit Store Info
+    fun sendClickEditStoreInfo() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.EDIT_STORE_INFO,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.EDIT
+            )
+        )
+    }
+
     override fun handleError(t: Throwable) {
         super.handleError(t)
         _msgTextId.postValue(CommonR.string.connection_failed)

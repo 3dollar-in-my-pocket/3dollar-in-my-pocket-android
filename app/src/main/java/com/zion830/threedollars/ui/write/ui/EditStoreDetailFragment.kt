@@ -22,8 +22,6 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.replaceFragment
-import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
 import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
@@ -246,6 +244,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
 
     private fun initButton() {
         binding.editAddressTextView.setOnClickListener {
+            addStoreViewModel.sendClickLocation()
             requireActivity().supportFragmentManager.replaceFragment(
                 R.id.container,
                 EditAddressFragment(),
@@ -268,10 +267,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 showToast(CommonR.string.store_name_empty)
                 return@setOnClickListener
             }
-            val bundle = Bundle().apply {
-                putString("screen", "write_address_detail")
-            }
-            EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
+            addStoreViewModel.sendClickOk()
             addStoreViewModel.editStore(
                 UserStoreModelRequest(
                     appearanceDays = getAppearanceDays(),

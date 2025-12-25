@@ -274,6 +274,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
         binding.editStoreInfoButton.onSingleClick {
+            viewModel.sendClickEditStoreInfo()
             supportFragmentManager.addNewFragment(
                 R.id.container,
                 EditStoreDetailFragment(),

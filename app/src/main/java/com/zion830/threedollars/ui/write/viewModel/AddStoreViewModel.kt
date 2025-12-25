@@ -11,6 +11,11 @@ import com.home.domain.repository.HomeRepository
 import com.home.domain.request.UserStoreModelRequest
 import com.home.presentation.data.HomeSortType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.MenuType
@@ -30,6 +35,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepository, private val repository: StoreDataSource) :
     BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.EDIT_STORE
 
 
     private val _selectedLocation: MutableStateFlow<LatLng?> = MutableStateFlow(null)
@@ -155,5 +162,46 @@ class AddStoreViewModel @Inject constructor(private val homeRepository: HomeRepo
 
     fun setSelectCategoryModelList(selectCategoryModelList: List<SelectCategoryModel>) {
         _selectCategoryList.value = selectCategoryModelList
+    }
+
+    // GA Events - Edit Store
+    fun sendClickLocation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LOCATION
+            )
+        )
+    }
+
+    fun sendClickInfo() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.INFO
+            )
+        )
+    }
+
+    fun sendClickMenu() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.MENU
+            )
+        )
+    }
+
+    fun sendClickOk() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.OK
+            )
+        )
     }
 }
