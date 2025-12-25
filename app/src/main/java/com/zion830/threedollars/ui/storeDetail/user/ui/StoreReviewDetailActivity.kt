@@ -13,6 +13,9 @@ import androidx.paging.PagingData
 import com.google.android.material.tabs.TabLayout
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.ReviewSortType
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
@@ -75,8 +78,8 @@ class StoreReviewDetailActivity :
         initFlow()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreReviewDetailActivity", screenName = "review_list")
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.REVIEW_LIST, this::class.java.simpleName)
     }
 
     private fun initButton() {

@@ -6,8 +6,8 @@ enum class ScreenName(val value: String) {
     SPLASH("splash"),
 
     // Authentication
-    SIGN_IN("signIn"),
-    SIGN_UP("signUp"),
+    SIGN_IN("sign_in"),
+    SIGN_UP("sign_up"),
     NICKNAME_INIT("nickname_init"),
     ACCOUNT_INFO("accountInfo"),
 
@@ -38,13 +38,13 @@ enum class ScreenName(val value: String) {
     STORE_EDIT("store_edit"),
 
     // Store Details
-    STORE_DETAIL("storeDetail"),
+    STORE_DETAIL("store_detail"),
     UPLOAD_PHOTO("uploadPhoto"),
-    REVIEW_LIST("reviewList"),
-    REPORT_STORE("reportStore"),
-    REVIEW_BOTTOM_SHEET("reviewBottomSheet"),
+    REVIEW_LIST("review_list"),
+    REPORT_STORE("report_store"),
+    REVIEW_BOTTOM_SHEET("review_bottom_sheet"),
     VISIT_STORE("visitStore"),
-    BOSS_STORE_DETAIL("bossStoreDetail"),
+    BOSS_STORE_DETAIL("boss_store_detail"),
     BOSS_STORE_REVIEW("bossStoreReview"),
     BOSS_STORE_REVIEW_WRITE("bossStoreReviewWrite"),
     BOSS_STORE_PHOTO("bossStorePhoto"),
@@ -74,7 +74,7 @@ enum class ScreenName(val value: String) {
 
     // Settings
     SETTING("setting"),
-    EDIT_NICKNAME("editNickname"),
+    EDIT_NICKNAME("edit_nickname"),
     QNA("qna"),
     FAQ("faq"),
     TEAM_INFO("teamInfo"),
@@ -83,7 +83,7 @@ enum class ScreenName(val value: String) {
     FEED_LIST("feedList"),
 
     // Dialogs & Popups
-    MARKER_POPUP("markerPopup"),
+    MARKER_POPUP("marker_popup"),
     ADDRESS_POPUP("address_popup"),
     ADDRESS("address");
 
