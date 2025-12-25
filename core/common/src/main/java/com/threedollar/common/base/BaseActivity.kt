@@ -59,7 +59,6 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         if (viewModel.screenName != ScreenName.EMPTY) {
             sendScreenView(viewModel.screenName)
         }
-        initFirebaseAnalytics()
     }
 
     abstract fun initView()
@@ -106,7 +105,7 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         }
     }
 
-    fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
+    open fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
         LogManager.sendPageView(screen, this::class.java.simpleName, extraParameters)
     }
 

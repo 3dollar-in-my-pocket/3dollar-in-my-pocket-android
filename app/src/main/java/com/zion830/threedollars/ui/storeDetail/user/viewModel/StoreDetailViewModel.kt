@@ -370,17 +370,6 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         )
     }
 
-    fun sendClickLikeReview(isLiked: Boolean) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.LIKE,
-                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
-            )
-        )
-    }
-
     // GA Events - Review List
     fun sendClickSortReviewList(sortType: String) {
         LogManager.sendEvent(
@@ -409,17 +398,6 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
                 screen = ScreenName.REVIEW_LIST,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.REPORT
-            )
-        )
-    }
-
-    fun sendClickLikeReviewFromList(isLiked: Boolean) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = ScreenName.REVIEW_LIST,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.LIKE,
-                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
             )
         )
     }
