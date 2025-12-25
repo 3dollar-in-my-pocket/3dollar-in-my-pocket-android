@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.my.presentation.page.data.TeamRow
@@ -248,9 +250,16 @@ private fun MemberNameGrid(
                     Text(
                         text = it,
                         fontSize = dpToSp(dp = 16),
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = dpToSp(6),
+                            maxFontSize = dpToSp(16)
+                        ),
+                        maxLines = 1,
                         color = Color.White,
                         fontFamily = PretendardFontFamily,
                         fontWeight = FontWeight.W700,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -275,9 +284,14 @@ private fun AdButton(
             Text(
                 text = "커피 ☕️ 사주기",
                 fontSize = dpToSp(dp = 10),
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = dpToSp(6),
+                    maxFontSize = dpToSp(10)
+                ),
                 color = Pink,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W400,
+                maxLines = 1
             )
             Spacer(
                 modifier = Modifier.height(4.dp)
@@ -310,6 +324,16 @@ private fun AdButton(
 @Preview
 @Composable
 private fun PreviewMyPageTeamScreen() {
+    MyPageTeamScreen(
+        clickBack = {},
+        clickAd = {},
+        clickTeam = {}
+    )
+}
+
+@Preview(widthDp = 320)
+@Composable
+private fun PreviewMyPageTeamSmallWidthScreen() {
     MyPageTeamScreen(
         clickBack = {},
         clickAd = {},
