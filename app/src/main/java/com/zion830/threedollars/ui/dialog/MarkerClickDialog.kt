@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.zion830.threedollars.DynamicLinkActivity
@@ -31,14 +32,12 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarkerClickBinding =
         DialogMarkerClickBinding.inflate(inflater, container, false)
 
+    override val screenName: ScreenName = ScreenName.MARKER_POPUP
+
     private val viewModel: MarkerClickViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext(), R.style.TransparentDialog)
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MarkerClickDialog", screenName = "marker_popup")
     }
 
     override fun initViews() {

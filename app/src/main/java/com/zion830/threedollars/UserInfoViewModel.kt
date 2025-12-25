@@ -30,7 +30,7 @@ class UserInfoViewModel @Inject constructor(
     private val loginRepository: LoginRepository
 ) : BaseViewModel() {
 
-    override val screenName: ScreenName = ScreenName.NICKNAME_CHANGE
+    override val screenName: ScreenName = ScreenName.EDIT_NICKNAME
 
     private val _userInfo: MutableLiveData<UserInfoModel> = MutableLiveData()
 

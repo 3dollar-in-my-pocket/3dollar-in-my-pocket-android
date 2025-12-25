@@ -74,7 +74,7 @@ enum class ScreenName(val value: String) {
 
     // Settings
     SETTING("setting"),
-    NICKNAME_CHANGE("editNickname"),
+    EDIT_NICKNAME("editNickname"),
     QNA("qna"),
     FAQ("faq"),
     TEAM_INFO("teamInfo"),

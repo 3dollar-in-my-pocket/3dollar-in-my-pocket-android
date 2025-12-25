@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAllDeleteFavoriteBinding
@@ -16,9 +17,7 @@ class AllDeleteFavoriteDialog : BaseDialogFragment<DialogAllDeleteFavoriteBindin
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAllDeleteFavoriteBinding =
         DialogAllDeleteFavoriteBinding.inflate(inflater, container, false)
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "AllDeleteFavoriteDialog", screenName = null)
-    }
+    override val screenName: ScreenName = ScreenName.EMPTY
 
     private var listener: DialogListener? = null
 

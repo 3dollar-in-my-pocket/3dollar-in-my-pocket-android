@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.threedollar.presentation.R
 import com.threedollar.presentation.databinding.DialogCreatePollBinding
@@ -17,13 +18,11 @@ import zion830.com.common.base.onSingleClick
 
 class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
 
+    override val screenName: ScreenName = ScreenName.CREATE_POLL
+
     private var createClick: (String, String, String) -> Unit = { _, _, _ -> }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogCreatePollBinding =
         DialogCreatePollBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "CreatePollDialog", screenName = "create_poll")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

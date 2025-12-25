@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
@@ -19,6 +20,8 @@ import com.threedollar.common.R as CommonR
 @AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
 
+    override val screenName: ScreenName = ScreenName.EMPTY
+
     private var check1 = false
     private var check2 = false
 
@@ -30,10 +33,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
 
     fun setDialogListener(listener: DialogListener) {
         this.listener = listener
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MarketingDialog",screenName = null)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

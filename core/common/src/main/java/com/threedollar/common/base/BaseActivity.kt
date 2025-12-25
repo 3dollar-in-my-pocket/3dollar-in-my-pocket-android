@@ -57,7 +57,7 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         super.onResume()
 
         if (viewModel.screenName != ScreenName.EMPTY) {
-            sendScreenView(viewModel.screenName)
+            sendPageView(viewModel.screenName)
         }
     }
 
@@ -105,7 +105,7 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         }
     }
 
-    open fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
+    open fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
         LogManager.sendPageView(screen, this::class.java.simpleName, extraParameters)
     }
 

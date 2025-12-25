@@ -189,7 +189,7 @@ class BossStoreDetailActivity :
         binding.admob.loadAd(adRequest)
     }
 
-    override fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
         LogManager.sendPageView(
             viewModel.screenName,
             this::class.simpleName.toString(),
