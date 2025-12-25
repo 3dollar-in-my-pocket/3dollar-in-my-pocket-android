@@ -12,6 +12,12 @@ import com.home.presentation.data.HomeStoreType
 import com.home.presentation.data.HomeUIState
 import com.home.presentation.data.toArray
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.utils.AdvertisementsPosition
@@ -26,6 +32,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.HOME
 
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
     val userInfo: StateFlow<UserModel> get() = _userInfo
@@ -184,5 +192,92 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private fun updateCarouselItemList(itemList: List<AdAndStoreItem>) {
         _uiState.update { it.copy(carouselItemList = itemList) }
+    }
+
+    // GA Events - Home
+    fun sendClickStore(storeId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(ParameterName.STORE_ID to storeId)
+            )
+        )
+    }
+
+    fun sendClickCurrentLocation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CURRENT_LOCATION
+            )
+        )
+    }
+
+    fun sendClickAddress() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ADDRESS
+            )
+        )
+    }
+
+    fun sendClickCategoryFilter(categoryName: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CATEGORY_FILTER,
+                additionalParams = mapOf(ParameterName.CATEGORY_NAME to categoryName)
+            )
+        )
+    }
+
+    fun sendClickBossFilter(value: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.BOSS_FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to value.toString())
+            )
+        )
+    }
+
+    fun sendClickSorting(sortType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SORTING,
+                additionalParams = mapOf(ParameterName.VALUE to sortType)
+            )
+        )
+    }
+
+    fun sendClickRecentActivityFilter(value: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to value.toString())
+            )
+        )
+    }
+
+    fun sendClickOnlyVisit(value: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ONLY_VISIT,
+                additionalParams = mapOf(ParameterName.VALUE to value.toString())
+            )
+        )
     }
 }

@@ -38,19 +38,8 @@ import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.threedollar.common.utils.Constants.CLICK_ADDRESS_FIELD
-import com.threedollar.common.utils.Constants.CLICK_AD_CARD
-import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
-import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
-import com.threedollar.common.utils.Constants.CLICK_MARKER
-import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
-import com.threedollar.common.utils.Constants.CLICK_SORTING
-import com.threedollar.common.utils.Constants.CLICK_STORE
-import com.threedollar.common.utils.Constants.CLICK_VISIT
-import com.threedollar.common.utils.Constants.HOME_REOPEN
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -186,12 +175,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initAdapter() {
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
-                val bundle = Bundle().apply {
-                    putString("screen", "home")
-                    putString("store_id", item.storeModel.storeId)
-                    putString("type", item.storeModel.storeType)
-                }
-                EventTracker.logEvent(CLICK_STORE, bundle)
+                viewModel.sendClickStore(item.storeModel.storeId)
                 if (item.storeModel.storeType == BOSS_STORE) {
                     val intent =
                         BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
@@ -264,10 +248,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initButton() {
         binding.layoutAddress.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-            }
-            EventTracker.logEvent(CLICK_ADDRESS_FIELD, bundle)
+            viewModel.sendClickAddress()
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 SearchAddressFragment.newInstance(),
@@ -276,10 +257,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.allMenuTextView.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-            }
-            EventTracker.logEvent(CLICK_CATEGORY_FILTER, bundle)
+            viewModel.sendClickCategoryFilter("ALL")
             showSelectCategoryDialog()
         }
 
@@ -291,12 +269,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             } else {
                 listOf()
             }
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-            }
-            EventTracker.logEvent(CLICK_RECENT_ACTIVITY_FILTER, bundle)
-
+            viewModel.sendClickRecentActivityFilter(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
             viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
         }
         binding.filterTextView.onSingleClick {
@@ -305,21 +278,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             } else {
                 HomeSortType.DISTANCE_ASC
             }
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putString("type", homeSortType.name)
-            }
-            EventTracker.logEvent(CLICK_SORTING, bundle)
+            viewModel.sendClickSorting(homeSortType.name)
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.onSingleClick {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
-            }
-            EventTracker.logEvent(CLICK_BOSS_FILTER, bundle)
+            viewModel.sendClickBossFilter(homeStoreType == HomeStoreType.BOSS_STORE)
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
