@@ -120,22 +120,30 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     fun isNameUpdated() = getUserInfo()
 
     // GA Events - MyPage
-    fun sendClickVisitedStore() {
+    fun sendClickVisitedStore(storeId: String, storeType: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.VISITED_STORE
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.VISITED_STORE,
+                additionalParams = mapOf(
+                    com.threedollar.common.analytics.ParameterName.STORE_ID to storeId,
+                    com.threedollar.common.analytics.ParameterName.STORE_TYPE to storeType
+                )
             )
         )
     }
 
-    fun sendClickFavoritedStore() {
+    fun sendClickFavoritedStore(storeId: String, storeType: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.FAVORITED_STORE
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.FAVORITED_STORE,
+                additionalParams = mapOf(
+                    com.threedollar.common.analytics.ParameterName.STORE_ID to storeId,
+                    com.threedollar.common.analytics.ParameterName.STORE_TYPE to storeType
+                )
             )
         )
     }
@@ -150,12 +158,12 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         )
     }
 
-    fun sendClickReview() {
+    fun sendClickPoll() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.REVIEW
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.POLL
             )
         )
     }
