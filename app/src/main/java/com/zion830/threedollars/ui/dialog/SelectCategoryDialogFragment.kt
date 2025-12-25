@@ -16,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.home.domain.data.store.CategoryModel
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants
@@ -38,6 +39,7 @@ class SelectCategoryDialogFragment :
     BaseBottomSheetDialogFragment<DialogBottomSelectCategoryBinding>() {
 
     private val viewModel: HomeViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.CATEGORY_FILTER_SCREEN
 
     private val popupViewModel: PopupViewModel by viewModels()
 
@@ -98,11 +100,6 @@ class SelectCategoryDialogFragment :
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomSelectCategoryBinding =
         DialogBottomSelectCategoryBinding.inflate(inflater, container, false)
-
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "SelectCategoryDialogFragment", screenName = "category_filter")
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

@@ -70,7 +70,9 @@ enum class LogObjectId(val value: String) {
     MEDAL("medal"),
     VISITED_STORE("visited_store"),
     FAVORITED_STORE("favorited_store"),
-    REVIEW("review");
+    REVIEW("review"),
+    VOTE("vote"),
+    COMMENT("comment");
 
     override fun toString(): String = value
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.home.domain.data.store.DeleteType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.utils.Constants
@@ -27,14 +28,11 @@ import zion830.com.common.base.onSingleClick
 @AndroidEntryPoint
 class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.REPORT_STORE
 
     private lateinit var deleteType: DeleteType
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogDeleteBinding =
         DialogDeleteBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "DeleteStoreDialog", screenName = "report_store")
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

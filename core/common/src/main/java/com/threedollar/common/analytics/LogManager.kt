@@ -87,9 +87,9 @@ object LogManager : LogManagerProtocol {
         }
 
         Log.d(TAG, """🧡 [LogManager]: PageView
-=> screen: ${screen.value}
-=> type: $className
-=> parameter: $paramString""")
+            => screen: ${screen.value}
+            => type: $className
+            => parameter: $paramString""")
     }
 
     private fun logDebugCustomEvent(event: LogEvent) {
@@ -104,7 +104,8 @@ object LogManager : LogManagerProtocol {
         }
 
         Log.d(TAG, """🧡 [LogManager]: CustomEvent
-=> name: ${event.name.value}
-=> parameter:$formattedParams""")
+            => screen: ${event.screen.value}
+            => name: ${event.name.value}
+            => parameter:$formattedParams""")
     }
 }

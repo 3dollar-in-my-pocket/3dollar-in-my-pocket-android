@@ -40,6 +40,7 @@ import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
+import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -193,7 +194,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     putString("screen", "home")
                     putString("advertisement_id", item.advertisementId.toString())
                 }
-                EventTracker.logEvent(CLICK_AD_CARD, bundle)
+//                EventTracker.logEvent(CLICK_AD_CARD, bundle)
                 if (item.link.type == "APP_SCHEME") {
                     startActivity(
                         Intent(requireContext(), DynamicLinkActivity::class.java).apply {
@@ -209,7 +210,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 putString("screen", "home")
                 putString("store_id", item.storeModel.storeId)
             }
-            EventTracker.logEvent(CLICK_VISIT, bundle)
+//            EventTracker.logEvent(CLICK_VISIT, bundle)
             val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
@@ -402,7 +403,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     putString("type", "BOSS_STORE")
                 }
             }
-            EventTracker.logEvent(CLICK_MARKER, bundle)
+//            EventTracker.logEvent(CLICK_MARKER, bundle)
             naverMapFragment.updateMarkerIcon(
                 drawableRes = R.drawable.ic_store_off,
                 position = adapter.focusedIndex,
@@ -627,7 +628,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             val bundle = Bundle().apply {
                 putString("screen", "home")
             }
-            EventTracker.logEvent(HOME_REOPEN, bundle)
+//            EventTracker.logEvent(HOME_REOPEN, bundle)
         }
         setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
         isFirstLoad = false

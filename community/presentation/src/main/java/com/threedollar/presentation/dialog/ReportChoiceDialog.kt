@@ -7,11 +7,13 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.domain.model.ReportReason
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
 import zion830.com.common.base.onSingleClick
 
 class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBinding>() {
+    override val screenName: ScreenName = ScreenName.EMPTY
     private val reportList = mutableListOf<ReportReason>()
     private var reportCallBack: (ReportReason, String?) -> Unit = { _, _ -> }
     private lateinit var choiceReasonModel: ReportReason
@@ -49,12 +51,11 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     }
 
     override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(
-            className = "ReportChoiceDialog", screenName = when (type) {
-                Type.POLL -> "report_poll"
-                Type.COMMENT -> "report_review"
-            }
-        )
+        val screen = when (type) {
+            Type.POLL -> ScreenName.REPORT_POLL
+            Type.COMMENT -> ScreenName.REPORT_REVIEW
+        }
+        sendScreenView(screen)
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
