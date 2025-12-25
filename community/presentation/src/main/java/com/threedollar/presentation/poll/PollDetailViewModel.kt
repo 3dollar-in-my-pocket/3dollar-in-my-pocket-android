@@ -2,6 +2,12 @@ package com.threedollar.presentation.poll
 
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CommentId
@@ -19,6 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PollDetailViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.POLL_DETAIL
 
     private var pollId: String = ""
     private val _report = MutableSharedFlow<BaseResponse<String>>()
@@ -136,6 +144,41 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
 
     fun setPollId(id: String) {
         pollId = id
+    }
+
+    // GA Events - Poll Detail
+    fun sendClickVote(optionId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VOTE,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.OPTION_ID to optionId
+                )
+            )
+        )
+    }
+
+    fun sendClickReport() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT
+            )
+        )
+    }
+
+    fun sendClickComment() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.COMMENT
+            )
+        )
     }
 
 }

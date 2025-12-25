@@ -2,6 +2,12 @@ package com.threedollar.presentation
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.data.AdvertisementModelV2
@@ -24,6 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.COMMUNITY
 
     private val _categoryList: MutableSharedFlow<List<Category>> = MutableStateFlow(listOf())
     val categoryList: SharedFlow<List<Category>> = _categoryList.asSharedFlow()
@@ -129,6 +137,43 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
                 } else _toast.emit(it.message.orEmpty())
             }
         }
+    }
+
+    // GA Events - Community
+    fun sendClickCategory(categoryName: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CATEGORY,
+                additionalParams = mapOf(ParameterName.CATEGORY_NAME to categoryName)
+            )
+        )
+    }
+
+    fun sendClickPoll(pollId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.POLL,
+                additionalParams = mapOf(ParameterName.POLL_ID to pollId)
+            )
+        )
+    }
+
+    fun sendClickVote(pollId: String, optionId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VOTE,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.OPTION_ID to optionId
+                )
+            )
+        )
     }
 }
 

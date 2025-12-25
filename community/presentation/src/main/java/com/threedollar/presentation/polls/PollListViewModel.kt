@@ -1,6 +1,12 @@
 package com.threedollar.presentation.polls
 
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.data.CreatePolicy
 import com.threedollar.domain.data.PollId
@@ -16,6 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PollListViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.POLL_LIST
 
     private val _pollItems: MutableSharedFlow<PollList> = MutableSharedFlow()
     val pollItems: SharedFlow<PollList> = _pollItems.asSharedFlow()
@@ -68,6 +76,42 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
                 else _toast.emit(it.message.orEmpty())
             }
         }
+    }
+
+    // GA Events - Poll List
+    fun sendClickCreatePoll() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CREATE_POLL
+            )
+        )
+    }
+
+    fun sendClickPoll(pollId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.POLL,
+                additionalParams = mapOf(ParameterName.POLL_ID to pollId)
+            )
+        )
+    }
+
+    fun sendClickVote(pollId: String, optionId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VOTE,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.OPTION_ID to optionId
+                )
+            )
+        )
     }
 
 }
