@@ -8,6 +8,7 @@ import com.my.domain.model.UserInfoModel
 import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
 import com.login.domain.repository.LoginRepository
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
@@ -28,6 +29,8 @@ class UserInfoViewModel @Inject constructor(
     private val myRepository: MyRepository,
     private val loginRepository: LoginRepository
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.NICKNAME_CHANGE
 
     private val _userInfo: MutableLiveData<UserInfoModel> = MutableLiveData()
 
