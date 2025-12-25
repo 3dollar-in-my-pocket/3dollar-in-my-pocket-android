@@ -69,7 +69,6 @@ fun MenuDetailScreen(
     onIntent: (AddStoreContract.Intent) -> Unit,
     onShowCategoryEditSheet: () -> Unit,
     modifier: Modifier = Modifier,
-    isCompletionMode: Boolean = false
 ) {
     LaunchedEffect(state.selectCategoryList, state.selectedCategoryId) {
         if (state.selectCategoryList.isNotEmpty() && state.selectedCategoryId == null) {
@@ -90,7 +89,6 @@ fun MenuDetailScreen(
             onIntent(AddStoreContract.Intent.UpdateMenuInCategory(categoryId, menuIndex, name, price, count))
         },
         modifier = modifier,
-        isCompletionMode = isCompletionMode
     )
 }
 
@@ -105,7 +103,6 @@ private fun MenuDetailScreenContent(
     onRemoveMenu: (String, Int) -> Unit,
     onUpdateMenu: (String, Int, String, String, Int?) -> Unit,
     modifier: Modifier = Modifier,
-    isCompletionMode: Boolean = false
 ) {
     Column(
         modifier = modifier

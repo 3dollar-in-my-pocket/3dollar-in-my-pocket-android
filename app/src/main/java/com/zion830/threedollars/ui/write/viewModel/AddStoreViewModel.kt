@@ -109,7 +109,9 @@ class AddStoreViewModel @Inject constructor(
             val newList: List<SelectCategoryModel>
             var newSelectedCategoryId = currentState.selectedCategoryId
 
-            if (!categoryModel.isSelected) {
+            val existsInList = list.any { it.menuType.categoryId == categoryModel.categoryId }
+
+            if (existsInList) {
                 val categoryToRemove = list.find { it.menuType.categoryId == categoryModel.categoryId }
                 categoryToRemove?.menuDetail?.let { menuList ->
                     if (menuList.isNotEmpty()) {
@@ -118,11 +120,11 @@ class AddStoreViewModel @Inject constructor(
                 }
 
                 if (currentState.selectedCategoryId == categoryModel.categoryId) {
-                    val remaining = list.filter { it.menuType.name != categoryModel.name }
+                    val remaining = list.filter { it.menuType.categoryId != categoryModel.categoryId }
                     newSelectedCategoryId = remaining.firstOrNull()?.menuType?.categoryId
                 }
 
-                newList = list.filter { it.menuType.name != categoryModel.name }
+                newList = list.filter { it.menuType.categoryId != categoryModel.categoryId }
             } else {
                 if (list.size < 10) {
                     val savedMenus = _removedCategoriesData[categoryModel.categoryId]
@@ -154,7 +156,9 @@ class AddStoreViewModel @Inject constructor(
     private fun removeCategory(categoryModel: CategoryModel) {
         _state.update { currentState ->
             currentState.copy(
-                selectCategoryList = currentState.selectCategoryList.filter { it.menuType.name != categoryModel.name }
+                selectCategoryList = currentState.selectCategoryList.filter {
+                    it.menuType.categoryId != categoryModel.categoryId
+                }
             )
         }
     }

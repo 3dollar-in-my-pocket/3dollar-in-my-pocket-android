@@ -333,7 +333,6 @@ fun AddStoreFlowScreen(
                                 currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
                                 coroutineScope.launch { sheetState.show() }
                             },
-                            isCompletionMode = true
                         )
                     }
                     composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
