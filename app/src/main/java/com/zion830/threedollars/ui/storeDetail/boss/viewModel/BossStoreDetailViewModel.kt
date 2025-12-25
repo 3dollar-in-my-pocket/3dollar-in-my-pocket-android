@@ -355,6 +355,14 @@ class BossStoreDetailViewModel @Inject constructor(
         )
     }
 
+    fun sendClickSNSLog() {
+        LogManager.sendEvent(ClickEvent(
+            screen = screenName,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.SNS
+        ))
+    }
+
     fun sendClickZoomMap() {
         LogManager.sendEvent(
             ClickEvent(
@@ -375,22 +383,12 @@ class BossStoreDetailViewModel @Inject constructor(
         )
     }
 
-    fun sendClickVisit() {
+    fun sendClickCopyAccountLog() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.VISIT
-            )
-        )
-    }
-
-    fun sendClickReportButton() {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.REPORT
+                objectId = LogObjectId.COPY_ACCOUNT
             )
         )
     }

@@ -31,17 +31,16 @@ import com.home.domain.data.store.ImageModel
 import com.home.domain.data.store.ReviewContentModel
 import com.home.domain.data.store.StatusType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
-import com.threedollar.common.utils.Constants.CLICK_NUMBER
-import com.threedollar.common.utils.Constants.CLICK_SNS
 import com.threedollar.common.utils.getDistanceText
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
@@ -190,8 +189,15 @@ class BossStoreDetailActivity :
         binding.admob.loadAd(adRequest)
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossStoreDetailActivity", screenName = "boss_store_detail")
+    override fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(
+            viewModel.screenName,
+            this::class.simpleName.toString(),
+            mapOf(
+                ParameterName.STORE_ID to storeId,
+                ParameterName.STORE_TYPE to Constants.BOSS_STORE
+            )
+        )
     }
 
     private fun initAdapter() {
@@ -264,31 +270,20 @@ class BossStoreDetailActivity :
         }
 
         binding.snsButton.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "boss_store_detail")
-                putString("store_id", storeId)
-            }
+            viewModel.sendClickSNSLog()
             viewModel.bossStoreDetailModel.value.store.snsUrl?.let {
-                EventTracker.logEvent(CLICK_SNS, bundle)
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
             }
         }
         binding.snsTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
-                val bundle = Bundle().apply {
-                    putString("screen", "boss_store_detail")
-                    putString("store_id", storeId)
-                }
-                EventTracker.logEvent(CLICK_SNS, bundle)
+                viewModel.sendClickSNSLog()
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
         }
         binding.phoneTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.contactsNumbers.isNotEmpty()) {
                 Bundle().apply {
-                    putString("screen", "boss_store_detail")
-                    putString("store_id", storeId)
-                    EventTracker.logEvent(CLICK_NUMBER, this)
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
@@ -452,6 +447,7 @@ class BossStoreDetailActivity :
     private fun initAccount(bossStoreDetailModel: BossStoreDetailModel) {
         val accountNumberModel = bossStoreDetailModel.store.accountNumbers?.firstOrNull()
         if (accountNumberModel != null) {
+            viewModel.sendClickCopyAccountLog()
             binding.accountCardView.isVisible = true
             binding.accountNumberTextView.text =
                 "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
