@@ -103,9 +103,9 @@ class MyStoreFragment :
                     adapter?.loadStateFlow?.collectLatest { loadState ->
                         when (loadState.refresh) {
                             is LoadState.NotLoading, is LoadState.Error -> {
-                                binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                                binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
-                                binding.tvStoreCount.isVisible = adapter?.itemCount ?: 0 > 0
+                                val isEmpty = (adapter?.itemCount ?: 0) <= 0
+                                binding.emptyStateView.isVisible = isEmpty
+                                binding.tvStoreCount.isVisible = !isEmpty
                             }
 
                             else -> {}
