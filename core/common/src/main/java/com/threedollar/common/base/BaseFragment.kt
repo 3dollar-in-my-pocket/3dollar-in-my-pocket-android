@@ -1,7 +1,6 @@
 package com.threedollar.common.base
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +35,7 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
     override fun onResume() {
         super.onResume()
         if (viewModel.screenName != ScreenName.EMPTY) {
-            sendScreenView(viewModel.screenName)
+            sendPageView(viewModel.screenName)
         }
     }
 
@@ -53,7 +52,7 @@ abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : Fragment() {
         }
     }
 
-    fun sendScreenView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
+    open fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
         LogManager.sendPageView(screen, this::class.java.simpleName, extraParameters)
     }
 

@@ -13,7 +13,7 @@ enum class ScreenName(val value: String) {
 
     // Home
     HOME("home"),
-    HOME_LIST("homeList"),
+    HOME_LIST("home_list"),
     HOME_MAP("home_map"),
     CATEGORY_FILTER("category_filter"),
     MAIN_AD_BANNER("mainAdBanner"),

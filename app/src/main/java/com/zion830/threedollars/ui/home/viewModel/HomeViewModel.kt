@@ -342,4 +342,70 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
         ))
     }
+
+    // GA Events - Home List
+    fun sendClickStoreInList(storeId: String, storeType: String) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.CARD,
+            objectId = LogObjectId.STORE,
+            additionalParams = mapOf(
+                ParameterName.STORE_ID to storeId,
+                ParameterName.STORE_TYPE to storeType
+            )
+        ))
+    }
+
+    fun sendClickCategoryFilterInList() {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.CATEGORY_FILTER
+        ))
+    }
+
+    fun sendClickSortingInList(value: String) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.SORTING,
+            additionalParams = mapOf(ParameterName.VALUE to value)
+        ))
+    }
+
+    fun sendClickAdvertisementInList(advertisementId: String) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BANNER,
+            objectId = LogObjectId.ADVERTISEMENT,
+            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
+        ))
+    }
+
+    fun sendClickBossFilterInList(value: Boolean) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.BOSS_FILTER,
+            additionalParams = mapOf(ParameterName.VALUE to value.toString())
+        ))
+    }
+
+    fun sendClickOnlyVisitInList(value: Boolean) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.ONLY_VISIT,
+            additionalParams = mapOf(ParameterName.VALUE to value.toString())
+        ))
+    }
+
+    fun sendClickRecentActivityFilterInList(value: Boolean) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.HOME_LIST,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+            additionalParams = mapOf(ParameterName.VALUE to value.toString())
+        ))
+    }
 }
