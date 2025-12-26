@@ -287,7 +287,7 @@
     <string name="my_page_edit_name3">수정할래요</string>
     <string name="my_store">제보한 가게</string>
     <string name="my_review">내가 쓴 리뷰</string>
-    <string name="my_review_empty">아직 작성한 리뷰가 없어요!</string>
+    <string name="my_review_empty">아직 작성한 리뷰가 없어요</string>
     <string name="my_visit_history">방문 인증 내역</string>
     <string name="no_visit_history">방문 인증 내역이 없어요!</string>
     <string name="no_visit_history_msg">방문 인증으로 정확도를 높혀봐요.</string>

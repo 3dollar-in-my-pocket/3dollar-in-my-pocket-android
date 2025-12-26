@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EmptyStateView">
+        <attr name="emptyStateIcon" format="reference" />
+        <attr name="emptyStateTitle" format="reference" />
+        <attr name="emptyStateSubTitle" format="reference" />
+    </declare-styleable>
+</resources>
