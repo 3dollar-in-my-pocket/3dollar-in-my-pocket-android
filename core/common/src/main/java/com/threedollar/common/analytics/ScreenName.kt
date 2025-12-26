@@ -1,0 +1,43 @@
+package com.threedollar.common.analytics
+
+enum class ScreenName(val value: String) {
+    EMPTY("empty"),
+    SPLASH("splash"),
+    SIGN_IN("sign_in"),
+    SIGN_UP("sign_up"),
+    HOME("home"),
+    HOME_LIST("home_list"),
+    CATEGORY_FILTER("category_filter"),
+    MAIN_AD_BANNER("main_ad_banner"),
+    SEARCH_ADDRESS("search_address"),
+    EDIT_STORE("edit_store"),
+    STORE_DETAIL("store_detail"),
+    REVIEW_LIST("review_list"),
+    REPORT_STORE("report_store"),
+    REVIEW_BOTTOM_SHEET("review_bottom_sheet"),
+    VISIT_STORE("visit_store"),
+    BOSS_STORE_DETAIL("boss_store_detail"),
+    BOSS_STORE_REVIEW_WRITE("boss_store_review_write"),
+    COMMUNITY("community"),
+    POLL_DETAIL("poll_detail"),
+    POLL_LIST("poll_list"),
+    REPORT_POLL("report_poll"),
+    REPORT_REVIEW("report_review"),
+    CREATE_POLL("create_poll"),
+    MY_PAGE("my_page"),
+    REGISTERED_STORE("registered_store"),
+    VISITED_LIST("visited_list"),
+    MY_REVIEW("my_review"),
+    MY_MEDAL("my_medal"),
+    MY_BOOKMARK_LIST("my_bookmark_list"),
+    EDIT_BOOKMARK_LIST("edit_bookmark_list"),
+    BOOKMARK_LIST_VIEWER("bookmark_list_viewer"),
+    SETTING("setting"),
+    EDIT_NICKNAME("edit_nickname"),
+    QNA("qna"),
+    FAQ("faq"),
+    TEAM_INFO("team_info"),
+    MARKER_POPUP("marker_popup");
+
+    override fun toString(): String = value
+}

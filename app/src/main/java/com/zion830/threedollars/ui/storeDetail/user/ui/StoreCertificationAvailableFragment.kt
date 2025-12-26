@@ -14,9 +14,6 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.textPartTypeface
-import com.threedollar.common.utils.Constants.CLICK_VISIT_FAIL
-import com.threedollar.common.utils.Constants.CLICK_VISIT_SUCCESS
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.LayoutCertificationAvailableBinding
 import com.zion830.threedollars.ui.map.ui.StoreCertificationNaverMapFragment
@@ -43,15 +40,11 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
     }
 
     override fun initView() {
-
         initTextView()
         initImageView()
         initButton()
         initFlow()
         initMap()
-    }
-
-    override fun initFirebaseAnalytics() {
     }
 
     private fun initTextView() {
@@ -80,19 +73,11 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.layoutSuccess.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "visit_store")
-                putString("store_id", userStoreModel?.storeId.toString())
-            }
-            EventTracker.logEvent(CLICK_VISIT_SUCCESS, bundle)
+            viewModel.sendClickVisitSuccess()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, true)
         }
         binding.layoutFailed.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "visit_store")
-                putString("store_id", userStoreModel?.storeId.toString())
-            }
-            EventTracker.logEvent(CLICK_VISIT_FAIL, bundle)
+            viewModel.sendClickVisitFail()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, false)
         }
     }

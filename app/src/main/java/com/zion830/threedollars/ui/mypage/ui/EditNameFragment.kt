@@ -13,7 +13,6 @@ import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
@@ -27,15 +26,10 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentEditNameBinding =
         FragmentEditNameBinding.inflate(inflater, container, false)
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditNameFragment", screenName = null)
-    }
-
     override val viewModel: UserInfoViewModel by activityViewModels()
     val myPageViewModel: MyPageViewModel by activityViewModels()
 
     override fun initView() {
-        EventTracker.logEvent(Constants.NICKNAME_CHANGE_PAGE_BTN_CLICKED)
         initEditTextView()
         initButton()
         initObserve()
@@ -50,7 +44,6 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
             }
         }
         viewModel.isAlreadyUsed.observe(viewLifecycleOwner) {
-            EventTracker.logEvent(Constants.NICKNAME_ALREADY_EXISTED)
             binding.groupAlreadyExist.isVisible = it.isNotEmpty()
             if (it.isNotEmpty()) {
                 binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))

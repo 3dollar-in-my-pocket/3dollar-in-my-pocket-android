@@ -8,6 +8,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.threedollar.common.BuildConfig
 import com.threedollar.common.R
+import com.threedollar.common.analytics.ScreenName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 open class BaseViewModel : ViewModel() {
+    open val screenName: ScreenName = ScreenName.EMPTY
 
     protected val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading

@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home.ui
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -14,17 +13,17 @@ import com.google.android.gms.ads.AdRequest
 import com.home.domain.data.place.PlaceModel
 import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.utils.Constants
 import com.threedollar.network.data.kakao.Document
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
@@ -64,20 +63,14 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "SearchAddressFragment", screenName = null)
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.SEARCH_ADDRESS, this::class.java.simpleName)
     }
 
     private fun initAdapter() {
         searchAddressRecyclerAdapter = SearchAddressRecyclerAdapter(object : OnItemClickListener<Document> {
             override fun onClick(item: Document) {
-                val bundle = Bundle().apply {
-                    putString("screen", "search_address")
-                    putString("building_name", item.placeName)
-                    putString("address", item.addressName)
-                    putString("type", "SEARCH")
-                }
-                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+                searchViewModel.sendClickAddress("SEARCH")
 
                 val location = LatLng(item.y.toDouble(), item.x.toDouble())
                 searchViewModel.postPlace(
@@ -98,13 +91,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
 
         recentSearchAdapter = RecentSearchAdapter(searchClickListener = object : OnItemClickListener<PlaceModel> {
             override fun onClick(item: PlaceModel) {
-                val bundle = Bundle().apply {
-                    putString("screen", "search_address")
-                    putString("building_name", item.placeName)
-                    putString("address", item.addressName)
-                    putString("type", "RECENT")
-                }
-                EventTracker.logEvent(Constants.CLICK_ADDRESS, bundle)
+                searchViewModel.sendClickAddress("RECENT")
 
                 val location = LatLng(item.location.latitude, item.location.longitude)
                 searchViewModel.postPlace(

@@ -4,6 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.repository.HomeRepository
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -14,6 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreCertificationViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.VISIT_STORE
 
     private val _storeVisitResult = MutableSharedFlow<Boolean>()
     val storeVisitResult: SharedFlow<Boolean> get() = _storeVisitResult
@@ -39,5 +46,26 @@ class StoreCertificationViewModel @Inject constructor(private val homeRepository
                 hideLoading()
             }
         }
+    }
+
+    // GA Events
+    fun sendClickVisitSuccess() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISIT_SUCCESS
+            )
+        )
+    }
+
+    fun sendClickVisitFail() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISIT_FAIL
+            )
+        )
     }
 }

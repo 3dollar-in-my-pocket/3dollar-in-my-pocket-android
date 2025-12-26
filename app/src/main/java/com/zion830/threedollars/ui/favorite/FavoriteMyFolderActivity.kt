@@ -34,6 +34,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
     private val adapter: FavoriteMyFolderRecyclerAdapter by lazy {
         FavoriteMyFolderRecyclerAdapter(object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
+                viewModel.sendClickStore(item.storeId, item.storeType)
                 if (item.storeType == Constants.BOSS_STORE) {
                     activityResultLauncher.launch(BossStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
                 } else {
@@ -78,6 +79,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
         binding.favoriteListRecyclerView.adapter = adapter
         binding.shareImageView.onSingleClick {
+            viewModel.sendClickShare()
             viewModel.share()
         }
         binding.backImageView.onSingleClick {
@@ -106,6 +108,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
             dialog.show(supportFragmentManager, dialog.tag)
         }
         binding.infoEditTextView.onSingleClick {
+            viewModel.sendClickEdit()
             activityResultLauncher.launch(
                 FavoriteMyInfoEditActivity.getIntent(
                     this,
@@ -150,10 +153,6 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
                 viewModel.effect.collect(::onEvent)
             }
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "FavoriteMyFolderActivity", screenName = null)
     }
 
     private fun onEvent(event: FavoriteViewModel.Event) {

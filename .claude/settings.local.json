@@ -30,7 +30,12 @@
       "Bash(echo:*)",
       "WebSearch",
       "Read(//Users/jeongjin-yong/.gradle/caches/**)",
-      "Bash(readelf:*)"
+      "Bash(readelf:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.notion.so)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

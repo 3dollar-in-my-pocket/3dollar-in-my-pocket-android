@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants.CLICK_ADDRESS_OK
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogNearExistBinding
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -21,6 +21,8 @@ import com.threedollar.common.R as CommonR
 @AndroidEntryPoint
 class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() {
 
+    override val screenName: ScreenName = ScreenName.EMPTY
+
     interface DialogListener {
         fun accept()
     }
@@ -29,10 +31,6 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogNearExistBinding =
         DialogNearExistBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "NearExistDialog", screenName = "write_address_popup")
-    }
 
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
@@ -67,7 +65,6 @@ class NearExistDialog : BaseBottomSheetDialogFragment<DialogNearExistBinding>() 
                 putString("screen", "write_address_popup")
                 putString("address", binding.addressTextView.text.toString())
             }
-            EventTracker.logEvent(CLICK_ADDRESS_OK, bundle)
             listener?.accept()
             dismiss()
         }

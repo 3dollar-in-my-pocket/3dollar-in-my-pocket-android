@@ -6,6 +6,7 @@ import java.util.Locale
 
 
 data class MyVoteHistory(
+    val pollId: String,
     val title: String,
     val date: String,
     val options: List<Option>
@@ -21,6 +22,7 @@ data class MyVoteHistory(
 fun UserPollModel.toMyVoteHistory(): MyVoteHistory {
     val maxCount = this.options.maxOfOrNull { it.count } ?: 0
     return MyVoteHistory(
+        pollId = this.pollId,
         title = this.title,
         date = this.createdAt.convertUpdateAt(),
         options = this.options.map {

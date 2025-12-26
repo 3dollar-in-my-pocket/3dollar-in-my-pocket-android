@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.my.presentation.page.screen.MyPageScreen
 import com.my.presentation.page.team.MyPageTeamActivity
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseComposeFragment
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.MyFragmentStarter
@@ -25,16 +26,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
     override val viewModel: MyPageViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.MY_PAGE
 
     @Inject
     lateinit var myFragmentStarter: MyFragmentStarter
 
     @Inject
     lateinit var activityStarter: ActivityStarter
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyPageFragment", screenName = null)
-    }
 
     override fun onResume() {
         super.onResume()

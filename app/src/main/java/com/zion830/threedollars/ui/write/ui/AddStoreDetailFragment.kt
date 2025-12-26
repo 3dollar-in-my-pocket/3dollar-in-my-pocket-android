@@ -21,7 +21,6 @@ import com.home.domain.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentAddStoreBinding
@@ -100,10 +99,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
         initFlows()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "AddStoreDetailFragment", screenName = "write_address_detail")
-    }
-
     private fun initNavigationBar() {
         if (requireActivity() is MainActivity) {
             (requireActivity() as MainActivity).showBottomNavigation(false)
@@ -161,7 +156,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
         }
         binding.editAddressTextView.setOnClickListener {
-            EventTracker.logEvent(Constants.EDIT_ADDRESS_BTN_CLICKED)
             findNavController().navigateSafe(R.id.action_navigation_write_detail_to_navigation_write)
         }
         binding.btnClearCategory.setOnClickListener {
@@ -173,7 +167,6 @@ class AddStoreDetailFragment : BaseFragment<FragmentAddStoreBinding, AddStoreVie
             val bundle = Bundle().apply {
                 putString("screen", "write_address_detail")
             }
-            EventTracker.logEvent("click_write_store", bundle)
             saveStore()
         }
         binding.fullScreenButton.setOnClickListener {

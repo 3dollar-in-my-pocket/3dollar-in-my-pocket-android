@@ -2,6 +2,11 @@ package com.zion830.threedollars.ui.login.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.login.domain.repository.LoginRepository
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.network.data.auth.LoginRequest
@@ -21,6 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.SIGN_IN
 
     private val _loginResult: MutableSharedFlow<ResultWrapper<SignUser?>> = MutableSharedFlow()
     val loginResult: SharedFlow<ResultWrapper<SignUser?>> get() = _loginResult
@@ -44,6 +51,26 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         viewModelScope.launch(coroutineExceptionHandler) {
             loginRepository.putPushInformation(informationRequest)
         }
+    }
+
+    fun sendClickKakaoLogin() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SIGN_IN_KAKAO
+            )
+        )
+    }
+
+    fun sendClickGoogleLogin() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SIGN_IN_GOOGLE
+            )
+        )
     }
 
 }

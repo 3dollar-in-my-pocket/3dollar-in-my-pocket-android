@@ -56,13 +56,6 @@ class WebActivity : BaseComposeActivity<WebViewModel>() {
         intent.getStringExtra(EXTRA_URL) ?: ""
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(
-            className = "WebActivity",
-            screenName = "webview"
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

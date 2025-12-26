@@ -32,6 +32,7 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(),
 
     override fun initView() {
         adapter = MedalRecyclerAdapter {
+            viewModel.sendClickMedal(it.medal.medalId ?: -1)
             if (!it.isSelected && it.isExist) {
                 showChangeMyMedalDialog(it.medal.medalId ?: -1)
             }
@@ -51,10 +52,6 @@ class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(),
     override fun onBackPressed() {
         activity?.supportFragmentManager?.popBackStack()
         pageViewModel.getUserInfo()
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyMedalFragment", screenName = null)
     }
 
     private fun observeData() {

@@ -6,6 +6,7 @@ import com.home.domain.repository.HomeRepository
 import com.login.domain.data.AccessCheckModel
 import com.login.domain.repository.LoginRepository
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.common.utils.Constants.BOSS_STORE
@@ -34,6 +35,8 @@ class SplashViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val appStatusRepository: AppStatusRepository
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.SPLASH
 
     private val _splashAdvertisement: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val splashAdvertisement = _splashAdvertisement.asStateFlow()
