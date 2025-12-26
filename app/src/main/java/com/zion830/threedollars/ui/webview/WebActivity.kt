@@ -11,18 +11,19 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -95,52 +97,52 @@ class WebActivity : BaseComposeActivity<WebViewModel>() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewTopBar(
     title: String,
     onClose: () -> Unit,
     onCopyUrl: () -> Unit
 ) {
-    TopAppBar(
-        backgroundColor = Color.White,
-        elevation = 1.dp
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .shadow(elevation = 1.dp)
+            .background(Color.White)
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth()
+        IconButton(
+            onClick = onClose,
+            modifier = Modifier.align(Alignment.CenterStart)
         ) {
-            IconButton(
-                onClick = onClose,
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    painter = painterResource(id = com.zion830.threedollars.core.designsystem.R.drawable.ic_close_white),
-                    contentDescription = "Close",
-                    tint = ColorBlack
-                )
-            }
-
-            Text(
-                text = title.ifEmpty { "웹페이지" },
-                style = MaterialTheme.typography.h6,
-                color = Color.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 56.dp)
+            Icon(
+                painter = painterResource(id = com.zion830.threedollars.core.designsystem.R.drawable.ic_close_white),
+                contentDescription = "Close",
+                tint = ColorBlack
             )
+        }
 
-            IconButton(
-                onClick = onCopyUrl,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_copy_18),
-                    contentDescription = "Copy URL",
-                    tint = Color.Black
-                )
-            }
+        Text(
+            text = title.ifEmpty { "웹페이지" },
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 56.dp)
+        )
+
+        IconButton(
+            onClick = onCopyUrl,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_copy_18),
+                contentDescription = "Copy URL",
+                tint = Color.Black
+            )
         }
     }
 }

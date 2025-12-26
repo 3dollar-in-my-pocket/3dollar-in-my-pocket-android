@@ -151,11 +151,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         navigateToMedalPageWithDeepLink(intent)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent?.let {
-            navigateToMedalPageWithDeepLink(it)
-        }
+        navigateToMedalPageWithDeepLink(intent)
     }
 
     private fun initNavController(navController: NavController) {

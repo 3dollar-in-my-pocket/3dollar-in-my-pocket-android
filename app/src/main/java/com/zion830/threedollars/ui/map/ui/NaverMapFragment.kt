@@ -21,7 +21,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.analytics.logEvent
 import com.home.domain.data.store.ContentModel
 import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
@@ -213,8 +213,20 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                             // 로드가 취소되거나 메모리가 정리될 때 호출됩니다.
                         }
                     })
-                markers[position].width = context?.convertDpToPx(markerModel.unSelected.width.toFloat())?.toInt() ?: markers[position].width
-                markers[position].height = context?.convertDpToPx(markerModel.unSelected.height.toFloat())?.toInt() ?: markers[position].height
+
+                val markerWidth = if (isSelected) {
+                    markerModel.selected.width
+                } else {
+                    markerModel.unSelected.width
+                }
+                val markerHeight = if (isSelected) {
+                    markerModel.selected.height
+                } else {
+                    markerModel.unSelected.height
+                }
+
+                markers[position].width = context?.convertDpToPx(markerWidth.toFloat())?.toInt() ?: markers[position].width
+                markers[position].height = context?.convertDpToPx(markerHeight.toFloat())?.toInt() ?: markers[position].height
                 markers[position].map = naverMap
             }
         }
