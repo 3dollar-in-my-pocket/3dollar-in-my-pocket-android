@@ -61,8 +61,9 @@ class FeedBackFragmentItem : Fragment() {
                 launch {
                     adapter?.loadStateFlow?.collectLatest { loadState ->
                         if (loadState.refresh is LoadState.NotLoading) {
-                            binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                            binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                            val isEmpty = adapter?.itemCount == 0
+                            binding.ivEmpty.isVisible = isEmpty
+                            binding.emptyStateView.isVisible = isEmpty
                         }
                     }
                 }

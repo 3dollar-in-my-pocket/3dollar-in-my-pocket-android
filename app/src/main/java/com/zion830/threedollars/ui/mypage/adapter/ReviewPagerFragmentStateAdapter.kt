@@ -20,4 +20,6 @@ class ReviewPagerFragmentStateAdapter(fragmentActivity: FragmentActivity) : Frag
         notifyItemInserted(fragments.size - 1)
     }
 
+    fun getFragmentOrNull(position: Int): Fragment? = fragments.getOrNull(position)
+
 }

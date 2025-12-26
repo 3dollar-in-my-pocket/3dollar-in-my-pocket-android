@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="240dp"
+    android:layout_height="240dp"
+    android:background="@drawable/rect_radius_12_gray30"
+    android:backgroundTint="@color/gray95"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <ImageView
+        android:id="@+id/iv_empty_icon"
+        android:layout_width="91dp"
+        android:layout_height="91dp"
+        android:contentDescription="@string/empty_data"
+        android:src="@drawable/img_empty" />
+
+    <TextView
+        android:id="@+id/tv_empty_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="데이터가 없습니다"
+        android:textColor="@color/gray30"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_empty_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textColor="@color/gray60"
+        android:textSize="12sp"
+        android:visibility="gone" />
+</LinearLayout>
