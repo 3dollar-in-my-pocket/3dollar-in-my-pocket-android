@@ -147,20 +147,6 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     }
 
     // GA Events - Poll Detail
-    fun sendClickVote(optionId: String) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.VOTE,
-                additionalParams = mapOf(
-                    ParameterName.POLL_ID to pollId,
-                    ParameterName.OPTION_ID to optionId
-                )
-            )
-        )
-    }
-
     fun sendClickReport() {
         LogManager.sendEvent(
             ClickEvent(
@@ -171,14 +157,31 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
         )
     }
 
-    fun sendClickComment() {
+    fun sendClickPollOption(optionId: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.COMMENT
+                objectId = LogObjectId.POLL_OPTION,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.OPTION_ID to optionId
+                )
             )
         )
     }
 
+    fun sendClickReportReview(reviewId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT_REVIEW,
+                additionalParams = mapOf(
+                    ParameterName.REVIEW_ID to reviewId,
+                    ParameterName.POLL_ID to pollId
+                )
+            )
+        )
+    }
 }

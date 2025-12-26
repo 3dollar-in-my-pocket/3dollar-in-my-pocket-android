@@ -51,8 +51,8 @@ enum class ScreenName(val value: String) {
 
     // Community
     COMMUNITY("community"),
-    POLL_DETAIL("pollDetail"),
-    POLL_LIST("pollList"),
+    POLL_DETAIL("poll_detail"),
+    POLL_LIST("poll_list"),
     REPORT_POLL("reportPoll"),
     REPORT_REVIEW("reportReview"),
     CREATE_POLL("createPoll"),
