@@ -6,6 +6,11 @@ import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.my.domain.model.UserInfoUpdateModel
 import com.my.domain.repository.MyRepository
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.UserDataSource
@@ -87,5 +92,18 @@ class MyMealViewModel @Inject constructor(private val userDataSource: UserDataSo
                 }
             }
         }
+    }
+
+    fun sendClickMedal(medalId: Int) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.MY_MEDAL,
+                objectType = LogObjectType.MEDAL,
+                objectId = LogObjectId.MEDAL,
+                additionalParams = mapOf(
+                    ParameterName.MEDAL_ID to medalId.toString()
+                )
+            )
+        )
     }
 }
