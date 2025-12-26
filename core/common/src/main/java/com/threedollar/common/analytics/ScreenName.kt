@@ -17,7 +17,7 @@ enum class ScreenName(val value: String) {
     HOME_MAP("home_map"),
     CATEGORY_FILTER("category_filter"),
     MAIN_AD_BANNER("main_ad_banner"),
-    SEARCH_ADDRESS("searchAddress"),
+    SEARCH_ADDRESS("search_address"),
 
     // Write/Store Creation
     WRITE_ADDRESS("writeAddress"),

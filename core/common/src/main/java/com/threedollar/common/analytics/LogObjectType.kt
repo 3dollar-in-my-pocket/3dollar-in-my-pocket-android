@@ -9,7 +9,8 @@ enum class LogObjectType(val value: String) {
     FILTER("filter"),
     FIELD("field"),
     REVIEW("review"),
-    MEDAL("medal");
+    MEDAL("medal"),
+    MENU("menu");
 
     override fun toString(): String = value
 }
