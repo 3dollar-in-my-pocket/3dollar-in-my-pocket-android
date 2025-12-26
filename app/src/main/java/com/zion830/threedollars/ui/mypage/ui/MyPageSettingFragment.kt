@@ -12,6 +12,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import com.my.presentation.page.team.MyPageTeamActivity
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
@@ -42,8 +45,8 @@ class MyPageSettingFragment :
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMypageSettingBinding =
         FragmentMypageSettingBinding.inflate(inflater, container, false)
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyPageSettingFragment", screenName = null)
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.SETTING, this::class.simpleName.toString())
     }
 
     override val viewModel: UserInfoViewModel by activityViewModels()

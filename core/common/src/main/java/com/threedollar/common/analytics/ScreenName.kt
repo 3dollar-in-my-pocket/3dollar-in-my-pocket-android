@@ -70,7 +70,7 @@ enum class ScreenName(val value: String) {
     MY_MEDAL("my_medal"),
     MY_BOOKMARK_LIST("my_bookmark_list"),
     EDIT_BOOKMARK_LIST("edit_bookmark_list"),
-    BOOKMARK_LIST_VIEWER("bookmarkListViewer"),
+    BOOKMARK_LIST_VIEWER("bookmark_list_viewer"),
 
     // Settings
     SETTING("setting"),
