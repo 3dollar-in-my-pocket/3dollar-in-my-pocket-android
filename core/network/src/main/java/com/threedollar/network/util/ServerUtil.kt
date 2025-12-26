@@ -18,3 +18,9 @@ fun <T> apiResult(response: Response<BaseResponse<T>>): BaseResponse<T> =
             error = errorResponse.error
         )
     }
+
+fun Response<*>.errorResponseOrNull(): ErrorResponse? = try {
+    Gson().fromJson(errorBody()?.string(), ErrorResponse::class.java)
+} catch (e: Exception) {
+    null
+}
