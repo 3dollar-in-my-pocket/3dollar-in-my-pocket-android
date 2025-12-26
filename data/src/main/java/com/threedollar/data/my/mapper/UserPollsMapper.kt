@@ -1,11 +1,10 @@
 package com.threedollar.data.my.mapper
 
-import com.threedollar.domain.my.model.UserPollsModel
-import com.threedollar.domain.my.model.UserPollModel
 import com.threedollar.domain.my.model.CategoryModel
-import com.threedollar.domain.my.model.PollOptionModel
-import com.threedollar.domain.my.model.PhotoModel
 import com.threedollar.domain.my.model.CursorModel
+import com.threedollar.domain.my.model.PollOptionModel
+import com.threedollar.domain.my.model.UserPollModel
+import com.threedollar.domain.my.model.UserPollsModel
 import com.threedollar.network.data.poll.response.GetMyPollListResponse
 
 object UserPollsMapper {

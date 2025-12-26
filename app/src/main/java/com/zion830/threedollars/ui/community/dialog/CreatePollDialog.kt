@@ -5,16 +5,12 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import com.threedollar.common.base.BaseDialogFragment
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.DialogCreatePollBinding
-import com.zion830.threedollars.databinding.FragmentCommunityBinding
 import zion830.com.common.base.onSingleClick
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
 

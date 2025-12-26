@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -26,15 +25,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.threedollar.domain.home.data.store.DayOfTheWeekType
-import com.threedollar.domain.home.data.store.PaymentType
-import com.threedollar.domain.home.data.store.ReviewContentModel
-import com.threedollar.domain.home.data.store.StoreImage
-import com.threedollar.domain.home.data.store.UserStoreDetailEmptyItem
-import com.threedollar.domain.home.data.store.UserStoreDetailModel
-import com.threedollar.domain.home.data.store.UserStoreMenuModel
-import com.threedollar.domain.home.data.store.UserStoreMoreResponse
-import com.threedollar.domain.home.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
@@ -49,9 +39,17 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.getDistanceText
 import com.threedollar.common.utils.toDefaultInt
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.PaymentType
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.StoreImage
+import com.threedollar.domain.home.data.store.UserStoreDetailEmptyItem
+import com.threedollar.domain.home.data.store.UserStoreDetailModel
+import com.threedollar.domain.home.data.store.UserStoreMenuModel
+import com.threedollar.domain.home.data.store.UserStoreMoreResponse
+import com.threedollar.domain.home.data.store.VisitsModel
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
@@ -70,7 +68,6 @@ import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
-import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.isGpsAvailable
 import com.zion830.threedollars.utils.isLocationAvailable
@@ -89,6 +86,7 @@ import zion830.com.common.ext.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Locale
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {

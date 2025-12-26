@@ -3,10 +3,9 @@ package com.zion830.threedollars.ui.map.ui
 import androidx.core.view.isVisible
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreDetailNaverMapFragment : NaverMapFragment() {

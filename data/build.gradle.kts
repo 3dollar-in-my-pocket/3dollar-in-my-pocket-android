@@ -6,13 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.home.data"
-
+    namespace = "com.threedollar.data"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -23,6 +21,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -34,18 +33,17 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":home:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:common"))
+    implementation(project(":domain"))
 
     implementation(libs.bundles.androidx.ui)
-    testImplementation(libs.bundles.testing)
-
-    // 힐트
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-
     implementation(libs.bundles.retrofit)
+    implementation(libs.gson)
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.common.ktx)
 
-    implementation(libs.bundles.paging)
+    testImplementation(libs.bundles.testing)
 }

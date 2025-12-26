@@ -1,7 +1,7 @@
-package com.home.presentation.data
+package com.zion830.threedollars.ui.home.data
 
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.request.FilterConditionsTypeModel
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 

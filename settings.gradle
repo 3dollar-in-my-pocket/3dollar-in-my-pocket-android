@@ -1,8 +1,0 @@
-include ':app'
-rootProject.name='MyDiary'
-include ':common'
-include ':core:network'
-include ':core:common'
-include ':core:designsystem'
-include ':data'
-include ':domain'

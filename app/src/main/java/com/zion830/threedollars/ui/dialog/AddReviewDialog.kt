@@ -10,11 +10,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants.CLICK_REVIEW_BOTTOM_BUTTON
+import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast

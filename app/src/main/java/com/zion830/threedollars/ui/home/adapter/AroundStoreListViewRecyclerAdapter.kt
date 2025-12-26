@@ -7,8 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.store.ContentModel
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
@@ -18,10 +16,10 @@ import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.common.utils.getDistanceText
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.store.ContentModel
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemListViewAdBinding
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemListViewAdmobBinding
 import com.zion830.threedollars.databinding.ItemListViewBinding
 import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
@@ -29,6 +27,7 @@ import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 
 class AroundStoreListViewRecyclerAdapter(

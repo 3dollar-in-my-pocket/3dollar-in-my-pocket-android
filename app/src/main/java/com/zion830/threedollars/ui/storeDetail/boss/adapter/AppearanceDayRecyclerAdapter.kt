@@ -9,10 +9,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.home.data.store.AppearanceDayModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemAppearanceDayBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(BaseDiffUtilCallback()) {
 

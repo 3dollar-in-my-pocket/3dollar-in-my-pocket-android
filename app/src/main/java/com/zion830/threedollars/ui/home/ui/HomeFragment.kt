@@ -22,13 +22,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.advertisement.AdvertisementModelV2Empty
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ContentModel
-import com.home.domain.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeSortType
-import com.home.presentation.data.HomeStoreType
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
@@ -49,10 +49,6 @@ import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.Constants.CLICK_VISIT
 import com.threedollar.common.utils.Constants.HOME_REOPEN
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
-import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
@@ -61,8 +57,6 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
@@ -576,7 +570,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun collectSelectedCategory(category: CategoryModel?) {
         val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
-        val textColor = if (category == null) R.color.gray70 else R.color.pink
+        val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
         val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
 
         binding.run {
@@ -586,7 +580,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
             if (category == null) {
                 allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                    ContextCompat.getDrawable(requireContext(), DesignSystemR.drawable.ic_category), null, null, null
                 )
             } else {
                 loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
@@ -606,11 +600,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         )
         adapter.submitList(resultList)
         val list = itemList.filterIsInstance<ContentModel>()
-        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
+        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_store_off, list) {
             onStoreClicked(it)
         }
         naverMapFragment.updateMarkerIcon(
-            drawableRes = R.drawable.ic_mappin_focused_on,
+            drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
             position = 0,
             markerModel = list.firstOrNull()?.markerModel,
             isSelected = true
@@ -632,10 +626,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun collectHomeStoreType(storeType: HomeStoreType) {
         binding.run {
             if (storeType == HomeStoreType.BOSS_STORE) {
-                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
             } else {
-                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
         }
@@ -644,10 +638,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
         binding.run {
             if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
             } else {
-                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
         }

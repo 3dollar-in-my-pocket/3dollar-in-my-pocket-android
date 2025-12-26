@@ -2,10 +2,8 @@ package com.zion830.threedollars.ui.storeDetail.boss.binding
 
 import android.content.res.ColorStateList
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @BindingAdapter("settingReviewBackground")

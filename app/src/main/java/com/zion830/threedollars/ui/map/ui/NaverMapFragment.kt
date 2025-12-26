@@ -21,9 +21,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
-import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.data.store.MarkerModel
+import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -35,10 +33,11 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.common.utils.Constants
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.MarkerModel
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
 import com.zion830.threedollars.utils.NaverMapUtils

@@ -1,17 +1,15 @@
 package com.zion830.threedollars.ui.storeDetail.boss.adapter
 
 import android.graphics.Typeface
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class BossReviewSummitRecyclerAdapter(
     private val onClickAction: (FeedbackTypeResponse) -> Unit,

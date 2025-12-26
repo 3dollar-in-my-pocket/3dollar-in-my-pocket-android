@@ -17,14 +17,6 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.android.gms.ads.AdRequest
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.store.CategoryModel
-import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
-import com.zion830.threedollars.ui.home.data.HomeFilterEvent
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.data.AdMobItem
@@ -32,17 +24,20 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -52,6 +47,7 @@ import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewModel>() {
@@ -243,7 +239,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             .collect {
                 binding.apply {
                     bossFilterTextView.apply {
-                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
+                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.color.pink else DesignSystemR.color.gray40, null))
                         setBackgroundResource(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                     }
 
@@ -260,7 +256,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     filterConditionsTextView.apply {
                         setTextColor(
                             resources.getColor(
-                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
+                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.color.pink else DesignSystemR.color.gray40,
                                 null
                             )
                         )

@@ -51,7 +51,11 @@
       "mcp__serena__initial_instructions",
       "mcp__serena__list_memories",
       "mcp__serena__think_about_whether_you_are_done",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(if [ -f \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/build.gradle.kts\" ])",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(if [ -d \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/src\" ])"
     ],
     "deny": [],
     "ask": []

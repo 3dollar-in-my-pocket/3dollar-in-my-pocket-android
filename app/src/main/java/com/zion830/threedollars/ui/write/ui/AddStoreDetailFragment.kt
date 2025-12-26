@@ -19,7 +19,6 @@ import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
-import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class AddStoreDetailFragment : Fragment() {

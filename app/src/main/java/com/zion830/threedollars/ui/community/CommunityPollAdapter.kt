@@ -11,18 +11,17 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.domain.community.data.AdvertisementModelV2
 import com.threedollar.domain.community.data.PollItem
-import com.zion830.threedollars.ui.community.data.PollListData
 import com.zion830.threedollars.databinding.ItemPollAdBinding
 import com.zion830.threedollars.databinding.ItemPollBinding
+import com.zion830.threedollars.ui.community.data.PollListData
 import com.zion830.threedollars.ui.community.utils.calculatePercentages
 import com.zion830.threedollars.ui.community.utils.getDeadlineString
 import com.zion830.threedollars.ui.community.utils.hasVotingPeriodEnded
 import zion830.com.common.base.BaseDiffUtilCallback
-import com.zion830.threedollars.R
-import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class CommunityPollAdapter(
     private val choicePoll: (String, String) -> Unit,

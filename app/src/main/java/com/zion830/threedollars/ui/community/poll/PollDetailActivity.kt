@@ -17,7 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
-import com.threedollar.domain.community.model.ReportReason
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
 import com.threedollar.common.listener.EventTrackerListener
@@ -25,9 +24,7 @@ import com.threedollar.common.utils.Constants
 import com.threedollar.domain.community.data.PollComment
 import com.threedollar.domain.community.data.PollCommentList
 import com.threedollar.domain.community.data.PollItem
-import com.zion830.threedollars.R
-import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.threedollar.domain.community.model.ReportReason
 import com.zion830.threedollars.databinding.ActivityPollDetailBinding
 import com.zion830.threedollars.ui.community.dialog.ReportChoiceDialog
 import com.zion830.threedollars.ui.community.utils.calculatePercentages
@@ -39,6 +36,8 @@ import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailViewModel>({ ActivityPollDetailBinding.inflate(it) }) {

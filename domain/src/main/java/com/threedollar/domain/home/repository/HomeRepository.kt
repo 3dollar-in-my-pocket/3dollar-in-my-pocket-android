@@ -1,6 +1,8 @@
 package com.threedollar.domain.home.repository
 
 import androidx.paging.PagingData
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.place.PlaceModel
 import com.threedollar.domain.home.data.store.AroundStoreModel
@@ -24,12 +26,8 @@ import com.threedollar.domain.home.request.PlaceType
 import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.request.ReportReviewModelRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.threedollar.common.base.BaseResponse
-import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.http.Body
-import retrofit2.http.Path
 
 interface HomeRepository {
 

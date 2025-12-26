@@ -9,7 +9,6 @@ import com.threedollar.network.data.store.MyReportedContent
 import com.threedollar.network.data.store.MyReportedStore
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemMyStoreBinding
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.BaseViewHolder
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR

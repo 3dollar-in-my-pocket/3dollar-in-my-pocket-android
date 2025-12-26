@@ -3,6 +3,10 @@ package com.threedollar.data.home.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.data.home.asModel
 import com.threedollar.data.home.asRequest
 import com.threedollar.data.home.asType
@@ -34,12 +38,7 @@ import com.threedollar.domain.home.request.PlaceType
 import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.request.ReportReviewModelRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.threedollar.common.base.BaseResponse
-import com.threedollar.common.utils.AdvertisementsPosition
-import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIST
 import com.threedollar.network.api.ServerApi
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PostFeedbackRequest

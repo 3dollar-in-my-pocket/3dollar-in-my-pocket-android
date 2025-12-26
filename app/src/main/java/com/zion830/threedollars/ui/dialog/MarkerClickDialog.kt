@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarkerClickBinding
 import com.zion830.threedollars.ui.map.viewModel.MarkerClickViewModel
 import dagger.hilt.android.AndroidEntryPoint

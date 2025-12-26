@@ -1,9 +1,8 @@
 package com.zion830.threedollars.datasource.model.v2.response
 
 import com.threedollar.common.data.AdAndStoreItem
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 data class StoreEmptyResponse(
     val emptyImage: Int = DesignSystemR.drawable.ic_no_store,

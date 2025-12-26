@@ -8,19 +8,18 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnBackPressedListener
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentMyMedalBinding
 import com.zion830.threedollars.ui.dialog.MedalInfoDialog
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.adapter.MedalRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyMealViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.loadUrlImg
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class MyMedalFragment : BaseFragment<FragmentMyMedalBinding, MyMealViewModel>(), OnBackPressedListener {

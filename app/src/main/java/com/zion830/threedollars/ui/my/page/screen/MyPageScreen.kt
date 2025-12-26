@@ -44,26 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import com.threedollar.common.R as CommonR
-import zion830.com.common.R as LegacyCommonR
-import com.zion830.threedollars.ui.my.page.MyPageViewModel
-import com.threedollar.domain.my.model.*
-import com.zion830.threedollars.ui.my.page.commponent.MyPageShopInfoView
-import com.zion830.threedollars.ui.my.page.data.MyPageButton
-import com.zion830.threedollars.ui.my.page.data.MyPageSectionTitleData
-import com.zion830.threedollars.ui.my.page.data.MyPageShop
-import com.zion830.threedollars.ui.my.page.data.MyPageUserInformationData
-import com.zion830.threedollars.ui.my.page.data.MyVoteHistory
-import com.zion830.threedollars.ui.my.page.data.myPageButtonPreview
-import com.zion830.threedollars.ui.my.page.data.myPageSectionTitlePreview
-import com.zion830.threedollars.ui.my.page.data.myPageShopPreview
-import com.zion830.threedollars.ui.my.page.data.myPageShopsPreview
-import com.zion830.threedollars.ui.my.page.data.myPageUserInformationDataPreview
-import com.zion830.threedollars.ui.my.page.data.toMyPageButtons
-import com.zion830.threedollars.ui.my.page.data.toMyPageShops
-import com.zion830.threedollars.ui.my.page.data.toMyVoteHistory
-import com.threedollar.common.listener.MyFragments
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -79,7 +59,26 @@ import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import base.compose.dpToSp
+import coil3.compose.AsyncImage
+import com.threedollar.common.listener.MyFragments
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.commponent.MyPageShopInfoView
+import com.zion830.threedollars.ui.my.page.data.MyPageButton
+import com.zion830.threedollars.ui.my.page.data.MyPageSectionTitleData
+import com.zion830.threedollars.ui.my.page.data.MyPageShop
+import com.zion830.threedollars.ui.my.page.data.MyPageUserInformationData
+import com.zion830.threedollars.ui.my.page.data.MyVoteHistory
+import com.zion830.threedollars.ui.my.page.data.myPageButtonPreview
+import com.zion830.threedollars.ui.my.page.data.myPageSectionTitlePreview
+import com.zion830.threedollars.ui.my.page.data.myPageShopPreview
+import com.zion830.threedollars.ui.my.page.data.myPageShopsPreview
+import com.zion830.threedollars.ui.my.page.data.myPageUserInformationDataPreview
+import com.zion830.threedollars.ui.my.page.data.toMyPageButtons
+import com.zion830.threedollars.ui.my.page.data.toMyPageShops
+import com.zion830.threedollars.ui.my.page.data.toMyVoteHistory
+import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import zion830.com.common.R as LegacyCommonR
 
 @Composable
 fun MyPageScreen(viewModel: MyPageViewModel) {

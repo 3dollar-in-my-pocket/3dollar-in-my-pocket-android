@@ -6,9 +6,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.community.data.PollItem
-import com.zion830.threedollars.R
-import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemPollListBinding
 import com.zion830.threedollars.databinding.ItemRealtimeTitleBinding
 import com.zion830.threedollars.ui.community.utils.calculatePercentages
@@ -19,6 +16,8 @@ import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import java.util.Calendar
 import java.util.TimeZone
+import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class PollListAdapter(private val choicePoll: (String, String) -> Unit, private val clickPoll: (PollItem) -> Unit) :
     ListAdapter<PollItem, ViewHolder>(BaseDiffUtilCallback()) {

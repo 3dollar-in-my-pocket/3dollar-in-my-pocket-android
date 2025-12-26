@@ -6,13 +6,12 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.ReviewStatusType
-import com.zion830.threedollars.ui.my.page.data.convertUpdateAt
-import com.threedollar.common.listener.OnItemClickListener
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewBinding
 import com.zion830.threedollars.databinding.ItemFoodTruckReviewMoreBinding
+import com.zion830.threedollars.ui.my.page.data.convertUpdateAt
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick

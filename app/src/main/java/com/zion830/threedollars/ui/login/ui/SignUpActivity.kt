@@ -26,8 +26,6 @@ import com.threedollar.common.utils.Constants.CLICK_SIGN_UP
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.dialog.MarketingDialog
@@ -40,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class SignUpActivity :

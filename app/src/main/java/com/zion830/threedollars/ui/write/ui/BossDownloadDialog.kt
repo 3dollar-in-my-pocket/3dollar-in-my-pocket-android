@@ -41,13 +41,12 @@ import base.compose.Gray100
 import base.compose.Gray70
 import base.compose.Gray80
 import base.compose.Green
-import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.analytics.logEvent
 import com.threedollar.common.R
 
 class BossDownloadDialog : BottomSheetDialogFragment() {

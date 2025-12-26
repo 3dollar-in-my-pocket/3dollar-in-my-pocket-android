@@ -16,8 +16,6 @@ import com.threedollar.common.utils.Constants
 import com.threedollar.domain.community.data.PollItem
 import com.threedollar.domain.community.data.PollList
 import com.threedollar.domain.community.model.PollCreateModel
-import com.zion830.threedollars.R
-import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.databinding.ActivityPollListBinding
 import com.zion830.threedollars.ui.community.dialog.CreatePollDialog
 import com.zion830.threedollars.ui.community.poll.PollDetailActivity
@@ -25,10 +23,8 @@ import com.zion830.threedollars.ui.community.utils.selectedPoll
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel>({ ActivityPollListBinding.inflate(it) }) {

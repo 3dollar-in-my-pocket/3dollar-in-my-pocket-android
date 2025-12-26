@@ -4,7 +4,6 @@ import com.threedollar.domain.community.data.PollItem
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 
 fun calculatePercentages(a: Int, b: Int): Pair<Int, Int> {
     val total = a + b

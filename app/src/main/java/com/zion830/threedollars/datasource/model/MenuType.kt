@@ -2,7 +2,6 @@ package com.zion830.threedollars.datasource.model
 
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
-import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 enum class MenuType(

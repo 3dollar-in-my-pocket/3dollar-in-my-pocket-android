@@ -1,7 +1,6 @@
 package com.threedollar.data.community.mapper
 
 import com.threedollar.common.utils.toDefaultDouble
-import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.community.data.Cursor
 import com.threedollar.domain.community.data.PopularStore
 import com.threedollar.network.data.neighborhood.GetPopularStoresResponse

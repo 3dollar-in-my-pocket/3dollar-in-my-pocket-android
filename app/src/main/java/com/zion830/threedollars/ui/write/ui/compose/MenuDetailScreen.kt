@@ -57,7 +57,7 @@ import base.compose.Pink
 import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import base.compose.Red
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel

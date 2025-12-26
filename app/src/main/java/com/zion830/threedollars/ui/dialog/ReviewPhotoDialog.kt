@@ -7,11 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import com.threedollar.domain.home.data.store.ImageModel
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
+import com.threedollar.domain.home.data.store.ImageModel
 import com.zion830.threedollars.databinding.FragmentReviewPhotoBinding
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.ReviewImageSliderAdapter
 import zion830.com.common.base.onSingleClick

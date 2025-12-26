@@ -4,16 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.threedollar.domain.home.data.store.AddCategoryModel
-import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
+import com.threedollar.domain.home.data.store.AddCategoryModel
+import com.threedollar.domain.home.data.store.CategoryModel
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemCategoryAddBinding
 import com.zion830.threedollars.databinding.ItemSelectedCategoryBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class AddCategoryRecyclerAdapter(
     private val showDialog: () -> Unit,

@@ -1,7 +1,8 @@
 package com.threedollar.data.community.datasource
 
-import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.neighborhood.GetNeighborhoodsResponse
@@ -18,9 +19,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
-import com.threedollar.common.utils.AdvertisementsPosition
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Header
 
 
 interface CommunityDataSource {

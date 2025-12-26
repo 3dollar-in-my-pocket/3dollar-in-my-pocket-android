@@ -3,10 +3,8 @@ package com.zion830.threedollars.ui.dialog
 import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import androidx.core.view.isVisible
 import com.zion830.threedollars.databinding.DialogLoadingProgressBinding
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class LoadingProgressDialog(context: Context) : Dialog(context) {
     
