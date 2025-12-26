@@ -140,38 +140,83 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     }
 
     // GA Events - Community
-    fun sendClickCategory(categoryName: String) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.CATEGORY,
-                additionalParams = mapOf(ParameterName.CATEGORY_NAME to categoryName)
-            )
-        )
-    }
-
     fun sendClickPoll(pollId: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
-                objectType = LogObjectType.BUTTON,
+                objectType = LogObjectType.CARD,
                 objectId = LogObjectId.POLL,
                 additionalParams = mapOf(ParameterName.POLL_ID to pollId)
             )
         )
     }
 
-    fun sendClickVote(pollId: String, optionId: String) {
+    fun sendClickPollOption(pollId: String, optionId: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.VOTE,
+                objectId = LogObjectId.POLL_OPTION,
                 additionalParams = mapOf(
                     ParameterName.POLL_ID to pollId,
                     ParameterName.OPTION_ID to optionId
                 )
+            )
+        )
+    }
+
+    fun sendClickPollCategory() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.POLL_CATEGORY
+            )
+        )
+    }
+
+    fun sendClickDistrict() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.DISTRICT
+            )
+        )
+    }
+
+    fun sendClickFilter(value: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.TAB,
+                objectId = LogObjectId.FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to value)
+            )
+        )
+    }
+
+    fun sendClickStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
+    }
+
+    fun sendClickAdvertisement(advertisementId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.ADVERTISEMENT,
+                additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
             )
         )
     }

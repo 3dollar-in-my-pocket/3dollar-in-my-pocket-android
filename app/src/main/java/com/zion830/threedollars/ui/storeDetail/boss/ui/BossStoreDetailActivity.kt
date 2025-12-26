@@ -447,11 +447,11 @@ class BossStoreDetailActivity :
     private fun initAccount(bossStoreDetailModel: BossStoreDetailModel) {
         val accountNumberModel = bossStoreDetailModel.store.accountNumbers?.firstOrNull()
         if (accountNumberModel != null) {
-            viewModel.sendClickCopyAccountLog()
             binding.accountCardView.isVisible = true
             binding.accountNumberTextView.text =
                 "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
             binding.accountCopyButton.onSingleClick {
+                viewModel.sendClickCopyAccountLog()
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
                 showToast(getString(CommonR.string.account_number_copied))
