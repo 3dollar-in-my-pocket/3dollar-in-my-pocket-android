@@ -7,17 +7,24 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.domain.model.ReportReason
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.presentation.databinding.DialogReportChoiceBinding
 import zion830.com.common.base.onSingleClick
 
 class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBinding>() {
-    override val screenName: ScreenName = ScreenName.EMPTY
+    override var screenName: ScreenName = ScreenName.EMPTY
     private val reportList = mutableListOf<ReportReason>()
     private var reportCallBack: (ReportReason, String?) -> Unit = { _, _ -> }
     private lateinit var choiceReasonModel: ReportReason
     private var type = Type.POLL
+    private var pollId: String = ""
+    private var reviewId: String = ""
     private val adapter by lazy {
         ReportChoiceAdapter(choiceClick)
     }
@@ -34,6 +41,11 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     override fun initView() {
         initAdapter()
         initButton()
+
+        screenName = when(type) {
+            Type.POLL -> ScreenName.REPORT_POLL
+            Type.COMMENT -> ScreenName.REPORT_REVIEW
+        }
     }
 
     private fun initAdapter() {
@@ -45,17 +57,26 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     private fun initButton() {
         binding.imgClose.onSingleClick { dismiss() }
         binding.twReport.onSingleClick {
+            sendClickReport()
             reportCallBack(choiceReasonModel, binding.etReport.text.toString())
             dismiss()
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        val screen = when (type) {
-            Type.POLL -> ScreenName.REPORT_POLL
-            Type.COMMENT -> ScreenName.REPORT_REVIEW
+    private fun sendClickReport() {
+        val params = mutableMapOf<ParameterName, String>()
+        params[ParameterName.POLL_ID] = pollId
+        if (type == Type.COMMENT && reviewId.isNotEmpty()) {
+            params[ParameterName.REVIEW_ID] = reviewId
         }
-        sendScreenView(screen)
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT,
+                additionalParams = params
+            )
+        )
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
@@ -78,6 +99,16 @@ class ReportChoiceDialog : BaseBottomSheetDialogFragment<DialogReportChoiceBindi
     fun setReportList(list: List<ReportReason>): ReportChoiceDialog {
         reportList.addAll(list)
         choiceReasonModel = reportList.first()
+        return this
+    }
+
+    fun setPollId(pollId: String): ReportChoiceDialog {
+        this.pollId = pollId
+        return this
+    }
+
+    fun setReviewId(reviewId: String): ReportChoiceDialog {
+        this.reviewId = reviewId
         return this
     }
 

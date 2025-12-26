@@ -60,10 +60,15 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 binding.etComment.setText(it.current.comment.content)
             } else {
                 viewModel.sendClickReportReview(it.current.comment.commentId)
-                ReportChoiceDialog().setType(ReportChoiceDialog.Type.COMMENT).setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
-                    if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
-                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
-                }.show(supportFragmentManager, "")
+                ReportChoiceDialog()
+                    .setType(ReportChoiceDialog.Type.COMMENT)
+                    .setReportList(pollCommentReports)
+                    .setPollId(if (::pollItem.isInitialized) pollItem.poll.pollId else "")
+                    .setReviewId(it.current.comment.commentId)
+                    .setReportCallback { reasonModel, s ->
+                        if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
+                        else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
+                    }.show(supportFragmentManager, "")
             }
         }
     }
@@ -136,10 +141,14 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         }
         binding.btnReport.onSingleClick {
             viewModel.sendClickReport()
-            ReportChoiceDialog().setType(ReportChoiceDialog.Type.POLL).setReportList(pollReports).setReportCallback { reasonModel, s ->
-                if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
-                else viewModel.report(reasonModel.id)
-            }.show(supportFragmentManager, "")
+            ReportChoiceDialog()
+                .setType(ReportChoiceDialog.Type.POLL)
+                .setReportList(pollReports)
+                .setPollId(if (::pollItem.isInitialized) pollItem.poll.pollId else "")
+                .setReportCallback { reasonModel, s ->
+                    if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
+                    else viewModel.report(reasonModel.id)
+                }.show(supportFragmentManager, "")
         }
     }
 
