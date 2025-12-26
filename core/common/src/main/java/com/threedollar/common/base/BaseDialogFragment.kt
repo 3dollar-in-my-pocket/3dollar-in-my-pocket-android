@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
@@ -69,7 +68,6 @@ abstract class BaseDialogFragment<B : ViewBinding> :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
-        initFirebaseAnalytics()
         initViews()
     }
 
@@ -85,15 +83,6 @@ abstract class BaseDialogFragment<B : ViewBinding> :
     }
 
     abstract fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): B
-
-    @Deprecated(
-        message = "No longer needed. Dialog.screenName is used automatically",
-        replaceWith = ReplaceWith("")
-    )
-    open fun initFirebaseAnalytics() {
-        // Override in legacy screens if needed
-        // New screens should set Dialog.screenName instead
-    }
 
     abstract fun initViews()
     companion object {

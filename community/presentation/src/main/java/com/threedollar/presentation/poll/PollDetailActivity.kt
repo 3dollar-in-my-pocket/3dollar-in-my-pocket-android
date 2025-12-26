@@ -73,10 +73,6 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "PollDetailActivity", screenName = "poll_detail")
-    }
-
     override fun initView() {
         setLightSystemBars()
         initViewModel()

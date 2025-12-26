@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.viewbinding.ViewBinding
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
@@ -63,14 +62,6 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
     abstract fun initView()
 
-    @Deprecated(
-        message = "No longer needed. ViewModel.screenName is used automatically",
-        replaceWith = ReplaceWith("")
-    )
-    open fun initFirebaseAnalytics() {
-        // Override in legacy screens if needed
-        // New screens should set ViewModel.screenName instead
-    }
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         val v = currentFocus
         val ret = super.dispatchTouchEvent(event)
@@ -90,19 +81,6 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         }
 
         return ret
-    }
-
-    @Deprecated(
-        message = "Use sendScreenView(ScreenName) instead",
-        replaceWith = ReplaceWith("sendScreenView(screen)")
-    )
-    fun setFirebaseAnalyticsLogEvent(className: String, screenName: String?) {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
-            screenName?.let {
-                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            }
-        }
     }
 
     open fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {

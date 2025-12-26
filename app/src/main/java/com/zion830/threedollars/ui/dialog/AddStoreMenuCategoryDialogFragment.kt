@@ -13,7 +13,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
@@ -114,7 +113,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
                     putString("screen", "category_selection")
                     putString("category_name", viewModel.selectCategoryList.value.joinToString { it.menuType.name })
                 }
-                EventTracker.logEvent(Constants.CLICK_CATEGORY, bundle)
             }
             dismiss()
         }

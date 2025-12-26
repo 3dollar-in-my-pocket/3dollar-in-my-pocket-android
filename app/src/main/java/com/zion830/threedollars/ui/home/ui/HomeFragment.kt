@@ -127,10 +127,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        // OnResume에서 로그를 보내기 위해 의도적으로 비워두었습니다.
-    }
-
     private fun initScroll() {
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.aroundStoreRecyclerView)

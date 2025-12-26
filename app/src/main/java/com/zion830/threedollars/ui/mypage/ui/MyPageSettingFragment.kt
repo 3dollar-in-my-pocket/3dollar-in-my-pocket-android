@@ -21,7 +21,6 @@ import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.zion830.threedollars.BuildConfig
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.R
@@ -56,8 +55,6 @@ class MyPageSettingFragment :
     }
 
     override fun initView() {
-        EventTracker.logEvent(Constants.SETTING_BTN_CLICKED)
-
         initButton()
 
         binding.token.isVisible = BuildConfig.BUILD_TYPE == "debug"
@@ -123,26 +120,21 @@ class MyPageSettingFragment :
             activity?.supportFragmentManager?.popBackStack()
         }
         binding.layoutTerms.setOnClickListener {
-            EventTracker.logEvent(Constants.TERMS_OF_USE_BTN_CLICKED)
             val browserIntent =
                 Intent(Intent.ACTION_VIEW, Uri.parse(getString(CommonR.string.terms_of_service_url)))
             startActivity(browserIntent)
         }
         binding.layoutTeamIntroduce.setOnClickListener {
-            EventTracker.logEvent(Constants.TEAM_INTRODUCE_BTN_CLICKED)
             val browserIntent = Intent(requireContext(), MyPageTeamActivity::class.java)
             startActivity(browserIntent)
         }
         binding.layoutAsk.setOnClickListener {
-            EventTracker.logEvent(Constants.INQUIRY_BTN_CLICKED)
             addAskFragment()
         }
         binding.buttonLogout.setOnClickListener {
-            EventTracker.logEvent(Constants.LOGOUT_BTN_CLICKED)
             tryLogout()
         }
         binding.btnDeleteAccount.setOnClickListener {
-            EventTracker.logEvent(Constants.SIGNOUT_BTN_CLICKED)
             showDeleteAccountDialog()
         }
         binding.constraintAd.setOnClickListener {
@@ -204,7 +196,7 @@ class MyPageSettingFragment :
             .setMessage(CommonR.string.delete_account_confirm)
             .setCancelable(true)
             .setNegativeButton(android.R.string.cancel) { _, _ ->
-                EventTracker.logEvent(Constants.SIGNOUT_CANCEL_BTN_CLICKED)
+
             }
             .setPositiveButton(zion830.com.common.R.string.ok) { _, _ -> tryDeleteAccount() }
             .create()
@@ -212,7 +204,6 @@ class MyPageSettingFragment :
     }
 
     private fun tryDeleteAccount() {
-        EventTracker.logEvent(Constants.SIGNOUT_WITHDRAW_BTN_CLICKED)
         viewModel.deleteUser {
             LegacySharedPrefUtils.clearUserInfo()
             GlobalApplication.googleClient.signOut()

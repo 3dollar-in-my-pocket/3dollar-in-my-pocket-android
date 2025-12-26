@@ -117,10 +117,6 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
         FragmentCommunityBinding.inflate(inflater, container, false)
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "CommunityFragment", screenName = "community")
-    }
-
     override fun initView() {
         selectedPopular(true)
         initAdvertisements()

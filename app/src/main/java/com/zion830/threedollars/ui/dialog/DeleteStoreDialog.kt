@@ -16,7 +16,6 @@ import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.CLICK_REPORT
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogDeleteBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel

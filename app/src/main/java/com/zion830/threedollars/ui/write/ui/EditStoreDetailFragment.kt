@@ -87,10 +87,6 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         initFlow()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditStoreDetailFragment", screenName = "write_address_detail")
-    }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {

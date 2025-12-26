@@ -6,8 +6,6 @@ enum class LogObjectType(val value: String) {
     MARKER("marker"),
     BANNER("banner"),
     TAB("tab"),
-    FILTER("filter"),
-    FIELD("field"),
     REVIEW("review"),
     MEDAL("medal"),
     MENU("menu");

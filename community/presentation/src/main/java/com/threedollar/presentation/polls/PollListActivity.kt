@@ -55,9 +55,6 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
     private var pollList: PollList? = null
     private var isLoading = false
     private var categoryId = ""
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "PollListActivity", screenName = "poll_list")
-    }
 
     override fun initView() {
         setLightSystemBars()

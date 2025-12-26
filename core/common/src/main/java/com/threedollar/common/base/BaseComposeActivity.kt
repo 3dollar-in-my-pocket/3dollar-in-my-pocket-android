@@ -40,15 +40,6 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : AppCompatActivity() {
         }
     }
 
-    @Deprecated(
-        message = "No longer needed. ViewModel.screenName is used automatically",
-        replaceWith = ReplaceWith("")
-    )
-    open fun initFirebaseAnalytics() {
-        // Override in legacy screens if needed
-        // New screens should set ViewModel.screenName instead
-    }
-
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         val v = currentFocus
         val ret = super.dispatchTouchEvent(event)
@@ -68,19 +59,6 @@ abstract class BaseComposeActivity<VM : BaseViewModel> : AppCompatActivity() {
         }
 
         return ret
-    }
-
-    @Deprecated(
-        message = "Use sendPageView(ScreenName) instead",
-        replaceWith = ReplaceWith("sendPageView(screen)")
-    )
-    fun setFirebaseAnalyticsLogEvent(className: String, screenName: String?) {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
-            screenName?.let {
-                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            }
-        }
     }
 
     open fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {

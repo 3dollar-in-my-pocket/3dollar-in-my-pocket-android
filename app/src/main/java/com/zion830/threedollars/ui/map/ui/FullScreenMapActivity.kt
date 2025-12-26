@@ -34,10 +34,6 @@ class FullScreenMapActivity :
         initButton()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "FullScreenMapActivity", screenName = null)
-    }
-
     private fun initIntent() {
         latitude = intent.getDoubleExtra(LATITUDE, 0.0)
         longitude = intent.getDoubleExtra(LONGITUDE, 0.0)

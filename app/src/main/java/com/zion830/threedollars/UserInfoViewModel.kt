@@ -68,8 +68,6 @@ class UserInfoViewModel @Inject constructor(
     }
 
     fun updateName() {
-        EventTracker.logEvent(Constants.NICKNAME_CHANGE_BTN_CLICKED)
-
         if (isNameEmpty.value == true) {
             return
         }
