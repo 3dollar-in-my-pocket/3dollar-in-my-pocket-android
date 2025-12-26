@@ -14,6 +14,7 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
+import com.threedollar.common.analytics.ParameterName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -127,8 +128,8 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
                 objectType = LogObjectType.CARD,
                 objectId = LogObjectId.VISITED_STORE,
                 additionalParams = mapOf(
-                    com.threedollar.common.analytics.ParameterName.STORE_ID to storeId,
-                    com.threedollar.common.analytics.ParameterName.STORE_TYPE to storeType
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
                 )
             )
         )
@@ -141,8 +142,8 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
                 objectType = LogObjectType.CARD,
                 objectId = LogObjectId.FAVORITED_STORE,
                 additionalParams = mapOf(
-                    com.threedollar.common.analytics.ParameterName.STORE_ID to storeId,
-                    com.threedollar.common.analytics.ParameterName.STORE_TYPE to storeType
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
                 )
             )
         )
