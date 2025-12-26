@@ -12,12 +12,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.my.presentation.page.MyPageViewModel
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.network.data.store.MyReportedContent
 import com.threedollar.network.data.store.MyReportedStore
 import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
@@ -54,6 +59,7 @@ class MyStoreFragment :
     override fun initView() {
         adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<MyReportedStore> {
             override fun onClick(item: MyReportedStore) {
+                sendClickStore(item.storeId.toString(), Constants.USER_STORE)
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
@@ -73,8 +79,22 @@ class MyStoreFragment :
         observeUiData()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyStoreFragment", screenName = null)
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.REGISTERED_STORE, this::class.java.simpleName)
+    }
+
+    private fun sendClickStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REGISTERED_STORE,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
     }
 
     override fun onStop() {

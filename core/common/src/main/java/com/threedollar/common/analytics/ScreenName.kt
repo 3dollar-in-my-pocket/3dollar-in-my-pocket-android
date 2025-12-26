@@ -63,7 +63,7 @@ enum class ScreenName(val value: String) {
     // My Page
     MY_PAGE("my_page"),
     MY_STORE("my_store"),
-    REGISTERED_STORE("registeredStore"),
+    REGISTERED_STORE("registered_store"),
     VISITED_LIST("visitedList"),
     CLICK_REVIEW("clickReview"),
     MY_REVIEW("myReview"),
