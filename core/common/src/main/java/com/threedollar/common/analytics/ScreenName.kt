@@ -43,7 +43,7 @@ enum class ScreenName(val value: String) {
     REVIEW_LIST("review_list"),
     REPORT_STORE("report_store"),
     REVIEW_BOTTOM_SHEET("review_bottom_sheet"),
-    VISIT_STORE("visitStore"),
+    VISIT_STORE("visit_store"),
     BOSS_STORE_DETAIL("boss_store_detail"),
     BOSS_STORE_REVIEW("bossStoreReview"),
     BOSS_STORE_REVIEW_WRITE("bossStoreReviewWrite"),

@@ -65,10 +65,6 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreCertificationFragment", screenName = "visit_store")
-    }
-
     private fun initMap() {
         val storeLatLng = LatLng(
             userStoreModel?.location?.latitude ?: 0.0,
