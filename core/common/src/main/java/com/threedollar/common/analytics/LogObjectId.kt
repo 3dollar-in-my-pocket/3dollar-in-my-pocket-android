@@ -16,7 +16,6 @@ enum class LogObjectId(val value: String) {
     BOSS_FILTER("boss_filter"),
     SORTING("sorting"),
     RECENT_ACTIVITY_FILTER("recent_activity_filter"),
-    ONLY_VISIT("only_visit"),
 
     // Common Actions
     DO_NOT_SHOW_TODAY("do_not_show_today"),

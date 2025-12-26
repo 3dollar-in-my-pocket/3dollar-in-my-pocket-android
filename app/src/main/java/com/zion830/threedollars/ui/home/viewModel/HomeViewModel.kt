@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.home.domain.data.advertisement.AdvertisementModelV2
 import com.home.domain.data.store.CategoryModel
+import com.home.domain.data.store.StoreModel
 import com.home.domain.data.user.UserModel
 import com.home.domain.repository.HomeRepository
 import com.home.domain.request.FilterConditionsTypeModel
@@ -195,18 +196,30 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     // GA Events - Home
-    fun sendClickStore(storeId: String) {
+    fun sendClickStore(store: StoreModel) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.STORE,
-                additionalParams = mapOf(ParameterName.STORE_ID to storeId)
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to store.storeId,
+                    ParameterName.STORE_TYPE to store.storeType
+                )
             )
         )
     }
 
-    fun sendClickCurrentLocation() {
+    fun sendClickAdvertisementCardLog(ad: AdvertisementModelV2) {
+        LogManager.sendEvent(ClickEvent(
+            screen = screenName,
+            objectType = LogObjectType.CARD,
+            objectId = LogObjectId.ADVERTISEMENT,
+            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to ad.advertisementId.toString())
+        ))
+    }
+
+    fun sendClickCurrentLocationLog() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
@@ -226,13 +239,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         )
     }
 
-    fun sendClickCategoryFilter(categoryName: String) {
+    fun sendClickCategoryFilter() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.CATEGORY_FILTER,
-                additionalParams = mapOf(ParameterName.CATEGORY_NAME to categoryName)
+                objectId = LogObjectId.CATEGORY_FILTER
             )
         )
     }
@@ -270,14 +282,31 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         )
     }
 
-    fun sendClickOnlyVisit(value: Boolean) {
+    fun sendClickVisitButtonLog() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.ONLY_VISIT,
-                additionalParams = mapOf(ParameterName.VALUE to value.toString())
+                objectId = LogObjectId.VISIT
             )
         )
+    }
+
+    fun sendClickMarkerLog(store: StoreModel) {
+        LogManager.sendEvent(ClickEvent(
+            screen = screenName,
+            objectType = LogObjectType.MARKER,
+            objectId = LogObjectId.STORE,
+            additionalParams = mapOf(ParameterName.STORE_ID to store.storeId)
+        ))
+    }
+
+    fun sendClickAdvertisementMarkerLog(advertisementId: Int) {
+        LogManager.sendEvent(ClickEvent(
+            screen = screenName,
+            objectType = LogObjectType.MARKER,
+            objectId = LogObjectId.ADVERTISEMENT,
+            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId.toString())
+        ))
     }
 }
