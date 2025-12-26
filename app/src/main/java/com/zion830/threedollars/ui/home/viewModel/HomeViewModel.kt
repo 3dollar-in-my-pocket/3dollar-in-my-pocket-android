@@ -309,4 +309,37 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId.toString())
         ))
     }
+
+    // GA Events - Category Filter
+    fun sendClickCategoryInFilter(categoryId: String?) {
+        val params = if (categoryId != null) {
+            mapOf(ParameterName.CATEGORY_ID to categoryId)
+        } else {
+            emptyMap()
+        }
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.CATEGORY_FILTER,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.CATEGORY,
+            additionalParams = params
+        ))
+    }
+
+    fun sendClickCategoryBannerAd(advertisementId: String) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.CATEGORY_FILTER,
+            objectType = LogObjectType.BANNER,
+            objectId = LogObjectId.ADVERTISEMENT,
+            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
+        ))
+    }
+
+    fun sendClickCategoryMenuAd(advertisementId: String) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.CATEGORY_FILTER,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.ADVERTISEMENT,
+            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
+        ))
+    }
 }
