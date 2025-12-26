@@ -16,19 +16,17 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.advertisement.AdvertisementModelV2Empty
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.common.utils.getDistanceText
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.MarkerModel
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemHomeEmptyBinding
 import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
@@ -36,6 +34,7 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 
 class AroundStoreMapViewRecyclerAdapter(
@@ -255,13 +254,13 @@ class NearStoreMapViewViewHolder(
             if (item.storeModel.storeType == USER_STORE) {
                 val visitCount = item.extraModel.visitCountsModel?.existsCounts ?: 0
                 text = GlobalApplication.getContext().getString(CommonR.string.resent_visit_count, visitCount)
-                setTextAppearance(R.style.apple_gothic_medium_size_12dp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.color_white))
+                setTextAppearance(DesignSystemR.style.apple_gothic_medium_size_12dp)
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.color_white))
                 setCompoundDrawablesWithIntrinsicBounds(null, null, null, null)
             } else {
                 text = StringUtils.getString(CommonR.string.only_boss)
-                setTextAppearance(R.style.apple_gothic_bold_size_12dp)
-                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.pink))
+                setTextAppearance(DesignSystemR.style.apple_gothic_bold_size_12dp)
+                setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.pink))
                 val drawableStart = ContextCompat.getDrawable(GlobalApplication.getContext(), DesignSystemR.drawable.ic_check_pink_16)
                 setCompoundDrawablesWithIntrinsicBounds(drawableStart, null, null, null)
             }

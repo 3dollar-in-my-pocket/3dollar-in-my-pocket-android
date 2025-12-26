@@ -25,7 +25,7 @@ class MedalRecyclerAdapter(
             tvName.setTextColor(
                 ContextCompat.getColor(
                     root.context,
-                    if (item.isSelected || item.isExist) R.color.color_sub_red else R.color.gray60
+                    if (item.isSelected || item.isExist) DesignSystemR.color.color_sub_red else DesignSystemR.color.gray60
                 )
             )
             tvName.setBackgroundResource(

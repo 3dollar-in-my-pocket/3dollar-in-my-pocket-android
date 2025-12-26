@@ -61,6 +61,18 @@ This is a multi-module Android application following Clean Architecture principl
 
 The app is a location-based service for finding street food vendors ("3달러 가게") with features for store discovery, reviews, community polling, and user management.
 
+## Coding Guidelines
+
+### Comment Style
+- **Use KDoc comments (`/** */`) for documentation**: Public APIs, classes, and functions that need documentation
+- **Avoid single-line comments (`//`)**: Do not use `//` comments in production code
+- **Only use KDoc when necessary**: Add comments only when they provide meaningful information beyond what the code itself conveys
+
+### Code Style
+- Follow Kotlin coding conventions
+- Use meaningful variable and function names that are self-documenting
+- Keep functions small and focused on a single responsibility
+
 ## Development Notes
 
 ### Data Layer Patterns

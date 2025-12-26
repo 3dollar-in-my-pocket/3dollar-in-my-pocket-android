@@ -23,13 +23,13 @@ import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.AppearanceDayModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.FeedbackType
-import com.home.domain.data.store.ImageModel
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.StatusType
+import com.threedollar.domain.home.data.store.AppearanceDayModel
+import com.threedollar.domain.home.data.store.BossStoreDetailModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.FeedbackType
+import com.threedollar.domain.home.data.store.ImageModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.StatusType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
@@ -43,6 +43,7 @@ import com.threedollar.common.utils.Constants.CLICK_SNS
 import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
@@ -526,7 +527,7 @@ class BossStoreDetailActivity :
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
-        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+        val favoriteIcon = if (isFavorite) DesignSystemR.drawable.ic_food_truck_favorite_on else DesignSystemR.drawable.ic_food_truck_favorite_off
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)

@@ -7,10 +7,10 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate.REASON_GESTURE
 import com.naver.maps.map.NaverMap
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class NearStoreNaverMapFragment(
@@ -55,7 +55,7 @@ class NearStoreNaverMapFragment(
                 moveToCurrentLocation()
             }
             Constants.MODE_ROAD_FOOD -> {
-                binding.btnFindLocation.setImageResource(R.drawable.ic_search)
+                binding.btnFindLocation.setImageResource(DesignSystemR.drawable.ic_search)
             }
         }
     }

@@ -6,9 +6,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.home.domain.data.store.UserStoreDetailItem
-import com.home.domain.data.store.UserStoreMenuModel
-import com.home.domain.data.store.UserStoreMoreResponse
+import com.threedollar.domain.home.data.store.UserStoreDetailItem
+import com.threedollar.domain.home.data.store.UserStoreMenuModel
+import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
 import zion830.com.common.base.BaseDiffUtilCallback

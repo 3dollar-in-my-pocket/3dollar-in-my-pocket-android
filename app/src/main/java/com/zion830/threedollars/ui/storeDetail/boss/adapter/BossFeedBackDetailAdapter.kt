@@ -3,11 +3,11 @@ package com.zion830.threedollars.ui.storeDetail.boss.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.FeedbackModel
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.threedollar.domain.home.data.store.FeedbackModel
 import com.zion830.threedollars.databinding.ItemFoodTruckFeedbackDetailBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class BossFeedBackDetailAdapter : ListAdapter<FeedbackModel?, BossFeedBackDetailViewHolder>(BaseDiffUtilCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BossFeedBackDetailViewHolder {

@@ -33,7 +33,6 @@ import com.threedollar.network.data.store.MyReportedStoresResponse
 import com.threedollar.network.data.store.PostUserStoreResponse
 import com.threedollar.network.data.store.Reviews
 import com.threedollar.network.data.store.SaveImagesResponse
-import com.threedollar.network.data.store.StoreNearExistResponse
 import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
@@ -318,17 +317,10 @@ interface ServerApi {
         @Query("sort") sort: String,
     ): Response<BaseResponse<Reviews>>
 
-    @GET("/api/v1/stores/near/exists")
-    suspend fun getStoreNearExists(
-        @Query("distance") distance: Double,
-        @Query("mapLatitude") mapLatitude: Double,
-        @Query("mapLongitude") mapLongitude: Double,
-    ): Response<BaseResponse<StoreNearExistResponse>>
-
-    @POST("/api/v2/store")
+    @POST("/api/v3/store")
     suspend fun postUserStore(@Body userStoreRequest: UserStoreRequest): Response<BaseResponse<PostUserStoreResponse>>
 
-    @PUT("/api/v2/store/{storeId}")
+    @PATCH("/api/v3/store/{storeId}")
     suspend fun putUserStore(
         @Body userStoreRequest: UserStoreRequest,
         @Path("storeId") storeId: Int

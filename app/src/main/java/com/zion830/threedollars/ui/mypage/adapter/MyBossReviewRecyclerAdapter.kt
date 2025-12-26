@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.mypage.adapter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter

@@ -30,6 +30,8 @@
     <color name="pink_200">#FFDADD</color>
     <color name="pink_100">#FFF3F4</color>
 
+    <color name="purple">#9C6ADE</color>
+
     <!-- Gray Scale -->
     <color name="gray100">#0F0F0F</color>
     <color name="gray95">#181818</color>

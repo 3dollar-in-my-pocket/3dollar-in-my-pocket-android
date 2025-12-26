@@ -102,4 +102,10 @@
         <item name="android:layout_height">@dimen/divider_height</item>
         <item name="android:layout_width">match_parent</item>
     </style>
+
+    <!-- Dialog Style (from community module) -->
+    <style name="DialogStyle" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowMinWidthMajor">97%</item>
+        <item name="android:windowMinWidthMinor">97%</item>
+    </style>
 </resources>

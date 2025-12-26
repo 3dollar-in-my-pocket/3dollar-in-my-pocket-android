@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.StoreImage
-import com.home.domain.data.store.UserStoreDetailEmptyItem
-import com.home.domain.data.store.UserStoreDetailItem
+import com.threedollar.domain.home.data.store.StoreImage
+import com.threedollar.domain.home.data.store.UserStoreDetailEmptyItem
+import com.threedollar.domain.home.data.store.UserStoreDetailItem
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ItemPhotoBinding

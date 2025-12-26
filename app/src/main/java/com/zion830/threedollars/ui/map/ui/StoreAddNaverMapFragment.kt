@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +26,7 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         naverMap?.addOnCameraIdleListener {
             if (System.currentTimeMillis() - lastTime > 1000 && isIdleAvailable) {
                 val selectedPosition = naverMap?.cameraPosition?.target
-                addStoreViewModel.updateLocation(selectedPosition)
+                addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(selectedPosition))
                 lastTime = System.currentTimeMillis()
             }
         }
@@ -39,7 +40,7 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        addStoreViewModel.updateLocation(position)
+        addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(position))
         isIdleAvailable = true
     }
 }

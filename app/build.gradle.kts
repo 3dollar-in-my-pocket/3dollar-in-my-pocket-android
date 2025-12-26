@@ -98,17 +98,9 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
     implementation(project(":core:designsystem"))
-    implementation(project(":home:domain"))
-    implementation(project(":home:data"))
-    implementation(project(":home:presentation"))
-    implementation(project(":my:presentation"))
-    implementation(project(":my:domain"))
-    implementation(project(":my:data"))
-    implementation(project(":community:presentation"))
-    implementation(project(":login:domain"))
-    implementation(project(":login:data"))
-    implementation(project(":community:domain"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config)
@@ -122,7 +114,7 @@ dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.bundles.coil.compose)
     implementation(libs.firebase.messaging)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

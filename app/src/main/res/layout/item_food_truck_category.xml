@@ -6,7 +6,7 @@ xmlns:tools="http://schemas.android.com/tools">
 
     <variable
         name="item"
-        type="com.home.domain.data.store.CategoryModel" />
+        type="com.threedollar.domain.home.data.store.CategoryModel" />
 </data>
 
 <LinearLayout

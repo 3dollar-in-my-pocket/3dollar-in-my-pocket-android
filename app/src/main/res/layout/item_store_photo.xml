@@ -6,7 +6,7 @@
         
         <variable
             name="item"
-            type="com.home.domain.data.store.StoreImage" />
+            type="com.threedollar.domain.home.data.store.StoreImage" />
         
         <variable
             name="listener"

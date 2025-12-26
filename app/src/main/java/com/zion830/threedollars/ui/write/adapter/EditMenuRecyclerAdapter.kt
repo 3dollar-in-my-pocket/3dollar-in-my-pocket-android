@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.UserStoreMenuModel
+import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.zion830.threedollars.databinding.ItemMenuEditBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 

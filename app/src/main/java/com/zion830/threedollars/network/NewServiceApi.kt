@@ -13,7 +13,6 @@ import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
-import com.zion830.threedollars.datasource.model.v2.request.NewStoreRequest
 import com.zion830.threedollars.datasource.model.v2.request.UpdateMedalRequest
 import com.zion830.threedollars.datasource.model.v2.response.FAQByCategoryResponse
 import com.zion830.threedollars.datasource.model.v2.response.FAQCategoryResponse
@@ -29,9 +28,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreDeta
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackFullResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.BossStoreFeedbackTypeResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NearExistResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.NearStoreResponse
-import com.zion830.threedollars.datasource.model.v2.response.store.NewStoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.store.StoreDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -72,25 +69,6 @@ interface NewServiceApi {
     suspend fun deleteReview(
         @Path("reviewId") reviewId: Int,
     ): Response<BaseResponse<String>>
-
-    // 가게
-    @POST("/api/v2/store")
-    suspend fun saveStore(
-        @Body newStoreRequest: NewStoreRequest,
-    ): Response<NewStoreResponse>
-
-    @PUT("/api/v2/store/{storeId}")
-    suspend fun editStore(
-        @Path("storeId") storeId: Int,
-        @Body editStoreRequest: NewStoreRequest
-    ): Response<NewStoreResponse>
-
-    @GET("/api/v1/stores/near/exists")
-    suspend fun getNearExists(
-        @Query("distance") distance: Double = 10.0,
-        @Query("mapLatitude") latitude: Double,
-        @Query("mapLongitude") longitude: Double
-    ): Response<NearExistResponse>
 
     // 가게 검색
     @GET("/api/v2/store")

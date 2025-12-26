@@ -35,6 +35,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
     implementation(libs.bundles.androidx.ui)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)

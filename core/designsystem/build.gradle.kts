@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
 }
 
 apply(from = "../../common.gradle")
@@ -14,6 +15,7 @@ android {
     buildFeatures {
         viewBinding = false
         dataBinding = false
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

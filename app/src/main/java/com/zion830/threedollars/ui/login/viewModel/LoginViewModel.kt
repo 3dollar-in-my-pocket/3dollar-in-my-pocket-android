@@ -1,7 +1,7 @@
 package com.zion830.threedollars.ui.login.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.login.domain.repository.LoginRepository
+import com.threedollar.domain.login.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.network.data.auth.LoginRequest

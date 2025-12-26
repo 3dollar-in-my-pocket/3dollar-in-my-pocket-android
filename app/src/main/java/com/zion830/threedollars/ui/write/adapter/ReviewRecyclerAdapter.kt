@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.ReviewStatusType
-import com.home.domain.data.store.UserStoreDetailEmptyItem
-import com.home.domain.data.store.UserStoreDetailItem
-import com.home.domain.data.store.UserStoreMoreResponse
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.ReviewStatusType
+import com.threedollar.domain.home.data.store.UserStoreDetailEmptyItem
+import com.threedollar.domain.home.data.store.UserStoreDetailItem
+import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication

@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.orEmpty
 import com.threedollar.common.ext.toStringDefault
-import com.threedollar.presentation.poll.PollDetailActivity
+import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
