@@ -66,9 +66,9 @@ enum class ScreenName(val value: String) {
     REGISTERED_STORE("registered_store"),
     VISITED_LIST("visited_list"),
     CLICK_REVIEW("clickReview"),
-    MY_REVIEW("myReview"),
-    MY_MEDAL("myMedal"),
-    MY_BOOKMARK_LIST("myBookmarkList"),
+    MY_REVIEW("my_review"),
+    MY_MEDAL("my_medal"),
+    MY_BOOKMARK_LIST("my_bookmark_list"),
     EDIT_BOOKMARK_LIST("editBookmarkList"),
     BOOKMARK_LIST_VIEWER("bookmarkListViewer"),
 
