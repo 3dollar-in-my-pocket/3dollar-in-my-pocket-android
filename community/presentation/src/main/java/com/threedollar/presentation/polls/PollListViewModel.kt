@@ -79,37 +79,37 @@ class PollListViewModel @Inject constructor(private val communityRepository: Com
     }
 
     // GA Events - Poll List
-    fun sendClickCreatePoll() {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.CREATE_POLL
-            )
-        )
-    }
-
     fun sendClickPoll(pollId: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
-                objectType = LogObjectType.BUTTON,
+                objectType = LogObjectType.CARD,
                 objectId = LogObjectId.POLL,
                 additionalParams = mapOf(ParameterName.POLL_ID to pollId)
             )
         )
     }
 
-    fun sendClickVote(pollId: String, optionId: String) {
+    fun sendClickPollOption(pollId: String, optionId: String) {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.VOTE,
+                objectId = LogObjectId.POLL_OPTION,
                 additionalParams = mapOf(
                     ParameterName.POLL_ID to pollId,
                     ParameterName.OPTION_ID to optionId
                 )
+            )
+        )
+    }
+
+    fun sendClickCreatePoll() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CREATE_POLL
             )
         )
     }
