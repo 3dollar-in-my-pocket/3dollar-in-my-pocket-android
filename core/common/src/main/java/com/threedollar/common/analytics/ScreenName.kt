@@ -55,7 +55,7 @@ enum class ScreenName(val value: String) {
     POLL_LIST("poll_list"),
     REPORT_POLL("report_poll"),
     REPORT_REVIEW("report_review"),
-    CREATE_POLL("createPoll"),
+    CREATE_POLL("create_poll"),
 
     // Review
     WRITE_REVIEW("write_review"),
