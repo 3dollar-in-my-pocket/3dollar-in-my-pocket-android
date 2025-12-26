@@ -1,4 +1,4 @@
-package com.my.presentation.page.screen
+package com.zion830.threedollars.ui.my.page.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,16 +40,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.my.presentation.page.data.TeamRow
+import base.compose.Gray40
+import base.compose.Pink
+import base.compose.Pink200
+import base.compose.Pink500
+import base.compose.PretendardFontFamily
+import base.compose.dpToSp
+import com.zion830.threedollars.ui.my.page.data.TeamRow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import zion830.com.common.R
-import zion830.com.common.base.compose.Gray40
-import zion830.com.common.base.compose.Pink
-import zion830.com.common.base.compose.Pink200
-import zion830.com.common.base.compose.Pink500
-import zion830.com.common.base.compose.PretendardFontFamily
-import zion830.com.common.base.compose.dpToSp
 import com.threedollar.common.R as CommonR
 
 @Composable
@@ -200,8 +200,7 @@ private fun TeamRow(
     teamRow: TeamRow
 ) {
     Row(
-        modifier = Modifier
-            .background(Pink500, shape = RoundedCornerShape(16.dp))
+        modifier = Modifier.background(Pink500, shape = RoundedCornerShape(16.dp))
             .padding(vertical = 12.dp, horizontal = 20.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
