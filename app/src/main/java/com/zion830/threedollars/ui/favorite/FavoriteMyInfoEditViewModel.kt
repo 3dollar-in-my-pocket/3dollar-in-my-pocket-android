@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.favorite
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
@@ -13,6 +14,7 @@ import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FavoriteMyInfoEditViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
+    override val screenName: ScreenName = ScreenName.EDIT_BOOKMARK_LIST
     private val _isSuccess: MutableLiveData<Boolean> = MutableLiveData()
     val isSuccess: LiveData<Boolean> get() = _isSuccess
 
