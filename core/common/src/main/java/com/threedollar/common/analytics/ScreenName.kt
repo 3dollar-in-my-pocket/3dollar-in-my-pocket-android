@@ -45,8 +45,8 @@ enum class ScreenName(val value: String) {
     REVIEW_BOTTOM_SHEET("review_bottom_sheet"),
     VISIT_STORE("visit_store"),
     BOSS_STORE_DETAIL("boss_store_detail"),
-    BOSS_STORE_REVIEW("bossStoreReview"),
-    BOSS_STORE_REVIEW_WRITE("bossStoreReviewWrite"),
+    BOSS_STORE_REVIEW("boss_store_review"),
+    BOSS_STORE_REVIEW_WRITE("boss_store_review_write"),
     BOSS_STORE_PHOTO("bossStorePhoto"),
 
     // Community

@@ -403,4 +403,15 @@ class BossStoreDetailViewModel @Inject constructor(
             )
         )
     }
+
+    // GA Events - Boss Store Review Write
+    fun sendClickWriteReviewSubmit() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.BOSS_STORE_REVIEW_WRITE,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
+    }
 }
