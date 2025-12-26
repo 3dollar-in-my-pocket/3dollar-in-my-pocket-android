@@ -77,7 +77,7 @@ enum class ScreenName(val value: String) {
     EDIT_NICKNAME("edit_nickname"),
     QNA("qna"),
     FAQ("faq"),
-    TEAM_INFO("teamInfo"),
+    TEAM_INFO("team_info"),
 
     // Feed
     FEED_LIST("feedList"),
