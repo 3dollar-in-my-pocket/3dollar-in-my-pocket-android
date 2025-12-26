@@ -2,6 +2,7 @@ package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.auth.LoginRequest
+import com.threedollar.network.data.auth.LogoutRequest
 import com.threedollar.network.data.auth.SignUpRequest
 import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
@@ -23,7 +24,9 @@ interface LoginApi {
     suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<SignUser>>
 
     @POST("/api/v2/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
+    suspend fun logout(
+        @Body request: LogoutRequest
+    ): Response<BaseResponse<String>>
 
     @PUT("/api/v2/device")
     suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>
