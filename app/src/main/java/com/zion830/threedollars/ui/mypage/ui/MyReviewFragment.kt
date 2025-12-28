@@ -43,7 +43,14 @@ class MyReviewFragment : BaseFragment<FragmentMyReviewBinding, UserInfoViewModel
         }
         binding.reviewViewPager.adapter = fragmentAdapter
         TabLayoutMediator(binding.sortTabLayout, binding.reviewViewPager) { tab, position ->
-            tab.setText(CommonR.string.review_boss_tab_title)
+            when (fragmentAdapter?.getFragmentOrNull(position)) {
+                is ReviewFragmentItem -> {
+                    tab.setText(CommonR.string.review_user_tab_title)
+                }
+                is FeedBackFragmentItem -> {
+                    tab.setText(CommonR.string.review_boss_tab_title)
+                }
+            }
         }.attach()
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()

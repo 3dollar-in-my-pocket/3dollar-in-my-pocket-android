@@ -41,17 +41,27 @@ class ReviewFragmentItem : Fragment() {
             override fun onClick(item: MyReviewResponseData) {
                 sendClickReview(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
                 if (item.store.storeType == BOSS_STORE) {
-                    val intent = BossStoreDetailActivity.getIntent(requireContext(), item.store.storeId.toString())
+                    val intent = BossStoreDetailActivity.getIntent(
+                        requireContext(),
+                        item.store.storeId.toString()
+                    )
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 } else {
-                    val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
+                    val intent = StoreDetailActivity.getIntent(
+                        requireContext(),
+                        item.store.storeId?.toIntOrNull()
+                    )
                     startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
                 }
             }
         })
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentReviewItemBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,8 +87,10 @@ class ReviewFragmentItem : Fragment() {
                 launch {
                     adapter?.loadStateFlow?.collectLatest { loadState ->
                         if (loadState.refresh is LoadState.NotLoading) {
-                            binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                            binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                            val isEmpty = adapter?.itemCount == 0
+
+                            binding.ivEmpty.isVisible = isEmpty
+                            binding.emptyStateView.isVisible = isEmpty
                         }
                     }
                 }
