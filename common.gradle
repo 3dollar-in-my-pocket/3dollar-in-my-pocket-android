@@ -28,7 +28,7 @@ android {
             storePassword '3dollor'
         }
     }
-    
+
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
@@ -72,7 +72,7 @@ dependencies {
     implementation libs.play.services.ads
     implementation libs.play.services.location
     implementation platform(libs.firebase.bom)
-    
+
     implementation libs.firebase.analytics
     implementation libs.firebase.crashlytics
 
@@ -83,6 +83,9 @@ dependencies {
     implementation libs.naver.map
 
     implementation libs.simple.rating.bar
+
+    implementation 'io.github.fornewid:naver-map-location:21.0.2'
+    implementation 'io.github.fornewid:naver-map-compose:1.7.4'
 
     implementation(libs.hashtag.view) {
         exclude group: 'com.google.guava'

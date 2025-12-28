@@ -1,10 +1,8 @@
 package zion830.com.common.base
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat

@@ -6,11 +6,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.data.my.datasource.MyFeedbacksDataSourceImpl
+import com.threedollar.data.my.datasource.MyReviewDataSourceImpl
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.my.data.datasource.MyFeedbacksDataSourceImpl
-import com.my.data.datasource.MyReviewDataSourceImpl
-import com.zion830.threedollars.datasource.StoreDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

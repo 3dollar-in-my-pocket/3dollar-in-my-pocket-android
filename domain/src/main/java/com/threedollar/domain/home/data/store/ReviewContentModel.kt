@@ -1,0 +1,10 @@
+package com.threedollar.domain.home.data.store
+
+
+data class ReviewContentModel(
+    val review: ReviewModel = ReviewModel(),
+    val reviewReport: ReviewReportModel = ReviewReportModel(),
+    val reviewWriter: ReviewWriterModel = ReviewWriterModel(),
+    val stickers: List<StickerModel> = listOf(),
+    val comments: List<CommentModel> = listOf()
+) : UserStoreDetailItem

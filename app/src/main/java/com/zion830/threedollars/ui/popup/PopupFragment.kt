@@ -15,7 +15,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate

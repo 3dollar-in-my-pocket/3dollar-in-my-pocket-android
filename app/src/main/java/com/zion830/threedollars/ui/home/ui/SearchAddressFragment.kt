@@ -11,12 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.gms.ads.AdRequest
-import com.home.domain.data.place.PlaceModel
-import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.domain.home.data.place.PlaceModel
+import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
@@ -24,7 +24,6 @@ import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter
 import com.zion830.threedollars.ui.home.adapter.SearchAddressRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview

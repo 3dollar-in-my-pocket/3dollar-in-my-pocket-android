@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.my.domain.model.UserInfoModel
-import com.my.domain.model.UserInfoUpdateModel
-import com.my.domain.repository.MyRepository
-import com.login.domain.repository.LoginRepository
+import com.threedollar.domain.my.model.UserInfoModel
+import com.threedollar.domain.my.model.UserInfoUpdateModel
+import com.threedollar.domain.my.repository.MyRepository
+import com.threedollar.domain.login.repository.LoginRepository
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants

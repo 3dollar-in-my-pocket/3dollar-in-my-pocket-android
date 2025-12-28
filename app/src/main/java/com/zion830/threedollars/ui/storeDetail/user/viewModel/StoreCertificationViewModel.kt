@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.user.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.home.domain.repository.HomeRepository
+import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -6,12 +6,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.AppearanceDayModel
-import com.home.domain.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.AppearanceDayModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ItemAppearanceDayBinding
 import zion830.com.common.base.BaseDiffUtilCallback
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class AppearanceDayRecyclerAdapter : ListAdapter<AppearanceDayModel, AppearanceDayViewHolder>(BaseDiffUtilCallback()) {
 
@@ -30,10 +30,10 @@ class AppearanceDayViewHolder(private val binding: ItemAppearanceDayBinding) : V
         binding.dayTextView.text = item.dayOfTheWeek.dayString
         if (item.openingHoursModel == null) {
             binding.timeTextView.text = "휴무"
-            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray50))
+            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.gray50))
         } else {
             binding.timeTextView.text = item.openingHoursModel!!.toConvert()
-            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), R.color.gray70))
+            binding.timeTextView.setTextColor(ContextCompat.getColor(GlobalApplication.getContext(), DesignSystemR.color.gray70))
         }
         binding.locationTextView.text = item.locationDescription
         if (item.dayOfTheWeek == DayOfTheWeekType.SUNDAY) {

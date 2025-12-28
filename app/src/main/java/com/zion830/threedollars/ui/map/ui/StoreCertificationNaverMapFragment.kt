@@ -7,10 +7,10 @@ import androidx.core.view.isVisible
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.CircleOverlay
-import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationAvailableFragment.Companion.MIN_DISTANCE
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreCertificationNaverMapFragment : NaverMapFragment() {
@@ -46,7 +46,7 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
     override fun onMapReady(map: NaverMap) {
         super.onMapReady(map)
 
-        addMarker(R.drawable.ic_mappin_focused_on, latLng)
+        addMarker(DesignSystemR.drawable.ic_mappin_focused_on, latLng)
         addCircle(latLng, MIN_DISTANCE.toDouble())
 
         initFindLocationButton()
@@ -55,9 +55,9 @@ class StoreCertificationNaverMapFragment : NaverMapFragment() {
 
     private fun addCircle(latLng: LatLng, radius: Double) {
         circleOverlay = CircleOverlay(latLng, radius).apply {
-            color = ContextCompat.getColor(requireContext(), R.color.certification_radius)
+            color = ContextCompat.getColor(requireContext(), DesignSystemR.color.certification_radius)
             outlineWidth = 1
-            outlineColor = ContextCompat.getColor(requireContext(), R.color.color_sub_red)
+            outlineColor = ContextCompat.getColor(requireContext(), DesignSystemR.color.color_sub_red)
         }
 
         if (!isOverlayExist) {

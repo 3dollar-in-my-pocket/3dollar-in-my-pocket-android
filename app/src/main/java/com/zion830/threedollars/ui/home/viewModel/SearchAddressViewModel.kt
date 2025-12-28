@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.home.domain.data.place.PlaceModel
-import com.home.domain.repository.HomeRepository
-import com.home.domain.request.PlaceRequest
-import com.home.domain.request.PlaceType
+import com.threedollar.domain.home.data.place.PlaceModel
+import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.PlaceRequest
+import com.threedollar.domain.home.request.PlaceType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.data.kakao.SearchAddressResponse

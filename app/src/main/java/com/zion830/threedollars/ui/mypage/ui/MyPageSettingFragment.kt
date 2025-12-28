@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
-import com.my.presentation.page.team.MyPageTeamActivity
+import com.zion830.threedollars.ui.my.page.team.MyPageTeamActivity
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnBackPressedListener
