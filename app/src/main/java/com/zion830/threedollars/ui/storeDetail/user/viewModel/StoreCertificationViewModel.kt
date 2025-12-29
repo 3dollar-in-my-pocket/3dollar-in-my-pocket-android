@@ -3,7 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.user.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.home.domain.repository.HomeRepository
+import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId

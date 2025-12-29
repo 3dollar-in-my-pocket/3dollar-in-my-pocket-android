@@ -1,9 +1,6 @@
 package com.zion830.threedollars.ui.map.viewModel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
@@ -13,6 +10,8 @@ import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.repository.HomeRepository
 import com.zion830.threedollars.datasource.UserDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -2,7 +2,7 @@ package com.zion830.threedollars.datasource.model.v2.response.store
 
 
 import com.google.gson.annotations.SerializedName
-import com.home.domain.data.store.BossStoreDetailItem
+import com.threedollar.domain.home.data.store.BossStoreDetailItem
 
 data class BossStoreDetailModel(
     @SerializedName("appearanceDays")

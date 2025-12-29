@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.my.domain.model.UserInfoUpdateModel
-import com.my.domain.repository.MyRepository
+import com.threedollar.domain.my.model.UserInfoUpdateModel
+import com.threedollar.domain.my.repository.MyRepository
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId

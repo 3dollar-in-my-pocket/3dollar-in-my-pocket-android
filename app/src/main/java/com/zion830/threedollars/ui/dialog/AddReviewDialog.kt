@@ -10,16 +10,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.home.domain.data.store.ReviewContentModel
-import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.zion830.threedollars.R
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.common.analytics.ScreenName
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 interface OnReviewEditCallback {
     fun onReviewEdited(updatedReview: ReviewContentModel)
@@ -36,7 +36,7 @@ class AddReviewDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, DesignSystemR.style.CustomBottomSheetDialogTheme)
     }
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

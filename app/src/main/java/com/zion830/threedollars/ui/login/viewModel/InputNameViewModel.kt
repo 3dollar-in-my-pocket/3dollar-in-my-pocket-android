@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.login.domain.repository.LoginRepository
+import com.threedollar.domain.login.repository.LoginRepository
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId

@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
-import com.my.presentation.page.MyPageViewModel
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId

@@ -1,8 +1,8 @@
 package com.zion830.threedollars.ui.popup
 
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.repository.HomeRepository
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.repository.HomeRepository
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager

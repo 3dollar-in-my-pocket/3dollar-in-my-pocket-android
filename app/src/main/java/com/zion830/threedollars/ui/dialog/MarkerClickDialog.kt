@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ import com.zion830.threedollars.ui.map.viewModel.MarkerClickViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 
 @AndroidEntryPoint
@@ -37,7 +37,7 @@ class MarkerClickDialog(val latLng: LatLng) : BaseDialogFragment<DialogMarkerCli
     private val viewModel: MarkerClickViewModel by viewModels()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return Dialog(requireContext(), R.style.TransparentDialog)
+        return Dialog(requireContext(), DesignSystemR.style.TransparentDialog)
     }
 
     override fun initViews() {

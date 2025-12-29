@@ -10,14 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
 import com.google.android.gms.ads.AdRequest
-import com.home.domain.data.place.PlaceModel
-import com.home.domain.request.PlaceRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnItemClickListener
+import com.threedollar.common.utils.Constants
+import com.threedollar.domain.home.data.place.PlaceModel
+import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.network.data.kakao.Document
 import com.zion830.threedollars.databinding.FragmentSearchByAddressBinding
 import com.zion830.threedollars.ui.home.adapter.RecentSearchAdapter

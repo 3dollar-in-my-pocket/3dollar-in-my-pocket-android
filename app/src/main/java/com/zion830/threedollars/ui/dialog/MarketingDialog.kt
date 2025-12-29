@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogMarketingBinding
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
@@ -36,7 +36,7 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return Dialog(requireContext(), R.style.TransparentDialog)
+        return Dialog(requireContext(), DesignSystemR.style.TransparentDialog)
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogMarketingBinding = DialogMarketingBinding.inflate(inflater,container,false)
@@ -51,19 +51,19 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                     check1 = false
                     check2 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_uncheck,
+                        DesignSystemR.drawable.icon_circle_uncheck,
                         0,
                         0,
                         0
                     )
                     term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
+                        DesignSystemR.drawable.icon_uncheck_gray,
                         0,
                         0,
                         0
                     )
                     term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
+                        DesignSystemR.drawable.icon_uncheck_gray,
                         0,
                         0,
                         0
@@ -72,19 +72,19 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                     check1 = true
                     check2 = true
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_check,
+                        DesignSystemR.drawable.icon_circle_check,
                         0,
                         0,
                         0
                     )
                     term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
+                        DesignSystemR.drawable.icon_check_pink,
                         0,
                         0,
                         0
                     )
                     term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
+                        DesignSystemR.drawable.icon_check_pink,
                         0,
                         0,
                         0
@@ -97,13 +97,13 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 if (check1) {
                     check1 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_uncheck,
+                        DesignSystemR.drawable.icon_circle_uncheck,
                         0,
                         0,
                         0
                     )
                     term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
+                        DesignSystemR.drawable.icon_uncheck_gray,
                         0,
                         0,
                         0
@@ -111,13 +111,13 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 } else {
                     check1 = true
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_check,
+                        DesignSystemR.drawable.icon_circle_check,
                         0,
                         0,
                         0
                     )
                     term1TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
+                        DesignSystemR.drawable.icon_check_pink,
                         0,
                         0,
                         0
@@ -129,13 +129,13 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                 if (check2) {
                     check2 = false
                     allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_circle_uncheck,
+                        DesignSystemR.drawable.icon_circle_uncheck,
                         0,
                         0,
                         0
                     )
                     term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_uncheck_gray,
+                        DesignSystemR.drawable.icon_uncheck_gray,
                         0,
                         0,
                         0
@@ -144,14 +144,14 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
                     check2 = true
                     if (check1) {
                         allAgreeTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            R.drawable.icon_circle_check,
+                            DesignSystemR.drawable.icon_circle_check,
                             0,
                             0,
                             0
                         )
                     }
                     term2TextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        R.drawable.icon_check_pink,
+                        DesignSystemR.drawable.icon_check_pink,
                         0,
                         0,
                         0

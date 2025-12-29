@@ -9,16 +9,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.my.presentation.page.MyPageViewModel
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
-import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.R
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentEditNameBinding
+import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel>(), OnBackPressedListener {
@@ -46,7 +45,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
         viewModel.isAlreadyUsed.observe(viewLifecycleOwner) {
             binding.groupAlreadyExist.isVisible = it.isNotEmpty()
             if (it.isNotEmpty()) {
-                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), DesignSystemR.color.red))
                 binding.tvAlreadyExist.text = it
             }
         }
@@ -81,7 +80,7 @@ class EditNameFragment : BaseFragment<FragmentEditNameBinding, UserInfoViewModel
 
             override fun onTextChanged(charSequence: CharSequence, start: Int, before: Int, count: Int) {
                 viewModel.userName.value = charSequence.toString()
-                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), R.color.pink))
+                binding.editNickName.setTextColor(ContextCompat.getColor(requireContext(), DesignSystemR.color.pink))
                 if (binding.groupAlreadyExist.isVisible) {
                     binding.groupAlreadyExist.isVisible = false
                 }

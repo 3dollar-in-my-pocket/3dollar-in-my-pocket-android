@@ -7,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.home.domain.data.store.ReasonModel
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.request.ReportReviewModelRequest
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
+import com.threedollar.domain.home.data.store.ReasonModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.request.ReportReviewModelRequest
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogReportReviewBinding
 import zion830.com.common.base.onSingleClick

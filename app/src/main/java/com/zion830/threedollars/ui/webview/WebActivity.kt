@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.base.BaseComposeActivity
-import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import zion830.com.common.base.compose.ColorBlack
+import base.compose.ColorBlack
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class WebActivity : BaseComposeActivity<WebViewModel>() {
@@ -132,7 +132,7 @@ fun WebViewTopBar(
             modifier = Modifier.align(Alignment.CenterEnd)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_copy_18),
+                painter = painterResource(id = DesignSystemR.drawable.ic_copy_18),
                 contentDescription = "Copy URL",
                 tint = Color.Black
             )

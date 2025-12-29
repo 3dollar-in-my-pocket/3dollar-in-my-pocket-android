@@ -25,15 +25,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.PaymentType
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.StoreImage
-import com.home.domain.data.store.UserStoreDetailEmptyItem
-import com.home.domain.data.store.UserStoreDetailModel
-import com.home.domain.data.store.UserStoreMenuModel
-import com.home.domain.data.store.UserStoreMoreResponse
-import com.home.domain.data.store.VisitsModel
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
@@ -51,8 +42,16 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.getDistanceText
 import com.threedollar.common.utils.toDefaultInt
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.PaymentType
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.StoreImage
+import com.threedollar.domain.home.data.store.UserStoreDetailEmptyItem
+import com.threedollar.domain.home.data.store.UserStoreDetailModel
+import com.threedollar.domain.home.data.store.UserStoreMenuModel
+import com.threedollar.domain.home.data.store.UserStoreMoreResponse
+import com.threedollar.domain.home.data.store.VisitsModel
 import com.zion830.threedollars.R
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
@@ -89,6 +88,7 @@ import zion830.com.common.ext.isNotNullOrEmpty
 import java.text.SimpleDateFormat
 import java.util.Locale
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
@@ -176,7 +176,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             }
         }
 
-        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(R.color.pink, null))
+        binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(DesignSystemR.color.pink, null))
         refreshStoreInfo()
         initMap()
         initButton()
@@ -612,7 +612,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 null,
                 null,
             )
-            setTextColor(getColor(R.color.gray70))
+            setTextColor(getColor(DesignSystemR.color.gray70))
         }
     }
 
@@ -656,7 +656,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             listOf(mondayTextView, tuesdayTextView, wednesdayTextView, thursdayTextView, fridayTextView, saturdayTextView, sundayTextView).forEach {
                 it.apply {
                     setBackgroundResource(DesignSystemR.drawable.circle_gray10_24dp)
-                    setTextColor(getColor(R.color.gray40))
+                    setTextColor(getColor(DesignSystemR.color.gray40))
                 }
             }
         }
@@ -665,7 +665,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAppearanceDay(textView: TextView) {
         textView.apply {
             setBackgroundResource(DesignSystemR.drawable.circle_gray70_24dp)
-            setTextColor(getColor(R.color.color_white))
+            setTextColor(getColor(DesignSystemR.color.color_white))
         }
     }
 
@@ -680,7 +680,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
-        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+        val favoriteIcon = if (isFavorite) DesignSystemR.drawable.ic_food_truck_favorite_on else DesignSystemR.drawable.ic_food_truck_favorite_off
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
@@ -765,7 +765,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 ForegroundColorSpan(
                     ContextCompat.getColor(
                         applicationContext,
-                        R.color.color_main_red,
+                        DesignSystemR.color.color_main_red,
                     ),
                 ),
                 0,
