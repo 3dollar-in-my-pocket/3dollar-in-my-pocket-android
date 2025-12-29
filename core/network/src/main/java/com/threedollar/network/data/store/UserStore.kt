@@ -29,4 +29,14 @@ data class UserStore(
     val updatedAt: String? = "",
     @SerializedName("openingHours")
     val openingHours: OpeningHours? = OpeningHours(),
+    @SerializedName("isOwner")
+    val isOwner: Boolean? = false,
+    @SerializedName("salesTypeV2")
+    val salesTypeV2: SalesTypeV2? = null,
+    @SerializedName("menusV3")
+    val menusV3: List<MenuV3>? = listOf(),
+    @SerializedName("isDeleted")
+    val isDeleted: Boolean? = false,
+    @SerializedName("activitiesStatus")
+    val activitiesStatus: String? = null,
 )

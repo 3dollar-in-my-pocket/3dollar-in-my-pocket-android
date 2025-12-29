@@ -19,5 +19,7 @@ data class UserStoreResponse(
     @SerializedName("tags")
     val tags: Tags? = Tags(),
     @SerializedName("visits")
-    val visits: Visits? = Visits()
+    val visits: Visits? = Visits(),
+    @SerializedName("openStatus")
+    val openStatus: OpenStatus? = OpenStatus()
 )
