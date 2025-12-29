@@ -66,7 +66,6 @@ import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.threedollar.common.compose.dialog.CommonDialog
 import com.threedollar.common.compose.dialog.DialogButton
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.NearExistBottomSheetLayout
@@ -114,7 +113,6 @@ class NewAddressFragment : Fragment() {
                             putString("screen", "write_address")
                             putString("address", address)
                         }
-                        EventTracker.logEvent(Constants.CLICK_SET_ADDRESS, bundle)
                         viewModel.processIntent(AddStoreContract.Intent.SetAddress(address))
                         viewModel.state.value.selectedLocation?.let { location ->
                             viewModel.processIntent(AddStoreContract.Intent.CheckNearStore(location))

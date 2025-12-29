@@ -2,6 +2,11 @@ package com.zion830.threedollars.ui.write.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
@@ -35,6 +40,8 @@ class AddStoreViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(AddStoreContract.State())
     val state: StateFlow<AddStoreContract.State> = _state.asStateFlow()
+    override val screenName: ScreenName = ScreenName.EDIT_STORE
+
 
     private val _effect = MutableSharedFlow<AddStoreContract.Effect>()
     val effect: SharedFlow<AddStoreContract.Effect> = _effect.asSharedFlow()

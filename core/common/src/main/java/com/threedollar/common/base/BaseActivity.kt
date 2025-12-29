@@ -12,7 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.viewbinding.ViewBinding
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.ext.showSnack
 
 abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
@@ -52,11 +54,14 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
 
     override fun onResume() {
         super.onResume()
-        initFirebaseAnalytics()
+
+        if (viewModel.screenName != ScreenName.EMPTY) {
+            sendPageView(viewModel.screenName)
+        }
     }
 
     abstract fun initView()
-    abstract fun initFirebaseAnalytics()
+
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         val v = currentFocus
         val ret = super.dispatchTouchEvent(event)
@@ -78,13 +83,8 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         return ret
     }
 
-    fun setFirebaseAnalyticsLogEvent(className: String, screenName: String?) {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, className)
-            screenName?.let {
-                param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            }
-        }
+    open fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any> = emptyMap()) {
+        LogManager.sendPageView(screen, this::class.java.simpleName, extraParameters)
     }
 
     private fun hideKeyboard() {

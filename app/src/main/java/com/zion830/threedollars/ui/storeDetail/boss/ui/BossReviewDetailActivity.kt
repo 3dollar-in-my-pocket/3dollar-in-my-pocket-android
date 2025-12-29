@@ -120,10 +120,6 @@ class BossReviewDetailActivity :
         })
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossReviewDetailActivity", screenName = "boss_review_list")
-    }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {

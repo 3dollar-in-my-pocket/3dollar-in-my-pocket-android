@@ -49,7 +49,6 @@ import base.compose.PretendardFontFamily
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.utils.Constants.CLICK_ADDRESS_OK
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -241,7 +240,6 @@ fun NearExistBottomSheetContent(
                         putString("screen", "write_address_popup")
                         putString("address", address)
                     }
-                    EventTracker.logEvent(CLICK_ADDRESS_OK, bundle)
                     onConfirm()
                 }
                 .padding(vertical = 14.dp),

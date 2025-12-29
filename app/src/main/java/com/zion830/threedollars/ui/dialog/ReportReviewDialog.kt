@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.domain.home.data.store.ReasonModel
 import com.threedollar.domain.home.data.store.ReviewContentModel
@@ -21,6 +22,8 @@ class ReportReviewDialog(
     private val content: ReviewContentModel?,
     private val storeId: Int?
 ) : BaseBottomSheetDialogFragment<DialogReportReviewBinding>() {
+
+    override val screenName: ScreenName = ScreenName.EMPTY
     private var reportReasons: List<ReasonModel> = emptyList()
     private var reportReviewModelRequest = ReportReviewModelRequest()
 
@@ -37,10 +40,6 @@ class ReportReviewDialog(
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogReportReviewBinding =
         DialogReportReviewBinding.inflate(inflater, container, false)
 
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "ReportReviewDialog", screenName = null)
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

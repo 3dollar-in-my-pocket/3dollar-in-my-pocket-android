@@ -19,6 +19,8 @@ import com.google.android.gms.location.LocationServices
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
@@ -83,8 +85,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         initNavView()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MainActivity", screenName = null)
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        // Fragment에서 page_view 전송중
     }
 
     private fun initFlow() {

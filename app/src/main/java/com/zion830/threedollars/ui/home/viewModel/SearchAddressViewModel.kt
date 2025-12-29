@@ -9,6 +9,12 @@ import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.domain.home.request.PlaceType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.network.data.kakao.SearchAddressResponse
 import com.zion830.threedollars.datasource.MapDataSource
@@ -80,6 +86,19 @@ class SearchAddressViewModel @Inject constructor(private val homeRepository: Hom
                 getPlace()
             }
         }
+    }
+
+    fun sendClickAddress(value: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.SEARCH_ADDRESS,
+                objectType = LogObjectType.MENU,
+                objectId = LogObjectId.ADDRESS,
+                additionalParams = mapOf(
+                    ParameterName.VALUE to value
+                )
+            )
+        )
     }
 
     override fun handleError(t: Throwable) {
