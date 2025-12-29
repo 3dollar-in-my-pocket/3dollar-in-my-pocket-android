@@ -228,17 +228,6 @@ private fun MenuCategorySection(
                 fontFamily = PretendardFontFamily,
                 color = Gray100
             )
-
-            Text(
-                text = stringResource(CommonR.string.delete),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = PretendardFontFamily,
-                color = Red,
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .clickable { }
-            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
