@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.home.ui
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -17,19 +16,21 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.data.AdMobItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
@@ -47,7 +48,6 @@ import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewModel>() {
@@ -83,8 +83,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         binding.listRecyclerView.adapter = adapter
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "HomeListViewFragment", screenName = "home_list")
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.HOME_LIST, this::class.simpleName.toString())
     }
 
     private fun initButtons() {
@@ -102,16 +102,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun onCategoryFilterClick() {
-        EventTracker.logEvent(Constants.CLICK_CATEGORY_FILTER, Bundle().apply { putString("screen", "home_list") })
+        viewModel.sendClickCategoryFilterInList()
         showSelectCategoryDialog()
     }
 
     private fun onSortFilterClick() {
         homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) HomeSortType.LATEST else HomeSortType.DISTANCE_ASC
-        EventTracker.logEvent(Constants.CLICK_SORTING, Bundle().apply {
-            putString("screen", "home_list")
-            putString("type", homeSortType.name)
-        })
+        viewModel.sendClickSortingInList(homeSortType.name)
         viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
     }
 
@@ -119,28 +116,19 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         sharedPrefUtils.setIsClickFilterConditions()
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
         filterConditionsType = if (filterConditionsType.isEmpty()) listOf(FilterConditionsTypeModel.RECENT_ACTIVITY) else listOf()
-        EventTracker.logEvent(Constants.CLICK_RECENT_ACTIVITY_FILTER, Bundle().apply {
-            putString("screen", "home_list")
-            putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-        })
+        viewModel.sendClickRecentActivityFilterInList(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
         viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
     }
 
     private fun onBossFilterClick() {
         homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-        EventTracker.logEvent(Constants.CLICK_BOSS_FILTER, Bundle().apply {
-            putString("screen", "home_list")
-            putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
-        })
+        viewModel.sendClickBossFilterInList(homeStoreType == HomeStoreType.BOSS_STORE)
         viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
     }
 
     private fun onCertifiedStoreFilterClick() {
         isFilterCertifiedStores = !isFilterCertifiedStores
-        EventTracker.logEvent(Constants.CLICK_ONLY_VISIT, Bundle().apply {
-            putString("screen", "home_list")
-            putString("value", if (isFilterCertifiedStores) "true" else "false")
-        })
+        viewModel.sendClickOnlyVisitInList(isFilterCertifiedStores)
         binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(
             ContextCompat.getDrawable(
                 requireContext(),
@@ -274,12 +262,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getStoreItemClickListener() = object : OnItemClickListener<ContentModel> {
         override fun onClick(item: ContentModel) {
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("store_id", item.storeModel.storeId)
-                putString("type", item.storeModel.storeType)
-            }
-            EventTracker.logEvent(CLICK_STORE, bundle)
+            viewModel.sendClickStoreInList(item.storeModel.storeId, item.storeModel.storeType)
             val intent = if (item.storeModel.storeType == Constants.BOSS_STORE) {
                 BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
             } else {
@@ -291,11 +274,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getAdvertisementClickListener() = object : OnItemClickListener<AdvertisementModelV2> {
         override fun onClick(item: AdvertisementModelV2) {
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("advertisement_id", item.advertisementId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+            viewModel.sendClickAdvertisementInList(item.advertisementId.toString())
             val intent = if (item.link.type == "APP_SCHEME") {
                 Intent(requireContext(), DynamicLinkActivity::class.java).apply { putExtra("link", item.link.url) }
             } else {

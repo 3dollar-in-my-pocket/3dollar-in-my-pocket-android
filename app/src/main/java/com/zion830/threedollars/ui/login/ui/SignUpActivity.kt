@@ -24,7 +24,6 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants.CLICK_SIGN_UP
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.datasource.model.LoginType
@@ -69,10 +68,6 @@ class SignUpActivity :
             binding.btnFinish.text = if (it) getString(CommonR.string.login_name3) else getString(CommonR.string.login_name_fail)
             binding.tvAlreadyExist.visibility = if (it) View.INVISIBLE else View.VISIBLE
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "SignUpActivity", screenName = "sign_up")
     }
 
     private fun initEditTextView() {
@@ -150,11 +145,7 @@ class SignUpActivity :
         }
 
         binding.btnFinish.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "sign_up")
-                putString("nickname", binding.etName.text.toString())
-            }
-            EventTracker.logEvent(CLICK_SIGN_UP, bundle)
+            viewModel.sendClickSignUp()
             if (LegacySharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
                 tryKakaoLogin()
             } else {

@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.databinding.DialogOpeningHourNumberPickerBinding
 import zion830.com.common.base.onSingleClick
@@ -15,6 +16,7 @@ interface OnClickDoneListener {
 
 class OpeningHourNumberPickerDialog :
     BaseBottomSheetDialogFragment<DialogOpeningHourNumberPickerBinding>() {
+    override val screenName: ScreenName = ScreenName.EMPTY
     private var listener: OnClickDoneListener? = null
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogOpeningHourNumberPickerBinding =
         DialogOpeningHourNumberPickerBinding.inflate(inflater, container, false)
@@ -36,10 +38,6 @@ class OpeningHourNumberPickerDialog :
 
     fun setDialogListener(listener: OnClickDoneListener) {
         this.listener = listener
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "OpeningHourNumberPickerDialog", screenName = null)
     }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

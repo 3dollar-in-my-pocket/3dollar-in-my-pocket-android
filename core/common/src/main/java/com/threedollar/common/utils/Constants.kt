@@ -97,7 +97,6 @@ object Constants {
     const val STORE_REGISTER_SUBMIT_BTN_CLICKED = "store_register_submit_button_clicked"
 
     // store delete
-    const val DELETE_POPUP_CLOSE_BTN_CLICKED = "delete_request_popup_close_button_clicked"
     const val DELETE_REQUEST_SUBMIT_BTN_CLICKED = "delete_request_submit_button_clicked"
 
     // community

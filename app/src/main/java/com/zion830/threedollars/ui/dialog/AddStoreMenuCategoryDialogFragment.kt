@@ -10,9 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
@@ -27,6 +27,7 @@ import zion830.com.common.base.onSingleClick
 class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogBottomAddStoreMenuCategoryBinding>() {
 
     private val viewModel: AddStoreViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.EMPTY
 
     private val streetCategories by lazy { LegacySharedPrefUtils.getCategories() }
 
@@ -54,10 +55,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomAddStoreMenuCategoryBinding =
         DialogBottomAddStoreMenuCategoryBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "AddStoreMenuCategoryDialogFragment", screenName = "category_selection")
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
@@ -116,7 +113,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
                     putString("screen", "category_selection")
                     putString("category_name", viewModel.state.value.selectCategoryList.joinToString { it.menuType.name })
                 }
-                EventTracker.logEvent(Constants.CLICK_CATEGORY, bundle)
             }
             dismiss()
         }

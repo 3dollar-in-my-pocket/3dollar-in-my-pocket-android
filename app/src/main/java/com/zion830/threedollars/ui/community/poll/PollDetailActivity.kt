@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.community.poll
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.StyleSpan
@@ -19,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.ActivityStarter
-import com.threedollar.common.listener.EventTrackerListener
-import com.threedollar.common.utils.Constants
 import com.threedollar.domain.community.data.PollComment
 import com.threedollar.domain.community.data.PollCommentList
 import com.threedollar.domain.community.data.PollItem
@@ -31,12 +28,12 @@ import com.zion830.threedollars.ui.community.utils.calculatePercentages
 import com.zion830.threedollars.ui.community.utils.getDeadlineString
 import com.zion830.threedollars.ui.community.utils.hasVotingPeriodEnded
 import com.zion830.threedollars.ui.community.utils.selectedPoll
+import com.threedollar.common.R as CommonR
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
-import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
@@ -45,8 +42,6 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     @Inject
     lateinit var activityStarter: ActivityStarter
 
-    @Inject
-    lateinit var eventTrackerListener: EventTrackerListener
     override val viewModel: PollDetailViewModel by viewModels()
     private lateinit var pollItem: PollItem
     private var isCommentEdit = false
@@ -63,35 +58,19 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 editCommentId = it.current.comment.commentId
                 binding.etComment.requestFocusFromTouch()
                 binding.etComment.setText(it.current.comment.content)
-                val bundle = Bundle().apply {
-                    putString("screen", "poll_detail")
-                    putString("review_id", it.current.comment.commentId)
-                }
-                eventTrackerListener.logEvent(Constants.CLICK_EDIT_REVIEW, bundle)
             } else {
-                ReportChoiceDialog().setType(ReportChoiceDialog.Type.COMMENT).setReportList(pollCommentReports).setReportCallback { reasonModel, s ->
-                    if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
-                    else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
-                    if (::pollItem.isInitialized) {
-                        val bundle = Bundle().apply {
-                            putString("screen", "report_review")
-                            putString("poll_id", pollItem.poll.pollId)
-                            putString("review_id", it.current.comment.commentId)
-                        }
-                        eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
-                    }
-                }.show(supportFragmentManager, "")
-                val bundle = Bundle().apply {
-                    putString("screen", "poll_detail")
-                    putString("review_id", it.current.comment.commentId)
-                }
-                eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
+                viewModel.sendClickReportReview(it.current.comment.commentId)
+                ReportChoiceDialog()
+                    .setType(ReportChoiceDialog.Type.COMMENT)
+                    .setReportList(pollCommentReports)
+                    .setPollId(if (::pollItem.isInitialized) pollItem.poll.pollId else "")
+                    .setReviewId(it.current.comment.commentId)
+                    .setReportCallback { reasonModel, s ->
+                        if (reasonModel.id == "POLL_OTHER") viewModel.reportComment(it.current.comment.commentId, reasonModel.id, s)
+                        else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
+                    }.show(supportFragmentManager, "")
             }
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "PollDetailActivity", screenName = "poll_detail")
     }
 
     override fun initView() {
@@ -157,24 +136,15 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
             return@setOnEditorActionListener true
         }
         binding.btnReport.onSingleClick {
-            ReportChoiceDialog().setType(ReportChoiceDialog.Type.POLL).setReportList(pollReports).setReportCallback { reasonModel, s ->
-                if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
-                else viewModel.report(reasonModel.id)
-                if (::pollItem.isInitialized) {
-                    val bundle = Bundle().apply {
-                        putString("screen", "report_poll")
-                        putString("poll_id", pollItem.poll.pollId)
-                    }
-                    eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
-                }
-            }.show(supportFragmentManager, "")
-            if (::pollItem.isInitialized) {
-                val bundle = Bundle().apply {
-                    putString("screen", "poll_detail")
-                    putString("poll_id", pollItem.poll.pollId)
-                }
-                eventTrackerListener.logEvent(Constants.CLICK_REPORT, bundle)
-            }
+            viewModel.sendClickReport()
+            ReportChoiceDialog()
+                .setType(ReportChoiceDialog.Type.POLL)
+                .setReportList(pollReports)
+                .setPollId(if (::pollItem.isInitialized) pollItem.poll.pollId else "")
+                .setReportCallback { reasonModel, s ->
+                    if (reasonModel.id == "POLL_OTHER") viewModel.report(reasonModel.id, s)
+                    else viewModel.report(reasonModel.id)
+                }.show(supportFragmentManager, "")
         }
     }
 
@@ -358,23 +328,13 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
 
         binding.llPollFirstChoice.onSingleClick {
             if (first.choice.selectedByMe) return@onSingleClick
+            viewModel.sendClickPollOption(first.optionId)
             viewModel.votePoll(first.optionId)
-            val bundle = Bundle().apply {
-                putString("screen", "poll_detail")
-                putString("poll_id", pollItem.poll.pollId)
-                putString("option_id", first.optionId)
-            }
-            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
         }
         binding.llPollSecondChoice.onSingleClick {
             if (second.choice.selectedByMe) return@onSingleClick
+            viewModel.sendClickPollOption(second.optionId)
             viewModel.votePoll(second.optionId)
-            val bundle = Bundle().apply {
-                putString("screen", "poll_detail")
-                putString("poll_id", pollItem.poll.pollId)
-                putString("option_id", first.optionId)
-            }
-            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
         }
     }
 }

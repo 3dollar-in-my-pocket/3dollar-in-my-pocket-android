@@ -10,6 +10,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
@@ -52,6 +58,7 @@ class MyVisitHistoryFragment :
     override fun initView() {
         adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<MyVisitHistoryV2> {
             override fun onClick(item: MyVisitHistoryV2) {
+                sendClickStore(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
                 val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
@@ -64,8 +71,22 @@ class MyVisitHistoryFragment :
         observeUiData()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyVisitHistoryFragment", screenName = null)
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.VISITED_LIST, this::class.java.simpleName)
+    }
+
+    private fun sendClickStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.VISITED_LIST,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
     }
 
     private fun observeUiData() {
@@ -81,8 +102,7 @@ class MyVisitHistoryFragment :
                         adapter?.loadStateFlow?.collectLatest { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.NotLoading, is LoadState.Error -> {
-                                    binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                                    binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                                    binding.emptyStateView.isVisible = adapter?.itemCount == 0
                                 }
 
                                 else -> {}

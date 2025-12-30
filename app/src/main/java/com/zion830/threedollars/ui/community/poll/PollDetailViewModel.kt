@@ -2,6 +2,12 @@ package com.zion830.threedollars.ui.community.poll
 
 import androidx.lifecycle.viewModelScope
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.community.data.CommentId
@@ -19,6 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PollDetailViewModel @Inject constructor(private val communityRepository: CommunityRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.POLL_DETAIL
 
     private var pollId: String = ""
     private val _report = MutableSharedFlow<BaseResponse<String>>()
@@ -138,4 +146,42 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
         pollId = id
     }
 
+    // GA Events - Poll Detail
+    fun sendClickReport() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT
+            )
+        )
+    }
+
+    fun sendClickPollOption(optionId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.POLL_OPTION,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.OPTION_ID to optionId
+                )
+            )
+        )
+    }
+
+    fun sendClickReportReview(reviewId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT_REVIEW,
+                additionalParams = mapOf(
+                    ParameterName.REVIEW_ID to reviewId,
+                    ParameterName.POLL_ID to pollId
+                )
+            )
+        )
+    }
 }

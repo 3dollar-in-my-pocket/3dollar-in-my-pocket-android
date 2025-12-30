@@ -42,10 +42,6 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditAddressFragment", screenName = "write_address")
-    }
-
     private fun initMap() {
         naverMapFragment = StoreAddNaverMapFragment()
         activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.mapContainer, naverMapFragment)?.commit()

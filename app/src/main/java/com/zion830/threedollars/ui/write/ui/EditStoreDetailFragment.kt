@@ -22,8 +22,6 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.replaceFragment
-import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
 import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
@@ -88,10 +86,6 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         initButton()
         initAdapter()
         initFlow()
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditStoreDetailFragment", screenName = "write_address_detail")
     }
 
     private fun initFlow() {
@@ -270,7 +264,6 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             val bundle = Bundle().apply {
                 putString("screen", "write_address_detail")
             }
-            EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
             addStoreViewModel.processIntent(
                 AddStoreContract.Intent.EditStore(
                     request = UserStoreModelRequest(

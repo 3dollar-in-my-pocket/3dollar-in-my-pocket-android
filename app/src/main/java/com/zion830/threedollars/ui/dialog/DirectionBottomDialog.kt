@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.zion830.threedollars.databinding.DialogBottomDirectionBinding
 import zion830.com.common.base.onSingleClick
@@ -16,16 +17,14 @@ import java.net.URLEncoder
 
 class DirectionBottomDialog : BaseBottomSheetDialogFragment<DialogBottomDirectionBinding>() {
 
+    override val screenName: ScreenName = ScreenName.EMPTY
+
     private var latitude = 0.0
     private var longitude = 0.0
     private var storeName = ""
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomDirectionBinding =
         DialogBottomDirectionBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "DirectionBottomDialog", screenName = null)
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
