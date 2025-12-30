@@ -301,20 +301,26 @@ fun NaverMapSection(
     selectedLocation: LatLng?,
     onCameraIdle: (LatLng, Double) -> Unit
 ) {
-    // 카메라 상태 관리
+    val defaultLocation = LatLng(37.5666, 126.9784)
+
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(
-            selectedLocation ?: LatLng(37.5666, 126.9784),
+            selectedLocation ?: defaultLocation,
             15.0
         )
     }
 
-    // 카메라 이동 완료 감지 (기존 IdleEventListener 대체)
+    LaunchedEffect(selectedLocation) {
+        selectedLocation?.let { location ->
+            cameraPositionState.position = CameraPosition(location, 15.0)
+        }
+    }
+
     LaunchedEffect(cameraPositionState) {
         snapshotFlow { cameraPositionState.isMoving }
             .collect { isMoving ->
                 if (!isMoving) {
-                    delay(1000) // 기존 1초 딜레이 유지
+                    delay(300)
                     val target = cameraPositionState.position.target
                     val contentBounds = cameraPositionState.contentBounds
                     val distance = if (contentBounds != null) {

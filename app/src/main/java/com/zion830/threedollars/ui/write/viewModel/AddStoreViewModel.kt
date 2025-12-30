@@ -1,7 +1,10 @@
 package com.zion830.threedollars.ui.write.viewModel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
+import com.zion830.threedollars.utils.isLocationAvailable
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
@@ -30,7 +33,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val fusedLocationProviderClient: FusedLocationProviderClient
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(AddStoreContract.State())
@@ -43,6 +47,19 @@ class AddStoreViewModel @Inject constructor(
 
     init {
         loadAvailableCategories()
+        loadCurrentLocation()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun loadCurrentLocation() {
+        if (isLocationAvailable()) {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    val latLng = LatLng(it.latitude, it.longitude)
+                    _state.update { state -> state.copy(selectedLocation = latLng) }
+                }
+            }
+        }
     }
 
     fun processIntent(intent: AddStoreContract.Intent) {
@@ -499,5 +516,6 @@ class AddStoreViewModel @Inject constructor(
         _state.update { AddStoreContract.State() }
         _removedCategoriesData.clear()
         loadAvailableCategories()
+        loadCurrentLocation()
     }
 }
