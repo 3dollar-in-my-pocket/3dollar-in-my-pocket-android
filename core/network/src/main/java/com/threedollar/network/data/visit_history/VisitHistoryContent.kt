@@ -5,7 +5,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.network.data.store.Store
-import com.threedollar.network.data.store.StoreInfo
 
 @JsonClass(generateAdapter = true)
 data class VisitHistoryContent(

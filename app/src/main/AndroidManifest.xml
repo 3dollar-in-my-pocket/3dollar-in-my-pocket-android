@@ -188,10 +188,10 @@
 
         <activity android:name=".ui.storeDetail.user.ui.MoreImageActivity" />
 
-        <activity android:name="com.threedollar.presentation.polls.PollListActivity" />
-        <activity android:name="com.threedollar.presentation.poll.PollDetailActivity" />
+        <activity android:name="com.zion830.threedollars.ui.community.polls.PollListActivity" />
+        <activity android:name="com.zion830.threedollars.ui.community.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
-        <activity android:name="com.my.presentation.page.team.MyPageTeamActivity" />
+        <activity android:name="com.zion830.threedollars.ui.my.page.team.MyPageTeamActivity" />
 
         <activity
             android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"

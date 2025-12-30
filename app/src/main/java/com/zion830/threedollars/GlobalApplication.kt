@@ -11,9 +11,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.home.domain.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
+import com.threedollar.common.analytics.LogManager
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
@@ -60,6 +61,7 @@ class GlobalApplication : Application() {
         instance = this
         APPLICATION_CONTEXT = applicationContext
         eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
+        LogManager.initialize(eventTracker)
 
         RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)

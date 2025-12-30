@@ -3,26 +3,25 @@ package com.zion830.threedollars.ui.storeDetail.boss.ui
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.appcompat.app.AlertDialog
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityFoodTruckReviewBinding
+import com.zion830.threedollars.ui.dialog.LoadingProgressDialog
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossReviewSummitRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.PhotoAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.PhotoItem
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
-import com.zion830.threedollars.ui.dialog.LoadingProgressDialog
 import com.zion830.threedollars.utils.GridItemDecoration
 import com.zion830.threedollars.utils.ImageUtils
 import com.zion830.threedollars.utils.goToPermissionSetting
@@ -90,12 +89,7 @@ class BossReviewWriteActivity :
             } else if (binding.etReview.text.toString().trim().isEmpty()) {
                 showToast(getString(CommonR.string.boss_review_content_required))
             } else {
-                val bundle = Bundle().apply {
-                    putString("screen", "boss_store_review")
-                    putString("store_id", storeId)
-                }
-                EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-                
+                viewModel.sendClickWriteReviewSubmit()
                 submitReview()
             }
         }
@@ -122,8 +116,8 @@ class BossReviewWriteActivity :
         updateSubmitButtonState()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossReviewActivity",screenName = "boss_store_review")
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.BOSS_STORE_REVIEW_WRITE, this::class.java.simpleName)
     }
 
     private fun iniFlows() {

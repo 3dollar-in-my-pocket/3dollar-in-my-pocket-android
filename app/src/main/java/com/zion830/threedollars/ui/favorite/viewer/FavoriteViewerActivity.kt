@@ -23,9 +23,6 @@ import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "FavoriteViewerActivity", screenName = null)
-    }
 
     override val viewModel: FavoriteViewerViewModel by viewModels()
     private lateinit var favoriteId: String
@@ -71,6 +68,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                 FavoriteViewerViewModel.Event.Close -> finish()
                 is FavoriteViewerViewModel.Event.Viewer -> {
                     val item = it.item
+                    viewModel.sendClickStore(item.storeId, item.storeType)
                     if (GlobalApplication.isLoggedIn) {
                         moveToDetailActivity(item)
                     } else {

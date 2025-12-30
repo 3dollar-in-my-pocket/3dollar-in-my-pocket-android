@@ -22,9 +22,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.request.PushInformationRequest
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
@@ -53,12 +51,10 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
         (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
-            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED)
             LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
             tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
-            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED)
             LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }

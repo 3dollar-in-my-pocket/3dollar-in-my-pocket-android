@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.ImageContentModel
+import com.threedollar.domain.home.data.store.ImageContentModel
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.databinding.ItemImageSliderBinding
 import zion830.com.common.base.BaseDiffUtilCallback

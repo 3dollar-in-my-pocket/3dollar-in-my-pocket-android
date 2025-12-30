@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/navigation_mypage"
-        android:name="com.my.presentation.page.MyPageFragment"
+        android:name="com.zion830.threedollars.ui.my.page.MyPageFragment"
         android:label="@string/title_mypage" />
 
     <fragment

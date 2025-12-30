@@ -23,26 +23,26 @@ import com.google.android.flexbox.JustifyContent
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.home.domain.data.store.AppearanceDayModel
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.FeedbackType
-import com.home.domain.data.store.ImageModel
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.StatusType
+import com.threedollar.domain.home.data.store.AppearanceDayModel
+import com.threedollar.domain.home.data.store.BossStoreDetailModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.FeedbackType
+import com.threedollar.domain.home.data.store.ImageModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.StatusType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.CLICK_NAVIGATION
-import com.threedollar.common.utils.Constants.CLICK_NUMBER
-import com.threedollar.common.utils.Constants.CLICK_SNS
 import com.threedollar.common.utils.getDistanceText
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
 import com.zion830.threedollars.datasource.model.v2.response.FoodTruckMenuEmptyResponse
@@ -139,6 +139,8 @@ class BossStoreDetailActivity :
                 override fun onClick(item: ReviewContentModel) {
                     val sticker = item.stickers.firstOrNull()
                     if (sticker != null) {
+                        val isLiked = !sticker.reactedByMe
+                        viewModel.sendClickLikeReview(isLiked)
                         viewModel.putLike(storeId, item.review.reviewId.toString(), if (sticker.reactedByMe) "" else sticker.stickerId)
                     }
                 }
@@ -188,8 +190,15 @@ class BossStoreDetailActivity :
         binding.admob.loadAd(adRequest)
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossStoreDetailActivity", screenName = "boss_store_detail")
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(
+            viewModel.screenName,
+            this::class.simpleName.toString(),
+            mapOf(
+                ParameterName.STORE_ID to storeId,
+                ParameterName.STORE_TYPE to Constants.BOSS_STORE
+            )
+        )
     }
 
     private fun initAdapter() {
@@ -249,41 +258,33 @@ class BossStoreDetailActivity :
             finish()
         }
         binding.bottomReviewTextView.onSingleClick {
+            viewModel.sendClickWriteReview()
             moveFoodTruckReviewWriteActivity()
         }
         binding.feedbackReviewTextView.onSingleClick {
+            viewModel.sendClickWriteReview()
             moveFoodTruckReviewWriteActivity()
         }
         binding.shareButton.onSingleClick {
+            viewModel.sendClickShare()
             initShared()
         }
 
         binding.snsButton.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "boss_store_detail")
-                putString("store_id", storeId)
-            }
+            viewModel.sendClickSNSLog()
             viewModel.bossStoreDetailModel.value.store.snsUrl?.let {
-                EventTracker.logEvent(CLICK_SNS, bundle)
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
             }
         }
         binding.snsTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.snsUrl.isNotNullOrEmpty()) {
-                val bundle = Bundle().apply {
-                    putString("screen", "boss_store_detail")
-                    putString("store_id", storeId)
-                }
-                EventTracker.logEvent(CLICK_SNS, bundle)
+                viewModel.sendClickSNSLog()
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.bossStoreDetailModel.value.store.snsUrl)))
             }
         }
         binding.phoneTextView.onSingleClick {
             if (viewModel.bossStoreDetailModel.value.store.contactsNumbers.isNotEmpty()) {
                 Bundle().apply {
-                    putString("screen", "boss_store_detail")
-                    putString("store_id", storeId)
-                    EventTracker.logEvent(CLICK_NUMBER, this)
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
@@ -294,6 +295,7 @@ class BossStoreDetailActivity :
             }
         }
         binding.directionsButton.onSingleClick {
+            viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
 
@@ -304,11 +306,13 @@ class BossStoreDetailActivity :
             clickFavoriteButton()
         }
         binding.addressTextView.onSingleClick {
+            viewModel.sendClickCopyAddress()
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
             showToast(getString(CommonR.string.address_copied))
         }
         binding.fullScreenButton.onSingleClick {
+            viewModel.sendClickZoomMap()
             moveFullScreenMap()
         }
     }
@@ -326,11 +330,6 @@ class BossStoreDetailActivity :
     }
 
     private fun showDirectionBottomDialog() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(CLICK_NAVIGATION, bundle)
         val store = viewModel.bossStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
     }
@@ -453,6 +452,7 @@ class BossStoreDetailActivity :
             binding.accountNumberTextView.text =
                 "${accountNumberModel.bank.description} ${accountNumberModel.accountNumber} | ${accountNumberModel.accountHolder}"
             binding.accountCopyButton.onSingleClick {
+                viewModel.sendClickCopyAccountLog()
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.text = accountNumberModel.accountNumber
                 showToast(getString(CommonR.string.account_number_copied))
@@ -463,11 +463,6 @@ class BossStoreDetailActivity :
     }
 
     private fun initShared() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val shareFormat = ShareFormat(
             getString(CommonR.string.kakao_map_format),
             binding.storeNameTextView.text.toString(),
@@ -490,13 +485,6 @@ class BossStoreDetailActivity :
     }
 
     private fun moveFoodTruckReviewWriteActivity() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
-        EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
-        
-        // 피드백 존재 여부 확인
         viewModel.checkFeedbackExists(storeId)
     }
 
@@ -511,22 +499,17 @@ class BossStoreDetailActivity :
     }
 
     private fun clickFavoriteButton() {
-        val bundle = Bundle().apply {
-            putString("screen", "boss_store_detail")
-            putString("store_id", storeId)
-        }
+        val isOn = !viewModel.favoriteModel.value.isFavorite
+        viewModel.sendClickFavorite(isOn)
         if (viewModel.favoriteModel.value.isFavorite) {
-            bundle.putString("value", "off")
             viewModel.deleteFavorite(storeId)
         } else {
-            bundle.putString("value", "on")
             viewModel.putFavorite(storeId)
         }
-        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
     }
 
     private fun setFavoriteIcon(isFavorite: Boolean) {
-        val favoriteIcon = if (isFavorite) R.drawable.ic_food_truck_favorite_on else R.drawable.ic_food_truck_favorite_off
+        val favoriteIcon = if (isFavorite) DesignSystemR.drawable.ic_food_truck_favorite_on else DesignSystemR.drawable.ic_food_truck_favorite_off
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)

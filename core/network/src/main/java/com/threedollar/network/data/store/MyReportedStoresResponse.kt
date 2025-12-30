@@ -4,7 +4,6 @@ package com.threedollar.network.data.store
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 
 @JsonClass(generateAdapter = true)
 data class MyReportedStoresResponse(

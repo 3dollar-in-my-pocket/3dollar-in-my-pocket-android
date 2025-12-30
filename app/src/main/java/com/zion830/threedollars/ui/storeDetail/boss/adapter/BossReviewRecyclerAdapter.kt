@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.FoodTruckReviewModel
+import com.threedollar.domain.home.data.store.FoodTruckReviewModel
 import com.zion830.threedollars.databinding.ItemBossReviewNewBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 

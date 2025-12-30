@@ -7,9 +7,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.tabs.TabLayout
-import com.home.domain.data.store.ImageModel
-import com.home.domain.data.store.ReviewContentModel
-import com.home.domain.data.store.ReviewSortType
+import com.threedollar.domain.home.data.store.ImageModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.ReviewSortType
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ActivityBossReviewDetailBinding
@@ -118,10 +118,6 @@ class BossReviewDetailActivity :
 
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossReviewDetailActivity", screenName = "boss_review_list")
     }
 
     private fun initFlow() {

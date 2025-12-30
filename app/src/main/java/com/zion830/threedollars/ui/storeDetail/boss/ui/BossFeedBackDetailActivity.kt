@@ -91,10 +91,6 @@ class BossFeedBackDetailActivity :
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "BossFeedBackDetailActivity", screenName = "boss_feedback_detail")
-    }
-
     companion object {
         private const val STORE_ID = "storeId"
         fun getIntent(context: Context, storeId: String? = null) =

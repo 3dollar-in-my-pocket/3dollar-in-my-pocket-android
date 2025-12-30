@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.place.PlaceModel
+import com.threedollar.domain.home.data.place.PlaceModel
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.databinding.ItemRecentSearchBinding
 import zion830.com.common.base.BaseDiffUtilCallback
