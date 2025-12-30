@@ -102,8 +102,7 @@ class MyVisitHistoryFragment :
                         adapter?.loadStateFlow?.collectLatest { loadState ->
                             when (loadState.refresh) {
                                 is LoadState.NotLoading, is LoadState.Error -> {
-                                    binding.ivEmpty.isVisible = adapter?.itemCount == 0
-                                    binding.layoutNoData.root.isVisible = adapter?.itemCount == 0
+                                    binding.emptyStateView.isVisible = adapter?.itemCount == 0
                                 }
 
                                 else -> {}

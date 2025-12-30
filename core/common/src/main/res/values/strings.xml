@@ -381,8 +381,7 @@
     <string name="my_review_empty">아직 작성한 리뷰가 없어요</string>
     <string name="my_visit_history">방문 인증 내역</string>
     <string name="no_visit_history">방문 인증 내역이 없어요!</string>
-    <string name="no_visit_history_msg">방문 인증으로 정확도를 높혀봐요.</string>
-    <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
+    <string name="no_visit_history_sub">방문하고 가게 정확도를 높혀봐요</string>
     <string name="my_medal">내 칭호</string>
     <string name="about_medal">칭호 살펴보기</string>
     <string name="change_medal">장착중인 칭호를 변경하시겠어요?</string>
