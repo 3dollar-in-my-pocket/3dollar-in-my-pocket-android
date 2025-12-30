@@ -22,14 +22,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.advertisement.AdvertisementModelV2Empty
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ContentModel
-import com.home.domain.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeSortType
-import com.home.presentation.data.HomeStoreType
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.CustomEvent
+import com.threedollar.common.analytics.EventName
+import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.addNewFragment
@@ -38,22 +41,10 @@ import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.threedollar.common.utils.Constants.CLICK_ADDRESS_FIELD
-import com.threedollar.common.utils.Constants.CLICK_AD_CARD
-import com.threedollar.common.utils.Constants.CLICK_BOSS_FILTER
-import com.threedollar.common.utils.Constants.CLICK_CATEGORY_FILTER
-import com.threedollar.common.utils.Constants.CLICK_MARKER
-import com.threedollar.common.utils.Constants.CLICK_RECENT_ACTIVITY_FILTER
-import com.threedollar.common.utils.Constants.CLICK_SORTING
-import com.threedollar.common.utils.Constants.CLICK_STORE
-import com.threedollar.common.utils.Constants.CLICK_VISIT
-import com.threedollar.common.utils.Constants.HOME_REOPEN
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
@@ -63,6 +54,7 @@ import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -78,6 +70,7 @@ import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import javax.inject.Inject
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -101,7 +94,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var locationPermissionDialog: AlertDialog? = null
 
     private var isFirstLoad = true
-    
+
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -127,16 +120,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initFlow()
         initButton()
         initScroll()
-
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
         viewModel.addressText.observe(viewLifecycleOwner) {
             binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
         }
-    }
 
-    override fun initFirebaseAnalytics() {
-        // OnResume에서 로그를 보내기 위해 의도적으로 비워두었습니다.
+        arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
+            arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
+            startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
+        }
     }
 
     private fun initScroll() {
@@ -155,14 +148,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             이동후 포커싱 되는 부분에서는 position을 통해 markerModel을 가져온다.
                              */
                             naverMapFragment.updateMarkerIcon(
-                                drawableRes = R.drawable.ic_store_off,
+                                drawableRes = DesignSystemR.drawable.ic_store_off,
                                 position = adapter.focusedIndex,
                                 markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                                 isSelected = false
                             )
                             adapter.focusedIndex = if (position > 0) position - 1 else position
                             naverMapFragment.updateMarkerIcon(
-                                drawableRes = R.drawable.ic_mappin_focused_on,
+                                drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                                 position = adapter.focusedIndex,
                                 markerModel = adapter.getItemMarker(position),
                                 isSelected = true
@@ -186,12 +179,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initAdapter() {
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
-                val bundle = Bundle().apply {
-                    putString("screen", "home")
-                    putString("store_id", item.storeModel.storeId)
-                    putString("type", item.storeModel.storeType)
-                }
-                EventTracker.logEvent(CLICK_STORE, bundle)
+                viewModel.sendClickStore(item.storeModel)
                 if (item.storeModel.storeType == BOSS_STORE) {
                     val intent =
                         BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
@@ -205,11 +193,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }, object : OnItemClickListener<AdvertisementModelV2> {
             override fun onClick(item: AdvertisementModelV2) {
-                val bundle = Bundle().apply {
-                    putString("screen", "home")
-                    putString("advertisement_id", item.advertisementId.toString())
-                }
-                EventTracker.logEvent(CLICK_AD_CARD, bundle)
+                viewModel.sendClickAdvertisementCardLog(item)
                 if (item.link.type == "APP_SCHEME") {
                     startActivity(
                         Intent(requireContext(), DynamicLinkActivity::class.java).apply {
@@ -221,11 +205,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }) { item ->
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putString("store_id", item.storeModel.storeId)
-            }
-            EventTracker.logEvent(CLICK_VISIT, bundle)
+            viewModel.sendClickVisitButtonLog()
             val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
@@ -238,9 +218,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.tvRetrySearch.isVisible = true
             },
             onLocationButtonClicked = {
+                viewModel.sendClickCurrentLocationLog()
                 checkLocationPermissionForButton()
             }
         )
+        naverMapFragment.onAdMarkerClicked = { advertisementId ->
+            viewModel.sendClickAdvertisementMarkerLog(advertisementId)
+        }
         childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
         
         // Check and request location permission after login
@@ -264,10 +248,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initButton() {
         binding.layoutAddress.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-            }
-            EventTracker.logEvent(CLICK_ADDRESS_FIELD, bundle)
+            viewModel.sendClickAddress()
             requireActivity().supportFragmentManager.addNewFragment(
                 R.id.layout_container,
                 SearchAddressFragment.newInstance(),
@@ -276,10 +257,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         binding.allMenuTextView.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-            }
-            EventTracker.logEvent(CLICK_CATEGORY_FILTER, bundle)
+            viewModel.sendClickCategoryFilter()
             showSelectCategoryDialog()
         }
 
@@ -291,12 +269,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             } else {
                 listOf()
             }
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-            }
-            EventTracker.logEvent(CLICK_RECENT_ACTIVITY_FILTER, bundle)
-
+            viewModel.sendClickRecentActivityFilter(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
             viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
         }
         binding.filterTextView.onSingleClick {
@@ -305,21 +278,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             } else {
                 HomeSortType.DISTANCE_ASC
             }
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putString("type", homeSortType.name)
-            }
-            EventTracker.logEvent(CLICK_SORTING, bundle)
+            viewModel.sendClickSorting(homeSortType.name)
             viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
         }
 
         binding.bossFilterTextView.onSingleClick {
             homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
-            }
-            EventTracker.logEvent(CLICK_BOSS_FILTER, bundle)
+            viewModel.sendClickBossFilter(homeStoreType == HomeStoreType.BOSS_STORE)
             viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
@@ -427,26 +392,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {
         val position = adapter.getItemPosition(adAndStoreItem)
         if (position >= 0) {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-                if (adAndStoreItem is ContentModel) {
-                    putString("store_id", adAndStoreItem.storeModel.storeId)
-                    putString("type", adAndStoreItem.storeModel.storeType)
-                } else if (adAndStoreItem is BossNearStoreResponse.BossNearStoreModel) {
-                    putString("store_id", adAndStoreItem.bossStoreId)
-                    putString("type", "BOSS_STORE")
-                }
+            if (adAndStoreItem is ContentModel) {
+                viewModel.sendClickMarkerLog(adAndStoreItem.storeModel)
             }
-            EventTracker.logEvent(CLICK_MARKER, bundle)
+
             naverMapFragment.updateMarkerIcon(
-                drawableRes = R.drawable.ic_store_off,
+                drawableRes = DesignSystemR.drawable.ic_store_off,
                 position = adapter.focusedIndex,
                 markerModel = adapter.getItemMarker(if (adapter.focusedIndex <= 0) adapter.focusedIndex else adapter.focusedIndex + 1),
                 isSelected = false
             )
             adapter.focusedIndex = if (position > 0) position - 1 else position
             naverMapFragment.updateMarkerIcon(
-                drawableRes = R.drawable.ic_mappin_focused_on,
+                drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                 position = adapter.focusedIndex,
                 markerModel = adapter.getItemMarker(position),
                 isSelected = true
@@ -565,7 +523,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun collectSelectedCategory(category: CategoryModel?) {
         val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
-        val textColor = if (category == null) R.color.gray70 else R.color.pink
+        val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
         val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
 
         binding.run {
@@ -575,7 +533,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
             if (category == null) {
                 allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_category), null, null, null
+                    ContextCompat.getDrawable(requireContext(), DesignSystemR.drawable.ic_category), null, null, null
                 )
             } else {
                 loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
@@ -595,11 +553,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         )
         adapter.submitList(resultList)
         val list = itemList.filterIsInstance<ContentModel>()
-        naverMapFragment.addStoreMarkers(R.drawable.ic_store_off, list) {
+        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_store_off, list) {
             onStoreClicked(it)
         }
         naverMapFragment.updateMarkerIcon(
-            drawableRes = R.drawable.ic_mappin_focused_on,
+            drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
             position = 0,
             markerModel = list.firstOrNull()?.markerModel,
             isSelected = true
@@ -621,10 +579,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun collectHomeStoreType(storeType: HomeStoreType) {
         binding.run {
             if (storeType == HomeStoreType.BOSS_STORE) {
-                bossFilterTextView.setTextColor(resources.getColor(R.color.pink, null))
+                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
             } else {
-                bossFilterTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                 bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
         }
@@ -633,15 +591,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
         binding.run {
             if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                filterConditionsTextView.setTextColor(resources.getColor(R.color.pink, null))
+                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
             } else {
-                filterConditionsTextView.setTextColor(resources.getColor(R.color.gray40, null))
+                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
                 filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
             }
         }
     }
-    
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -659,12 +617,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         if (!isFirstLoad) {
-            val bundle = Bundle().apply {
-                putString("screen", "home")
-            }
-            EventTracker.logEvent(HOME_REOPEN, bundle)
+            LogManager.sendEvent(CustomEvent(
+                viewModel.screenName,
+                EventName.HOME_REOPEN
+            ))
         }
-        setFirebaseAnalyticsLogEvent(className = "HomeFragment", screenName = "home")
         isFirstLoad = false
     }
 

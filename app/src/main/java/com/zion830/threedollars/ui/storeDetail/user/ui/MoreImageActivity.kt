@@ -15,7 +15,6 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityMoreImageBinding
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
@@ -66,9 +65,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         initFlow()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MoreImageActivity",screenName = null)
-    }
     private fun initViewModel() {
         viewModel.getImage(storeId)
     }
@@ -104,7 +100,6 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
                             putString("store_id", storeId.toString())
                             putString("count", images.size.toString())
                         }
-                        EventTracker.logEvent(Constants.CLICK_UPLOAD, bundle)
                         viewModel.saveImages(images, storeId)
                     }
                 }

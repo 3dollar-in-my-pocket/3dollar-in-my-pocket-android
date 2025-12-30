@@ -80,7 +80,7 @@
         <item>토요일</item>
         <item>일요일</item>
     </string-array>
-    
+
     <!-- Store Types -->
     <string name="road">길거리</string>
     <string name="road_food">길거리음식</string>
@@ -149,10 +149,101 @@
     <string name="add_store_finish">가게 등록하기</string>
     <string name="add_store_success">가게 제보가 완료되었습니다. 감사합니다!</string>
     <string name="failed_add_store">가게 제보에 실패했습니다. 다시 시도해주세요.</string>
-    <string name="dialog_near_exist_title">10m이내에 이미 제보된\n가게가 있어요!</string>
+    <string name="dialog_near_exist_title_format">50m 이내에 이미 등록된\n%d개의 가게가 있어요</string>
     <string name="dialog_near_exist_subtitle">중복된 가게 제보인지 확인해 주세요</string>
     <string name="dialog_near_exist_button_finish">여기가 확실해요</string>
-    
+    <string name="near_store_header">근처 가게</string>
+    <string name="more_stores_format">외 %d개</string>
+    <string name="exit_confirm_title">다음에 할까요?</string>
+    <string name="exit_confirm_message">지금까지 입력한 정보가 저장되지 않아요.</string>
+    <string name="exit_confirm_dismiss">닫기</string>
+    <string name="exit_confirm_exit">나가기</string>
+
+    <!-- Store Add - Buttons & Actions -->
+    <string name="add_store_next">다음</string>
+    <string name="add_store_submit">작성완료</string>
+    <string name="add_store_write_complete">작성 완료</string>
+    <string name="add_store_skip">건너뛰기</string>
+    <string name="add_store_add_menu">메뉴 추가</string>
+    <string name="add_store_edit_complete">수정 완료</string>
+    <string name="add_store_edit_category">카테고리 수정</string>
+    <string name="add_store_change_location">위치 변경</string>
+    <string name="add_store_confirm">확인</string>
+    <string name="add_store_report_current_location">현위치로 가게 제보</string>
+    <string name="add_store_manage_easier">더 편하게 가게 관리하기</string>
+
+    <!-- Store Add - Titles & Headers -->
+    <string name="add_store_completion_title">새로운 길거리 음식점을\n제보했어요</string>
+    <string name="add_store_tell_us_more">이 업체에 대해 더 알려주세요!</string>
+    <string name="add_store_select_category_title">음식 카테고리 선택</string>
+    <string name="add_store_menu_detail_title">메뉴 상세 정보 추가</string>
+    <string name="add_store_info_input_title">가게 정보 입력</string>
+    <string name="add_store_detail_title">가게 상세 정보 추가</string>
+    <string name="add_store_select_time">시간 선택</string>
+
+    <!-- Store Add - Labels & Sections -->
+    <string name="category_snack">간식</string>
+    <string name="category_meal">식사</string>
+    <string name="add_store_food_category">음식 카테고리</string>
+    <string name="add_store_menu_suffix">메뉴</string>
+    <string name="add_store_menu_format">메뉴%d</string>
+    <string name="add_store_menu_with_name">%s 메뉴</string>
+    <string name="add_store_select_category_count">추가할 카테고리를 선택해 주세요 (%d/10)</string>
+    <string name="add_store_location_confirm">가게 위치 확인</string>
+    <string name="add_store_appearance_day">출몰 요일</string>
+    <string name="add_store_appearance_time">출몰 시간대</string>
+    <string name="add_store_add_menu_detail">메뉴 상세 정보 추가하기</string>
+    <string name="add_store_menu_detail_subtitle">메뉴명 • 메뉴 가격</string>
+    <string name="add_store_add_store_detail">가게 세부 정보 추가하기</string>
+    <string name="add_store_detail_subtitle">가게 형태 • 결제 방식 • 출몰 요일 • 출몰 시간대</string>
+    <string name="add_store_optional">선택</string>
+
+    <!-- Store Add - Descriptions & Hints -->
+    <string name="add_store_name_hint_description">지금 당장 가게 이름을 알 수 없다면, 근처의 랜드마크와 함께 입력해 보세요.</string>
+    <string name="add_store_detail_description">가게 세부 정보를 입력하고 더 알찬 정보를 제공해 보세요</string>
+    <string name="add_store_boss_question">👩‍🍳 혹시 제보할 가게의 사장님이라면?</string>
+    <string name="add_store_no_address">주소 정보 없음</string>
+    <string name="add_store_menu_required">메뉴를 입력해주세요</string>
+
+    <!-- Store Add - Placeholders -->
+    <string name="add_store_name_placeholder">붕어빵역 2번 출구 삼거리 근처 붕어빵 집</string>
+    <string name="add_store_menu_name_placeholder">슈크림 붕어빵</string>
+    <string name="add_store_count_placeholder">1</string>
+    <string name="add_store_price_placeholder">5,000</string>
+    <string name="add_store_start_time_placeholder">시작 시간</string>
+    <string name="add_store_end_time_placeholder">종료 시간</string>
+
+    <!-- Store Add - Units & Connectors -->
+    <string name="unit_count">개</string>
+    <string name="unit_currency_won">원</string>
+    <string name="time_from">부터</string>
+    <string name="time_until">까지</string>
+    <string name="time_am">오전</string>
+    <string name="time_pm">오후</string>
+    <string name="time_hour_format">%d시</string>
+    <string name="time_minute_format">%02d분</string>
+    <string name="time_format_am">오전 %d시</string>
+    <string name="time_format_pm">오후 %d시</string>
+
+    <!-- Store Add - Content Descriptions -->
+    <string name="cd_back">뒤로 가기</string>
+    <string name="cd_location_pin">위치 선택 핀</string>
+
+    <!-- Boss Download Dialog -->
+    <string name="boss_download_title">사장님 앱을 설치하고\n더 편하게 가게를 관리해 보세요</string>
+    <string name="boss_download_install">사장님 앱 설치하기</string>
+    <string name="boss_download_benefit_intro_prefix">아래의 기능을 </string>
+    <string name="boss_download_benefit_intro_highlight">모두 무료로</string>
+    <string name="boss_download_benefit_intro_suffix"> 만나실 수 있어요</string>
+
+    <string-array name="boss_benefit">
+        <item>💌 단골 손님에게 메세지 보내기</item>
+        <item>✏️ 가게 정보 관리하기</item>
+        <item>📢 가게 소식 공지하기</item>
+        <item>🗳️ 리뷰 관리하기</item>
+        <item>🚚 실시간 가게 영업 정보 관리하기</item>
+    </string-array>
+
     <!-- Store Delete -->
     <string name="request_delete">신고하기</string>
     <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>
@@ -292,8 +383,7 @@
     <string name="my_review_empty">아직 작성한 리뷰가 없어요</string>
     <string name="my_visit_history">방문 인증 내역</string>
     <string name="no_visit_history">방문 인증 내역이 없어요!</string>
-    <string name="no_visit_history_msg">방문 인증으로 정확도를 높혀봐요.</string>
-    <string name="no_visit_history_sub">방문을 인증해 보고 정확도를 높혀봐요</string>
+    <string name="no_visit_history_sub">방문하고 가게 정확도를 높혀봐요</string>
     <string name="my_medal">내 칭호</string>
     <string name="about_medal">칭호 살펴보기</string>
     <string name="change_medal">장착중인 칭호를 변경하시겠어요?</string>

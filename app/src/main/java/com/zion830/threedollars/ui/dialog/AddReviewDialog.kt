@@ -10,17 +10,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.home.domain.data.store.ReviewContentModel
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
-import com.threedollar.common.utils.Constants.CLICK_REVIEW_BOTTOM_BUTTON
-import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.common.analytics.ScreenName
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 interface OnReviewEditCallback {
     fun onReviewEdited(updatedReview: ReviewContentModel)
@@ -28,15 +27,16 @@ interface OnReviewEditCallback {
 
 @AndroidEntryPoint
 class AddReviewDialog(
-    private val content: ReviewContentModel?, 
+    private val content: ReviewContentModel?,
     private val storeId: Int?,
     private val onEditCallback: OnReviewEditCallback? = null
 ) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.REVIEW_BOTTOM_SHEET
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, DesignSystemR.style.CustomBottomSheetDialogTheme)
     }
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
@@ -59,10 +59,6 @@ class AddReviewDialog(
         }
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "AddReviewDialog", screenName = "review_bottom_sheet")
-    }
-
     private fun initButton() {
         binding.closeImageButton.onSingleClick {
             dismiss()
@@ -72,12 +68,7 @@ class AddReviewDialog(
                 showToast(CommonR.string.over_rating_1)
                 return@onSingleClick
             }
-            val bundle = Bundle().apply {
-                putString("screen", "review_bottom_sheet")
-                putString("store_id", storeId.toString())
-                putString("rating", binding.rating.rating.toString())
-            }
-            EventTracker.logEvent(CLICK_REVIEW_BOTTOM_BUTTON, bundle)
+            viewModel.sendClickWriteReviewSubmit(binding.rating.rating.toInt())
             if (content == null) {
                 viewModel.postStoreReview(
                     binding.etContent.text.toString(),

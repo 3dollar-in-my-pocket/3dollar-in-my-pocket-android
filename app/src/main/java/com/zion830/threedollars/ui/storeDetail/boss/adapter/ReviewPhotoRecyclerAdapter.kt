@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.ImageModel
+import com.threedollar.domain.home.data.store.ImageModel
 import com.threedollar.common.ext.loadImage
 import com.zion830.threedollars.databinding.ItemPhotoBinding
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener

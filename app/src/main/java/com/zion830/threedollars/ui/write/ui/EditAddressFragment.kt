@@ -11,11 +11,10 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
-import com.zion830.threedollars.ui.dialog.NearExistDialog
+import com.zion830.threedollars.ui.dialog.NearExistBottomSheetDialogFragment
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
-import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,15 +35,11 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.finishButton.onSingleClick {
-            viewModel.getStoreNearExists(viewModel.selectedLocation.value ?: LatLng(0.0, 0.0))
+            viewModel.processIntent(AddStoreContract.Intent.CheckNearStore(viewModel.state.value.selectedLocation ?: LatLng(0.0, 0.0)))
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
             requireActivity().supportFragmentManager.popBackStack()
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditAddressFragment", screenName = "write_address")
     }
 
     private fun initMap() {
@@ -56,29 +51,23 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.selectedLocation.collect { latLng ->
-                        if (latLng != null) {
+                    viewModel.state.collect { state ->
+                        state.selectedLocation?.let { latLng ->
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
-                            val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-                            val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
-                            viewModel.requestStoreInfo(
-                                latLng,
-                                if (northWest != null && southEast != null) calculateDistance(northWest, southEast).toDouble() else DEFAULT_DISTANCE_M
-                            )
                         }
                     }
                 }
                 launch {
-                    viewModel.aroundStoreModels.collect { res ->
-                        naverMapFragment.addStoreMarkers(R.drawable.ic_mappin_focused_off, res ?: listOf())
-                    }
-                }
-                launch {
-                    viewModel.isNearStoreExist.collect {
-                        if (it) {
-                            showNearExistDialog()
-                        } else {
-                            moveAddStoreDetailFragment()
+                    viewModel.effect.collect { effect ->
+                        when (effect) {
+                            is AddStoreContract.Effect.NearStoreExists -> {
+                                if (effect.exists) {
+                                    showNearExistDialog()
+                                } else {
+                                    moveAddStoreDetailFragment()
+                                }
+                            }
+                            else -> {}
                         }
                     }
                 }
@@ -87,14 +76,16 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, AddStoreView
     }
 
     private fun showNearExistDialog() {
-        NearExistDialog.getInstance(viewModel.selectedLocation.value?.latitude ?: 0.0, viewModel.selectedLocation.value?.longitude ?: 0.0)
-            .apply {
-                setDialogListener(object : NearExistDialog.DialogListener {
-                    override fun accept() {
-                        moveAddStoreDetailFragment()
-                    }
-                })
-            }.show(parentFragmentManager, "")
+        NearExistBottomSheetDialogFragment.getInstance(
+            viewModel.state.value.selectedLocation?.latitude ?: 0.0,
+            viewModel.state.value.selectedLocation?.longitude ?: 0.0
+        ).apply {
+            setDialogListener(object : NearExistBottomSheetDialogFragment.DialogListener {
+                override fun accept() {
+                    moveAddStoreDetailFragment()
+                }
+            })
+        }.show(parentFragmentManager, "")
     }
 
     private fun moveAddStoreDetailFragment() {

@@ -1,28 +1,30 @@
 package com.zion830.threedollars.ui.storeDetail.boss.viewModel
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.home.domain.data.store.BossStoreDetailModel
-import com.home.domain.data.store.FavoriteModel
-import com.home.domain.data.store.ReasonModel
-import com.home.domain.data.store.SaveImagesModel
-import com.home.domain.data.store.UploadFileModel
-import com.home.domain.repository.HomeRepository
-import com.home.domain.request.ReportReviewModelRequest
-import com.home.domain.request.ReportReasonsGroupType
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
-import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.home.domain.data.store.ReviewContentModel
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
-import com.zion830.threedollars.R
+import com.threedollar.common.utils.Constants.STORE
+import com.threedollar.domain.home.data.store.BossStoreDetailModel
+import com.threedollar.domain.home.data.store.FavoriteModel
+import com.threedollar.domain.home.data.store.ReasonModel
+import com.threedollar.domain.home.data.store.ReviewContentModel
+import com.threedollar.domain.home.data.store.UploadFileModel
+import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.ReportReasonsGroupType
+import com.threedollar.domain.home.request.ReportReviewModelRequest
 import com.zion830.threedollars.utils.FileTypeConstants
 import com.zion830.threedollars.utils.ImageUtils
 import com.zion830.threedollars.utils.StringUtils.getString
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
-import android.content.Context
-import android.net.Uri
-import com.threedollar.common.utils.Constants.STORE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +37,8 @@ import com.threedollar.common.R as CommonR
 class BossStoreDetailViewModel @Inject constructor(
     private val homeRepository: HomeRepository
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.BOSS_STORE_DETAIL
 
     private val _bossStoreDetailModel = MutableStateFlow(BossStoreDetailModel())
     val bossStoreDetailModel: StateFlow<BossStoreDetailModel> get() = _bossStoreDetailModel
@@ -303,5 +307,107 @@ class BossStoreDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    // GA Events - Store Detail
+    fun sendClickFavorite(isOn: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITE,
+                additionalParams = mapOf(ParameterName.VALUE to if (isOn) "on" else "off")
+            )
+        )
+    }
+
+    fun sendClickShare() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SHARE
+            )
+        )
+    }
+
+    fun sendClickWriteReview() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
+    }
+
+    fun sendClickNavigation() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.NAVIGATION
+            )
+        )
+    }
+
+    fun sendClickSNSLog() {
+        LogManager.sendEvent(ClickEvent(
+            screen = screenName,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.SNS
+        ))
+    }
+
+    fun sendClickZoomMap() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.ZOOM_MAP
+            )
+        )
+    }
+
+    fun sendClickCopyAddress() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.COPY_ADDRESS
+            )
+        )
+    }
+
+    fun sendClickCopyAccountLog() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.COPY_ACCOUNT
+            )
+        )
+    }
+
+    fun sendClickLikeReview(isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(ParameterName.VALUE to isLiked.toString())
+            )
+        )
+    }
+
+    // GA Events - Boss Store Review Write
+    fun sendClickWriteReviewSubmit() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.BOSS_STORE_REVIEW_WRITE,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE_REVIEW
+            )
+        )
     }
 }

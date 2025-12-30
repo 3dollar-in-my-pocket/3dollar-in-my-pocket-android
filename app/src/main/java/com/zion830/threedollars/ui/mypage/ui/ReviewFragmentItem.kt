@@ -11,6 +11,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
@@ -33,6 +39,7 @@ class ReviewFragmentItem : Fragment() {
         super.onCreate(savedInstanceState)
         adapter = MyReviewRecyclerAdapter(object : OnItemClickListener<MyReviewResponseData> {
             override fun onClick(item: MyReviewResponseData) {
+                sendClickReview(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
                 if (item.store.storeType == BOSS_STORE) {
                     val intent = BossStoreDetailActivity.getIntent(
                         requireContext(),
@@ -90,5 +97,20 @@ class ReviewFragmentItem : Fragment() {
             }
         }
     }
+
+    private fun sendClickReview(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.MY_REVIEW,
+                objectType = LogObjectType.REVIEW,
+                objectId = LogObjectId.REVIEW,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
+    }
+
 }
 

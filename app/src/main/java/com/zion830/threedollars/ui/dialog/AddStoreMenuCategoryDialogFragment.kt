@@ -10,23 +10,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import zion830.com.common.ext.isNotNullOrEmpty
 
 @AndroidEntryPoint
 class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogBottomAddStoreMenuCategoryBinding>() {
 
     private val viewModel: AddStoreViewModel by activityViewModels()
+    override val screenName: ScreenName = ScreenName.EMPTY
 
     private val streetCategories by lazy { LegacySharedPrefUtils.getCategories() }
 
@@ -35,7 +36,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter(
             onCategoryClickListener = { item ->
-                viewModel.changeSelectCategory(item)
+                viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(item))
                 initStreetAdapterSubmit()
             },
             onAdClickListener = {}
@@ -45,7 +46,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter(
             onCategoryClickListener = { item ->
-                viewModel.changeSelectCategory(item)
+                viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(item))
                 initTruckAdapterSubmit()
             },
             onAdClickListener = {}
@@ -54,10 +55,6 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomAddStoreMenuCategoryBinding =
         DialogBottomAddStoreMenuCategoryBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "AddStoreMenuCategoryDialogFragment", screenName = "category_selection")
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
@@ -82,7 +79,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     }
 
     private fun initStreetAdapterSubmit() {
-        val list = viewModel.selectCategoryList.value
+        val list = viewModel.state.value.selectCategoryList
         streetCategoryAdapter.submitList(
             streetCategories.map { item ->
                 val sameItem = list.find { it.menuType.name == item.name }
@@ -96,7 +93,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     }
 
     private fun initTruckAdapterSubmit() {
-        val list = viewModel.selectCategoryList.value
+        val list = viewModel.state.value.selectCategoryList
         bossCategoryAdapter.submitList(
             truckCategories.map { item ->
                 val sameItem = list.find { it.menuType.name == item.name }
@@ -111,12 +108,11 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
 
     private fun initButton() {
         binding.finishButton.onSingleClick {
-            if (viewModel.selectCategoryList.value.isNotNullOrEmpty()) {
+            if (viewModel.state.value.selectCategoryList.isNotEmpty()) {
                 val bundle = Bundle().apply {
                     putString("screen", "category_selection")
-                    putString("category_name", viewModel.selectCategoryList.value.joinToString { it.menuType.name })
+                    putString("category_name", viewModel.state.value.selectCategoryList.joinToString { it.menuType.name })
                 }
-                EventTracker.logEvent(Constants.CLICK_CATEGORY, bundle)
             }
             dismiss()
         }

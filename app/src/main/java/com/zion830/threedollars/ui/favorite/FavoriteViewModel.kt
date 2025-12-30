@@ -5,8 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.home.domain.repository.HomeRepository
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.datasource.FavoriteMyFolderDataSourceImpl
 import com.zion830.threedollars.datasource.UserDataSource
@@ -26,6 +32,9 @@ class FavoriteViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val newServiceApi: NewServiceApi
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MY_BOOKMARK_LIST
+
     val favoriteMyFolderPager = Pager(PagingConfig(FavoriteMyFolderDataSourceImpl.LOAD_SIZE)) {
         FavoriteMyFolderDataSourceImpl(newServiceApi)
     }.flow
@@ -77,6 +86,40 @@ class FavoriteViewModel @Inject constructor(
         }
 
         _effect.trySend(Event.Share(folderId))
+    }
+
+    fun sendClickStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.MY_BOOKMARK_LIST,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
+    }
+
+    fun sendClickEdit() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.MY_BOOKMARK_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.EDIT
+            )
+        )
+    }
+
+    fun sendClickShare() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.MY_BOOKMARK_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SHARE
+            )
+        )
     }
 
     sealed interface Event {

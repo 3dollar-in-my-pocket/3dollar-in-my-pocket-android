@@ -24,9 +24,7 @@ import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants.CLICK_SIGN_UP
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityLoginNameBinding
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.dialog.MarketingDialog
@@ -39,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class SignUpActivity :
@@ -61,18 +60,14 @@ class SignUpActivity :
         viewModel.isNameEmpty.observe(this) {
             binding.btnFinish.apply {
                 isClickable = !it
-                setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (it) R.drawable.ic_start_off else R.drawable.ic_start, 0)
-                setTextColor(resources.getColor(if (it) R.color.color_gray2 else R.color.color_main_red, null))
+                setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, if (it) DesignSystemR.drawable.ic_start_off else DesignSystemR.drawable.ic_start, 0)
+                setTextColor(resources.getColor(if (it) DesignSystemR.color.color_gray2 else DesignSystemR.color.color_main_red, null))
             }
         }
         viewModel.isAvailable.observe(this) {
             binding.btnFinish.text = if (it) getString(CommonR.string.login_name3) else getString(CommonR.string.login_name_fail)
             binding.tvAlreadyExist.visibility = if (it) View.INVISIBLE else View.VISIBLE
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "SignUpActivity", screenName = "sign_up")
     }
 
     private fun initEditTextView() {
@@ -150,11 +145,7 @@ class SignUpActivity :
         }
 
         binding.btnFinish.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "sign_up")
-                putString("nickname", binding.etName.text.toString())
-            }
-            EventTracker.logEvent(CLICK_SIGN_UP, bundle)
+            viewModel.sendClickSignUp()
             if (LegacySharedPrefUtils.getLoginType() == LoginType.KAKAO.socialName) {
                 tryKakaoLogin()
             } else {

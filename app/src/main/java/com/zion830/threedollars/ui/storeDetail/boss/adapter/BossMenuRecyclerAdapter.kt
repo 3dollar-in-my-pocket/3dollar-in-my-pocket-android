@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.home.domain.data.store.BossStoreDetailItem
-import com.home.domain.data.store.MenuModel
+import com.threedollar.domain.home.data.store.BossStoreDetailItem
+import com.threedollar.domain.home.data.store.MenuModel
 import com.threedollar.common.ext.loadCircleImage
 import com.threedollar.common.ext.toFormattedNumber
 import com.zion830.threedollars.GlobalApplication

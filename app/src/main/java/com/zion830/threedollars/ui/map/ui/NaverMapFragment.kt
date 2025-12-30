@@ -22,8 +22,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.home.domain.data.store.ContentModel
-import com.home.domain.data.store.MarkerModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -34,8 +32,8 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.MarkerModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
@@ -71,6 +69,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     var listener: OnMapTouchListener? = null
 
     private var isShowOverlay = true
+
+    var onAdMarkerClicked: ((Int) -> Unit)? = null
 
     fun setOnMapTouchListener(mapListener: OnMapTouchListener) {
         listener = mapListener
@@ -156,11 +156,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     }
                 }
                 map.locationOverlay.setOnClickListener {
-                    val bundle = Bundle().apply {
-                        putString("screen", "home")
-                        putString("advertisement_id", storeMarker.advertisementId.toString())
-                    }
-                    EventTracker.logEvent(Constants.CLICK_AD_MARKER, bundle)
+                    onAdMarkerClicked?.invoke(storeMarker.advertisementId)
                     val dialog = MarkerClickDialog(latLng = currentPosition.value ?: LatLng.INVALID)
                     dialog.show(parentFragmentManager, dialog.tag)
                     return@setOnClickListener false
@@ -235,7 +231,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     fun addStoreMarkers(
         @DrawableRes drawableRes: Int,
         list: List<ContentModel>,
-        onClick: (marker: ContentModel) -> Unit = {},
+        onClick: (marker: ContentModel) -> Unit = {}
     ) {
         if (naverMap == null) {
             return

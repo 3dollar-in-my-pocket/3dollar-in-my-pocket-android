@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.data.my.datasource.MyFeedbacksDataSourceImpl
+import com.threedollar.data.my.datasource.MyReviewDataSourceImpl
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
-import com.my.data.datasource.MyFeedbacksDataSourceImpl
-import com.my.data.datasource.MyReviewDataSourceImpl
-import com.zion830.threedollars.datasource.StoreDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,6 +19,8 @@ class MyReviewViewModel @Inject constructor(
     private val serverApi: ServerApi,
     sharedPrefUtils: SharedPrefUtils
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MY_REVIEW
 
     val myReviewPager = Pager(PagingConfig(MyReviewDataSourceImpl.LOAD_SIZE)) {
         MyReviewDataSourceImpl(serverApi)

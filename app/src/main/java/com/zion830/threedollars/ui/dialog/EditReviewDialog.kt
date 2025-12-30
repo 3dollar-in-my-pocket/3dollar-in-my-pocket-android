@@ -9,15 +9,16 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.network.data.user.ReviewContent
-import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.DialogAddReviewBinding
 import com.zion830.threedollars.datasource.model.v2.request.NewReview
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class EditReviewDialog(
@@ -25,16 +26,14 @@ class EditReviewDialog(
     private val onComplete: (NewReview) -> Unit,
 ) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
 
+    override val screenName: ScreenName = ScreenName.EMPTY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, DesignSystemR.style.CustomBottomSheetDialogTheme)
     }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogAddReviewBinding =
         DialogAddReviewBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditReviewDialog",screenName = "review_bottom_sheet")
-    }
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =

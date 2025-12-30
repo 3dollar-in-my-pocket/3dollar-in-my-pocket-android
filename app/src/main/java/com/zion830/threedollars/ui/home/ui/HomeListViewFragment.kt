@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.home.ui
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -17,30 +16,29 @@ import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.home.domain.data.advertisement.AdvertisementModelV2
-import com.home.domain.data.store.CategoryModel
-import com.home.domain.data.store.ContentModel
-import com.home.domain.request.FilterConditionsTypeModel
-import com.home.presentation.data.HomeSortType
-import com.home.presentation.data.HomeStoreType
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.data.AdMobItem
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.CLICK_STORE
 import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
-import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
-import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -85,8 +83,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         binding.listRecyclerView.adapter = adapter
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "HomeListViewFragment", screenName = "home_list")
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(ScreenName.HOME_LIST, this::class.simpleName.toString())
     }
 
     private fun initButtons() {
@@ -104,16 +102,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun onCategoryFilterClick() {
-        EventTracker.logEvent(Constants.CLICK_CATEGORY_FILTER, Bundle().apply { putString("screen", "home_list") })
+        viewModel.sendClickCategoryFilterInList()
         showSelectCategoryDialog()
     }
 
     private fun onSortFilterClick() {
         homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) HomeSortType.LATEST else HomeSortType.DISTANCE_ASC
-        EventTracker.logEvent(Constants.CLICK_SORTING, Bundle().apply {
-            putString("screen", "home_list")
-            putString("type", homeSortType.name)
-        })
+        viewModel.sendClickSortingInList(homeSortType.name)
         viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
     }
 
@@ -121,32 +116,23 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         sharedPrefUtils.setIsClickFilterConditions()
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
         filterConditionsType = if (filterConditionsType.isEmpty()) listOf(FilterConditionsTypeModel.RECENT_ACTIVITY) else listOf()
-        EventTracker.logEvent(Constants.CLICK_RECENT_ACTIVITY_FILTER, Bundle().apply {
-            putString("screen", "home_list")
-            putBoolean("value", filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-        })
+        viewModel.sendClickRecentActivityFilterInList(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
         viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
     }
 
     private fun onBossFilterClick() {
         homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-        EventTracker.logEvent(Constants.CLICK_BOSS_FILTER, Bundle().apply {
-            putString("screen", "home_list")
-            putString("value", if (homeStoreType == HomeStoreType.BOSS_STORE) "on" else "off")
-        })
+        viewModel.sendClickBossFilterInList(homeStoreType == HomeStoreType.BOSS_STORE)
         viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
     }
 
     private fun onCertifiedStoreFilterClick() {
         isFilterCertifiedStores = !isFilterCertifiedStores
-        EventTracker.logEvent(Constants.CLICK_ONLY_VISIT, Bundle().apply {
-            putString("screen", "home_list")
-            putString("value", if (isFilterCertifiedStores) "true" else "false")
-        })
+        viewModel.sendClickOnlyVisitInList(isFilterCertifiedStores)
         binding.certifiedStoreTextView.setCompoundDrawablesWithIntrinsicBounds(
             ContextCompat.getDrawable(
                 requireContext(),
-                if (isFilterCertifiedStores) R.drawable.ic_certification_check_on else R.drawable.ic_certification_check_off
+                if (isFilterCertifiedStores) DesignSystemR.drawable.ic_certification_check_on else DesignSystemR.drawable.ic_certification_check_off
             ), null, null, null
         )
         viewModel.fetchAroundStores()
@@ -190,13 +176,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         return if (category.categoryId.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),
-                R.color.gray70,
+                DesignSystemR.color.gray70,
                 DesignSystemR.drawable.rect_white_radius10_stroke_gray30
             )
         } else {
             Triple(
                 category.name,
-                R.color.pink,
+                DesignSystemR.color.pink,
                 DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
             )
         }
@@ -241,7 +227,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             .collect {
                 binding.apply {
                     bossFilterTextView.apply {
-                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) R.color.pink else R.color.gray40, null))
+                        setTextColor(resources.getColor(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.color.pink else DesignSystemR.color.gray40, null))
                         setBackgroundResource(if (it == HomeStoreType.BOSS_STORE) DesignSystemR.drawable.rect_radius10_pink100_stroke_pink else DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
                     }
 
@@ -258,7 +244,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     filterConditionsTextView.apply {
                         setTextColor(
                             resources.getColor(
-                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) R.color.pink else R.color.gray40,
+                                if (it.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) DesignSystemR.color.pink else DesignSystemR.color.gray40,
                                 null
                             )
                         )
@@ -276,12 +262,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getStoreItemClickListener() = object : OnItemClickListener<ContentModel> {
         override fun onClick(item: ContentModel) {
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("store_id", item.storeModel.storeId)
-                putString("type", item.storeModel.storeType)
-            }
-            EventTracker.logEvent(CLICK_STORE, bundle)
+            viewModel.sendClickStoreInList(item.storeModel.storeId, item.storeModel.storeType)
             val intent = if (item.storeModel.storeType == Constants.BOSS_STORE) {
                 BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
             } else {
@@ -293,11 +274,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun getAdvertisementClickListener() = object : OnItemClickListener<AdvertisementModelV2> {
         override fun onClick(item: AdvertisementModelV2) {
-            val bundle = Bundle().apply {
-                putString("screen", "home_list")
-                putString("advertisement_id", item.advertisementId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+            viewModel.sendClickAdvertisementInList(item.advertisementId.toString())
             val intent = if (item.link.type == "APP_SCHEME") {
                 Intent(requireContext(), DynamicLinkActivity::class.java).apply { putExtra("link", item.link.url) }
             } else {

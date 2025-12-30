@@ -9,21 +9,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
-import com.home.domain.data.store.AddCategoryModel
-import com.home.domain.data.store.DayOfTheWeekType
-import com.home.domain.data.store.PaymentType
-import com.home.domain.data.store.SalesType
-import com.home.domain.data.store.SelectCategoryModel
-import com.home.domain.request.MenuModelRequest
-import com.home.domain.request.OpeningHourRequest
-import com.home.domain.request.UserStoreModelRequest
+import com.threedollar.domain.home.data.store.AddCategoryModel
+import com.threedollar.domain.home.data.store.DayOfTheWeekType
+import com.threedollar.domain.home.data.store.PaymentType
+import com.threedollar.domain.home.data.store.SalesType
+import com.threedollar.domain.home.data.store.SelectCategoryModel
+import com.threedollar.domain.home.request.MenuModelRequest
+import com.threedollar.domain.home.request.OpeningHourRequest
+import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.replaceFragment
-import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentEditDetailBinding
 import com.zion830.threedollars.ui.dialog.AddStoreMenuCategoryDialogFragment
@@ -35,6 +33,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -63,13 +62,13 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                 )
             },
             {
-                addStoreViewModel.removeCategory(it)
+                addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveCategory(it))
             },
         )
     }
 
     private val editCategoryMenuRecyclerAdapter: EditCategoryMenuRecyclerAdapter by lazy {
-        EditCategoryMenuRecyclerAdapter { addStoreViewModel.removeCategory(it) }
+        EditCategoryMenuRecyclerAdapter { addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveCategory(it)) }
     }
 
     private val naverMapFragment: StoreDetailNaverMapFragment = StoreDetailNaverMapFragment()
@@ -89,41 +88,35 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         initFlow()
     }
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "EditStoreDetailFragment", screenName = "write_address_detail")
-    }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    addStoreViewModel.selectedLocation.collect {
-                        binding.addressTextView.text = getCurrentLocationName(it)
-                        it?.let {
+                    addStoreViewModel.state.collect { state ->
+                        state.selectedLocation?.let { location ->
+                            binding.addressTextView.text = getCurrentLocationName(location)
                             delay(500L)
-                            val latLng = LatLng(it.latitude, it.longitude)
+                            val latLng = LatLng(location.latitude, location.longitude)
                             naverMapFragment.initMap(latLng, false)
                         }
-                    }
-                }
-                launch {
-                    addStoreViewModel.postUserStoreModel.collect {
-                        it?.let {
-                            viewModel.getUserStoreDetail(
-                                storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
-                                deviceLatitude = it.latitude,
-                                deviceLongitude = it.longitude,
-                                filterVisitStartDate = getMonthFirstDate(),
-                            )
-                            showToast(CommonR.string.edit_store_success)
-                            requireActivity().supportFragmentManager.popBackStack()
-                        }
-                    }
-                }
-                launch {
-                    addStoreViewModel.selectCategoryList.collect { categoryModelList ->
+
+                        val categoryModelList = state.selectCategoryList
                         addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel(categoryModelList.size < 3)) + categoryModelList.map { it.menuType })
                         editCategoryMenuRecyclerAdapter.setItems(categoryModelList)
+                    }
+                }
+                launch {
+                    addStoreViewModel.effect.collect { effect ->
+                        when (effect) {
+                            is AddStoreContract.Effect.StoreUpdated -> {
+                                showToast(CommonR.string.edit_store_success)
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
+                            is AddStoreContract.Effect.ShowError -> {
+                                showToast(effect.message)
+                            }
+                            else -> {}
+                        }
                     }
                 }
                 launch {
@@ -136,9 +129,9 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 }
                                 SelectCategoryModel(menuType = model, menu)
                             }
-                            addStoreViewModel.setSelectCategoryModelList(selectCategoryModelList)
-                            if (addStoreViewModel.selectedLocation.value == null) {
-                                addStoreViewModel.updateLocation(LatLng(location.latitude, location.longitude))
+                            addStoreViewModel.processIntent(AddStoreContract.Intent.SetSelectCategoryList(selectCategoryModelList))
+                            if (addStoreViewModel.state.value.selectedLocation == null) {
+                                addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(LatLng(location.latitude, location.longitude)))
                             }
                             binding.storeNameEditTextView.setText(it.store.name)
 
@@ -258,7 +251,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
         }
         binding.btnClearCategory.setOnClickListener {
             addCategoryRecyclerAdapter.submitList(listOf(AddCategoryModel()))
-            addStoreViewModel.removeAllCategory()
+            addStoreViewModel.processIntent(AddStoreContract.Intent.RemoveAllCategories)
         }
         binding.fullScreenButton.setOnClickListener {
             moveFullScreenMap()
@@ -271,22 +264,23 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
             val bundle = Bundle().apply {
                 putString("screen", "write_address_detail")
             }
-            EventTracker.logEvent(Constants.CLICK_WRITE_STORE, bundle)
-            addStoreViewModel.editStore(
-                UserStoreModelRequest(
-                    appearanceDays = getAppearanceDays(),
-                    latitude = addStoreViewModel.selectedLocation.value?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
-                    longitude = addStoreViewModel.selectedLocation.value?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                    menuRequests = getMenuList().asReversed(),
-                    paymentMethods = getPaymentMethod(),
-                    openingHours = OpeningHourRequest(
-                        startTime = startTime,
-                        endTime = endTime,
+            addStoreViewModel.processIntent(
+                AddStoreContract.Intent.EditStore(
+                    request = UserStoreModelRequest(
+                        appearanceDays = getAppearanceDays(),
+                        latitude = addStoreViewModel.state.value.selectedLocation?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
+                        longitude = addStoreViewModel.state.value.selectedLocation?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
+                        menuRequests = getMenuList().reversed(),
+                        paymentMethods = getPaymentMethod(),
+                        openingHours = OpeningHourRequest(
+                            startTime = startTime,
+                            endTime = endTime,
+                        ),
+                        storeName = binding.storeNameEditTextView.text.toString(),
+                        salesType = getStoreType(),
                     ),
-                    storeName = binding.storeNameEditTextView.text.toString(),
-                    storeType = getStoreType(),
-                ),
-                viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
+                    storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: 0,
+                )
             )
         }
         binding.openingHourStartTimeTextView.setOnClickListener {
@@ -298,7 +292,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 binding.openingHourStartTimeTextView.text = ""
                                 startTime = null
                             } else {
-                                binding.openingHourStartTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                binding.openingHourStartTimeTextView.text = if (hour < 13) getString(CommonR.string.time_format_am, hour) else getString(CommonR.string.time_format_pm, hour - 12)
                                 val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                                 startTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
                             }
@@ -315,7 +309,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                 binding.openingHourEndTimeTextView.text = ""
                                 endTime = null
                             } else {
-                                binding.openingHourEndTimeTextView.text = if (hour < 13) "오전 ${hour}시" else "오후 ${hour}시"
+                                binding.openingHourEndTimeTextView.text = if (hour < 13) getString(CommonR.string.time_format_am, hour) else getString(CommonR.string.time_format_pm, hour - 12)
                                 val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                                 endTime = dateFormat.format(dateFormat.parse("$hour:00") as Date)
                             }
@@ -326,7 +320,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
     }
 
     private fun moveFullScreenMap() {
-        val latLng = addStoreViewModel.selectedLocation.value
+        val latLng = addStoreViewModel.state.value.selectedLocation
         val intent = FullScreenMapActivity.getIntent(
             context = requireContext(),
             latitude = latLng?.latitude,
@@ -385,13 +379,13 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                     val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
 
                     if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MenuModelRequest(category, name, price))
+                        menuList.add(MenuModelRequest(name = name, price = price.toIntOrNull(), category = category))
                         isEmptyCategory = false
                     }
                 }
 
                 if (isEmptyCategory) {
-                    menuList.add(MenuModelRequest(category, "", ""))
+                    menuList.add(MenuModelRequest(name = "", price = null, category = category))
                 }
             }
         }

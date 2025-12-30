@@ -3,9 +3,9 @@ package com.zion830.threedollars.ui.map.ui
 import androidx.core.view.isVisible
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.R
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreDetailNaverMapFragment : NaverMapFragment() {
@@ -19,6 +19,6 @@ class StoreDetailNaverMapFragment : NaverMapFragment() {
     fun initMap(latLng: LatLng, isClosed: Boolean? = null) {
         moveCamera(latLng)
         clearMarker()
-        addMarker(if (isClosed == true) R.drawable.ic_mappin_focused_off else R.drawable.ic_mappin_focused_on, latLng)
+        addMarker(if (isClosed == true) DesignSystemR.drawable.ic_mappin_focused_off else DesignSystemR.drawable.ic_mappin_focused_on, latLng)
     }
 }
