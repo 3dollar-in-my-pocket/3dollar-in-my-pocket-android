@@ -51,6 +51,8 @@ class FavoriteViewerViewModel @Inject constructor(private val userDataSource: Us
             if (response.isSuccessful) {
                 response.body()?.data?.let {
                     _favoriteViewer.value = it
+                } ?: run {
+                    _error.send(FavoriteViewerError.Unknown)
                 }
             } else {
                 val errorResponse = response.errorResponseOrNull()
