@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import base.compose.Gray40
@@ -27,7 +28,8 @@ import com.zion830.threedollars.ui.my.page.data.myPageShopPreview
 @Composable
 fun MyPageShopInfoView(myPageShop: MyPageShop = myPageShopPreview) {
     Row(
-        modifier =  Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(48.dp)
     ) {
         AsyncImage(
@@ -37,21 +39,22 @@ fun MyPageShopInfoView(myPageShop: MyPageShop = myPageShopPreview) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                myPageShop.tags.forEach {
-                    Text(
-                        text = it, fontSize = dpToSp(dp = 12),
-                        fontFamily = PretendardFontFamily,
-                        fontWeight = FontWeight.W500,
-                        color = Gray40
-                    )
-                }
-            }
+            Text(
+                text = myPageShop.tags.joinToString(" "),
+                fontSize = dpToSp(dp = 12),
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W500,
+                color = Gray40,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             Text(
                 text = myPageShop.title, fontSize = dpToSp(dp = 16),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W700,
-                color = Color.White
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
