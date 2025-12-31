@@ -10,12 +10,16 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
-import com.zion830.threedollars.datasource.UserDataSource
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
+import com.threedollar.network.util.errorResponseOrNull
+import com.zion830.threedollars.datasource.UserDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class FavoriteViewerViewModel @Inject constructor(private val userDataSource: UserDataSource) : BaseViewModel() {
@@ -27,6 +31,12 @@ class FavoriteViewerViewModel @Inject constructor(private val userDataSource: Us
     private val _eventClick = MutableLiveData<Event>()
     val eventClick: LiveData<Event> get() = _eventClick
 
+    private val _error = Channel<FavoriteViewerError>(
+        capacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val error: Flow<FavoriteViewerError> = _error.receiveAsFlow()
+
     fun onEventClick(event: Event) {
         _eventClick.value = event
     }
@@ -36,14 +46,22 @@ class FavoriteViewerViewModel @Inject constructor(private val userDataSource: Us
     }
 
     fun getFavoriteViewer(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val response = userDataSource.getFavoriteViewer(id, null)
             if (response.isSuccessful) {
                 response.body()?.data?.let {
                     _favoriteViewer.value = it
+                } ?: run {
+                    _error.send(FavoriteViewerError.Unknown)
                 }
             } else {
-                _msgTextId.postValue(CommonR.string.connection_failed)
+                val errorResponse = response.errorResponseOrNull()
+                val errorEvent = if (errorResponse != null) {
+                    FavoriteViewerError.ApiError(message = errorResponse.message.orEmpty())
+                } else {
+                    FavoriteViewerError.Unknown
+                }
+                _error.send(errorEvent)
             }
         }
     }
