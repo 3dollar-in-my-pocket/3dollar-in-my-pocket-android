@@ -119,6 +119,14 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         }
     }
 
+    fun savePushToken(value: String) {
+        sharedPreferences.edit(commit = true) {
+            putString(PUSH_TOKEN, value)
+        }
+    }
+
+    fun getPushToken(): String = sharedPreferences.getString(PUSH_TOKEN, null).orEmpty()
+
     fun clearUserInfo() {
         saveAccessToken("")
         saveKakaoToken("", "")
@@ -144,6 +152,7 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         private const val IS_CLICK_FILTER_CONDITIONS = "is_click_filter_conditions"
         private const val SELECT_NEIGHBORHOOD_DESCRIPTION = "select_neighborhood_description"
         private const val SELECT_NEIGHBORHOOD_DISTRICT = "select_neighborhood_district"
+        private const val PUSH_TOKEN = "push_token"
         val BOSS_FEED_BACK_LIST = "boss_feed_back_list"
     }
 }
