@@ -25,6 +25,7 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.databinding.ActivityLoginBinding
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.ui.login.model.LoginResultModel
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -40,6 +41,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
 
     override val viewModel: LoginViewModel by viewModels()
     private val inputNameLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            startActivity(MainActivity.getIntent(this))
+            finish()
+        }
+    }
+    private val signUpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             startActivity(MainActivity.getIntent(this))
             finish()
@@ -162,9 +169,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                 launch {
                     viewModel.loginResult.collect {
                         when (it) {
-                            is ResultWrapper.Success -> {
-                                LegacySharedPrefUtils.saveUserId(it.value?.userId ?: 0)
-                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
+                            is LoginResultModel.Success -> {
+                                /**
+                                 * TODO - ViewModel or Data layer로 위임해야 합니다.
+                                 */
+                                LegacySharedPrefUtils.saveUserId(it.userId)
+                                LegacySharedPrefUtils.saveAccessToken(it.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
                                         viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
@@ -174,17 +184,23 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                                 finish()
                             }
 
-                            is ResultWrapper.GenericError -> {
-                                when (it.code) {
-                                    400 -> showToast(CommonR.string.connection_failed)
-                                    404 -> inputNameLauncher.launch(Intent(this@LoginActivity, SignUpActivity::class.java))
-                                    503 -> showToast(CommonR.string.server_500)
-                                    500, 502 -> showToast(CommonR.string.connection_failed)
-                                    else -> showToast(CommonR.string.connection_failed)
-                                }
+                            is LoginResultModel.Maintanance -> {
+                                showToast(CommonR.string.server_500)
                             }
 
-                            ResultWrapper.NetworkError -> {}
+                            is LoginResultModel.Error -> {
+                                showToast(CommonR.string.connection_failed)
+                            }
+
+                            is LoginResultModel.RequireSignUp -> {
+                                signUpLauncher.launch(
+                                    SignUpActivityV2.getIntent(
+                                        context = this@LoginActivity,
+                                        loginType = it.loginType,
+                                        token = it.token
+                                    )
+                                )
+                            }
                         }
                     }
                 }

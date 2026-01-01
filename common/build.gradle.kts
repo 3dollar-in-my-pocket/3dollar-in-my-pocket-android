@@ -39,5 +39,6 @@ kotlin {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(libs.androidx.compose.ui)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
 }
