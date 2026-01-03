@@ -52,6 +52,7 @@ import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapte
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
@@ -94,6 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var locationPermissionDialog: AlertDialog? = null
 
     private var isFirstLoad = true
+    private var isIgnoreScrollListener = false
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -140,13 +142,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 snapHelper,
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
+                        if (isIgnoreScrollListener) return
+
                         if (adapter.getItemLocation(position) != null) {
-                            /*
-                            광고가 index를 하나 차지하고 있어서 focusedIndex는 position에 -1을 해준다.
-                            하지만 adapter.getItemMarker에서 markerModel을 가져올 때는 position 기준으로 가져와야 된다.
-                            그러므로 가게 이동전 포커싱 돼 있던 아이콘을 비활성화 하기 위해 adapter.focusedIndex에 +1를 해준 값을 넣어주고
-                            이동후 포커싱 되는 부분에서는 position을 통해 markerModel을 가져온다.
-                             */
                             naverMapFragment.updateMarkerIcon(
                                 drawableRes = DesignSystemR.drawable.ic_store_off,
                                 position = adapter.focusedIndex,
@@ -321,10 +319,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     viewModel.uiState
-                        .map { it.carouselItemList }
+                        .map { it.carouselItemList to it.shouldResetScroll }
                         .distinctUntilChanged()
-                        .collect {
-                            collectCarouselItemList(it)
+                        .collect { (itemList, shouldResetScroll) ->
+                            collectCarouselItemList(itemList, shouldResetScroll)
                         }
                 }
                 launch {
@@ -543,7 +541,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private suspend fun collectCarouselItemList(itemList: List<AdAndStoreItem>) {
+    private suspend fun collectCarouselItemList(itemList: List<AdAndStoreItem>, shouldResetScroll: Boolean) {
         if (itemList.isEmpty()) return
         val resultList = mutableListOf<AdAndStoreItem>()
         resultList.addAll(itemList)
@@ -551,19 +549,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             1,
             viewModel.advertisementModel.value ?: AdvertisementModelV2Empty()
         )
-        adapter.submitList(resultList)
-        val list = itemList.filterIsInstance<ContentModel>()
-        naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_store_off, list) {
-            onStoreClicked(it)
+
+        if (!shouldResetScroll) {
+            isIgnoreScrollListener = true
         }
-        naverMapFragment.updateMarkerIcon(
-            drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
-            position = 0,
-            markerModel = list.firstOrNull()?.markerModel,
-            isSelected = true
-        )
-        delay(200L)
-        binding.aroundStoreRecyclerView.scrollToPosition(0)
+
+        adapter.submitList(resultList)
+
+        if (shouldResetScroll) {
+            val list = itemList.filterIsInstance<ContentModel>()
+            naverMapFragment.addStoreMarkers(DesignSystemR.drawable.ic_store_off, list) {
+                onStoreClicked(it)
+            }
+            naverMapFragment.updateMarkerIcon(
+                drawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
+                position = 0,
+                markerModel = list.firstOrNull()?.markerModel,
+                isSelected = true
+            )
+            delay(200L)
+            binding.aroundStoreRecyclerView.scrollToPosition(0)
+        } else {
+            delay(100L)
+            isIgnoreScrollListener = false
+        }
     }
 
     private fun collectHomeSortType(sortType: HomeSortType) {
@@ -606,6 +615,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         if (requestCode == Constants.GET_LOCATION_PERMISSION) {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
+        }
+
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
+            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
+            if (isUpdated) {
+                @Suppress("DEPRECATION")
+                val userStore = data?.getSerializableExtra(StoreDetailActivity.EXTRA_USER_STORE) as? UserStoreModel
+                userStore?.let { viewModel.updateStoreItem(it) }
+            }
         }
     }
     

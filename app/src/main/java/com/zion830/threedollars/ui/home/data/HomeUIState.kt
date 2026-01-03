@@ -14,7 +14,8 @@ data class HomeUIState(
     var homeStoreType: HomeStoreType = HomeStoreType.ALL,
     var filterConditionsType : List<FilterConditionsTypeModel> = listOf(),
     var selectedCategory: CategoryModel? = null,
-    var carouselItemList: List<AdAndStoreItem> = listOf()
+    var carouselItemList: List<AdAndStoreItem> = listOf(),
+    var shouldResetScroll: Boolean = true
 ) {
     companion object {
         val DEFAULT_LOCATION = LatLng(37.56, 126.97) // 서울

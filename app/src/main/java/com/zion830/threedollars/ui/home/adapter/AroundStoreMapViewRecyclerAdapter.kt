@@ -32,7 +32,6 @@ import com.zion830.threedollars.databinding.ItemNearStoreAdBinding
 import com.zion830.threedollars.databinding.ItemStoreLocationBinding
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.utils.StringUtils
-import zion830.com.common.base.BaseDiffUtilCallback
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -41,7 +40,7 @@ class AroundStoreMapViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val adClickListener: OnItemClickListener<AdvertisementModelV2>,
     private val certificationClick: (ContentModel) -> Unit,
-) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
+) : ListAdapter<AdAndStoreItem, ViewHolder>(AdAndStoreItemDiffCallback()) {
     var focusedIndex = 0
 
     fun getItemLocation(position: Int) = when (getItem(position)) {
