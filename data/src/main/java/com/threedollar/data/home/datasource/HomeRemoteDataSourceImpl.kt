@@ -17,6 +17,7 @@ import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
+import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.FilterConditionsType
@@ -39,7 +40,10 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
-class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: ServerApi) : HomeRemoteDataSource {
+class HomeRemoteDataSourceImpl @Inject constructor(
+    private val serverApi: ServerApi,
+    private val prefUtils: SharedPrefUtils
+) : HomeRemoteDataSource {
     override fun getAroundStores(
         distanceM: Double,
         categoryIds: Array<String>?,
@@ -116,7 +120,13 @@ class HomeRemoteDataSourceImpl @Inject constructor(private val serverApi: Server
     }
 
     override fun putPushInformation(informationRequest: PushInformationRequest): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.putPushInformation(informationRequest)))
+        emit(
+            apiResult(serverApi.putPushInformation(informationRequest)).also {
+                if (it.ok) {
+                    prefUtils.savePushToken(informationRequest.pushToken)
+                }
+            }
+        )
     }
 
     override fun getAdvertisements(

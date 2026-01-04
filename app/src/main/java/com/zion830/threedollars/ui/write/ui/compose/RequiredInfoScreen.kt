@@ -127,7 +127,7 @@ private fun RequiredInfoContent(
 
         OutlinedTextField(
             value = storeName,
-            onValueChange = onStoreNameChange,
+            onValueChange = { if (it.length <= 150) onStoreNameChange(it) },
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(

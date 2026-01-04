@@ -5,6 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.threedollar.domain.login.repository.LoginRepository
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.network.data.auth.SignUpRequest
@@ -25,6 +30,8 @@ import com.threedollar.common.R as CommonR
 @HiltViewModel
 class InputNameViewModel @Inject constructor(private val loginRepository: LoginRepository, private val userDataSource: UserDataSource) :
     BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.SIGN_UP
 
     val userName: MutableLiveData<String> = MutableLiveData("")
     private val latestSocialType: MutableLiveData<LoginType> =
@@ -90,5 +97,15 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
                 }
             }
         }
+    }
+
+    fun sendClickSignUp() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SIGN_UP
+            )
+        )
     }
 }

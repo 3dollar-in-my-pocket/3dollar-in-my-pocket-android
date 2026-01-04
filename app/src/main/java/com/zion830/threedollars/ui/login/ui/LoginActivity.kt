@@ -19,10 +19,8 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
-import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
 import com.threedollar.network.request.PushInformationRequest
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.databinding.ActivityLoginBinding
@@ -52,25 +50,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
         setDarkSystemBars()
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "sign_in")
-            }
-            EventTracker.logEvent(Constants.KAKAO_BTN_CLICKED, bundle)
+            viewModel.sendClickKakaoLogin()
             LegacySharedPrefUtils.saveLoginType(LoginType.KAKAO)
             tryLoginBySocialType()
         }
         binding.btnLoginGoogle.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "sign_in")
-            }
-            EventTracker.logEvent(Constants.GOOGLE_BTN_CLICKED, bundle)
+            viewModel.sendClickGoogleLogin()
             LegacySharedPrefUtils.saveLoginType(LoginType.GOOGLE)
             tryLoginBySocialType()
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "LoginActivity", screenName = "sign_in")
     }
 
     private fun tryLoginBySocialType() {

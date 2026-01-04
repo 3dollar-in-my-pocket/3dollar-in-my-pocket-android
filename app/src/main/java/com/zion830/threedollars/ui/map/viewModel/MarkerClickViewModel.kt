@@ -2,6 +2,12 @@ package com.zion830.threedollars.ui.map.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
@@ -17,6 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MarkerClickViewModel @Inject constructor(private val userDataSource: UserDataSource, private val homeRepository: HomeRepository) :
     BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MARKER_POPUP
 
     private val _popupsResponse: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val popupsResponse: StateFlow<AdvertisementModelV2?> get() = _popupsResponse
@@ -39,5 +47,17 @@ class MarkerClickViewModel @Inject constructor(private val userDataSource: UserD
                 }
             }
         }
+    }
+
+    // GA Events - Marker Popup
+    fun sendClickBottomButton(advertisementId: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.BOTTOM_BUTTON,
+                additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
+            )
+        )
     }
 }

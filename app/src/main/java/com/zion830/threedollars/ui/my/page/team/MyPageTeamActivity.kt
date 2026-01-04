@@ -24,10 +24,6 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
     override val viewModel: MyPageTeamViewModel by viewModels()
     private var rewardedAd: RewardedAd? = null
 
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "MyPageTeamActivity", screenName = null)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inItAd()

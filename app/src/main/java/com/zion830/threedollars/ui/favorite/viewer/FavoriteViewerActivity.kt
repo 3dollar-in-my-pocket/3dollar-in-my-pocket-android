@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.toStringDefault
@@ -18,14 +22,12 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, FavoriteViewerViewModel>({ ActivityFavoriteViewerBinding.inflate(it) }) {
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "FavoriteViewerActivity", screenName = null)
-    }
 
     override val viewModel: FavoriteViewerViewModel by viewModels()
     private lateinit var favoriteId: String
@@ -71,6 +73,7 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
                 FavoriteViewerViewModel.Event.Close -> finish()
                 is FavoriteViewerViewModel.Event.Viewer -> {
                     val item = it.item
+                    viewModel.sendClickStore(item.storeId, item.storeType)
                     if (GlobalApplication.isLoggedIn) {
                         moveToDetailActivity(item)
                     } else {
@@ -95,6 +98,43 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
             binding.favoriteUserNameText.textFavoriteUserName(it.user.name)
             binding.favoriteMemoText.text = it.introduction
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.error.collect(::onError)
+            }
+        }
+    }
+
+    private fun onError(error: FavoriteViewerError) {
+        val title = when (error) {
+            is FavoriteViewerError.ApiError -> {
+                error.message.takeIf { it.isNotEmpty() } ?: getString(CommonR.string.error_connection_failed_title)
+            }
+
+            is FavoriteViewerError.Unknown -> {
+                getString(CommonR.string.error_connection_failed_title)
+            }
+        }
+        val message = when (error) {
+            is FavoriteViewerError.ApiError -> {
+                null
+            }
+
+            is FavoriteViewerError.Unknown -> {
+                getString(CommonR.string.error_connection_failed_message)
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                finish()
+            }
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(false)
+            .create()
+            .show()
     }
 
     override fun finish() {

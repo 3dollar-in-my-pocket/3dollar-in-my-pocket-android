@@ -7,8 +7,14 @@ import com.threedollar.domain.my.model.FavoriteStoresModel
 import com.threedollar.domain.my.model.VisitHistoryModel
 import com.threedollar.domain.my.model.UserPollsModel
 import com.zion830.threedollars.ui.my.page.data.MyPageShop
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.listener.MyFragments
+import com.threedollar.common.analytics.ParameterName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.MY_PAGE
 
     /**
      * States
@@ -111,4 +119,53 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     }
 
     fun isNameUpdated() = getUserInfo()
+
+    // GA Events - MyPage
+    fun sendClickVisitedStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.VISITED_STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
+    }
+
+    fun sendClickFavoritedStore(storeId: String, storeType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.FAVORITED_STORE,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId,
+                    ParameterName.STORE_TYPE to storeType
+                )
+            )
+        )
+    }
+
+    fun sendClickMedal() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.MEDAL
+            )
+        )
+    }
+
+    fun sendClickPoll() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.POLL
+            )
+        )
+    }
 }

@@ -26,6 +26,9 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.ext.convertUpdateAt
@@ -48,7 +51,6 @@ import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.threedollar.domain.home.data.store.VisitsModel
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
@@ -64,6 +66,8 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
+import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -92,6 +96,10 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
 
     override val viewModel: StoreDetailViewModel by viewModels()
+
+    private val addStoreViewModel: AddStoreViewModel by viewModels()
+
+    private var isStoreUpdated = false
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -155,8 +163,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
     }
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
@@ -192,13 +199,20 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         }
     }
 
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        LogManager.sendPageView(
+            viewModel.screenName,
+            this::class.java.simpleName,
+            mapOf(
+                ParameterName.STORE_ID to storeId.toString(),
+                ParameterName.STORE_TYPE to Constants.USER_STORE
+            )
+        )
+    }
+
     private fun initAdmob() {
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "StoreDetailActivity", screenName = "store_detail")
     }
 
     private fun initAdapter() {
@@ -221,15 +235,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initButton() {
         binding.btnBack.onSingleClick {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
         binding.deleteButton.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "store_detail")
-                putString("store_id", storeId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_REPORT, bundle)
+            viewModel.sendClickReportButton()
             DeleteStoreDialog.getInstance().show(supportFragmentManager, DeleteStoreDialog::class.java.name)
         }
         binding.photoSummitTextView.onSingleClick {
@@ -254,31 +263,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             putString("store_id", storeId.toString())
                             putString("count", images.size.toString())
                         }
-                        EventTracker.logEvent(Constants.CLICK_UPLOAD, bundle)
                         viewModel.saveImages(images, storeId)
                     }
                 }
             }
         }
         binding.shareButton.onSingleClick {
+            viewModel.sendClickShare()
             initShared()
         }
         binding.writeReviewTextView.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "store_detail")
-                putString("store_id", storeId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
+            viewModel.sendClickWriteReview()
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
 
         binding.reviewButton.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "store_detail")
-                putString("store_id", storeId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_WRITE_REVIEW, bundle)
+            viewModel.sendClickWriteReview()
             AddReviewDialog.getInstance(storeId = storeId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
@@ -291,11 +292,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             )
         }
         binding.addCertificationButton.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "store_detail")
-                putString("store_id", storeId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_VISIT, bundle)
+            viewModel.sendClickVisit()
             startCertification()
         }
         binding.favoriteButton.onSingleClick {
@@ -305,29 +302,22 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             clickFavoriteButton()
         }
         binding.fullScreenButton.onSingleClick {
+            viewModel.sendClickZoomMap()
             moveFullScreenMap()
         }
         binding.addressTextView.onSingleClick {
-            val bundle = Bundle().apply {
-                putString("screen", "store_detail")
-                putString("store_id", storeId.toString())
-            }
-            EventTracker.logEvent(Constants.CLICK_COPY_ADDRESS, bundle)
+            viewModel.sendClickCopyAddress()
             val manager = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
             manager.text = binding.addressTextView.text
             showToast("주소가 복사됐습니다.")
         }
         binding.directionsButton.onSingleClick {
+            viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
     }
 
     private fun initShared() {
-        val bundle = Bundle().apply {
-            putString("screen", "store_detail")
-            putString("store_id", storeId.toString())
-        }
-        EventTracker.logEvent(Constants.CLICK_SHARE, bundle)
         val userStoreModel = viewModel.userStoreDetailModel.value?.store
 
         val shareFormat = ShareFormat(
@@ -424,6 +414,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     viewModel.reviewSuccessEvent.collect {
                         if (it) {
                             refreshStoreInfo()
+                        }
+                    }
+                }
+                launch {
+                    addStoreViewModel.effect.collect { effect ->
+                        if (effect is AddStoreContract.Effect.StoreUpdated) {
+                            isStoreUpdated = true
                         }
                     }
                 }
@@ -684,12 +681,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun clickFavoriteButton() {
-        val bundle = Bundle().apply {
-            putString("screen", "store_detail")
-            putString("store_id", storeId.toString())
-            putString("value", if (viewModel.favoriteModel.value.isFavorite) "off" else "on")
-        }
-        EventTracker.logEvent(Constants.CLICK_FAVORITE, bundle)
+        val isOn = !viewModel.favoriteModel.value.isFavorite
+        viewModel.sendClickFavorite(isOn)
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(storeId.toString())
         } else {
@@ -726,21 +719,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     }
 
     private fun showDirectionBottomDialog() {
-        val bundle = Bundle().apply {
-            putString("screen", "store_detail")
-            putString("store_id", storeId.toString())
-        }
-        EventTracker.logEvent(Constants.CLICK_NAVIGATION, bundle)
         val store = viewModel.userStoreDetailModel.value?.store
         DirectionBottomDialog.getInstance(store?.location?.latitude, store?.location?.longitude, store?.name).show(supportFragmentManager, "")
     }
 
     private fun moveFullScreenMap() {
-        val bundle = Bundle().apply {
-            putString("screen", "store_detail")
-            putString("store_id", storeId.toString())
-        }
-        EventTracker.logEvent(Constants.CLICK_ZOOM_MAP, bundle)
         val store = viewModel.userStoreDetailModel.value?.store
         val intent = FullScreenMapActivity.getIntent(
             context = this,
@@ -833,6 +816,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         dialog.show()
     }
 
+    private fun finishWithResult() {
+        val resultIntent = Intent().apply {
+            putExtra(EXTRA_IS_UPDATED, isStoreUpdated)
+            if (isStoreUpdated) {
+                putExtra(EXTRA_USER_STORE, viewModel.userStoreDetailModel.value?.store)
+            }
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
     override fun finish() {
         navigateToMainActivityOnCloseIfNeeded()
         super.finish()
@@ -841,7 +835,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     companion object {
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
-        private const val EDIT_STORE_INFO = 234
+        const val EXTRA_IS_UPDATED = "extra_is_updated"
+        const val EXTRA_USER_STORE = "extra_user_store"
 
         fun getIntent(
             context: Context,

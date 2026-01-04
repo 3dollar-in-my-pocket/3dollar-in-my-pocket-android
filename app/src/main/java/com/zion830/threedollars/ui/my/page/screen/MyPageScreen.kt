@@ -104,6 +104,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             viewModel.addFragments(MyFragments.MyReview)
         },
         clickMedals = {
+            viewModel.sendClickMedal()
             viewModel.addFragments(MyFragments.MyMedal)
         }
     )
@@ -129,7 +130,10 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 .padding(it)
                 .verticalScroll(rememberScrollState())
         ) {
-            MyPageUserInformation(myPageUserInformation) { viewModel.addFragments(MyFragments.MyMedal) }
+            MyPageUserInformation(myPageUserInformation) {
+                viewModel.sendClickMedal()
+                viewModel.addFragments(MyFragments.MyMedal)
+            }
             MyPageInformationButtons(myPageButtons)
             Spacer(modifier = Modifier.height(44.dp))
             // 내가 방문한 가게
@@ -149,9 +153,8 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 )
             } else {
                 MyPageVisitedShopItem(myVisitsShop, true) { myPageShop ->
-                    viewModel.clickStore(
-                        myPageShop
-                    )
+                    viewModel.sendClickVisitedStore(myPageShop.storeId, myPageShop.storeType)
+                    viewModel.clickStore(myPageShop)
                 }
             }
             Spacer(modifier = Modifier.height(36.dp))
@@ -163,7 +166,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                     topIcon = DesignSystemR.drawable.ic_favorite_gray,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_favorit),
                     count = userInfo.activity.favoriteStoresCount
-                ) { viewModel.clickFavorite() })
+                ) {
+                    viewModel.clickFavorite()
+                })
             Spacer(modifier = Modifier.height(16.dp))
             if (myFavoriteShop.isEmpty()) {
                 MyPageEmptyView(
@@ -173,9 +178,8 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 )
             } else {
                 MyPageVisitedShopItem(myFavoriteShop, false) { myPageShop ->
-                    viewModel.clickStore(
-                        myPageShop
-                    )
+                    viewModel.sendClickFavoritedStore(myPageShop.storeId, myPageShop.storeType)
+                    viewModel.clickStore(myPageShop)
                 }
             }
             Spacer(modifier = Modifier.height(36.dp))
@@ -209,7 +213,9 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                     verticalArrangement = Arrangement.spacedBy(28.dp)
                 ) {
                     myVoteHistory.forEach { vote ->
-                        MyPageVoteHistoryItem(vote)
+                        MyPageVoteHistoryItem(vote) {
+                            viewModel.sendClickPoll()
+                        }
                     }
                 }
             }
@@ -557,8 +563,12 @@ fun MyPageVoteCountItem(count: Int = 2042) {
 }
 
 @Composable
-fun MyPageVoteHistoryItem(vote: MyVoteHistory) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun MyPageVoteHistoryItem(vote: MyVoteHistory, onClick: () -> Unit = {}) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+    ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = vote.title,

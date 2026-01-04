@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +18,8 @@ import androidx.navigation.fragment.findNavController
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.loadImage
-import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.EventTracker
 import com.zion830.threedollars.databinding.FragmentPopupBinding
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
@@ -44,17 +41,11 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
             }
 
             tvClose.onSingleClick {
-                val bundle = Bundle().apply {
-                    putString("screen", "main_ad_banner")
-                }
-                EventTracker.logEvent(Constants.CLICK_CLOSE, bundle)
+                viewModel.sendClickClose()
                 findNavController().navigateUp()
             }
             tvTodayNotPopup.onSingleClick {
-                val bundle = Bundle().apply {
-                    putString("screen", "main_ad_banner")
-                }
-                EventTracker.logEvent(Constants.CLICK_NOT_SHOW_TODAY, bundle)
+                viewModel.sendClickDoNotShowToday()
                 sharedPrefUtils.setTodayNotPopupDate(getCurrentDate())
                 findNavController().navigateUp()
             }
@@ -63,11 +54,7 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                 webView.isVisible = true
                 viewModel.popups.value.let { popups ->
                     popups.firstOrNull()?.let { popup ->
-                        val bundle = Bundle().apply {
-                            putString("screen", "main_ad_banner")
-                            putString("advertisement_id", popup.advertisementId.toString())
-                        }
-                        EventTracker.logEvent(Constants.CLICK_AD_BANNER, bundle)
+                        viewModel.sendClickAdvertisement(popup.advertisementId.toString())
                         if (popup.link.type == "APP_SCHEME") {
                             startActivity(
                                 Intent(requireContext(), DynamicLinkActivity::class.java).apply {
@@ -106,10 +93,6 @@ class PopupFragment : BaseFragment<FragmentPopupBinding, PopupViewModel>() {
                 setLayerType(View.LAYER_TYPE_SOFTWARE, null)
             }
         }
-    }
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "PopupFragment", screenName = "main_ad_banner")
     }
 
     inner class WebViewClient : android.webkit.WebViewClient() {

@@ -31,7 +31,6 @@ class MyFragmentsStarterImpl @Inject constructor() : MyFragmentStarter {
     }
 
     private fun addShowAllStoreFragment(activity: FragmentActivity) {
-        EventTracker.logEvent(Constants.SHOW_ALL_MY_STORE_BTN_CLICKED)
         activity.supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyStoreFragment(),
@@ -40,7 +39,6 @@ class MyFragmentsStarterImpl @Inject constructor() : MyFragmentStarter {
     }
 
     private fun addShowAllReviewFragment(activity: FragmentActivity) {
-        EventTracker.logEvent(Constants.SHOW_ALL_MY_REVIEW_BTN_CLICKED)
         activity.supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyReviewFragment(),
@@ -49,7 +47,6 @@ class MyFragmentsStarterImpl @Inject constructor() : MyFragmentStarter {
     }
 
     private fun addShowAllMedalFragment(activity: FragmentActivity) {
-        EventTracker.logEvent(Constants.SHOW_ALL_MY_MEDAL_BTN_CLICKED)
         activity.supportFragmentManager.addNewFragment(
             R.id.layout_container,
             MyMedalFragment(),

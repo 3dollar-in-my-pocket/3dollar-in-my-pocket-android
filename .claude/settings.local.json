@@ -55,7 +55,8 @@
       "Bash(if [ -f \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/build.gradle.kts\" ])",
       "Bash(then)",
       "Bash(else)",
-      "Bash(if [ -d \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/src\" ])"
+      "Bash(if [ -d \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/src\" ])",
+      "mcp__serena__think_about_task_adherence"
     ],
     "deny": [],
     "ask": []

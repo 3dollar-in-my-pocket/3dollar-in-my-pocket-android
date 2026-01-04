@@ -9,18 +9,21 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.databinding.DialogCreatePollBinding
+import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
 import zion830.com.common.base.onSingleClick
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
 
+    override val screenName: ScreenName = ScreenName.CREATE_POLL
+
     private var createClick: (String, String, String) -> Unit = { _, _, _ -> }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogCreatePollBinding =
         DialogCreatePollBinding.inflate(inflater, container, false)
-
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "CreatePollDialog", screenName = "create_poll")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,7 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
         binding.btnCreate.isEnabled = false
         binding.btnCreate.isSelected = false
         binding.btnCreate.onSingleClick {
+            sendClickCreate()
             val title = binding.editPollName.text.toString()
             val first = binding.editPollFirst.text.toString()
             val second = binding.editPollSecond.text.toString()
@@ -43,6 +47,16 @@ class CreatePollDialog : BaseDialogFragment<DialogCreatePollBinding>() {
             dismiss()
         }
         binding.btnCancel.onSingleClick { dismiss() }
+    }
+
+    private fun sendClickCreate() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.CREATE
+            )
+        )
     }
 
     private fun initEditText() {

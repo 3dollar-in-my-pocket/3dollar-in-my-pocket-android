@@ -2,7 +2,6 @@ package com.zion830.threedollars.ui.community.polls
 
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -11,8 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.common.base.BaseActivity
-import com.threedollar.common.listener.EventTrackerListener
-import com.threedollar.common.utils.Constants
 import com.threedollar.domain.community.data.PollItem
 import com.threedollar.domain.community.data.PollList
 import com.threedollar.domain.community.model.PollCreateModel
@@ -23,14 +20,11 @@ import com.zion830.threedollars.ui.community.utils.selectedPoll
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import javax.inject.Inject
 import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel>({ ActivityPollListBinding.inflate(it) }) {
 
-    @Inject
-    lateinit var eventTrackerListener: EventTrackerListener
     override val viewModel: PollListViewModel by viewModels()
     private val registerPollDetail = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
@@ -49,30 +43,18 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
     private val adapter: PollListAdapter by lazy {
         PollListAdapter({ pollId, optionId ->
             viewModel.votePoll(pollId, optionId)
-            val bundle = Bundle().apply {
-                putString("screen", "poll_list")
-                putString("poll_id", pollId)
-                putString("option_id", optionId)
-            }
-            eventTrackerListener.logEvent(Constants.CLICK_POLL_OPTION, bundle)
+            viewModel.sendClickPollOption(pollId, optionId)
         }, {
+            viewModel.sendClickPoll(it.poll.pollId)
             registerPollDetail.launch(Intent(this, PollDetailActivity::class.java).apply {
                 putExtra("id", it.poll.pollId)
             })
-            val bundle = Bundle().apply {
-                putString("screen", "poll_list")
-                putString("poll_id", it.poll.pollId)
-            }
-            eventTrackerListener.logEvent(Constants.CLICK_POLL, bundle)
         })
     }
     private val pollItems = mutableListOf<PollItem?>()
     private var pollList: PollList? = null
     private var isLoading = false
     private var categoryId = ""
-    override fun initFirebaseAnalytics() {
-        setFirebaseAnalyticsLogEvent(className = "PollListActivity", screenName = "poll_list")
-    }
 
     override fun initView() {
         setLightSystemBars()
@@ -123,6 +105,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
             if (!binding.twPollPopular.isSelected) selectedPollMenu(false)
         }
         binding.llPollCreate.onSingleClick {
+            viewModel.sendClickCreatePoll()
             CreatePollDialog().setCreatePoll { title, first, second ->
                 viewModel.createPoll(
                     PollCreateModel(
@@ -134,18 +117,7 @@ class PollListActivity : BaseActivity<ActivityPollListBinding, PollListViewModel
                         isAllowMultipleChoice = false
                     )
                 )
-                val bundle = Bundle().apply {
-                    putString("screen", "create_poll")
-                    putString("title", title)
-                    putString("poll_first_option", first)
-                    putString("poll_second_option", second)
-                }
-                eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
             }.show(supportFragmentManager, "")
-            val bundle = Bundle().apply {
-                putString("screen", "poll_list")
-            }
-            eventTrackerListener.logEvent(Constants.CLICK_CREATE_POLL, bundle)
         }
         binding.imgClose.onSingleClick { finish() }
     }

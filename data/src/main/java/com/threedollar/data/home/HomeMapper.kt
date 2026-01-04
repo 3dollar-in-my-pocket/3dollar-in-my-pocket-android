@@ -653,6 +653,10 @@ fun String.asSalesType() = when (this) {
         SalesType.CONVENIENCE_STORE
     }
 
+    "FOOD_TRUCK" -> {
+        SalesType.FOOD_TRUCK
+    }
+
     else -> {
         SalesType.NONE
     }

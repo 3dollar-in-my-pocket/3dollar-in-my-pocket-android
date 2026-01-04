@@ -8,6 +8,7 @@ import com.threedollar.domain.my.model.UserInfoModel
 import com.threedollar.domain.my.model.UserInfoUpdateModel
 import com.threedollar.domain.my.repository.MyRepository
 import com.threedollar.domain.login.repository.LoginRepository
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.toStringDefault
 import com.threedollar.common.utils.Constants
@@ -28,6 +29,8 @@ class UserInfoViewModel @Inject constructor(
     private val myRepository: MyRepository,
     private val loginRepository: LoginRepository
 ) : BaseViewModel() {
+
+    override val screenName: ScreenName = ScreenName.EDIT_NICKNAME
 
     private val _userInfo: MutableLiveData<UserInfoModel> = MutableLiveData()
 
@@ -65,8 +68,6 @@ class UserInfoViewModel @Inject constructor(
     }
 
     fun updateName() {
-        EventTracker.logEvent(Constants.NICKNAME_CHANGE_BTN_CLICKED)
-
         if (isNameEmpty.value == true) {
             return
         }
