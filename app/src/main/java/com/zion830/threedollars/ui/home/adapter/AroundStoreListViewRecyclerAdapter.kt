@@ -24,7 +24,6 @@ import com.zion830.threedollars.databinding.ItemListViewAdmobBinding
 import com.zion830.threedollars.databinding.ItemListViewBinding
 import com.zion830.threedollars.databinding.ItemListViewEmptyBinding
 import com.zion830.threedollars.utils.StringUtils
-import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -33,7 +32,7 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 class AroundStoreListViewRecyclerAdapter(
     private val clickListener: OnItemClickListener<ContentModel>,
     private val clickAdListener:OnItemClickListener<AdvertisementModelV2>
-) : ListAdapter<AdAndStoreItem, ViewHolder>(BaseDiffUtilCallback()) {
+) : ListAdapter<AdAndStoreItem, ViewHolder>(AdAndStoreItemDiffCallback()) {
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is ContentModel -> {
             VIEW_TYPE_STORE

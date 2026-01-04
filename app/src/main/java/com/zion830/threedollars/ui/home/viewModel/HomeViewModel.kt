@@ -14,7 +14,9 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.CategoryModel
+import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.StoreModel
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
@@ -192,7 +194,25 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     private fun updateCarouselItemList(itemList: List<AdAndStoreItem>) {
-        _uiState.update { it.copy(carouselItemList = itemList) }
+        _uiState.update { it.copy(carouselItemList = itemList, shouldResetScroll = true) }
+    }
+
+    fun updateStoreItem(userStore: UserStoreModel) {
+        val currentList = _uiState.value.carouselItemList.toMutableList()
+        val index = currentList.indexOfFirst { item ->
+            (item as? ContentModel)?.storeModel?.storeId == userStore.storeId.toString()
+        }
+
+        if (index != -1) {
+            val item = currentList[index] as ContentModel
+            val updatedStoreModel = item.storeModel.copy(
+                storeName = userStore.name,
+                categories = userStore.categories,
+                locationModel = userStore.location,
+            )
+            currentList[index] = item.copy(storeModel = updatedStoreModel)
+            _uiState.update { it.copy(carouselItemList = currentList, shouldResetScroll = false) }
+        }
     }
 
     // GA Events - Home

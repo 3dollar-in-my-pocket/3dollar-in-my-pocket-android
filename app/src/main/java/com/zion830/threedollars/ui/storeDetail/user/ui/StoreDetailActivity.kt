@@ -66,6 +66,8 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
+import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
+import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
@@ -94,6 +96,10 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailViewModel>({ ActivityStoreInfoBinding.inflate(it) }) {
 
     override val viewModel: StoreDetailViewModel by viewModels()
+
+    private val addStoreViewModel: AddStoreViewModel by viewModels()
+
+    private var isStoreUpdated = false
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -157,8 +163,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
     }
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
@@ -230,8 +235,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun initButton() {
         binding.btnBack.onSingleClick {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
         binding.deleteButton.onSingleClick {
             viewModel.sendClickReportButton()
@@ -410,6 +414,13 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     viewModel.reviewSuccessEvent.collect {
                         if (it) {
                             refreshStoreInfo()
+                        }
+                    }
+                }
+                launch {
+                    addStoreViewModel.effect.collect { effect ->
+                        if (effect is AddStoreContract.Effect.StoreUpdated) {
+                            isStoreUpdated = true
                         }
                     }
                 }
@@ -805,6 +816,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         dialog.show()
     }
 
+    private fun finishWithResult() {
+        val resultIntent = Intent().apply {
+            putExtra(EXTRA_IS_UPDATED, isStoreUpdated)
+            if (isStoreUpdated) {
+                putExtra(EXTRA_USER_STORE, viewModel.userStoreDetailModel.value?.store)
+            }
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
     override fun finish() {
         navigateToMainActivityOnCloseIfNeeded()
         super.finish()
@@ -813,7 +835,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     companion object {
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
-        private const val EDIT_STORE_INFO = 234
+        const val EXTRA_IS_UPDATED = "extra_is_updated"
+        const val EXTRA_USER_STORE = "extra_user_store"
 
         fun getIntent(
             context: Context,

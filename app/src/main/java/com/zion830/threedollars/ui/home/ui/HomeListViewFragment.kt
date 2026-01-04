@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -28,6 +29,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -190,8 +192,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private suspend fun collectAroundStoreModelsFlow() {
         viewModel.uiState
-            .map { it.carouselItemList }
-            .collect { adAndStoreItems ->
+            .map { it.carouselItemList to it.shouldResetScroll }
+            .collect { (adAndStoreItems, shouldResetScroll) ->
                 binding.listTitleTextView.text =
                     viewModel.uiState.value.selectedCategory?.description?.ifEmpty {
                         getString(CommonR.string.fragment_home_all_menu)
@@ -202,8 +204,10 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     viewModel.advertisementListModel.value?.let { add(2, it) } // 광고 배너 위치를 2번째로 조정
                 }
                 adapter.submitList(resultList)
-                delay(200L)
-                binding.listRecyclerView.scrollToPosition(0)
+                if (shouldResetScroll) {
+                    delay(200L)
+                    binding.listRecyclerView.scrollToPosition(0)
+                }
             }
     }
 
@@ -301,5 +305,18 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                     callback(null)
                 }
             })
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
+            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
+            if (isUpdated && data != null) {
+                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
+                userStore?.let { viewModel.updateStoreItem(it) }
+            }
+        }
     }
 }

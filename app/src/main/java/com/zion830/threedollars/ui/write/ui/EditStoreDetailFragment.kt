@@ -110,6 +110,12 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                         when (effect) {
                             is AddStoreContract.Effect.StoreUpdated -> {
                                 showToast(CommonR.string.edit_store_success)
+                                viewModel.getUserStoreDetail(
+                                    storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
+                                    deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                                    deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                                    filterVisitStartDate = getMonthFirstDate(),
+                                )
                                 requireActivity().supportFragmentManager.popBackStack()
                             }
                             is AddStoreContract.Effect.ShowError -> {
