@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -95,7 +96,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var locationPermissionDialog: AlertDialog? = null
 
     private var isFirstLoad = true
-    private var isIgnoreScrollListener = false
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -142,8 +142,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 snapHelper,
                 onSnapPositionChangeListener = object : OnSnapPositionChangeListener {
                     override fun onSnapPositionChange(position: Int) {
-                        if (isIgnoreScrollListener) return
-
                         if (adapter.getItemLocation(position) != null) {
                             naverMapFragment.updateMarkerIcon(
                                 drawableRes = DesignSystemR.drawable.ic_store_off,
@@ -550,10 +548,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.advertisementModel.value ?: AdvertisementModelV2Empty()
         )
 
-        if (!shouldResetScroll) {
-            isIgnoreScrollListener = true
-        }
-
         adapter.submitList(resultList)
 
         if (shouldResetScroll) {
@@ -569,9 +563,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
             delay(200L)
             binding.aroundStoreRecyclerView.scrollToPosition(0)
-        } else {
-            delay(100L)
-            isIgnoreScrollListener = false
         }
     }
 
@@ -619,9 +610,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
             val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
-            if (isUpdated) {
-                @Suppress("DEPRECATION")
-                val userStore = data?.getSerializableExtra(StoreDetailActivity.EXTRA_USER_STORE) as? UserStoreModel
+            if (isUpdated && data != null) {
+                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
                 userStore?.let { viewModel.updateStoreItem(it) }
             }
         }
