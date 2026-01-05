@@ -63,7 +63,7 @@ class LoadingDialog private constructor(private val context: Context) {
         
         fun getInstance(context: Context): LoadingDialog {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: LoadingDialog(context.applicationContext).also { INSTANCE = it }
+                INSTANCE ?: LoadingDialog(context).also { INSTANCE = it }
             }
         }
         
