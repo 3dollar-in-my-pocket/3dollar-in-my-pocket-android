@@ -95,6 +95,7 @@
                 android:drawablePadding="2dp"
                 android:textColor="@color/gray40"
                 app:drawableStartCompat="@drawable/ic_review_12"
+                app:drawableTint="@color/gray50"
                 tools:text="12개" />
 
             <View
@@ -112,6 +113,7 @@
                 android:drawablePadding="2dp"
                 android:textColor="@color/gray40"
                 app:drawableStartCompat="@drawable/ic_star_solid_12"
+                app:drawableTint="@color/gray50"
                 tools:text="4.6" />
 
             <View
@@ -130,6 +132,7 @@
                 android:drawablePadding="2dp"
                 android:textColor="@color/gray40"
                 app:drawableStartCompat="@drawable/ic_location_soild_12"
+                app:drawableTint="@color/gray50"
                 tools:text="1km +" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
