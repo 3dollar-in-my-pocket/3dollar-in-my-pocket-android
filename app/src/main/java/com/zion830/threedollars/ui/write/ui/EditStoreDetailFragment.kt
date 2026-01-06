@@ -303,7 +303,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                         appearanceDays = getAppearanceDays(),
                         latitude = location?.latitude ?: NaverMapUtils.DEFAULT_LOCATION.latitude,
                         longitude = location?.longitude ?: NaverMapUtils.DEFAULT_LOCATION.longitude,
-                        menuRequests = getMenuList().reversed(),
+                        menuRequests = getMenuList(),
                         paymentMethods = getPaymentMethod(),
                         openingHours = OpeningHourRequest(
                             startTime = startTime,
