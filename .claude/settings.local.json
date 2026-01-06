@@ -58,7 +58,8 @@
       "Bash(if [ -d \"/Users/jeongjin-yong/Desktop/work/3dollar-in-my-pocket-android/$dir/src\" ])",
       "mcp__serena__think_about_task_adherence",
       "mcp__serena__write_memory",
-      "mcp__serena__edit_memory"
+      "mcp__serena__edit_memory",
+      "mcp__serena__insert_after_symbol"
     ],
     "deny": [],
     "ask": []

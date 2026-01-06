@@ -612,7 +612,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
             if (isUpdated && data != null) {
                 val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let { viewModel.updateStoreItem(it) }
+                userStore?.let {
+                    viewModel.updateStoreItem(it)
+                    naverMapFragment.updateMarkerPosition(
+                        it.storeId.toString(),
+                        it.location.latitude,
+                        it.location.longitude
+                    )
+                }
             }
         }
     }

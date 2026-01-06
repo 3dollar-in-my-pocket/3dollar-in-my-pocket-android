@@ -3,7 +3,9 @@ package com.zion830.threedollars.ui.write.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -122,6 +124,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                     editStoreViewModel.effect.collect { effect ->
                         when (effect) {
                             is EditStoreContract.Effect.StoreUpdated -> {
+                                setFragmentResult(STORE_EDITED_RESULT_KEY, bundleOf(STORE_UPDATED to true))
                                 showToast(CommonR.string.edit_store_success)
                                 viewModel.getUserStoreDetail(
                                     storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
@@ -462,4 +465,9 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentEditDetailBinding =
         FragmentEditDetailBinding.inflate(inflater, container, false)
+
+    companion object {
+        const val STORE_EDITED_RESULT_KEY = "storeEditedResult"
+        const val STORE_UPDATED = "storeUpdated"
+    }
 }
