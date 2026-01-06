@@ -77,12 +77,14 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
     private var endTime: String? = null
     override fun initView() {
         initMap()
-        viewModel.getUserStoreDetail(
-            storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
-            deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
-            deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
-            filterVisitStartDate = getMonthFirstDate(),
-        )
+        if (!editStoreViewModel.state.value.isInitialized) {
+            viewModel.getUserStoreDetail(
+                storeId = viewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
+                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                filterVisitStartDate = getMonthFirstDate(),
+            )
+        }
         initButton()
         initAdapter()
         initFlow()
