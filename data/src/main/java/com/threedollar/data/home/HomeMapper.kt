@@ -299,6 +299,7 @@ fun Store.asModel() = StoreModel(
 
 fun Tags.asModel() = TagsModel(
     isNew = isNew ?: false,
+    isVerifiedStore = isVerifiedStore ?: false
 )
 
 fun VisitCounts.asModel() = VisitCountsModel(
