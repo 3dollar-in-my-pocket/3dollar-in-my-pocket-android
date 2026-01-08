@@ -133,6 +133,9 @@
     <string name="visit_count">이번주 %d명이 다녀간 가게에요!</string>
     <string name="resent_visit_count">최근 방문 %d명</string>
     <string name="last_visit">최근 한달 %d명이 방문 성공</string>
+    <string name="store_verified_banner1">가슴속 3천원이 직접 확인한\u00A0</string>
+    <string name="store_verified_banner2">공식 인증</string>
+    <string name="store_verified_banner3">가게입니다!</string>
     
     <!-- Store Edit -->
     <string name="edit_info">정보수정</string>

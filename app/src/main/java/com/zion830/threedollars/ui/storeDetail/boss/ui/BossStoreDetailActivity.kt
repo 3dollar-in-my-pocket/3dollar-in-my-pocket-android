@@ -42,6 +42,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.getDistanceText
 import com.zion830.threedollars.R
+import com.zion830.threedollars.core.ui.component.compose.gone
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ActivityFoodTruckStoreDetailBinding
 import com.zion830.threedollars.datasource.model.v2.response.BossStoreMenuMoreResponse
@@ -58,6 +59,7 @@ import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdap
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
+import com.zion830.threedollars.ui.storeDetail.boss.ui.compose.VerifiedStoreBanner
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
@@ -70,6 +72,7 @@ import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -338,7 +341,7 @@ class BossStoreDetailActivity :
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.bossStoreDetailModel.collect { bossStoreDetailModel ->
+                    viewModel.bossStoreDetailModel.collectLatest { bossStoreDetailModel ->
 
                         val isClosed = bossStoreDetailModel.openStatusModel.status == StatusType.CLOSED
 
@@ -412,6 +415,9 @@ class BossStoreDetailActivity :
                         }
 
                         initAccount(bossStoreDetailModel)
+                        renderVerifiedBanner(
+                            isVerified = bossStoreDetailModel.tags.isVerifiedStore
+                        )
                     }
                 }
                 launch {
@@ -526,6 +532,17 @@ class BossStoreDetailActivity :
         builder.setMessage(getString(CommonR.string.review_report_already_message))
         builder.setPositiveButton(CommonR.string.report_confirm) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
+    }
+
+    private fun renderVerifiedBanner(isVerified: Boolean) {
+        if (isVerified) {
+            binding.verifiedBanner.isVisible = true
+            binding.verifiedBanner.setContent {
+                VerifiedStoreBanner()
+            }
+        } else {
+            binding.verifiedBanner.gone()
+        }
     }
 
     companion object {
