@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-abstract class LoginDataSourceModule {
+internal abstract class LoginDataSourceModule {
 
     @Singleton
     @Binds

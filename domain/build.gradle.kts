@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -38,6 +40,9 @@ dependencies {
     implementation(libs.bundles.androidx.ui)
     implementation(libs.bundles.retrofit)
     implementation(libs.androidx.paging.runtime.ktx)
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     testImplementation(libs.bundles.testing)
 }

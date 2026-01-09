@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
 }
 
 apply(from = "../../common.gradle")
@@ -37,6 +38,9 @@ dependencies {
 
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
+
+    implementation(libs.bundles.compose)
+    implementation(libs.lottie.compose)
 
     api(libs.simple.rating.bar)
 }

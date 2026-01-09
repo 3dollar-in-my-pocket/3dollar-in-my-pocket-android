@@ -185,6 +185,9 @@
         <activity
             android:name="com.zion830.threedollars.ui.login.ui.SignUpActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.zion830.threedollars.ui.login.ui.SignUpActivityV2"
+            android:screenOrientation="portrait" />
 
         <activity android:name=".ui.storeDetail.user.ui.MoreImageActivity" />
 
