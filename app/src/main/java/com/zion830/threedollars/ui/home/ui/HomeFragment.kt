@@ -455,10 +455,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     
     private fun checkLocationPermissionForButton() {
         if (isLocationAvailable()) {
-            // 권한 있음: 현재 위치로
             naverMapFragment.moveToCurrentLocation(true)
+            binding.tvRetrySearch.isVisible = true
         } else {
-            // 권한 없음: 항상 설명 다이얼로그 표시
             showLocationPermissionDialog()
         }
     }
