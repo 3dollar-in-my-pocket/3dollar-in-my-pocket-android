@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -316,11 +315,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.carouselItemList to it.shouldResetScroll }
-                        .distinctUntilChanged()
-                        .collect { (itemList, shouldResetScroll) ->
-                            collectCarouselItemList(itemList, shouldResetScroll)
+                    viewModel.carouselUpdate
+                        .collect { itemList ->
+                            collectCarouselItemList(itemList, viewModel.consumeShouldResetScroll())
                         }
                 }
                 launch {

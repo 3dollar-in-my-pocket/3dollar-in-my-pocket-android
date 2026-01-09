@@ -26,8 +26,10 @@ import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.toArray
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,6 +50,17 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState())
     val uiState = _uiState.asStateFlow()
+
+    private val _carouselUpdate = MutableSharedFlow<List<AdAndStoreItem>>(replay = 1)
+    val carouselUpdate = _carouselUpdate.asSharedFlow()
+
+    private var shouldResetScroll = false
+
+    fun consumeShouldResetScroll(): Boolean {
+        val value = shouldResetScroll
+        shouldResetScroll = false
+        return value
+    }
 
     private val _advertisementModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val advertisementModel: StateFlow<AdvertisementModelV2?> get() = _advertisementModel
@@ -194,11 +207,14 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     private fun updateCarouselItemList(itemList: List<AdAndStoreItem>) {
-        _uiState.update { it.copy(carouselItemList = itemList, shouldResetScroll = true) }
+        viewModelScope.launch {
+            shouldResetScroll = true
+            _carouselUpdate.emit(itemList)
+        }
     }
 
     fun updateStoreItem(userStore: UserStoreModel) {
-        val currentList = _uiState.value.carouselItemList.toMutableList()
+        val currentList = _carouselUpdate.replayCache.firstOrNull()?.toMutableList() ?: return
         val index = currentList.indexOfFirst { item ->
             (item as? ContentModel)?.storeModel?.storeId == userStore.storeId.toString()
         }
@@ -211,7 +227,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 locationModel = userStore.location,
             )
             currentList[index] = item.copy(storeModel = updatedStoreModel)
-            _uiState.update { it.copy(carouselItemList = currentList, shouldResetScroll = false) }
+            viewModelScope.launch {
+                _carouselUpdate.emit(currentList)
+            }
         }
     }
 
