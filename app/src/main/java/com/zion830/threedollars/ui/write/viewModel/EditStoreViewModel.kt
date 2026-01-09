@@ -49,6 +49,9 @@ class EditStoreViewModel @Inject constructor(
         when (intent) {
             is EditStoreContract.Intent.InitWithStoreData -> initWithStoreData(intent)
             is EditStoreContract.Intent.UpdateLocation -> updateLocation(intent.location)
+            is EditStoreContract.Intent.UpdateTempLocation -> updateTempLocation(intent.location)
+            is EditStoreContract.Intent.ConfirmLocation -> confirmLocation()
+            is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
@@ -75,6 +78,18 @@ class EditStoreViewModel @Inject constructor(
 
     private fun updateLocation(location: LatLng?) {
         _state.update { it.copy(selectedLocation = location) }
+    }
+
+    private fun updateTempLocation(location: LatLng?) {
+        _state.update { it.copy(tempLocation = location) }
+    }
+
+    private fun confirmLocation() {
+        _state.update { it.copy(selectedLocation = it.tempLocation, tempLocation = null) }
+    }
+
+    private fun cancelLocationEdit() {
+        _state.update { it.copy(tempLocation = null) }
     }
 
     private fun setSelectCategoryList(list: List<SelectCategoryModel>) {

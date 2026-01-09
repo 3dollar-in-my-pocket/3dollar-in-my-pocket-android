@@ -26,7 +26,7 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         naverMap?.addOnCameraIdleListener {
             if (System.currentTimeMillis() - lastTime > 1000 && isIdleAvailable) {
                 val selectedPosition = naverMap?.cameraPosition?.target
-                editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateLocation(selectedPosition))
+                editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateTempLocation(selectedPosition))
                 lastTime = System.currentTimeMillis()
             }
         }
@@ -36,6 +36,7 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         binding.btnFindLocation.layoutParams = params
 
         editStoreViewModel.state.value.selectedLocation?.let { location ->
+            editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateTempLocation(location))
             moveCamera(location)
             isIdleAvailable = true
         }

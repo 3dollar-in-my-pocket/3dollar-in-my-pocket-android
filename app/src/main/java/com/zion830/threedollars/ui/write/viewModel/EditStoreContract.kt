@@ -16,6 +16,7 @@ object EditStoreContract {
         val storeType: String? = null,
         val address: String = "",
         val selectedLocation: LatLng? = null,
+        val tempLocation: LatLng? = null,
         val selectCategoryList: List<SelectCategoryModel> = emptyList(),
         val availableSnackCategories: List<CategoryModel> = emptyList(),
         val availableMealCategories: List<CategoryModel> = emptyList(),
@@ -39,6 +40,9 @@ object EditStoreContract {
             val openingHours: OpeningHourRequest
         ) : Intent()
         data class UpdateLocation(val location: LatLng?) : Intent()
+        data class UpdateTempLocation(val location: LatLng?) : Intent()
+        data object ConfirmLocation : Intent()
+        data object CancelLocationEdit : Intent()
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
         data class ChangeSelectCategory(val category: CategoryModel) : Intent()
         data class RemoveCategory(val category: CategoryModel) : Intent()

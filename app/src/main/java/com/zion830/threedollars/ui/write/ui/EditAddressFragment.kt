@@ -11,6 +11,7 @@ import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
+import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,12 +30,15 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, EditStoreVie
         initMap()
         initFlow()
         binding.backButton.onSingleClick {
+            viewModel.processIntent(EditStoreContract.Intent.CancelLocationEdit)
             requireActivity().supportFragmentManager.popBackStack()
         }
         binding.finishButton.onSingleClick {
+            viewModel.processIntent(EditStoreContract.Intent.ConfirmLocation)
             requireActivity().supportFragmentManager.popBackStack()
         }
         requireActivity().onBackPressedDispatcher.addCallback(this) {
+            viewModel.processIntent(EditStoreContract.Intent.CancelLocationEdit)
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -49,7 +53,7 @@ class EditAddressFragment : BaseFragment<FragmentNewAddressBinding, EditStoreVie
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.state.collect { state ->
-                        state.selectedLocation?.let { latLng ->
+                        state.tempLocation?.let { latLng ->
                             binding.addressTextView.text = getCurrentLocationName(latLng) ?: getString(CommonR.string.location_no_address)
                         }
                     }
