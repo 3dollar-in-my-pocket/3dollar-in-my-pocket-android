@@ -123,10 +123,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initScroll()
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
-        viewModel.addressText.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
-        }
-
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
             startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
@@ -166,8 +162,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
         viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
@@ -356,6 +350,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
+                    }
+                }
+                launch {
+                    viewModel.currentLocation.collect {
+                        binding.tvAddress.text = getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
                 }
             }

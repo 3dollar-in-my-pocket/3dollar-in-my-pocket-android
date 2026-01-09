@@ -25,6 +25,7 @@ import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.toArray
+import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,10 +44,8 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
     val userInfo: StateFlow<UserModel> get() = _userInfo
 
-    val addressText: MutableLiveData<String> = MutableLiveData()
-    val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
-    val mapLocation: MutableLiveData<LatLng> = MutableLiveData()
-    val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
+    private val _currentLocation: MutableStateFlow<LatLng> = MutableStateFlow(NaverMapUtils.DEFAULT_LOCATION)
+    val currentLocation: StateFlow<LatLng> = _currentLocation.asStateFlow()
 
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState())
     val uiState = _uiState.asStateFlow()
@@ -118,7 +117,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     } else {
                         ArrayList(response.data?.contentModels as List<AdAndStoreItem>)
                     }
-
+                    _currentLocation.emit(uiState.mapPosition)
                     updateCarouselItemList(carouselItemList)
                 } else {
                     _serverError.emit(response.message)
