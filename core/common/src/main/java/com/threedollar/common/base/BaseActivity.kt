@@ -35,10 +35,11 @@ abstract class BaseActivity<B : ViewBinding, VM : BaseViewModel>(
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
             view.updatePadding(
-                top = insets.top,
-                bottom = insets.bottom
+                top = systemBars.top,
+                bottom = maxOf(systemBars.bottom, ime.bottom)
             )
             WindowInsetsCompat.CONSUMED
         }
