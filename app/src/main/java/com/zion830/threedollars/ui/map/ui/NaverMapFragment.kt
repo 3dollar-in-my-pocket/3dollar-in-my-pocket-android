@@ -243,6 +243,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         val newMarkers = list.map { item ->
             Marker().apply {
                 this.position = LatLng(item.storeModel.locationModel.latitude, item.storeModel.locationModel.longitude)
+                this.tag = item.storeModel.storeId
                 if (item.markerModel == null) {
                     this.icon = OverlayImage.fromResource(drawableRes)
                 } else {
@@ -269,6 +270,10 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             }
         }
         markers.addAll(newMarkers)
+    }
+
+    fun updateMarkerPosition(storeId: String, latitude: Double, longitude: Double) {
+        markers.find { it.tag == storeId }?.position = LatLng(latitude, longitude)
     }
 
     fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {

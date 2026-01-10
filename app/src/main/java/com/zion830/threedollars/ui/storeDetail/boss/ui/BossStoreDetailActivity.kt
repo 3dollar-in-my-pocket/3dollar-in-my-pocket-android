@@ -484,7 +484,7 @@ class BossStoreDetailActivity :
                 CommonR.string.share_kakao_food_truck,
                 viewModel.bossStoreDetailModel.value.store.name,
             ),
-            imageUrl = viewModel.bossStoreDetailModel.value.store.representativeImages.first().imageUrl,
+            imageUrl = viewModel.bossStoreDetailModel.value.store.representativeImages.firstOrNull()?.imageUrl,
             storeId = storeId,
             type = getString(CommonR.string.scheme_host_kakao_link_food_truck_type),
         )

@@ -63,7 +63,6 @@ object AddStoreContract {
         object MarkStoreDetailCompleted : Intent()
         object ClearError : Intent()
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
-        data class EditStore(val request: UserStoreModelRequest, val storeId: Int) : Intent()
         data class CheckNearStore(val location: LatLng) : Intent()
         object ResetState : Intent()
     }

@@ -260,6 +260,7 @@ private fun MenuCategorySection(
                 color = ColorWhite
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 

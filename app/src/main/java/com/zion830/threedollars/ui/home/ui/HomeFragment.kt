@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -124,10 +123,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initScroll()
         binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
-        viewModel.addressText.observe(viewLifecycleOwner) {
-            binding.tvAddress.text = it ?: getString(CommonR.string.location_no_address)
-        }
-
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
             startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
@@ -167,8 +162,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        val northWest = naverMapFragment.naverMap?.contentBounds?.northWest
-        val southEast = naverMapFragment.naverMap?.contentBounds?.southEast
         viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
@@ -316,11 +309,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.carouselItemList to it.shouldResetScroll }
-                        .distinctUntilChanged()
-                        .collect { (itemList, shouldResetScroll) ->
-                            collectCarouselItemList(itemList, shouldResetScroll)
+                    viewModel.carouselUpdate
+                        .collect { itemList ->
+                            collectCarouselItemList(itemList, viewModel.consumeShouldResetScroll())
                         }
                 }
                 launch {
@@ -359,6 +350,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
+                    }
+                }
+                launch {
+                    viewModel.currentLocation.collect {
+                        binding.tvAddress.text = getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
                 }
             }
@@ -459,10 +455,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     
     private fun checkLocationPermissionForButton() {
         if (isLocationAvailable()) {
-            // 권한 있음: 현재 위치로
             naverMapFragment.moveToCurrentLocation(true)
+            binding.tvRetrySearch.isVisible = true
         } else {
-            // 권한 없음: 항상 설명 다이얼로그 표시
             showLocationPermissionDialog()
         }
     }
@@ -612,7 +607,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
             if (isUpdated && data != null) {
                 val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let { viewModel.updateStoreItem(it) }
+                userStore?.let {
+                    viewModel.updateStoreItem(it)
+                    naverMapFragment.updateMarkerPosition(
+                        it.storeId.toString(),
+                        it.location.latitude,
+                        it.location.longitude
+                    )
+                }
             }
         }
     }

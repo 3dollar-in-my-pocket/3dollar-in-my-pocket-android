@@ -100,15 +100,17 @@ class SelectCategoryDialogFragment :
     }
 
     private fun initAd() {
-        viewModel.currentLocation.value?.let { latLng ->
-            popupViewModel.getPopups(
-                position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
-                latLng = latLng
-            )
-            popupViewModel.getPopups(
-                position = AdvertisementsPosition.MENU_CATEGORY_ICON,
-                latLng = latLng
-            )
+        lifecycleScope.launch {
+            viewModel.currentLocation.collect { latLng ->
+                popupViewModel.getPopups(
+                    position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
+                    latLng = latLng
+                )
+                popupViewModel.getPopups(
+                    position = AdvertisementsPosition.MENU_CATEGORY_ICON,
+                    latLng = latLng
+                )
+            }
         }
     }
 

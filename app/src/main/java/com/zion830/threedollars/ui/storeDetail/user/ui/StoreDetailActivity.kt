@@ -66,6 +66,7 @@ import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewMod
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
 import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
+import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
@@ -179,6 +180,10 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             if (result.resultCode == RESULT_OK) {
                 refreshStoreInfo()
             }
+        }
+
+        supportFragmentManager.setFragmentResultListener(STORE_EDITED_RESULT_KEY, this) { _, _ ->
+            isStoreUpdated = true
         }
 
         binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(DesignSystemR.color.pink, null))
