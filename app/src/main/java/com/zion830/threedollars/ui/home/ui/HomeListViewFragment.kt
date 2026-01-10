@@ -34,7 +34,8 @@ import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
-import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
@@ -163,7 +164,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             }
     }
 
-    private fun updateCategoryView(category: CategoryModel) {
+    private fun updateCategoryView(category: StoreCategoryItem) {
         val (text, textColor, background) = getCategoryViewAttributes(category)
         binding.allMenuTextView.apply {
             this.text = text
@@ -175,8 +176,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         }
     }
 
-    private fun getCategoryViewAttributes(category: CategoryModel): Triple<String, Int, Int> {
-        return if (category.categoryId.isEmpty()) {
+    private fun getCategoryViewAttributes(category: StoreCategoryItem): Triple<String, Int, Int> {
+        return if (category.id.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),
                 DesignSystemR.color.gray70,

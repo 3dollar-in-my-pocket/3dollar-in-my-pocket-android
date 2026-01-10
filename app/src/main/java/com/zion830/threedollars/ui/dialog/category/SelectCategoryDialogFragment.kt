@@ -1,4 +1,4 @@
-package com.zion830.threedollars.ui.dialog
+package com.zion830.threedollars.ui.dialog.category
 
 import android.content.Intent
 import android.graphics.Color
@@ -12,18 +12,18 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import base.compose.AppTheme
+import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.databinding.DialogBottomSelectCategoryBinding
-import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
+import com.zion830.threedollars.ui.dialog.category.composable.CategoryListScreen
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,74 +34,33 @@ import zion830.com.common.base.onSingleClick
 class SelectCategoryDialogFragment :
     BaseBottomSheetDialogFragment<DialogBottomSelectCategoryBinding>() {
 
-    private val viewModel: HomeViewModel by activityViewModels()
+    private val viewModel: SelectCategoryViewModel by activityViewModels()
+
+    private val homeViewModel: HomeViewModel by activityViewModels()
     override val screenName: ScreenName = ScreenName.CATEGORY_FILTER
 
     private val popupViewModel: PopupViewModel by viewModels()
-
-    private val streetCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter(
-            onCategoryClickListener = { item ->
-                val selectedCategory: CategoryModel? = if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) {
-                    null
-                } else {
-                    item
-                }
-                viewModel.sendClickCategoryInFilter(selectedCategory?.categoryId)
-                viewModel.changeSelectCategory(selectedCategory)
-                dismiss()
-            },
-            onAdClickListener = { item ->
-                viewModel.sendClickCategoryMenuAd(item.advertisementId.toString())
-                if (item.link.type == "APP_SCHEME") {
-                    startActivity(
-                        Intent(requireContext(), DynamicLinkActivity::class.java).apply {
-                            putExtra("link", item.link.url)
-                        },
-                    )
-                } else {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link.url)))
-                }
-                dismiss()
-            }
-        )
-    }
-
-    private val bossCategoryAdapter by lazy {
-        SelectCategoryRecyclerAdapter(
-            onCategoryClickListener = { item ->
-                val selectedCategory: CategoryModel? = if (viewModel.uiState.value.selectedCategory?.categoryId == item.categoryId) {
-                    null
-                } else {
-                    item
-                }
-                viewModel.sendClickCategoryInFilter(selectedCategory?.categoryId)
-                viewModel.changeSelectCategory(selectedCategory)
-                dismiss()
-            },
-            onAdClickListener = {}
-        )
-    }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogBottomSelectCategoryBinding =
         DialogBottomSelectCategoryBinding.inflate(inflater, container, false)
 
     override fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
-            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+            bottomSheetDialog.findViewById<View>(R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from<View>(bottomSheet)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun initView() {
+        initCategoryList()
         initAd()
-        initAdapter()
+//        initAdapter()
         initFlow()
     }
 
     private fun initAd() {
         lifecycleScope.launch {
-            viewModel.currentLocation.collect { latLng ->
+            homeViewModel.currentLocation.collect { latLng ->
                 popupViewModel.getPopups(
                     position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
                     latLng = latLng
@@ -114,34 +73,11 @@ class SelectCategoryDialogFragment :
         }
     }
 
-    private fun initAdapter() {
-        binding.streetCategoryRecyclerView.adapter = streetCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getCategories().map {
-                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
-                    it.copy(isSelected = true)
-                } else {
-                    it
-                }
-            }
-            submitList(categories)
-        }
-        binding.bossCategoryRecyclerView.adapter = bossCategoryAdapter.apply {
-            val categories = LegacySharedPrefUtils.getTruckCategories().map {
-                if (viewModel.uiState.value.selectedCategory?.name == it.name) {
-                    it.copy(isSelected = true)
-                } else {
-                    it
-                }
-            }
-            submitList(categories)
-        }
-    }
-
     private fun initFlow() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.serverError.collect {
+                    homeViewModel.serverError.collect {
                         it?.let {
                             showToast(it)
                         }
@@ -161,12 +97,13 @@ class SelectCategoryDialogFragment :
                                     binding.tvAdBody.setTextColor(Color.parseColor(it))
                                 }
                             }
-                            popup.background.color.let { if (it.isNotEmpty()) binding.cdAdCategory.setCardBackgroundColor(Color.parseColor(it)) }
+                            popup.background.color.let { if (it.isNotEmpty()) binding.cdAdCategory.setCardBackgroundColor(
+                                Color.parseColor(it)) }
 
                             binding.ivAdImage.loadUrlImg(popup.image.url)
 
                             binding.cdAdCategory.onSingleClick {
-                                viewModel.sendClickCategoryBannerAd(popup.advertisementId.toString())
+                                homeViewModel.sendClickCategoryBannerAd(popup.advertisementId.toString())
                                 if (popup.link.type == "APP_SCHEME") {
                                     startActivity(
                                         Intent(requireContext(), DynamicLinkActivity::class.java).apply {
@@ -174,7 +111,12 @@ class SelectCategoryDialogFragment :
                                         },
                                     )
                                 } else {
-                                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(popup.link.url)))
+                                    startActivity(
+                                        Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(popup.link.url)
+                                        )
+                                    )
                                 }
                                 dismiss()
                             }
@@ -183,22 +125,38 @@ class SelectCategoryDialogFragment :
                     }
                 }
 
-                launch {
-                    popupViewModel.categoryIconAd.collect { advertisementModelV2List ->
-                        advertisementModelV2List?.let {
-                            if (it.isNotEmpty()) {
-                                streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
-                            }
-                        }
+                // TODO - SelectCategoryViewModel 로 마이그레이션 : https://3dollarinmypocket.atlassian.net/browse/TH-888
+//                launch {
+//                    popupViewModel.categoryIconAd.collect { advertisementModelV2List ->
+//                        advertisementModelV2List?.let {
+//                            if (it.isNotEmpty()) {
+//                                streetCategoryAdapter.submitList(streetCategoryAdapter.currentList + advertisementModelV2List.first())
+//                            }
+//                        }
+//                    }
+//                }
+//                launch {
+//                    popupViewModel.serverError.collect {
+//                        it?.let {
+//                            showToast(it)
+//                        }
+//                    }
+//                }
+            }
+        }
+    }
+
+    private fun initCategoryList() {
+        binding.categoryList.setContent {
+            AppTheme {
+                CategoryListScreen(
+                    viewModel = viewModel,
+                    homeViewModel = homeViewModel,
+                    onSelected = {
+                        homeViewModel.changeSelectCategory(it)
+                dismiss()
                     }
-                }
-                launch {
-                    popupViewModel.serverError.collect {
-                        it?.let {
-                            showToast(it)
-                        }
-                    }
-                }
+                )
             }
         }
     }
