@@ -6,6 +6,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.isRunning
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
@@ -19,6 +20,7 @@ import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -42,11 +44,12 @@ class AddStoreViewModel @Inject constructor(
     val state: StateFlow<AddStoreContract.State> = _state.asStateFlow()
     override val screenName: ScreenName = ScreenName.EDIT_STORE
 
-
     private val _effect = MutableSharedFlow<AddStoreContract.Effect>()
     val effect: SharedFlow<AddStoreContract.Effect> = _effect.asSharedFlow()
 
     private val _removedCategoriesData: MutableMap<String, List<UserStoreMenuModel>> = mutableMapOf()
+
+    private var submitStoreJob: Job? = null
 
     init {
         loadAvailableCategories()
@@ -369,6 +372,10 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun submitNewStore() {
+        if (submitStoreJob.isRunning) {
+            return
+        }
+
         val currentState = _state.value
         val location = currentState.selectedLocation ?: return
         val name = currentState.storeName
@@ -422,6 +429,8 @@ class AddStoreViewModel @Inject constructor(
                 }
             }
             hideLoading()
+        }.also {
+            submitStoreJob = it
         }
     }
 
