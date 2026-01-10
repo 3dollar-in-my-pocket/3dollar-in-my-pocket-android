@@ -46,14 +46,6 @@ object LegacySharedPrefUtils {
 
     fun getAccessToken() = sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
 
-    fun saveCategories(categoryInfo: List<CategoriesModel>) {
-        saveList(categoryInfo, CATEGORY_LIST)
-    }
-
-    fun saveTruckCategories(categoryInfo: List<CategoriesModel>) {
-        saveList(categoryInfo, TRUCK_CATEGORY_LIST)
-    }
-
     fun saveLoginType(loginType: LoginType?) = sharedPreferences.edit {
         putString(LOGIN_TYPE, loginType?.socialName)
         commit()
