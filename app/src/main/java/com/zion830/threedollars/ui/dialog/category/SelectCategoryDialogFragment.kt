@@ -54,7 +54,6 @@ class SelectCategoryDialogFragment :
     override fun initView() {
         initCategoryList()
         initAd()
-//        initAdapter()
         initFlow()
     }
 
