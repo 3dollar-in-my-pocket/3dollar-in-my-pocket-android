@@ -65,10 +65,10 @@ class SelectCategoryDialogFragment :
                     position = AdvertisementsPosition.MENU_CATEGORY_BANNER,
                     latLng = latLng
                 )
-                popupViewModel.getPopups(
-                    position = AdvertisementsPosition.MENU_CATEGORY_ICON,
-                    latLng = latLng
-                )
+//                popupViewModel.getPopups(
+//                    position = AdvertisementsPosition.MENU_CATEGORY_ICON,
+//                    latLng = latLng
+//                )
             }
         }
     }
