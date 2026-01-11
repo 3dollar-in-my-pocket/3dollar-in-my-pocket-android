@@ -15,8 +15,8 @@ import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
-import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
-import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint

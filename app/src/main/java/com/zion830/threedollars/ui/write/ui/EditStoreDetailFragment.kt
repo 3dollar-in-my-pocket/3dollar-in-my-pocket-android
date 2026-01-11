@@ -32,8 +32,8 @@ import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
-import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
-import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.getCurrentLocationName
@@ -134,6 +134,17 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                             is EditStoreContract.Effect.ShowError -> {
                                 showToast(effect.message)
                             }
+                            is EditStoreContract.Effect.ShowToast -> {
+                                showToast(effect.message)
+                            }
+                            is EditStoreContract.Effect.NavigateToLocationEdit -> {
+                            }
+                            is EditStoreContract.Effect.NavigateBack -> {
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
+                            is EditStoreContract.Effect.CloseScreen -> {
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
                         }
                     }
                 }
@@ -155,6 +166,7 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
                                         storeName = storeDetail.store.name,
                                         storeType = storeDetail.store.salesType?.name,
                                         location = LatLng(location.latitude, location.longitude),
+                                        address = storeDetail.store.address?.fullAddress ?: "",
                                         categories = selectCategoryModelList,
                                         paymentMethods = storeDetail.store.paymentMethods.toSet(),
                                         appearanceDays = storeDetail.store.appearanceDays.toSet(),

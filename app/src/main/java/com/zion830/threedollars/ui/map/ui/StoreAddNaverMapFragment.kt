@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
-import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 

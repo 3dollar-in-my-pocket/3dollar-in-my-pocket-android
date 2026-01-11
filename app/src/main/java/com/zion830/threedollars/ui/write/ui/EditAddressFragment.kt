@@ -11,8 +11,8 @@ import com.threedollar.common.base.BaseFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNewAddressBinding
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
-import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
-import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.getCurrentLocationName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
