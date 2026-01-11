@@ -87,8 +87,6 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.SetEndTime -> setEndTime(intent.time)
             is AddStoreContract.Intent.SubmitNewStore -> submitNewStore()
             is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
-            is AddStoreContract.Intent.MarkMenuDetailCompleted -> markMenuDetailCompleted()
-            is AddStoreContract.Intent.MarkStoreDetailCompleted -> markStoreDetailCompleted()
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
@@ -294,14 +292,6 @@ class AddStoreViewModel @Inject constructor(
         } catch (e: Exception) {
             timeString
         }
-    }
-
-    private fun markMenuDetailCompleted() {
-        _state.update { it.copy(isMenuDetailCompleted = true) }
-    }
-
-    private fun markStoreDetailCompleted() {
-        _state.update { it.copy(isStoreDetailCompleted = true) }
     }
 
     private fun clearError() {

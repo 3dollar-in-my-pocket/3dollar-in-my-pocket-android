@@ -2,14 +2,12 @@ package com.zion830.threedollars.ui.write.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.getMonthFirstDate
@@ -34,7 +32,6 @@ import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.AddCategoryRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.EditCategoryMenuRecyclerAdapter
-import com.zion830.threedollars.ui.write.adapter.EditMenuRecyclerAdapter
 import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -395,33 +392,28 @@ class EditStoreDetailFragment : BaseFragment<FragmentEditDetailBinding, StoreDet
 
     private fun getMenuList(): List<MenuModelRequest> {
         val menuList = arrayListOf<MenuModelRequest>()
+        val allMenuData = editCategoryMenuRecyclerAdapter.getAllMenuData()
 
-        for (i in 0 until editCategoryMenuRecyclerAdapter.itemCount) {
-            binding.menuRecyclerView.getChildAt(i)?.let {
-                val view = it.findViewById<RecyclerView>(R.id.rv_menu_edit)
-                val editMenuRecyclerView = (view as RecyclerView)
-                val menuSize = (editMenuRecyclerView.adapter as? EditMenuRecyclerAdapter)?.itemCount ?: 0
-                val category = if (editCategoryMenuRecyclerAdapter.items.isNotEmpty()) {
-                    editCategoryMenuRecyclerAdapter.items[i].menuType.categoryId
-                } else {
-                    ""
+        editCategoryMenuRecyclerAdapter.items.forEach { categoryModel ->
+            val categoryId = categoryModel.menuType.categoryId
+            val menuDataList = allMenuData[categoryId] ?: emptyList()
+
+            var isEmptyCategory = true
+            menuDataList.forEach { menuData ->
+                if (menuData.name.isNotEmpty() || menuData.price.isNotEmpty()) {
+                    menuList.add(
+                        MenuModelRequest(
+                            name = menuData.name,
+                            price = menuData.price.toIntOrNull(),
+                            category = categoryId
+                        )
+                    )
+                    isEmptyCategory = false
                 }
+            }
 
-                var isEmptyCategory = true
-                repeat(menuSize) { index ->
-                    val menuRow = editMenuRecyclerView.getChildAt(index)
-                    val name = (menuRow.findViewById(R.id.et_name) as EditText).text.toString()
-                    val price = (menuRow.findViewById(R.id.et_price) as EditText).text.toString()
-
-                    if (name.isNotEmpty() || price.isNotEmpty()) {
-                        menuList.add(MenuModelRequest(name = name, price = price.toIntOrNull(), category = category))
-                        isEmptyCategory = false
-                    }
-                }
-
-                if (isEmptyCategory) {
-                    menuList.add(MenuModelRequest(name = "", price = null, category = category))
-                }
+            if (isEmptyCategory) {
+                menuList.add(MenuModelRequest(name = "", price = null, category = categoryId))
             }
         }
 

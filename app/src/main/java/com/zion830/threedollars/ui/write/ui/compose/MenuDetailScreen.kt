@@ -347,7 +347,7 @@ private fun MenuInputRow(
             OutlinedTextField(
                 value = countText,
                 onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) {
+                    if (newValue.all { it.isDigit() } && newValue.length <= 9) {
                         countText = newValue
                         onUpdateCount(newValue.toIntOrNull())
                     }
@@ -386,7 +386,7 @@ private fun MenuInputRow(
             OutlinedTextField(
                 value = priceText,
                 onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) {
+                    if (newValue.all { it.isDigit() } && newValue.length <= 9) {
                         priceText = newValue
                         onUpdatePrice(newValue)
                     }

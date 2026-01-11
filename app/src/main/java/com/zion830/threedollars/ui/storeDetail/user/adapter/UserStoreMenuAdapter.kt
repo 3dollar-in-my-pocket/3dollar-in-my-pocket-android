@@ -17,12 +17,6 @@ import zion830.com.common.base.onSingleClick
 class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     ListAdapter<UserStoreDetailItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
 
-    private var categoryNameList = mutableListOf<String>()
-
-    fun clearCategoryNameList() {
-        categoryNameList.clear()
-    }
-
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is UserStoreMenuModel -> {
             VIEW_TYPE_MENU
@@ -36,7 +30,9 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is UserStoreMenuViewHolder -> {
-                holder.bind(getItem(position) as UserStoreMenuModel)
+                val item = getItem(position) as UserStoreMenuModel
+                val isFirstInCategory = isFirstItemInCategory(position, item)
+                holder.bind(item, isFirstInCategory)
             }
             is UserStoreMenuMoreViewHolder -> {
                 holder.bind(getItem(position) as UserStoreMoreResponse)
@@ -56,6 +52,14 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
         }
     }
 
+    private fun isFirstItemInCategory(position: Int, currentItem: UserStoreMenuModel): Boolean {
+        if (position == 0) return true
+
+        val previousItem = getItem(position - 1)
+        return previousItem !is UserStoreMenuModel ||
+               previousItem.category.name != currentItem.category.name
+    }
+
     companion object {
         private const val VIEW_TYPE_MENU = 1
         private const val VIEW_TYPE_FOOTER = 2
@@ -64,9 +68,8 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
 
     inner class UserStoreMenuViewHolder(private val binding: ItemUserStoreMenuBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: UserStoreMenuModel) {
-            if (!categoryNameList.contains(item.category.name)) {
-                categoryNameList.add(item.category.name)
+        fun bind(item: UserStoreMenuModel, isFirstInCategory: Boolean) {
+            if (isFirstInCategory) {
                 binding.categoryImageView.apply {
                     Glide.with(this)
                         .load(item.category.imageUrl)
