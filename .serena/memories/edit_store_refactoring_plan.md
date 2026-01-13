@@ -762,23 +762,28 @@ Modifier.shadow(
 
 ## 7. 구현 순서
 
-### Phase 1: Contract 및 ViewModel 확장
+### Phase 1: Contract 및 ViewModel 확장 ✅ 완료
 1. `EditStoreContract.kt` 확장 (State, Intent, Effect)
 2. `EditStoreViewModel.kt` 확장 (새로운 Intent 처리)
+- 상세 문서: `.serena/memories/phase1_implementation_details.md`
 
-### Phase 2: 공통 컴포넌트 구현
+### Phase 2: 공통 컴포넌트 구현 ✅ 완료
 1. `EditStoreComponents.kt` 생성
 2. 기존 컴포넌트 재활용 검토 (CategoryChip 등)
+- 상세 문서: `.serena/memories/phase2_implementation_details.md`
 
-### Phase 3: 화면 구현
+### Phase 3: 화면 구현 ✅ 완료
 1. `EditStoreScreen.kt` - 메인 선택 화면
 2. `EditStoreInfoScreen.kt` - 가게 정보 수정 화면
-3. `EditStoreDetailFragment.kt` - Compose 호스트로 변경
+3. `EditStoreFragment.kt` - Compose 호스트 Fragment
+- 상세 문서: `.serena/memories/phase3_implementation_details.md`
 
-### Phase 4: 통합 및 테스트
-1. EditAddressFragment 연동
-2. MenuDetailScreen 연동
-3. ViewModel 연동 테스트
+### Phase 4: 통합 및 테스트 ✅ 완료
+1. EditAddressFragment 연동 (위치 수정) - 기존 구현 유지
+2. EditMenuScreen 생성 (메뉴 수정 Compose 화면)
+3. StoreDetailActivity 연결 (EditStoreFragment로 변경)
+4. 빌드 검증 완료
+- 상세 문서: `.serena/memories/phase4_implementation_details.md`
 
 ---
 

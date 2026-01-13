@@ -49,29 +49,39 @@ import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-/**
- * 상단 네비게이션 바 (타이틀 + X 닫기 버튼)
- */
 @Composable
 fun EditStoreTopBar(
     title: String,
     onCloseClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showBackButton: Boolean = false,
+    onBackClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
             .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        if (showBackButton && onBackClick != null) {
+            Icon(
+                painter = painterResource(id = DesignSystemR.drawable.ic_arrow_left),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onBackClick() },
+                tint = Gray100
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+        }
         Text(
             text = title,
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
-            color = Gray100
+            color = Gray100,
+            modifier = Modifier.weight(1f)
         )
         Icon(
             painter = painterResource(id = DesignSystemR.drawable.ic_close),
