@@ -72,7 +72,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.SetSelectedCategoryId -> setSelectedCategoryId(intent.categoryId)
             is EditStoreContract.Intent.AddMenuToCategory -> addMenuToCategory(intent.categoryId)
             is EditStoreContract.Intent.RemoveMenuFromCategory -> removeMenuFromCategory(intent.categoryId, intent.menuIndex)
-            is EditStoreContract.Intent.UpdateMenuInCategory -> updateMenuInCategory(intent.categoryId, intent.menuIndex, intent.name, intent.price)
+            is EditStoreContract.Intent.UpdateMenuInCategory -> updateMenuInCategory(intent.categoryId, intent.menuIndex, intent.name, intent.price, intent.count)
             is EditStoreContract.Intent.ShowExitConfirmDialog -> showExitConfirmDialog()
             is EditStoreContract.Intent.HideExitConfirmDialog -> hideExitConfirmDialog()
             is EditStoreContract.Intent.ConfirmExit -> confirmExit()
@@ -316,14 +316,14 @@ class EditStoreViewModel @Inject constructor(
         }
     }
 
-    private fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String) {
+    private fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String, count: Int?) {
         _state.update { currentState ->
             val updatedList = currentState.selectCategoryList.map { category ->
                 if (category.menuType.categoryId == categoryId) {
                     val currentMenus = category.menuDetail?.toMutableList() ?: mutableListOf()
                     if (menuIndex in currentMenus.indices) {
                         val existingMenu = currentMenus[menuIndex]
-                        currentMenus[menuIndex] = existingMenu.copy(name = name, price = price)
+                        currentMenus[menuIndex] = existingMenu.copy(name = name, price = price, count = count)
                     }
                     category.copy(menuDetail = currentMenus)
                 } else {

@@ -65,8 +65,8 @@ import com.zion830.threedollars.ui.storeDetail.user.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
-import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment
-import com.zion830.threedollars.ui.write.ui.EditStoreDetailFragment.Companion.STORE_EDITED_RESULT_KEY
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
@@ -289,8 +289,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.editStoreInfoButton.onSingleClick {
             supportFragmentManager.addNewFragment(
                 R.id.container,
-                EditStoreDetailFragment(),
-                EditStoreDetailFragment::class.java.name,
+                EditStoreFragment(),
+                EditStoreFragment::class.java.name,
                 false,
             )
         }

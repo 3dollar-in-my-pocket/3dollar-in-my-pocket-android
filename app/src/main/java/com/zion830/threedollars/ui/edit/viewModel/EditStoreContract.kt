@@ -107,7 +107,8 @@ object EditStoreContract {
             val categoryId: String,
             val menuIndex: Int,
             val name: String,
-            val price: String
+            val price: String,
+            val count: Int?
         ) : Intent()
 
         data object ShowExitConfirmDialog : Intent()
