@@ -66,6 +66,8 @@ object EditStoreContract {
     )
 
     sealed class Intent {
+        data class LoadStoreDetail(val storeId: Int) : Intent()
+
         data class InitWithStoreData(
             val storeId: Int,
             val storeName: String,
@@ -86,7 +88,7 @@ object EditStoreContract {
         data class ChangeSelectCategory(val category: CategoryModel) : Intent()
         data class RemoveCategory(val category: CategoryModel) : Intent()
         data object RemoveAllCategories : Intent()
-        data class SubmitEdit(val request: UserStoreModelRequest) : Intent()
+        data class SubmitEdit(val request: UserStoreModelRequest? = null) : Intent()
 
         data class NavigateToScreen(val screen: EditScreen) : Intent()
         data object NavigateBack : Intent()

@@ -10,8 +10,11 @@ import com.threedollar.domain.home.data.store.PaymentType
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.repository.HomeRepository
+import com.threedollar.domain.home.request.MenuModelRequest
+import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.TimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +53,7 @@ class EditStoreViewModel @Inject constructor(
 
     fun processIntent(intent: EditStoreContract.Intent) {
         when (intent) {
+            is EditStoreContract.Intent.LoadStoreDetail -> loadStoreDetail(intent.storeId)
             is EditStoreContract.Intent.InitWithStoreData -> initWithStoreData(intent)
             is EditStoreContract.Intent.UpdateLocation -> updateLocation(intent.location)
             is EditStoreContract.Intent.UpdateTempLocation -> updateTempLocation(intent.location)
@@ -77,6 +81,78 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.HideExitConfirmDialog -> hideExitConfirmDialog()
             is EditStoreContract.Intent.ConfirmExit -> confirmExit()
             is EditStoreContract.Intent.ClearError -> clearError()
+        }
+    }
+
+
+    private fun loadStoreDetail(storeId: Int) {
+        if (_state.value.isInitialized) return
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            _state.update { it.copy(isLoading = true) }
+            showLoading()
+
+            homeRepository.getUserStoreDetail(
+                storeId = storeId,
+                deviceLatitude = 0.0,
+                deviceLongitude = 0.0,
+                storeImagesCount = null,
+                reviewsCount = null,
+                visitHistoriesCount = null,
+                filterVisitStartDate = ""
+            ).collect { response ->
+                hideLoading()
+                val storeDetail = response.data
+                if (response.ok && storeDetail != null) {
+                    initializeFromStoreDetail(storeDetail)
+                } else {
+                    _state.update { it.copy(isLoading = false) }
+                    _effect.emit(EditStoreContract.Effect.ShowError(response.message ?: "Failed to load store"))
+                }
+            }
+        }
+    }
+
+    private fun initializeFromStoreDetail(storeDetail: com.threedollar.domain.home.data.store.UserStoreDetailModel) {
+        val store = storeDetail.store
+        val location = LatLng(store.location.latitude, store.location.longitude)
+
+        val selectCategoryModelList = store.categories.map { categoryModel ->
+            val menus = store.menus.filter { menuModel ->
+                menuModel.category.categoryId == categoryModel.categoryId
+            }
+            SelectCategoryModel(menuType = categoryModel, menus)
+        }
+
+        val openingHours = com.threedollar.domain.home.request.OpeningHourRequest(
+            startTime = store.openingHoursModel.startTime,
+            endTime = store.openingHoursModel.endTime
+        )
+
+        _state.update {
+            it.copy(
+                storeId = store.storeId,
+                storeName = store.name,
+                storeType = store.salesType.name,
+                selectedLocation = location,
+                address = store.address.fullAddress,
+                selectCategoryList = selectCategoryModelList,
+                selectedPaymentMethods = store.paymentMethods.toSet(),
+                selectedDays = store.appearanceDays.toSet(),
+                openingHours = openingHours,
+                isLoading = false,
+                isInitialized = true,
+                originalStoreData = EditStoreContract.OriginalStoreData(
+                    storeName = store.name,
+                    storeType = store.salesType.name,
+                    location = location,
+                    address = store.address.fullAddress,
+                    paymentMethods = store.paymentMethods.toSet(),
+                    appearanceDays = store.appearanceDays.toSet(),
+                    openingHours = openingHours,
+                    categories = selectCategoryModelList
+                )
+            )
         }
     }
 
@@ -174,7 +250,94 @@ class EditStoreViewModel @Inject constructor(
         }
     }
 
-    private fun submitEdit(request: UserStoreModelRequest) {
+
+    private fun validateAndNormalizeMenu(menu: UserStoreMenuModel): UserStoreMenuModel {
+        val hasName = !menu.name.isNullOrBlank()
+        val hasPrice = !menu.price.isNullOrBlank()
+        val hasCount = menu.count != null
+
+        return when {
+            !hasName && hasPrice && !hasCount -> menu.copy(price = "", count = null)
+            !hasName && !hasPrice && hasCount -> menu.copy(price = "", count = null)
+            hasName && hasPrice && !hasCount -> menu.copy(count = 1)
+            else -> menu
+        }
+    }
+
+    private fun buildValidatedMenuRequests(categories: List<SelectCategoryModel>): List<MenuModelRequest> {
+        val validatedMenus = categories.flatMap { category ->
+            category.menuDetail?.map { menu ->
+                validateAndNormalizeMenu(menu) to category.menuType.categoryId
+            } ?: emptyList()
+        }
+
+        val menuRequests = validatedMenus.mapNotNull { (menu, categoryId) ->
+            val hasName = !menu.name.isNullOrBlank()
+            val hasPrice = !menu.price.isNullOrBlank()
+            val hasCount = menu.count != null
+            if (hasName || (hasPrice && hasCount)) {
+                MenuModelRequest(
+                    name = menu.name ?: "",
+                    count = menu.count,
+                    price = menu.price?.toIntOrNull(),
+                    category = categoryId,
+                    description = null
+                )
+            } else null
+        }
+
+        val categoriesWithMenu = menuRequests.map { it.category }.toSet()
+        val missingCategoryMenus = categories
+            .filter { it.menuType.categoryId !in categoriesWithMenu }
+            .map { category ->
+                MenuModelRequest(
+                    name = "",
+                    count = null,
+                    price = null,
+                    category = category.menuType.categoryId,
+                    description = null
+                )
+            }
+
+        return menuRequests + missingCategoryMenus
+    }
+
+    private fun buildSubmitRequest(): UserStoreModelRequest {
+        val state = _state.value
+        val original = state.originalStoreData
+
+        val hasLocationChange = original?.location?.latitude != state.selectedLocation?.latitude ||
+                               original?.location?.longitude != state.selectedLocation?.longitude
+        val hasNameChange = original?.storeName != state.storeName
+        val hasTypeChange = original?.storeType != state.storeType
+        val hasDaysChange = original?.appearanceDays != state.selectedDays
+        val hasHoursChange = original?.openingHours != state.openingHours
+        val hasPaymentChange = original?.paymentMethods != state.selectedPaymentMethods
+        val hasMenuChange = original?.categories != state.selectCategoryList
+
+        val menuRequests = if (hasMenuChange) {
+            buildValidatedMenuRequests(state.selectCategoryList)
+        } else null
+
+        return UserStoreModelRequest(
+            latitude = if (hasLocationChange) state.selectedLocation?.latitude else null,
+            longitude = if (hasLocationChange) state.selectedLocation?.longitude else null,
+            storeName = if (hasNameChange) state.storeName else null,
+            salesType = if (hasTypeChange) state.storeType else null,
+            appearanceDays = if (hasDaysChange) state.selectedDays.toList() else null,
+            openingHours = if (hasHoursChange) {
+                OpeningHourRequest(
+                    startTime = TimeUtils.convertTo24HourFormat(state.openingHours.startTime),
+                    endTime = TimeUtils.convertTo24HourFormat(state.openingHours.endTime)
+                )
+            } else null,
+            paymentMethods = if (hasPaymentChange) state.selectedPaymentMethods.toList() else null,
+            menuRequests = menuRequests
+        )
+    }
+
+    private fun submitEdit(requestParam: UserStoreModelRequest? = null) {
+        val request = requestParam ?: buildSubmitRequest()
         val storeId = _state.value.storeId
         if (storeId == 0) return
 
@@ -249,7 +412,7 @@ class EditStoreViewModel @Inject constructor(
                 currentState.selectedDays - day
             } else {
                 currentState.selectedDays + day
-            }
+            }.sortedBy { it.ordinal }.toCollection(linkedSetOf())
             val newState = currentState.copy(selectedDays = newDays)
             newState.copy(hasInfoChanges = checkInfoChanges(newState))
         }

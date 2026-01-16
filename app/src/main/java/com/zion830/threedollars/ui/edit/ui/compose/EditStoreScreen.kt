@@ -21,8 +21,6 @@ import base.compose.ColorWhite
 import base.compose.Pink
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
-import com.threedollar.domain.home.request.MenuModelRequest
-import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract.EditScreen
 
@@ -55,7 +53,7 @@ fun EditStoreScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 EditStoreHeader(
                     title = stringResource(CommonR.string.edit_store_select_title),
@@ -70,8 +68,7 @@ fun EditStoreScreen(
                     description = state.address.ifEmpty {
                         stringResource(CommonR.string.edit_store_no_info)
                     },
-                    iconResId = DesignSystemR.drawable.ic_marker,
-                    isModified = state.hasLocationChanges,
+                    iconResId = DesignSystemR.drawable.ic_marker_map,
                     onClick = {
                         onIntent(EditStoreContract.Intent.NavigateToScreen(EditScreen.Location))
                     }
@@ -81,13 +78,13 @@ fun EditStoreScreen(
 
                 EditSectionCard(
                     title = stringResource(CommonR.string.edit_store_section_info),
-                    description = buildStoreInfoDescription(state),
-                    iconResId = DesignSystemR.drawable.ic_info,
-                    isModified = state.hasInfoChanges,
+                    iconResId = DesignSystemR.drawable.ic_completion_megaphone,
                     onClick = {
                         onIntent(EditStoreContract.Intent.NavigateToScreen(EditScreen.StoreInfo))
                     }
-                )
+                ) {
+                    StoreInfoContent(state = state)
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -99,7 +96,6 @@ fun EditStoreScreen(
                         stringResource(CommonR.string.edit_store_no_info)
                     },
                     iconResId = DesignSystemR.drawable.ic_completion_menu,
-                    isModified = state.hasMenuChanges,
                     onClick = {
                         onIntent(EditStoreContract.Intent.NavigateToScreen(EditScreen.StoreMenu))
                     }
@@ -107,22 +103,16 @@ fun EditStoreScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
-
-            MainButton(
-                text = stringResource(CommonR.string.edit_store_complete),
-                enabled = state.isSubmitEnabled,
-                onClick = {
-                    onIntent(
-                        EditStoreContract.Intent.SubmitEdit(
-                            buildSubmitRequest(state)
-                        )
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-            )
         }
+
+        MainButton(
+            text = stringResource(CommonR.string.edit_store_complete),
+            enabled = state.isSubmitEnabled,
+            onClick = {
+                onIntent(EditStoreContract.Intent.SubmitEdit())
+            },
+            modifier = Modifier.align(alignment = Alignment.BottomCenter).fillMaxWidth()
+        )
 
         if (state.isLoading) {
             Box(
@@ -145,28 +135,25 @@ fun EditStoreScreen(
 }
 
 @Composable
-private fun buildStoreInfoDescription(state: EditStoreContract.State): String {
-    val parts = mutableListOf<String>()
+private fun StoreInfoContent(state: EditStoreContract.State) {
+    val roadLabel = stringResource(CommonR.string.road)
+    val storeLabel = stringResource(CommonR.string.store)
+    val convenienceStoreLabel = stringResource(CommonR.string.convenience_store)
+    val cashLabel = stringResource(CommonR.string.cash)
+    val cardLabel = stringResource(CommonR.string.card)
+    val bankingLabel = stringResource(CommonR.string.banking)
 
-    if (state.storeName.isNotEmpty()) {
-        parts.add(state.storeName)
-    }
-
-    state.storeType?.let { type ->
-        val typeName = when (type) {
-            "ROAD" -> stringResource(CommonR.string.road)
-            "STORE" -> stringResource(CommonR.string.store)
-            "CONVENIENCE_STORE" -> stringResource(CommonR.string.convenience_store)
+    val storeTypeText = state.storeType?.let { type ->
+        when (type) {
+            "ROAD" -> roadLabel
+            "STORE" -> storeLabel
+            "CONVENIENCE_STORE" -> convenienceStoreLabel
             else -> type
         }
-        parts.add(typeName)
     }
 
-    if (state.selectedPaymentMethods.isNotEmpty()) {
-        val cashLabel = stringResource(CommonR.string.cash)
-        val cardLabel = stringResource(CommonR.string.card)
-        val bankingLabel = stringResource(CommonR.string.banking)
-        val paymentText = state.selectedPaymentMethods.joinToString(", ") { method ->
+    val paymentMethodsText = if (state.selectedPaymentMethods.isNotEmpty()) {
+        state.selectedPaymentMethods.joinToString(", ") { method ->
             when (method.name) {
                 "CASH" -> cashLabel
                 "CARD" -> cardLabel
@@ -174,64 +161,53 @@ private fun buildStoreInfoDescription(state: EditStoreContract.State): String {
                 else -> method.name
             }
         }
-        parts.add(paymentText)
-    }
+    } else null
 
-    return if (parts.isEmpty()) {
-        stringResource(CommonR.string.edit_store_no_info)
-    } else {
-        parts.joinToString(" · ")
-    }
-}
+    val appearanceDaysText = if (state.selectedDays.isNotEmpty()) {
+        state.selectedDays.joinToString(", ") { it.shortDayString }
+    } else null
 
-private fun buildSubmitRequest(state: EditStoreContract.State): UserStoreModelRequest {
-    val menuRequests = state.selectCategoryList.flatMap { category ->
-        val menus = category.menuDetail
-        if (menus.isNullOrEmpty()) {
-            listOf(
-                MenuModelRequest(
-                    name = "",
-                    price = null,
-                    category = category.menuType.categoryId
-                )
-            )
+    val hasOpeningHours = !state.openingHours.startTime.isNullOrEmpty() ||
+                          !state.openingHours.endTime.isNullOrEmpty()
+    val openingHoursText = if (hasOpeningHours) {
+        val start = state.openingHours.startTime ?: ""
+        val end = state.openingHours.endTime ?: ""
+        if (start.isNotEmpty() && end.isNotEmpty()) {
+            "$start ~ $end"
+        } else if (start.isNotEmpty()) {
+            "$start ~"
         } else {
-            menus.mapNotNull { menu ->
-                if (!menu.name.isNullOrEmpty() || menu.price != null) {
-                    MenuModelRequest(
-                        name = menu.name ?: "",
-                        price = menu.price?.toIntOrNull(),
-                        category = category.menuType.categoryId
-                    )
-                } else {
-                    MenuModelRequest(
-                        name = "",
-                        price = null,
-                        category = category.menuType.categoryId
-                    )
-                }
-            }.ifEmpty {
-                listOf(
-                    MenuModelRequest(
-                        name = "",
-                        price = null,
-                        category = category.menuType.categoryId
-                    )
-                )
-            }
+            "~ $end"
         }
-    }
+    } else null
 
-    return UserStoreModelRequest(
-        appearanceDays = state.selectedDays.toList(),
-        latitude = state.selectedLocation?.latitude ?: 0.0,
-        longitude = state.selectedLocation?.longitude ?: 0.0,
-        menuRequests = menuRequests,
-        paymentMethods = state.selectedPaymentMethods.toList(),
-        openingHours = state.openingHours,
-        storeName = state.storeName,
-        salesType = state.storeType
-    )
+    Column {
+        StoreInfoDetailRow(
+            label = stringResource(CommonR.string.edit_store_info_store_name),
+            value = state.storeName,
+            hasData = state.storeName.isNotEmpty()
+        )
+        StoreInfoDetailRow(
+            label = stringResource(CommonR.string.edit_store_info_store_type),
+            value = storeTypeText,
+            hasData = state.storeType != null
+        )
+        StoreInfoDetailRow(
+            label = stringResource(CommonR.string.edit_store_info_payment_method),
+            value = paymentMethodsText,
+            hasData = state.selectedPaymentMethods.isNotEmpty()
+        )
+        StoreInfoDetailRow(
+            label = stringResource(CommonR.string.edit_store_info_appearance_day),
+            value = appearanceDaysText,
+            hasData = state.selectedDays.isNotEmpty()
+        )
+        StoreInfoDetailRow(
+            label = stringResource(CommonR.string.edit_store_info_opening_hour),
+            value = openingHoursText,
+            hasData = hasOpeningHours
+        )
+    }
 }
 
 @Preview(showBackground = true)

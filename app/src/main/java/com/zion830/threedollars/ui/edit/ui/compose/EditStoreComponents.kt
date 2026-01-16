@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.edit.ui.compose
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,13 +39,16 @@ import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray30
+import base.compose.Gray40
 import base.compose.Gray50
+import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Green
 import base.compose.Green100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
+import base.compose.dpToSp
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -57,36 +61,36 @@ fun EditStoreTopBar(
     showBackButton: Boolean = false,
     onBackClick: (() -> Unit)? = null
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .padding(horizontal = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp),
     ) {
         if (showBackButton && onBackClick != null) {
             Icon(
                 painter = painterResource(id = DesignSystemR.drawable.ic_arrow_left),
                 contentDescription = null,
                 modifier = Modifier
+                    .align(alignment = Alignment.CenterStart)
                     .size(24.dp)
                     .clickable { onBackClick() },
                 tint = Gray100
             )
-            Spacer(modifier = Modifier.width(12.dp))
         }
         Text(
             text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W600,
+            fontSize = dpToSp(16),
+            fontWeight = FontWeight.W400,
             fontFamily = PretendardFontFamily,
             color = Gray100,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.align(alignment = Alignment.Center)
         )
         Icon(
-            painter = painterResource(id = DesignSystemR.drawable.ic_close),
+            painter = painterResource(id = DesignSystemR.drawable.ic_close_gray100_24),
             contentDescription = stringResource(id = CommonR.string.close),
             modifier = Modifier
+                .align(alignment = Alignment.CenterEnd)
                 .size(24.dp)
                 .clickable { onCloseClick() },
             tint = Gray100
@@ -107,7 +111,8 @@ fun EditStoreHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = title,
@@ -117,44 +122,46 @@ fun EditStoreHeader(
             color = Gray100
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = subtitle,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray70
-        )
         if (changedCount > 0) {
-            Spacer(modifier = Modifier.height(12.dp))
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .background(Green100)
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
             ) {
                 Text(
                     text = stringResource(id = CommonR.string.edit_store_changed_count, changedCount),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.W600,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W400,
                     fontFamily = PretendardFontFamily,
                     color = Green
                 )
             }
+        }else{
+            Text(
+                text = subtitle,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
+                fontFamily = PretendardFontFamily,
+                color = Gray70
+            )
         }
     }
 }
 
 /**
  * 섹션 카드 (가게 위치/정보/메뉴)
+ * description을 사용하면 기존처럼 단일 라인 표시
+ * content를 사용하면 커스텀 컨텐츠 표시 (가게 정보 상세용)
  */
 @Composable
 fun EditSectionCard(
     title: String,
-    description: String,
     iconResId: Int,
-    isModified: Boolean = false,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    content: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -167,24 +174,22 @@ fun EditSectionCard(
             .clip(RoundedCornerShape(16.dp))
             .background(ColorWhite)
             .clickable { onClick() }
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(12.dp),
     ) {
         Box(
             modifier = Modifier
                 .size(32.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (isModified) Pink.copy(alpha = 0.1f) else Gray10),
+                .clip(RoundedCornerShape(12.dp))
+                .background(Gray10),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
+            Image(
                 painter = painterResource(id = iconResId),
                 contentDescription = title,
-                modifier = Modifier.size(20.dp),
-                tint = if (isModified) Pink else Gray70
+                modifier = Modifier.size(24.dp),
             )
         }
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
@@ -194,24 +199,66 @@ fun EditSectionCard(
                 color = Gray100
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = description,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = PretendardFontFamily,
-                color = Gray50,
-                maxLines = 2
-            )
+            if (content != null) {
+                content()
+            } else if (description != null) {
+                Text(
+                    text = description,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W400,
+                    fontFamily = PretendardFontFamily,
+                    color = Gray50,
+                    maxLines = 2
+                )
+            }
         }
-        if (isModified) {
-            Spacer(modifier = Modifier.width(8.dp))
+    }
+}
+
+
+/**
+ * 가게 정보 상세 행 (체크마크 + 라벨 + 값)
+ * hasData가 true면 핑크 체크마크와 값 표시
+ * hasData가 false면 체크 없이 "제보된 정보가 없어요" 표시
+ */
+@Composable
+fun StoreInfoDetailRow(
+    label: String,
+    value: String?,
+    hasData: Boolean,
+    noDataText: String = stringResource(CommonR.string.edit_store_no_info),
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
             Icon(
-                painter = painterResource(id = DesignSystemR.drawable.ic_check),
+                painter = painterResource(id = DesignSystemR.drawable.ic_check_pink),
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = Pink
+                modifier = Modifier.size(12.dp),
+                tint = if (hasData) Pink else Gray40
             )
-        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.W500,
+            fontFamily = PretendardFontFamily,
+            color = if (hasData) Pink else Gray40,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = if (hasData && !value.isNullOrEmpty()) value else noDataText,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.W500,
+            fontFamily = PretendardFontFamily,
+            color = if (hasData) Gray60 else Gray50,
+            maxLines = 1
+        )
     }
 }
 
@@ -269,16 +316,7 @@ fun DayCircleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val dayLabel = when (day) {
-        DayOfTheWeekType.MONDAY -> "월"
-        DayOfTheWeekType.TUESDAY -> "화"
-        DayOfTheWeekType.WEDNESDAY -> "수"
-        DayOfTheWeekType.THURSDAY -> "목"
-        DayOfTheWeekType.FRIDAY -> "금"
-        DayOfTheWeekType.SATURDAY -> "토"
-        DayOfTheWeekType.SUNDAY -> "일"
-        else -> ""
-    }
+    val dayLabel = day.shortDayString
 
     Box(
         modifier = modifier
@@ -578,14 +616,12 @@ private fun EditSectionCardPreview() {
             title = "가게 위치",
             description = "서울시 강남구 테헤란로 123",
             iconResId = DesignSystemR.drawable.ic_marker,
-            isModified = false,
             onClick = {}
         )
         EditSectionCard(
             title = "가게 정보",
             description = "붕어빵 가게 · 현금, 카드 · 월, 화, 수",
             iconResId = DesignSystemR.drawable.ic_info,
-            isModified = true,
             onClick = {}
         )
     }

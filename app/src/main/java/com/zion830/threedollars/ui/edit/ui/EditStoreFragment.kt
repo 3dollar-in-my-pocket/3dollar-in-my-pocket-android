@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.ext.replaceFragment
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.edit.ui.compose.EditMenuScreen
 import com.zion830.threedollars.ui.edit.ui.compose.EditStoreInfoScreen
@@ -24,19 +25,15 @@ import com.zion830.threedollars.ui.edit.ui.compose.EditStoreScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract.EditScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
-import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
-import com.zion830.threedollars.ui.write.ui.EditAddressFragment
-import com.threedollar.common.ext.getMonthFirstDate
+import com.zion830.threedollars.ui.edit.ui.EditAddressFragment
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.threedollar.common.ext.replaceFragment
 
 @AndroidEntryPoint
 class EditStoreFragment : Fragment() {
 
     private val editStoreViewModel: EditStoreViewModel by activityViewModels()
-    private val storeDetailViewModel: StoreDetailViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,38 +77,28 @@ class EditStoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupBackPressHandler()
         initializeStoreData()
         observeEffects()
     }
 
-    private fun initializeStoreData() {
-        if (!editStoreViewModel.state.value.isInitialized) {
-            storeDetailViewModel.userStoreDetailModel.value?.let { storeDetail ->
-                val location = storeDetail.store.location
-                val selectCategoryModelList = storeDetail.store.categories.map { model ->
-                    val menu = storeDetail.store.menus.filter { userStoreMenuModel ->
-                        userStoreMenuModel.category.categoryId == model.categoryId
-                    }
-                    com.threedollar.domain.home.data.store.SelectCategoryModel(menuType = model, menu)
+    private fun setupBackPressHandler() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    editStoreViewModel.processIntent(EditStoreContract.Intent.NavigateBack)
                 }
-
-                editStoreViewModel.processIntent(
-                    EditStoreContract.Intent.InitWithStoreData(
-                        storeId = storeDetail.store.storeId,
-                        storeName = storeDetail.store.name,
-                        storeType = storeDetail.store.salesType?.name,
-                        location = com.naver.maps.geometry.LatLng(location.latitude, location.longitude),
-                        address = storeDetail.store.address?.fullAddress ?: "",
-                        categories = selectCategoryModelList,
-                        paymentMethods = storeDetail.store.paymentMethods.toSet(),
-                        appearanceDays = storeDetail.store.appearanceDays.toSet(),
-                        openingHours = com.threedollar.domain.home.request.OpeningHourRequest(
-                            startTime = storeDetail.store.openingHoursModel.startTime,
-                            endTime = storeDetail.store.openingHoursModel.endTime
-                        )
-                    )
-                )
             }
+        )
+    }
+
+    private fun initializeStoreData() {
+        val storeId = arguments?.getInt(ARG_STORE_ID, -1) ?: -1
+        if (storeId != -1) {
+            editStoreViewModel.processIntent(
+                EditStoreContract.Intent.LoadStoreDetail(storeId)
+            )
         }
     }
 
@@ -123,12 +110,6 @@ class EditStoreFragment : Fragment() {
                         is EditStoreContract.Effect.StoreUpdated -> {
                             setFragmentResult(STORE_EDITED_RESULT_KEY, bundleOf(STORE_UPDATED to true))
                             showToast(CommonR.string.edit_store_success)
-                            storeDetailViewModel.getUserStoreDetail(
-                                storeId = storeDetailViewModel.userStoreDetailModel.value?.store?.storeId ?: -1,
-                                deviceLatitude = storeDetailViewModel.userStoreDetailModel.value?.store?.location?.latitude,
-                                deviceLongitude = storeDetailViewModel.userStoreDetailModel.value?.store?.location?.longitude,
-                                filterVisitStartDate = getMonthFirstDate()
-                            )
                             requireActivity().supportFragmentManager.popBackStack()
                         }
                         is EditStoreContract.Effect.ShowError -> {
@@ -158,7 +139,12 @@ class EditStoreFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_STORE_ID = "storeId"
         const val STORE_EDITED_RESULT_KEY = "storeEditedResult"
         const val STORE_UPDATED = "storeUpdated"
+
+        fun newInstance(storeId: Int) = EditStoreFragment().apply {
+            arguments = bundleOf(ARG_STORE_ID to storeId)
+        }
     }
 }

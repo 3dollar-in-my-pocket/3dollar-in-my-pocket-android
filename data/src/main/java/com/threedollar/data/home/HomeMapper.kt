@@ -741,10 +741,10 @@ fun UserStoreModelRequest.asRequest() = UserStoreRequest(
     longitude = longitude,
     storeName = storeName,
     salesType = salesType,
-    appearanceDays = appearanceDays.map { it.name },
+    appearanceDays = appearanceDays?.map { it.name },
     openingHours = openingHours?.asRequest(),
-    paymentMethods = paymentMethods.map { it.name },
-    menuRequests = menuRequests.map { it.asRequest() },
+    paymentMethods = paymentMethods?.map { it.name },
+    menuRequests = menuRequests?.map { it.asRequest() },
 )
 
 fun OpeningHourRequest.asRequest() = com.threedollar.network.request.OpeningHourRequest(

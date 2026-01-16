@@ -162,7 +162,11 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            finishWithResult()
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                finishWithResult()
+            }
         }
     }
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
@@ -182,6 +186,12 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
         supportFragmentManager.setFragmentResultListener(STORE_EDITED_RESULT_KEY, this) { _, _ ->
             isStoreUpdated = true
+            viewModel.getUserStoreDetail(
+                storeId = storeId,
+                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                filterVisitStartDate = getMonthFirstDate()
+            )
         }
 
         binding.visitHistoryNotiTitleTextView.textPartColor("가게의 최근 활동", resources.getColor(DesignSystemR.color.pink, null))
@@ -289,7 +299,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.editStoreInfoButton.onSingleClick {
             supportFragmentManager.addNewFragment(
                 R.id.container,
-                EditStoreFragment(),
+                EditStoreFragment.newInstance(storeId),
                 EditStoreFragment::class.java.name,
                 false,
             )
