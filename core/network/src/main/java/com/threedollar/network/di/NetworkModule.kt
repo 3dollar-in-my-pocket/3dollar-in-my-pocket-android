@@ -8,6 +8,7 @@ import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.interceptor.ABTestInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,7 +43,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun getLoggerInterceptor() = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = HttpLoggingInterceptor.Level.HEADERS
     }
 
     @Provides
@@ -57,7 +58,12 @@ object NetworkModule {
     @Singleton
     @Provides
     @OkhttpClient
-    fun provideOkHttpClient(sharedPrefUtils: SharedPrefUtils, interceptor: HttpLoggingInterceptor, authenticator: Authenticator): OkHttpClient =
+    fun provideOkHttpClient(
+        sharedPrefUtils: SharedPrefUtils,
+        interceptor: HttpLoggingInterceptor,
+        authenticator: Authenticator,
+        abTestInterceptor: ABTestInterceptor,
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .addInterceptor {
@@ -81,6 +87,7 @@ object NetworkModule {
 
                 it.proceed(request)
             }
+            .addInterceptor(abTestInterceptor)
             .authenticator(authenticator)
             .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
             .build()

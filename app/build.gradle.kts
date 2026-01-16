@@ -98,6 +98,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
+    implementation(project(":core:abtest"))
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":core:designsystem"))
