@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.threedollar.common.BuildConfig
 import com.threedollar.common.coroutines.CoroutineTagElement
+import com.threedollar.common.ext.isRunning
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -37,6 +38,8 @@ abstract class UdfViewModel<Intent, State, Effect> : ViewModel() {
 
     private val dispatcher = Dispatchers.Main.immediate + coroutineExceptionHandler
 
+    private val runningJobMap = mutableMapOf<Any, Job>()
+
     protected open fun onException(exception: Throwable, tag: Any? = null) {
         FirebaseCrashlytics.getInstance().log(exception.message ?: exception.toString())
     }
@@ -57,6 +60,22 @@ abstract class UdfViewModel<Intent, State, Effect> : ViewModel() {
         start = start,
         block = block
     )
+
+    protected fun launchIfIdle(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        tag: Any,
+        block: suspend CoroutineScope.() -> Unit
+    ): Job {
+        val runningJob = runningJobMap[tag]
+        if (runningJob != null && runningJob.isRunning) {
+            return runningJob
+        }
+
+        return launch(context, start, tag, block).also {
+            runningJobMap[tag] = it
+        }
+    }
 
     protected fun setLoading(enable: Boolean) = _loading.update { enable }
 }

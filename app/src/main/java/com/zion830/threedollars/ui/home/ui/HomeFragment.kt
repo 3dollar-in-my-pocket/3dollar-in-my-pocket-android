@@ -47,12 +47,13 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
-import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
@@ -512,7 +513,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun collectSelectedCategory(category: CategoryModel?) {
+    private fun collectSelectedCategory(category: StoreCategoryItem?) {
         val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
         val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
         val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black

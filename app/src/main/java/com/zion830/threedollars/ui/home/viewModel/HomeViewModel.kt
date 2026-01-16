@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
@@ -13,7 +12,6 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.StoreModel
 import com.threedollar.domain.home.data.store.UserStoreModel
@@ -21,6 +19,7 @@ import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
@@ -101,7 +100,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
             homeRepository.getAroundStores(
                 distanceM = uiState.currentDistanceM,
-                categoryIds = uiState.selectedCategory?.categoryId?.let { arrayOf(it) },
+                categoryIds = uiState.selectedCategory?.id?.let { arrayOf(it) },
                 targetStores = uiState.homeStoreType.toArray(),
                 sortType = uiState.homeSortType.name,
                 filterCertifiedStores = uiState.filterCertifiedStores,
@@ -138,9 +137,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(categoryModel: CategoryModel?) {
+    fun changeSelectCategory(selected: StoreCategoryItem?) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.CATEGORY_FILTER,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.CATEGORY,
+            additionalParams = if (selected?.id != null) {
+                mapOf(ParameterName.CATEGORY_ID to selected.id)
+            } else {
+                emptyMap()
+            }
+        ))
+
         viewModelScope.launch(coroutineExceptionHandler) {
-            _uiState.update { it.copy(selectedCategory = categoryModel) }
+            _uiState.update { it.copy(selectedCategory = selected) }
             fetchAroundStores()
         }
     }
@@ -347,21 +357,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         ))
     }
 
-    // GA Events - Category Filter
-    fun sendClickCategoryInFilter(categoryId: String?) {
-        val params = if (categoryId != null) {
-            mapOf(ParameterName.CATEGORY_ID to categoryId)
-        } else {
-            emptyMap()
-        }
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BUTTON,
-            objectId = LogObjectId.CATEGORY,
-            additionalParams = params
-        ))
-    }
-
     fun sendClickCategoryBannerAd(advertisementId: String) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,
@@ -371,6 +366,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         ))
     }
 
+    // TODO - https://3dollarinmypocket.atlassian.net/browse/TH-888
     fun sendClickCategoryMenuAd(advertisementId: String) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,

@@ -88,6 +88,7 @@
                     android:drawablePadding="4dp"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="8dp"
+                    android:gravity="center_vertical"
                     android:text="@string/fragment_home_all_menu"
                     app:drawableStartCompat="@drawable/ic_category"
                     app:layout_constraintStart_toStartOf="parent"
