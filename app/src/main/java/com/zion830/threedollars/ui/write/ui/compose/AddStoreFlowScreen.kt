@@ -241,7 +241,6 @@ fun AddStoreFlowScreen(
                                     enabled = state.selectCategoryList.isNotEmpty(),
                                     showSkipButton = false,
                                     onClick = {
-                                        viewModel.processIntent(AddStoreContract.Intent.MarkMenuDetailCompleted)
                                         viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
                                     }
                                 )
@@ -252,7 +251,6 @@ fun AddStoreFlowScreen(
                                     enabled = true,
                                     showSkipButton = false,
                                     onClick = {
-                                        viewModel.processIntent(AddStoreContract.Intent.MarkStoreDetailCompleted)
                                         viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
                                     }
                                 )

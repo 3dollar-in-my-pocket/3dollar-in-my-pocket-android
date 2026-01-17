@@ -15,8 +15,8 @@ import com.threedollar.common.base.BaseBottomSheetDialogFragment
 import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.databinding.DialogBottomAddStoreMenuCategoryBinding
 import com.zion830.threedollars.ui.home.adapter.SelectCategoryRecyclerAdapter
-import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +26,7 @@ import zion830.com.common.base.onSingleClick
 @AndroidEntryPoint
 class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogBottomAddStoreMenuCategoryBinding>() {
 
-    private val viewModel: AddStoreViewModel by activityViewModels()
+    private val viewModel: EditStoreViewModel by activityViewModels()
     override val screenName: ScreenName = ScreenName.EMPTY
 
     private val streetCategories by lazy { LegacySharedPrefUtils.getCategories() }
@@ -36,7 +36,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val streetCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter(
             onCategoryClickListener = { item ->
-                viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(item))
+                viewModel.processIntent(EditStoreContract.Intent.ChangeSelectCategory(item))
                 initStreetAdapterSubmit()
             },
             onAdClickListener = {}
@@ -46,7 +46,7 @@ class AddStoreMenuCategoryDialogFragment : BaseBottomSheetDialogFragment<DialogB
     private val bossCategoryAdapter by lazy {
         SelectCategoryRecyclerAdapter(
             onCategoryClickListener = { item ->
-                viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(item))
+                viewModel.processIntent(EditStoreContract.Intent.ChangeSelectCategory(item))
                 initTruckAdapterSubmit()
             },
             onAdClickListener = {}

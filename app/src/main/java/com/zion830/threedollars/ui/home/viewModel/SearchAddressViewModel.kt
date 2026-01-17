@@ -21,8 +21,10 @@ import com.zion830.threedollars.datasource.MapDataSource
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,8 +35,10 @@ class SearchAddressViewModel @Inject constructor(private val homeRepository: Hom
     private val _searchResult: MutableStateFlow<SearchAddressResponse?> = MutableStateFlow(null)
     val searchResult: StateFlow<SearchAddressResponse?> get() = _searchResult
 
-    private val _searchResultLocation = MutableStateFlow(NaverMapUtils.DEFAULT_LOCATION)
-    val searchResultLocation: StateFlow<LatLng> get() = _searchResultLocation
+    private var currentLocation: LatLng = NaverMapUtils.DEFAULT_LOCATION
+
+    private val _searchResultLocation = Channel<LatLng>(Channel.BUFFERED)
+    val searchResultLocation = _searchResultLocation.receiveAsFlow()
 
     private val _searchAddress = MutableStateFlow("")
     val searchAddress: StateFlow<String> get() = _searchAddress
@@ -44,7 +48,7 @@ class SearchAddressViewModel @Inject constructor(private val homeRepository: Hom
 
     fun search(query: String) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val searchAddressResponse = repository.searchAddress(query, _searchResultLocation.value)
+            val searchAddressResponse = repository.searchAddress(query, currentLocation)
             _searchResult.value = searchAddressResponse
             if (searchAddressResponse.documents.isNotEmpty()) {
                 searchAddressResponse.documents.first()
@@ -57,7 +61,10 @@ class SearchAddressViewModel @Inject constructor(private val homeRepository: Hom
     }
 
     fun updateLatLng(latlng: LatLng) {
-        _searchResultLocation.value = latlng
+        currentLocation = latlng
+        viewModelScope.launch {
+            _searchResultLocation.send(latlng)
+        }
     }
 
     fun clear() {

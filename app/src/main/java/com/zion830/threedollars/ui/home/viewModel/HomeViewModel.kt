@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.home.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
@@ -13,7 +12,6 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.StoreModel
 import com.threedollar.domain.home.data.store.UserStoreModel
@@ -21,13 +19,17 @@ import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.toArray
+import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,13 +43,22 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
     val userInfo: StateFlow<UserModel> get() = _userInfo
 
-    val addressText: MutableLiveData<String> = MutableLiveData()
-    val currentLocation: MutableLiveData<LatLng> = MutableLiveData()
-    val mapLocation: MutableLiveData<LatLng> = MutableLiveData()
-    val currentDistanceM: MutableLiveData<Double> = MutableLiveData()
+    private val _currentLocation: MutableStateFlow<LatLng> = MutableStateFlow(NaverMapUtils.DEFAULT_LOCATION)
+    val currentLocation: StateFlow<LatLng> = _currentLocation.asStateFlow()
 
     private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState())
     val uiState = _uiState.asStateFlow()
+
+    private val _carouselUpdate = MutableSharedFlow<List<AdAndStoreItem>>(replay = 1)
+    val carouselUpdate = _carouselUpdate.asSharedFlow()
+
+    private var shouldResetScroll = false
+
+    fun consumeShouldResetScroll(): Boolean {
+        val value = shouldResetScroll
+        shouldResetScroll = false
+        return value
+    }
 
     private val _advertisementModel: MutableStateFlow<AdvertisementModelV2?> = MutableStateFlow(null)
     val advertisementModel: StateFlow<AdvertisementModelV2?> get() = _advertisementModel
@@ -89,7 +100,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
 
             homeRepository.getAroundStores(
                 distanceM = uiState.currentDistanceM,
-                categoryIds = uiState.selectedCategory?.categoryId?.let { arrayOf(it) },
+                categoryIds = uiState.selectedCategory?.id?.let { arrayOf(it) },
                 targetStores = uiState.homeStoreType.toArray(),
                 sortType = uiState.homeSortType.name,
                 filterCertifiedStores = uiState.filterCertifiedStores,
@@ -105,7 +116,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                     } else {
                         ArrayList(response.data?.contentModels as List<AdAndStoreItem>)
                     }
-
+                    _currentLocation.emit(uiState.mapPosition)
                     updateCarouselItemList(carouselItemList)
                 } else {
                     _serverError.emit(response.message)
@@ -126,9 +137,20 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(categoryModel: CategoryModel?) {
+    fun changeSelectCategory(selected: StoreCategoryItem?) {
+        LogManager.sendEvent(ClickEvent(
+            screen = ScreenName.CATEGORY_FILTER,
+            objectType = LogObjectType.BUTTON,
+            objectId = LogObjectId.CATEGORY,
+            additionalParams = if (selected?.id != null) {
+                mapOf(ParameterName.CATEGORY_ID to selected.id)
+            } else {
+                emptyMap()
+            }
+        ))
+
         viewModelScope.launch(coroutineExceptionHandler) {
-            _uiState.update { it.copy(selectedCategory = categoryModel) }
+            _uiState.update { it.copy(selectedCategory = selected) }
             fetchAroundStores()
         }
     }
@@ -194,11 +216,14 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     private fun updateCarouselItemList(itemList: List<AdAndStoreItem>) {
-        _uiState.update { it.copy(carouselItemList = itemList, shouldResetScroll = true) }
+        viewModelScope.launch {
+            shouldResetScroll = true
+            _carouselUpdate.emit(itemList)
+        }
     }
 
     fun updateStoreItem(userStore: UserStoreModel) {
-        val currentList = _uiState.value.carouselItemList.toMutableList()
+        val currentList = _carouselUpdate.replayCache.firstOrNull()?.toMutableList() ?: return
         val index = currentList.indexOfFirst { item ->
             (item as? ContentModel)?.storeModel?.storeId == userStore.storeId.toString()
         }
@@ -211,7 +236,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 locationModel = userStore.location,
             )
             currentList[index] = item.copy(storeModel = updatedStoreModel)
-            _uiState.update { it.copy(carouselItemList = currentList, shouldResetScroll = false) }
+            viewModelScope.launch {
+                _carouselUpdate.emit(currentList)
+            }
         }
     }
 
@@ -330,21 +357,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         ))
     }
 
-    // GA Events - Category Filter
-    fun sendClickCategoryInFilter(categoryId: String?) {
-        val params = if (categoryId != null) {
-            mapOf(ParameterName.CATEGORY_ID to categoryId)
-        } else {
-            emptyMap()
-        }
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BUTTON,
-            objectId = LogObjectId.CATEGORY,
-            additionalParams = params
-        ))
-    }
-
     fun sendClickCategoryBannerAd(advertisementId: String) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,
@@ -354,6 +366,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         ))
     }
 
+    // TODO - https://3dollarinmypocket.atlassian.net/browse/TH-888
     fun sendClickCategoryMenuAd(advertisementId: String) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,

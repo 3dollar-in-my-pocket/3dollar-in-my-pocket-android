@@ -34,7 +34,8 @@ import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
-import com.zion830.threedollars.ui.dialog.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
@@ -44,6 +45,7 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
@@ -162,7 +164,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             }
     }
 
-    private fun updateCategoryView(category: CategoryModel) {
+    private fun updateCategoryView(category: StoreCategoryItem) {
         val (text, textColor, background) = getCategoryViewAttributes(category)
         binding.allMenuTextView.apply {
             this.text = text
@@ -174,8 +176,8 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         }
     }
 
-    private fun getCategoryViewAttributes(category: CategoryModel): Triple<String, Int, Int> {
-        return if (category.categoryId.isEmpty()) {
+    private fun getCategoryViewAttributes(category: StoreCategoryItem): Triple<String, Int, Int> {
+        return if (category.id.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),
                 DesignSystemR.color.gray70,
@@ -191,24 +193,23 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private suspend fun collectAroundStoreModelsFlow() {
-        viewModel.uiState
-            .map { it.carouselItemList to it.shouldResetScroll }
-            .collect { (adAndStoreItems, shouldResetScroll) ->
-                binding.listTitleTextView.text =
-                    viewModel.uiState.value.selectedCategory?.description?.ifEmpty {
-                        getString(CommonR.string.fragment_home_all_menu)
-                    }
-                val resultList = mutableListOf<AdAndStoreItem>().apply {
-                    add(AdMobItem) // AdMob을 첫 번째 아이템으로 추가
-                    addAll(adAndStoreItems)
-                    viewModel.advertisementListModel.value?.let { add(2, it) } // 광고 배너 위치를 2번째로 조정
+        viewModel.carouselUpdate.collect { adAndStoreItems ->
+            val shouldResetScroll = viewModel.consumeShouldResetScroll()
+            binding.listTitleTextView.text =
+                viewModel.uiState.value.selectedCategory?.description?.ifEmpty {
+                    getString(CommonR.string.fragment_home_all_menu)
                 }
-                adapter.submitList(resultList)
-                if (shouldResetScroll) {
-                    delay(200L)
-                    binding.listRecyclerView.scrollToPosition(0)
-                }
+            val resultList = mutableListOf<AdAndStoreItem>().apply {
+                add(AdMobItem)
+                addAll(adAndStoreItems)
+                viewModel.advertisementListModel.value?.let { add(2, it) }
             }
+            adapter.submitList(resultList)
+            if (shouldResetScroll) {
+                delay(200L)
+                binding.listRecyclerView.scrollToPosition(0)
+            }
+        }
     }
 
     private suspend fun collectSortType() {

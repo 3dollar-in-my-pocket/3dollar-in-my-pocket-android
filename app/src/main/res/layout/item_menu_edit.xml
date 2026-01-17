@@ -31,7 +31,7 @@
         android:background="@drawable/selector_edittext"
         android:hint="@string/hint_menu_price"
         android:imeOptions="actionNext"
-        android:inputType="text"
+        android:inputType="number"
         android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
