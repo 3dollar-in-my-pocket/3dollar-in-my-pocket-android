@@ -22,3 +22,14 @@ data class ClickEvent(
             return params
         }
 }
+
+fun LogManager.sendClick(
+    screen: ScreenName,
+    objectType: LogObjectType,
+    objectId: LogObjectId,
+    additionalParams: Map<ParameterName, Any>? = null
+) {
+    sendEvent(
+        event = ClickEvent(screen, objectType, objectId, additionalParams)
+    )
+}

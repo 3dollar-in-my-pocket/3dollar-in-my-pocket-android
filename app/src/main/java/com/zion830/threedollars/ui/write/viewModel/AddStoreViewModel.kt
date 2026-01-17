@@ -4,13 +4,9 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
-import com.zion830.threedollars.utils.isLocationAvailable
-import com.threedollar.common.analytics.ClickEvent
-import com.threedollar.common.analytics.LogManager
-import com.threedollar.common.analytics.LogObjectId
-import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.ext.isRunning
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
@@ -20,12 +16,11 @@ import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,6 +29,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,11 +44,12 @@ class AddStoreViewModel @Inject constructor(
     val state: StateFlow<AddStoreContract.State> = _state.asStateFlow()
     override val screenName: ScreenName = ScreenName.EDIT_STORE
 
-
     private val _effect = MutableSharedFlow<AddStoreContract.Effect>()
     val effect: SharedFlow<AddStoreContract.Effect> = _effect.asSharedFlow()
 
     private val _removedCategoriesData: MutableMap<String, List<UserStoreMenuModel>> = mutableMapOf()
+
+    private var submitStoreJob: Job? = null
 
     init {
         loadAvailableCategories()
@@ -88,11 +87,8 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.SetEndTime -> setEndTime(intent.time)
             is AddStoreContract.Intent.SubmitNewStore -> submitNewStore()
             is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
-            is AddStoreContract.Intent.MarkMenuDetailCompleted -> markMenuDetailCompleted()
-            is AddStoreContract.Intent.MarkStoreDetailCompleted -> markStoreDetailCompleted()
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
-            is AddStoreContract.Intent.EditStore -> editStore(intent.request, intent.storeId)
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
             is AddStoreContract.Intent.ResetState -> resetState()
         }
@@ -298,14 +294,6 @@ class AddStoreViewModel @Inject constructor(
         }
     }
 
-    private fun markMenuDetailCompleted() {
-        _state.update { it.copy(isMenuDetailCompleted = true) }
-    }
-
-    private fun markStoreDetailCompleted() {
-        _state.update { it.copy(isStoreDetailCompleted = true) }
-    }
-
     private fun clearError() {
         _state.update { it.copy(error = null) }
     }
@@ -374,6 +362,10 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun submitNewStore() {
+        if (submitStoreJob.isRunning) {
+            return
+        }
+
         val currentState = _state.value
         val location = currentState.selectedLocation ?: return
         val name = currentState.storeName
@@ -427,6 +419,8 @@ class AddStoreViewModel @Inject constructor(
                 }
             }
             hideLoading()
+        }.also {
+            submitStoreJob = it
         }
     }
 
@@ -477,27 +471,6 @@ class AddStoreViewModel @Inject constructor(
 
     private fun setSelectCategoryModelList(list: List<SelectCategoryModel>) {
         _state.update { it.copy(selectCategoryList = list) }
-    }
-
-    private fun editStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int) {
-        _state.update { it.copy(isLoading = true, error = null) }
-        showLoading()
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putUserStore(userStoreModelRequest, storeId).collect {
-                if (it.ok) {
-                    it.data?.let { data ->
-                        _state.update { state -> state.copy(isLoading = false, createdStoreInfo = data) }
-                    }
-                    _effect.emit(AddStoreContract.Effect.StoreUpdated)
-                } else {
-                    _state.update { state -> state.copy(isLoading = false, error = it.message) }
-                    _effect.emit(AddStoreContract.Effect.ShowError(it.message ?: "Unknown error"))
-                    _serverError.emit(it.message)
-                }
-            }
-            hideLoading()
-        }
     }
 
     private fun checkNearStore(location: LatLng) {

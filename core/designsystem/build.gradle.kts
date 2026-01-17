@@ -34,5 +34,6 @@ kotlin {
 }
 
 dependencies {
-    // No additional dependencies needed as they are inherited from common.gradle
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose)
 }

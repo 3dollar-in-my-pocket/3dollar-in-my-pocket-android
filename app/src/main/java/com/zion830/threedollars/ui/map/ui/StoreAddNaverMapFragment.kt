@@ -5,15 +5,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
-import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
-import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
+import com.zion830.threedollars.ui.write.viewModel.EditStoreContract
+import com.zion830.threedollars.ui.write.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StoreAddNaverMapFragment : NaverMapFragment() {
 
-    private val addStoreViewModel: AddStoreViewModel by activityViewModels()
+    private val editStoreViewModel: EditStoreViewModel by activityViewModels()
 
     private var isIdleAvailable = false
 
@@ -26,7 +26,7 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         naverMap?.addOnCameraIdleListener {
             if (System.currentTimeMillis() - lastTime > 1000 && isIdleAvailable) {
                 val selectedPosition = naverMap?.cameraPosition?.target
-                addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(selectedPosition))
+                editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateTempLocation(selectedPosition))
                 lastTime = System.currentTimeMillis()
             }
         }
@@ -35,12 +35,14 @@ class StoreAddNaverMapFragment : NaverMapFragment() {
         params.setMargins(0, 0, SizeUtils.dpToPx(24f), SizeUtils.dpToPx(58f))
         binding.btnFindLocation.layoutParams = params
 
-        moveToCurrentLocation(false)
+        editStoreViewModel.state.value.selectedLocation?.let { location ->
+            editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateTempLocation(location))
+            moveCamera(location)
+            isIdleAvailable = true
+        }
     }
 
     override fun onMyLocationLoaded(position: LatLng) {
         super.onMyLocationLoaded(position)
-        addStoreViewModel.processIntent(AddStoreContract.Intent.UpdateLocation(position))
-        isIdleAvailable = true
     }
 }

@@ -26,13 +26,24 @@ object AddStoreContract {
         val openingHours: OpeningHourRequest = OpeningHourRequest(),
         val createdStoreId: Int? = null,
         val createdStoreInfo: PostUserStoreModel? = null,
-        val isMenuDetailCompleted: Boolean = false,
-        val isStoreDetailCompleted: Boolean = false,
         val isLoading: Boolean = false,
         val error: String? = null
     ) {
         val isRequiredInfoValid: Boolean
             get() = storeName.isNotBlank() && storeType != null && selectedLocation != null
+
+        val isMenuDetailCompleted: Boolean
+            get() = selectCategoryList.any { category ->
+                category.menuDetail?.any { menu ->
+                    !menu.name.isNullOrBlank() || !menu.price.isNullOrBlank()
+                } == true
+            }
+
+        val isStoreDetailCompleted: Boolean
+            get() = selectedPaymentMethods.isNotEmpty() ||
+                    selectedDays.isNotEmpty() ||
+                    !openingHours.startTime.isNullOrBlank() ||
+                    !openingHours.endTime.isNullOrBlank()
     }
 
     sealed class Intent {
@@ -59,11 +70,8 @@ object AddStoreContract {
         data class SetEndTime(val time: String) : Intent()
         object SubmitNewStore : Intent()
         object UpdateStoreWithDetails : Intent()
-        object MarkMenuDetailCompleted : Intent()
-        object MarkStoreDetailCompleted : Intent()
         object ClearError : Intent()
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
-        data class EditStore(val request: UserStoreModelRequest, val storeId: Int) : Intent()
         data class CheckNearStore(val location: LatLng) : Intent()
         object ResetState : Intent()
     }

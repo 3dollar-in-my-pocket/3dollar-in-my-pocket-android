@@ -38,4 +38,6 @@ data class Classification(
     val type: String = "",
     @SerializedName("description")
     val description: String = "",
+    @SerializedName("priority")
+    val priority: Int = Int.MAX_VALUE,
 )

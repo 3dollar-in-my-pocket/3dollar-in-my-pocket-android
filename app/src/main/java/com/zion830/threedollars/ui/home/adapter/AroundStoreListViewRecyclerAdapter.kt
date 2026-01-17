@@ -181,13 +181,10 @@ class NearStoreListViewViewHolder(
 
     private fun ItemListViewBinding.setVisible(item: ContentModel) {
         newImageView.isVisible = item.extraModel.tagsModel.isNew
-        ratingTextView.isVisible = item.storeModel.storeType == USER_STORE
-        ratingView.isVisible = item.storeModel.storeType == USER_STORE
-
     }
 
     private fun ItemListViewBinding.setText(item: ContentModel) {
-        ratingTextView.text = (item.extraModel.rating ?: 0).toString()
+        ratingTextView.text = item.extraModel.rating.toString()
         tagTextView.text = item.storeModel.categories.joinToString(" ") { "#${it.name}" }
         distanceTextView.text = root.context.getDistanceText(item.distanceM)
         storeNameTextView.text = item.storeModel.storeName

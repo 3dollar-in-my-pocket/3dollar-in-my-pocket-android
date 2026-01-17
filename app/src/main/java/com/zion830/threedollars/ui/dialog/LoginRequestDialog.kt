@@ -19,12 +19,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.ui.login.model.LoginResultModel
 import com.zion830.threedollars.ui.login.viewModel.LoginViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.showToast
@@ -138,9 +138,12 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                 launch {
                     viewModel.loginResult.collect {
                         when (it) {
-                            is ResultWrapper.Success -> {
-                                LegacySharedPrefUtils.saveUserId(it.value?.userId ?: 0)
-                                LegacySharedPrefUtils.saveAccessToken(it.value?.token)
+                            is LoginResultModel.Success -> {
+                                /**
+                                 * TODO - ViewModel or Data layer로 위임해야 합니다.
+                                 */
+                                LegacySharedPrefUtils.saveUserId(it.userId)
+                                LegacySharedPrefUtils.saveAccessToken(it.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
                                         viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
@@ -150,17 +153,18 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                                 dismiss()
                             }
 
-                            is ResultWrapper.GenericError -> {
-                                when (it.code) {
-                                    400 -> showToast(CommonR.string.connection_failed)
-                                    404 -> callBack.invoke(false)
-                                    503 -> showToast(CommonR.string.server_500)
-                                    500, 502 -> showToast(CommonR.string.connection_failed)
-                                    else -> showToast(CommonR.string.connection_failed)
-                                }
+                            is LoginResultModel.Maintanance -> {
+                                showToast(CommonR.string.server_500)
                             }
 
-                            ResultWrapper.NetworkError -> {}
+                            is LoginResultModel.Error -> {
+                                showToast(CommonR.string.connection_failed)
+                            }
+
+                            is LoginResultModel.RequireSignUp -> {
+                                callBack.invoke(false)
+                                dismiss()
+                            }
                         }
                     }
                 }
