@@ -79,8 +79,27 @@ enum class EditScreen {
 
 ## 권장 순서
 1. **단기:** Option 3 (ResetState) - 즉시 적용 가능
-2. **중기:** Option 1 (BottomSheet) - 안정적인 라이프사이클 관리
+2. **중기:** Option 1 (BottomSheet) - 안정적인 라이프사이클 관리 ✅ **완료 (2026-01-17)**
 3. **장기:** Option 2 (Compose 통합) - 가장 깔끔한 아키텍처
+
+## Option 1 구현 완료 내용 (2026-01-17)
+
+### 변경된 아키텍처
+```
+EditStoreFragment (viewModels()로 ViewModel 소유)
+    |
+    +-- ComposeView (EditStoreScreen, EditStoreInfoScreen, EditMenuScreen)
+    |
+    +-- EditAddressBottomSheetDialogFragment (childFragmentManager로 show)
+            |
+            +-- StoreAddNaverMapFragment (childFragmentManager로 embed)
+```
+
+### 수정된 파일
+1. **EditStoreFragment.kt**: `activityViewModels()` → `viewModels()` 변경, 위치 수정 네비게이션을 `childFragmentManager.show()`로 변경
+2. **EditAddressBottomSheetDialogFragment.kt**: 신규 생성, `viewModels({ requireParentFragment() })` 사용
+3. **StoreAddNaverMapFragment.kt**: `viewModels({ requireParentFragment().requireParentFragment() })` 사용
+4. **EditAddressFragment.kt**: 삭제됨
 
 ## 관련 파일
 - `app/src/main/java/com/zion830/threedollars/ui/edit/ui/EditStoreFragment.kt`

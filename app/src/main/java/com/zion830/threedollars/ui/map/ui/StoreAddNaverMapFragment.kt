@@ -2,7 +2,7 @@ package com.zion830.threedollars.ui.map.ui
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.NaverMap
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
@@ -13,7 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StoreAddNaverMapFragment : NaverMapFragment() {
 
-    private val editStoreViewModel: EditStoreViewModel by activityViewModels()
+    private val editStoreViewModel: EditStoreViewModel by viewModels({
+        requireParentFragment().requireParentFragment()
+    })
 
     private var isIdleAvailable = false
 

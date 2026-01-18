@@ -10,22 +10,19 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.threedollar.common.R as CommonR
-import com.threedollar.common.ext.replaceFragment
-import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.edit.ui.compose.EditMenuScreen
 import com.zion830.threedollars.ui.edit.ui.compose.EditStoreInfoScreen
 import com.zion830.threedollars.ui.edit.ui.compose.EditStoreScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract.EditScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
-import com.zion830.threedollars.ui.edit.ui.EditAddressFragment
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -33,7 +30,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EditStoreFragment : Fragment() {
 
-    private val editStoreViewModel: EditStoreViewModel by activityViewModels()
+    private val editStoreViewModel: EditStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,12 +116,8 @@ class EditStoreFragment : Fragment() {
                             showToast(effect.message)
                         }
                         is EditStoreContract.Effect.NavigateToLocationEdit -> {
-                            requireActivity().supportFragmentManager.replaceFragment(
-                                R.id.container,
-                                EditAddressFragment(),
-                                EditAddressFragment::class.java.name,
-                                false
-                            )
+                            EditAddressBottomSheetDialogFragment.newInstance()
+                                .show(childFragmentManager, EditAddressBottomSheetDialogFragment.TAG)
                         }
                         is EditStoreContract.Effect.NavigateBack -> {
                             requireActivity().supportFragmentManager.popBackStack()
