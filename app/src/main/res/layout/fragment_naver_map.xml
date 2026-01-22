@@ -8,10 +8,8 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_map"
-        android:name="com.naver.maps.map.MapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:navermap_zoomControlEnabled="false" />
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/btn_find_location"

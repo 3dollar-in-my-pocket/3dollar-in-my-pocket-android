@@ -18,6 +18,7 @@ import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.utils.TimeUtils
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -29,9 +30,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -282,18 +280,6 @@ class AddStoreViewModel @Inject constructor(
         }
     }
 
-    private fun convertTo24HourFormat(timeString: String?): String? {
-        if (timeString.isNullOrBlank()) return null
-
-        return try {
-            val inputFormatter = DateTimeFormatter.ofPattern("a h시 mm분", Locale.KOREAN)
-            val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            LocalTime.parse(timeString, inputFormatter).format(outputFormatter)
-        } catch (e: Exception) {
-            timeString
-        }
-    }
-
     private fun clearError() {
         _state.update { it.copy(error = null) }
     }
@@ -382,8 +368,8 @@ class AddStoreViewModel @Inject constructor(
             appearanceDays = currentState.selectedDays.toList(),
             openingHours = currentState.openingHours.let {
                 OpeningHourRequest(
-                    startTime = convertTo24HourFormat(it.startTime),
-                    endTime = convertTo24HourFormat(it.endTime)
+                    startTime = TimeUtils.convertTo24HourFormat(it.startTime),
+                    endTime = TimeUtils.convertTo24HourFormat(it.endTime)
                 )
             }.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
@@ -439,8 +425,8 @@ class AddStoreViewModel @Inject constructor(
             appearanceDays = currentState.selectedDays.toList(),
             openingHours = currentState.openingHours.let {
                 OpeningHourRequest(
-                    startTime = convertTo24HourFormat(it.startTime),
-                    endTime = convertTo24HourFormat(it.endTime)
+                    startTime = TimeUtils.convertTo24HourFormat(it.startTime),
+                    endTime = TimeUtils.convertTo24HourFormat(it.endTime)
                 )
             }.takeIf {
                 !it.startTime.isNullOrBlank() || !it.endTime.isNullOrBlank()
