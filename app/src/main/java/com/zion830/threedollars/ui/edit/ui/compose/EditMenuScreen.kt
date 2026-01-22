@@ -78,9 +78,11 @@ fun EditMenuScreen(
         skipHalfExpanded = true
     )
 
-    LaunchedEffect(state.selectCategoryList, state.selectedCategoryId) {
-        if (state.selectCategoryList.isNotEmpty() && state.selectedCategoryId == null) {
-            onIntent(EditStoreContract.Intent.SetSelectedCategoryId(state.selectCategoryList.first().menuType.categoryId))
+    val currentCategoryList = state.tempSelectCategoryList ?: state.selectCategoryList
+
+    LaunchedEffect(currentCategoryList, state.selectedCategoryId) {
+        if (currentCategoryList.isNotEmpty() && state.selectedCategoryId == null) {
+            onIntent(EditStoreContract.Intent.SetSelectedCategoryId(currentCategoryList.first().menuType.categoryId))
         }
     }
 
@@ -88,7 +90,7 @@ fun EditMenuScreen(
         sheetState = bottomSheetState,
         sheetContent = {
             EditCategoryBottomSheet(
-                selectCategoryList = state.selectCategoryList,
+                selectCategoryList = currentCategoryList,
                 availableSnackCategories = state.availableSnackCategories,
                 availableMealCategories = state.availableMealCategories,
                 onCategoryChange = { category ->
@@ -110,7 +112,7 @@ fun EditMenuScreen(
                     title = stringResource(CommonR.string.edit_store_section_menu),
                     showBackButton = true,
                     onBackClick = {
-                        onIntent(EditStoreContract.Intent.NavigateBack)
+                        onIntent(EditStoreContract.Intent.CancelMenuEdit)
                     },
                     onCloseClick = {
                         if (state.hasAnyChanges) {
@@ -160,7 +162,7 @@ fun EditMenuScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        state.selectCategoryList.forEach { category ->
+                        currentCategoryList.forEach { category ->
                             EditCategoryChip(
                                 category = category.menuType,
                                 isSelected = state.selectedCategoryId == category.menuType.categoryId,
@@ -186,7 +188,7 @@ fun EditMenuScreen(
                             .padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        val selectedCategory = state.selectCategoryList.find {
+                        val selectedCategory = currentCategoryList.find {
                             it.menuType.categoryId == state.selectedCategoryId
                         }
 
@@ -221,7 +223,7 @@ fun EditMenuScreen(
                     text = stringResource(CommonR.string.edit_store_finish),
                     enabled = true,
                     onClick = {
-                        onIntent(EditStoreContract.Intent.NavigateBack)
+                        onIntent(EditStoreContract.Intent.ConfirmMenuChanges)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

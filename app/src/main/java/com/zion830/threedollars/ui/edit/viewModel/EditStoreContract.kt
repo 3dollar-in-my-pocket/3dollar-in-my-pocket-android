@@ -32,7 +32,13 @@ object EditStoreContract {
         val hasInfoChanges: Boolean = false,
         val hasMenuChanges: Boolean = false,
         val showExitConfirmDialog: Boolean = false,
-        val selectedCategoryId: String? = null
+        val selectedCategoryId: String? = null,
+        val tempStoreName: String? = null,
+        val tempStoreType: String? = null,
+        val tempSelectedPaymentMethods: Set<PaymentType>? = null,
+        val tempSelectedDays: Set<DayOfTheWeekType>? = null,
+        val tempOpeningHours: OpeningHourRequest? = null,
+        val tempSelectCategoryList: List<SelectCategoryModel>? = null
     ) {
         val totalChangedCount: Int
             get() = listOf(hasLocationChanges, hasInfoChanges, hasMenuChanges).count { it }
@@ -118,6 +124,14 @@ object EditStoreContract {
         data object ConfirmExit : Intent
 
         data object ClearError : Intent
+
+        data object StartInfoEdit : Intent
+        data object ConfirmInfoChanges : Intent
+        data object CancelInfoEdit : Intent
+
+        data object StartMenuEdit : Intent
+        data object ConfirmMenuChanges : Intent
+        data object CancelMenuEdit : Intent
     }
 
     sealed interface Effect {

@@ -57,14 +57,16 @@ fun EditStoreInfoScreen(
     )
     var selectedTimeType by remember { mutableStateOf(TimeType.START) }
 
+    val currentOpeningHours = state.tempOpeningHours ?: state.openingHours
+
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
         sheetContent = {
             TimePickerBottomSheet(
                 selectedTime = if (selectedTimeType == TimeType.START) {
-                    state.openingHours.startTime
+                    currentOpeningHours.startTime
                 } else {
-                    state.openingHours.endTime
+                    currentOpeningHours.endTime
                 },
                 onTimeSelected = { timeString ->
                     if (selectedTimeType == TimeType.START) {
@@ -87,7 +89,7 @@ fun EditStoreInfoScreen(
                     title = stringResource(CommonR.string.edit_store_section_info),
                     showBackButton = true,
                     onBackClick = {
-                        onIntent(EditStoreContract.Intent.NavigateBack)
+                        onIntent(EditStoreContract.Intent.CancelInfoEdit)
                     },
                     onCloseClick = {
                         if (state.hasAnyChanges) {
@@ -109,7 +111,7 @@ fun EditStoreInfoScreen(
                     SectionHeader(title = stringResource(CommonR.string.store_name))
                     Spacer(modifier = Modifier.height(8.dp))
                     EditStoreTextField(
-                        value = state.storeName,
+                        value = state.tempStoreName ?: state.storeName,
                         onValueChange = { onIntent(EditStoreContract.Intent.UpdateStoreName(it)) },
                         placeholder = stringResource(CommonR.string.add_store_name_placeholder)
                     )
@@ -119,7 +121,7 @@ fun EditStoreInfoScreen(
                     SectionHeader(title = stringResource(CommonR.string.store_type))
                     Spacer(modifier = Modifier.height(8.dp))
                     StoreTypeSection(
-                        selectedType = state.storeType,
+                        selectedType = state.tempStoreType ?: state.storeType,
                         onTypeSelected = { onIntent(EditStoreContract.Intent.UpdateStoreType(it)) }
                     )
 
@@ -131,7 +133,7 @@ fun EditStoreInfoScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     PaymentMethodSection(
-                        selectedMethods = state.selectedPaymentMethods,
+                        selectedMethods = state.tempSelectedPaymentMethods ?: state.selectedPaymentMethods,
                         onToggle = { onIntent(EditStoreContract.Intent.TogglePaymentMethod(it)) }
                     )
 
@@ -143,7 +145,7 @@ fun EditStoreInfoScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     AppearanceDaySection(
-                        selectedDays = state.selectedDays,
+                        selectedDays = state.tempSelectedDays ?: state.selectedDays,
                         onToggle = { onIntent(EditStoreContract.Intent.ToggleAppearanceDay(it)) }
                     )
 
@@ -152,8 +154,8 @@ fun EditStoreInfoScreen(
                     SectionHeader(title = stringResource(CommonR.string.add_store_appearance_time))
                     Spacer(modifier = Modifier.height(8.dp))
                     TimePickerRow(
-                        startTime = state.openingHours.startTime,
-                        endTime = state.openingHours.endTime,
+                        startTime = currentOpeningHours.startTime,
+                        endTime = currentOpeningHours.endTime,
                         onStartTimeClick = {
                             selectedTimeType = TimeType.START
                             scope.launch { bottomSheetState.show() }
@@ -171,7 +173,7 @@ fun EditStoreInfoScreen(
                     text = stringResource(CommonR.string.edit_store_finish),
                     enabled = true,
                     onClick = {
-                        onIntent(EditStoreContract.Intent.NavigateBack)
+                        onIntent(EditStoreContract.Intent.ConfirmInfoChanges)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

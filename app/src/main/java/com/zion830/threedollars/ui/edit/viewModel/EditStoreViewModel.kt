@@ -81,6 +81,12 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.HideExitConfirmDialog -> hideExitConfirmDialog()
             is EditStoreContract.Intent.ConfirmExit -> confirmExit()
             is EditStoreContract.Intent.ClearError -> clearError()
+            is EditStoreContract.Intent.StartInfoEdit -> startInfoEdit()
+            is EditStoreContract.Intent.ConfirmInfoChanges -> confirmInfoChanges()
+            is EditStoreContract.Intent.CancelInfoEdit -> cancelInfoEdit()
+            is EditStoreContract.Intent.StartMenuEdit -> startMenuEdit()
+            is EditStoreContract.Intent.ConfirmMenuChanges -> confirmMenuChanges()
+            is EditStoreContract.Intent.CancelMenuEdit -> cancelMenuEdit()
         }
     }
 
@@ -214,7 +220,7 @@ class EditStoreViewModel @Inject constructor(
 
     private fun changeSelectCategory(categoryModel: CategoryModel) {
         _state.update { currentState ->
-            val list = currentState.selectCategoryList
+            val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
             val existsInList = list.any { it.menuType.categoryId == categoryModel.categoryId }
 
             val newList = if (existsInList) {
@@ -227,26 +233,24 @@ class EditStoreViewModel @Inject constructor(
                 }
             }
 
-            val newState = currentState.copy(selectCategoryList = newList)
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+            currentState.copy(tempSelectCategoryList = newList)
         }
     }
 
     private fun removeCategory(categoryModel: CategoryModel) {
         _state.update { currentState ->
-            val newState = currentState.copy(
-                selectCategoryList = currentState.selectCategoryList.filter {
+            val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            currentState.copy(
+                tempSelectCategoryList = list.filter {
                     it.menuType.categoryId != categoryModel.categoryId
                 }
             )
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
         }
     }
 
     private fun removeAllCategories() {
         _state.update { currentState ->
-            val newState = currentState.copy(selectCategoryList = emptyList())
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+            currentState.copy(tempSelectCategoryList = emptyList())
         }
     }
 
@@ -360,12 +364,23 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun navigateToScreen(screen: EditStoreContract.EditScreen) {
-        if (screen == EditStoreContract.EditScreen.Location) {
-            viewModelScope.launch {
-                _effect.emit(EditStoreContract.Effect.NavigateToLocationEdit)
+        when (screen) {
+            EditStoreContract.EditScreen.Location -> {
+                viewModelScope.launch {
+                    _effect.emit(EditStoreContract.Effect.NavigateToLocationEdit)
+                }
             }
-        } else {
-            _state.update { it.copy(currentScreen = screen) }
+            EditStoreContract.EditScreen.StoreInfo -> {
+                startInfoEdit()
+                _state.update { it.copy(currentScreen = screen) }
+            }
+            EditStoreContract.EditScreen.StoreMenu -> {
+                startMenuEdit()
+                _state.update { it.copy(currentScreen = screen) }
+            }
+            else -> {
+                _state.update { it.copy(currentScreen = screen) }
+            }
         }
     }
 
@@ -381,56 +396,48 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun updateStoreName(name: String) {
-        _state.update { currentState ->
-            val newState = currentState.copy(storeName = name)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
-        }
+        _state.update { it.copy(tempStoreName = name) }
     }
 
     private fun updateStoreType(type: String) {
-        _state.update { currentState ->
-            val newState = currentState.copy(storeType = type)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
-        }
+        _state.update { it.copy(tempStoreType = type) }
     }
 
     private fun togglePaymentMethod(method: PaymentType) {
         _state.update { currentState ->
-            val newMethods = if (currentState.selectedPaymentMethods.contains(method)) {
-                currentState.selectedPaymentMethods - method
+            val currentMethods = currentState.tempSelectedPaymentMethods ?: currentState.selectedPaymentMethods
+            val newMethods = if (currentMethods.contains(method)) {
+                currentMethods - method
             } else {
-                currentState.selectedPaymentMethods + method
+                currentMethods + method
             }
-            val newState = currentState.copy(selectedPaymentMethods = newMethods)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
+            currentState.copy(tempSelectedPaymentMethods = newMethods)
         }
     }
 
     private fun toggleAppearanceDay(day: DayOfTheWeekType) {
         _state.update { currentState ->
-            val newDays = if (currentState.selectedDays.contains(day)) {
-                currentState.selectedDays - day
+            val currentDays = currentState.tempSelectedDays ?: currentState.selectedDays
+            val newDays = if (currentDays.contains(day)) {
+                currentDays - day
             } else {
-                currentState.selectedDays + day
+                currentDays + day
             }.sortedBy { it.ordinal }.toCollection(linkedSetOf())
-            val newState = currentState.copy(selectedDays = newDays)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
+            currentState.copy(tempSelectedDays = newDays)
         }
     }
 
     private fun updateStartTime(time: String?) {
         _state.update { currentState ->
-            val newHours = currentState.openingHours.copy(startTime = time)
-            val newState = currentState.copy(openingHours = newHours)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
+            val currentHours = currentState.tempOpeningHours ?: currentState.openingHours
+            currentState.copy(tempOpeningHours = currentHours.copy(startTime = time))
         }
     }
 
     private fun updateEndTime(time: String?) {
         _state.update { currentState ->
-            val newHours = currentState.openingHours.copy(endTime = time)
-            val newState = currentState.copy(openingHours = newHours)
-            newState.copy(hasInfoChanges = checkInfoChanges(newState))
+            val currentHours = currentState.tempOpeningHours ?: currentState.openingHours
+            currentState.copy(tempOpeningHours = currentHours.copy(endTime = time))
         }
     }
 
@@ -447,7 +454,8 @@ class EditStoreViewModel @Inject constructor(
 
     private fun addMenuToCategory(categoryId: String) {
         _state.update { currentState ->
-            val updatedList = currentState.selectCategoryList.map { category ->
+            val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            val updatedList = list.map { category ->
                 if (category.menuType.categoryId == categoryId) {
                     val currentMenus = category.menuDetail?.toMutableList() ?: mutableListOf()
                     currentMenus.add(UserStoreMenuModel())
@@ -456,14 +464,14 @@ class EditStoreViewModel @Inject constructor(
                     category
                 }
             }
-            val newState = currentState.copy(selectCategoryList = updatedList)
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+            currentState.copy(tempSelectCategoryList = updatedList)
         }
     }
 
     private fun removeMenuFromCategory(categoryId: String, menuIndex: Int) {
         _state.update { currentState ->
-            val updatedList = currentState.selectCategoryList.map { category ->
+            val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            val updatedList = list.map { category ->
                 if (category.menuType.categoryId == categoryId) {
                     val currentMenus = category.menuDetail?.toMutableList() ?: mutableListOf()
                     if (menuIndex in currentMenus.indices) {
@@ -474,14 +482,14 @@ class EditStoreViewModel @Inject constructor(
                     category
                 }
             }
-            val newState = currentState.copy(selectCategoryList = updatedList)
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+            currentState.copy(tempSelectCategoryList = updatedList)
         }
     }
 
     private fun updateMenuInCategory(categoryId: String, menuIndex: Int, name: String, price: String, count: Int?) {
         _state.update { currentState ->
-            val updatedList = currentState.selectCategoryList.map { category ->
+            val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            val updatedList = list.map { category ->
                 if (category.menuType.categoryId == categoryId) {
                     val currentMenus = category.menuDetail?.toMutableList() ?: mutableListOf()
                     if (menuIndex in currentMenus.indices) {
@@ -493,8 +501,7 @@ class EditStoreViewModel @Inject constructor(
                     category
                 }
             }
-            val newState = currentState.copy(selectCategoryList = updatedList)
-            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+            currentState.copy(tempSelectCategoryList = updatedList)
         }
     }
 
@@ -515,6 +522,78 @@ class EditStoreViewModel @Inject constructor(
 
     private fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    private fun startInfoEdit() {
+        _state.update { currentState ->
+            currentState.copy(
+                tempStoreName = currentState.storeName,
+                tempStoreType = currentState.storeType,
+                tempSelectedPaymentMethods = currentState.selectedPaymentMethods,
+                tempSelectedDays = currentState.selectedDays,
+                tempOpeningHours = currentState.openingHours
+            )
+        }
+    }
+
+    private fun confirmInfoChanges() {
+        _state.update { currentState ->
+            val newState = currentState.copy(
+                storeName = currentState.tempStoreName ?: currentState.storeName,
+                storeType = currentState.tempStoreType ?: currentState.storeType,
+                selectedPaymentMethods = currentState.tempSelectedPaymentMethods ?: currentState.selectedPaymentMethods,
+                selectedDays = currentState.tempSelectedDays ?: currentState.selectedDays,
+                openingHours = currentState.tempOpeningHours ?: currentState.openingHours,
+                tempStoreName = null,
+                tempStoreType = null,
+                tempSelectedPaymentMethods = null,
+                tempSelectedDays = null,
+                tempOpeningHours = null,
+                currentScreen = EditStoreContract.EditScreen.Selection
+            )
+            newState.copy(hasInfoChanges = checkInfoChanges(newState))
+        }
+    }
+
+    private fun cancelInfoEdit() {
+        _state.update { currentState ->
+            currentState.copy(
+                tempStoreName = null,
+                tempStoreType = null,
+                tempSelectedPaymentMethods = null,
+                tempSelectedDays = null,
+                tempOpeningHours = null,
+                currentScreen = EditStoreContract.EditScreen.Selection
+            )
+        }
+    }
+
+    private fun startMenuEdit() {
+        _state.update { currentState ->
+            currentState.copy(
+                tempSelectCategoryList = currentState.selectCategoryList
+            )
+        }
+    }
+
+    private fun confirmMenuChanges() {
+        _state.update { currentState ->
+            val newState = currentState.copy(
+                selectCategoryList = currentState.tempSelectCategoryList ?: currentState.selectCategoryList,
+                tempSelectCategoryList = null,
+                currentScreen = EditStoreContract.EditScreen.Selection
+            )
+            newState.copy(hasMenuChanges = checkMenuChanges(newState))
+        }
+    }
+
+    private fun cancelMenuEdit() {
+        _state.update { currentState ->
+            currentState.copy(
+                tempSelectCategoryList = null,
+                currentScreen = EditStoreContract.EditScreen.Selection
+            )
+        }
     }
 
     private fun checkInfoChanges(state: EditStoreContract.State): Boolean {
