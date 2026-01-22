@@ -25,6 +25,7 @@ import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract.EditScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -102,7 +103,7 @@ class EditStoreFragment : Fragment() {
     private fun observeEffects() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                editStoreViewModel.effect.collect { effect ->
+                editStoreViewModel.effect.collectLatest { effect ->
                     when (effect) {
                         is EditStoreContract.Effect.StoreUpdated -> {
                             setFragmentResult(STORE_EDITED_RESULT_KEY, bundleOf(STORE_UPDATED to true))

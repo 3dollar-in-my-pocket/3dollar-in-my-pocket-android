@@ -65,8 +65,8 @@ object EditStoreContract {
         val categories: List<SelectCategoryModel>
     )
 
-    sealed class Intent {
-        data class LoadStoreDetail(val storeId: Int) : Intent()
+    sealed interface Intent {
+        data class LoadStoreDetail(val storeId: Int) : Intent
 
         data class InitWithStoreData(
             val storeId: Int,
@@ -78,54 +78,54 @@ object EditStoreContract {
             val paymentMethods: Set<PaymentType>,
             val appearanceDays: Set<DayOfTheWeekType>,
             val openingHours: OpeningHourRequest
-        ) : Intent()
+        ) : Intent
 
-        data class UpdateLocation(val location: LatLng?) : Intent()
-        data class UpdateTempLocation(val location: LatLng?) : Intent()
-        data object ConfirmLocation : Intent()
-        data object CancelLocationEdit : Intent()
-        data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
-        data class ChangeSelectCategory(val category: CategoryModel) : Intent()
-        data class RemoveCategory(val category: CategoryModel) : Intent()
-        data object RemoveAllCategories : Intent()
-        data class SubmitEdit(val request: UserStoreModelRequest? = null) : Intent()
+        data class UpdateLocation(val location: LatLng?) : Intent
+        data class UpdateTempLocation(val location: LatLng?) : Intent
+        data object ConfirmLocation : Intent
+        data object CancelLocationEdit : Intent
+        data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent
+        data class ChangeSelectCategory(val category: CategoryModel) : Intent
+        data class RemoveCategory(val category: CategoryModel) : Intent
+        data object RemoveAllCategories : Intent
+        data class SubmitEdit(val request: UserStoreModelRequest? = null) : Intent
 
-        data class NavigateToScreen(val screen: EditScreen) : Intent()
-        data object NavigateBack : Intent()
+        data class NavigateToScreen(val screen: EditScreen) : Intent
+        data object NavigateBack : Intent
 
-        data class UpdateStoreName(val name: String) : Intent()
-        data class UpdateStoreType(val type: String) : Intent()
-        data class TogglePaymentMethod(val method: PaymentType) : Intent()
-        data class ToggleAppearanceDay(val day: DayOfTheWeekType) : Intent()
-        data class UpdateStartTime(val time: String?) : Intent()
-        data class UpdateEndTime(val time: String?) : Intent()
+        data class UpdateStoreName(val name: String) : Intent
+        data class UpdateStoreType(val type: String) : Intent
+        data class TogglePaymentMethod(val method: PaymentType) : Intent
+        data class ToggleAppearanceDay(val day: DayOfTheWeekType) : Intent
+        data class UpdateStartTime(val time: String?) : Intent
+        data class UpdateEndTime(val time: String?) : Intent
 
-        data class UpdateAddress(val address: String) : Intent()
+        data class UpdateAddress(val address: String) : Intent
 
-        data class SetSelectedCategoryId(val categoryId: String?) : Intent()
-        data class AddMenuToCategory(val categoryId: String) : Intent()
-        data class RemoveMenuFromCategory(val categoryId: String, val menuIndex: Int) : Intent()
+        data class SetSelectedCategoryId(val categoryId: String?) : Intent
+        data class AddMenuToCategory(val categoryId: String) : Intent
+        data class RemoveMenuFromCategory(val categoryId: String, val menuIndex: Int) : Intent
         data class UpdateMenuInCategory(
             val categoryId: String,
             val menuIndex: Int,
             val name: String,
             val price: String,
             val count: Int?
-        ) : Intent()
+        ) : Intent
 
-        data object ShowExitConfirmDialog : Intent()
-        data object HideExitConfirmDialog : Intent()
-        data object ConfirmExit : Intent()
+        data object ShowExitConfirmDialog : Intent
+        data object HideExitConfirmDialog : Intent
+        data object ConfirmExit : Intent
 
-        data object ClearError : Intent()
+        data object ClearError : Intent
     }
 
-    sealed class Effect {
-        data object StoreUpdated : Effect()
-        data class ShowError(val message: String) : Effect()
-        data class ShowToast(val message: String) : Effect()
-        data object NavigateToLocationEdit : Effect()
-        data object NavigateBack : Effect()
-        data object CloseScreen : Effect()
+    sealed interface Effect {
+        data object StoreUpdated : Effect
+        data class ShowError(val message: String) : Effect
+        data class ShowToast(val message: String) : Effect
+        data object NavigateToLocationEdit : Effect
+        data object NavigateBack : Effect
+        data object CloseScreen : Effect
     }
 }

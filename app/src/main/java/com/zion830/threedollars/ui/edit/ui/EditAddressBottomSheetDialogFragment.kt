@@ -20,6 +20,7 @@ import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.ui.map.ui.StoreAddNaverMapFragment
 import com.zion830.threedollars.utils.getCurrentLocationName
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -77,7 +78,7 @@ class EditAddressBottomSheetDialogFragment : BaseBottomSheetDialogFragment<Fragm
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    editStoreViewModel.state.collect { state ->
+                    editStoreViewModel.state.collectLatest { state ->
                         state.tempLocation?.let { latLng ->
                             binding.addressTextView.text = getCurrentLocationName(latLng)
                                 ?: getString(CommonR.string.location_no_address)

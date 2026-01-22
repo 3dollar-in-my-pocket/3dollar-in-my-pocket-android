@@ -223,9 +223,7 @@ fun EditMenuScreen(
                     onClick = {
                         onIntent(EditStoreContract.Intent.NavigateBack)
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
