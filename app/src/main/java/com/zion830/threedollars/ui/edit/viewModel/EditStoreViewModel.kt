@@ -227,7 +227,17 @@ class EditStoreViewModel @Inject constructor(
                 list.filter { it.menuType.categoryId != categoryModel.categoryId }
             } else {
                 if (list.size < 10) {
-                    list + SelectCategoryModel(menuType = categoryModel, menuDetail = emptyList())
+                    list + SelectCategoryModel(
+                        menuType = categoryModel,
+                        menuDetail = listOf(
+                            UserStoreMenuModel(
+                                category = categoryModel,
+                                menuId = 0,
+                                name = "",
+                                price = ""
+                            )
+                        )
+                    )
                 } else {
                     list
                 }
