@@ -144,7 +144,7 @@ class EditStoreViewModel @Inject constructor(
                 address = store.address.fullAddress,
                 selectCategoryList = selectCategoryModelList,
                 selectedPaymentMethods = store.paymentMethods.toSet(),
-                selectedDays = store.appearanceDays.toSet(),
+                selectedDays = store.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = openingHours,
                 isLoading = false,
                 isInitialized = true,
@@ -154,7 +154,7 @@ class EditStoreViewModel @Inject constructor(
                     location = location,
                     address = store.address.fullAddress,
                     paymentMethods = store.paymentMethods.toSet(),
-                    appearanceDays = store.appearanceDays.toSet(),
+                    appearanceDays = store.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                     openingHours = openingHours,
                     categories = selectCategoryModelList
                 )
@@ -172,7 +172,7 @@ class EditStoreViewModel @Inject constructor(
                 address = intent.address,
                 selectCategoryList = intent.categories,
                 selectedPaymentMethods = intent.paymentMethods,
-                selectedDays = intent.appearanceDays,
+                selectedDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = intent.openingHours,
                 isInitialized = true,
                 originalStoreData = EditStoreContract.OriginalStoreData(
@@ -181,7 +181,7 @@ class EditStoreViewModel @Inject constructor(
                     location = intent.location,
                     address = intent.address,
                     paymentMethods = intent.paymentMethods,
-                    appearanceDays = intent.appearanceDays,
+                    appearanceDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                     openingHours = intent.openingHours,
                     categories = intent.categories
                 )
