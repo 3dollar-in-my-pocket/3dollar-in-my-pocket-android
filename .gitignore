@@ -174,3 +174,4 @@ fabric.properties
 3dollor-android-key.jks.txt
 google-services.json
 *.salive
+app/debug/output-metadata.json
