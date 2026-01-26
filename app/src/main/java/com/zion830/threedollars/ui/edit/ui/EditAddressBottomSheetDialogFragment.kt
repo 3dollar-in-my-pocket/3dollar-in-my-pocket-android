@@ -69,6 +69,8 @@ class EditAddressBottomSheetDialogFragment : BaseBottomSheetDialogFragment<Fragm
             dismiss()
         }
         binding.finishButton.onSingleClick {
+            val currentAddress = binding.addressTextView.text?.toString() ?: ""
+            editStoreViewModel.processIntent(EditStoreContract.Intent.UpdateAddress(currentAddress))
             editStoreViewModel.processIntent(EditStoreContract.Intent.ConfirmLocation)
             dismiss()
         }

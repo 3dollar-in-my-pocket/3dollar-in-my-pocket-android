@@ -120,6 +120,7 @@ import com.threedollar.network.data.store.Location
 import com.threedollar.network.data.store.Marker
 import com.threedollar.network.data.store.Menu
 import com.threedollar.network.data.store.MenuV2
+import com.threedollar.network.data.store.MenuV3
 import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.OpenStatus
 import com.threedollar.network.data.store.OpeningHours
@@ -320,23 +321,23 @@ fun OpeningHours.asModel() = OpeningHoursModel(
 )
 
 fun BossStore.asModel() = BossStoreModel(
-    storeId             = storeId,
-    isOwner             = isOwner,
-    name                = name,
-    rating              = rating,
-    location            = location?.asModel() ?: LocationModel(),
-    address             = address.asModel(),
-    representativeImages= representativeImages.map { it.asModel() },
-    introduction        = introduction ?: "",
-    snsUrl              = snsUrl ?: "",
-    menus               = menus.map { it.asModel() },
-    appearanceDays      = appearanceDays.map { it.asModel() },
-    categories          = categories.map { it.asModel() },
-    accountNumbers      = accountNumbers.map { it.asModel() },
-    contactsNumbers     = contactsNumbers.map { it.asModel() },
-    activitiesStatus    = ActivitiesStatus.from(activitiesStatus.name),
-    createdAt           = createdAt,
-    updatedAt           = updatedAt
+    storeId = storeId,
+    isOwner = isOwner,
+    name = name,
+    rating = rating,
+    location = location?.asModel() ?: LocationModel(),
+    address = address.asModel(),
+    representativeImages = representativeImages.map { it.asModel() },
+    introduction = introduction ?: "",
+    snsUrl = snsUrl ?: "",
+    menus = menus.map { it.asModel() },
+    appearanceDays = appearanceDays.map { it.asModel() },
+    categories = categories.map { it.asModel() },
+    accountNumbers = accountNumbers.map { it.asModel() },
+    contactsNumbers = contactsNumbers.map { it.asModel() },
+    activitiesStatus = ActivitiesStatus.from(activitiesStatus.name),
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun ContactNumber.asModel() = ContactNumberModel(
@@ -346,9 +347,9 @@ fun ContactNumber.asModel() = ContactNumberModel(
 
 fun RepresentativeImage.asModel() = ImageModel(
     imageUrl = imageUrl,
-    width    = width,
-    height   = height,
-    ratio    = ratio
+    width = width,
+    height = height,
+    ratio = ratio
 )
 
 fun AccountNumber.asModel() = AccountNumberModel(
@@ -625,7 +626,7 @@ fun UserStore.asModel() = UserStoreModel(
     categories = categories?.map { it.asModel() } ?: listOf(),
     createdAt = createdAt ?: "",
     location = location?.asModel() ?: LocationModel(),
-    menus = menus?.map { it.asModel() } ?: listOf(),
+    menus = menusV3?.map { it.asModel() } ?: listOf(),
     name = name ?: "",
     paymentMethods = paymentMethods?.map { it.asPaymentType() } ?: listOf(),
     rating = rating ?: 0.0,
@@ -670,6 +671,13 @@ fun UserStoreMenu.asModel() = UserStoreMenuModel(
     price = price,
 
     )
+
+fun MenuV3.asModel() = UserStoreMenuModel(
+    category = category.asModel(),
+    name = name,
+    price = price,
+    count = count?.toIntOrNull()
+)
 
 fun Visits.asModel() = VisitsModel(
     counts = counts?.asModel() ?: CountsModel(),
