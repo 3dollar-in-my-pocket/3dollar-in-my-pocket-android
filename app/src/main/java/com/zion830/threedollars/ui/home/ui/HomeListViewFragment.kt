@@ -45,6 +45,7 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -63,7 +64,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private var homeStoreType: HomeStoreType = HomeStoreType.ALL
     private var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC
-    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
     private var isFilterCertifiedStores = false
 
     private val adapter: AroundStoreListViewRecyclerAdapter by lazy {
@@ -97,6 +97,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             allMenuTextView.onSingleClick { onCategoryFilterClick() }
             filterTextView.onSingleClick { onSortFilterClick() }
             filterConditionsTextView.onSingleClick { onRecentActivityFilterClick() }
+            filterConditionsSpeechBubbleLayout.onSingleClick { onFilterConditionsSpeechBubbleLayoutClick() }
             bossFilterTextView.onSingleClick { onBossFilterClick() }
             certifiedStoreTextView.onSingleClick { onCertifiedStoreFilterClick() }
         }
@@ -118,10 +119,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
 
     private fun onRecentActivityFilterClick() {
         sharedPrefUtils.setIsClickFilterConditions()
-        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
-        filterConditionsType = if (filterConditionsType.isEmpty()) listOf(FilterConditionsTypeModel.RECENT_ACTIVITY) else listOf()
-        viewModel.sendClickRecentActivityFilterInList(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-        viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
+        binding.filterConditionsSpeechBubbleLayout.isVisible = false
+        viewModel.updateFilterCondition(FilterConditionsTypeModel.RECENT_ACTIVITY)
+    }
+
+    private fun onFilterConditionsSpeechBubbleLayoutClick() {
+        sharedPrefUtils.setIsClickFilterConditions()
+        binding.filterConditionsSpeechBubbleLayout.isVisible = false
     }
 
     private fun onBossFilterClick() {
@@ -244,7 +248,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private suspend fun collectFilterConditionsType() {
         viewModel.uiState
             .map { it.filterConditionsType }
-            .collect {
+            .collectLatest {
                 binding.apply {
                     filterConditionsTextView.apply {
                         setTextColor(

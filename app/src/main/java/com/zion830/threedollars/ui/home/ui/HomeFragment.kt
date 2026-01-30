@@ -22,13 +22,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
-import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
-import com.threedollar.domain.home.data.store.CategoryModel
-import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.CustomEvent
 import com.threedollar.common.analytics.EventName
@@ -42,18 +35,24 @@ import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
+import com.threedollar.domain.home.data.store.ContentModel
+import com.threedollar.domain.home.data.store.UserStoreModel
+import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.data.HomeSortType
+import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
-import com.threedollar.domain.home.data.store.UserStoreModel
-import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
@@ -90,7 +89,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var homeStoreType = HomeStoreType.ALL
     private var homeSortType = HomeSortType.DISTANCE_ASC
-    private var filterConditionsType: List<FilterConditionsTypeModel> = listOf()
 
     private var hasRequestedLocationPermission = false
     private var locationPermissionDialog: AlertDialog? = null
@@ -253,14 +251,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         binding.filterConditionsTextView.onSingleClick {
             sharedPrefUtils.setIsClickFilterConditions()
-            binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
-            filterConditionsType = if (filterConditionsType.isEmpty()) {
-                listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
-            } else {
-                listOf()
-            }
-            viewModel.sendClickRecentActivityFilter(filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY))
-            viewModel.updateHomeFilterEvent(filterConditionsType = filterConditionsType)
+            binding.filterConditionsSpeechBubbleLayout.isVisible = false
+            viewModel.updateFilterCondition(FilterConditionsTypeModel.RECENT_ACTIVITY)
+        }
+        binding.filterConditionsSpeechBubbleLayout.onSingleClick {
+            sharedPrefUtils.setIsClickFilterConditions()
+            binding.filterConditionsSpeechBubbleLayout.isVisible = false
         }
         binding.filterTextView.onSingleClick {
             homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
