@@ -170,6 +170,30 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
+    fun updateFilterCondition(
+        type: FilterConditionsTypeModel
+    ) {
+        val current = uiState.value.filterConditionsType
+        val contains = current.contains(type)
+
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to contains.toString())
+            )
+        )
+
+        updateHomeFilterEvent(
+            filterConditionsType = if (contains) {
+                current.minus(type)
+            } else {
+                current.plus(type)
+            }
+        )
+    }
+
     fun getAdvertisement(latLng: LatLng) {
         getAdvertisementList(latLng = latLng)
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -314,17 +338,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.SORTING,
                 additionalParams = mapOf(ParameterName.VALUE to sortType)
-            )
-        )
-    }
-
-    fun sendClickRecentActivityFilter(value: Boolean) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
-                additionalParams = mapOf(ParameterName.VALUE to value.toString())
             )
         )
     }
