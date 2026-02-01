@@ -1,0 +1,148 @@
+name: Firebase App Distribution
+
+on:
+  pull_request:
+    branches:
+      - 'release/**'
+    types:
+      - closed
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  build-and-distribute:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Create local.properties
+        run: |
+          cat << EOF > local.properties
+          sdk.dir=${ANDROID_HOME}
+          google_map_key=${{ secrets.GOOGLE_MAP_KEY }}
+          nmf_client_id=${{ secrets.NMF_CLIENT_ID }}
+          admob_id=${{ secrets.ADMOB_ID }}
+          kakao_key_dev=${{ secrets.KAKAO_KEY_DEV }}
+          kakao_map_key=${{ secrets.KAKAO_MAP_KEY }}
+          develop_url=${{ secrets.DEVELOP_URL }}
+          deep_link=${{ secrets.DEEP_LINK }}
+          application_id_dev=${{ secrets.APPLICATION_ID_DEV }}
+          EOF
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Find APK path
+        id: apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk -name "*.apk" -type f | head -1)
+          echo "path=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Get PR commits for release notes
+        id: release_notes
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          COMMITS=$(git log --pretty=format:"- %s" ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | head -20)
+
+          VERSION=$(grep "version_name=" gradle.properties | cut -d'=' -f2)
+
+          RELEASE_NOTES="PR #${PR_NUMBER}: ${PR_TITLE}
+          Version: ${VERSION}
+
+          Changes:
+          ${COMMITS}"
+
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: android-소지자
+          file: ${{ steps.apk.outputs.path }}
+          releaseNotes: ${{ steps.release_notes.outputs.notes }}
+
+      - name: Notify Slack on Success
+        if: success()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Firebase App Distribution 배포 완료"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Version:*\n${{ steps.release_notes.outputs.version }}"},
+                    {"type": "mrkdwn", "text": "*Branch:*\n${{ github.event.pull_request.base.ref }}"}
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Slack on Failure
+        if: failure()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {"type": "plain_text", "text": "Firebase App Distribution 배포 실패"}
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
