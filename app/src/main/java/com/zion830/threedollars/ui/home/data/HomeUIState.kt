@@ -13,7 +13,7 @@ data class HomeUIState(
     var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC,
     var homeStoreType: HomeStoreType = HomeStoreType.ALL,
     var filterConditionsType : List<FilterConditionsTypeModel> = listOf(FilterConditionsTypeModel.RECENT_ACTIVITY),
-    val selectedCategory: StoreCategoryItem? = null
+    val selectedCategory: StoreCategoryItem.Food? = null
 ) {
     companion object {
         val DEFAULT_LOCATION = LatLng(37.56, 126.97) // 서울
