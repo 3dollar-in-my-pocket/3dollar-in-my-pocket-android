@@ -676,7 +676,8 @@ fun MenuV3.asModel() = UserStoreMenuModel(
     category = category.asModel(),
     name = name,
     price = price,
-    count = count?.toIntOrNull()
+    count = count?.toIntOrNull(),
+    description = description
 )
 
 fun Visits.asModel() = VisitsModel(

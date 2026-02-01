@@ -295,7 +295,7 @@ class EditStoreViewModel @Inject constructor(
                     count = menu.count,
                     price = menu.price?.toIntOrNull(),
                     category = categoryId,
-                    description = null
+                    description = menu.description.ifEmpty { null }
                 )
             } else null
         }
