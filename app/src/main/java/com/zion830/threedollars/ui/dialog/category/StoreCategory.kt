@@ -1,8 +1,11 @@
 package com.zion830.threedollars.ui.dialog.category
 
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import kotlinx.collections.immutable.ImmutableList
+
 data class StoreCategory(
     val classification: StoreCategoryClassification,
-    val items: List<StoreCategoryItem>,
+    val items: ImmutableList<StoreCategoryItem>,
 )
 
 data class StoreCategoryClassification(
@@ -11,11 +14,17 @@ data class StoreCategoryClassification(
     val priority: Int
 )
 
-data class StoreCategoryItem(
-    val id: String,
-    val name: String,
-    val description: String,
-    val imageUrl: String,
-    val disableImageUrl: String,
-    val isNew: Boolean
-)
+sealed interface StoreCategoryItem {
+    data class Ad(
+        val data: AdvertisementModelV2
+    ) : StoreCategoryItem
+
+    data class Food(
+        val id: String,
+        val name: String,
+        val description: String,
+        val imageUrl: String,
+        val disableImageUrl: String,
+        val isNew: Boolean
+    ) : StoreCategoryItem
+}
