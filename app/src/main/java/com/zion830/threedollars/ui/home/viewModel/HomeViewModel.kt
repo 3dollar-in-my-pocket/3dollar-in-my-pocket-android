@@ -137,16 +137,14 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(selected: StoreCategoryItem?) {
+    fun changeSelectCategory(selected: StoreCategoryItem.Food?) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,
             objectType = LogObjectType.BUTTON,
             objectId = LogObjectId.CATEGORY,
-            additionalParams = if (selected?.id != null) {
-                mapOf(ParameterName.CATEGORY_ID to selected.id)
-            } else {
-                emptyMap()
-            }
+            additionalParams = selected?.id?.let {
+                mapOf(ParameterName.CATEGORY_ID to it)
+            } ?: emptyMap()
         ))
 
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -367,25 +365,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             objectType = LogObjectType.MARKER,
             objectId = LogObjectId.ADVERTISEMENT,
             additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId.toString())
-        ))
-    }
-
-    fun sendClickCategoryBannerAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BANNER,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
-        ))
-    }
-
-    // TODO - https://3dollarinmypocket.atlassian.net/browse/TH-888
-    fun sendClickCategoryMenuAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BUTTON,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
         ))
     }
 

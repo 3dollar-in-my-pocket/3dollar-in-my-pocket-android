@@ -168,7 +168,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             }
     }
 
-    private fun updateCategoryView(category: StoreCategoryItem) {
+    private fun updateCategoryView(category: StoreCategoryItem.Food) {
         val (text, textColor, background) = getCategoryViewAttributes(category)
         binding.allMenuTextView.apply {
             this.text = text
@@ -180,7 +180,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         }
     }
 
-    private fun getCategoryViewAttributes(category: StoreCategoryItem): Triple<String, Int, Int> {
+    private fun getCategoryViewAttributes(category: StoreCategoryItem.Food): Triple<String, Int, Int> {
         return if (category.id.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),
@@ -294,7 +294,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun showSelectCategoryDialog() {
-        SelectCategoryDialogFragment().show(parentFragmentManager, "")
+        SelectCategoryDialogFragment
+            .newInstance(
+                latLng = viewModel.uiState.value.userLocation
+            )
+            .show(parentFragmentManager, SelectCategoryDialogFragment.TAG)
     }
 
     private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {
