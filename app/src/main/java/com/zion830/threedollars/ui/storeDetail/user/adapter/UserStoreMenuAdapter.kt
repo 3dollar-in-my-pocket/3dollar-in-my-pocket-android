@@ -86,11 +86,7 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
                 binding.categoryTextView.isVisible = false
             }
             binding.menuNameTextView.text = if (item.name.isNullOrEmpty()) "-" else item.name
-            binding.menuPriceTextView.text = when {
-                item.price.isNullOrEmpty() -> "-"
-                item.count == null || item.count == 0 -> itemView.context.getString(CommonR.string.food_truck_price, item.price)
-                else -> itemView.context.getString(CommonR.string.menu_count_price_format, item.count, item.price)
-            }
+            binding.menuPriceTextView.text = if (item.description.isEmpty()) "-" else item.description
         }
     }
 }
