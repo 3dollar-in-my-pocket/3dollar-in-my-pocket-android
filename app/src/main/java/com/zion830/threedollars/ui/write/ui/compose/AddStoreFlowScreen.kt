@@ -147,8 +147,8 @@ fun AddStoreFlowScreen(
                         CategoryEditBottomSheet(
                             selectCategoryList = state.selectCategoryList,
                             storeCategories = state.storeCategories,
-                            onCategoryChange = { category ->
-                                viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(category))
+                            onConfirm = { categoryIds ->
+                                viewModel.processIntent(AddStoreContract.Intent.UpdateSelectedCategories(categoryIds))
                             },
                             onDismiss = {
                                 coroutineScope.launch { sheetState.hide() }

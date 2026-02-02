@@ -431,11 +431,13 @@ private fun MenuInputRow(
 fun CategoryEditBottomSheet(
     selectCategoryList: List<SelectCategoryModel>,
     storeCategories: List<StoreCategory>,
-    onCategoryChange: (CategoryModel) -> Unit,
+    onConfirm: (List<String>) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedCategoryIds = selectCategoryList.map { it.menuType.categoryId }
+    var localSelectedIds by remember(selectCategoryList) {
+        mutableStateOf(selectCategoryList.map { it.menuType.categoryId }.toSet())
+    }
 
     Column(
         modifier = modifier
@@ -444,7 +446,7 @@ fun CategoryEditBottomSheet(
             .padding(20.dp)
     ) {
         Text(
-            text = stringResource(CommonR.string.add_store_select_category_count, selectCategoryList.size),
+            text = stringResource(CommonR.string.add_store_select_category_count, localSelectedIds.size),
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -470,7 +472,7 @@ fun CategoryEditBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 storeCategory.items.forEach { item ->
-                    val isSelected = selectedCategoryIds.contains(item.id)
+                    val isSelected = localSelectedIds.contains(item.id)
                     val categoryModel = CategoryModel(
                         categoryId = item.id,
                         name = item.name,
@@ -483,8 +485,15 @@ fun CategoryEditBottomSheet(
                     CategoryChip(
                         category = categoryModel,
                         onClick = {
-                            val updatedCategory = categoryModel.copy(isSelected = !isSelected)
-                            onCategoryChange(updatedCategory)
+                            localSelectedIds = if (isSelected) {
+                                localSelectedIds - item.id
+                            } else {
+                                if (localSelectedIds.size < 10) {
+                                    localSelectedIds + item.id
+                                } else {
+                                    localSelectedIds
+                                }
+                            }
                         }
                     )
                 }
@@ -502,9 +511,10 @@ fun CategoryEditBottomSheet(
                 .fillMaxWidth()
                 .height(48.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(if (selectCategoryList.isEmpty()) Gray30 else Pink)
-                .clickable(enabled = selectCategoryList.isNotEmpty()) {
-                    if (selectCategoryList.isNotEmpty()) {
+                .background(if (localSelectedIds.isEmpty()) Gray30 else Pink)
+                .clickable(enabled = localSelectedIds.isNotEmpty()) {
+                    if (localSelectedIds.isNotEmpty()) {
+                        onConfirm(localSelectedIds.toList())
                         onDismiss()
                     }
                 },
