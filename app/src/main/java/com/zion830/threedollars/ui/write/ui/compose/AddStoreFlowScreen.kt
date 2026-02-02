@@ -146,8 +146,7 @@ fun AddStoreFlowScreen(
                     BottomSheetType.CATEGORY_EDIT -> {
                         CategoryEditBottomSheet(
                             selectCategoryList = state.selectCategoryList,
-                            availableSnackCategories = state.availableSnackCategories,
-                            availableMealCategories = state.availableMealCategories,
+                            storeCategories = state.storeCategories,
                             onCategoryChange = { category ->
                                 viewModel.processIntent(AddStoreContract.Intent.ChangeSelectCategory(category))
                             },
