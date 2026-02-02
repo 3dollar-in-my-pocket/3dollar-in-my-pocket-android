@@ -68,6 +68,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
+            is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
             is EditStoreContract.Intent.RemoveAllCategories -> removeAllCategories()
             is EditStoreContract.Intent.SubmitEdit -> submitEdit(intent.request)
@@ -251,6 +252,55 @@ class EditStoreViewModel @Inject constructor(
             }
 
             currentState.copy(tempSelectCategoryList = newList)
+        }
+    }
+
+
+    private fun updateSelectedCategories(categoryIds: List<String>) {
+        _state.update { currentState ->
+            val existingList = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            val allCategoryItems = currentState.storeCategories.flatMap { it.items }
+
+            val newList = categoryIds.mapNotNull { categoryId ->
+                val existing = existingList.find { it.menuType.categoryId == categoryId }
+                if (existing != null) {
+                    existing
+                } else {
+                    val item = allCategoryItems.find { it.id == categoryId }
+                    item?.let {
+                        val categoryModel = CategoryModel(
+                            categoryId = it.id,
+                            name = it.name,
+                            description = it.description,
+                            imageUrl = it.imageUrl,
+                            disableImageUrl = it.disableImageUrl,
+                            isNew = it.isNew
+                        )
+                        SelectCategoryModel(
+                            menuType = categoryModel,
+                            menuDetail = listOf(
+                                UserStoreMenuModel(
+                                    category = categoryModel,
+                                    menuId = 0,
+                                    name = "",
+                                    price = ""
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+
+            val newSelectedCategoryId = when {
+                newList.isEmpty() -> null
+                newList.any { it.menuType.categoryId == currentState.selectedCategoryId } -> currentState.selectedCategoryId
+                else -> newList.firstOrNull()?.menuType?.categoryId
+            }
+
+            currentState.copy(
+                tempSelectCategoryList = newList,
+                selectedCategoryId = newSelectedCategoryId
+            )
         }
     }
 

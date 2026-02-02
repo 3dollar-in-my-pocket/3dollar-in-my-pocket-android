@@ -92,6 +92,7 @@ object EditStoreContract {
         data object CancelLocationEdit : Intent
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent
         data class ChangeSelectCategory(val category: CategoryModel) : Intent
+        data class UpdateSelectedCategories(val categoryIds: List<String>) : Intent
         data class RemoveCategory(val category: CategoryModel) : Intent
         data object RemoveAllCategories : Intent
         data class SubmitEdit(val request: UserStoreModelRequest? = null) : Intent

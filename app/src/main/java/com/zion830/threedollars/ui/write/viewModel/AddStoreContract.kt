@@ -52,6 +52,7 @@ object AddStoreContract {
         data class SetAddress(val address: String) : Intent()
         data class UpdateLocation(val location: LatLng?) : Intent()
         data class ChangeSelectCategory(val category: CategoryModel) : Intent()
+        data class UpdateSelectedCategories(val categoryIds: List<String>) : Intent()
         data class RemoveCategory(val category: CategoryModel) : Intent()
         object RemoveAllCategories : Intent()
         data class SetSelectedCategoryId(val categoryId: String?) : Intent()
