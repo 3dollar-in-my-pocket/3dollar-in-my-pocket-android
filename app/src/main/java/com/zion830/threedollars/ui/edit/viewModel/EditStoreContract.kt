@@ -7,6 +7,7 @@ import com.threedollar.domain.home.data.store.PaymentType
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import com.zion830.threedollars.ui.dialog.category.StoreCategory
 
 object EditStoreContract {
 
@@ -18,8 +19,7 @@ object EditStoreContract {
         val selectedLocation: LatLng? = null,
         val tempLocation: LatLng? = null,
         val selectCategoryList: List<SelectCategoryModel> = emptyList(),
-        val availableSnackCategories: List<CategoryModel> = emptyList(),
-        val availableMealCategories: List<CategoryModel> = emptyList(),
+        val storeCategories: List<StoreCategory> = emptyList(),
         val selectedPaymentMethods: Set<PaymentType> = emptySet(),
         val selectedDays: Set<DayOfTheWeekType> = emptySet(),
         val openingHours: OpeningHourRequest = OpeningHourRequest(),

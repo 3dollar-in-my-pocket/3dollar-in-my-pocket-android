@@ -16,9 +16,11 @@ import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.model.v2.response.store.toStoreCategories
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.TimeUtils
+import kotlinx.coroutines.flow.collect
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -35,7 +37,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val fusedLocationProviderClient: FusedLocationProviderClient
+    private val fusedLocationProviderClient: FusedLocationProviderClient,
+    private val storeDataSource: StoreDataSource
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(AddStoreContract.State())
@@ -93,11 +96,15 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun loadAvailableCategories() {
-        _state.update {
-            it.copy(
-                availableSnackCategories = LegacySharedPrefUtils.getCategories(),
-                availableMealCategories = LegacySharedPrefUtils.getTruckCategories()
-            )
+        viewModelScope.launch(coroutineExceptionHandler) {
+            storeDataSource.getCategories().collect { response ->
+                if (response.isSuccessful) {
+                    val categoriesList = response.body()?.data ?: emptyList()
+                    _state.update {
+                        it.copy(storeCategories = categoriesList.toStoreCategories())
+                    }
+                }
+            }
         }
     }
 
