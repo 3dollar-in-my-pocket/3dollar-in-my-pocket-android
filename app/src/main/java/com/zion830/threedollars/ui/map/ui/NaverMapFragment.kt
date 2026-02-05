@@ -87,7 +87,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.fragment_map) as? MapFragment?
             ?: MapFragment.newInstance().also {
-                childFragmentManager.beginTransaction().add(R.id.fragment_map, it).commit()
+                childFragmentManager.beginTransaction().add(R.id.fragment_map, it).commitNow()
             }
         mapFragment.getMapAsync(this)
 

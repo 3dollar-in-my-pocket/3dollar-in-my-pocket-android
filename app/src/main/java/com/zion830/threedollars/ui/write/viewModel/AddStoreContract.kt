@@ -9,6 +9,7 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
+import com.zion830.threedollars.ui.dialog.category.StoreCategory
 
 object AddStoreContract {
 
@@ -19,8 +20,7 @@ object AddStoreContract {
         val selectedLocation: LatLng? = null,
         val selectCategoryList: List<SelectCategoryModel> = emptyList(),
         val selectedCategoryId: String? = null,
-        val availableSnackCategories: List<CategoryModel> = emptyList(),
-        val availableMealCategories: List<CategoryModel> = emptyList(),
+        val storeCategories: List<StoreCategory> = emptyList(),
         val selectedPaymentMethods: Set<PaymentType> = emptySet(),
         val selectedDays: Set<DayOfTheWeekType> = emptySet(),
         val openingHours: OpeningHourRequest = OpeningHourRequest(),
@@ -52,6 +52,7 @@ object AddStoreContract {
         data class SetAddress(val address: String) : Intent()
         data class UpdateLocation(val location: LatLng?) : Intent()
         data class ChangeSelectCategory(val category: CategoryModel) : Intent()
+        data class UpdateSelectedCategories(val categoryIds: List<String>) : Intent()
         data class RemoveCategory(val category: CategoryModel) : Intent()
         object RemoveAllCategories : Intent()
         data class SetSelectedCategoryId(val categoryId: String?) : Intent()

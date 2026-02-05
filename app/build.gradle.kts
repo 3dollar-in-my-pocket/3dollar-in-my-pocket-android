@@ -22,7 +22,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
 
         applicationId = "com.zion830.threedollars"
-        versionCode = 116
+        versionCode = 117
         versionName = project.findProperty("version_name") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -98,6 +98,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
+    implementation(project(":core:abtest"))
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":core:designsystem"))

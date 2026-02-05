@@ -68,6 +68,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:abtest"))
 
     implementation(libs.bundles.androidx.ui)
     implementation(project(":common"))
