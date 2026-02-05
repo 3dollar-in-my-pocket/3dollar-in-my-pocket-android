@@ -5,5 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class MenuV3(
     @SerializedName("name") val name: String = "",
     @SerializedName("description") val description: String = "",
-    @SerializedName("category") val category: Category = Category()
+    @SerializedName("category") val category: Category = Category(),
+    @SerializedName("count") val count: String? = "",
+    @SerializedName("price") val price: String? = ""
 )

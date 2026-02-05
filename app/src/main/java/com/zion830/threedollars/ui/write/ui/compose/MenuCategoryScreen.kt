@@ -34,7 +34,6 @@ import base.compose.PretendardFontFamily
 import base.compose.Red
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 
 data class CategorySection(
     val title: String,
@@ -49,19 +48,22 @@ fun MenuCategoryScreen(
 ) {
     val selectedCategoryIds = state.selectCategoryList.map { it.menuType.categoryId }
 
-    val snackCategories = LegacySharedPrefUtils.getCategories().map { category ->
-        category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
+    val categorySections = state.storeCategories.map { storeCategory ->
+        CategorySection(
+            title = storeCategory.classification.name,
+            categories = storeCategory.items.map { item ->
+                CategoryModel(
+                    categoryId = item.id,
+                    name = item.name,
+                    description = item.description,
+                    imageUrl = item.imageUrl,
+                    disableImageUrl = item.disableImageUrl,
+                    isNew = item.isNew,
+                    isSelected = selectedCategoryIds.contains(item.id)
+                )
+            }
+        )
     }
-    val mealCategories = LegacySharedPrefUtils.getTruckCategories().map { category ->
-        category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
-    }
-
-    val snackTitle = stringResource(CommonR.string.category_snack)
-    val mealTitle = stringResource(CommonR.string.category_meal)
-    val categorySections = listOf(
-        CategorySection(title = snackTitle, categories = snackCategories),
-        CategorySection(title = mealTitle, categories = mealCategories)
-    )
 
     MenuCategoryContent(
         categorySections = categorySections,

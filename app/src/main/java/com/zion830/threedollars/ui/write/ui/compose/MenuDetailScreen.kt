@@ -61,6 +61,7 @@ import coil3.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
+import com.zion830.threedollars.ui.dialog.category.StoreCategory
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 
 @Composable
@@ -429,19 +430,13 @@ private fun MenuInputRow(
 @Composable
 fun CategoryEditBottomSheet(
     selectCategoryList: List<SelectCategoryModel>,
-    availableSnackCategories: List<CategoryModel>,
-    availableMealCategories: List<CategoryModel>,
-    onCategoryChange: (CategoryModel) -> Unit,
+    storeCategories: List<StoreCategory>,
+    onConfirm: (List<String>) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedCategoryIds = selectCategoryList.map { it.menuType.categoryId }
-
-    val snackCategories = availableSnackCategories.map { category ->
-        category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
-    }
-    val mealCategories = availableMealCategories.map { category ->
-        category.copy(isSelected = selectedCategoryIds.contains(category.categoryId))
+    var localSelectedIds by remember(selectCategoryList) {
+        mutableStateOf(selectCategoryList.map { it.menuType.categoryId }.toSet())
     }
 
     Column(
@@ -451,7 +446,7 @@ fun CategoryEditBottomSheet(
             .padding(20.dp)
     ) {
         Text(
-            text = stringResource(CommonR.string.add_store_select_category_count, selectCategoryList.size),
+            text = stringResource(CommonR.string.add_store_select_category_count, localSelectedIds.size),
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
@@ -460,57 +455,52 @@ fun CategoryEditBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = stringResource(CommonR.string.category_snack),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W600,
-            fontFamily = PretendardFontFamily,
-            color = Gray100
-        )
+        storeCategories.forEachIndexed { index, storeCategory ->
+            Text(
+                text = storeCategory.classification.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W600,
+                fontFamily = PretendardFontFamily,
+                color = Gray100
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            snackCategories.forEach { category ->
-                CategoryChip(
-                    category = category,
-                    onClick = {
-                        val updatedCategory = category.copy(isSelected = !category.isSelected)
-                        onCategoryChange(updatedCategory)
-                    }
-                )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                storeCategory.items.forEach { item ->
+                    val isSelected = localSelectedIds.contains(item.id)
+                    val categoryModel = CategoryModel(
+                        categoryId = item.id,
+                        name = item.name,
+                        description = item.description,
+                        imageUrl = item.imageUrl,
+                        disableImageUrl = item.disableImageUrl,
+                        isNew = item.isNew,
+                        isSelected = isSelected
+                    )
+                    CategoryChip(
+                        category = categoryModel,
+                        onClick = {
+                            localSelectedIds = if (isSelected) {
+                                localSelectedIds - item.id
+                            } else {
+                                if (localSelectedIds.size < 10) {
+                                    localSelectedIds + item.id
+                                } else {
+                                    localSelectedIds
+                                }
+                            }
+                        }
+                    )
+                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = stringResource(CommonR.string.category_meal),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W600,
-            fontFamily = PretendardFontFamily,
-            color = Gray100
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            mealCategories.forEach { category ->
-                CategoryChip(
-                    category = category,
-                    onClick = {
-                        val updatedCategory = category.copy(isSelected = !category.isSelected)
-                        onCategoryChange(updatedCategory)
-                    }
-                )
+            if (index < storeCategories.size - 1) {
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
 
@@ -521,9 +511,10 @@ fun CategoryEditBottomSheet(
                 .fillMaxWidth()
                 .height(48.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(if (selectCategoryList.isEmpty()) Gray30 else Pink)
-                .clickable(enabled = selectCategoryList.isNotEmpty()) {
-                    if (selectCategoryList.isNotEmpty()) {
+                .background(if (localSelectedIds.isEmpty()) Gray30 else Pink)
+                .clickable(enabled = localSelectedIds.isNotEmpty()) {
+                    if (localSelectedIds.isNotEmpty()) {
+                        onConfirm(localSelectedIds.toList())
                         onDismiss()
                     }
                 },

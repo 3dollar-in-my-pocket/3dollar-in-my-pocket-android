@@ -13,6 +13,7 @@ import com.zion830.threedollars.databinding.ItemStoreDetailMenuMoreBinding
 import com.zion830.threedollars.databinding.ItemUserStoreMenuBinding
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
+import com.threedollar.common.R as CommonR
 
 class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
     ListAdapter<UserStoreDetailItem, RecyclerView.ViewHolder>(BaseDiffUtilCallback()) {
@@ -85,7 +86,7 @@ class UserStoreMenuAdapter(private val clickListener: () -> Unit) :
                 binding.categoryTextView.isVisible = false
             }
             binding.menuNameTextView.text = if (item.name.isNullOrEmpty()) "-" else item.name
-            binding.menuPriceTextView.text = if (item.price.isNullOrEmpty()) "-" else item.price
+            binding.menuPriceTextView.text = if (item.description.isEmpty()) "-" else item.description
         }
     }
 }

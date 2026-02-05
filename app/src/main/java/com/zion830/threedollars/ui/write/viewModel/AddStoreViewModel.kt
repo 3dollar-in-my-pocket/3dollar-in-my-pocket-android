@@ -16,9 +16,11 @@ import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.model.v2.response.store.toStoreCategories
 import com.zion830.threedollars.ui.dialog.NearStoreInfo
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.TimeUtils
+import kotlinx.coroutines.flow.collect
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -35,7 +37,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val fusedLocationProviderClient: FusedLocationProviderClient
+    private val fusedLocationProviderClient: FusedLocationProviderClient,
+    private val storeDataSource: StoreDataSource
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(AddStoreContract.State())
@@ -73,6 +76,7 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.SetAddress -> setAddress(intent.address)
             is AddStoreContract.Intent.UpdateLocation -> updateLocation(intent.location)
             is AddStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
+            is AddStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is AddStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
             is AddStoreContract.Intent.RemoveAllCategories -> removeAllCategories()
             is AddStoreContract.Intent.SetSelectedCategoryId -> setSelectedCategoryId(intent.categoryId)
@@ -93,11 +97,15 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun loadAvailableCategories() {
-        _state.update {
-            it.copy(
-                availableSnackCategories = LegacySharedPrefUtils.getCategories(),
-                availableMealCategories = LegacySharedPrefUtils.getTruckCategories()
-            )
+        viewModelScope.launch(coroutineExceptionHandler) {
+            storeDataSource.getCategories().collect { response ->
+                if (response.isSuccessful) {
+                    val categoriesList = response.body()?.data ?: emptyList()
+                    _state.update {
+                        it.copy(storeCategories = categoriesList.toStoreCategories())
+                    }
+                }
+            }
         }
     }
 
@@ -162,6 +170,65 @@ class AddStoreViewModel @Inject constructor(
                 } else {
                     newList = list
                 }
+            }
+
+            currentState.copy(
+                selectCategoryList = newList,
+                selectedCategoryId = newSelectedCategoryId
+            )
+        }
+    }
+
+
+    private fun updateSelectedCategories(categoryIds: List<String>) {
+        _state.update { currentState ->
+            val existingList = currentState.selectCategoryList
+            val existingIds = existingList.map { it.menuType.categoryId }.toSet()
+            val newIds = categoryIds.toSet()
+
+            existingList.filter { it.menuType.categoryId !in newIds }.forEach { removed ->
+                removed.menuDetail?.let { menuList ->
+                    if (menuList.isNotEmpty()) {
+                        _removedCategoriesData[removed.menuType.categoryId] = menuList
+                    }
+                }
+            }
+
+            val allCategoryItems = currentState.storeCategories.flatMap { it.items }
+
+            val newList = categoryIds.mapNotNull { categoryId ->
+                val existing = existingList.find { it.menuType.categoryId == categoryId }
+                if (existing != null) {
+                    existing
+                } else {
+                    val item = allCategoryItems.find { it.id == categoryId }
+                    item?.let {
+                        val categoryModel = CategoryModel(
+                            categoryId = it.id,
+                            name = it.name,
+                            description = it.description,
+                            imageUrl = it.imageUrl,
+                            disableImageUrl = it.disableImageUrl,
+                            isNew = it.isNew
+                        )
+                        val savedMenus = _removedCategoriesData[categoryId]
+                        val menuDetail = savedMenus ?: listOf(
+                            UserStoreMenuModel(
+                                category = categoryModel,
+                                menuId = 0,
+                                name = "",
+                                price = ""
+                            )
+                        )
+                        SelectCategoryModel(menuType = categoryModel, menuDetail = menuDetail)
+                    }
+                }
+            }
+
+            val newSelectedCategoryId = when {
+                newList.isEmpty() -> null
+                newList.any { it.menuType.categoryId == currentState.selectedCategoryId } -> currentState.selectedCategoryId
+                else -> newList.firstOrNull()?.menuType?.categoryId
             }
 
             currentState.copy(

@@ -13,8 +13,10 @@ import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.MenuModelRequest
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
+import com.zion830.threedollars.datasource.StoreDataSource
+import com.zion830.threedollars.datasource.model.v2.response.store.toStoreCategories
 import com.zion830.threedollars.utils.TimeUtils
+import kotlinx.coroutines.flow.collect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditStoreViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val storeDataSource: StoreDataSource
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(EditStoreContract.State())
@@ -43,11 +46,15 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun loadAvailableCategories() {
-        _state.update {
-            it.copy(
-                availableSnackCategories = LegacySharedPrefUtils.getCategories(),
-                availableMealCategories = LegacySharedPrefUtils.getTruckCategories()
-            )
+        viewModelScope.launch(coroutineExceptionHandler) {
+            storeDataSource.getCategories().collect { response ->
+                if (response.isSuccessful) {
+                    val categoriesList = response.body()?.data ?: emptyList()
+                    _state.update {
+                        it.copy(storeCategories = categoriesList.toStoreCategories())
+                    }
+                }
+            }
         }
     }
 
@@ -61,6 +68,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
+            is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
             is EditStoreContract.Intent.RemoveAllCategories -> removeAllCategories()
             is EditStoreContract.Intent.SubmitEdit -> submitEdit(intent.request)
@@ -144,7 +152,7 @@ class EditStoreViewModel @Inject constructor(
                 address = store.address.fullAddress,
                 selectCategoryList = selectCategoryModelList,
                 selectedPaymentMethods = store.paymentMethods.toSet(),
-                selectedDays = store.appearanceDays.toSet(),
+                selectedDays = store.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = openingHours,
                 isLoading = false,
                 isInitialized = true,
@@ -154,7 +162,7 @@ class EditStoreViewModel @Inject constructor(
                     location = location,
                     address = store.address.fullAddress,
                     paymentMethods = store.paymentMethods.toSet(),
-                    appearanceDays = store.appearanceDays.toSet(),
+                    appearanceDays = store.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                     openingHours = openingHours,
                     categories = selectCategoryModelList
                 )
@@ -172,7 +180,7 @@ class EditStoreViewModel @Inject constructor(
                 address = intent.address,
                 selectCategoryList = intent.categories,
                 selectedPaymentMethods = intent.paymentMethods,
-                selectedDays = intent.appearanceDays,
+                selectedDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = intent.openingHours,
                 isInitialized = true,
                 originalStoreData = EditStoreContract.OriginalStoreData(
@@ -181,7 +189,7 @@ class EditStoreViewModel @Inject constructor(
                     location = intent.location,
                     address = intent.address,
                     paymentMethods = intent.paymentMethods,
-                    appearanceDays = intent.appearanceDays,
+                    appearanceDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                     openingHours = intent.openingHours,
                     categories = intent.categories
                 )
@@ -247,6 +255,55 @@ class EditStoreViewModel @Inject constructor(
         }
     }
 
+
+    private fun updateSelectedCategories(categoryIds: List<String>) {
+        _state.update { currentState ->
+            val existingList = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
+            val allCategoryItems = currentState.storeCategories.flatMap { it.items }
+
+            val newList = categoryIds.mapNotNull { categoryId ->
+                val existing = existingList.find { it.menuType.categoryId == categoryId }
+                if (existing != null) {
+                    existing
+                } else {
+                    val item = allCategoryItems.find { it.id == categoryId }
+                    item?.let {
+                        val categoryModel = CategoryModel(
+                            categoryId = it.id,
+                            name = it.name,
+                            description = it.description,
+                            imageUrl = it.imageUrl,
+                            disableImageUrl = it.disableImageUrl,
+                            isNew = it.isNew
+                        )
+                        SelectCategoryModel(
+                            menuType = categoryModel,
+                            menuDetail = listOf(
+                                UserStoreMenuModel(
+                                    category = categoryModel,
+                                    menuId = 0,
+                                    name = "",
+                                    price = ""
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+
+            val newSelectedCategoryId = when {
+                newList.isEmpty() -> null
+                newList.any { it.menuType.categoryId == currentState.selectedCategoryId } -> currentState.selectedCategoryId
+                else -> newList.firstOrNull()?.menuType?.categoryId
+            }
+
+            currentState.copy(
+                tempSelectCategoryList = newList,
+                selectedCategoryId = newSelectedCategoryId
+            )
+        }
+    }
+
     private fun removeCategory(categoryModel: CategoryModel) {
         _state.update { currentState ->
             val list = currentState.tempSelectCategoryList ?: currentState.selectCategoryList
@@ -295,7 +352,7 @@ class EditStoreViewModel @Inject constructor(
                     count = menu.count,
                     price = menu.price?.toIntOrNull(),
                     category = categoryId,
-                    description = null
+                    description = menu.description.ifEmpty { null }
                 )
             } else null
         }
