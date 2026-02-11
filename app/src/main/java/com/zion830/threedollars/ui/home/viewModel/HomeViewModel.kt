@@ -42,11 +42,6 @@ class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
-    companion object {
-        private const val KEY_MAP_LATITUDE = "map_latitude"
-        private const val KEY_MAP_LONGITUDE = "map_longitude"
-    }
-
     override val screenName: ScreenName = ScreenName.HOME
 
     private val _userInfo: MutableStateFlow<UserModel> = MutableStateFlow(UserModel())
@@ -97,14 +92,11 @@ class HomeViewModel @Inject constructor(
 
     fun updateMapPosition(mapPosition: LatLng) {
         _uiState.update { it.copy(mapPosition = mapPosition) }
-        savedStateHandle[KEY_MAP_LATITUDE] = mapPosition.latitude
-        savedStateHandle[KEY_MAP_LONGITUDE] = mapPosition.longitude
+        savedStateHandle[KEY_MAP_POSITION] = mapPosition
     }
 
     fun getSavedMapPosition(): LatLng? {
-        val lat = savedStateHandle.get<Double>(KEY_MAP_LATITUDE)
-        val lng = savedStateHandle.get<Double>(KEY_MAP_LONGITUDE)
-        return if (lat != null && lng != null) LatLng(lat, lng) else null
+        return savedStateHandle.get<LatLng>(KEY_MAP_POSITION)
     }
 
     fun updateUserLocation(latLng: LatLng) {
@@ -457,5 +449,9 @@ class HomeViewModel @Inject constructor(
             objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
             additionalParams = mapOf(ParameterName.VALUE to value.toString())
         ))
+    }
+
+    companion object {
+        private const val KEY_MAP_POSITION = "map_position"
     }
 }
