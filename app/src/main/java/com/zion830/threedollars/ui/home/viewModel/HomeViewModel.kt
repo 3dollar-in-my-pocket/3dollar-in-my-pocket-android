@@ -137,7 +137,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun changeSelectCategory(selected: StoreCategoryItem.Food?) {
+    fun changeSelectCategory(selected: StoreCategoryItem?) {
         LogManager.sendEvent(ClickEvent(
             screen = ScreenName.CATEGORY_FILTER,
             objectType = LogObjectType.BUTTON,

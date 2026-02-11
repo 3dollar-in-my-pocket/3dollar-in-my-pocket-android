@@ -6,7 +6,7 @@ sealed interface SelectCategoryIntent {
     data object OnInit : SelectCategoryIntent
 
     data class OnCategoryClick(
-        val item: StoreCategoryItem
+        val item: SelectableCategoryItem
     ) : SelectCategoryIntent
 
     data class OnCategoryAdBannerClick(

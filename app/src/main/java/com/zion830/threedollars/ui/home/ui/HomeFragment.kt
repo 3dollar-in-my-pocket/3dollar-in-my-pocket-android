@@ -512,7 +512,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun collectSelectedCategory(category: StoreCategoryItem.Food?) {
+    private fun collectSelectedCategory(category: StoreCategoryItem?) {
         val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
         val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
         val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black

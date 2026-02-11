@@ -49,7 +49,7 @@ class SelectCategoryDialogFragment :
                     viewModel = viewModel,
                     homeViewModel = homeViewModel,
                     onSelected = {
-                        homeViewModel.changeSelectCategory(it)
+                        homeViewModel.changeSelectCategory(it?.category)
                         dismiss()
                     },
                     onDismiss = {

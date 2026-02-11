@@ -9,6 +9,21 @@ sealed interface SelectCategoryState {
 
     data class Success(
         val bannerAd: AdvertisementModelV2?,
-        val categories: ImmutableList<StoreCategory>
+        val categories: ImmutableList<SelectableCategory>
     ) : SelectCategoryState
+}
+
+data class SelectableCategory(
+    val classification: StoreCategoryClassification,
+    val items: ImmutableList<SelectableCategoryItem>,
+)
+
+sealed interface SelectableCategoryItem {
+    data class Default(
+        val category: StoreCategoryItem
+    ): SelectableCategoryItem
+
+    data class Ad(
+        val data: AdvertisementModelV2
+    ): SelectableCategoryItem
 }

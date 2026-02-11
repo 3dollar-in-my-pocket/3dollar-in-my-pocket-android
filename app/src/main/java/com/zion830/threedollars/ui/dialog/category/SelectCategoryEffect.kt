@@ -6,8 +6,8 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 sealed interface SelectCategoryEffect {
     data object InitError : SelectCategoryEffect
 
-    data class ChangeFoodCategory(
-        val item: StoreCategoryItem.Food
+    data class ChangeDefaultCategory(
+        val item: SelectableCategoryItem.Default
     ) : SelectCategoryEffect
 
     data class HandleAd(

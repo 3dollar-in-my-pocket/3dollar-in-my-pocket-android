@@ -168,7 +168,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
             }
     }
 
-    private fun updateCategoryView(category: StoreCategoryItem.Food) {
+    private fun updateCategoryView(category: StoreCategoryItem) {
         val (text, textColor, background) = getCategoryViewAttributes(category)
         binding.allMenuTextView.apply {
             this.text = text
@@ -180,7 +180,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         }
     }
 
-    private fun getCategoryViewAttributes(category: StoreCategoryItem.Food): Triple<String, Int, Int> {
+    private fun getCategoryViewAttributes(category: StoreCategoryItem): Triple<String, Int, Int> {
         return if (category.id.isEmpty()) {
             Triple(
                 getString(CommonR.string.fragment_home_all_menu),

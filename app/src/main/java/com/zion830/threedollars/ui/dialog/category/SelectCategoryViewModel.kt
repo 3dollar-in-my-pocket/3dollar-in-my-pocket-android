@@ -15,7 +15,7 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.repository.HomeRepository
 import com.zion830.threedollars.const.ArgumentKey
 import com.zion830.threedollars.datasource.StoreDataSource
-import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesResponse
+import com.zion830.threedollars.datasource.model.v2.response.store.toStoreCategories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -43,7 +43,7 @@ class SelectCategoryViewModel @Inject constructor(
 
     private val location = savedStateHandle.get<LatLng>(ArgumentKey.LOCATION) ?: LatLng.INVALID
 
-    private val categories = MutableStateFlow<ImmutableList<StoreCategory>>(persistentListOf())
+    private val categories = MutableStateFlow<ImmutableList<SelectableCategory>>(persistentListOf())
     private val categoryBannerAd = MutableStateFlow<AdvertisementModelV2?>(null)
     private val categoryIconAd = MutableStateFlow<AdvertisementModelV2?>(null)
 
@@ -114,13 +114,13 @@ class SelectCategoryViewModel @Inject constructor(
         intent: SelectCategoryIntent.OnCategoryClick
     ) {
         when (intent.item) {
-            is StoreCategoryItem.Food -> {
+            is SelectableCategoryItem.Default -> {
                 launch {
-                    _effect.send(SelectCategoryEffect.ChangeFoodCategory(intent.item))
+                    _effect.send(SelectCategoryEffect.ChangeDefaultCategory(intent.item))
                 }
             }
 
-            is StoreCategoryItem.Ad -> {
+            is SelectableCategoryItem.Ad -> {
                 launch {
                     LogManager.sendEvent(ClickEvent(
                         screen = ScreenName.CATEGORY_FILTER,
@@ -154,7 +154,16 @@ class SelectCategoryViewModel @Inject constructor(
         storeDataSource.getCategories().collect {
             val ret = it.body()
             if (ret != null) {
-                categories.value = ret.toFoodCategories()
+                categories.value = ret.data.toStoreCategories()
+                    .map { storeCategory ->
+                        SelectableCategory(
+                            classification = storeCategory.classification,
+                            items = storeCategory.items.map { item ->
+                                SelectableCategoryItem.Default(item)
+                            }.toImmutableList()
+                        )
+                    }
+                    .toImmutableList()
             } else {
                 _effect.send(SelectCategoryEffect.InitError)
             }
@@ -181,33 +190,9 @@ class SelectCategoryViewModel @Inject constructor(
         }
     }
 
-    private fun CategoriesResponse.toFoodCategories(): ImmutableList<StoreCategory> = data.groupBy {
-        it.classification
-    }.mapValues { entry ->
-        StoreCategory(
-            classification = StoreCategoryClassification(
-                type = entry.key.type,
-                name = entry.key.description,
-                priority = entry.key.priority
-            ),
-            items = entry.value.map { value ->
-                StoreCategoryItem.Food(
-                    id = value.categoryId,
-                    name = value.name,
-                    description = value.description,
-                    imageUrl = value.imageUrl,
-                    disableImageUrl = value.disableImageUrl,
-                    isNew = value.isNew
-                )
-            }.toImmutableList()
-        )
-    }.values.sortedBy {
-        it.classification.priority
-    }.toImmutableList()
-
-    private fun ImmutableList<StoreCategory>.injectAd(
+    private fun ImmutableList<SelectableCategory>.injectAd(
         target: AdvertisementModelV2
-    ): ImmutableList<StoreCategory> {
+    ): ImmutableList<SelectableCategory> {
         val originList = this
 
         val first = originList.firstOrNull() ?: return this
@@ -222,7 +207,7 @@ class SelectCategoryViewModel @Inject constructor(
 
         val injected = buildList(first.items.size + 1) {
             addAll(first.items)
-            add(targetIndex, StoreCategoryItem.Ad(target))
+            add(targetIndex, SelectableCategoryItem.Ad(target))
         }
 
         return buildList(originList.size) {

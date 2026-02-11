@@ -65,8 +65,8 @@ import com.zion830.threedollars.ui.dialog.category.SelectCategoryEffect
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryIntent
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryState
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryViewModel
-import com.zion830.threedollars.ui.dialog.category.StoreCategory
-import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
+import com.zion830.threedollars.ui.dialog.category.SelectableCategory
+import com.zion830.threedollars.ui.dialog.category.SelectableCategoryItem
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -77,7 +77,7 @@ private const val CATEGORY_GRID_SIZE = 4
 fun CategoryListScreen(
     viewModel: SelectCategoryViewModel,
     homeViewModel: HomeViewModel,
-    onSelected: (StoreCategoryItem.Food?) -> Unit,
+    onSelected: (SelectableCategoryItem.Default?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -93,18 +93,18 @@ fun CategoryListScreen(
         viewModel.dispatch(SelectCategoryIntent.OnInit)
     }
 
-    FlowWithLifecycleEffect(viewModel.effect) {
-        when (it) {
+    FlowWithLifecycleEffect(viewModel.effect) { effect ->
+        when (effect) {
             is SelectCategoryEffect.InitError -> {
                 showError = true
             }
 
-            is SelectCategoryEffect.ChangeFoodCategory -> {
-                onSelected.invoke(it.item.takeIf { homeUiState.selectedCategory != it })
+            is SelectCategoryEffect.ChangeDefaultCategory -> {
+                onSelected.invoke(effect.item.takeIf { homeUiState.selectedCategory != it.category })
             }
 
             is SelectCategoryEffect.HandleAd -> {
-                context.routeAd(it.data)
+                context.routeAd(effect.data)
                 onDismiss.invoke()
             }
         }
@@ -114,7 +114,7 @@ fun CategoryListScreen(
         is SelectCategoryState.Success -> {
             CategoryList(
                 state = state,
-                selected = homeUiState.selectedCategory,
+                selected = homeUiState.selectedCategory?.let(SelectableCategoryItem::Default),
                 onDispatch = viewModel::dispatch
             )
         }
@@ -240,7 +240,7 @@ private fun CategoryBannerAd(
 @Composable
 private fun CategoryList(
     state: SelectCategoryState.Success,
-    selected: StoreCategoryItem?,
+    selected: SelectableCategoryItem?,
     onDispatch: (SelectCategoryIntent) -> Unit,
 ) {
     Column(
@@ -267,9 +267,9 @@ private fun CategoryList(
 
 @Composable
 private fun CategoryListItem(
-    item: StoreCategory,
-    selected: StoreCategoryItem?,
-    onSelected: (StoreCategoryItem) -> Unit
+    item: SelectableCategory,
+    selected: SelectableCategoryItem?,
+    onSelected: (SelectableCategoryItem) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -297,15 +297,15 @@ private fun CategoryListItem(
         ) {
             item.items.forEach {
                 when (it) {
-                    is StoreCategoryItem.Food -> {
-                        CategoryFoodGridItem(
+                    is SelectableCategoryItem.Default -> {
+                        CategoryDefaultGridItem(
                             item = it,
                             selected = it == selected,
                             onSelected = onSelected
                         )
                     }
 
-                    is StoreCategoryItem.Ad -> {
+                    is SelectableCategoryItem.Ad -> {
                         CategoryGridAdItem(
                             item = it,
                             onSelected = onSelected
@@ -319,10 +319,10 @@ private fun CategoryListItem(
 }
 
 @Composable
-private fun CategoryFoodGridItem(
-    item: StoreCategoryItem.Food,
+private fun CategoryDefaultGridItem(
+    item: SelectableCategoryItem.Default,
     selected: Boolean,
-    onSelected: (StoreCategoryItem) -> Unit
+    onSelected: (SelectableCategoryItem.Default) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -339,8 +339,8 @@ private fun CategoryFoodGridItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = item.imageUrl,
-                contentDescription = item.name,
+                model = item.category.imageUrl,
+                contentDescription = item.category.name,
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .then(
@@ -365,7 +365,7 @@ private fun CategoryFoodGridItem(
             )
 
             Text(
-                text = item.name,
+                text = item.category.name,
                 fontSize = dpToSp(12),
                 color = if (selected) {
                     Pink
@@ -387,10 +387,10 @@ private fun CategoryFoodGridItem(
                 )
             )
         }
-        if (item.isNew) {
+        if (item.category.isNew) {
             Image(
                 painter = painterResource(DesignSystemR.drawable.ic_new_badge),
-                contentDescription = item.name,
+                contentDescription = item.category.name,
                 modifier = Modifier
                     .width(32.dp)
                     .height(14.dp)
@@ -402,8 +402,8 @@ private fun CategoryFoodGridItem(
 
 @Composable
 private fun CategoryGridAdItem(
-    item: StoreCategoryItem.Ad,
-    onSelected: (StoreCategoryItem.Ad) -> Unit
+    item: SelectableCategoryItem.Ad,
+    onSelected: (SelectableCategoryItem.Ad) -> Unit
 ) {
     Box(
         modifier = Modifier
