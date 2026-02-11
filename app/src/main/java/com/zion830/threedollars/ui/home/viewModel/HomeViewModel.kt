@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
@@ -36,7 +37,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val savedStateHandle: SavedStateHandle
+) : BaseViewModel() {
+
+    companion object {
+        private const val KEY_MAP_LATITUDE = "map_latitude"
+        private const val KEY_MAP_LONGITUDE = "map_longitude"
+    }
 
     override val screenName: ScreenName = ScreenName.HOME
 
@@ -87,7 +96,15 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun updateMapPosition(mapPosition: LatLng) {
-        _uiState.update { it.copy(mapPosition = mapPosition)  }
+        _uiState.update { it.copy(mapPosition = mapPosition) }
+        savedStateHandle[KEY_MAP_LATITUDE] = mapPosition.latitude
+        savedStateHandle[KEY_MAP_LONGITUDE] = mapPosition.longitude
+    }
+
+    fun getSavedMapPosition(): LatLng? {
+        val lat = savedStateHandle.get<Double>(KEY_MAP_LATITUDE)
+        val lng = savedStateHandle.get<Double>(KEY_MAP_LONGITUDE)
+        return if (lat != null && lng != null) LatLng(lat, lng) else null
     }
 
     fun updateUserLocation(latLng: LatLng) {

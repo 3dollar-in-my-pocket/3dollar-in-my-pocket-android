@@ -434,7 +434,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun checkAndRequestLocationPermission() {
         when {
             isLocationAvailable() -> {
-                // 권한 있음: 현재 위치로
+                naverMapFragment.enableLocationTracking()
                 naverMapFragment.moveToCurrentLocation(false)
                 viewModel.fetchAroundStores()
             }
@@ -456,8 +456,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     
     private fun checkLocationPermissionForButton() {
         if (isLocationAvailable()) {
+            naverMapFragment.enableLocationTracking()
+            val mapCenter = naverMapFragment.getMapCenterLatLng()
+            val currentLocation = naverMapFragment.currentPosition.value
             naverMapFragment.moveToCurrentLocation(true)
-            binding.tvRetrySearch.isVisible = true
+            val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
+            if (distance > 100f) {
+                binding.tvRetrySearch.isVisible = true
+            }
         } else {
             showLocationPermissionDialog()
         }
@@ -501,6 +507,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
     
     private fun onLocationPermissionGranted() {
+        naverMapFragment.enableLocationTracking()
         naverMapFragment.moveToCurrentLocation(true)
         
         lifecycleScope.launch {
