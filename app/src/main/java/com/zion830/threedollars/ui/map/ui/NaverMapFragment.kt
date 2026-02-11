@@ -303,6 +303,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     if (it != null) {
                         currentPosition.value = LatLng(it.latitude, it.longitude)
                         currentPosition.value?.let { position ->
+                            naverMap?.locationOverlay?.isVisible = true
+                            naverMap?.locationOverlay?.position = position
                             if (showAnim) {
                                 moveCameraWithAnim(position)
                             } else {

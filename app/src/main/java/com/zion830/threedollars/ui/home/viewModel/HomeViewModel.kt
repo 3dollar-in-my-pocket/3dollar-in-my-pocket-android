@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
@@ -36,7 +37,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val savedStateHandle: SavedStateHandle
+) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.HOME
 
@@ -87,7 +91,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun updateMapPosition(mapPosition: LatLng) {
-        _uiState.update { it.copy(mapPosition = mapPosition)  }
+        _uiState.update { it.copy(mapPosition = mapPosition) }
+        savedStateHandle[KEY_MAP_POSITION] = mapPosition
+    }
+
+    fun getSavedMapPosition(): LatLng? {
+        return savedStateHandle.get<LatLng>(KEY_MAP_POSITION)
     }
 
     fun updateUserLocation(latLng: LatLng) {
@@ -440,5 +449,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
             additionalParams = mapOf(ParameterName.VALUE to value.toString())
         ))
+    }
+
+    companion object {
+        private const val KEY_MAP_POSITION = "map_position"
     }
 }
