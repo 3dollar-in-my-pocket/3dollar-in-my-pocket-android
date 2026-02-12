@@ -294,7 +294,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     }
 
     private fun showSelectCategoryDialog() {
-        SelectCategoryDialogFragment().show(parentFragmentManager, "")
+        SelectCategoryDialogFragment
+            .newInstance(
+                latLng = viewModel.uiState.value.userLocation
+            )
+            .show(parentFragmentManager, SelectCategoryDialogFragment.TAG)
     }
 
     private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {

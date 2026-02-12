@@ -374,8 +374,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun showSelectCategoryDialog() {
-        val dialog = SelectCategoryDialogFragment()
-        dialog.show(parentFragmentManager, "")
+        SelectCategoryDialogFragment
+            .newInstance(
+                latLng = viewModel.uiState.value.userLocation
+            )
+            .show(parentFragmentManager, SelectCategoryDialogFragment.TAG)
     }
 
     private fun onStoreClicked(adAndStoreItem: AdAndStoreItem) {

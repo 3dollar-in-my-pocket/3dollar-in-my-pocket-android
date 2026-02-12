@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.dialog.category.composable
 
+import android.content.Context
+import android.content.Intent
 import androidx.annotation.IntRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,13 +10,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.LocalTextStyle
@@ -30,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.ColorBlack
 import base.compose.ColorWhite
@@ -48,16 +55,19 @@ import base.compose.Pink
 import base.compose.Pink100
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
+import com.threedollar.common.compose.utils.toColor
+import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
+import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryEffect
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryIntent
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryState
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryViewModel
-import com.zion830.threedollars.ui.dialog.category.StoreCategory
-import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
+import com.zion830.threedollars.ui.dialog.category.SelectableCategory
+import com.zion830.threedollars.ui.dialog.category.SelectableCategoryItem
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
-import kotlinx.collections.immutable.ImmutableList
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -67,8 +77,11 @@ private const val CATEGORY_GRID_SIZE = 4
 fun CategoryListScreen(
     viewModel: SelectCategoryViewModel,
     homeViewModel: HomeViewModel,
-    onSelected: (StoreCategoryItem?) -> Unit
+    onSelected: (SelectableCategoryItem.Default?) -> Unit,
+    onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -80,10 +93,19 @@ fun CategoryListScreen(
         viewModel.dispatch(SelectCategoryIntent.OnInit)
     }
 
-    FlowWithLifecycleEffect(viewModel.effect) {
-        when (it) {
-            is SelectCategoryEffect.OnInitError -> {
+    FlowWithLifecycleEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is SelectCategoryEffect.InitError -> {
                 showError = true
+            }
+
+            is SelectCategoryEffect.ChangeDefaultCategory -> {
+                onSelected.invoke(effect.item.takeIf { homeUiState.selectedCategory != it.category })
+            }
+
+            is SelectCategoryEffect.HandleAd -> {
+                context.routeAd(effect.data)
+                onDismiss.invoke()
             }
         }
     }
@@ -91,13 +113,9 @@ fun CategoryListScreen(
     when (val state = state) {
         is SelectCategoryState.Success -> {
             CategoryList(
-                categories = state.categories,
-                selected = homeUiState.selectedCategory,
-                onSelected = { selected ->
-                    onSelected.invoke(
-                        selected.takeIf { homeUiState.selectedCategory != it }
-                    )
-                }
+                state = state,
+                selected = homeUiState.selectedCategory?.let(SelectableCategoryItem::Default),
+                onDispatch = viewModel::dispatch
             )
         }
 
@@ -168,10 +186,62 @@ fun CategoryListScreen(
 }
 
 @Composable
+private fun CategoryBannerAd(
+    ad: AdvertisementModelV2,
+    onPressed: (AdvertisementModelV2) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .background(ad.background.color.toColor(), RoundedCornerShape(12.dp))
+            .noRippleClickable {
+                onPressed.invoke(ad)
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp, start = 16.dp, bottom = 16.dp)
+                .weight(1f)
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = ad.title.content,
+                fontSize = 14.sp,
+                color = ad.title.fontColor.toColor(),
+                fontWeight = FontWeight.W700,
+                letterSpacing = 0.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = ad.subTitle.content,
+                fontSize = 12.sp,
+                color = ad.subTitle.fontColor.toColor(),
+                fontWeight = FontWeight.Normal,
+                letterSpacing = 0.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        AsyncImage(
+            modifier = Modifier.size(84.dp),
+            contentDescription = "광고 배너 이미지",
+            model = ad.image.url,
+            contentScale = ContentScale.Fit
+        )
+    }
+}
+
+@Composable
 private fun CategoryList(
-    categories: ImmutableList<StoreCategory>,
-    selected: StoreCategoryItem?,
-    onSelected: (StoreCategoryItem) -> Unit
+    state: SelectCategoryState.Success,
+    selected: SelectableCategoryItem?,
+    onDispatch: (SelectCategoryIntent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -181,17 +251,25 @@ private fun CategoryList(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        categories.forEach {
-            CategoryListItem(it, selected, onSelected)
+        state.bannerAd?.let {
+            CategoryBannerAd(it) { pressed ->
+                onDispatch.invoke(SelectCategoryIntent.OnCategoryAdBannerClick(pressed))
+            }
+            VerticalSpacer(4)
+        }
+        state.categories.forEach {
+            CategoryListItem(it, selected) { pressed ->
+                onDispatch.invoke(SelectCategoryIntent.OnCategoryClick(pressed))
+            }
         }
     }
 }
 
 @Composable
 private fun CategoryListItem(
-    item: StoreCategory,
-    selected: StoreCategoryItem?,
-    onSelected: (StoreCategoryItem) -> Unit
+    item: SelectableCategory,
+    selected: SelectableCategoryItem?,
+    onSelected: (SelectableCategoryItem) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -218,21 +296,33 @@ private fun CategoryListItem(
             verticalSpacing = 12.dp
         ) {
             item.items.forEach {
-                CategoryGridItem(
-                    item = it,
-                    selected = it == selected,
-                    onSelected = onSelected
-                )
+                when (it) {
+                    is SelectableCategoryItem.Default -> {
+                        CategoryDefaultGridItem(
+                            item = it,
+                            selected = it == selected,
+                            onSelected = onSelected
+                        )
+                    }
+
+                    is SelectableCategoryItem.Ad -> {
+                        CategoryGridAdItem(
+                            item = it,
+                            onSelected = onSelected
+                        )
+                    }
+                }
+
             }
         }
     }
 }
 
 @Composable
-private fun CategoryGridItem(
-    item: StoreCategoryItem,
+private fun CategoryDefaultGridItem(
+    item: SelectableCategoryItem.Default,
     selected: Boolean,
-    onSelected: (StoreCategoryItem) -> Unit
+    onSelected: (SelectableCategoryItem.Default) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -249,8 +339,8 @@ private fun CategoryGridItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = item.imageUrl,
-                contentDescription = item.name,
+                model = item.category.imageUrl,
+                contentDescription = item.category.name,
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .then(
@@ -275,7 +365,7 @@ private fun CategoryGridItem(
             )
 
             Text(
-                text = item.name,
+                text = item.category.name,
                 fontSize = dpToSp(12),
                 color = if (selected) {
                     Pink
@@ -297,14 +387,61 @@ private fun CategoryGridItem(
                 )
             )
         }
-        if (item.isNew) {
+        if (item.category.isNew) {
             Image(
                 painter = painterResource(DesignSystemR.drawable.ic_new_badge),
-                contentDescription = item.name,
+                contentDescription = item.category.name,
                 modifier = Modifier
                     .width(32.dp)
                     .height(14.dp)
                     .align(Alignment.TopStart)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CategoryGridAdItem(
+    item: SelectableCategoryItem.Ad,
+    onSelected: (SelectableCategoryItem.Ad) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable { onSelected.invoke(item) },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = item.data.image.url,
+                contentDescription = item.data.title.content,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                contentScale = ContentScale.Fit
+            )
+
+            Text(
+                text = item.data.title.content,
+                fontSize = dpToSp(12),
+                color = Gray70,
+                fontWeight = FontWeight.W500,
+                lineHeight = dpToSp(18),
+                letterSpacing = 0.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                style = LocalTextStyle.current.copy(
+                    lineBreak = LineBreak.Heading
+                )
             )
         }
     }
@@ -374,6 +511,22 @@ private fun CategoryGridLayout(
 
                 y += rowHeight + vSpacingPx
             }
+        }
+    }
+}
+
+private fun Context.routeAd(data: AdvertisementModelV2) {
+    when (data.link.type) {
+        "APP_SCHEME" -> {
+            startActivity(
+                Intent(this, DynamicLinkActivity::class.java).apply {
+                    putExtra("link", data.link.url)
+                },
+            )
+        }
+
+        else -> {
+            startActivity(Intent(Intent.ACTION_VIEW, data.link.url.toUri()))
         }
     }
 }
