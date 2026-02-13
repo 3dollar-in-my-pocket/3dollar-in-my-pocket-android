@@ -196,10 +196,7 @@ class SelectCategoryViewModel @Inject constructor(
         val originList = this
 
         val first = originList.firstOrNull() ?: return this
-
-        val targetIndex = target
-            .metadata
-            .exposureIndex.takeIf { first.items.lastIndex >= it } ?: first.items.lastIndex
+        val targetIndex = target.metadata.exposureIndex
 
         if (targetIndex < 0) {
             return this
@@ -207,7 +204,12 @@ class SelectCategoryViewModel @Inject constructor(
 
         val injected = buildList(first.items.size + 1) {
             addAll(first.items)
-            add(targetIndex, SelectableCategoryItem.Ad(target))
+
+            if (targetIndex > lastIndex) {
+                add(SelectableCategoryItem.Ad(target))
+            } else {
+                add(targetIndex, SelectableCategoryItem.Ad(target))
+            }
         }
 
         return buildList(originList.size) {
