@@ -22,7 +22,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
 
         applicationId = "com.zion830.threedollars"
-        versionCode = 117
+        versionCode = 119
         versionName = project.findProperty("version_name") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

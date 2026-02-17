@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
@@ -36,7 +37,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : BaseViewModel() {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val savedStateHandle: SavedStateHandle
+) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.HOME
 
@@ -87,7 +91,12 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
     fun updateMapPosition(mapPosition: LatLng) {
-        _uiState.update { it.copy(mapPosition = mapPosition)  }
+        _uiState.update { it.copy(mapPosition = mapPosition) }
+        savedStateHandle[KEY_MAP_POSITION] = mapPosition
+    }
+
+    fun getSavedMapPosition(): LatLng? {
+        return savedStateHandle.get<LatLng>(KEY_MAP_POSITION)
     }
 
     fun updateUserLocation(latLng: LatLng) {
@@ -142,11 +151,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             screen = ScreenName.CATEGORY_FILTER,
             objectType = LogObjectType.BUTTON,
             objectId = LogObjectId.CATEGORY,
-            additionalParams = if (selected?.id != null) {
-                mapOf(ParameterName.CATEGORY_ID to selected.id)
-            } else {
-                emptyMap()
-            }
+            additionalParams = selected?.id?.let {
+                mapOf(ParameterName.CATEGORY_ID to it)
+            } ?: emptyMap()
         ))
 
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -168,6 +175,30 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             ) }
             fetchAroundStores()
         }
+    }
+
+    fun updateFilterCondition(
+        type: FilterConditionsTypeModel
+    ) {
+        val current = uiState.value.filterConditionsType
+        val contains = current.contains(type)
+
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to contains.toString())
+            )
+        )
+
+        updateHomeFilterEvent(
+            filterConditionsType = if (contains) {
+                current.minus(type)
+            } else {
+                current.plus(type)
+            }
+        )
     }
 
     fun getAdvertisement(latLng: LatLng) {
@@ -318,17 +349,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         )
     }
 
-    fun sendClickRecentActivityFilter(value: Boolean) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
-                additionalParams = mapOf(ParameterName.VALUE to value.toString())
-            )
-        )
-    }
-
     fun sendClickVisitButtonLog() {
         LogManager.sendEvent(
             ClickEvent(
@@ -354,25 +374,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             objectType = LogObjectType.MARKER,
             objectId = LogObjectId.ADVERTISEMENT,
             additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId.toString())
-        ))
-    }
-
-    fun sendClickCategoryBannerAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BANNER,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
-        ))
-    }
-
-    // TODO - https://3dollarinmypocket.atlassian.net/browse/TH-888
-    fun sendClickCategoryMenuAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BUTTON,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
         ))
     }
 
@@ -440,5 +441,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
             additionalParams = mapOf(ParameterName.VALUE to value.toString())
         ))
+    }
+
+    companion object {
+        private const val KEY_MAP_POSITION = "map_position"
     }
 }

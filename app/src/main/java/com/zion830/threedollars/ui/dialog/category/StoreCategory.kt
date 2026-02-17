@@ -5,12 +5,6 @@ data class StoreCategory(
     val items: List<StoreCategoryItem>,
 )
 
-data class StoreCategoryClassification(
-    val type: String,
-    val name: String,
-    val priority: Int
-)
-
 data class StoreCategoryItem(
     val id: String,
     val name: String,
@@ -18,4 +12,10 @@ data class StoreCategoryItem(
     val imageUrl: String,
     val disableImageUrl: String,
     val isNew: Boolean
+)
+
+data class StoreCategoryClassification(
+    val type: String,
+    val name: String,
+    val priority: Int
 )
