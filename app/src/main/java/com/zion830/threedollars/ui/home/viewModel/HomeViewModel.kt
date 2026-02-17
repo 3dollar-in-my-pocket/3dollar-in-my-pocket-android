@@ -151,11 +151,9 @@ class HomeViewModel @Inject constructor(
             screen = ScreenName.CATEGORY_FILTER,
             objectType = LogObjectType.BUTTON,
             objectId = LogObjectId.CATEGORY,
-            additionalParams = if (selected?.id != null) {
-                mapOf(ParameterName.CATEGORY_ID to selected.id)
-            } else {
-                emptyMap()
-            }
+            additionalParams = selected?.id?.let {
+                mapOf(ParameterName.CATEGORY_ID to it)
+            } ?: emptyMap()
         ))
 
         viewModelScope.launch(coroutineExceptionHandler) {
@@ -177,6 +175,30 @@ class HomeViewModel @Inject constructor(
             ) }
             fetchAroundStores()
         }
+    }
+
+    fun updateFilterCondition(
+        type: FilterConditionsTypeModel
+    ) {
+        val current = uiState.value.filterConditionsType
+        val contains = current.contains(type)
+
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+                additionalParams = mapOf(ParameterName.VALUE to contains.toString())
+            )
+        )
+
+        updateHomeFilterEvent(
+            filterConditionsType = if (contains) {
+                current.minus(type)
+            } else {
+                current.plus(type)
+            }
+        )
     }
 
     fun getAdvertisement(latLng: LatLng) {
@@ -327,17 +349,6 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun sendClickRecentActivityFilter(value: Boolean) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
-                additionalParams = mapOf(ParameterName.VALUE to value.toString())
-            )
-        )
-    }
-
     fun sendClickVisitButtonLog() {
         LogManager.sendEvent(
             ClickEvent(
@@ -363,25 +374,6 @@ class HomeViewModel @Inject constructor(
             objectType = LogObjectType.MARKER,
             objectId = LogObjectId.ADVERTISEMENT,
             additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId.toString())
-        ))
-    }
-
-    fun sendClickCategoryBannerAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BANNER,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
-        ))
-    }
-
-    // TODO - https://3dollarinmypocket.atlassian.net/browse/TH-888
-    fun sendClickCategoryMenuAd(advertisementId: String) {
-        LogManager.sendEvent(ClickEvent(
-            screen = ScreenName.CATEGORY_FILTER,
-            objectType = LogObjectType.BUTTON,
-            objectId = LogObjectId.ADVERTISEMENT,
-            additionalParams = mapOf(ParameterName.ADVERTISEMENT_ID to advertisementId)
         ))
     }
 
