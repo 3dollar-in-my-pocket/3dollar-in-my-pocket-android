@@ -1,21 +1,21 @@
 package com.threedollar.network.sdui.model.section
 
-import com.threedollar.network.sdui.model.component.SDCard
-import com.threedollar.network.sdui.model.component.SDHeader
+import com.threedollar.network.sdui.model.component.SDCardModel
+import com.threedollar.network.sdui.model.component.SDHeaderModel
 
 enum class SDSectionType {
     RELATED_STORES
 }
 
-interface SDSection {
+interface SDSectionModel {
     val type: SDSectionType
 }
 
-data class RelatedStoresSection(
-    val header: SDHeader?,
-    val cards: List<SDCard>,
+data class RelatedStoresSectionModel(
+    val header: SDHeaderModel?,
+    val cards: List<SDCardModel>,
     val reference: List<Reference>?
-) : SDSection {
+) : SDSectionModel {
     override val type: SDSectionType = SDSectionType.RELATED_STORES
 
     data class Reference(

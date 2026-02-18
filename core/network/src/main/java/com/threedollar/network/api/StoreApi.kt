@@ -1,7 +1,7 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.sdui.model.screen.SDScreen
+import com.threedollar.network.sdui.model.screen.SDScreenModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,5 +13,5 @@ interface StoreApi {
         @Path("storeId") storeId: Int,
         @Header("X-Device-Latitude") lat: Double,
         @Header("X-Device-Longitude") lng: Double,
-    ): Response<BaseResponse<SDScreen>>
+    ): Response<BaseResponse<SDScreenModel>>
 }

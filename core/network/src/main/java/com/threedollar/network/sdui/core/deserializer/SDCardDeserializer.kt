@@ -4,18 +4,18 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import com.threedollar.network.sdui.model.component.ImagePreviewCard
-import com.threedollar.network.sdui.model.component.SDCard
+import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.network.sdui.model.component.SDCardModel
 import com.threedollar.network.sdui.model.component.SDCardType
 import java.lang.reflect.Type
 
-class SDCardDeserializer : JsonDeserializer<SDCard> {
+class SDCardDeserializer : JsonDeserializer<SDCardModel> {
 
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): SDCard {
+    ): SDCardModel {
         val jsonObject = json.asJsonObject
 
         val type = jsonObject["type"]
@@ -25,7 +25,7 @@ class SDCardDeserializer : JsonDeserializer<SDCard> {
 
         return when (type) {
             SDCardType.IMAGE_PREVIEW_CARD -> {
-                context.deserialize(jsonObject, ImagePreviewCard::class.java)
+                context.deserialize(jsonObject, ImagePreviewCardModel::class.java)
             }
         }
     }

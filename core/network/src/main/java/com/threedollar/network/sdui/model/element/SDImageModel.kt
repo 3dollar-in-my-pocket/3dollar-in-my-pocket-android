@@ -1,6 +1,6 @@
 package com.threedollar.network.sdui.model.element
 
-data class SDImage(
+data class SDImageModel(
     val url: String?,
     val style: Style?
 ) {

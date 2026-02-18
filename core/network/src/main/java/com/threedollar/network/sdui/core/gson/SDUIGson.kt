@@ -4,8 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.threedollar.network.sdui.core.deserializer.SDCardDeserializer
 import com.threedollar.network.sdui.core.deserializer.SDSectionDeserializer
-import com.threedollar.network.sdui.model.component.SDCard
-import com.threedollar.network.sdui.model.section.SDSection
+import com.threedollar.network.sdui.model.component.SDCardModel
+import com.threedollar.network.sdui.model.section.SDSectionModel
 
 object SDUIGson {
     fun provideGson(): Gson = GsonBuilder()
@@ -13,6 +13,6 @@ object SDUIGson {
         .create()
 
     fun GsonBuilder.registerSDUI(): GsonBuilder = this
-        .registerTypeAdapter(SDSection::class.java, SDSectionDeserializer())
-        .registerTypeAdapter(SDCard::class.java, SDCardDeserializer())
+        .registerTypeAdapter(SDSectionModel::class.java, SDSectionDeserializer())
+        .registerTypeAdapter(SDCardModel::class.java, SDCardDeserializer())
 }

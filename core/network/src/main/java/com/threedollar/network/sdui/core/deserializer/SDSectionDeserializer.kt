@@ -4,18 +4,18 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import com.threedollar.network.sdui.model.section.RelatedStoresSection
-import com.threedollar.network.sdui.model.section.SDSection
+import com.threedollar.network.sdui.model.section.RelatedStoresSectionModel
+import com.threedollar.network.sdui.model.section.SDSectionModel
 import com.threedollar.network.sdui.model.section.SDSectionType
 import java.lang.reflect.Type
 
-class SDSectionDeserializer : JsonDeserializer<SDSection> {
+class SDSectionDeserializer : JsonDeserializer<SDSectionModel> {
 
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): SDSection {
+    ): SDSectionModel {
         val jsonObject = json.asJsonObject
 
         val type = jsonObject["type"]
@@ -25,7 +25,7 @@ class SDSectionDeserializer : JsonDeserializer<SDSection> {
 
         return when (type) {
             SDSectionType.RELATED_STORES ->
-                context.deserialize(jsonObject, RelatedStoresSection::class.java)
+                context.deserialize(jsonObject, RelatedStoresSectionModel::class.java)
         }
     }
 }
