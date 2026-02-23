@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.storeDetail.boss.ui
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +33,16 @@ class BossReviewDetailActivity :
     BaseActivity<ActivityBossReviewDetailBinding, BossReviewDetailViewModel>({ ActivityBossReviewDetailBinding.inflate(it) }) {
     override val viewModel: BossReviewDetailViewModel by viewModels()
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
+    private val reviewWriteLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            lifecycleScope.launch {
+                kotlinx.coroutines.delay(500L)
+                viewModel.getReviewList(storeId, ReviewSortType.LATEST)
+            }
+        }
+    }
     private val foodTruckReviewAdapter: FoodTruckReviewAdapter by lazy {
         FoodTruckReviewAdapter(
             onReviewImageClickListener = object : OnReviewImageClickListener {
@@ -145,7 +156,7 @@ class BossReviewDetailActivity :
                                 showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 val intent = BossReviewWriteActivity.getIntent(this@BossReviewDetailActivity, storeId.toString())
-                                startActivity(intent)
+                                reviewWriteLauncher.launch(intent)
                             }
                             // Reset the state after handling
                             viewModel.resetFeedbackExistsState()

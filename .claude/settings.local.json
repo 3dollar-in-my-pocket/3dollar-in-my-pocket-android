@@ -64,7 +64,10 @@
       "mcp__figma__get_design_context",
       "mcp__figma__get_screenshot",
       "mcp__serena__insert_before_symbol",
-      "Bash(xargs cat:*)"
+      "Bash(xargs cat:*)",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

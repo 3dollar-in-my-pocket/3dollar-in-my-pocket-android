@@ -76,8 +76,6 @@ class BossReviewWriteActivity :
         storeId = intent.getStringExtra(KEY_STORE_ID).toString()
 
         binding.btnBack.onSingleClick {
-            val intent = BossStoreDetailActivity.getIntent(this, storeId)
-            startActivity(intent)
             finish()
         }
 
@@ -128,6 +126,7 @@ class BossReviewWriteActivity :
                         hideLoadingDialog()
                         if (it?.ok == true) {
                             showCustomBlackToast(getString(CommonR.string.review_toast))
+                            setResult(RESULT_OK)
                             finish()
                         }
                     }
