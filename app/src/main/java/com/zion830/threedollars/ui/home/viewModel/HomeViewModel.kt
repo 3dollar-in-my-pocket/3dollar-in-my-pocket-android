@@ -166,12 +166,14 @@ class HomeViewModel @Inject constructor(
         homeSortType: HomeSortType? = null,
         homeStoreType: HomeStoreType? = null,
         filterConditionsType: List<FilterConditionsTypeModel>? = null,
+        filterCertifiedStores: Boolean? = null,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _uiState.update { it.copy(
                 homeStoreType = homeStoreType ?: it.homeStoreType,
                 homeSortType = homeSortType ?: it.homeSortType,
-                filterConditionsType = filterConditionsType ?: it.filterConditionsType
+                filterConditionsType = filterConditionsType ?: it.filterConditionsType,
+                filterCertifiedStores = filterCertifiedStores ?: it.filterCertifiedStores
             ) }
             fetchAroundStores()
         }
