@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
@@ -99,16 +100,18 @@ class ReviewPhotoDialog : DialogFragment() {
     }
 
     private fun setupImages() {
+        if (currentPosition > 0) {
+            binding.slider.visibility = View.INVISIBLE
+        }
         adapter.submitList(images) {
-            // 이미지 로드 완료 후 시작 위치로 스크롤
-            if (!isInitScroll && currentPosition > 0 && currentPosition < images.size) {
-                binding.slider.postDelayed({
-                    isInitScroll = true
-                    binding.slider.scrollToPosition(currentPosition)
-                }, 200)
-            } else {
-                isInitScroll = true
+            if (images.isNotEmpty()) {
+                currentPosition = currentPosition.coerceIn(0, images.lastIndex)
+                (binding.slider.layoutManager as? LinearLayoutManager)
+                    ?.scrollToPositionWithOffset(currentPosition, 0)
+                    ?: binding.slider.scrollToPosition(currentPosition)
             }
+            isInitScroll = true
+            binding.slider.visibility = View.VISIBLE
         }
     }
 

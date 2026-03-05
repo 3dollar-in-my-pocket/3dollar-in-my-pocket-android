@@ -28,6 +28,7 @@ import com.threedollar.domain.home.data.store.BossStoreDetailModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.FeedbackType
 import com.threedollar.domain.home.data.store.ImageModel
+import com.threedollar.domain.home.data.store.MenuModel
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.StatusType
 import com.naver.maps.geometry.LatLng
@@ -86,9 +87,14 @@ class BossStoreDetailActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val foodTruckMenuAdapter: BossMenuRecyclerAdapter by lazy {
-        BossMenuRecyclerAdapter {
-            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
-        }
+        BossMenuRecyclerAdapter(
+            onMoreClick = {
+                foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
+            },
+            onMenuImageClick = { menu, position ->
+                openMenuImageDialog(menu, position)
+            },
+        )
     }
     private val appearanceDayAdapter: AppearanceDayRecyclerAdapter by lazy {
         AppearanceDayRecyclerAdapter()
@@ -335,6 +341,33 @@ class BossStoreDetailActivity :
     private fun showDirectionBottomDialog() {
         val store = viewModel.bossStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
+    }
+
+    private fun openMenuImageDialog(clickedMenu: MenuModel, clickedMenuPosition: Int) {
+        if (clickedMenu.imageUrl.isNullOrBlank()) return
+
+        val menus = viewModel.bossStoreDetailModel.value.store.menus
+        if (clickedMenuPosition !in menus.indices) return
+
+        val menuImages = menus
+            .filter { !it.imageUrl.isNullOrBlank() }
+            .map {
+                ImageModel(
+                    imageUrl = it.imageUrl.orEmpty(),
+                    width = 0,
+                    height = 0,
+                    ratio = 0,
+                )
+            }
+        if (menuImages.isEmpty()) return
+
+        val clickedImageIndex = menus
+            .subList(0, clickedMenuPosition + 1)
+            .count { !it.imageUrl.isNullOrBlank() } - 1
+        if (clickedImageIndex !in menuImages.indices) return
+
+        ReviewPhotoDialog.getInstance(menuImages, clickedImageIndex)
+            .show(supportFragmentManager, "ReviewPhotoDialog")
     }
 
     private fun initFlows() {
