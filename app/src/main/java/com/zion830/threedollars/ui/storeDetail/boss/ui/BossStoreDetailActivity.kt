@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -54,6 +55,7 @@ import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
@@ -76,6 +78,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.ext.textPartTypeface
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -186,6 +189,7 @@ class BossStoreDetailActivity :
         initFlows()
         initAdapter()
         initAdmob()
+        initMockVisitHistory()
     }
 
     private fun initAdmob() {
@@ -301,6 +305,9 @@ class BossStoreDetailActivity :
             viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
+        binding.contributorSummaryLayout.onSingleClick {
+            startActivity(StoreContributorActivity.getIntent(this))
+        }
 
         binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
@@ -318,6 +325,46 @@ class BossStoreDetailActivity :
             viewModel.sendClickZoomMap()
             moveFullScreenMap()
         }
+    }
+
+    private fun initMockVisitHistory() {
+        binding.smileTextView.text = getString(CommonR.string.visit_history_success, 13)
+        binding.smileTextView.textPartTypeface("13명", Typeface.BOLD)
+        binding.sadTextView.text = getString(CommonR.string.visit_history_fail, 13)
+        binding.sadTextView.textPartTypeface("13명", Typeface.BOLD)
+
+        val visitRows = listOf(
+            Triple(binding.visitHistoryRow1TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
+            Triple(binding.visitHistoryRow2TextView, DesignSystemR.drawable.circle_red_4dp, "마포구몽키스패너"),
+            Triple(binding.visitHistoryRow3TextView, DesignSystemR.drawable.circle_red_4dp, "마포구몽키스패너"),
+            Triple(binding.visitHistoryRow4TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
+            Triple(binding.visitHistoryRow5TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
+        )
+
+        visitRows.forEach { (textView, drawableRes, visitorName) ->
+            textView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawableRes, 0, 0, 0)
+            textView.text = getString(CommonR.string.store_contributor_visit_row, "23.02.03 16:43", visitorName)
+            textView.textPartTypeface(visitorName, Typeface.BOLD)
+        }
+        binding.visitExtraTextView.text = getString(CommonR.string.visit_extra, 10)
+    }
+
+    private fun bindContributorSummary(bossStoreDetailModel: BossStoreDetailModel) {
+        val contributorName = bossStoreDetailModel.lastContributor.name.ifBlank {
+            getString(CommonR.string.store_contributor_summary_default_name)
+        }
+        val uniqueContributorCount = bossStoreDetailModel.uniqueContributorCount.coerceAtLeast(1)
+        val additionalContributorCount = (uniqueContributorCount - 1).coerceAtLeast(0)
+        binding.contributorSummaryTextView.text = if (additionalContributorCount > 0) {
+            getString(
+                CommonR.string.store_contributor_summary_format,
+                contributorName,
+                additionalContributorCount,
+            )
+        } else {
+            getString(CommonR.string.store_contributor_summary_single_format, contributorName)
+        }
+        binding.contributorSummaryTextView.textPartTypeface("${contributorName}님", Typeface.BOLD)
     }
 
     private fun moveFullScreenMap() {
@@ -414,6 +461,7 @@ class BossStoreDetailActivity :
                             reviewRatingAvgTextView.text = getString(CommonR.string.score, bossStoreDetailModel.store.rating)
                         }
 
+                        bindContributorSummary(bossStoreDetailModel)
                         initAccount(bossStoreDetailModel)
                         renderVerifiedBanner(
                             isVerified = bossStoreDetailModel.tags.isVerifiedStore

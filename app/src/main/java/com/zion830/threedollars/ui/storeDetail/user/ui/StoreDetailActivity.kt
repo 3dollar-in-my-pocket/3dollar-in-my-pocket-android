@@ -60,6 +60,7 @@ import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.user.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.storeDetail.user.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
@@ -328,6 +329,9 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
+        binding.contributorSummaryLayout.onSingleClick {
+            startActivity(StoreContributorActivity.getIntent(this))
+        }
     }
 
     private fun initShared() {
@@ -556,6 +560,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
         binding.storeNameTextView.text = userStoreDetailModel.store.name
         binding.creatorTextView.text = getString(CommonR.string.creator, userStoreDetailModel.creator.name)
+        val contributorName = userStoreDetailModel.lastContributor.name.ifBlank {
+            userStoreDetailModel.creator.name.ifBlank {
+                getString(CommonR.string.store_contributor_summary_default_name)
+            }
+        }
+        val uniqueContributorCount = userStoreDetailModel.uniqueContributorCount.coerceAtLeast(1)
+        val additionalContributorCount = (uniqueContributorCount - 1).coerceAtLeast(0)
+        binding.contributorSummaryTextView.text = if (additionalContributorCount > 0) {
+            getString(
+                CommonR.string.store_contributor_summary_format,
+                contributorName,
+                additionalContributorCount,
+            )
+        } else {
+            getString(CommonR.string.store_contributor_summary_single_format, contributorName)
+        }
+        binding.contributorSummaryTextView.textPartTypeface("${contributorName}님", Typeface.BOLD)
         binding.distanceTextView.text = getDistanceText(userStoreDetailModel.distanceM)
         binding.reviewTextView.text = getString(CommonR.string.food_truck_review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()

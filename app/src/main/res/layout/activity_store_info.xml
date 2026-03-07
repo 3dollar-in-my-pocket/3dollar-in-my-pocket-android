@@ -145,6 +145,43 @@
                     tools:text="1km +" />
             </LinearLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contributorSummaryLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:paddingVertical="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/menuIconImageView"
+                app:layout_constraintTop_toBottomOf="@id/distanceReviewLinearLayout">
+
+                <TextView
+                    android:id="@+id/contributorSummaryTextView"
+                    style="@style/pretendard_medium.size_14dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textColor="@color/gray60"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/contributorSummaryArrowImageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="맛돌이님 외 1명이 가게를 완성했어요" />
+
+                <ImageView
+                    android:id="@+id/contributorSummaryArrowImageView"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/gray40" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/storeFunctionCardView"
                 android:layout_width="0dp"
@@ -156,7 +193,7 @@
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/distanceReviewLinearLayout"
+                app:layout_constraintTop_toBottomOf="@id/contributorSummaryLayout"
                 tools:ignore="UnusedAttribute">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
