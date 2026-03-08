@@ -306,7 +306,12 @@ class BossStoreDetailActivity :
             showDirectionBottomDialog()
         }
         binding.contributorSummaryLayout.onSingleClick {
-            startActivity(StoreContributorActivity.getIntent(this))
+            startActivity(
+                StoreContributorActivity.getIntent(
+                    context = this,
+                    storeId = storeId,
+                )
+            )
         }
 
         binding.favoriteButton.onSingleClick {

@@ -8,15 +8,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.BorderStroke
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,37 +23,65 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color as ComposeColor
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.AppTheme
 import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
-import com.threedollar.common.R as CommonR
+import com.threedollar.common.serverdriven.model.SDActionBarModel
+import com.threedollar.common.serverdriven.model.SDCardModel
+import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDScreenModel
+import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.serverdriven.model.SDTextModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
+import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
+import com.zion830.threedollars.core.ui.serverdriven.SDActionButton
+import com.zion830.threedollars.core.ui.serverdriven.SDCardRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDSectionRenderer
+import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiEffect
+import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiIntent
+import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiState
+import com.zion830.threedollars.ui.storeDetail.contributor.viewModel.StoreContributorViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
+private val Gray100 = androidx.compose.ui.graphics.Color(0xFF0F0F0F)
+private val Gray30 = androidx.compose.ui.graphics.Color(0xFFE4E4E4)
+private val Gray0 = androidx.compose.ui.graphics.Color(0xFFF7F7F7)
+
+@AndroidEntryPoint
 class StoreContributorActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var actionHandler: StoreContributorActionHandler
+
+    private val viewModel: StoreContributorViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        actionHandler.attach(this)
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.light(Color.WHITE, Color.BLACK),
@@ -64,75 +89,269 @@ class StoreContributorActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                StoreContributorScreen(
-                    contributors = contributorPreviewModels(),
+                StoreContributorRoute(
+                    viewModel = viewModel,
                     onClose = ::finish,
-                    onShareInfo = {},
+                    onAction = actionHandler::onAction,
                 )
             }
         }
     }
 
+    override fun onDestroy() {
+        actionHandler.detach()
+        super.onDestroy()
+    }
+
     companion object {
-        fun getIntent(context: Context): Intent = Intent(context, StoreContributorActivity::class.java)
+        const val EXTRA_STORE_ID = "extra_store_id"
+
+        fun getIntent(
+            context: Context,
+            storeId: String,
+        ): Intent = Intent(context, StoreContributorActivity::class.java).apply {
+            putExtra(EXTRA_STORE_ID, storeId)
+        }
     }
 }
 
-private data class ContributorUiModel(
-    val name: String,
-    val actions: List<String>,
-    val relativeTime: String,
-    val badgeStyle: ContributorBadgeStyle,
-)
+@Composable
+private fun StoreContributorRoute(
+    viewModel: StoreContributorViewModel,
+    onClose: () -> Unit,
+    onAction: (SDLinkModel) -> Unit,
+) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
-private enum class ContributorBadgeStyle {
-    Mint,
-    Coral,
+    LaunchedEffect(Unit) {
+        viewModel.dispatch(StoreContributorUiIntent.OnInit)
+    }
+
+    FlowWithLifecycleEffect(viewModel.effect) { effect ->
+        when (effect) {
+            StoreContributorUiEffect.Close -> onClose()
+            is StoreContributorUiEffect.ExecuteAction -> onAction(effect.action)
+        }
+    }
+
+    StoreContributorScreen(
+        state = state,
+        onClose = { viewModel.dispatch(StoreContributorUiIntent.OnCloseClick) },
+        onActionClick = { viewModel.dispatch(StoreContributorUiIntent.OnActionClick(it)) },
+        onLoadNextPage = { viewModel.dispatch(StoreContributorUiIntent.OnLoadNextPage) },
+    )
 }
 
 @Composable
 private fun StoreContributorScreen(
-    contributors: List<ContributorUiModel>,
+    state: StoreContributorUiState,
     onClose: () -> Unit,
-    onShareInfo: () -> Unit,
+    onActionClick: (SDLinkModel) -> Unit,
+    onLoadNextPage: () -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    if (state is StoreContributorUiState.Success) {
+        PagingTrigger(
+            listState = listState,
+            canLoadMore = state.canLoadMore,
+            isPaging = state.isPaging,
+            onLoadNextPage = onLoadNextPage,
+        )
+    }
+
+    val actionBar = (state as? StoreContributorUiState.Success)
+        ?.screen
+        ?.sections
+        ?.filterIsInstance<SDSectionModel.ActionBarSection>()
+        ?.firstOrNull()
+        ?.actionBar
+    val screenHeaderTitle = (state as? StoreContributorUiState.Success)
+        ?.screen
+        ?.sections
+        ?.filterIsInstance<SDSectionModel.HeaderSection>()
+        ?.firstOrNull { it.type.equals("SCREEN_HEADER", ignoreCase = true) }
+        ?.header
+        ?.title
+
     Scaffold(
         containerColor = Gray0,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            StoreContributorTopBar(onClose = onClose)
+            StoreContributorTopBar(
+                title = screenHeaderTitle,
+                onClose = onClose,
+            )
         },
         bottomBar = {
-            StoreContributorBottomBar(onShareInfo = onShareInfo)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(ColorWhite)
+                    .navigationBarsPadding(),
+            ) {
+                HorizontalDivider(color = Gray30)
+                actionBar?.let {
+                    BottomActionBar(
+                        actionBar = it,
+                        onActionClick = onActionClick,
+                    )
+                }
+            }
         },
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            item {
-                Text(
-                    text = stringResource(CommonR.string.store_contributor_section_title),
-                    color = Gray100,
-                    fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = dpToSp(24),
-                    lineHeight = dpToSp(32),
-                )
-            }
+        when (state) {
+            StoreContributorUiState.Loading -> LoadingContent(paddingValues)
+            is StoreContributorUiState.Error -> ErrorContent(state.message, paddingValues)
+            is StoreContributorUiState.Success -> SuccessContent(
+                screen = state.screen,
+                listState = listState,
+                isPaging = state.isPaging,
+            paddingValues = paddingValues,
+            )
+        }
+    }
+}
 
-            items(contributors) { contributor ->
-                ContributorCard(contributor = contributor)
+@Composable
+private fun BottomActionBar(
+    actionBar: SDActionBarModel,
+    onActionClick: (SDLinkModel) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+    ) {
+        SDActionButton(
+            button = actionBar.button,
+            fillMaxWidth = true,
+            onAction = onActionClick,
+        )
+    }
+}
+
+@Composable
+private fun PagingTrigger(
+    listState: LazyListState,
+    canLoadMore: Boolean,
+    isPaging: Boolean,
+    onLoadNextPage: () -> Unit,
+) {
+    LaunchedEffect(listState, canLoadMore, isPaging) {
+        snapshotFlow {
+            val totalCount = listState.layoutInfo.totalItemsCount
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleIndex to totalCount
+        }
+            .map { (lastVisibleIndex, totalCount) ->
+                canLoadMore && !isPaging && totalCount > 0 && lastVisibleIndex >= totalCount - 2
+            }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                onLoadNextPage()
+            }
+    }
+}
+
+@Composable
+private fun LoadingContent(
+    paddingValues: PaddingValues,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        contentAlignment = Alignment.Center,
+    ) {
+        LottieFishLoading(modifier = Modifier.size(120.dp))
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    message: String,
+    paddingValues: PaddingValues,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(horizontal = 20.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = if (message.isBlank()) "정보를 불러오지 못했어요" else message,
+            color = Gray100,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = dpToSp(16),
+            lineHeight = dpToSp(24),
+        )
+    }
+}
+
+@Composable
+private fun SuccessContent(
+    screen: SDScreenModel,
+    listState: LazyListState,
+    isPaging: Boolean,
+    paddingValues: PaddingValues,
+) {
+    val bodySections = screen.sections.filterNot { section ->
+        section is SDSectionModel.ActionBarSection ||
+            (section is SDSectionModel.HeaderSection && section.type.equals("SCREEN_HEADER", ignoreCase = true))
+    }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        state = listState,
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        bodySections.forEachIndexed { index, section ->
+            when (section) {
+                is SDSectionModel.HeaderSection -> {
+                    item(key = "header-$index-${section.type}") {
+                        SDSectionRenderer(section = section, onAction = {})
+                    }
+                }
+
+                is SDSectionModel.CardsSection -> {
+                    items(
+                        items = section.cards,
+                        key = { card -> "card-${section.type}-${card.cardId}" },
+                    ) { card ->
+                        SDCardRenderer(card = card)
+                    }
+                }
+
+                is SDSectionModel.Unknown -> Unit
+                is SDSectionModel.ActionBarSection -> Unit
+            }
+        }
+
+        if (isPaging) {
+            item(key = "paging") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    LottieFishLoading(modifier = Modifier.size(72.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-private fun StoreContributorTopBar(onClose: () -> Unit) {
+private fun StoreContributorTopBar(
+    title: SDTextModel?,
+    onClose: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,15 +359,17 @@ private fun StoreContributorTopBar(onClose: () -> Unit) {
             .statusBarsPadding()
             .height(56.dp),
     ) {
-        Text(
-            text = stringResource(CommonR.string.store_contributor_title),
-            modifier = Modifier.align(Alignment.Center),
-            color = Gray100,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.Normal,
-            fontSize = dpToSp(16),
-            lineHeight = dpToSp(24),
-        )
+        title?.let {
+            Text(
+                text = it.text,
+                modifier = Modifier.align(Alignment.Center),
+                color = Gray100,
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = dpToSp(16),
+                lineHeight = dpToSp(24),
+            )
+        }
 
         IconButton(
             onClick = onClose,
@@ -156,220 +377,96 @@ private fun StoreContributorTopBar(onClose: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(DesignSystemR.drawable.ic_close_black),
-                contentDescription = stringResource(CommonR.string.close),
+                contentDescription = "닫기",
                 tint = Gray100,
             )
         }
     }
 }
 
+@Preview
 @Composable
-private fun StoreContributorBottomBar(onShareInfo: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(ColorWhite)
-            .navigationBarsPadding(),
-    ) {
-        HorizontalDivider(color = Gray30)
-        Button(
-            onClick = onShareInfo,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(1.dp, Gray30),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ColorWhite,
-                contentColor = Gray100,
+private fun StoreContributorSuccessPreview() {
+    AppTheme {
+        StoreContributorScreen(
+            state = StoreContributorUiState.Success(
+                screen = contributorPreviewScreen(),
+                canLoadMore = true,
             ),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 0.dp,
-                pressedElevation = 0.dp,
+            onClose = {},
+            onActionClick = {},
+            onLoadNextPage = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun StoreContributorErrorPreview() {
+    AppTheme {
+        StoreContributorScreen(
+            state = StoreContributorUiState.Error("정보를 불러오지 못했어요"),
+            onClose = {},
+            onActionClick = {},
+            onLoadNextPage = {},
+        )
+    }
+}
+
+private fun contributorPreviewScreen() = SDScreenModel(
+    sections = listOf(
+        SDSectionModel.HeaderSection(
+            type = "SCREEN_HEADER",
+            header = com.threedollar.common.serverdriven.model.SDHeaderModel(
+                title = SDTextModel(
+                    text = "정보 기여자 목록",
+                    isHtml = false,
+                    fontColor = "#141414",
+                ),
             ),
-        ) {
-            Text(
-                text = stringResource(CommonR.string.store_contributor_share_action),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = dpToSp(16),
-                lineHeight = dpToSp(24),
-            )
-        }
-    }
-}
-
-@Composable
-private fun ContributorCard(contributor: ContributorUiModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(ColorWhite)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        ContributorBadge(style = contributor.badgeStyle)
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = contributor.name,
-                color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = dpToSp(16),
-                lineHeight = dpToSp(24),
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    contributor.actions.forEach { action ->
-                        Text(
-                            text = action,
-                            color = Gray50,
-                            fontFamily = PretendardFontFamily,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = dpToSp(12),
-                            lineHeight = dpToSp(18),
-                        )
-                    }
-                }
-
-                Text(
-                    text = contributor.relativeTime,
-                    color = Gray50,
-                    fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = dpToSp(12),
-                    lineHeight = dpToSp(18),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ContributorBadge(style: ContributorBadgeStyle) {
-    val outerColor = if (style == ContributorBadgeStyle.Mint) ComposeColor(0xFF6EDD56) else ComposeColor(0xFFFF9CA5)
-    val accentColor = if (style == ContributorBadgeStyle.Mint) ComposeColor(0xFFFF7A45) else ComposeColor(0xFFFFD54A)
-    val iconRes = if (style == ContributorBadgeStyle.Mint) {
-        DesignSystemR.drawable.ic_location_soild_12
-    } else {
-        DesignSystemR.drawable.ic_write_16
-    }
-
-    Box(
-        modifier = Modifier
-            .size(36.dp)
-            .background(outerColor, CircleShape)
-            .border(2.dp, accentColor, CircleShape)
-            .padding(5.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape)
-                .background(ComposeColor(0xFF232323)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = null,
-                tint = ColorWhite,
-                modifier = Modifier.size(16.dp),
-            )
-        }
-    }
-}
-
-private fun contributorPreviewModels() = listOf(
-    ContributorUiModel(
-        name = "아득한양갱#9",
-        actions = listOf("사진 정보를 추가했어요.", "가게 위치를 수정했어요.", "가게 메뉴를 수정했어요."),
-        relativeTime = "30분 전",
-        badgeStyle = ContributorBadgeStyle.Mint,
-    ),
-    ContributorUiModel(
-        name = "연희동 붕어빵",
-        actions = listOf("사진 정보를 추가했어요."),
-        relativeTime = "2일 전",
-        badgeStyle = ContributorBadgeStyle.Mint,
-    ),
-    ContributorUiModel(
-        name = "마포구 몽키스패너",
-        actions = listOf("장소를 등록했어요", "장소를 등록했어요"),
-        relativeTime = "15일 전",
-        badgeStyle = ContributorBadgeStyle.Coral,
-    ),
-    ContributorUiModel(
-        name = "마포구 몽키스패너",
-        actions = listOf("가게를 등록했어요"),
-        relativeTime = "15일 전",
-        badgeStyle = ContributorBadgeStyle.Coral,
+        ),
+        SDSectionModel.HeaderSection(
+            type = "HEADER",
+            header = com.threedollar.common.serverdriven.model.SDHeaderModel(
+                title = SDTextModel(
+                    text = "함께 만든 가게 정보",
+                    isHtml = false,
+                    fontColor = "#141414",
+                ),
+            ),
+        ),
+        SDSectionModel.CardsSection(
+            type = "HISTORIES",
+            cards = listOf(
+                SDCardModel.HistoryCard(
+                    type = "HISTORY_CARD",
+                    cardId = "1",
+                    title = SDTextModel("맛돌이", false, "#141414"),
+                    subTitles = listOf(
+                        SDTextModel("사진 12장 등록", false, "#666666"),
+                        SDTextModel("메뉴 수정", false, "#666666"),
+                    ),
+                    metadata = SDTextModel("3시간 전", false, "#666666"),
+                ),
+                SDCardModel.HistoryCard(
+                    type = "HISTORY_CARD",
+                    cardId = "2",
+                    title = SDTextModel("붕어빵러버", false, "#141414"),
+                    subTitles = listOf(
+                        SDTextModel("운영 시간 제보", false, "#666666"),
+                    ),
+                    metadata = SDTextModel("어제", false, "#666666"),
+                ),
+            ),
+        ),
+        SDSectionModel.ActionBarSection(
+            type = "ACTION_BAR",
+            actionBar = SDActionBarModel(
+                button = com.threedollar.common.serverdriven.model.SDButtonModel(
+                    text = SDTextModel("정보 공유하기", false, "#141414"),
+                    link = SDLinkModel(type = "NONE", link = ""),
+                ),
+            ),
+        ),
     ),
 )
-
-private val Gray0 = ComposeColor(0xFFFAFAFA)
-private val Gray30 = ComposeColor(0xFFD0D0D0)
-private val Gray50 = ComposeColor(0xFF969696)
-private val Gray100 = ComposeColor(0xFF0F0F0F)
-
-@Preview(showBackground = true, showSystemUi = true, widthDp = 375, heightDp = 812)
-@Composable
-private fun StoreContributorScreenPreview() {
-    AppTheme {
-        StoreContributorScreen(
-            contributors = contributorPreviewModels(),
-            onClose = {},
-            onShareInfo = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 375)
-@Composable
-private fun StoreContributorLongContentPreview() {
-    AppTheme {
-        StoreContributorScreen(
-            contributors = listOf(
-                ContributorUiModel(
-                    name = "아주아주긴닉네임을가진기여자#999",
-                    actions = listOf("사진 정보를 아주 길게 추가했어요.", "가게 위치를 아주 자세하게 수정했어요."),
-                    relativeTime = "방금 전",
-                    badgeStyle = ContributorBadgeStyle.Mint,
-                ),
-            ),
-            onClose = {},
-            onShareInfo = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 375)
-@Composable
-private fun StoreContributorSingleActionPreview() {
-    AppTheme {
-        StoreContributorScreen(
-            contributors = listOf(
-                ContributorUiModel(
-                    name = "연희동 붕어빵",
-                    actions = listOf("가게를 등록했어요"),
-                    relativeTime = "2일 전",
-                    badgeStyle = ContributorBadgeStyle.Coral,
-                ),
-            ),
-            onClose = {},
-            onShareInfo = {},
-        )
-    }
-}
