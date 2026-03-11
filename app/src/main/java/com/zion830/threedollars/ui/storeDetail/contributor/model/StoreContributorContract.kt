@@ -22,6 +22,7 @@ sealed interface StoreContributorUiState {
 @Immutable
 sealed interface StoreContributorUiIntent {
     data object OnInit : StoreContributorUiIntent
+    data object OnRefresh : StoreContributorUiIntent
     data object OnCloseClick : StoreContributorUiIntent
     data object OnLoadNextPage : StoreContributorUiIntent
     data class OnActionClick(val action: SDLinkModel) : StoreContributorUiIntent

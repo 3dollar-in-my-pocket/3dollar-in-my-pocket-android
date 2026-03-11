@@ -3,12 +3,13 @@ package com.zion830.threedollars.ui.storeDetail.contributor.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import android.view.View
 import androidx.activity.SystemBarStyle
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,27 +37,37 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import base.compose.AppTheme
 import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
+import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.serverdriven.model.SDActionBarModel
 import com.threedollar.common.serverdriven.model.SDCardModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.zion830.threedollars.R
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
 import com.zion830.threedollars.core.ui.serverdriven.SDActionButton
 import com.zion830.threedollars.core.ui.serverdriven.SDCardRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDSectionRenderer
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiEffect
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiIntent
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiState
@@ -65,6 +76,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private val Gray100 = androidx.compose.ui.graphics.Color(0xFF0F0F0F)
@@ -72,12 +86,17 @@ private val Gray30 = androidx.compose.ui.graphics.Color(0xFFE4E4E4)
 private val Gray0 = androidx.compose.ui.graphics.Color(0xFFF7F7F7)
 
 @AndroidEntryPoint
-class StoreContributorActivity : ComponentActivity() {
+class StoreContributorActivity : AppCompatActivity() {
 
     @Inject
     lateinit var actionHandler: StoreContributorActionHandler
 
     private val viewModel: StoreContributorViewModel by viewModels()
+    private var shouldRefreshAfterEdit = false
+    private var refreshJob: Job? = null
+    private val storeId: String by lazy(LazyThreadSafetyMode.NONE) {
+        intent.getStringExtra(EXTRA_STORE_ID).orEmpty()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,25 +105,94 @@ class StoreContributorActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.light(Color.WHITE, Color.BLACK),
         )
+        setContentView(R.layout.activity_store_contributor)
+        applyFragmentContainerInsets()
+        updateFragmentContainerVisibility()
+        supportFragmentManager.addOnBackStackChangedListener {
+            updateFragmentContainerVisibility()
+            refreshAfterEditIfNeeded()
+        }
+        supportFragmentManager.setFragmentResultListener(EditStoreFragment.STORE_EDITED_RESULT_KEY, this) { _, _ ->
+            shouldRefreshAfterEdit = true
+            refreshAfterEditIfNeeded()
+        }
 
-        setContent {
-            AppTheme {
-                StoreContributorRoute(
-                    viewModel = viewModel,
-                    onClose = ::finish,
-                    onAction = actionHandler::onAction,
-                )
+        findViewById<ComposeView>(R.id.storeContributorComposeView).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    StoreContributorRoute(
+                        viewModel = viewModel,
+                        onClose = ::finish,
+                        onAction = ::handleAction,
+                    )
+                }
             }
         }
     }
 
     override fun onDestroy() {
+        refreshJob?.cancel()
         actionHandler.detach()
         super.onDestroy()
     }
 
+    private fun handleAction(action: SDLinkModel) {
+        if (handleLocalEditAction(action)) return
+        actionHandler.onAction(action)
+    }
+
+    private fun handleLocalEditAction(action: SDLinkModel): Boolean {
+        if (!action.type.equals("APP_SCHEME", ignoreCase = true)) return false
+
+        val uri = Uri.parse(action.link)
+        if (uri.path != STORE_UPDATE_PATH) return false
+
+        val targetStoreId = uri.getQueryParameter("storeId")
+            .orEmpty()
+            .ifBlank { storeId }
+            .toIntOrNull()
+            ?: return true
+        if (supportFragmentManager.findFragmentByTag(EditStoreFragment::class.java.simpleName) != null) {
+            return true
+        }
+
+        findViewById<View>(R.id.storeContributorFragmentContainer).isVisible = true
+        supportFragmentManager.addNewFragment(
+            containerId = R.id.storeContributorFragmentContainer,
+            fragment = EditStoreFragment.newInstance(targetStoreId),
+            tag = EditStoreFragment::class.java.simpleName,
+        )
+        return true
+    }
+
+    private fun updateFragmentContainerVisibility() {
+        findViewById<View>(R.id.storeContributorFragmentContainer).isVisible =
+            supportFragmentManager.backStackEntryCount > 0
+    }
+
+    private fun refreshAfterEditIfNeeded() {
+        if (!shouldRefreshAfterEdit || supportFragmentManager.backStackEntryCount > 0) return
+
+        shouldRefreshAfterEdit = false
+        refreshJob?.cancel()
+        refreshJob = lifecycleScope.launch {
+            delay(350)
+            viewModel.dispatch(StoreContributorUiIntent.OnRefresh)
+        }
+    }
+
+    private fun applyFragmentContainerInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.storeContributorFragmentContainer)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(top = systemBars.top, bottom = systemBars.bottom)
+            insets
+        }
+    }
+
     companion object {
         const val EXTRA_STORE_ID = "extra_store_id"
+        private const val STORE_UPDATE_PATH = "/storeUpdate"
 
         fun getIntent(
             context: Context,

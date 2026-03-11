@@ -305,14 +305,7 @@ class BossStoreDetailActivity :
             viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
-        binding.contributorSummaryLayout.onSingleClick {
-            startActivity(
-                StoreContributorActivity.getIntent(
-                    context = this,
-                    storeId = storeId,
-                )
-            )
-        }
+        binding.contributorSummaryLayout.isVisible = false
 
         binding.favoriteButton.onSingleClick {
             clickFavoriteButton()

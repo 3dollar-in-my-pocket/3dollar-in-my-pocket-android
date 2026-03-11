@@ -30,6 +30,8 @@ class StoreContributorViewModel @Inject constructor(
 ) : UdfViewModel<StoreContributorUiIntent, StoreContributorUiState, StoreContributorUiEffect>() {
 
     private val storeId: String = savedStateHandle.get<String>(StoreContributorActivity.EXTRA_STORE_ID).orEmpty()
+    private var initialized = false
+    private var loadVersion = 0
 
     private val stateStore = MutableStateFlow<StoreContributorUiState>(StoreContributorUiState.Loading)
     override val state: StateFlow<StoreContributorUiState> = stateStore.asStateFlow()
@@ -43,6 +45,7 @@ class StoreContributorViewModel @Inject constructor(
     override fun dispatch(intent: StoreContributorUiIntent) {
         when (intent) {
             StoreContributorUiIntent.OnInit -> onInit()
+            StoreContributorUiIntent.OnRefresh -> refresh()
             StoreContributorUiIntent.OnCloseClick -> _effect.trySend(StoreContributorUiEffect.Close)
             StoreContributorUiIntent.OnLoadNextPage -> loadNextPage()
             is StoreContributorUiIntent.OnActionClick -> _effect.trySend(StoreContributorUiEffect.ExecuteAction(intent.action))
@@ -50,6 +53,8 @@ class StoreContributorViewModel @Inject constructor(
     }
 
     override fun onException(exception: Throwable, tag: Any?) {
+        if (tag is RequestTag && tag.version != loadVersion) return
+
         super.onException(exception, tag)
         val currentState = stateStore.value
         stateStore.value = when (currentState) {
@@ -63,10 +68,26 @@ class StoreContributorViewModel @Inject constructor(
             stateStore.value = StoreContributorUiState.Error("정보를 불러오지 못했어요")
             return
         }
-        if (stateStore.value !is StoreContributorUiState.Loading) return
+        if (initialized) return
+        initialized = true
+        loadScreen()
+    }
 
-        launch(tag = "init") {
+    private fun refresh() {
+        if (storeId.isBlank()) {
+            stateStore.value = StoreContributorUiState.Error("정보를 불러오지 못했어요")
+            return
+        }
+        loadScreen()
+    }
+
+    private fun loadScreen() {
+        val version = ++loadVersion
+        stateStore.value = StoreContributorUiState.Loading
+
+        launch(tag = RequestTag(version = version, isPaging = false)) {
             screenRepository.getStoreContributorScreen(storeId).collect { response ->
+                if (version != loadVersion) return@collect
                 if (response.ok) {
                     val screen = response.data ?: SDScreenModel()
                     val cardsSection = screen.sections.firstCardsSection()
@@ -86,10 +107,12 @@ class StoreContributorViewModel @Inject constructor(
         if (currentState.isPaging || !currentState.canLoadMore) return
 
         val nextCursor = currentState.screen.sections.firstCardsSection()?.cursor?.nextCursor ?: return
+        val version = loadVersion
         stateStore.update { currentState.copy(isPaging = true) }
 
-        launch(tag = "paging") {
+        launch(tag = RequestTag(version = version, isPaging = true)) {
             screenRepository.getStoreContributorHistories(storeId, nextCursor).collect { response ->
+                if (version != loadVersion) return@collect
                 val latestState = stateStore.value as? StoreContributorUiState.Success ?: return@collect
                 if (response.ok) {
                     val section = response.data ?: SDSectionModel.CardsSection(type = "", cursor = SDCursorModel())
@@ -179,4 +202,9 @@ class StoreContributorViewModel @Inject constructor(
         isHtml.toString(),
         fontColor.orEmpty(),
     ).joinToString(separator = "|")
+
+    private data class RequestTag(
+        val version: Int,
+        val isPaging: Boolean,
+    )
 }
