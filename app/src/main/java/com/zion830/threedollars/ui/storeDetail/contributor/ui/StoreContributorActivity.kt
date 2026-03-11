@@ -93,6 +93,7 @@ class StoreContributorActivity : AppCompatActivity() {
 
     private val viewModel: StoreContributorViewModel by viewModels()
     private var shouldRefreshAfterEdit = false
+    private var hasStoreUpdated = false
     private var refreshJob: Job? = null
     private val storeId: String by lazy(LazyThreadSafetyMode.NONE) {
         intent.getStringExtra(EXTRA_STORE_ID).orEmpty()
@@ -113,6 +114,7 @@ class StoreContributorActivity : AppCompatActivity() {
             refreshAfterEditIfNeeded()
         }
         supportFragmentManager.setFragmentResultListener(EditStoreFragment.STORE_EDITED_RESULT_KEY, this) { _, _ ->
+            hasStoreUpdated = true
             shouldRefreshAfterEdit = true
             refreshAfterEditIfNeeded()
         }
@@ -135,6 +137,13 @@ class StoreContributorActivity : AppCompatActivity() {
         refreshJob?.cancel()
         actionHandler.detach()
         super.onDestroy()
+    }
+
+    override fun finish() {
+        if (hasStoreUpdated) {
+            setResult(RESULT_OK)
+        }
+        super.finish()
     }
 
     private fun handleAction(action: SDLinkModel) {

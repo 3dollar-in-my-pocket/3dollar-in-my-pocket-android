@@ -330,7 +330,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             showDirectionBottomDialog()
         }
         binding.contributorSummaryLayout.onSingleClick {
-            startActivity(
+            activityResultLauncher.launch(
                 StoreContributorActivity.getIntent(
                     context = this,
                     storeId = storeId.toString(),
