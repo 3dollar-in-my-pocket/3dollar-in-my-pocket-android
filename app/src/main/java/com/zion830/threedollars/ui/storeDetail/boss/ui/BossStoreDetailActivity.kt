@@ -8,6 +8,7 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -159,6 +160,37 @@ class BossStoreDetailActivity :
             },
             onMoreClickListener = { moveBossReviewActivity() }
         )
+    }
+
+    private val reviewWriteLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            lifecycleScope.launch {
+                kotlinx.coroutines.delay(500L)
+                try {
+                    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                        viewModel.getFoodTruckStoreDetail(
+                            bossStoreId = storeId,
+                            latitude = location?.latitude ?: 0.0,
+                            longitude = location?.longitude ?: 0.0,
+                        )
+                    }.addOnFailureListener {
+                        viewModel.getFoodTruckStoreDetail(
+                            bossStoreId = storeId,
+                            latitude = 0.0,
+                            longitude = 0.0,
+                        )
+                    }
+                } catch (e: SecurityException) {
+                    viewModel.getFoodTruckStoreDetail(
+                        bossStoreId = storeId,
+                        latitude = 0.0,
+                        longitude = 0.0,
+                    )
+                }
+            }
+        }
     }
 
     private var storeId = ""
@@ -519,7 +551,7 @@ class BossStoreDetailActivity :
                                 showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 val intent = BossReviewWriteActivity.getIntent(this@BossStoreDetailActivity, storeId)
-                                startActivity(intent)
+                                reviewWriteLauncher.launch(intent)
                             }
                             // Reset the state after handling
                             viewModel.resetFeedbackExistsState()
