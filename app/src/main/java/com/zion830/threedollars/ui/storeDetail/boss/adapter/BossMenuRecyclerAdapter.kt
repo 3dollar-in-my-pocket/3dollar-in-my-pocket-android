@@ -19,7 +19,10 @@ import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
 
-class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
+class BossMenuRecyclerAdapter(
+    private val onMoreClick: () -> Unit,
+    private val onMenuImageClick: (MenuModel, Int) -> Unit,
+) :
     ListAdapter<BossStoreDetailItem?, ViewHolder>(BaseDiffUtilCallback()) {
 
     fun getItemPosition(item: BossStoreDetailItem) =
@@ -47,13 +50,16 @@ class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         VIEW_TYPE_MENU -> {
-            BossMenuViewHolder(ItemFoodTruckMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            BossMenuViewHolder(
+                binding = ItemFoodTruckMenuBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                onMenuImageClick = onMenuImageClick,
+            )
         }
 
         VIEW_TYPE_FOOTER -> {
             BossMenuMoreViewHolder(
                 binding = ItemStoreDetailMenuMoreBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-                clickListener = clickListener
+                clickListener = onMoreClick
             )
         }
 
@@ -65,7 +71,7 @@ class BossMenuRecyclerAdapter(private val clickListener: () -> Unit) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is BossMenuViewHolder -> {
-                holder.bind(getItem(position) as MenuModel)
+                holder.bind(getItem(position) as MenuModel, position)
             }
 
             is BossMenuEmptyViewHolder -> {
@@ -104,12 +110,22 @@ class BossMenuEmptyViewHolder(private val binding: ItemFoodTruckMenuEmptyBinding
         }
     }
 
-    class BossMenuViewHolder(private val binding: ItemFoodTruckMenuBinding) :
+    class BossMenuViewHolder(
+        private val binding: ItemFoodTruckMenuBinding,
+        private val onMenuImageClick: (MenuModel, Int) -> Unit,
+    ) :
         ViewHolder(binding.root) {
 
-        fun bind(item: MenuModel) {
+        fun bind(item: MenuModel, position: Int) {
             binding.menuNameTextView.text = item.name
             binding.priceTextView.text = GlobalApplication.getContext().getString(CommonR.string.food_truck_price, item.price.toFormattedNumber())
             binding.menuImageView.loadCircleImage(item.imageUrl)
+            if (item.imageUrl.isNullOrBlank()) {
+                binding.menuImageView.setOnClickListener(null)
+            } else {
+                binding.menuImageView.onSingleClick {
+                    onMenuImageClick(item, position)
+                }
+            }
         }
     }
