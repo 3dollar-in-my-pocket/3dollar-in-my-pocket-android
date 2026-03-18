@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class UserStoreResponse(
     @SerializedName("creator")
     val creator: Creator? = Creator(),
+    @SerializedName("lastContributor")
+    val lastContributor: Creator? = Creator(),
     @SerializedName("distanceM")
     val distanceM: Int? = 0,
     @SerializedName("favorite")
@@ -21,5 +23,7 @@ data class UserStoreResponse(
     @SerializedName("visits")
     val visits: Visits? = Visits(),
     @SerializedName("openStatus")
-    val openStatus: OpenStatus? = OpenStatus()
+    val openStatus: OpenStatus? = OpenStatus(),
+    @SerializedName("uniqueContributorCount")
+    val uniqueContributorCount: Int? = 0,
 )

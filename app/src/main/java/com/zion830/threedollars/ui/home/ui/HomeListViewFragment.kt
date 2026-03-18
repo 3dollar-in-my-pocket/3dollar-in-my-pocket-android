@@ -143,7 +143,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
                 if (isFilterCertifiedStores) DesignSystemR.drawable.ic_certification_check_on else DesignSystemR.drawable.ic_certification_check_off
             ), null, null, null
         )
-        viewModel.fetchAroundStores()
+        viewModel.updateHomeFilterEvent(filterCertifiedStores = isFilterCertifiedStores)
     }
 
     private fun initFlows() {
