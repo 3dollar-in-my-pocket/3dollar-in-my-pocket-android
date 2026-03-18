@@ -374,13 +374,15 @@ fun BossStoreResponse.asModel() = BossStoreDetailModel(
     distanceM = distanceM ?: 0,
     favoriteModel = favorite?.asModel() ?: FavoriteModel(),
     feedbackModels = feedbacks?.map { it.asModel() } ?: listOf(),
+    lastContributor = lastContributor?.asModel() ?: CreatorModel(),
     openStatusModel = openStatus?.asModel() ?: OpenStatusModel(),
     store = store.asModel(),
     tags = tags?.asModel() ?: TagsModel(),
     newsPosts = newsPosts?.contents?.map { it.asModel() } ?: listOf(),
     reviews = reviews?.contents?.map { it.asModel() } ?: listOf(),
     reviewTotalCount = reviews?.cursor?.totalCount ?: 0,
-    hasMoreReviews = reviews?.cursor?.hasMore ?: false
+    hasMoreReviews = reviews?.cursor?.hasMore ?: false,
+    uniqueContributorCount = uniqueContributorCount ?: 0,
 )
 
 fun NewsPost.asModel(): NewsPostModel = NewsPostModel(
@@ -530,12 +532,14 @@ fun FeedbackCountResponse.asModel(feedbackTypeResponseList: List<FeedbackTypeRes
 
 fun UserStoreResponse.asModel(): UserStoreDetailModel = UserStoreDetailModel(
     creator = creator?.asModel() ?: CreatorModel(),
+    lastContributor = lastContributor?.asModel() ?: CreatorModel(),
     distanceM = distanceM ?: 0,
     favorite = favorite?.asModel() ?: FavoriteModel(),
     images = images?.asModel() ?: ImagesModel(),
     reviews = reviews?.asModel() ?: ReviewsModel(),
     store = store?.asModel() ?: UserStoreModel(),
     tags = tags?.asModel() ?: TagsModel(),
+    uniqueContributorCount = uniqueContributorCount ?: 0,
     visits = visits?.asModel() ?: VisitsModel(),
 
     )

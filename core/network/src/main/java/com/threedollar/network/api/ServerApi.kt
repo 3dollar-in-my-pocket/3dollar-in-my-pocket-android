@@ -24,6 +24,8 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
+import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -209,6 +211,17 @@ interface ServerApi {
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
         @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
+
+    @GET("/api/v1/screen/store/{storeId}/contributors")
+    suspend fun getStoreContributorScreen(
+        @Path("storeId") storeId: String,
+    ): Response<BaseResponse<StoreContributorScreenResponse>>
+
+    @GET("/api/v1/screen/store/{storeId}/contributors/section/histories")
+    suspend fun getStoreContributorHistories(
+        @Path("storeId") storeId: String,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<StoreContributorHistoriesResponse>>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
