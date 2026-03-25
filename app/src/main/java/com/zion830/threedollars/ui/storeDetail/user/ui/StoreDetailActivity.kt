@@ -17,11 +17,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import base.compose.AppTheme
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -34,6 +38,7 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.isVisibleInWindow
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.ext.textPartColor
@@ -58,16 +63,17 @@ import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
+import com.zion830.threedollars.ui.storeDetail.ui.StoreDetailRelatedStoresSection
 import com.zion830.threedollars.ui.storeDetail.user.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.storeDetail.user.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
-import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
-import com.zion830.threedollars.ui.edit.ui.EditStoreFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
@@ -82,7 +88,6 @@ import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -202,6 +207,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initAdapter()
         initFlows()
         initAdmob()
+        initRelatedStoreSection()
+        initScrollListener()
 
         viewModel.addReviewResult.observe(this) {
             viewModel.getUserStoreDetail(
@@ -227,6 +234,46 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAdmob() {
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
+    }
+
+    private fun initRelatedStoreSection() {
+        binding.relatedStoreSection.setContent {
+            AppTheme {
+                val section by viewModel.relatedStoreSection.collectAsStateWithLifecycle()
+                section?.let { StoreDetailRelatedStoresSection(it) }
+            }
+        }
+    }
+
+    private fun initScrollListener() {
+        binding.scroll.setOnScrollChangeListener(
+            object : NestedScrollView.OnScrollChangeListener {
+                var isRelatedStoreSectionConsumed = false
+
+                override fun onScrollChange(
+                    v: NestedScrollView,
+                    scrollX: Int,
+                    scrollY: Int,
+                    oldScrollX: Int,
+                    oldScrollY: Int
+                ) {
+                    if (!isRelatedStoreSectionConsumed && binding.relatedStoreSection.isVisibleInWindow(threshold = 0.5f)) {
+                        LogManager.sendPageView(
+                            screen = ScreenName.STORE_DETAIL_BRIDGE,
+                            className = StoreDetailActivity::class.java.simpleName,
+                            extraParameters = viewModel.relatedStoreSection.value?.let {
+                                mapOf(
+                                    ParameterName.EXPERIMENT_KEY to it.reference?.firstOrNull()?.experimentKey.orEmpty(),
+                                    ParameterName.EXPERIMENT_TYPE to it.reference?.firstOrNull()?.type.orEmpty(),
+                                    ParameterName.EXPERIMENT_VARIANT to it.reference?.firstOrNull()?.variant.orEmpty(),
+                                )
+                            } ?: emptyMap()
+                        )
+                        isRelatedStoreSectionConsumed = true
+                    }
+                }
+            }
+        )
     }
 
     private fun initAdapter() {

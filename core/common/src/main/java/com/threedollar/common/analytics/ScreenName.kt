@@ -12,6 +12,7 @@ enum class ScreenName(val value: String) {
     SEARCH_ADDRESS("search_address"),
     EDIT_STORE("edit_store"),
     STORE_DETAIL("store_detail"),
+    STORE_DETAIL_BRIDGE("store_detail_bridge"),
     REVIEW_LIST("review_list"),
     REPORT_STORE("report_store"),
     REVIEW_BOTTOM_SHEET("review_bottom_sheet"),

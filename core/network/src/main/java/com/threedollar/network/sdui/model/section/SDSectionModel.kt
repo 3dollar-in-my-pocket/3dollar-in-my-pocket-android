@@ -11,7 +11,7 @@ interface SDSectionModel {
     val type: SDSectionType
 }
 
-data class RelatedStoresSectionModel(
+data class SDRelatedStoresSectionModel(
     val header: SDHeaderModel?,
     val cards: List<SDCardModel>,
     val reference: List<Reference>?

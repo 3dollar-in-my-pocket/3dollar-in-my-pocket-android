@@ -1,7 +1,8 @@
 package com.threedollar.network.sdui.model.element
 
 enum class SDLinkType {
-    APP_SCHEME
+    APP_SCHEME,
+    WEB
 }
 
 data class SDLink(
