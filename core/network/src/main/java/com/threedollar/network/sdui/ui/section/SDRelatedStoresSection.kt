@@ -47,10 +47,12 @@ fun SDRelatedStoresSection(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(model.cards) { card ->
-                when (card) {
+            items(model.cards) {
+                when (it) {
                     is ImagePreviewCardModel -> {
-                        SDImagePreviewCard(card, onCardPressed)
+                        SDImagePreviewCard(it) { pressed ->
+                            onCardPressed.invoke(pressed)
+                        }
                     }
                 }
             }

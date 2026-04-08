@@ -7,10 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import base.compose.dpToSp
 import com.threedollar.network.sdui.model.element.SDChipModel
 import com.threedollar.network.sdui.model.element.SDImageModel
 import com.threedollar.network.sdui.model.element.SDTextModel
-
 
 @Composable
 fun SDChip(
@@ -26,7 +26,11 @@ fun SDChip(
             SDImage(it)
         }
         model.text?.let {
-            SDText(it)
+            SDText(
+                model = it,
+                fontSize = dpToSp(12),
+                lineHeight = dpToSp(18)
+            )
         }
     }
 }

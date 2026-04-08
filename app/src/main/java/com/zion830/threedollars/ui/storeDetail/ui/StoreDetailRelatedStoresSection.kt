@@ -11,22 +11,18 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import base.compose.Gray0
-import com.threedollar.common.ext.openUrl
-import com.threedollar.network.sdui.model.element.SDLinkType
+import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
 import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.network.sdui.ui.section.SDRelatedStoresSection
-import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
 
 @Composable
 fun StoreDetailRelatedStoresSection(
-    section: SDRelatedStoresSectionModel
+    section: SDRelatedStoresSectionModel,
+    onCardPressed: (ImagePreviewCardModel, SDRelatedStoresSectionModel.Reference?) -> Unit,
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,20 +42,8 @@ fun StoreDetailRelatedStoresSection(
 
         SDRelatedStoresSection(
             model = section,
-            onCardPressed = {
-                when (it.link?.type) {
-                    SDLinkType.WEB -> {
-                        context.openUrl(it.link?.link)
-                    }
-
-                    SDLinkType.APP_SCHEME -> {
-                        DynamicLinkActivity.launch(context, it.link?.link.orEmpty())
-                    }
-
-                    else -> {
-                        // do nothing
-                    }
-                }
+            onCardPressed = { card ->
+                onCardPressed.invoke(card, section.reference?.firstOrNull())
             }
         )
     }

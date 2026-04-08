@@ -31,8 +31,12 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
+import com.threedollar.common.analytics.sendClick
+import com.threedollar.common.analytics.sendImpression
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.ext.convertUpdateAt
@@ -40,6 +44,7 @@ import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.isVisibleInWindow
 import com.threedollar.common.ext.loadImage
+import com.threedollar.common.ext.openUrl
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.ext.textPartTypeface
@@ -56,6 +61,8 @@ import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.threedollar.domain.home.data.store.VisitsModel
+import com.threedollar.network.sdui.model.element.SDLinkType
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
@@ -240,7 +247,41 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         binding.relatedStoreSection.setContent {
             AppTheme {
                 val section by viewModel.relatedStoreSection.collectAsStateWithLifecycle()
-                section?.let { StoreDetailRelatedStoresSection(it) }
+                section?.let {
+                    StoreDetailRelatedStoresSection(
+                        section = it,
+                        onCardPressed = { card, ref ->
+                            val cardRef = card.refs?.firstOrNull()
+
+                            LogManager.sendClick(
+                                viewModel.screenName,
+                                objectType = LogObjectType.CARD,
+                                objectId = LogObjectId.RECOMMEND_STORE,
+                                additionalParams = mapOf(
+                                    ParameterName.STORE_ID to cardRef?.storeId.orEmpty(),
+                                    ParameterName.STORE_TYPE to cardRef?.storeType.orEmpty(),
+                                    ParameterName.EXPERIMENT_KEY to ref?.experimentKey.orEmpty(),
+                                    ParameterName.EXPERIMENT_TYPE to ref?.type.orEmpty(),
+                                    ParameterName.EXPERIMENT_VARIANT to ref?.variant.orEmpty(),
+                                )
+                            )
+
+                            when (card.link?.type) {
+                                SDLinkType.WEB -> {
+                                    openUrl(card.link?.link)
+                                }
+
+                                SDLinkType.APP_SCHEME -> {
+                                    DynamicLinkActivity.launch(this, card.link?.link.orEmpty())
+                                }
+
+                                else -> {
+                                    // do nothing
+                                }
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -257,18 +298,25 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     oldScrollX: Int,
                     oldScrollY: Int
                 ) {
+                    /**
+                     * NestedScrollView로 인해 Compose에서 처리 불가
+                     * TODO : NestedScrollView를 LazyColumn으로 마이그레이션
+                     */
                     if (!isRelatedStoreSectionConsumed && binding.relatedStoreSection.isVisibleInWindow(threshold = 0.5f)) {
-                        LogManager.sendPageView(
-                            screen = ScreenName.STORE_DETAIL_BRIDGE,
-                            className = StoreDetailActivity::class.java.simpleName,
-                            extraParameters = viewModel.relatedStoreSection.value?.let {
-                                mapOf(
-                                    ParameterName.EXPERIMENT_KEY to it.reference?.firstOrNull()?.experimentKey.orEmpty(),
-                                    ParameterName.EXPERIMENT_TYPE to it.reference?.firstOrNull()?.type.orEmpty(),
-                                    ParameterName.EXPERIMENT_VARIANT to it.reference?.firstOrNull()?.variant.orEmpty(),
-                                )
-                            } ?: emptyMap()
-                        )
+                        viewModel.relatedStoreSection.value?.reference?.forEach { reference ->
+                            LogManager.sendImpression(
+                                screen = ScreenName.STORE_DETAIL,
+                                objectType = LogObjectType.CAROUSEL,
+                                objectId = LogObjectId.RECOMMEND,
+                                additionalParams = viewModel.relatedStoreSection.value?.let {
+                                    mapOf(
+                                        ParameterName.EXPERIMENT_KEY to reference.experimentKey.orEmpty(),
+                                        ParameterName.EXPERIMENT_TYPE to reference.type.orEmpty(),
+                                        ParameterName.EXPERIMENT_VARIANT to reference.variant.orEmpty(),
+                                    )
+                                } ?: emptyMap()
+                            )
+                        }
                         isRelatedStoreSectionConsumed = true
                     }
                 }

@@ -26,8 +26,8 @@ fun SDImage(
             model = model.url,
             contentDescription = "이미지",
             modifier = Modifier
-                .width((model.style?.width ?: 0f).dp)
-                .height((model.style?.height ?: 0f).dp),
+                .width((model.style?.width ?: 12f).dp)
+                .height((model.style?.height ?: 12f).dp),
             contentScale = contentScale
         )
     }

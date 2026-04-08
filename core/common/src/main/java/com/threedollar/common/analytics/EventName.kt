@@ -6,6 +6,7 @@ package com.threedollar.common.analytics
  */
 enum class EventName(val value: String) {
     Click("click"),
+    IMPRESSION("impression"),
     HOME_REOPEN("home_reopen");
 
     override fun toString(): String = value

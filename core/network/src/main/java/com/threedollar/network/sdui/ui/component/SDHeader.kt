@@ -17,7 +17,7 @@ fun SDHeader(
         SDText(
             model = it,
             maxLines = 1,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.W700,
             modifier = modifier
         )
     }
