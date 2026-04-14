@@ -2,12 +2,12 @@ package com.zion830.threedollars.ui.storeDetail.contributor.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import com.threedollar.common.base.UdfViewModel
-import com.threedollar.common.serverdriven.model.SDCardModel
-import com.threedollar.common.serverdriven.model.SDCursorModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.domain.screen.repository.ScreenRepository
+import com.zion830.threedollars.ui.storeDetail.contributor.model.appendFirstCardsSection
+import com.zion830.threedollars.ui.storeDetail.contributor.model.firstCardsSection
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiEffect
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiIntent
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiState
@@ -115,9 +115,9 @@ class StoreContributorViewModel @Inject constructor(
                 if (version != loadVersion) return@collect
                 val latestState = stateStore.value as? StoreContributorUiState.Success ?: return@collect
                 if (response.ok) {
-                    val section = response.data ?: SDSectionModel.CardsSection(type = "", cursor = SDCursorModel())
+                    val section = response.data ?: SDSectionModel.CardsSection(type = "")
                     stateStore.value = latestState.copy(
-                        screen = latestState.screen.appendCards(section),
+                        screen = latestState.screen.appendFirstCardsSection(section),
                         isPaging = false,
                         canLoadMore = section.cursor?.hasMore == true,
                     )
@@ -127,81 +127,6 @@ class StoreContributorViewModel @Inject constructor(
             }
         }
     }
-
-    private fun List<SDSectionModel>.firstCardsSection(): SDSectionModel.CardsSection? =
-        firstOrNull { it is SDSectionModel.CardsSection } as? SDSectionModel.CardsSection
-
-    private fun SDScreenModel.appendCards(cardsSection: SDSectionModel.CardsSection): SDScreenModel {
-        var updated = false
-        return copy(
-            sections = sections.map { section ->
-                if (section is SDSectionModel.CardsSection && !updated) {
-                    updated = true
-                    section.copy(
-                        cards = (section.cards + cardsSection.cards).normalizedHistoryCards(),
-                        cursor = cardsSection.cursor,
-                    )
-                } else {
-                    section
-                }
-            }
-        )
-    }
-
-    private fun List<SDCardModel>.normalizedHistoryCards(): List<SDCardModel> {
-        val mergedCards = linkedMapOf<String, SDCardModel.HistoryCard>()
-        val normalizedCards = mutableListOf<SDCardModel>()
-
-        forEach { card ->
-            when (card) {
-                is SDCardModel.HistoryCard -> {
-                    val key = card.historyMergeKey()
-                    val existing = mergedCards[key]
-                    if (existing == null) {
-                        val normalizedCard = card.copy(
-                            subTitles = card.subTitles.distinctBy { it.dedupKey() },
-                        )
-                        mergedCards[key] = normalizedCard
-                        normalizedCards += normalizedCard
-                    } else {
-                        val mergedCard = existing.copy(
-                            subTitles = (existing.subTitles + card.subTitles).distinctBy { it.dedupKey() },
-                            subTitleChip = existing.subTitleChip ?: card.subTitleChip,
-                            image = existing.image ?: card.image,
-                            metadata = existing.metadata ?: card.metadata,
-                            style = existing.style ?: card.style,
-                        )
-                        mergedCards[key] = mergedCard
-                        val existingIndex = normalizedCards.indexOfFirst {
-                            it is SDCardModel.HistoryCard && it.historyMergeKey() == key
-                        }
-                        if (existingIndex >= 0) {
-                            normalizedCards[existingIndex] = mergedCard
-                        }
-                    }
-                }
-
-                else -> normalizedCards += card
-            }
-        }
-
-        return normalizedCards
-    }
-
-    private fun SDCardModel.HistoryCard.historyMergeKey(): String {
-        val titleKey = title.text.trim()
-        return if (titleKey.isNotEmpty()) {
-            titleKey.lowercase()
-        } else {
-            cardId
-        }
-    }
-
-    private fun com.threedollar.common.serverdriven.model.SDTextModel.dedupKey(): String = listOf(
-        text.trim(),
-        isHtml.toString(),
-        fontColor.orEmpty(),
-    ).joinToString(separator = "|")
 
     private data class RequestTag(
         val version: Int,

@@ -31,12 +31,12 @@ import com.threedollar.network.data.screen.StoreContributorSurfaceStyleResponse
 import com.threedollar.network.data.screen.StoreContributorTextResponse
 
 fun StoreContributorScreenResponse.asModel(): SDScreenModel = SDScreenModel(
-    sections = sections.orEmpty().map { it.asModel() }.normalizedHistorySections()
+    sections = sections.orEmpty().map { it.asModel() }
 )
 
 fun StoreContributorHistoriesResponse.asCardsSectionModel(): SDSectionModel.CardsSection = SDSectionModel.CardsSection(
     type = type.orEmpty(),
-    cards = cards.orEmpty().map { it.asModel() }.normalizedHistoryCardItems(),
+    cards = cards.orEmpty().map { it.asModel() },
     cursor = cursor?.asModel(),
 )
 
@@ -160,66 +160,3 @@ private fun StoreContributorCursorResponse.asModel(): SDCursorModel = SDCursorMo
     nextCursor = nextCursor,
     hasMore = hasMore ?: false,
 )
-
-private fun List<SDSectionModel>.normalizedHistorySections(): List<SDSectionModel> = map { section ->
-    when (section) {
-        is SDSectionModel.CardsSection -> section.copy(cards = section.cards.normalizedHistoryCardItems())
-        else -> section
-    }
-}
-
-private fun List<SDCardModel>.normalizedHistoryCardItems(): List<SDCardModel> {
-    val mergedCards = linkedMapOf<String, SDCardModel.HistoryCard>()
-    val normalizedCards = mutableListOf<SDCardModel>()
-
-    forEach { card ->
-        when (card) {
-            is SDCardModel.HistoryCard -> {
-                val key = card.historyMergeKey()
-                val existing = mergedCards[key]
-                if (existing == null) {
-                    mergedCards[key] = card.copy(
-                        subTitles = card.subTitles.distinctBy { it.dedupKey() },
-                    )
-                    normalizedCards += mergedCards.getValue(key)
-                } else {
-                    val mergedCard = existing.merge(card)
-                    mergedCards[key] = mergedCard
-                    val existingIndex = normalizedCards.indexOfFirst {
-                        it is SDCardModel.HistoryCard && it.historyMergeKey() == key
-                    }
-                    if (existingIndex >= 0) {
-                        normalizedCards[existingIndex] = mergedCard
-                    }
-                }
-            }
-
-            else -> normalizedCards += card
-        }
-    }
-
-    return normalizedCards
-}
-
-private fun SDCardModel.HistoryCard.merge(other: SDCardModel.HistoryCard): SDCardModel.HistoryCard = copy(
-    subTitles = (subTitles + other.subTitles).distinctBy { it.dedupKey() },
-    subTitleChip = subTitleChip ?: other.subTitleChip,
-    image = image ?: other.image,
-    metadata = metadata ?: other.metadata,
-    style = style ?: other.style,
-)
-
-private fun SDCardModel.HistoryCard.historyMergeKey(): String {
-    val titleKey = title.text.trim()
-    return if (titleKey.isNotEmpty()) {
-        titleKey.lowercase()
-    } else {
-        cardId
-    }
-}
-
-private fun SDTextModel.dedupKey(): String = listOf(
-    text.trim(),
-    isHtml.toString(),
-    fontColor.orEmpty(),
-).joinToString(separator = "|")

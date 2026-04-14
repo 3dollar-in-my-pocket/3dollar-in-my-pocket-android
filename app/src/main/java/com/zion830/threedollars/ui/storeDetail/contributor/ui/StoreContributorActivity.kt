@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -416,10 +416,10 @@ private fun SuccessContent(
                 }
 
                 is SDSectionModel.CardsSection -> {
-                    items(
+                    itemsIndexed(
                         items = section.cards,
-                        key = { card -> "card-${section.type}-${card.cardId}" },
-                    ) { card ->
+                        key = { index, card -> "card-${section.type}-${card.cardId}-$index" },
+                    ) { _, card ->
                         SDCardRenderer(card = card)
                     }
                 }
