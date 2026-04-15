@@ -13,7 +13,6 @@
         android:layout_marginBottom="16dp"
         android:descendantFocusability="beforeDescendants"
         android:fillViewport="true"
-        android:paddingHorizontal="20dp"
         app:layout_constraintBottom_toTopOf="@id/bottomConstraintLayout"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp"
@@ -28,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="16dp"
+                android:layout_marginStart="20dp"
                 android:background="@android:color/white"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_arrow_left"
@@ -39,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="16dp"
+                android:layout_marginEnd="20dp"
                 android:background="@android:color/white"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_deletion"
@@ -50,6 +51,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginStart="20dp"
                 android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btn_back"
@@ -111,7 +113,7 @@
                 android:id="@+id/distanceReviewLinearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="24dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@id/visitTextView"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -150,6 +152,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:layout_marginEnd="20dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
@@ -186,7 +189,7 @@
                 android:id="@+id/storeFunctionCardView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="1dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/gray0"
                 app:cardCornerRadius="20dp"
@@ -301,6 +304,7 @@
                 android:layout_width="0dp"
                 android:layout_height="140dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="20dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -338,6 +342,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="20dp"
                 android:background="@drawable/rect_gray"
                 android:visibility="visible"
                 app:adSize="MEDIUM_RECTANGLE"
@@ -346,14 +351,25 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/map" />
 
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/gray0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/admob"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/visitHistoryLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/admob">
+                app:layout_constraintTop_toBottomOf="@id/divider1">
 
                 <TextView
                     android:id="@+id/visitHistoryTitleTextView"
@@ -481,15 +497,25 @@
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/gray0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/visitHistoryLayout"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/storeInfoLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/visitHistoryLayout">
+                app:layout_constraintTop_toBottomOf="@+id/divider2">
 
                 <TextView
                     android:id="@+id/storeInfoTitleTextView"
@@ -779,14 +805,25 @@
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/gray0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/storeInfoLayout"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photoLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/storeInfoLayout">
+                app:layout_constraintTop_toBottomOf="@id/divider3">
 
                 <TextView
                     android:id="@+id/storePhotoTitleTextView"
@@ -825,14 +862,33 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/relatedStoreSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photoLayout"/>
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/gray0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/relatedStoreSection"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/reviewLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photoLayout">
+                app:layout_constraintTop_toBottomOf="@id/divider4">
 
                 <TextView
                     android:id="@+id/reviewTitleTextView"

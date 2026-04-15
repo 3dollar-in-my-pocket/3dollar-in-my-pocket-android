@@ -1,5 +1,6 @@
 package com.threedollar.common.ext
 
+import android.graphics.Rect
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -8,6 +9,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorRes
+import androidx.annotation.FloatRange
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
@@ -157,4 +159,23 @@ fun ImageView.loadCircleImage(imageRes: Int?) {
             .circleCrop()
             .into(this)
     }
+}
+
+fun View.isVisibleInWindow(
+    @FloatRange(from = 0.0, to = 1.0) threshold: Float = 0f
+): Boolean {
+    if (!isShown || width == 0 || height == 0) return false
+
+    val rect = Rect()
+    val isVisible = getGlobalVisibleRect(rect)
+    if (!isVisible) return false
+
+    val visibleArea = rect.width() * rect.height()
+    val totalArea = width * height
+
+    if (totalArea == 0) return false
+
+    val visiblePercent = visibleArea.toFloat() / totalArea
+
+    return visiblePercent >= threshold
 }

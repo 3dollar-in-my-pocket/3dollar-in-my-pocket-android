@@ -48,8 +48,10 @@ enum class LogObjectId(val value: String) {
     MEDAL("medal"),
     VISITED_STORE("visited_store"),
     FAVORITED_STORE("favorited_store"),
+    RECOMMEND_STORE("recommendStore"),
     REVIEW("review"),
-    RANDOM("random");
+    RANDOM("random"),
+    RECOMMEND("recommend");
 
     override fun toString(): String = value
 }
