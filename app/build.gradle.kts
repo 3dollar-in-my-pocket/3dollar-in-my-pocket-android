@@ -117,5 +117,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.coil.compose)
     implementation(libs.firebase.messaging)
+    implementation(libs.androidx.customview.poolingcontainer)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
