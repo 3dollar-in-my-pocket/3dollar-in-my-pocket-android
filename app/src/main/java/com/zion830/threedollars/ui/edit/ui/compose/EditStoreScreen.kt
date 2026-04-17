@@ -11,14 +11,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import base.compose.ColorWhite
+import base.compose.Gray50
 import base.compose.Pink
+import base.compose.PretendardFontFamily
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
@@ -101,6 +106,18 @@ fun EditStoreScreen(
                     }
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                EditSectionCard(
+                    title = stringResource(CommonR.string.edit_store_section_photo),
+                    iconResId = DesignSystemR.drawable.ic_photo,
+                    onClick = {
+                        onIntent(EditStoreContract.Intent.OpenPhotoPicker)
+                    }
+                ) {
+                    PhotoReportContent(state = state)
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -114,7 +131,7 @@ fun EditStoreScreen(
             modifier = Modifier.align(alignment = Alignment.BottomCenter).fillMaxWidth()
         )
 
-        if (state.isLoading) {
+        if (state.isLoading && !state.isPhotoUploading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -129,6 +146,14 @@ fun EditStoreScreen(
             ExitConfirmDialog(
                 onDismiss = { onIntent(EditStoreContract.Intent.HideExitConfirmDialog) },
                 onConfirm = { onIntent(EditStoreContract.Intent.ConfirmExit) }
+            )
+        }
+
+        if (state.showSubmitErrorDialog) {
+            RetrySubmitDialog(
+                message = state.submitErrorMessage ?: stringResource(CommonR.string.edit_store_submit_retry_message),
+                onDismiss = { onIntent(EditStoreContract.Intent.DismissSubmitError) },
+                onRetry = { onIntent(EditStoreContract.Intent.RetrySubmit) }
             )
         }
     }
@@ -210,17 +235,54 @@ private fun StoreInfoContent(state: EditStoreContract.State) {
     }
 }
 
+@Composable
+private fun PhotoReportContent(state: EditStoreContract.State) {
+    Column {
+        Text(
+            text = if (state.totalPhotoCount > 0) {
+                stringResource(CommonR.string.edit_store_photo_count, state.totalPhotoCount)
+            } else {
+                stringResource(CommonR.string.photo_empty)
+            },
+            fontSize = 14.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = PretendardFontFamily,
+            color = Gray50,
+        )
+
+        if (state.pendingPhotoCount > 0) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(CommonR.string.edit_store_pending_photo_count, state.pendingPhotoCount),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.W500,
+                fontFamily = PretendardFontFamily,
+                color = Pink,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun EditStoreScreenPreview() {
     EditStoreScreen(
         state = EditStoreContract.State(
+            photoCount = 2,
             address = "서울특별시 강남구 역삼동 123-45",
             storeName = "맛있는 분식집",
             storeType = "ROAD",
             hasLocationChanges = true,
             hasInfoChanges = false,
-            hasMenuChanges = false
+            hasMenuChanges = false,
+            pendingPhotos = listOf(
+                EditStoreContract.PendingPhoto(
+                    id = "preview",
+                    uriString = "content://preview/1",
+                    cachedFilePath = "/tmp/preview.jpg",
+                    displayName = "preview.jpg",
+                )
+            )
         ),
         onIntent = {}
     )

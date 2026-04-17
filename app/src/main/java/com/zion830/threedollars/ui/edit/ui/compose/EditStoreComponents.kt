@@ -559,6 +559,79 @@ fun ExitConfirmDialog(
     }
 }
 
+@Composable
+fun RetrySubmitDialog(
+    message: String,
+    onDismiss: () -> Unit,
+    onRetry: () -> Unit,
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(ColorWhite)
+                .padding(24.dp)
+        ) {
+            Text(
+                text = stringResource(id = CommonR.string.edit_store_submit_retry_title),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.W700,
+                fontFamily = PretendardFontFamily,
+                color = Gray100
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = message,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W400,
+                fontFamily = PretendardFontFamily,
+                color = Gray70
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(1.dp, Gray30, RoundedCornerShape(8.dp))
+                        .clickable { onDismiss() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(id = CommonR.string.close),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = PretendardFontFamily,
+                        color = Gray100
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Pink)
+                        .clickable { onRetry() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(id = CommonR.string.retry),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W600,
+                        fontFamily = PretendardFontFamily,
+                        color = ColorWhite
+                    )
+                }
+            }
+        }
+    }
+}
+
 /**
  * 하단 메인 버튼 (수정 완료)
  */
