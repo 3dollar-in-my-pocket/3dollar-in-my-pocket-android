@@ -227,7 +227,6 @@ class BossStoreDetailActivity :
         initFlows()
         initAdapter()
         initAdmob()
-        initMockVisitHistory()
     }
 
     private fun initAdmob() {
@@ -361,28 +360,6 @@ class BossStoreDetailActivity :
             viewModel.sendClickZoomMap()
             moveFullScreenMap()
         }
-    }
-
-    private fun initMockVisitHistory() {
-        binding.smileTextView.text = getString(CommonR.string.visit_history_success, 13)
-        binding.smileTextView.textPartTypeface("13명", Typeface.BOLD)
-        binding.sadTextView.text = getString(CommonR.string.visit_history_fail, 13)
-        binding.sadTextView.textPartTypeface("13명", Typeface.BOLD)
-
-        val visitRows = listOf(
-            Triple(binding.visitHistoryRow1TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
-            Triple(binding.visitHistoryRow2TextView, DesignSystemR.drawable.circle_red_4dp, "마포구몽키스패너"),
-            Triple(binding.visitHistoryRow3TextView, DesignSystemR.drawable.circle_red_4dp, "마포구몽키스패너"),
-            Triple(binding.visitHistoryRow4TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
-            Triple(binding.visitHistoryRow5TextView, DesignSystemR.drawable.circle_green_4dp, "마포구몽키스패너"),
-        )
-
-        visitRows.forEach { (textView, drawableRes, visitorName) ->
-            textView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawableRes, 0, 0, 0)
-            textView.text = getString(CommonR.string.store_contributor_visit_row, "23.02.03 16:43", visitorName)
-            textView.textPartTypeface(visitorName, Typeface.BOLD)
-        }
-        binding.visitExtraTextView.text = getString(CommonR.string.visit_extra, 10)
     }
 
     private fun bindContributorSummary(bossStoreDetailModel: BossStoreDetailModel) {
