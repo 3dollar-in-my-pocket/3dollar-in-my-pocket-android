@@ -14,7 +14,7 @@ plugins {
 apply(from = "../common.gradle")
 
 android {
-    namespace = " "
+    namespace = "com.zion830.threedollars"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
