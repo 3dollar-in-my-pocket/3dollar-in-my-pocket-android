@@ -1,6 +1,7 @@
 package com.zion830.threedollars
 
 import android.animation.Animator
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -42,6 +43,14 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val POLL_ID = "pollId"
         private const val ID = "id"
         private const val URL = "url"
+
+        fun launch(context: Context, link: String) {
+            Intent(context, DynamicLinkActivity::class.java).apply {
+                putExtra(LINK, link)
+            }.let {
+                context.startActivity(it)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -78,6 +78,9 @@ junit = "4.13.2"
 androidx-test-ext-junit = "1.3.0"
 espresso-core = "3.7.0"
 
+# CustomView
+customview-poolingcontainer = "1.0.0"
+
 [libraries]
 # --- Kotlin & Coroutines ---
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -118,6 +121,9 @@ androidx-activity-compose = {group = "androidx.activity", name = "activity-compo
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil-compose" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil-compose" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie-compose"}
+
+# --- CustomView ---
+androidx-customview-poolingcontainer = { group = "androidx.customview", name = "customview-poolingcontainer", version.ref = "customview-poolingcontainer" }
 
 # --- Hilt (DI) ---
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

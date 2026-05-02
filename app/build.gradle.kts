@@ -22,7 +22,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
 
         applicationId = "com.zion830.threedollars"
-        versionCode = 120
+        versionCode = 121
         versionName = project.findProperty("version_name") as String
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -117,5 +117,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.coil.compose)
     implementation(libs.firebase.messaging)
+    implementation(libs.androidx.customview.poolingcontainer)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
