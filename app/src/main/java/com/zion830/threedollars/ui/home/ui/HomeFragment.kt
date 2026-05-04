@@ -2,25 +2,20 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.CustomEvent
@@ -32,24 +27,21 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
+import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.UserStoreModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
-import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
+import com.zion830.threedollars.ui.home.adapter.HomeFilterAdapter
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
@@ -65,19 +57,13 @@ import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import javax.inject.Inject
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
-
-    @Inject
-    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: HomeViewModel by activityViewModels()
 
@@ -87,8 +73,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
-    private var homeStoreType = HomeStoreType.ALL
-    private var homeSortType = HomeSortType.DISTANCE_ASC
+    private lateinit var filterAdapter: HomeFilterAdapter
 
     private var hasRequestedLocationPermission = false
     private var locationPermissionDialog: AlertDialog? = null
@@ -116,11 +101,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
         initMap()
         initAdapter()
+        initFilterAdapter()
         initViewModel()
         initFlow()
         initButton()
         initScroll()
-        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
@@ -234,6 +219,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun initFilterAdapter() {
+        filterAdapter = HomeFilterAdapter(
+            onCategoryClick = {
+                viewModel.sendClickCategoryFilter()
+                showSelectCategoryDialog()
+            },
+            onRadioClick = { paramKey, optionIndex ->
+                viewModel.selectRadioOption(paramKey, optionIndex)
+            },
+            onActionClick = { link ->
+                viewModel.handleActionLink(link)
+            },
+            onCloseSelectedCategoryClick = {
+                viewModel.closeSelectedCategory()
+            },
+        )
+        binding.filterRecyclerView.adapter = filterAdapter
+        binding.filterRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        if (binding.filterRecyclerView.itemDecorationCount == 0) {
+            binding.filterRecyclerView.addItemDecoration(HomeFilterAdapter.SpacingDecoration(10))
+        }
+    }
+
     private fun initButton() {
         binding.layoutAddress.onSingleClick {
             viewModel.sendClickAddress()
@@ -242,36 +251,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 SearchAddressFragment.newInstance(),
                 SearchAddressFragment::class.java.name
             )
-        }
-
-        binding.allMenuTextView.onSingleClick {
-            viewModel.sendClickCategoryFilter()
-            showSelectCategoryDialog()
-        }
-
-        binding.filterConditionsTextView.onSingleClick {
-            sharedPrefUtils.setIsClickFilterConditions()
-            binding.filterConditionsSpeechBubbleLayout.isVisible = false
-            viewModel.updateFilterCondition(FilterConditionsTypeModel.RECENT_ACTIVITY)
-        }
-        binding.filterConditionsSpeechBubbleLayout.onSingleClick {
-            sharedPrefUtils.setIsClickFilterConditions()
-            binding.filterConditionsSpeechBubbleLayout.isVisible = false
-        }
-        binding.filterTextView.onSingleClick {
-            homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
-                HomeSortType.LATEST
-            } else {
-                HomeSortType.DISTANCE_ASC
-            }
-            viewModel.sendClickSorting(homeSortType.name)
-            viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
-        }
-
-        binding.bossFilterTextView.onSingleClick {
-            homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-            viewModel.sendClickBossFilter(homeStoreType == HomeStoreType.BOSS_STORE)
-            viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
         binding.listViewTextView.onSingleClick {
@@ -287,14 +266,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState
-                        .map { it.selectedCategory }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectSelectedCategory(it)
-                        }
-                }
                 launch {
                     viewModel.userInfo.collect {
                         if (it.marketingConsent == "UNVERIFIED") {
@@ -312,28 +283,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.homeSortType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectHomeSortType(it)
-                        }
+                    viewModel.filterCells.collect { cells ->
+                        filterAdapter.submitList(cells)
+                    }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.homeStoreType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectHomeStoreType(it)
-                        }
-                }
-                launch {
-                    viewModel.uiState
-                        .map { it.filterConditionsType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectFilterConditionsType(it)
-                        }
+                    viewModel.filterDeepLink.collect { link ->
+                        handleFilterDeepLink(link)
+                    }
                 }
                 launch {
                     viewModel.serverError.collect {
@@ -358,19 +315,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {
-        Glide.with(requireContext())
-            .load(imageUri)
-            .override(64)
-            .into(object : CustomTarget<Drawable>() {
-                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                    callback(resource)
+    private fun handleFilterDeepLink(link: SDLinkModel) {
+        val url = link.link
+        if (url.isBlank()) return
+        if (link.type == "APP_SCHEME") {
+            startActivity(
+                Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                    putExtra("link", url)
                 }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    callback(null)
-                }
-            })
+            )
+        } else {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
     }
 
     private fun showSelectCategoryDialog() {
@@ -519,28 +475,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun collectSelectedCategory(category: StoreCategoryItem?) {
-        val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
-        val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
-        val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
-
-        binding.run {
-            allMenuTextView.text = text
-            allMenuTextView.setTextColor(resources.getColor(textColor, null))
-            allMenuTextView.setBackgroundResource(background)
-
-            if (category == null) {
-                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(requireContext(), DesignSystemR.drawable.ic_category), null, null, null
-                )
-            } else {
-                loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
-                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                }
-            }
-        }
-    }
-
     private suspend fun collectCarouselItemList(itemList: List<AdAndStoreItem>, shouldResetScroll: Boolean) {
         if (itemList.isEmpty()) return
         val resultList = mutableListOf<AdAndStoreItem>()
@@ -565,40 +499,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
             delay(200L)
             binding.aroundStoreRecyclerView.scrollToPosition(0)
-        }
-    }
-
-    private fun collectHomeSortType(sortType: HomeSortType) {
-        binding.run {
-            filterTextView.text = if (sortType == HomeSortType.DISTANCE_ASC) {
-                getString(CommonR.string.fragment_home_filter_distance)
-            } else {
-                getString(CommonR.string.fragment_home_filter_latest)
-            }
-        }
-    }
-
-    private fun collectHomeStoreType(storeType: HomeStoreType) {
-        binding.run {
-            if (storeType == HomeStoreType.BOSS_STORE) {
-                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
-                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-            } else {
-                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
-                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-            }
-        }
-    }
-
-    private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
-        binding.run {
-            if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
-                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-            } else {
-                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
-                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-            }
         }
     }
 

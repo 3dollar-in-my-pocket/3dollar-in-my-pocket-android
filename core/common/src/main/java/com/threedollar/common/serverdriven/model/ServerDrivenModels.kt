@@ -122,3 +122,34 @@ data class SDCursorModel(
     val nextCursor: String? = null,
     val hasMore: Boolean = false,
 )
+
+data class SDClickLogModel(
+    val screenName: String,
+    val objectType: String,
+    val objectId: String,
+    val extraParameters: Map<String, SDClickLogValue> = emptyMap(),
+)
+
+sealed interface SDClickLogValue {
+    val anyValue: Any?
+
+    data class StringValue(val value: String) : SDClickLogValue {
+        override val anyValue: Any get() = value
+    }
+
+    data class IntValue(val value: Int) : SDClickLogValue {
+        override val anyValue: Any get() = value
+    }
+
+    data class DoubleValue(val value: Double) : SDClickLogValue {
+        override val anyValue: Any get() = value
+    }
+
+    data class BoolValue(val value: Boolean) : SDClickLogValue {
+        override val anyValue: Any get() = value
+    }
+
+    data object Null : SDClickLogValue {
+        override val anyValue: Any? get() = null
+    }
+}

@@ -24,6 +24,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -67,6 +68,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ServerApi {
 
@@ -185,13 +187,11 @@ interface ServerApi {
         @Query("distanceM") distanceM: Double = 100000.0,
         @Query("categoryIds") categoryIds: Array<String>? = null,
         @Query("targetStores") targetStores: Array<String>? = null,
-        @Query("sortType") sortType: String,
-        @Query("filterCertifiedStores") filterCertifiedStores: Boolean? = null,
-        @Query("filterConditions") filterConditions: List<String> = listOf(),
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
+        @QueryMap dynamicParams: Map<String, String> = emptyMap(),
     ): Response<BaseResponse<AroundStoreResponse>>
 
     @GET("/api/v4/boss-store/{bossStoreId}")
@@ -211,6 +211,9 @@ interface ServerApi {
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
         @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
+
+    @GET("/api/v1/screen/home")
+    suspend fun getHomeFilterScreen(): Response<BaseResponse<HomeFilterScreenResponse>>
 
     @GET("/api/v1/screen/store/{storeId}/contributors")
     suspend fun getStoreContributorScreen(

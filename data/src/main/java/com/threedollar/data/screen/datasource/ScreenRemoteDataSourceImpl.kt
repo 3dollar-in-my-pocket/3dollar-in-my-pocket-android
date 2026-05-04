@@ -2,6 +2,7 @@ package com.threedollar.data.screen.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.util.apiResult
@@ -21,5 +22,9 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         cursor: String?,
     ): Flow<BaseResponse<StoreContributorHistoriesResponse>> = flow {
         emit(apiResult(serverApi.getStoreContributorHistories(storeId, cursor)))
+    }
+
+    override fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenResponse>> = flow {
+        emit(apiResult(serverApi.getHomeFilterScreen()))
     }
 }
