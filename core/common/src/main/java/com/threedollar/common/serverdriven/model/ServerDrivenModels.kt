@@ -108,6 +108,10 @@ data class SDLinkModel(
     val link: String,
 )
 
+data class SDViewLogModel(
+    val screenName: String,
+)
+
 data class SDSurfaceStyleModel(
     val backgroundColor: String? = null,
     val border: SDBorderModel? = null,

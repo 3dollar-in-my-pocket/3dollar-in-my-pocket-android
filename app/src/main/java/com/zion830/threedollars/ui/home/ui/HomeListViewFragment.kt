@@ -4,10 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
@@ -29,12 +33,13 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
-import com.zion830.threedollars.ui.home.adapter.HomeFilterAdapter
+import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import base.compose.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -54,15 +59,13 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         )
     }
 
-    private lateinit var filterAdapter: HomeFilterAdapter
-
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeListViewBinding =
         FragmentHomeListViewBinding.inflate(inflater, container, false)
 
     override fun initView() {
         initFlows()
         initButtons()
-        initFilterAdapter()
+        initFilterComposeView()
         setupRecyclerView()
     }
 
@@ -70,27 +73,25 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         binding.listRecyclerView.adapter = adapter
     }
 
-    private fun initFilterAdapter() {
-        filterAdapter = HomeFilterAdapter(
-            onCategoryClick = {
-                viewModel.sendClickCategoryFilterInList()
-                showSelectCategoryDialog()
-            },
-            onRadioClick = { paramKey, optionIndex ->
-                viewModel.selectRadioOption(paramKey, optionIndex)
-            },
-            onActionClick = { link ->
-                viewModel.handleActionLink(link)
-            },
-            onCloseSelectedCategoryClick = {
-                viewModel.closeSelectedCategory()
-            },
+    private fun initFilterComposeView() {
+        binding.filterComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
-        binding.filterRecyclerView.adapter = filterAdapter
-        binding.filterRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        if (binding.filterRecyclerView.itemDecorationCount == 0) {
-            binding.filterRecyclerView.addItemDecoration(HomeFilterAdapter.SpacingDecoration(10))
+        binding.filterComposeView.setContent {
+            AppTheme {
+                val cells = viewModel.filterCells.collectAsStateWithLifecycle().value
+                HomeFilterChipsRow(
+                    cells = cells,
+                    contentPadding = PaddingValues(horizontal = 22.dp),
+                    onCategoryClick = {
+                        viewModel.sendClickCategoryFilter()
+                        showSelectCategoryDialog()
+                    },
+                    onRadioClick = viewModel::selectRadioOption,
+                    onActionClick = viewModel::handleActionLink,
+                    onCloseSelectedCategoryClick = viewModel::closeSelectedCategory,
+                )
+            }
         }
     }
 
@@ -125,16 +126,9 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch { collectAroundStoreModelsFlow() }
-                launch { collectFilterCells() }
                 launch { collectFilterDeepLink() }
                 launch { collectServerErrorFlow() }
             }
-        }
-    }
-
-    private suspend fun collectFilterCells() {
-        viewModel.filterCells.collect { cells ->
-            filterAdapter.submitList(cells)
         }
     }
 

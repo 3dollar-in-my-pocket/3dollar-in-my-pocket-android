@@ -18,6 +18,7 @@ import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.network.data.screen.HomeFilterBarResponse
 import com.threedollar.network.data.screen.HomeFilterBorderResponse
 import com.threedollar.network.data.screen.HomeFilterButtonResponse
@@ -32,9 +33,11 @@ import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeFilterSectionResponse
 import com.threedollar.network.data.screen.HomeFilterSurfaceStyleResponse
 import com.threedollar.network.data.screen.HomeFilterTextResponse
+import com.threedollar.network.data.screen.HomeFilterViewLogResponse
 
 fun HomeFilterScreenResponse.asModel(): HomeFilterScreenModel = HomeFilterScreenModel(
-    sections = sections.orEmpty().map { it.asModel() }
+    sections = sections.orEmpty().map { it.asModel() },
+    viewLog = viewLog?.asModelOrNull(),
 )
 
 private fun HomeFilterSectionResponse.asModel(): HomeScreenSection {
@@ -96,7 +99,7 @@ private fun HomeFilterRadioOptionResponse.asModelOrNull(): HomeFilterRadioOption
 private fun HomeFilterChipResponse.asModel(): SDChipModel = SDChipModel(
     image = image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
     text = text.asModel(),
-    additionalText = null,
+    additionalText = additionalText?.asModel(),
     style = style?.let { SDSurfaceStyleModel(backgroundColor = it.backgroundColor, border = it.border?.asModel()) },
 )
 
@@ -150,6 +153,11 @@ private fun HomeFilterClickLogResponse.asModel(): SDClickLogModel = SDClickLogMo
     objectId = objectId.orEmpty(),
     extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
 )
+
+private fun HomeFilterViewLogResponse.asModelOrNull(): SDViewLogModel? {
+    val screen = screenName?.takeIf { it.isNotBlank() } ?: return null
+    return SDViewLogModel(screenName = screen)
+}
 
 private fun JsonElement.asClickLogValue(): SDClickLogValue {
     if (isJsonNull) return SDClickLogValue.Null

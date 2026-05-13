@@ -7,10 +7,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.core.content.IntentCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -41,7 +45,7 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
-import com.zion830.threedollars.ui.home.adapter.HomeFilterAdapter
+import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
@@ -56,6 +60,7 @@ import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
+import base.compose.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -72,8 +77,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var adapter: AroundStoreMapViewRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
-
-    private lateinit var filterAdapter: HomeFilterAdapter
 
     private var hasRequestedLocationPermission = false
     private var locationPermissionDialog: AlertDialog? = null
@@ -101,7 +104,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
         initMap()
         initAdapter()
-        initFilterAdapter()
+        initFilterComposeView()
         initViewModel()
         initFlow()
         initButton()
@@ -219,27 +222,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun initFilterAdapter() {
-        filterAdapter = HomeFilterAdapter(
-            onCategoryClick = {
-                viewModel.sendClickCategoryFilter()
-                showSelectCategoryDialog()
-            },
-            onRadioClick = { paramKey, optionIndex ->
-                viewModel.selectRadioOption(paramKey, optionIndex)
-            },
-            onActionClick = { link ->
-                viewModel.handleActionLink(link)
-            },
-            onCloseSelectedCategoryClick = {
-                viewModel.closeSelectedCategory()
-            },
+    private fun initFilterComposeView() {
+        binding.filterComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
-        binding.filterRecyclerView.adapter = filterAdapter
-        binding.filterRecyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        if (binding.filterRecyclerView.itemDecorationCount == 0) {
-            binding.filterRecyclerView.addItemDecoration(HomeFilterAdapter.SpacingDecoration(10))
+        binding.filterComposeView.setContent {
+            AppTheme {
+                val cells = viewModel.filterCells.collectAsStateWithLifecycle().value
+                HomeFilterChipsRow(
+                    cells = cells,
+                    contentPadding = PaddingValues(horizontal = 0.dp),
+                    onCategoryClick = {
+                        viewModel.sendClickCategoryFilter()
+                        showSelectCategoryDialog()
+                    },
+                    onRadioClick = viewModel::selectRadioOption,
+                    onActionClick = viewModel::handleActionLink,
+                    onCloseSelectedCategoryClick = viewModel::closeSelectedCategory,
+                )
+            }
         }
     }
 
@@ -281,11 +282,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         .collect { itemList ->
                             collectCarouselItemList(itemList, viewModel.consumeShouldResetScroll())
                         }
-                }
-                launch {
-                    viewModel.filterCells.collect { cells ->
-                        filterAdapter.submitList(cells)
-                    }
                 }
                 launch {
                     viewModel.filterDeepLink.collect { link ->

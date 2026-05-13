@@ -35,6 +35,7 @@ enum class FilterOpenStatuses {
 
 data class HomeFilterScreenModel(
     val sections: List<HomeScreenSection> = emptyList(),
+    val viewLog: SDViewLogModel? = null,
 )
 
 sealed interface HomeScreenSection {

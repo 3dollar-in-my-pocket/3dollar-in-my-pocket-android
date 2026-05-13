@@ -14,14 +14,17 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.serverdriven.model.FilterOpenStatuses
 import com.threedollar.common.serverdriven.model.HomeFilterBar
+import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeScreenSection
+import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDClickLogModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
@@ -36,6 +39,7 @@ import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
+import com.zion830.threedollars.ui.home.data.HomeFilterQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
@@ -94,7 +98,8 @@ class HomeViewModel @Inject constructor(
     val advertisementListModel: StateFlow<AdvertisementModelV2?> get() = _advertisementListModel
 
     init {
-        _filterCells.value = makeFallbackFilterCells(selectedCategory = null)
+        syncRadioSelectionFromLegacy()
+        updateFilterCells()
         fetchHomeFilterScreen()
     }
 
@@ -143,7 +148,10 @@ class HomeViewModel @Inject constructor(
                 mapLongitude = state.mapPosition.longitude,
                 deviceLatitude = state.userLocation.latitude,
                 deviceLongitude = state.userLocation.longitude,
-                dynamicParams = collectDynamicParams(state),
+                dynamicParams = HomeFilterQueryParamsBuilder.build(
+                    state = state,
+                    bars = allBars(),
+                ),
             ).collect { response ->
                 if (response.ok) {
                     val carouselItemList = if (response.data?.contentModels.isNullOrEmpty()) {
@@ -336,6 +344,7 @@ class HomeViewModel @Inject constructor(
             (it as? HomeFilterBar.RadioBar)?.paramKey == paramKey
         } as? HomeFilterBar.RadioBar ?: return
         val option = radioBar.options.getOrNull(optionIndex) ?: return
+        val previousState = uiState.value
 
         _uiState.update { state ->
             val newSelection = state.radioSelection.toMutableMap()
@@ -343,7 +352,7 @@ class HomeViewModel @Inject constructor(
             state.copy(radioSelection = newSelection)
         }
         applyParamValueToLegacyState(paramKey = paramKey, paramValue = option.paramValue)
-        sendClickFilterLog(option = option)
+        sendClickFilterLog(paramKey = paramKey, option = option, previousState = previousState)
         fetchAroundStores()
         updateFilterCells()
     }
@@ -359,9 +368,10 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun allBars(): List<HomeFilterBar> {
-        return uiState.value.filterSections
+        val serverBars = uiState.value.filterSections
             .filterIsInstance<HomeScreenSection.HomeFilterSectionModel>()
             .flatMap { it.bars }
+        return serverBars.ifEmpty { fallbackBars() }
     }
 
     private fun initializeRadioSelectionDefaults() {
@@ -428,23 +438,6 @@ class HomeViewModel @Inject constructor(
         else -> null
     }
 
-    private fun collectDynamicParams(state: HomeUIState): Map<String, String> {
-        val params = mutableMapOf<String, String>()
-        for (bar in allBars()) {
-            if (bar is HomeFilterBar.RadioBar) {
-                if (bar.paramKey == "targetStores") continue
-                val selectedIndex = state.radioSelection[bar.paramKey] ?: 0
-                val option = bar.options.getOrNull(selectedIndex)
-                val value = option?.paramValue ?: continue
-                params[bar.paramKey] = value
-            }
-        }
-        if (params["sortType"] == null) {
-            params["sortType"] = state.homeSortType.name
-        }
-        return params
-    }
-
     private fun updateFilterCells() {
         val state = uiState.value
         _filterCells.value = if (state.hasLoadedFilterScreen) {
@@ -455,8 +448,15 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun flattenFilterCells(state: HomeUIState): List<HomeFilterCellType> {
+        return flattenFilterCells(state = state, bars = allBars())
+    }
+
+    private fun flattenFilterCells(
+        state: HomeUIState,
+        bars: List<HomeFilterBar>,
+    ): List<HomeFilterCellType> {
         val cells = mutableListOf<HomeFilterCellType>()
-        for (bar in allBars()) {
+        for (bar in bars) {
             when (bar) {
                 is HomeFilterBar.CategoryBar -> {
                     cells.add(HomeFilterCellType.Chip(bar.categoriesFilter, ChipAction.OpenCategoryFilter))
@@ -488,24 +488,94 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun makeFallbackFilterCells(selectedCategory: StoreCategoryItem?): List<HomeFilterCellType> {
-        val cells = mutableListOf<HomeFilterCellType>()
-        val categoriesChip = SDChipModel(
-            image = null,
-            text = SDTextModel(text = "음식 종류", isHtml = false, fontColor = "#5A5A5A"),
-            additionalText = null,
-            style = null,
+        return flattenFilterCells(
+            state = uiState.value.copy(selectedCategory = selectedCategory),
+            bars = fallbackBars(),
         )
-        cells.add(HomeFilterCellType.Chip(categoriesChip, ChipAction.OpenCategoryFilter))
-        selectedCategory?.let { category ->
-            cells.add(
-                HomeFilterCellType.SelectedCategoryChip(
-                    chip = makeSelectedCategoryChip(category, "#000000"),
-                    current = null,
-                )
-            )
-        }
-        return cells
     }
+
+    private fun fallbackBars(): List<HomeFilterBar> = listOf(
+        HomeFilterBar.CategoryBar(
+            type = HomeFilterBarType.CATEGORY_BAR,
+            categoriesFilter = fallbackChip(text = "음식 종류"),
+            categoriesFilterClickLog = null,
+            currentCategoryFilter = HomeFilterCurrentCategory(
+                fontColor = "#FF858F",
+                style = SELECTED_CATEGORY_STYLE,
+                clickLog = null,
+            ),
+        ),
+        fallbackRadioBar(
+            paramKey = "filterOpenStatuses",
+            offText = "영업 중",
+            onText = "영업 중",
+            onValue = "OPEN",
+        ),
+        fallbackRadioBar(
+            paramKey = "filterConditions",
+            offText = "최근 활동",
+            onText = "최근 활동",
+            onValue = "RECENT_ACTIVITY",
+        ),
+        HomeFilterBar.RadioBar(
+            type = HomeFilterBarType.RADIO_BAR,
+            paramKey = "sortType",
+            options = listOf(
+                HomeFilterRadioOption(
+                    chip = fallbackChip(text = "거리순", selected = true),
+                    paramValue = HomeSortType.DISTANCE_ASC.name,
+                    clickLog = null,
+                ),
+                HomeFilterRadioOption(
+                    chip = fallbackChip(text = "최신순", selected = true),
+                    paramValue = HomeSortType.LATEST.name,
+                    clickLog = null,
+                ),
+            ),
+        ),
+        fallbackRadioBar(
+            paramKey = "targetStores",
+            offText = "사장님 직영점만",
+            onText = "사장님 직영점만",
+            onValue = HomeStoreType.BOSS_STORE.name,
+        ),
+    )
+
+    private fun fallbackRadioBar(
+        paramKey: String,
+        offText: String,
+        onText: String,
+        onValue: String,
+    ): HomeFilterBar.RadioBar = HomeFilterBar.RadioBar(
+        type = HomeFilterBarType.RADIO_BAR,
+        paramKey = paramKey,
+        options = listOf(
+            HomeFilterRadioOption(
+                chip = fallbackChip(text = offText),
+                paramValue = null,
+                clickLog = null,
+            ),
+            HomeFilterRadioOption(
+                chip = fallbackChip(text = onText, selected = true),
+                paramValue = onValue,
+                clickLog = null,
+            ),
+        ),
+    )
+
+    private fun fallbackChip(
+        text: String,
+        selected: Boolean = false,
+    ): SDChipModel = SDChipModel(
+        image = null,
+        text = SDTextModel(
+            text = text,
+            isHtml = false,
+            fontColor = if (selected) "#FF858F" else "#5A5A5A",
+        ),
+        additionalText = null,
+        style = if (selected) SELECTED_CATEGORY_STYLE else DEFAULT_CHIP_STYLE,
+    )
 
     private fun makeSelectedCategoryChip(category: StoreCategoryItem, fontColor: String): SDChipModel = SDChipModel(
         image = SDImageModel(url = category.imageUrl, style = SDImageStyleModel(width = 16.0, height = 16.0)),
@@ -514,9 +584,43 @@ class HomeViewModel @Inject constructor(
         style = null,
     )
 
-    private fun sendClickFilterLog(option: HomeFilterRadioOption) {
-        val log = option.clickLog ?: return
-        sendClickEvent(log)
+    private fun sendClickFilterLog(
+        paramKey: String,
+        option: HomeFilterRadioOption,
+        previousState: HomeUIState,
+    ) {
+        option.clickLog?.let {
+            sendClickEvent(it)
+            return
+        }
+
+        sendLegacyFallbackFilterLog(
+            paramKey = paramKey,
+            paramValue = option.paramValue,
+            previousState = previousState,
+        )
+    }
+
+    private fun sendLegacyFallbackFilterLog(
+        paramKey: String,
+        paramValue: String?,
+        previousState: HomeUIState,
+    ) {
+        when (paramKey) {
+            "filterConditions" -> {
+                val contains = previousState.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)
+                LogManager.sendEvent(
+                    ClickEvent(
+                        screen = screenName,
+                        objectType = LogObjectType.BUTTON,
+                        objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
+                        additionalParams = mapOf(ParameterName.VALUE to contains.toString())
+                    )
+                )
+            }
+            "sortType" -> sendClickSorting(paramValue ?: HomeSortType.DISTANCE_ASC.name)
+            "targetStores" -> sendClickBossFilter(paramValue == HomeStoreType.BOSS_STORE.name)
+        }
     }
 
     private fun sendActionBarClickLog(link: SDLinkModel) {
@@ -738,5 +842,13 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val KEY_MAP_POSITION = "map_position"
+        private val DEFAULT_CHIP_STYLE = SDSurfaceStyleModel(
+            backgroundColor = "#FFFFFF",
+            border = SDBorderModel(color = "#D0D0D0", width = 1.0),
+        )
+        private val SELECTED_CATEGORY_STYLE = SDSurfaceStyleModel(
+            backgroundColor = "#FFF3F4",
+            border = SDBorderModel(color = "#FF858F", width = 1.0),
+        )
     }
 }

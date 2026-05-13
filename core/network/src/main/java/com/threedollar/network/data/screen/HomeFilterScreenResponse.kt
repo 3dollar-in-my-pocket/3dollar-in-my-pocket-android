@@ -6,6 +6,13 @@ import com.google.gson.annotations.SerializedName
 data class HomeFilterScreenResponse(
     @SerializedName("sections")
     val sections: List<HomeFilterSectionResponse>? = emptyList(),
+    @SerializedName("viewLog")
+    val viewLog: HomeFilterViewLogResponse? = null,
+)
+
+data class HomeFilterViewLogResponse(
+    @SerializedName("screenName")
+    val screenName: String? = null,
 )
 
 data class HomeFilterSectionResponse(
@@ -39,6 +46,8 @@ data class HomeFilterChipResponse(
     val image: HomeFilterImageResponse? = null,
     @SerializedName("text")
     val text: HomeFilterTextResponse? = null,
+    @SerializedName("additionalText")
+    val additionalText: HomeFilterTextResponse? = null,
     @SerializedName("style")
     val style: HomeFilterChipStyleResponse? = null,
 )
