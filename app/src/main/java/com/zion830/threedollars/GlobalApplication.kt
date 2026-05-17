@@ -62,6 +62,7 @@ class GlobalApplication : Application() {
         APPLICATION_CONTEXT = applicationContext
         eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
         LogManager.initialize(eventTracker)
+        com.threedollar.common.analytics.SDClickLogger.initialize(eventTracker)
 
         RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
         MobileAds.initialize(this)

@@ -1,6 +1,7 @@
 package com.threedollar.data.screen.repository
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.data.screen.asCardsSectionModel
@@ -34,6 +35,17 @@ class ScreenRepositoryImpl @Inject constructor(
             BaseResponse(
                 ok = it.ok,
                 data = section,
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenModel>> =
+        screenRemoteDataSource.getHomeFilterScreen().map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel() ?: HomeFilterScreenModel(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,

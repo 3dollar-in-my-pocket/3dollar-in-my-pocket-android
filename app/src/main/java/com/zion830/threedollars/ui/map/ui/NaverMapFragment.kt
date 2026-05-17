@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -18,8 +19,11 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
@@ -295,49 +299,93 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     }
 
     @SuppressLint("MissingPermission")
-    fun moveToCurrentLocation(showAnim: Boolean = false) {
+    fun moveToCurrentLocation(
+        showAnim: Boolean = false,
+        onLocationLoaded: (LatLng?) -> Unit = {},
+    ) {
         try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    if (it != null) {
-                        currentPosition.value = LatLng(it.latitude, it.longitude)
-                        currentPosition.value?.let { position ->
-                            naverMap?.locationOverlay?.isVisible = true
-                            naverMap?.locationOverlay?.position = position
-                            if (showAnim) {
-                                moveCameraWithAnim(position)
-                            } else {
-                                moveCamera(position)
-                            }
-                            onMyLocationLoaded(position)
-                        }
+            requestCurrentLocation { position ->
+                if (position != null) {
+                    currentPosition.value = position
+                    naverMap?.locationOverlay?.isVisible = true
+                    naverMap?.locationOverlay?.position = position
+                    if (showAnim) {
+                        moveCameraWithAnim(position)
+                    } else {
+                        moveCamera(position)
                     }
+                    onMyLocationLoaded(position)
                 }
+                onLocationLoaded(position)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
             moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+            onLocationLoaded(null)
         }
     }
 
     @SuppressLint("MissingPermission")
     fun updateMyLatestLocation(onMyLocationLoaded: (LatLng?) -> Unit) {
         try {
-            if (isLocationAvailable() && isGpsAvailable()) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnSuccessListener {
-                    if (it != null) {
-                        currentPosition.value = LatLng(it.latitude, it.longitude)
-                        onMyLocationLoaded(currentPosition.value)
-                    } else {
-                        onMyLocationLoaded(null)
-                    }
+            requestCurrentLocation { position ->
+                if (position != null) {
+                    currentPosition.value = position
                 }
+                onMyLocationLoaded(position)
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
+            onMyLocationLoaded(null)
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestCurrentLocation(onLocationLoaded: (LatLng?) -> Unit) {
+        if (!isLocationAvailable() || !isGpsAvailable()) {
+            onLocationLoaded(null)
+            return
+        }
+
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    onLocationLoaded(location.toLatLng())
+                } else {
+                    requestFreshCurrentLocation(onLocationLoaded)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(this::class.java.name, exception.message ?: "")
+                requestFreshCurrentLocation(onLocationLoaded)
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestFreshCurrentLocation(onLocationLoaded: (LatLng?) -> Unit) {
+        val cancellationTokenSource = CancellationTokenSource()
+        val request = CurrentLocationRequest.Builder()
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .setDurationMillis(CURRENT_LOCATION_TIMEOUT_MILLIS)
+            .build()
+        fusedLocationProviderClient
+            .getCurrentLocation(request, cancellationTokenSource.token)
+            .addOnSuccessListener { location ->
+                onLocationLoaded(location?.toLatLng())
+            }
+            .addOnFailureListener { exception ->
+                Log.e(this::class.java.name, exception.message ?: "")
+                onLocationLoaded(null)
+            }
+            .addOnCanceledListener {
+                onLocationLoaded(null)
+            }
+    }
+
+    private fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
+
+    private companion object {
+        const val CURRENT_LOCATION_TIMEOUT_MILLIS = 5_000L
     }
 
     fun setIsShowOverlay(isVisible: Boolean) {

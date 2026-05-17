@@ -20,7 +20,6 @@ import com.threedollar.domain.home.data.store.SaveImagesModel
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.user.UserModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.domain.home.request.PlaceType
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -35,13 +34,11 @@ interface HomeRepository {
         distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
-        sortType: String,
-        filterCertifiedStores: Boolean?,
-        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
+        dynamicParams: Map<String, String> = emptyMap(),
     ): Flow<BaseResponse<AroundStoreModel>>
 
     fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreDetailModel>>
