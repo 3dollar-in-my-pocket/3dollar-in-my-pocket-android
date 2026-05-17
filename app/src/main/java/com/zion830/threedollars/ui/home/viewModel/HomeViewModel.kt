@@ -37,13 +37,12 @@ import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.threedollar.domain.screen.repository.ScreenRepository
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
+import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
-import com.zion830.threedollars.ui.home.data.HomeFilterQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
-import com.zion830.threedollars.ui.home.data.toArray
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -137,21 +136,38 @@ class HomeViewModel @Inject constructor(
     }
 
     fun fetchAroundStores() {
+        fetchAroundStores(uiState.value)
+    }
+
+    fun fetchAroundStores(
+        mapPosition: LatLng,
+        userLocation: LatLng = mapPosition,
+    ) {
+        val state = uiState.value.copy(
+            mapPosition = mapPosition,
+            userLocation = userLocation,
+        )
+        _uiState.value = state
+        savedStateHandle[KEY_MAP_POSITION] = mapPosition
+        fetchAroundStores(state)
+    }
+
+    private fun fetchAroundStores(state: HomeUIState) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val state = uiState.value
+            val params = HomeAroundStoreRequestParamsBuilder.build(
+                state = state,
+                bars = allBars(),
+            )
 
             homeRepository.getAroundStores(
-                distanceM = state.currentDistanceM,
-                categoryIds = state.selectedCategory?.id?.let { arrayOf(it) },
-                targetStores = state.homeStoreType.toArray(),
-                mapLatitude = state.mapPosition.latitude,
-                mapLongitude = state.mapPosition.longitude,
-                deviceLatitude = state.userLocation.latitude,
-                deviceLongitude = state.userLocation.longitude,
-                dynamicParams = HomeFilterQueryParamsBuilder.build(
-                    state = state,
-                    bars = allBars(),
-                ),
+                distanceM = params.distanceM,
+                categoryIds = params.categoryIds,
+                targetStores = params.targetStores,
+                mapLatitude = params.mapLatitude,
+                mapLongitude = params.mapLongitude,
+                deviceLatitude = params.deviceLatitude,
+                deviceLongitude = params.deviceLongitude,
+                dynamicParams = params.dynamicParams,
             ).collect { response ->
                 if (response.ok) {
                     val carouselItemList = if (response.data?.contentModels.isNullOrEmpty()) {

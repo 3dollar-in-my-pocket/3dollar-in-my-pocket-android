@@ -149,7 +149,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
     private fun initAdapter() {
@@ -385,9 +384,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun checkAndRequestLocationPermission() {
         when {
             isLocationAvailable() -> {
-                naverMapFragment.enableLocationTracking()
-                naverMapFragment.moveToCurrentLocation(false)
-                viewModel.fetchAroundStores()
+                loadHomeWithCurrentLocation(showAnim = false)
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 // 이전에 거부했지만 재요청 가능: 바로 권한 요청
@@ -409,11 +406,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (isLocationAvailable()) {
             naverMapFragment.enableLocationTracking()
             val mapCenter = naverMapFragment.getMapCenterLatLng()
-            val currentLocation = naverMapFragment.currentPosition.value
-            naverMapFragment.moveToCurrentLocation(true)
-            val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
-            if (distance > 100f) {
-                binding.tvRetrySearch.isVisible = true
+            naverMapFragment.moveToCurrentLocation(true) { currentLocation ->
+                val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
+                if (distance > 100f) {
+                    binding.tvRetrySearch.isVisible = true
+                }
             }
         } else {
             showLocationPermissionDialog()
@@ -423,7 +420,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun useDefaultLocation() {
         naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
 
-        viewModel.fetchAroundStores()
+        viewModel.fetchAroundStores(
+            mapPosition = NaverMapUtils.DEFAULT_LOCATION,
+            userLocation = NaverMapUtils.DEFAULT_LOCATION,
+        )
         viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
     }
     
@@ -458,16 +458,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
     
     private fun onLocationPermissionGranted() {
+        loadHomeWithCurrentLocation(showAnim = true)
+    }
+
+    private fun loadHomeWithCurrentLocation(showAnim: Boolean) {
         naverMapFragment.enableLocationTracking()
-        naverMapFragment.moveToCurrentLocation(true)
-        
-        lifecycleScope.launch {
-            delay(1000L)
-            val currentLocation = naverMapFragment.currentPosition.value
-            if (currentLocation != null) {
-                viewModel.fetchAroundStores()
-                viewModel.getAdvertisement(latLng = currentLocation)
+        naverMapFragment.moveToCurrentLocation(showAnim) { currentLocation ->
+            if (currentLocation == null) {
+                useDefaultLocation()
+                return@moveToCurrentLocation
             }
+
+            viewModel.fetchAroundStores(
+                mapPosition = currentLocation,
+                userLocation = currentLocation,
+            )
+            viewModel.getAdvertisement(latLng = currentLocation)
         }
     }
 
