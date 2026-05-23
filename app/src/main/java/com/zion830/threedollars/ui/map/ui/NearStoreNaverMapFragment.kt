@@ -34,7 +34,7 @@ class NearStoreNaverMapFragment(
         }
 
         val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        params.setMargins(0, 0, 0, SizeUtils.dpToPx(178f))
+        params.setMargins(0, 0, 0, SizeUtils.dpToPx(360f))
         binding.btnFindLocation.layoutParams = params
 
         binding.btnFindLocation.setOnClickListener {

@@ -3,7 +3,11 @@ package com.zion830.threedollars.ui.map.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -11,8 +15,10 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +44,9 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.MarkerModel
+import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.SDChipModel
+import com.threedollar.common.serverdriven.model.SDImageModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
@@ -276,6 +285,119 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.addAll(newMarkers)
     }
 
+    fun addHomeListMarkers(
+        @DrawableRes drawableRes: Int,
+        list: List<HomeListCardModel.BasicCard>,
+        onClick: (marker: HomeListCardModel.BasicCard) -> Unit = {},
+    ) {
+        if (naverMap == null) {
+            return
+        }
+
+        markers.forEach { it.map = null }
+        markers.clear()
+
+        val newMarkers = list.map { item ->
+            Marker().apply {
+                this.position = LatLng(item.marker.location.latitude, item.marker.location.longitude)
+                this.tag = item.cardId
+                applyHomeListMarkerIcon(marker = this, chip = item.marker.unfocused, drawableRes = drawableRes)
+                this.map = naverMap
+                setOnClickListener {
+                    onClick(item)
+                    true
+                }
+            }
+        }
+        markers.addAll(newMarkers)
+    }
+
+    fun updateHomeListMarkerIcon(
+        @DrawableRes drawableRes: Int,
+        position: Int,
+        card: HomeListCardModel.BasicCard?,
+        isSelected: Boolean,
+    ) {
+        if (markers.size <= position) return
+        val marker = markers[position]
+        val chip = if (isSelected) {
+            card?.marker?.focused
+        } else {
+            card?.marker?.unfocused
+        }
+        applyHomeListMarkerIcon(marker = marker, chip = chip, drawableRes = drawableRes)
+        marker.map = naverMap
+    }
+
+    private fun applyHomeListMarkerIcon(
+        marker: Marker,
+        chip: SDChipModel?,
+        @DrawableRes drawableRes: Int,
+    ) {
+        val image = chip?.image
+        if (image != null) {
+            loadMarkerImage(marker, image)
+            return
+        }
+        val markerText = chip?.markerText().orEmpty()
+        if (markerText.isBlank()) {
+            marker.icon = OverlayImage.fromResource(drawableRes)
+            return
+        }
+        val bitmap = createChipMarkerBitmap(chip ?: return)
+        marker.icon = OverlayImage.fromBitmap(bitmap)
+        marker.width = bitmap.width
+        marker.height = bitmap.height
+    }
+
+    private fun loadMarkerImage(marker: Marker, image: SDImageModel) {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(image.url)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    marker.icon = OverlayImage.fromBitmap(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) = Unit
+            })
+        image.style?.width?.let { marker.width = context?.convertDpToPx(it.toFloat())?.toInt() ?: marker.width }
+        image.style?.height?.let { marker.height = context?.convertDpToPx(it.toFloat())?.toInt() ?: marker.height }
+    }
+
+    private fun createChipMarkerBitmap(chip: SDChipModel): Bitmap {
+        val textView = TextView(requireContext()).apply {
+            text = chip.markerText()
+            textSize = 12f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(chip.text.fontColor.toAndroidColor(Color.WHITE))
+            setPadding(
+                context.convertDpToPx(10f).toInt(),
+                context.convertDpToPx(6f).toInt(),
+                context.convertDpToPx(10f).toInt(),
+                context.convertDpToPx(6f).toInt(),
+            )
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = context.convertDpToPx(14f)
+                setColor(chip.style?.backgroundColor.toAndroidColor(Color.rgb(255, 133, 143)))
+                chip.style?.border?.let { border ->
+                    setStroke(
+                        context.convertDpToPx((border.width ?: 1.0).toFloat()).toInt(),
+                        border.color.toAndroidColor(Color.TRANSPARENT),
+                    )
+                }
+            }
+        }
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        textView.measure(widthSpec, heightSpec)
+        textView.layout(0, 0, textView.measuredWidth, textView.measuredHeight)
+        return Bitmap.createBitmap(textView.measuredWidth, textView.measuredHeight, Bitmap.Config.ARGB_8888).also { bitmap ->
+            textView.draw(Canvas(bitmap))
+        }
+    }
+
     fun updateMarkerPosition(storeId: String, latitude: Double, longitude: Double) {
         markers.find { it.tag == storeId }?.position = LatLng(latitude, longitude)
     }
@@ -423,4 +545,16 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             this.resources.displayMetrics,
         )
     }
+}
+
+private fun SDChipModel.markerText(): String {
+    return listOf(text.text, additionalText?.text)
+        .filterNot { it.isNullOrBlank() }
+        .joinToString(" ")
+}
+
+private fun String?.toAndroidColor(fallback: Int): Int {
+    return runCatching {
+        this?.toColorInt() ?: fallback
+    }.getOrDefault(fallback)
 }

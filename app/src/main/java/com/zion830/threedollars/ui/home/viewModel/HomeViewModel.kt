@@ -16,6 +16,8 @@ import com.threedollar.common.serverdriven.model.FilterOpenStatuses
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
+import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.SDBorderModel
@@ -26,6 +28,9 @@ import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.threedollar.common.serverdriven.model.StoreActionBarModel
+import com.threedollar.common.serverdriven.model.StoreScreenModel
+import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.ContentModel
@@ -40,6 +45,7 @@ import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
+import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
@@ -81,6 +87,21 @@ class HomeViewModel @Inject constructor(
 
     private val _filterDeepLink = MutableSharedFlow<SDLinkModel>(extraBufferCapacity = 1)
     val filterDeepLink: SharedFlow<SDLinkModel> = _filterDeepLink.asSharedFlow()
+
+    private val _homeListSection = MutableStateFlow(HomeListSectionModel())
+    val homeListSection: StateFlow<HomeListSectionModel> = _homeListSection.asStateFlow()
+
+    private val _selectedStoreScreen = MutableStateFlow<StoreScreenModel?>(null)
+    val selectedStoreScreen: StateFlow<StoreScreenModel?> = _selectedStoreScreen.asStateFlow()
+
+    private val _storePreviewToast = MutableSharedFlow<String>()
+    val storePreviewToast: SharedFlow<String> = _storePreviewToast.asSharedFlow()
+
+    private val _selectedHomeListCardId = MutableStateFlow<String?>(null)
+    val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
+
+    private var homeListNextCursor: String? = null
+    private var isHomeListLoading = false
 
     private var shouldResetScroll = false
 
@@ -153,13 +174,28 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchAroundStores(state: HomeUIState) {
+        fetchHomeListSection(state = state, cursor = null, append = false)
+    }
+
+    fun fetchNextHomeListSection() {
+        val cursor = homeListNextCursor ?: return
+        if (isHomeListLoading) return
+        fetchHomeListSection(state = uiState.value, cursor = cursor, append = true)
+    }
+
+    private fun fetchHomeListSection(
+        state: HomeUIState,
+        cursor: String?,
+        append: Boolean,
+    ) {
         viewModelScope.launch(coroutineExceptionHandler) {
+            isHomeListLoading = true
             val params = HomeAroundStoreRequestParamsBuilder.build(
                 state = state,
                 bars = allBars(),
             )
 
-            homeRepository.getAroundStores(
+            screenRepository.getHomeListSection(
                 distanceM = params.distanceM,
                 categoryIds = params.categoryIds,
                 targetStores = params.targetStores,
@@ -167,20 +203,111 @@ class HomeViewModel @Inject constructor(
                 mapLongitude = params.mapLongitude,
                 deviceLatitude = params.deviceLatitude,
                 deviceLongitude = params.deviceLongitude,
-                dynamicParams = params.dynamicParams,
+                dynamicParams = HomeListSectionQueryParamsBuilder.build(params.dynamicParams),
+                cursor = cursor,
             ).collect { response ->
+                isHomeListLoading = false
                 if (response.ok) {
-                    val carouselItemList = if (response.data?.contentModels.isNullOrEmpty()) {
-                        arrayListOf(StoreEmptyResponse())
+                    val section = response.data ?: HomeListSectionModel()
+                    val nextCards = if (append) {
+                        _homeListSection.value.cards + section.cards
                     } else {
-                        ArrayList(response.data?.contentModels as List<AdAndStoreItem>)
+                        section.cards
                     }
                     _currentLocation.emit(state.mapPosition)
-                    updateCarouselItemList(carouselItemList)
+                    _homeListSection.value = section.copy(cards = nextCards)
+                    homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
+                    if (!append) {
+                        _selectedHomeListCardId.value = section.cards.firstOrNull()?.cardId
+                    }
+                    sendHomeListImpressionLogs(section.cards)
                 } else {
                     _serverError.emit(response.message)
                 }
             }
+        }
+    }
+
+    fun selectHomeListCard(card: HomeListCardModel.BasicCard) {
+        _selectedHomeListCardId.value = card.cardId
+        card.clickLog?.let { SDClickLogger.send(it) }
+        fetchStoreScreen(card.storeIdOrNull())
+    }
+
+    fun selectHomeListMarker(card: HomeListCardModel.BasicCard) {
+        _selectedHomeListCardId.value = card.cardId
+        card.marker.clickLog?.let { SDClickLogger.send(it) }
+        fetchStoreScreen(card.storeIdOrNull())
+    }
+
+    fun fetchStoreScreen(storeId: Long?) {
+        if (storeId == null) return
+        val state = uiState.value
+        viewModelScope.launch(coroutineExceptionHandler) {
+            screenRepository.getStoreScreen(
+                storeId = storeId,
+                deviceLatitude = state.userLocation.latitude,
+                deviceLongitude = state.userLocation.longitude,
+            ).collect { response ->
+                if (response.ok) {
+                    val screen = response.data ?: StoreScreenModel()
+                    _selectedStoreScreen.value = screen
+                    screen.viewLog?.let { SDClickLogger.send(it) }
+                } else {
+                    _serverError.emit(response.message)
+                }
+            }
+        }
+    }
+
+    fun closeStorePreview() {
+        _selectedStoreScreen.value = null
+    }
+
+    fun sendStorePreviewActionLog(actionBar: StoreActionBarModel) {
+        actionBar.clickLog?.let { SDClickLogger.send(it) }
+    }
+
+    fun putFavoriteFromStorePreview(storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.putFavorite(storeId).collect { response ->
+                if (response.ok) {
+                    updateStorePreviewFavoriteAction(isFavorite = true)
+                    _storePreviewToast.emit("가게를 저장했어요")
+                } else {
+                    _serverError.emit(response.message)
+                }
+            }
+        }
+    }
+
+    fun deleteFavoriteFromStorePreview(storeId: String) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.deleteFavorite(storeId).collect { response ->
+                if (response.ok) {
+                    updateStorePreviewFavoriteAction(isFavorite = false)
+                    _storePreviewToast.emit("가게 저장을 취소했어요")
+                } else {
+                    _serverError.emit(response.message)
+                }
+            }
+        }
+    }
+
+    private fun updateStorePreviewFavoriteAction(isFavorite: Boolean) {
+        _selectedStoreScreen.update { screen ->
+            screen?.copy(
+                sections = screen.sections.map { section ->
+                    if (section is StoreSectionModel.Preview) {
+                        section.copy(
+                            topActionBars = section.topActionBars.mapFavoriteAction(isFavorite),
+                            actionBars = section.actionBars.mapFavoriteAction(isFavorite),
+                        )
+                    } else {
+                        section
+                    }
+                },
+            )
         }
     }
 
@@ -309,6 +436,16 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             shouldResetScroll = true
             _carouselUpdate.emit(itemList)
+        }
+    }
+
+    private fun sendHomeListImpressionLogs(cards: List<HomeListCardModel>) {
+        cards.forEach { card ->
+            when (card) {
+                is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+                is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+                is HomeListCardModel.EmptyCard -> Unit
+            }
         }
     }
 
@@ -867,4 +1004,35 @@ class HomeViewModel @Inject constructor(
             border = SDBorderModel(color = "#FF858F", width = 1.0),
         )
     }
+}
+
+private fun List<StoreActionBarModel>.mapFavoriteAction(isFavorite: Boolean): List<StoreActionBarModel> {
+    return map { actionBar ->
+        val customAction = actionBar.button.customAction
+        val actionType = customAction?.actionType.orEmpty()
+        val isFavoriteAction = actionType.equals("STORE_PREVIEW_SECTION_FAVORITE", ignoreCase = true) ||
+            actionType.equals("STORE_PREVIEW_SECTION_UNFAVORITE", ignoreCase = true)
+        if (customAction != null && isFavoriteAction) {
+            actionBar.copy(
+                button = actionBar.button.copy(
+                    customAction = customAction.copy(
+                        actionType = if (isFavorite) {
+                            "STORE_PREVIEW_SECTION_UNFAVORITE"
+                        } else {
+                            "STORE_PREVIEW_SECTION_FAVORITE"
+                        },
+                    ),
+                ),
+            )
+        } else {
+            actionBar
+        }
+    }
+}
+
+private fun HomeListCardModel.BasicCard.storeIdOrNull(): Long? {
+    return link?.link?.substringAfter("storeId=", missingDelimiterValue = "")
+        ?.substringBefore("&")
+        ?.toLongOrNull()
+        ?: cardId.substringAfter(":", missingDelimiterValue = cardId).toLongOrNull()
 }
