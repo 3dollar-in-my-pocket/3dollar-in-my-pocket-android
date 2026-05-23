@@ -59,8 +59,10 @@ import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -453,7 +455,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
             "STORE_PREVIEW_SECTION_SHARE" -> shareStorePreview(customAction)
             "STORE_PREVIEW_SECTION_NAVIGATION" -> showStorePreviewDirection(customAction)
+            "STORE_PREVIEW_SECTION_REVIEW_WRITE" -> moveStorePreviewReviewWrite(customAction)
+            "STORE_PREVIEW_SECTION_CLOSE" -> viewModel.closeStorePreview()
         }
+    }
+
+    private fun moveStorePreviewReviewWrite(customAction: SDCustomActionModel) {
+        val storeId = customAction.extraParams.longValue("STORE_ID") ?: currentStorePreviewStoreId() ?: return
+        val storeType = customAction.extraParams.stringValue("STORE_TYPE") ?: currentStorePreviewStoreType()
+        val intent = if (storeType == BOSS_STORE) {
+            BossReviewWriteActivity.getIntent(requireContext(), storeId.toString())
+        } else {
+            StoreReviewDetailActivity.getInstance(
+                context = requireContext(),
+                storeId = storeId.toInt(),
+                openReviewWrite = true,
+            )
+        }
+        startActivity(intent)
     }
 
     private fun shareStorePreview(customAction: SDCustomActionModel) {
@@ -505,6 +524,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun currentHomeListCards(): List<HomeListCardModel.BasicCard> {
         return viewModel.homeListSection.value.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+    }
+
+    private fun currentHomeListCard(): HomeListCardModel.BasicCard? {
+        val selectedCardId = viewModel.selectedHomeListCardId.value
+        return currentHomeListCards().firstOrNull { it.cardId == selectedCardId }
+    }
+
+    private fun currentStorePreviewStoreId(): Long? {
+        return currentHomeListCard()?.link?.link?.queryValue("storeId")?.toLongOrNull()
+    }
+
+    private fun currentStorePreviewStoreType(): String? {
+        return currentHomeListCard()?.link?.link?.queryValue("storeType")
     }
 
     private fun updateHomeListMarkerSelection(

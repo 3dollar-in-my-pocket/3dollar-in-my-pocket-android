@@ -525,6 +525,7 @@ private fun StorePreviewHeaderSection(
     onActionClick: (StoreActionBarModel) -> Unit,
 ) {
     val favoriteAction = preview.favoriteActionBar()
+    val closeAction = preview.closeActionBar()
     val rowActions = preview.rowActionBars()
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -557,7 +558,13 @@ private fun StorePreviewHeaderSection(
                 StorePreviewIconButton(
                     iconRes = DesignSystemR.drawable.ic_store_preview_close,
                     tint = Gray100,
-                    onClick = onClosePreview,
+                    onClick = {
+                        if (closeAction != null) {
+                            onActionClick(closeAction)
+                        } else {
+                            onClosePreview()
+                        }
+                    },
                 )
             }
         }
@@ -1093,8 +1100,13 @@ private fun StoreSectionModel.Preview.favoriteActionBar(): StoreActionBarModel? 
         ?: actionBars.firstOrNull { it.isFavoriteToggleAction() }
 }
 
+private fun StoreSectionModel.Preview.closeActionBar(): StoreActionBarModel? {
+    return topActionBars.firstOrNull { it.isCloseAction() }
+        ?: actionBars.firstOrNull { it.isCloseAction() }
+}
+
 private fun StoreSectionModel.Preview.rowActionBars(): List<StoreActionBarModel> {
-    return actionBars.filterNot { it.isFavoriteToggleAction() }
+    return actionBars.filterNot { it.isFavoriteToggleAction() || it.isCloseAction() }
 }
 
 private fun StoreActionBarModel.isFavoriteToggleAction(): Boolean {
@@ -1115,6 +1127,13 @@ private fun StoreActionBarModel.isUnfavoriteAction(): Boolean {
     return actionType.equals("STORE_PREVIEW_SECTION_UNFAVORITE", ignoreCase = true) ||
         type.contains("UNFAVORITE", ignoreCase = true) ||
         type.contains("UN_FAVORITE", ignoreCase = true)
+}
+
+private fun StoreActionBarModel.isCloseAction(): Boolean {
+    val actionType = button.customAction?.actionType.orEmpty()
+    return actionType.equals("STORE_PREVIEW_SECTION_CLOSE", ignoreCase = true) ||
+        type.contains("CLOSE", ignoreCase = true) ||
+        button.text.displayText().contains("닫기")
 }
 
 private fun StoreActionBarModel.isVisitAction(): Boolean {
