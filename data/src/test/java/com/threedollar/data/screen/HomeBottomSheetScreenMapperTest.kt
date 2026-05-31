@@ -25,6 +25,7 @@ import com.threedollar.network.data.screen.SDSurfaceStyleResponse
 import com.threedollar.network.data.screen.SDTextResponse
 import com.threedollar.network.data.screen.StoreActionBarResponse
 import com.threedollar.network.data.screen.StoreScreenResponse
+import com.threedollar.network.data.screen.StoreSectionAdditionalInfosResponse
 import com.threedollar.network.data.screen.StoreSectionResponse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -151,7 +152,7 @@ class HomeBottomSheetScreenMapperTest {
     }
 
     @Test
-    fun storeScreenMapper_mapsPreviewSectionCustomActionsAndViewLogExtras() {
+    fun storeScreenMapper_mapsPreviewSectionAdditionalInfosCustomActionsAndViewLogExtras() {
         val response = StoreScreenResponse(
             sections = listOf(
                 StoreSectionResponse(
@@ -163,17 +164,9 @@ class HomeBottomSheetScreenMapperTest {
                         primary = listOf(chip("붕어빵"), chip("4.6 (8)")),
                         secondary = listOf(chip("영업 중"), chip("1km +")),
                     ),
-                    topActionBars = listOf(
-                        StoreActionBarResponse(
-                            type = "ACTION_BAR",
-                            button = SDButtonResponse(
-                                customAction = SDCustomActionResponse(
-                                    actionType = "STORE_PREVIEW_SECTION_FAVORITE",
-                                    extraParams = mapOf("STORE_ID" to JsonPrimitive(100186)),
-                                ),
-                            ),
-                            clickLog = clickLog("button", "bookmark"),
-                        ),
+                    additionalInfos = StoreSectionAdditionalInfosResponse(
+                        type = "STORE",
+                        isSubscriber = false,
                     ),
                     actionBars = listOf(
                         StoreActionBarResponse(
@@ -188,6 +181,20 @@ class HomeBottomSheetScreenMapperTest {
                         StoreActionBarResponse(
                             type = "ACTION_BAR",
                             button = SDButtonResponse(
+                                text = SDTextResponse.fromText("리뷰 작성"),
+                                customAction = SDCustomActionResponse(
+                                    actionType = "STORE_PREVIEW_SECTION_REVIEW_WRITE",
+                                    extraParams = mapOf(
+                                        "STORE_ID" to JsonPrimitive(100186),
+                                        "STORE_TYPE" to JsonPrimitive("USER_STORE"),
+                                    ),
+                                ),
+                            ),
+                            clickLog = clickLog("button", "review"),
+                        ),
+                        StoreActionBarResponse(
+                            type = "ACTION_BAR",
+                            button = SDButtonResponse(
                                 text = SDTextResponse.fromText("공유"),
                                 customAction = SDCustomActionResponse(
                                     actionType = "STORE_PREVIEW_SECTION_SHARE",
@@ -198,6 +205,17 @@ class HomeBottomSheetScreenMapperTest {
                                 ),
                             ),
                             clickLog = clickLog("button", "share"),
+                        ),
+                        StoreActionBarResponse(
+                            type = "ACTION_BAR",
+                            button = SDButtonResponse(
+                                text = SDTextResponse.fromText("길안내"),
+                                customAction = SDCustomActionResponse(
+                                    actionType = "STORE_PREVIEW_SECTION_NAVIGATION",
+                                    extraParams = mapOf("STORE_NAME" to JsonPrimitive("강남역 0번 출구 앞 붕어빵")),
+                                ),
+                            ),
+                            clickLog = clickLog("button", "navigation"),
                         ),
                     ),
                     images = listOf(SDImageResponse(url = "https://example.com/store.png")),
@@ -222,16 +240,33 @@ class HomeBottomSheetScreenMapperTest {
         assertEquals(100186, (model.viewLog?.extraParameters?.get("STORE_ID") as SDClickLogValue.IntValue).value)
         assertEquals("강남역 0번 출구 앞 붕어빵", preview.header.title?.text)
         assertEquals("4.6 (8)", preview.metadata.primary[1].text.text)
-        assertEquals("STORE_PREVIEW_SECTION_FAVORITE", preview.topActionBars.single().button.customAction?.actionType)
+        assertEquals("STORE", preview.additionalInfos.type)
+        assertEquals(false, preview.additionalInfos.isSubscriber)
+        assertTrue(preview.topActionBars.isEmpty())
         assertEquals("END", preview.actionBars[0].button.imageAlignment)
         assertEquals("/visit?storeId=100186", preview.actionBars[0].button.link?.link)
         assertNull(preview.actionBars[0].button.customAction)
-        assertEquals("STORE_PREVIEW_SECTION_SHARE", preview.actionBars[1].button.customAction?.actionType)
-        assertEquals(100186, (preview.actionBars[1].button.customAction?.extraParams?.get("STORE_ID") as SDClickLogValue.IntValue).value)
-        assertEquals("USER_STORE", (preview.actionBars[1].button.customAction?.extraParams?.get("STORE_TYPE") as SDClickLogValue.StringValue).value)
+        assertEquals("STORE_PREVIEW_SECTION_REVIEW_WRITE", preview.actionBars[1].button.customAction?.actionType)
+        assertEquals("STORE_PREVIEW_SECTION_SHARE", preview.actionBars[2].button.customAction?.actionType)
+        assertEquals(100186, (preview.actionBars[2].button.customAction?.extraParams?.get("STORE_ID") as SDClickLogValue.IntValue).value)
+        assertEquals("USER_STORE", (preview.actionBars[2].button.customAction?.extraParams?.get("STORE_TYPE") as SDClickLogValue.StringValue).value)
+        assertEquals("STORE_PREVIEW_SECTION_NAVIGATION", preview.actionBars[3].button.customAction?.actionType)
         assertEquals("https://example.com/store.png", preview.images.single().url)
         assertEquals("대표 리뷰", preview.bodies.single().text)
         assertTrue(preview.actionBars.all { it.type == "ACTION_BAR" })
+    }
+
+    @Test
+    fun storeScreenMapper_mapsMissingPreviewAdditionalInfosToDefault() {
+        val response = StoreScreenResponse(
+            sections = listOf(StoreSectionResponse(type = "PREVIEW")),
+        )
+
+        val model = response.asModel()
+        val preview = model.sections.single() as StoreSectionModel.Preview
+
+        assertEquals("EMPTY", preview.additionalInfos.type)
+        assertEquals(false, preview.additionalInfos.isSubscriber)
     }
 
     private fun chip(text: String): SDChipResponse = SDChipResponse(

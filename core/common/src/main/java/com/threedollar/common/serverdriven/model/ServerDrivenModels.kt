@@ -229,6 +229,7 @@ sealed interface StoreSectionModel {
         override val type: String,
         val header: HomeListCardHeaderModel,
         val metadata: HomeListCardMetadataModel,
+        val additionalInfos: StoreSectionAdditionalInfosModel = StoreSectionAdditionalInfosModel(),
         val topActionBars: List<StoreActionBarModel> = emptyList(),
         val actionBars: List<StoreActionBarModel> = emptyList(),
         val images: List<SDImageModel> = emptyList(),
@@ -236,6 +237,11 @@ sealed interface StoreSectionModel {
         val style: SDSurfaceStyleModel? = null,
     ) : StoreSectionModel
 }
+
+data class StoreSectionAdditionalInfosModel(
+    val type: String = "EMPTY",
+    val isSubscriber: Boolean = false,
+)
 
 data class StoreActionBarModel(
     val type: String,

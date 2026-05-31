@@ -79,6 +79,8 @@ data class StoreSectionResponse(
     val header: HomeListCardHeaderResponse? = null,
     @SerializedName("metadata")
     val metadata: HomeListCardMetadataResponse? = null,
+    @SerializedName("additionalInfos")
+    val additionalInfos: StoreSectionAdditionalInfosResponse? = null,
     @SerializedName("topActionBars")
     val topActionBars: List<StoreActionBarResponse>? = emptyList(),
     @SerializedName("actionBars")
@@ -89,6 +91,13 @@ data class StoreSectionResponse(
     val bodies: List<SDTextResponse>? = emptyList(),
     @SerializedName("style")
     val style: SDSurfaceStyleResponse? = null,
+)
+
+data class StoreSectionAdditionalInfosResponse(
+    @SerializedName("type")
+    val type: String? = null,
+    @SerializedName("isSubscriber")
+    val isSubscriber: Boolean? = false,
 )
 
 data class StoreActionBarResponse(

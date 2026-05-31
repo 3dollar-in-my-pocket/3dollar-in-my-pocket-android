@@ -278,6 +278,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
+                    onFavoriteClick = ::toggleStorePreviewFavorite,
+                    onStorePreviewClick = ::moveStorePreviewDetail,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -443,16 +445,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun handleStorePreviewCustomAction(customAction: SDCustomActionModel) {
         when (customAction.actionType) {
-            "STORE_PREVIEW_SECTION_FAVORITE" -> {
-                customAction.extraParams.longValue("STORE_ID")?.let { storeId ->
-                    viewModel.putFavoriteFromStorePreview(storeId.toString())
-                }
-            }
-            "STORE_PREVIEW_SECTION_UNFAVORITE" -> {
-                customAction.extraParams.longValue("STORE_ID")?.let { storeId ->
-                    viewModel.deleteFavoriteFromStorePreview(storeId.toString())
-                }
-            }
             "STORE_PREVIEW_SECTION_SHARE" -> shareStorePreview(customAction)
             "STORE_PREVIEW_SECTION_NAVIGATION" -> showStorePreviewDirection(customAction)
             "STORE_PREVIEW_SECTION_REVIEW_WRITE" -> moveStorePreviewReviewWrite(customAction)
@@ -460,19 +452,42 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun toggleStorePreviewFavorite(isSubscriber: Boolean) {
+        val storeId = viewModel.selectedStorePreviewStoreId.value
+            ?: currentStorePreviewRoute()?.storeId
+            ?: return
+        if (isSubscriber) {
+            viewModel.deleteFavoriteFromStorePreview(storeId)
+        } else {
+            viewModel.putFavoriteFromStorePreview(storeId)
+        }
+    }
+
     private fun moveStorePreviewReviewWrite(customAction: SDCustomActionModel) {
-        val storeId = customAction.extraParams.longValue("STORE_ID") ?: currentStorePreviewStoreId() ?: return
-        val storeType = customAction.extraParams.stringValue("STORE_TYPE") ?: currentStorePreviewStoreType()
-        val intent = if (storeType == BOSS_STORE) {
-            BossReviewWriteActivity.getIntent(requireContext(), storeId.toString())
+        val route = currentStorePreviewRoute(
+            fallbackStoreId = customAction.extraParams.longValue("STORE_ID"),
+            fallbackStoreType = customAction.extraParams.stringValue("STORE_TYPE"),
+        ) ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
         } else {
             StoreReviewDetailActivity.getInstance(
                 context = requireContext(),
-                storeId = storeId.toInt(),
+                storeId = route.storeId.toInt(),
                 openReviewWrite = true,
             )
         }
         startActivity(intent)
+    }
+
+    private fun moveStorePreviewDetail() {
+        val route = currentStorePreviewRoute() ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
     private fun shareStorePreview(customAction: SDCustomActionModel) {
@@ -531,12 +546,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         return currentHomeListCards().firstOrNull { it.cardId == selectedCardId }
     }
 
-    private fun currentStorePreviewStoreId(): Long? {
-        return currentHomeListCard()?.link?.link?.queryValue("storeId")?.toLongOrNull()
-    }
-
-    private fun currentStorePreviewStoreType(): String? {
-        return currentHomeListCard()?.link?.link?.queryValue("storeType")
+    private fun currentStorePreviewRoute(
+        fallbackStoreId: Long? = null,
+        fallbackStoreType: String? = null,
+    ): HomeStorePreviewRoute? {
+        val card = currentHomeListCard()
+        return HomeStorePreviewRoute.fromLink(
+            link = card?.link?.link,
+            fallbackStoreId = fallbackStoreId
+                ?: viewModel.selectedStorePreviewStoreId.value
+                ?: card?.storeIdFromCardId(),
+            fallbackStoreType = fallbackStoreType,
+        )
     }
 
     private fun updateHomeListMarkerSelection(
@@ -755,7 +776,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     )
                 }
             }
+            refreshSelectedStorePreview()
         }
+    }
+
+    private fun refreshSelectedStorePreview() {
+        if (viewModel.selectedStoreScreen.value == null) return
+        viewModel.refreshSelectedStorePreview()
     }
     
     override fun onResume() {
@@ -786,6 +813,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 }
 
 private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryParameter(key)
+
+private fun HomeListCardModel.BasicCard.storeIdFromCardId(): Long? {
+    return cardId.substringAfter(":", missingDelimiterValue = cardId).toLongOrNull()
+}
 
 private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
     return when (val value = this[key]) {

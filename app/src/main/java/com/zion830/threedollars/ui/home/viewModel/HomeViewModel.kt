@@ -94,6 +94,9 @@ class HomeViewModel @Inject constructor(
     private val _selectedStoreScreen = MutableStateFlow<StoreScreenModel?>(null)
     val selectedStoreScreen: StateFlow<StoreScreenModel?> = _selectedStoreScreen.asStateFlow()
 
+    private val _selectedStorePreviewStoreId = MutableStateFlow<Long?>(null)
+    val selectedStorePreviewStoreId: StateFlow<Long?> = _selectedStorePreviewStoreId.asStateFlow()
+
     private val _storePreviewToast = MutableSharedFlow<String>()
     val storePreviewToast: SharedFlow<String> = _storePreviewToast.asSharedFlow()
 
@@ -242,6 +245,7 @@ class HomeViewModel @Inject constructor(
 
     fun fetchStoreScreen(storeId: Long?) {
         if (storeId == null) return
+        _selectedStorePreviewStoreId.value = storeId
         val state = uiState.value
         viewModelScope.launch(coroutineExceptionHandler) {
             screenRepository.getStoreScreen(
@@ -262,17 +266,23 @@ class HomeViewModel @Inject constructor(
 
     fun closeStorePreview() {
         _selectedStoreScreen.value = null
+        _selectedStorePreviewStoreId.value = null
+    }
+
+    fun refreshSelectedStorePreview() {
+        fetchStoreScreen(_selectedStorePreviewStoreId.value)
     }
 
     fun sendStorePreviewActionLog(actionBar: StoreActionBarModel) {
         actionBar.clickLog?.let { SDClickLogger.send(it) }
     }
 
-    fun putFavoriteFromStorePreview(storeId: String) {
+    fun putFavoriteFromStorePreview(storeId: Long? = _selectedStorePreviewStoreId.value) {
+        val targetStoreId = storeId ?: return
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putFavorite(storeId).collect { response ->
+            homeRepository.putFavorite(targetStoreId.toString()).collect { response ->
                 if (response.ok) {
-                    updateStorePreviewFavoriteAction(isFavorite = true)
+                    updateStorePreviewFavorite(isFavorite = true)
                     _storePreviewToast.emit("가게를 저장했어요")
                 } else {
                     _serverError.emit(response.message)
@@ -281,11 +291,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteFavoriteFromStorePreview(storeId: String) {
+    fun deleteFavoriteFromStorePreview(storeId: Long? = _selectedStorePreviewStoreId.value) {
+        val targetStoreId = storeId ?: return
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.deleteFavorite(storeId).collect { response ->
+            homeRepository.deleteFavorite(targetStoreId.toString()).collect { response ->
                 if (response.ok) {
-                    updateStorePreviewFavoriteAction(isFavorite = false)
+                    updateStorePreviewFavorite(isFavorite = false)
                     _storePreviewToast.emit("가게 저장을 취소했어요")
                 } else {
                     _serverError.emit(response.message)
@@ -294,14 +305,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun updateStorePreviewFavoriteAction(isFavorite: Boolean) {
+    private fun updateStorePreviewFavorite(isFavorite: Boolean) {
         _selectedStoreScreen.update { screen ->
             screen?.copy(
                 sections = screen.sections.map { section ->
                     if (section is StoreSectionModel.Preview) {
                         section.copy(
-                            topActionBars = section.topActionBars.mapFavoriteAction(isFavorite),
-                            actionBars = section.actionBars.mapFavoriteAction(isFavorite),
+                            additionalInfos = section.additionalInfos.copy(isSubscriber = isFavorite),
                         )
                     } else {
                         section
@@ -1003,30 +1013,6 @@ class HomeViewModel @Inject constructor(
             backgroundColor = "#FFF3F4",
             border = SDBorderModel(color = "#FF858F", width = 1.0),
         )
-    }
-}
-
-private fun List<StoreActionBarModel>.mapFavoriteAction(isFavorite: Boolean): List<StoreActionBarModel> {
-    return map { actionBar ->
-        val customAction = actionBar.button.customAction
-        val actionType = customAction?.actionType.orEmpty()
-        val isFavoriteAction = actionType.equals("STORE_PREVIEW_SECTION_FAVORITE", ignoreCase = true) ||
-            actionType.equals("STORE_PREVIEW_SECTION_UNFAVORITE", ignoreCase = true)
-        if (customAction != null && isFavoriteAction) {
-            actionBar.copy(
-                button = actionBar.button.copy(
-                    customAction = customAction.copy(
-                        actionType = if (isFavorite) {
-                            "STORE_PREVIEW_SECTION_UNFAVORITE"
-                        } else {
-                            "STORE_PREVIEW_SECTION_FAVORITE"
-                        },
-                    ),
-                ),
-            )
-        } else {
-            actionBar
-        }
     }
 }
 

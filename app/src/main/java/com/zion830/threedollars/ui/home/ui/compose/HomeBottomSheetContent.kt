@@ -83,6 +83,7 @@ import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
+import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -113,6 +114,8 @@ fun HomeBottomSheetContent(
     onLoadNextPage: () -> Unit,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
+    onFavoriteClick: (Boolean) -> Unit = { _ -> },
+    onStorePreviewClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = 164.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -313,6 +316,8 @@ fun HomeBottomSheetContent(
                     storeScreen = storeScreen,
                     onClosePreview = onClosePreview,
                     onActionClick = onActionClick,
+                    onFavoriteClick = onFavoriteClick,
+                    onPreviewClick = onStorePreviewClick,
                     modifier = Modifier.weight(1f),
                 )
             } else {
@@ -480,6 +485,8 @@ private fun StorePreviewContent(
     storeScreen: StoreScreenModel,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
+    onFavoriteClick: (Boolean) -> Unit,
+    onPreviewClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val preview = storeScreen.previewSectionOrNull()
@@ -505,11 +512,16 @@ private fun StorePreviewContent(
                 preview = preview,
                 onClosePreview = onClosePreview,
                 onActionClick = onActionClick,
+                onFavoriteClick = onFavoriteClick,
+                onPreviewClick = onPreviewClick,
             )
         }
         if (preview.images.isNotEmpty() || preview.bodies.isNotEmpty()) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(StorePreviewMediaGap)) {
+                Column(
+                    modifier = Modifier.clickable(onClick = onPreviewClick),
+                    verticalArrangement = Arrangement.spacedBy(StorePreviewMediaGap),
+                ) {
                     HomeImages(images = preview.images, listMode = false)
                     BodiesRow(bodies = preview.bodies)
                 }
@@ -523,9 +535,9 @@ private fun StorePreviewHeaderSection(
     preview: StoreSectionModel.Preview,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
+    onFavoriteClick: (Boolean) -> Unit,
+    onPreviewClick: () -> Unit,
 ) {
-    val favoriteAction = preview.favoriteActionBar()
-    val closeAction = preview.closeActionBar()
     val rowActions = preview.rowActionBars()
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -537,34 +549,30 @@ private fun StorePreviewHeaderSection(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onPreviewClick),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 StorePreviewTitle(header = preview.header)
                 MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                favoriteAction?.let { actionBar ->
+                if (preview.additionalInfos.isStoreType()) {
                     StorePreviewIconButton(
-                        iconRes = if (actionBar.isUnfavoriteAction()) {
+                        iconRes = if (preview.additionalInfos.isSubscriber) {
                             DesignSystemR.drawable.ic_store_preview_bookmark_solid
                         } else {
                             DesignSystemR.drawable.ic_store_preview_bookmark_line
                         },
-                        tint = if (actionBar.isUnfavoriteAction()) Pink else Gray100,
-                        onClick = { onActionClick(actionBar) },
+                        tint = if (preview.additionalInfos.isSubscriber) Pink else Gray100,
+                        onClick = { onFavoriteClick(preview.additionalInfos.isSubscriber) },
                     )
                 }
                 StorePreviewIconButton(
                     iconRes = DesignSystemR.drawable.ic_store_preview_close,
                     tint = Gray100,
-                    onClick = {
-                        if (closeAction != null) {
-                            onActionClick(closeAction)
-                        } else {
-                            onClosePreview()
-                        }
-                    },
+                    onClick = onClosePreview,
                 )
             }
         }
@@ -1095,18 +1103,12 @@ private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
     return StorePreviewBaseVerticalPadding + headerHeight + mediaBlockHeight
 }
 
-private fun StoreSectionModel.Preview.favoriteActionBar(): StoreActionBarModel? {
-    return topActionBars.firstOrNull { it.isFavoriteToggleAction() }
-        ?: actionBars.firstOrNull { it.isFavoriteToggleAction() }
-}
-
-private fun StoreSectionModel.Preview.closeActionBar(): StoreActionBarModel? {
-    return topActionBars.firstOrNull { it.isCloseAction() }
-        ?: actionBars.firstOrNull { it.isCloseAction() }
-}
-
 private fun StoreSectionModel.Preview.rowActionBars(): List<StoreActionBarModel> {
     return actionBars.filterNot { it.isFavoriteToggleAction() || it.isCloseAction() }
+}
+
+private fun StoreSectionAdditionalInfosModel.isStoreType(): Boolean {
+    return type.equals("STORE", ignoreCase = true)
 }
 
 private fun StoreActionBarModel.isFavoriteToggleAction(): Boolean {

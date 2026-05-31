@@ -23,6 +23,7 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
+import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.network.data.screen.HomeListCardHeaderResponse
 import com.threedollar.network.data.screen.HomeListCardMetadataResponse
@@ -45,6 +46,7 @@ import com.threedollar.network.data.screen.SDSurfaceStyleResponse
 import com.threedollar.network.data.screen.SDTextResponse
 import com.threedollar.network.data.screen.StoreActionBarResponse
 import com.threedollar.network.data.screen.StoreScreenResponse
+import com.threedollar.network.data.screen.StoreSectionAdditionalInfosResponse
 import com.threedollar.network.data.screen.StoreSectionResponse
 
 fun HomeListSectionResponse.asModel(): HomeListSectionModel = HomeListSectionModel(
@@ -107,6 +109,7 @@ private fun StoreSectionResponse.asStoreSectionModelOrNull(): StoreSectionModel?
             type = type.orEmpty(),
             header = header.asModel(),
             metadata = metadata.asModel(),
+            additionalInfos = additionalInfos.asModel(),
             topActionBars = topActionBars.orEmpty().map { it.asModel() },
             actionBars = actionBars.orEmpty().map { it.asModel() },
             images = images.orEmpty().mapNotNull { it.asModelOrNull() },
@@ -128,6 +131,13 @@ private fun HomeListCardMetadataResponse?.asModel(): HomeListCardMetadataModel =
     secondary = this?.secondary.orEmpty().map { it.asModel() },
     separator = this?.separator?.asModelOrNull(),
 )
+
+private fun StoreSectionAdditionalInfosResponse?.asModel(): StoreSectionAdditionalInfosModel {
+    return StoreSectionAdditionalInfosModel(
+        type = this?.type ?: "EMPTY",
+        isSubscriber = this?.isSubscriber ?: false,
+    )
+}
 
 private fun HomeListMarkerResponse.asModelOrNull(): HomeListMarkerModel? {
     val locationModel = location?.asModelOrNull() ?: return null

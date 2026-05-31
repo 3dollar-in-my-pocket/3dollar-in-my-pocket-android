@@ -27,6 +27,7 @@ import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
+import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
@@ -150,8 +151,11 @@ private fun Context.designStoreScreen(): StoreScreenModel {
                         ),
                     ),
                 ),
+                additionalInfos = StoreSectionAdditionalInfosModel(
+                    type = "STORE",
+                    isSubscriber = false,
+                ),
                 actionBars = listOf(
-                    favoriteAction(),
                     StoreActionBarModel(
                         type = "VISIT",
                         button = SDButtonModel(
@@ -211,18 +215,4 @@ private fun Context.drawableUri(@DrawableRes resId: Int): String {
         .appendPath(resId.toString())
         .build()
         .toString()
-}
-
-private fun favoriteAction(): StoreActionBarModel {
-    return StoreActionBarModel(
-        type = "FAVORITE",
-        button = SDButtonModel(
-            text = SDTextModel(
-                text = "저장",
-                isHtml = false,
-                fontColor = "#0F0F0F",
-            ),
-            customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_FAVORITE"),
-        ),
-    )
 }
