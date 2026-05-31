@@ -2,8 +2,10 @@ package com.threedollar.data.screen.repository
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
+import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.data.screen.asCardsSectionModel
 import com.threedollar.data.screen.asModel
 import com.threedollar.data.screen.datasource.ScreenRemoteDataSource
@@ -15,6 +17,56 @@ import javax.inject.Inject
 class ScreenRepositoryImpl @Inject constructor(
     private val screenRemoteDataSource: ScreenRemoteDataSource,
 ) : ScreenRepository {
+    override fun getHomeListSection(
+        distanceM: Double,
+        categoryIds: Array<String>?,
+        targetStores: Array<String>?,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+        dynamicParams: Map<String, String>,
+        cursor: String?,
+    ): Flow<BaseResponse<HomeListSectionModel>> =
+        screenRemoteDataSource.getHomeListSection(
+            distanceM = distanceM,
+            categoryIds = categoryIds,
+            targetStores = targetStores,
+            mapLatitude = mapLatitude,
+            mapLongitude = mapLongitude,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude,
+            dynamicParams = dynamicParams,
+            cursor = cursor,
+        ).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel() ?: HomeListSectionModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getStoreScreen(
+        storeId: Long,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<StoreScreenModel>> =
+        screenRemoteDataSource.getStoreScreen(
+            storeId = storeId,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude,
+        ).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asModel() ?: StoreScreenModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
     override fun getStoreContributorScreen(storeId: String): Flow<BaseResponse<SDScreenModel>> =
         screenRemoteDataSource.getStoreContributorScreen(storeId).map {
             BaseResponse(

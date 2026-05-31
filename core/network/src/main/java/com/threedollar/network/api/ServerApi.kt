@@ -25,6 +25,8 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeListSectionResponse
+import com.threedollar.network.data.screen.StoreScreenResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -214,6 +216,26 @@ interface ServerApi {
 
     @GET("/api/v1/screen/home")
     suspend fun getHomeFilterScreen(): Response<BaseResponse<HomeFilterScreenResponse>>
+
+    @GET("/api/v1/screen/home/section/list")
+    suspend fun getHomeListSection(
+        @Query("distanceM") distanceM: Double,
+        @Query("categoryIds") categoryIds: Array<String>? = null,
+        @Query("targetStores") targetStores: Array<String>? = null,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @QueryMap dynamicParams: Map<String, String> = emptyMap(),
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<HomeListSectionResponse>>
+
+    @GET("/api/v2/screen/store/{storeId}")
+    suspend fun getStoreScreen(
+        @Path("storeId") storeId: Long,
+        @Header("X-Device-Latitude") deviceLatitude: Double?,
+        @Header("X-Device-Longitude") deviceLongitude: Double?,
+    ): Response<BaseResponse<StoreScreenResponse>>
 
     @GET("/api/v1/screen/store/{storeId}/contributors")
     suspend fun getStoreContributorScreen(

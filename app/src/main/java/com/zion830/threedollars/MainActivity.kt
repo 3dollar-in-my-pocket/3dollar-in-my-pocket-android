@@ -156,6 +156,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         navigateToMedalPageWithDeepLink(intent)
     }
 
@@ -221,6 +222,10 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 binding.navView.selectedItemId = R.id.navigation_vote
             }
         } else if (intent.getStringExtra(DynamicLinkActivity.HOME).isNotNullOrEmpty()) {
+            binding.navView.post {
+                binding.navView.selectedItemId = R.id.navigation_home
+            }
+        } else if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW)) {
             binding.navView.post {
                 binding.navView.selectedItemId = R.id.navigation_home
             }

@@ -34,6 +34,7 @@ class StoreReviewDetailActivity :
 
     private var reviewSortType = ReviewSortType.LATEST
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
+    private val openReviewWrite: Boolean by lazy { intent.getBooleanExtra(OPEN_REVIEW_WRITE, false) }
 
     private val moreReviewAdapter by lazy {
         MoreReviewAdapter(
@@ -74,6 +75,7 @@ class StoreReviewDetailActivity :
         initAdapter()
         initTabLayout()
         initFlow()
+        openReviewWriteIfNeeded()
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -88,8 +90,19 @@ class StoreReviewDetailActivity :
 
         binding.reviewWriteTextView.onSingleClick {
             viewModel.sendClickWriteReviewFromList()
-            AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
+            showAddReviewDialog()
         }
+    }
+
+    private fun openReviewWriteIfNeeded() {
+        if (!openReviewWrite) return
+        binding.root.post {
+            showAddReviewDialog()
+        }
+    }
+
+    private fun showAddReviewDialog() {
+        AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
     }
 
     private fun initAdapter() {
@@ -177,9 +190,15 @@ class StoreReviewDetailActivity :
 
     companion object {
         const val STORE_ID = "store_id"
+        private const val OPEN_REVIEW_WRITE = "open_review_write"
 
-        fun getInstance(context: Context, storeId: Int) = Intent(context, StoreReviewDetailActivity::class.java).apply {
+        fun getInstance(
+            context: Context,
+            storeId: Int,
+            openReviewWrite: Boolean = false,
+        ) = Intent(context, StoreReviewDetailActivity::class.java).apply {
             putExtra(STORE_ID, storeId)
+            putExtra(OPEN_REVIEW_WRITE, openReviewWrite)
         }
     }
 }
