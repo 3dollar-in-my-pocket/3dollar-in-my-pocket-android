@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +52,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,6 +61,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -92,6 +95,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 private val MetadataSeparatorColor = Color(0xFFB7B7B7)
@@ -153,6 +157,7 @@ fun HomeBottomSheetContent(
         }
         var sheetOffsetPx by remember { mutableFloatStateOf(anchors.collapsedOffset) }
         var settledValue by remember { mutableStateOf(HomeSheetValue.Collapsed) }
+        var lastListSettledValue by remember { mutableStateOf(HomeSheetValue.Collapsed) }
         var isSheetInitialized by remember { mutableStateOf(false) }
         var animationJob by remember { mutableStateOf<Job?>(null) }
 
@@ -183,6 +188,9 @@ fun HomeBottomSheetContent(
         }
 
         fun animateSheetTo(value: HomeSheetValue) {
+            if (storeScreen == null) {
+                lastListSettledValue = value
+            }
             animateSheetToOffset(targetOffset = anchors.offsetOf(value), settled = value)
         }
 
@@ -201,7 +209,13 @@ fun HomeBottomSheetContent(
 
         LaunchedEffect(anchors) {
             sheetOffsetPx = if (isSheetInitialized) {
-                if (storeScreen != null) storePreviewOffsetPx else anchors.offsetOf(settledValue)
+                if (storeScreen != null) {
+                    storePreviewOffsetPx
+                } else {
+                    val restoredValue = HomeSheetStateCalculator.restoreAfterPreview(lastListSettledValue)
+                    settledValue = restoredValue
+                    anchors.offsetOf(restoredValue)
+                }
             } else {
                 isSheetInitialized = true
                 anchors.collapsedOffset
@@ -216,7 +230,7 @@ fun HomeBottomSheetContent(
                     settled = HomeSheetValue.Collapsed,
                 )
             } else {
-                animateSheetTo(HomeSheetValue.Collapsed)
+                animateSheetTo(HomeSheetStateCalculator.restoreAfterPreview(lastListSettledValue))
             }
         }
 
@@ -401,10 +415,27 @@ private fun HomeListContent(
                     onClick = { onCardClick(card) },
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
-                is HomeListCardModel.AdMobCard -> Spacer(modifier = Modifier.height(0.dp))
+                is HomeListCardModel.AdMobCard -> HomeListAdMobCard()
             }
         }
     }
+}
+
+@Composable
+private fun HomeListAdMobCard() {
+    AndroidView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+            .height(250.dp),
+        factory = { context ->
+            AdView(context).apply {
+                setAdSize(AdSize.MEDIUM_RECTANGLE)
+                adUnitId = context.getString(CommonR.string.admob_list_banner)
+                loadAd(AdRequest.Builder().build())
+            }
+        },
+    )
 }
 
 @Composable
@@ -587,28 +618,50 @@ private fun StorePreviewHeaderSection(
 
 @Composable
 private fun StorePreviewTitle(header: HomeListCardHeaderModel) {
+    TitleWithBadge(
+        title = header.title,
+        badge = header.badge,
+        titleSize = 20,
+        titleWeight = FontWeight.SemiBold,
+        titleColor = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
+        maxLines = 1,
+        badgeDefaultSize = 16.dp,
+    )
+}
+
+@Composable
+private fun TitleWithBadge(
+    title: SDTextModel?,
+    badge: SDImageModel?,
+    titleSize: Int,
+    titleWeight: FontWeight,
+    titleColor: Color,
+    maxLines: Int,
+    badgeDefaultSize: Dp,
+    modifier: Modifier = Modifier,
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = header.title.displayText(),
-            color = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
+            text = title.displayText(),
+            color = titleColor,
             fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(20),
-            lineHeight = dpToSp(28),
-            maxLines = 1,
+            fontWeight = title?.fontWeight.toComposeFontWeight(titleWeight),
+            fontSize = dpToSp(titleSize),
+            lineHeight = dpToSp(titleSize + 8),
+            maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f, fill = false),
         )
-        header.badge?.let { image ->
+        badge?.let { image ->
             ServerImage(
                 image = image,
                 modifier = Modifier.size(
-                    width = (image.style?.width ?: 16.0).dp,
-                    height = (image.style?.height ?: 16.0).dp,
+                    width = (image.style?.width ?: badgeDefaultSize.value.toDouble()).dp,
+                    height = (image.style?.height ?: badgeDefaultSize.value.toDouble()).dp,
                 ),
                 contentScale = ContentScale.Fit,
             )
@@ -786,33 +839,15 @@ private fun HomeHeader(
     titleColor: Color? = null,
     badgeDefaultSize: Dp = 16.dp,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Text(
-            text = header.title.displayText(),
-            color = titleColor ?: header.title?.fontColor.toColor(fallback = Gray100),
-            fontFamily = PretendardFontFamily,
-            fontWeight = titleWeight,
-            fontSize = dpToSp(titleSize),
-            lineHeight = dpToSp(titleSize + 8),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
-        header.badge?.let { image ->
-            ServerImage(
-                image = image,
-                modifier = Modifier.size(
-                    width = (image.style?.width ?: badgeDefaultSize.value.toDouble()).dp,
-                    height = (image.style?.height ?: badgeDefaultSize.value.toDouble()).dp,
-                ),
-                contentScale = ContentScale.Fit,
-            )
-        }
-    }
+    TitleWithBadge(
+        title = header.title,
+        badge = header.badge,
+        titleSize = titleSize,
+        titleWeight = titleWeight,
+        titleColor = titleColor ?: header.title?.fontColor.toColor(fallback = Gray100),
+        maxLines = 2,
+        badgeDefaultSize = badgeDefaultSize,
+    )
 }
 
 @Composable
@@ -826,7 +861,6 @@ private fun MetadataRows(
             chips = metadata.secondary,
             defaultTextColor = Gray60,
             firstChipColor = Gray80,
-            firstChipWeight = FontWeight.SemiBold,
         )
     }
 }
@@ -836,7 +870,6 @@ private fun MetadataRow(
     chips: List<SDChipModel>,
     defaultTextColor: Color,
     firstChipColor: Color? = null,
-    firstChipWeight: FontWeight = FontWeight.Normal,
 ) {
     if (chips.isEmpty()) return
     Row(
@@ -860,7 +893,7 @@ private fun MetadataRow(
                 } else {
                     chip.text.fontColor.toColor(fallback = defaultTextColor)
                 },
-                fontWeight = if (index == 0) firstChipWeight else FontWeight.Normal,
+                fontWeight = chip.text.fontWeight.toComposeFontWeight(FontWeight.Normal),
                 modifier = if (index == 0 && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
         }
@@ -906,7 +939,7 @@ private fun MetadataChip(
                 text = additionalText.displayText(),
                 color = textColor,
                 fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = additionalText.fontWeight.toComposeFontWeight(FontWeight.Normal),
                 fontSize = dpToSp(14),
                 lineHeight = dpToSp(20),
                 maxLines = 1,
@@ -992,7 +1025,7 @@ private fun BodiesRow(bodies: List<SDTextModel>) {
                     text = body.displayText(),
                     color = body.fontColor.toColor(fallback = Gray70),
                     fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = body.fontWeight.toComposeFontWeight(FontWeight.Medium),
                     fontSize = dpToSp(12),
                     lineHeight = dpToSp(18),
                     maxLines = 2,
@@ -1182,6 +1215,19 @@ private fun SDTextModel?.displayText(): String {
         HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
     } else {
         value
+    }
+}
+
+private fun String?.toComposeFontWeight(fallback: FontWeight): FontWeight {
+    return when (this?.trim()?.uppercase()?.replace("-", "_")?.replace(" ", "_")) {
+        "BLACK", "900" -> FontWeight.Black
+        "EXTRA_BOLD", "EXTRABOLD", "800" -> FontWeight.ExtraBold
+        "BOLD", "700" -> FontWeight.Bold
+        "SEMI_BOLD", "SEMIBOLD", "600" -> FontWeight.SemiBold
+        "MEDIUM", "500" -> FontWeight.Medium
+        "NORMAL", "REGULAR", "400" -> FontWeight.Normal
+        "LIGHT", "300" -> FontWeight.Light
+        else -> fallback
     }
 }
 

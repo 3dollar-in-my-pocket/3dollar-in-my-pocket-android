@@ -42,7 +42,6 @@ import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
-import com.kakao.sdk.user.UserApiClient
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -178,36 +177,39 @@ fun Context.shareWithKakao(
     storeId: String?,
     type: String?
 ) {
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-        val feed = FeedTemplate(
-            content = Content(
-                title = title ?: "",
-                description = description,
-                imageUrl = imageUrl ?: "",
-                link = Link(getString(CommonR.string.download_url), getString(CommonR.string.download_url))
-            ),
-            buttons = listOf(
-                Button(
-                    title = getString(CommonR.string.find_location),
-                    link = Link(
-                        webUrl = shareFormat.shareUrl,
-                        mobileWebUrl = shareFormat.shareUrl,
-                        androidExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString()),
-                        iosExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString())
-                    )
-                )
+    if (storeId.isNullOrBlank() || type.isNullOrBlank()) {
+        showToast(getString(CommonR.string.exist_location_error))
+        return
+    }
+
+    val feed = FeedTemplate(
+        content = Content(
+            title = title ?: "",
+            description = description,
+            imageUrl = imageUrl ?: "",
+            link = Link(getString(CommonR.string.download_url), getString(CommonR.string.download_url)),
+        ),
+        buttons = listOf(
+            Button(
+                title = getString(CommonR.string.find_location),
+                link = Link(
+                    webUrl = shareFormat.shareUrl,
+                    mobileWebUrl = shareFormat.shareUrl,
+                    androidExecutionParams = mapOf("storeId" to storeId, "storeType" to type),
+                    iosExecutionParams = mapOf("storeId" to storeId, "storeType" to type),
+                ),
             )
         )
+    )
 
-        ShareClient.instance.shareDefault(this, feed) { linkResult, error ->
-            if (error != null) {
-                shareUrl(shareFormat.url)
-            } else if (linkResult != null) {
-                this.startActivity(linkResult.intent)
-            }
+    ShareClient.instance.shareDefault(this, feed) { linkResult, error ->
+        if (error != null) {
+            showToast(error.localizedMessage ?: getString(CommonR.string.exist_location_error))
+        } else if (linkResult != null) {
+            startActivity(linkResult.intent)
+        } else {
+            showToast(getString(CommonR.string.exist_location_error))
         }
-    } else {
-        shareUrl(shareFormat.shareUrl)
     }
 }
 

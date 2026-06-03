@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.user.ui
 
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +39,9 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             arguments?.getSerializable(USER_STORE_MODEL) as? UserStoreModel
         }
     }
+    private val finishActivityOnClose: Boolean by lazy {
+        arguments?.getBoolean(FINISH_ACTIVITY_ON_CLOSE, false) ?: false
+    }
 
     override fun initView() {
         initTextView()
@@ -70,7 +74,7 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
 
     private fun initButton() {
         binding.ibClose.onSingleClick {
-            requireActivity().supportFragmentManager.popBackStack()
+            closeCertificationFlow(Activity.RESULT_CANCELED)
         }
         binding.layoutSuccess.onSingleClick {
             viewModel.sendClickVisitSuccess()
@@ -87,7 +91,7 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.storeVisitResult.collect {
-                        activity?.supportFragmentManager?.popBackStack()
+                        closeCertificationFlow(Activity.RESULT_OK)
                     }
                 }
                 launch {
@@ -104,15 +108,31 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): LayoutCertificationAvailableBinding =
         LayoutCertificationAvailableBinding.inflate(inflater, container, false)
 
+    private fun closeCertificationFlow(resultCode: Int) {
+        if (finishActivityOnClose) {
+            requireActivity().setResult(resultCode)
+            requireActivity().finish()
+        } else {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
     companion object {
         const val MIN_DISTANCE = 100
         private const val USER_STORE_MODEL = "userStoreModel"
-        fun getInstance(userStoreModel: UserStoreModel?) = StoreCertificationAvailableFragment().apply {
-            userStoreModel?.let {
-                val bundle = Bundle()
-                bundle.putSerializable(USER_STORE_MODEL, userStoreModel)
-                arguments = bundle
+        private const val FINISH_ACTIVITY_ON_CLOSE = "finishActivityOnClose"
+
+        fun getInstance(
+            userStoreModel: UserStoreModel?,
+            finishActivityOnClose: Boolean = false,
+        ) = StoreCertificationAvailableFragment().apply {
+            val bundle = Bundle().apply {
+                putBoolean(FINISH_ACTIVITY_ON_CLOSE, finishActivityOnClose)
+                userStoreModel?.let {
+                    putSerializable(USER_STORE_MODEL, userStoreModel)
+                }
             }
+            arguments = bundle
         }
     }
 }

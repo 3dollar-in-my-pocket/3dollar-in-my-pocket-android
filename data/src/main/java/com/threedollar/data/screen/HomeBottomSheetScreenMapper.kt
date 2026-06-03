@@ -87,7 +87,7 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
             style = style?.asModel(),
         )
 
-        normalizedType == "ADMOB_CARD" -> HomeListCardModel.AdMobCard(
+        normalizedType == "ADMOB_CARD" || normalizedType == "AD_MOB" -> HomeListCardModel.AdMobCard(
             type = type.orEmpty(),
             cardId = cardId.orEmpty(),
             clickLog = clickLog?.asModel(),
@@ -179,6 +179,7 @@ private fun SDTextResponse?.asModel(): SDTextModel = SDTextModel(
     text = this?.text.orEmpty(),
     isHtml = this?.isHtml ?: false,
     fontColor = this?.fontColor,
+    fontWeight = this?.fontWeight,
 )
 
 private fun SDImageResponse.asModelOrNull(): SDImageModel? {

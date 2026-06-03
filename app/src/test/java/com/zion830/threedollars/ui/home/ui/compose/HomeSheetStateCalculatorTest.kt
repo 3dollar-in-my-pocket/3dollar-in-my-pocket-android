@@ -79,4 +79,16 @@ class HomeSheetStateCalculatorTest {
             0f,
         )
     }
+
+    @Test
+    fun `closing preview restores previous list sheet value`() {
+        assertEquals(
+            HomeSheetValue.FullList,
+            HomeSheetStateCalculator.restoreAfterPreview(HomeSheetValue.FullList),
+        )
+        assertEquals(
+            HomeSheetValue.Collapsed,
+            HomeSheetStateCalculator.restoreAfterPreview(HomeSheetValue.Collapsed),
+        )
+    }
 }
