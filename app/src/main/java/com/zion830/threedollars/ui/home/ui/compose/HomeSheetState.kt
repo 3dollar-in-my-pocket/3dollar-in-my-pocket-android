@@ -71,4 +71,8 @@ internal object HomeSheetStateCalculator {
             .coerceAtMost(containerHeightPx)
         return (containerHeightPx - visibleHeight).toFloat()
     }
+
+    fun restoreAfterPreview(previousListValue: HomeSheetValue): HomeSheetValue {
+        return previousListValue
+    }
 }

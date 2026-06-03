@@ -221,7 +221,10 @@ class HomeViewModel @Inject constructor(
                     _homeListSection.value = section.copy(cards = nextCards)
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
-                        _selectedHomeListCardId.value = section.cards.firstOrNull()?.cardId
+                        _selectedHomeListCardId.value = section.cards
+                            .filterIsInstance<HomeListCardModel.BasicCard>()
+                            .firstOrNull()
+                            ?.cardId
                     }
                     sendHomeListImpressionLogs(section.cards)
                 } else {
@@ -235,6 +238,10 @@ class HomeViewModel @Inject constructor(
         _selectedHomeListCardId.value = card.cardId
         card.clickLog?.let { SDClickLogger.send(it) }
         fetchStoreScreen(card.storeIdOrNull())
+    }
+
+    fun sendClickHomeListCard(card: HomeListCardModel.BasicCard) {
+        card.clickLog?.let { SDClickLogger.send(it) }
     }
 
     fun selectHomeListMarker(card: HomeListCardModel.BasicCard) {

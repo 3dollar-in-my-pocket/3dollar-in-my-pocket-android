@@ -73,6 +73,7 @@ data class SDTextModel(
     val text: String,
     val isHtml: Boolean,
     val fontColor: String? = null,
+    val fontWeight: String? = null,
 )
 
 data class SDTextSpansModel(

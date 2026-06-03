@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +43,7 @@ import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
@@ -61,8 +63,10 @@ import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -100,6 +104,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
 
+    private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            viewModel.closeStorePreview()
+        }
+    }
+
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -119,6 +129,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initView() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
         initMap()
         initAdapter()
         initFilterComposeView()
@@ -274,7 +285,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
-                    onCardClick = viewModel::selectHomeListCard,
+                    onCardClick = ::moveHomeListCardDetail,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
@@ -354,7 +365,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.homeListSection.collect { section ->
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
-                        if (cards.isEmpty()) return@collect
+                        if (cards.isEmpty()) {
+                            naverMapFragment.clearMarker()
+                            return@collect
+                        }
                         naverMapFragment.addHomeListMarkers(
                             drawableRes = DesignSystemR.drawable.ic_store_off,
                             list = cards,
@@ -367,6 +381,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedHomeListCardId.collect { selectedCardId ->
                         updateHomeListMarkerSelection(currentHomeListCards(), selectedCardId)
+                    }
+                }
+                launch {
+                    viewModel.selectedStoreScreen.collect { screen ->
+                        homeBackPressedCallback.isEnabled = screen != null
                     }
                 }
                 launch {
@@ -434,10 +453,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (url.isBlank()) return
         if (link.type == "APP_SCHEME" && url.startsWith("/visit")) {
             val storeId = url.queryValue("storeId")?.toIntOrNull() ?: return
-            startActivityForResult(
-                StoreDetailActivity.getIntent(requireContext(), storeId = storeId, startCertification = true),
-                Constants.SHOW_STORE_BY_CATEGORY,
-            )
+            moveStorePreviewVisit(storeId)
             return
         }
         handleFilterDeepLink(link)
@@ -471,13 +487,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val intent = if (route.storeType == BOSS_STORE) {
             BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
         } else {
-            StoreReviewDetailActivity.getInstance(
+            StoreDetailActivity.getIntent(
                 context = requireContext(),
                 storeId = route.storeId.toInt(),
                 openReviewWrite = true,
             )
         }
         startActivity(intent)
+    }
+
+    private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
+        viewModel.sendClickHomeListCard(card)
+        val route = HomeStorePreviewRoute.fromLink(
+            link = card.link?.link,
+            fallbackStoreId = card.storeIdFromCardId(),
+            fallbackStoreType = card.storeTypeFromCardId(),
+        ) ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
     private fun moveStorePreviewDetail() {
@@ -492,12 +523,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun shareStorePreview(customAction: SDCustomActionModel) {
         val params = customAction.extraParams
-        val storeId = params.longValue("STORE_ID")?.toString()
-        val storeType = params.stringValue("STORE_TYPE")
+        val route = currentStorePreviewRoute(
+            fallbackStoreId = params.longValue("STORE_ID"),
+            fallbackStoreType = params.stringValue("STORE_TYPE"),
+        )
+        val storeId = route?.storeId?.toString()
+        val storeType = route?.storeType ?: USER_STORE
         val storeName = params.stringValue("STORE_NAME") ?: currentStorePreviewTitle()
-        val latitude = params.doubleValue("LATITUDE")
-        val longitude = params.doubleValue("LONGITUDE")
-        val location = if (latitude != null && longitude != null) LatLng(latitude, longitude) else null
+        val currentCard = currentHomeListCard()
+        val latitude = params.doubleValue("LATITUDE") ?: currentCard?.marker?.location?.latitude
+        val longitude = params.doubleValue("LONGITUDE") ?: currentCard?.marker?.location?.longitude
+        if (storeId.isNullOrBlank() || latitude == null || longitude == null) {
+            showToast(getString(CommonR.string.exist_location_error))
+            return
+        }
+        val location = LatLng(latitude, longitude)
         val kakaoType = if (storeType == BOSS_STORE) {
             getString(CommonR.string.scheme_host_kakao_link_food_truck_type)
         } else {
@@ -509,11 +549,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 storeName = storeName,
                 location = location,
             ),
-            title = storeName,
-            description = storeName,
+            title = if (storeType == BOSS_STORE) {
+                getString(CommonR.string.share_kakao_food_truck_title, storeName)
+            } else {
+                getString(CommonR.string.share_kakao_road_food_title, storeName)
+            },
+            description = if (storeType == BOSS_STORE) {
+                getString(CommonR.string.share_kakao_food_truck, storeName)
+            } else {
+                getString(CommonR.string.share_kakao_road_food, storeName)
+            },
             imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
             storeId = storeId,
             type = kakaoType,
+        )
+    }
+
+    private fun moveStorePreviewVisit(storeId: Int) {
+        val args = currentStoreCertificationArgs(storeId) ?: run {
+            showToast(getString(CommonR.string.exist_location_error))
+            return
+        }
+        startActivityForResult(
+            StoreCertificationActivity.getIntent(requireContext(), args),
+            Constants.SHOW_STORE_BY_CATEGORY,
         )
     }
 
@@ -537,6 +596,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             .orEmpty()
     }
 
+    private fun currentStoreCertificationArgs(storeId: Int): StoreCertificationArgs? {
+        val card = currentHomeListCard()
+        val markerLocation = card?.marker?.location ?: return null
+        return StoreCertificationArgs(
+            storeId = storeId,
+            storeName = currentStorePreviewTitle().ifBlank { card.header.title?.text.orEmpty() },
+            latitude = markerLocation.latitude,
+            longitude = markerLocation.longitude,
+            categories = card.metadata.primary.mapNotNull { chip ->
+                val name = chip.text.text.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                StoreCertificationCategoryArgs(
+                    name = name,
+                    imageUrl = chip.image?.url.orEmpty(),
+                )
+            },
+        )
+    }
+
     private fun currentHomeListCards(): List<HomeListCardModel.BasicCard> {
         return viewModel.homeListSection.value.cards.filterIsInstance<HomeListCardModel.BasicCard>()
     }
@@ -556,7 +633,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             fallbackStoreId = fallbackStoreId
                 ?: viewModel.selectedStorePreviewStoreId.value
                 ?: card?.storeIdFromCardId(),
-            fallbackStoreType = fallbackStoreType,
+            fallbackStoreType = fallbackStoreType ?: card?.storeTypeFromCardId(),
         )
     }
 
@@ -816,6 +893,14 @@ private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryPa
 
 private fun HomeListCardModel.BasicCard.storeIdFromCardId(): Long? {
     return cardId.substringAfter(":", missingDelimiterValue = cardId).toLongOrNull()
+}
+
+private fun HomeListCardModel.BasicCard.storeTypeFromCardId(): String? {
+    return when (cardId.substringBefore(":", missingDelimiterValue = "")) {
+        "B" -> BOSS_STORE
+        "S" -> USER_STORE
+        else -> null
+    }
 }
 
 private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {

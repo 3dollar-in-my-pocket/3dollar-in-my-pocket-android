@@ -152,6 +152,72 @@ class HomeBottomSheetScreenMapperTest {
     }
 
     @Test
+    fun homeListSectionMapper_mapsAdMobTypeAlias() {
+        val response = HomeListSectionResponse(
+            cards = listOf(
+                HomeListCardResponse(
+                    type = "AD_MOB",
+                    cardId = "ad-1",
+                    clickLog = clickLog("card", "ad"),
+                    impressionLog = SDImpressionLogResponse(
+                        eventType = "IMPRESSION",
+                        screenName = "home",
+                        objectType = "card",
+                        objectId = "ad",
+                    ),
+                ),
+            ),
+        )
+
+        val card = response.asModel().cards.single() as HomeListCardModel.AdMobCard
+
+        assertEquals("AD_MOB", card.type)
+        assertEquals("ad-1", card.cardId)
+        assertEquals("ad", card.clickLog?.objectId)
+        assertEquals("IMPRESSION", card.impressionLog?.eventType)
+    }
+
+    @Test
+    fun homeListSectionMapper_preservesServerFontWeightAndMarkerText() {
+        val response = Gson().fromJson(
+            """
+            {
+              "cards": [
+                {
+                  "type": "BASIC_CARD",
+                  "cardId": "S:100186",
+                  "header": {
+                    "title": { "content": "강남역 붕어빵", "fontWeight": "BOLD" }
+                  },
+                  "metadata": {
+                    "primary": [{ "text": { "content": "붕어빵" } }],
+                    "secondary": [
+                      { "text": { "content": "영업종료", "fontWeight": "NORMAL" } },
+                      { "text": { "content": "1km +", "fontWeight": "SEMI_BOLD" } }
+                    ]
+                  },
+                  "marker": {
+                    "focused": { "text": { "content": "영업중" } },
+                    "unfocused": { "text": { "content": "" } },
+                    "location": { "lat": 37.1, "lng": 127.2 }
+                  }
+                }
+              ]
+            }
+            """.trimIndent(),
+            HomeListSectionResponse::class.java,
+        )
+
+        val card = response.asModel().cards.single() as HomeListCardModel.BasicCard
+
+        assertEquals("BOLD", card.header.title?.fontWeight)
+        assertEquals("NORMAL", card.metadata.secondary[0].text.fontWeight)
+        assertEquals("SEMI_BOLD", card.metadata.secondary[1].text.fontWeight)
+        assertEquals("영업중", card.marker.focused.text.text)
+        assertEquals("", card.marker.unfocused.text.text)
+    }
+
+    @Test
     fun storeScreenMapper_mapsPreviewSectionAdditionalInfosCustomActionsAndViewLogExtras() {
         val response = StoreScreenResponse(
             sections = listOf(

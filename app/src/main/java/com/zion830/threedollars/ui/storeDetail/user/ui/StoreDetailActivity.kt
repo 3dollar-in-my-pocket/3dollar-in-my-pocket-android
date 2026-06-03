@@ -127,6 +127,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
 
     private var startCertificationExactly: Boolean? = false
+    private var openReviewWriteExactly: Boolean? = false
 
     private val photoAdapter: PhotoRecyclerAdapter by lazy {
         PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
@@ -468,6 +469,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             initPhotoLayout(it)
                             initMap(it)
                             isStartCertification()
+                            openReviewWriteIfNeeded()
                             initImageView(it)
                             initTextView(it)
                             initVisitHistory(it.visits)
@@ -590,6 +592,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (startCertificationExactly == true) {
             startCertification()
             startCertificationExactly = null
+        }
+    }
+
+    private fun openReviewWriteIfNeeded() {
+        openReviewWriteExactly = if (openReviewWriteExactly != null) {
+            intent.getBooleanExtra(KEY_OPEN_REVIEW_WRITE, false)
+        } else {
+            null
+        }
+        if (openReviewWriteExactly == true) {
+            AddReviewDialog.getInstance(storeId = storeId)
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+            openReviewWriteExactly = null
         }
     }
 
@@ -962,6 +977,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     companion object {
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
+        private const val KEY_OPEN_REVIEW_WRITE = "KEY_OPEN_REVIEW_WRITE"
         const val EXTRA_IS_UPDATED = "extra_is_updated"
         const val EXTRA_USER_STORE = "extra_user_store"
 
@@ -970,6 +986,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             storeId: Int? = null,
             startCertification: Boolean = false,
             deepLinkStoreId: String? = null,
+            openReviewWrite: Boolean = false,
         ) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 storeId?.let {
@@ -979,6 +996,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     putExtra(STORE_ID, it.toInt())
                 }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
+                putExtra(KEY_OPEN_REVIEW_WRITE, openReviewWrite)
             }
     }
 }

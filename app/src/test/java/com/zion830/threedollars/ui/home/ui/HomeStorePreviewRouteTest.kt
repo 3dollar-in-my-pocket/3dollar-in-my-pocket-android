@@ -24,6 +24,17 @@ class HomeStorePreviewRouteTest {
     }
 
     @Test
+    fun `fallback id and type are used when link is missing`() {
+        val route = HomeStorePreviewRoute.fromLink(
+            link = null,
+            fallbackStoreId = 100186L,
+            fallbackStoreType = "USER_STORE",
+        )
+
+        assertEquals(HomeStorePreviewRoute(storeId = 100186L, storeType = "USER_STORE"), route)
+    }
+
+    @Test
     fun `route is null without store id`() {
         val route = HomeStorePreviewRoute.fromLink("/store?storeType=USER_STORE")
 

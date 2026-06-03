@@ -116,6 +116,8 @@ data class SDTextResponse(
     private val rawIsHtml: Boolean? = false,
     @SerializedName("fontColor")
     private val rawFontColor: String? = null,
+    @SerializedName("fontWeight")
+    private val rawFontWeight: String? = null,
 ) {
     val text: String?
         get() = rawText.textContent()
@@ -126,15 +128,20 @@ data class SDTextResponse(
     val fontColor: String?
         get() = rawText.stringValue("fontColor") ?: rawFontColor
 
+    val fontWeight: String?
+        get() = rawText.stringValue("fontWeight") ?: rawFontWeight
+
     companion object {
         fun fromText(
             text: String?,
             isHtml: Boolean? = false,
             fontColor: String? = null,
+            fontWeight: String? = null,
         ): SDTextResponse = SDTextResponse(
             rawText = text?.let(::JsonPrimitive),
             rawIsHtml = isHtml,
             rawFontColor = fontColor,
+            rawFontWeight = fontWeight,
         )
     }
 }
