@@ -42,6 +42,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.MarkerModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
@@ -51,6 +52,7 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
+import com.zion830.threedollars.ui.home.ui.markerChipForSelection
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
@@ -320,11 +322,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     ) {
         if (markers.size <= position) return
         val marker = markers[position]
-        val chip = if (isSelected) {
-            card?.marker?.focused
-        } else {
-            card?.marker?.unfocused
-        }
+        val chip = card?.markerChipForSelection(isSelected)
         applyHomeListMarkerIcon(marker = marker, chip = chip, drawableRes = drawableRes)
         marker.map = naverMap
     }
@@ -548,9 +546,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 }
 
 private fun SDChipModel.markerText(): String {
-    return listOf(text.text, additionalText?.text)
-        .filterNot { it.isNullOrBlank() }
-        .joinToString(" ")
+    return displayText()
 }
 
 private fun String?.toAndroidColor(fallback: Int): Int {

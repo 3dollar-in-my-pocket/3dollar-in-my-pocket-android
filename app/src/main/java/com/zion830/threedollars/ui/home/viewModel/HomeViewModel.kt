@@ -49,6 +49,8 @@ import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeSortType
 import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
+import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
+import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -237,7 +239,8 @@ class HomeViewModel @Inject constructor(
     fun selectHomeListCard(card: HomeListCardModel.BasicCard) {
         _selectedHomeListCardId.value = card.cardId
         card.clickLog?.let { SDClickLogger.send(it) }
-        fetchStoreScreen(card.storeIdOrNull())
+        val storeId = card.storePreviewStoreIdOrNull()
+        fetchStoreScreen(storeId, fallbackCard = card)
     }
 
     fun sendClickHomeListCard(card: HomeListCardModel.BasicCard) {
@@ -247,12 +250,18 @@ class HomeViewModel @Inject constructor(
     fun selectHomeListMarker(card: HomeListCardModel.BasicCard) {
         _selectedHomeListCardId.value = card.cardId
         card.marker.clickLog?.let { SDClickLogger.send(it) }
-        fetchStoreScreen(card.storeIdOrNull())
+        val storeId = card.storePreviewStoreIdOrNull()
+        fetchStoreScreen(storeId, fallbackCard = card)
     }
 
-    fun fetchStoreScreen(storeId: Long?) {
-        if (storeId == null) return
+    fun fetchStoreScreen(storeId: Long?, fallbackCard: HomeListCardModel.BasicCard? = null) {
+        if (storeId == null) {
+            return
+        }
         _selectedStorePreviewStoreId.value = storeId
+        fallbackCard?.toFallbackStorePreviewScreen()?.let { fallbackScreen ->
+            _selectedStoreScreen.value = fallbackScreen
+        }
         val state = uiState.value
         viewModelScope.launch(coroutineExceptionHandler) {
             screenRepository.getStoreScreen(
@@ -1021,11 +1030,4 @@ class HomeViewModel @Inject constructor(
             border = SDBorderModel(color = "#FF858F", width = 1.0),
         )
     }
-}
-
-private fun HomeListCardModel.BasicCard.storeIdOrNull(): Long? {
-    return link?.link?.substringAfter("storeId=", missingDelimiterValue = "")
-        ?.substringBefore("&")
-        ?.toLongOrNull()
-        ?: cardId.substringAfter(":", missingDelimiterValue = cardId).toLongOrNull()
 }
