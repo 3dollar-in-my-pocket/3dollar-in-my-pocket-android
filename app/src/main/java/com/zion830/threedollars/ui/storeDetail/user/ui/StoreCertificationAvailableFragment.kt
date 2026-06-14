@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>() {
@@ -31,6 +32,8 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
     override val viewModel: StoreCertificationViewModel by viewModels()
 
     private lateinit var naverMapFragment: StoreCertificationNaverMapFragment
+
+    private var pendingVisitExists = false
 
     private val userStoreModel: UserStoreModel? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -77,10 +80,12 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
             closeCertificationFlow(Activity.RESULT_CANCELED)
         }
         binding.layoutSuccess.onSingleClick {
+            pendingVisitExists = true
             viewModel.sendClickVisitSuccess()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, true)
         }
         binding.layoutFailed.onSingleClick {
+            pendingVisitExists = false
             viewModel.sendClickVisitFail()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, false)
         }
@@ -90,7 +95,11 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.storeVisitResult.collect {
+                    viewModel.storeVisitResult.collect { isSuccess ->
+                        if (!isSuccess) return@collect
+                        if (pendingVisitExists) {
+                            showToast(CommonR.string.add_certification_success)
+                        }
                         closeCertificationFlow(Activity.RESULT_OK)
                     }
                 }

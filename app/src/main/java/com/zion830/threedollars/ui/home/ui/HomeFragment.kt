@@ -71,6 +71,7 @@ import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
@@ -290,12 +291,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
-                    onCardClick = viewModel::selectHomeListCard,
+                    onCardClick = ::moveHomeListCardDetail,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
                     onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = ::moveStorePreviewDetail,
+                    onAddPhotoClick = ::moveStorePreviewPhotoAdd,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -499,6 +501,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         }
         startActivity(intent)
+    }
+
+    private fun moveStorePreviewPhotoAdd() {
+        val route = currentStorePreviewRoute() ?: return
+        startActivityForResult(
+            MoreImageActivity.getIntent(requireContext(), route.storeId.toInt()),
+            Constants.SHOW_STORE_BY_CATEGORY,
+        )
+    }
+
+    private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
+        viewModel.sendClickHomeListCard(card)
+        val route = HomeStorePreviewRoute.fromLink(
+            link = card.link?.link,
+            fallbackStoreId = card.storePreviewStoreIdOrNull(),
+            fallbackStoreType = card.storePreviewStoreTypeOrNull(),
+        ) ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
     private fun moveStorePreviewDetail() {

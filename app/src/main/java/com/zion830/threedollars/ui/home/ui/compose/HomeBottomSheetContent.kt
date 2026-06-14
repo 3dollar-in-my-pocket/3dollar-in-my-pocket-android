@@ -44,9 +44,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -55,6 +60,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -66,9 +72,12 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import base.compose.ColorWhite
+import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
+import base.compose.Gray30
+import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
@@ -108,8 +117,13 @@ private val StorePreviewTitleMetadataHeight = 72.dp
 private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
 private val StorePreviewRootGap = 12.dp
-private val StorePreviewImageHeight = 158.dp
-private val StorePreviewReviewHeight = 58.dp
+private val StorePreviewImageHeight = 120.dp
+private const val StorePreviewReviewMaxLines = 2
+private const val StorePreviewReviewLineHeight = 18
+private const val StorePreviewReviewVerticalPaddingValue = 11
+private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddingValue.dp
+private val StorePreviewReviewEstimatedMaxHeight =
+    (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
@@ -123,6 +137,7 @@ fun HomeBottomSheetContent(
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
+    onAddPhotoClick: (() -> Unit)? = null,
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = 164.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -335,6 +350,7 @@ fun HomeBottomSheetContent(
                     onActionClick = onActionClick,
                     onFavoriteClick = onFavoriteClick,
                     onPreviewClick = onStorePreviewClick,
+                    onAddPhotoClick = onAddPhotoClick,
                     modifier = Modifier.weight(1f),
                 )
             } else {
@@ -431,12 +447,12 @@ private fun HomeListAdMobCard() {
             .fillMaxWidth()
             .padding(vertical = 12.dp)
             .height(HomeListAdMobConfig.containerHeight)
-            .background(Color(0xFF2E2E2E)),
+            .background(ColorWhite),
         factory = { context ->
             AdView(context).apply {
                 setAdSize(HomeListAdMobConfig.adSize)
                 adUnitId = context.getString(CommonR.string.admob_list_banner)
-                setBackgroundColor(0xFF2E2E2E.toInt())
+                setBackgroundColor(android.graphics.Color.WHITE)
                 adListener = object : AdListener() {
                     override fun onAdLoaded() {
                         Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob loaded")
@@ -532,6 +548,7 @@ private fun StorePreviewContent(
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit,
     onPreviewClick: () -> Unit,
+    onAddPhotoClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val preview = storeScreen.previewSectionOrNull()
@@ -567,7 +584,7 @@ private fun StorePreviewContent(
                     modifier = Modifier.clickable(onClick = onPreviewClick),
                     verticalArrangement = Arrangement.spacedBy(StorePreviewMediaGap),
                 ) {
-                    HomeImages(images = preview.images, listMode = false)
+                    HomeImages(images = preview.images, listMode = false, onAddPhotoClick = onAddPhotoClick)
                     BodiesRow(bodies = preview.bodies)
                 }
             }
@@ -678,6 +695,7 @@ private fun TitleWithBadge(
                     height = (image.style?.height ?: badgeDefaultSize.value.toDouble()).dp,
                 ),
                 contentScale = ContentScale.Fit,
+                drawPlaceholderBackground = false,
             )
         }
     }
@@ -967,57 +985,76 @@ private fun MetadataChip(
 private fun HomeImages(
     images: List<SDImageModel>,
     listMode: Boolean,
+    onAddPhotoClick: (() -> Unit)? = null,
 ) {
     if (images.isEmpty()) return
-    val imageHeight = if (listMode) 120.dp else StorePreviewImageHeight
-    when (images.size) {
-        1 -> ServerImage(
-            image = images.first(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(imageHeight)
-                .clip(RoundedCornerShape(if (listMode) 8.dp else 10.dp)),
-            contentScale = ContentScale.Crop,
-        )
-
-        2 -> if (listMode) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                images.take(2).forEach { image ->
-                    ServerImage(
-                        image = image,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(imageHeight)
-                            .clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-            }
-        } else {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
-                    ServerImage(
-                        image = image,
-                        modifier = Modifier
-                            .size(StorePreviewImageHeight)
-                            .clip(RoundedCornerShape(10.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
+    val cornerRadius = if (listMode) 8.dp else 10.dp
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
+            ServerImage(
+                image = image,
+                modifier = Modifier
+                    .size(StorePreviewImageHeight)
+                    .clip(RoundedCornerShape(cornerRadius)),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        if (onAddPhotoClick != null) {
+            item(key = "store-preview-add-photo") {
+                AddPhotoTile(onClick = onAddPhotoClick)
             }
         }
+    }
+}
 
-        else -> LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
-                ServerImage(
-                    image = image,
-                    modifier = Modifier
-                        .width(if (listMode) 120.dp else StorePreviewImageHeight)
-                        .height(imageHeight)
-                        .clip(RoundedCornerShape(if (listMode) 8.dp else 10.dp)),
-                    contentScale = ContentScale.Crop,
+@Composable
+private fun AddPhotoTile(onClick: () -> Unit) {
+    val strokeWidth = 1.dp
+    val dashWidth = 6.dp
+    val dashGap = 4.dp
+    Box(
+        modifier = Modifier
+            .size(StorePreviewImageHeight)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Gray0)
+            .drawBehind {
+                val strokePx = strokeWidth.toPx()
+                drawRoundRect(
+                    color = Gray30,
+                    topLeft = Offset(strokePx / 2f, strokePx / 2f),
+                    size = Size(size.width - strokePx, size.height - strokePx),
+                    cornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx()),
+                    style = Stroke(
+                        width = strokePx,
+                        pathEffect = PathEffect.dashPathEffect(
+                            floatArrayOf(dashWidth.toPx(), dashGap.toPx()),
+                        ),
+                    ),
                 )
             }
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Icon(
+                painter = painterResource(DesignSystemR.drawable.ic_plus),
+                contentDescription = stringResource(CommonR.string.store_preview_photo_add),
+                tint = Gray50,
+                modifier = Modifier.size(24.dp),
+            )
+            Text(
+                text = stringResource(CommonR.string.store_preview_photo_add),
+                color = Gray50,
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = dpToSp(14),
+                lineHeight = dpToSp(20),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
@@ -1030,10 +1067,9 @@ private fun BodiesRow(bodies: List<SDTextModel>) {
             Box(
                 modifier = Modifier
                     .then(if (bodies.size == 1) Modifier.fillParentMaxWidth() else Modifier.width(300.dp))
-                    .height(58.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(Gray10)
-                    .padding(horizontal = 12.dp, vertical = 11.dp),
+                    .padding(horizontal = 12.dp, vertical = StorePreviewReviewVerticalPadding),
             ) {
                 Text(
                     text = body.displayText(),
@@ -1041,8 +1077,8 @@ private fun BodiesRow(bodies: List<SDTextModel>) {
                     fontFamily = PretendardFontFamily,
                     fontWeight = body.fontWeight.toServerDrivenFontWeight(FontWeight.Medium),
                     fontSize = dpToSp(12),
-                    lineHeight = dpToSp(18),
-                    maxLines = 2,
+                    lineHeight = dpToSp(StorePreviewReviewLineHeight),
+                    maxLines = StorePreviewReviewMaxLines,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -1141,9 +1177,9 @@ private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
         0.dp
     }
     val mediaHeight = when {
-        images.isNotEmpty() && bodies.isNotEmpty() -> StorePreviewImageHeight + StorePreviewMediaGap + StorePreviewReviewHeight
+        images.isNotEmpty() && bodies.isNotEmpty() -> StorePreviewImageHeight + StorePreviewMediaGap + StorePreviewReviewEstimatedMaxHeight
         images.isNotEmpty() -> StorePreviewImageHeight
-        bodies.isNotEmpty() -> StorePreviewReviewHeight
+        bodies.isNotEmpty() -> StorePreviewReviewEstimatedMaxHeight
         else -> 0.dp
     }
     val mediaBlockHeight = if (mediaHeight > 0.dp) StorePreviewRootGap + mediaHeight else 0.dp
