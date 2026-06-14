@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
+import android.util.Log
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -60,10 +61,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -77,6 +78,7 @@ import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
@@ -109,6 +111,7 @@ private val StorePreviewRootGap = 12.dp
 private val StorePreviewImageHeight = 158.dp
 private val StorePreviewReviewHeight = 58.dp
 private val StorePreviewMediaGap = 8.dp
+private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
 fun HomeBottomSheetContent(
@@ -427,11 +430,22 @@ private fun HomeListAdMobCard() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp)
-            .height(250.dp),
+            .height(HomeListAdMobConfig.containerHeight)
+            .background(Color(0xFF2E2E2E)),
         factory = { context ->
             AdView(context).apply {
-                setAdSize(AdSize.MEDIUM_RECTANGLE)
+                setAdSize(HomeListAdMobConfig.adSize)
                 adUnitId = context.getString(CommonR.string.admob_list_banner)
+                setBackgroundColor(0xFF2E2E2E.toInt())
+                adListener = object : AdListener() {
+                    override fun onAdLoaded() {
+                        Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob loaded")
+                    }
+
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
+                    }
+                }
                 loadAd(AdRequest.Builder().build())
             }
         },
@@ -649,7 +663,7 @@ private fun TitleWithBadge(
             text = title.displayText(),
             color = titleColor,
             fontFamily = PretendardFontFamily,
-            fontWeight = title?.fontWeight.toComposeFontWeight(titleWeight),
+            fontWeight = title?.fontWeight.toServerDrivenFontWeight(titleWeight),
             fontSize = dpToSp(titleSize),
             lineHeight = dpToSp(titleSize + 8),
             maxLines = maxLines,
@@ -893,7 +907,7 @@ private fun MetadataRow(
                 } else {
                     chip.text.fontColor.toColor(fallback = defaultTextColor)
                 },
-                fontWeight = chip.text.fontWeight.toComposeFontWeight(FontWeight.Normal),
+                fontWeight = chip.text.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
                 modifier = if (index == 0 && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
         }
@@ -939,7 +953,7 @@ private fun MetadataChip(
                 text = additionalText.displayText(),
                 color = textColor,
                 fontFamily = PretendardFontFamily,
-                fontWeight = additionalText.fontWeight.toComposeFontWeight(FontWeight.Normal),
+                fontWeight = additionalText.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
                 fontSize = dpToSp(14),
                 lineHeight = dpToSp(20),
                 maxLines = 1,
@@ -1025,7 +1039,7 @@ private fun BodiesRow(bodies: List<SDTextModel>) {
                     text = body.displayText(),
                     color = body.fontColor.toColor(fallback = Gray70),
                     fontFamily = PretendardFontFamily,
-                    fontWeight = body.fontWeight.toComposeFontWeight(FontWeight.Medium),
+                    fontWeight = body.fontWeight.toServerDrivenFontWeight(FontWeight.Medium),
                     fontSize = dpToSp(12),
                     lineHeight = dpToSp(18),
                     maxLines = 2,
@@ -1207,28 +1221,6 @@ private fun ServerImage(
             modifier
         },
     )
-}
-
-private fun SDTextModel?.displayText(): String {
-    val value = this?.text.orEmpty()
-    return if (this?.isHtml == true) {
-        HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-    } else {
-        value
-    }
-}
-
-private fun String?.toComposeFontWeight(fallback: FontWeight): FontWeight {
-    return when (this?.trim()?.uppercase()?.replace("-", "_")?.replace(" ", "_")) {
-        "BLACK", "900" -> FontWeight.Black
-        "EXTRA_BOLD", "EXTRABOLD", "800" -> FontWeight.ExtraBold
-        "BOLD", "700" -> FontWeight.Bold
-        "SEMI_BOLD", "SEMIBOLD", "600" -> FontWeight.SemiBold
-        "MEDIUM", "500" -> FontWeight.Medium
-        "NORMAL", "REGULAR", "400" -> FontWeight.Normal
-        "LIGHT", "300" -> FontWeight.Light
-        else -> fallback
-    }
 }
 
 private fun String?.textColorOnWhite(fallback: Color): Color {
