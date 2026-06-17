@@ -864,17 +864,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
 
-        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
-            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
-            if (isUpdated && data != null) {
-                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let {
-                    viewModel.updateStoreItem(it)
-                    naverMapFragment.updateMarkerPosition(
-                        it.storeId.toString(),
-                        it.location.latitude,
-                        it.location.longitude
-                    )
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                data?.takeIf { it.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) }?.let { result ->
+                    val userStore = IntentCompat.getSerializableExtra(result, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
+                    userStore?.let {
+                        viewModel.updateStoreItem(it)
+                        naverMapFragment.updateMarkerPosition(
+                            it.storeId.toString(),
+                            it.location.latitude,
+                            it.location.longitude
+                        )
+                    }
                 }
             }
             refreshSelectedStorePreview()
