@@ -9,6 +9,7 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
@@ -34,7 +35,7 @@ class NearStoreNaverMapFragment(
         }
 
         val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        params.setMargins(0, 0, 0, SizeUtils.dpToPx(360f))
+        params.setMargins(0, 0, 0, SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP))
         binding.btnFindLocation.layoutParams = params
 
         binding.btnFindLocation.setOnClickListener {

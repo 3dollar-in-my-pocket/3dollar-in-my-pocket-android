@@ -101,6 +101,7 @@ import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
+import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -141,7 +142,7 @@ fun HomeBottomSheetContent(
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
     fullListTopPx: Int,
-    collapsedPeekHeight: Dp = 164.dp,
+    collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
