@@ -63,6 +63,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -81,6 +82,7 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
+import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
 import base.compose.PretendardFontFamily
@@ -1055,6 +1057,16 @@ private fun AddPhotoTile(onClick: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+    }
+}
+
+@Preview(name = "Store preview photo add tile")
+@Composable
+private fun AddPhotoTilePreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            AddPhotoTile(onClick = {})
         }
     }
 }

@@ -297,7 +297,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onActionClick = ::handleStorePreviewAction,
                     onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = ::moveStorePreviewDetail,
-                    onAddPhotoClick = ::moveStorePreviewPhotoAdd,
+                    onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -509,6 +509,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             MoreImageActivity.getIntent(requireContext(), route.storeId.toInt()),
             Constants.SHOW_STORE_BY_CATEGORY,
         )
+    }
+
+    private fun canAddPhotoToStorePreview(): Boolean {
+        return currentStorePreviewRoute()?.storeType == USER_STORE
     }
 
     private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
