@@ -1,20 +1,23 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
+import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HomeSheetStateCalculatorTest {
+    private val collapsedPeekHeightPx = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.toInt()
+    private val collapsedOffsetPx = 812 - collapsedPeekHeightPx
 
     @Test
     fun `collapsed anchor keeps only peek height visible`() {
         val anchors = HomeSheetStateCalculator.anchors(
             containerHeightPx = 812,
             fullListTopPx = 188,
-            collapsedPeekHeightPx = 164,
+            collapsedPeekHeightPx = collapsedPeekHeightPx,
         )
 
         assertEquals(188f, anchors.fullListOffset, 0f)
-        assertEquals(648f, anchors.collapsedOffset, 0f)
+        assertEquals(collapsedOffsetPx.toFloat(), anchors.collapsedOffset, 0f)
     }
 
     @Test
@@ -22,12 +25,12 @@ class HomeSheetStateCalculatorTest {
         val anchors = HomeSheetStateCalculator.anchors(
             containerHeightPx = 812,
             fullListTopPx = 188,
-            collapsedPeekHeightPx = 164,
+            collapsedPeekHeightPx = collapsedPeekHeightPx,
         )
 
         assertEquals(188f, anchors.clamp(100f), 0f)
         assertEquals(400f, anchors.clamp(400f), 0f)
-        assertEquals(648f, anchors.clamp(700f), 0f)
+        assertEquals(collapsedOffsetPx.toFloat(), anchors.clamp(700f), 0f)
     }
 
     @Test
@@ -55,7 +58,14 @@ class HomeSheetStateCalculatorTest {
     @Test
     fun `visible sheet height subtracts current offset`() {
         assertEquals(624f, HomeSheetStateCalculator.visibleHeight(containerHeightPx = 812, currentOffset = 188f), 0f)
-        assertEquals(164f, HomeSheetStateCalculator.visibleHeight(containerHeightPx = 812, currentOffset = 648f), 0f)
+        assertEquals(
+            collapsedPeekHeightPx.toFloat(),
+            HomeSheetStateCalculator.visibleHeight(
+                containerHeightPx = 812,
+                currentOffset = collapsedOffsetPx.toFloat(),
+            ),
+            0f,
+        )
     }
 
     @Test
@@ -65,16 +75,16 @@ class HomeSheetStateCalculatorTest {
             HomeSheetStateCalculator.previewOffset(
                 containerHeightPx = 812,
                 desiredVisibleHeightPx = 392,
-                minimumVisibleHeightPx = 164,
+                minimumVisibleHeightPx = collapsedPeekHeightPx,
             ),
             0f,
         )
         assertEquals(
-            648f,
+            collapsedOffsetPx.toFloat(),
             HomeSheetStateCalculator.previewOffset(
                 containerHeightPx = 812,
                 desiredVisibleHeightPx = 120,
-                minimumVisibleHeightPx = 164,
+                minimumVisibleHeightPx = collapsedPeekHeightPx,
             ),
             0f,
         )

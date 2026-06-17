@@ -6,6 +6,11 @@ import org.junit.Test
 class HomeSheetLayoutTest {
 
     @Test
+    fun `collapsed peek height matches home guide`() {
+        assertEquals(348f, HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP, 0f)
+    }
+
+    @Test
     fun `location button sits above collapsed home sheet`() {
         assertEquals(
             HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP + 16f,

@@ -427,6 +427,32 @@ private fun HomeFeedButtonPreview() {
     }
 }
 
+@Preview(name = "Home collapsed sheet height", widthDp = 360, heightDp = 812)
+@Composable
+private fun HomeCollapsedSheetHeightPreview() {
+    AppTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Gray10),
+        ) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp)
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .background(ColorWhite),
+            ) {
+                HomeBottomSheetHandle(
+                    onHandleDrag = {},
+                    onHandleDragEnd = {},
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun HomeBottomSheetHandle(
     onHandleDrag: (Float) -> Unit,
