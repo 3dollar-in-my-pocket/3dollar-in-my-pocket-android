@@ -128,6 +128,7 @@ private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddin
 private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
+private val HomeFeedButtonBottomGap = 16.dp
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
@@ -141,6 +142,7 @@ fun HomeBottomSheetContent(
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
+    onFeedClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -332,6 +334,15 @@ fun HomeBottomSheetContent(
             onFullListBackgroundVisibleChange(isFullListSettled)
         }
 
+        if (storeScreen == null && !isFullListSettled) {
+            HomeFeedButton(
+                onClick = onFeedClick,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = sheetHeight + HomeFeedButtonBottomGap),
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -367,6 +378,51 @@ fun HomeBottomSheetContent(
                         .nestedScroll(listNestedScrollConnection),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun HomeFeedButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .height(40.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(ColorWhite)
+            .border(BorderStroke(1.dp, Gray20), RoundedCornerShape(20.dp))
+            .clickable(onClick = onClick)
+            .padding(start = 12.dp, end = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Icon(
+            painter = painterResource(DesignSystemR.drawable.ic_community),
+            contentDescription = null,
+            tint = Gray70,
+            modifier = Modifier.size(18.dp),
+        )
+        Text(
+            text = stringResource(CommonR.string.home_feed_button),
+            color = Gray80,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = dpToSp(13),
+            lineHeight = dpToSp(19),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Preview(name = "Home feed floating button")
+@Composable
+private fun HomeFeedButtonPreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            HomeFeedButton(onClick = {})
         }
     }
 }
