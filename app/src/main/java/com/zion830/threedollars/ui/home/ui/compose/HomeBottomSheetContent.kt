@@ -94,8 +94,11 @@ import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
+import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
+import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDImageModel
+import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
@@ -121,9 +124,13 @@ private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
 private val StorePreviewRootGap = 12.dp
 private val StorePreviewImageHeight = 120.dp
+private val StorePreviewActionIconSize = 14.dp
+private val StorePreviewActionTrailingIconSize = 10.dp
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
 private const val StorePreviewReviewVerticalPaddingValue = 11
+private const val StorePreviewVisitActionWeight = 1.2f
+private const val StorePreviewDefaultActionWeight = 1f
 private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddingValue.dp
 private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
@@ -822,8 +829,21 @@ private fun StorePreviewActionBarRow(
         actionBars.forEach { actionBar ->
             StorePreviewActionButton(
                 actionBar = actionBar,
-                modifier = if (actionBar.isVisitAction()) Modifier else Modifier.weight(1f),
+                modifier = Modifier.weight(actionBar.previewActionWeight()),
                 onClick = { onActionClick(actionBar) },
+            )
+        }
+    }
+}
+
+@Preview(name = "Store preview actions compact", widthDp = 360)
+@Composable
+private fun StorePreviewActionBarRowCompactPreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+            StorePreviewActionBarRow(
+                actionBars = previewStoreActionBars(),
+                onActionClick = {},
             )
         }
     }
@@ -867,21 +887,22 @@ private fun StorePreviewActionButton(
         else -> Modifier
     }
     val horizontalPadding = when {
-        isVisit -> PaddingValues(start = 12.dp, end = 8.dp)
-        isReview -> PaddingValues(horizontal = 12.dp)
-        else -> PaddingValues(horizontal = 10.dp)
+        isVisit -> PaddingValues(start = 8.dp, end = 6.dp)
+        isReview -> PaddingValues(horizontal = 8.dp)
+        else -> PaddingValues(horizontal = 6.dp)
     }
 
     Row(
         modifier = modifier
             .height(StorePreviewActionRowHeight)
+            .fillMaxWidth()
             .clip(shape)
             .background(background)
             .then(borderModifier)
             .clickable(onClick = onClick)
             .padding(horizontalPadding),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterHorizontally),
     ) {
         if (button.imageAlignment != "END") {
             StorePreviewActionImage(actionBar = actionBar, tint = textColor)
@@ -891,8 +912,8 @@ private fun StorePreviewActionButton(
             color = textColor,
             fontFamily = PretendardFontFamily,
             fontWeight = if (isVisit || isReview) FontWeight.SemiBold else FontWeight.Normal,
-            fontSize = dpToSp(14),
-            lineHeight = dpToSp(20),
+            fontSize = dpToSp(13),
+            lineHeight = dpToSp(19),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -918,7 +939,7 @@ private fun StorePreviewActionImage(
             painter = painterResource(id = localIconRes),
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(StorePreviewActionIconSize),
         )
         return
     }
@@ -928,8 +949,8 @@ private fun StorePreviewActionImage(
         ServerImage(
             image = image,
             modifier = Modifier.size(
-                width = (image.style?.width ?: if (trailing) 12.0 else 16.0).dp,
-                height = (image.style?.height ?: if (trailing) 12.0 else 16.0).dp,
+                width = (image.style?.width ?: if (trailing) 10.0 else 14.0).dp,
+                height = (image.style?.height ?: if (trailing) 10.0 else 14.0).dp,
             ),
             contentScale = ContentScale.Fit,
             drawPlaceholderBackground = false,
@@ -944,7 +965,7 @@ private fun StorePreviewActionImage(
         painter = painterResource(id = iconRes),
         contentDescription = null,
         tint = tint,
-        modifier = Modifier.size(if (trailing) 12.dp else 16.dp),
+        modifier = Modifier.size(if (trailing) StorePreviewActionTrailingIconSize else StorePreviewActionIconSize),
     )
 }
 
@@ -1321,6 +1342,10 @@ private fun StoreActionBarModel.isVisitAction(): Boolean {
         button.text.displayText().contains("방문")
 }
 
+private fun StoreActionBarModel.previewActionWeight(): Float {
+    return if (isVisitAction()) StorePreviewVisitActionWeight else StorePreviewDefaultActionWeight
+}
+
 private fun StoreActionBarModel.isReviewAction(): Boolean {
     return button.text.displayText().contains("리뷰")
 }
@@ -1333,6 +1358,39 @@ private fun StoreActionBarModel.isShareAction(): Boolean {
 private fun StoreActionBarModel.isNavigationAction(): Boolean {
     return button.customAction?.actionType.equals("STORE_PREVIEW_SECTION_NAVIGATION", ignoreCase = true) ||
         button.text.displayText().contains("길안내")
+}
+
+private fun previewStoreActionBars(): List<StoreActionBarModel> {
+    return listOf(
+        StoreActionBarModel(
+            type = "VISIT",
+            button = SDButtonModel(
+                text = SDTextModel(text = "방문 인증", isHtml = false),
+                imageAlignment = "END",
+                link = SDLinkModel(type = "APP", link = "/visit"),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "REVIEW",
+            button = SDButtonModel(
+                text = SDTextModel(text = "리뷰 작성", isHtml = false),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "SHARE",
+            button = SDButtonModel(
+                text = SDTextModel(text = "공유", isHtml = false),
+                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_SHARE"),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "NAVIGATION",
+            button = SDButtonModel(
+                text = SDTextModel(text = "길안내", isHtml = false),
+                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_NAVIGATION"),
+            ),
+        ),
+    )
 }
 
 @Composable
