@@ -297,7 +297,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onActionClick = ::handleStorePreviewAction,
                     onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = ::moveStorePreviewDetail,
-                    onAddPhotoClick = ::moveStorePreviewPhotoAdd,
+                    onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
+                    onFeedClick = ::moveCommunityFeed,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -500,7 +501,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 openReviewWrite = true,
             )
         }
-        startActivity(intent)
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
     private fun moveStorePreviewPhotoAdd() {
@@ -509,6 +510,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             MoreImageActivity.getIntent(requireContext(), route.storeId.toInt()),
             Constants.SHOW_STORE_BY_CATEGORY,
         )
+    }
+
+    private fun moveCommunityFeed() {
+        findNavController().navigate(R.id.navigation_vote)
+    }
+
+    private fun canAddPhotoToStorePreview(): Boolean {
+        return currentStorePreviewRoute()?.storeType == USER_STORE
     }
 
     private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
@@ -855,24 +864,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
 
-        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
-            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
-            if (isUpdated && data != null) {
-                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let {
-                    viewModel.updateStoreItem(it)
-                    naverMapFragment.updateMarkerPosition(
-                        it.storeId.toString(),
-                        it.location.latitude,
-                        it.location.longitude
-                    )
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                data?.favoriteStateOrNull()?.let(viewModel::updateSelectedStorePreviewFavorite)
+                data?.takeIf { it.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) }?.let { result ->
+                    val userStore = IntentCompat.getSerializableExtra(result, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
+                    userStore?.let {
+                        viewModel.updateStoreItem(it)
+                        naverMapFragment.updateMarkerPosition(
+                            it.storeId.toString(),
+                            it.location.latitude,
+                            it.location.longitude
+                        )
+                    }
                 }
             }
-            refreshSelectedStorePreview()
+            refreshHomeAfterStoreUpdate()
         }
     }
 
-    private fun refreshSelectedStorePreview() {
+    private fun refreshHomeAfterStoreUpdate() {
+        viewModel.refreshHomeListSectionAfterStoreUpdate()
         if (viewModel.selectedStoreScreen.value == null) return
         viewModel.refreshSelectedStorePreview()
     }
@@ -905,6 +917,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 }
 
 private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryParameter(key)
+
+private fun Intent.favoriteStateOrNull(): Boolean? {
+    return if (hasExtra(StoreDetailActivity.EXTRA_IS_FAVORITE)) {
+        getBooleanExtra(StoreDetailActivity.EXTRA_IS_FAVORITE, false)
+    } else {
+        null
+    }
+}
 
 private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
     return when (val value = this[key]) {

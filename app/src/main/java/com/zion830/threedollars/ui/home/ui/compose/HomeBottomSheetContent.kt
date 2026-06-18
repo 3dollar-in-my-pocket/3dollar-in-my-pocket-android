@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -63,6 +64,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -81,6 +83,8 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
+import base.compose.Green
+import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
 import base.compose.PretendardFontFamily
@@ -92,13 +96,17 @@ import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
+import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
+import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDImageModel
+import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
+import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -118,13 +126,20 @@ private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
 private val StorePreviewRootGap = 12.dp
 private val StorePreviewImageHeight = 120.dp
+private val StorePreviewActionIconSize = 14.dp
+private val StorePreviewActionTrailingIconSize = 10.dp
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
 private const val StorePreviewReviewVerticalPaddingValue = 11
+private const val StorePreviewVisitActionWeight = 1.2f
+private const val StorePreviewDefaultActionWeight = 1f
 private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddingValue.dp
 private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
+private val HomeFeedButtonBottomGap = 16.dp
+private val HomeFeedButtonShape = RoundedCornerShape(16.dp)
+private const val HomeFeedButtonEmoji = "\uD83C\uDF40 "
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
@@ -138,8 +153,9 @@ fun HomeBottomSheetContent(
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
+    onFeedClick: () -> Unit = {},
     fullListTopPx: Int,
-    collapsedPeekHeight: Dp = 164.dp,
+    collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
@@ -152,11 +168,11 @@ fun HomeBottomSheetContent(
         val storePreviewHeightPx = with(density) {
             (storePreviewSection?.previewSheetHeight() ?: collapsedPeekHeight).toPx().roundToInt()
         }
-        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx, collapsedPeekHeightPx) {
+        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx) {
             HomeSheetStateCalculator.previewOffset(
                 containerHeightPx = containerHeightPx,
                 desiredVisibleHeightPx = storePreviewHeightPx,
-                minimumVisibleHeightPx = collapsedPeekHeightPx,
+                minimumVisibleHeightPx = 0,
             )
         }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
@@ -329,6 +345,15 @@ fun HomeBottomSheetContent(
             onFullListBackgroundVisibleChange(isFullListSettled)
         }
 
+        if (storeScreen == null && !isFullListSettled) {
+            HomeFeedButton(
+                onClick = onFeedClick,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = sheetHeight + HomeFeedButtonBottomGap),
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -362,6 +387,76 @@ fun HomeBottomSheetContent(
                     modifier = Modifier
                         .weight(1f)
                         .nestedScroll(listNestedScrollConnection),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeFeedButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .shadow(
+                elevation = 6.dp,
+                shape = HomeFeedButtonShape,
+                ambientColor = Green.copy(alpha = 0.4f),
+                spotColor = Green.copy(alpha = 0.4f),
+            )
+            .clip(HomeFeedButtonShape)
+            .background(ColorWhite)
+            .border(BorderStroke(1.dp, Green), HomeFeedButtonShape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = HomeFeedButtonEmoji + stringResource(CommonR.string.home_feed_button),
+            color = Green,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = dpToSp(14),
+            lineHeight = dpToSp(20),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Preview(name = "Home feed floating button")
+@Composable
+private fun HomeFeedButtonPreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            HomeFeedButton(onClick = {})
+        }
+    }
+}
+
+@Preview(name = "Home collapsed sheet height", widthDp = 360, heightDp = 812)
+@Composable
+private fun HomeCollapsedSheetHeightPreview() {
+    AppTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Gray10),
+        ) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp)
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .background(ColorWhite),
+            ) {
+                HomeBottomSheetHandle(
+                    onHandleDrag = {},
+                    onHandleDragEnd = {},
                 )
             }
         }
@@ -737,8 +832,21 @@ private fun StorePreviewActionBarRow(
         actionBars.forEach { actionBar ->
             StorePreviewActionButton(
                 actionBar = actionBar,
-                modifier = if (actionBar.isVisitAction()) Modifier else Modifier.weight(1f),
+                modifier = Modifier.weight(actionBar.previewActionWeight()),
                 onClick = { onActionClick(actionBar) },
+            )
+        }
+    }
+}
+
+@Preview(name = "Store preview actions compact", widthDp = 360)
+@Composable
+private fun StorePreviewActionBarRowCompactPreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+            StorePreviewActionBarRow(
+                actionBars = previewStoreActionBars(),
+                onActionClick = {},
             )
         }
     }
@@ -782,21 +890,22 @@ private fun StorePreviewActionButton(
         else -> Modifier
     }
     val horizontalPadding = when {
-        isVisit -> PaddingValues(start = 12.dp, end = 8.dp)
-        isReview -> PaddingValues(horizontal = 12.dp)
-        else -> PaddingValues(horizontal = 10.dp)
+        isVisit -> PaddingValues(start = 8.dp, end = 6.dp)
+        isReview -> PaddingValues(horizontal = 8.dp)
+        else -> PaddingValues(horizontal = 6.dp)
     }
 
     Row(
         modifier = modifier
             .height(StorePreviewActionRowHeight)
+            .fillMaxWidth()
             .clip(shape)
             .background(background)
             .then(borderModifier)
             .clickable(onClick = onClick)
             .padding(horizontalPadding),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterHorizontally),
     ) {
         if (button.imageAlignment != "END") {
             StorePreviewActionImage(actionBar = actionBar, tint = textColor)
@@ -806,8 +915,8 @@ private fun StorePreviewActionButton(
             color = textColor,
             fontFamily = PretendardFontFamily,
             fontWeight = if (isVisit || isReview) FontWeight.SemiBold else FontWeight.Normal,
-            fontSize = dpToSp(14),
-            lineHeight = dpToSp(20),
+            fontSize = dpToSp(13),
+            lineHeight = dpToSp(19),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -833,7 +942,7 @@ private fun StorePreviewActionImage(
             painter = painterResource(id = localIconRes),
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(StorePreviewActionIconSize),
         )
         return
     }
@@ -843,8 +952,8 @@ private fun StorePreviewActionImage(
         ServerImage(
             image = image,
             modifier = Modifier.size(
-                width = (image.style?.width ?: if (trailing) 12.0 else 16.0).dp,
-                height = (image.style?.height ?: if (trailing) 12.0 else 16.0).dp,
+                width = (image.style?.width ?: if (trailing) 10.0 else 14.0).dp,
+                height = (image.style?.height ?: if (trailing) 10.0 else 14.0).dp,
             ),
             contentScale = ContentScale.Fit,
             drawPlaceholderBackground = false,
@@ -859,7 +968,7 @@ private fun StorePreviewActionImage(
         painter = painterResource(id = iconRes),
         contentDescription = null,
         tint = tint,
-        modifier = Modifier.size(if (trailing) 12.dp else 16.dp),
+        modifier = Modifier.size(if (trailing) StorePreviewActionTrailingIconSize else StorePreviewActionIconSize),
     )
 }
 
@@ -1059,6 +1168,16 @@ private fun AddPhotoTile(onClick: () -> Unit) {
     }
 }
 
+@Preview(name = "Store preview photo add tile")
+@Composable
+private fun AddPhotoTilePreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            AddPhotoTile(onClick = {})
+        }
+    }
+}
+
 @Composable
 private fun BodiesRow(bodies: List<SDTextModel>) {
     if (bodies.isEmpty()) return
@@ -1226,6 +1345,10 @@ private fun StoreActionBarModel.isVisitAction(): Boolean {
         button.text.displayText().contains("방문")
 }
 
+private fun StoreActionBarModel.previewActionWeight(): Float {
+    return if (isVisitAction()) StorePreviewVisitActionWeight else StorePreviewDefaultActionWeight
+}
+
 private fun StoreActionBarModel.isReviewAction(): Boolean {
     return button.text.displayText().contains("리뷰")
 }
@@ -1238,6 +1361,39 @@ private fun StoreActionBarModel.isShareAction(): Boolean {
 private fun StoreActionBarModel.isNavigationAction(): Boolean {
     return button.customAction?.actionType.equals("STORE_PREVIEW_SECTION_NAVIGATION", ignoreCase = true) ||
         button.text.displayText().contains("길안내")
+}
+
+private fun previewStoreActionBars(): List<StoreActionBarModel> {
+    return listOf(
+        StoreActionBarModel(
+            type = "VISIT",
+            button = SDButtonModel(
+                text = SDTextModel(text = "방문 인증", isHtml = false),
+                imageAlignment = "END",
+                link = SDLinkModel(type = "APP", link = "/visit"),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "REVIEW",
+            button = SDButtonModel(
+                text = SDTextModel(text = "리뷰 작성", isHtml = false),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "SHARE",
+            button = SDButtonModel(
+                text = SDTextModel(text = "공유", isHtml = false),
+                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_SHARE"),
+            ),
+        ),
+        StoreActionBarModel(
+            type = "NAVIGATION",
+            button = SDButtonModel(
+                text = SDTextModel(text = "길안내", isHtml = false),
+                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_NAVIGATION"),
+            ),
+        ),
+    )
 }
 
 @Composable

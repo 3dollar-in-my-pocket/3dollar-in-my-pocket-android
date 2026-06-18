@@ -181,7 +181,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))
     }
 
-    override fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>> = flow {
+    override fun putStoreReview(reviewId: Long, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>> = flow {
         emit(apiResult(serverApi.putStoreReview(reviewId, storeReviewRequest)))
     }
 
@@ -205,7 +205,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.putUserStore(userStoreRequest = userStoreRequest, storeId = storeId)))
     }
 
-    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>> = flow {
+    override fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>> = flow {
         emit(apiResult(serverApi.reportStoreReview(storeId, reviewId, reportReviewRequest)))
     }
 
