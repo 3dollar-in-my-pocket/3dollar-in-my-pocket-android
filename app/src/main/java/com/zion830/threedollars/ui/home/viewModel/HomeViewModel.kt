@@ -182,6 +182,15 @@ class HomeViewModel @Inject constructor(
         fetchHomeListSection(state = state, cursor = null, append = false)
     }
 
+    fun refreshHomeListSectionAfterStoreUpdate() {
+        fetchHomeListSection(
+            state = uiState.value,
+            cursor = null,
+            append = false,
+            preserveSelectedStore = true,
+        )
+    }
+
     fun fetchNextHomeListSection() {
         val cursor = homeListNextCursor ?: return
         if (isHomeListLoading) return
@@ -192,9 +201,12 @@ class HomeViewModel @Inject constructor(
         state: HomeUIState,
         cursor: String?,
         append: Boolean,
+        preserveSelectedStore: Boolean = false,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             isHomeListLoading = true
+            val previousSelectedCardId = _selectedHomeListCardId.value
+            val previousSelectedStoreId = _selectedStorePreviewStoreId.value
             val params = HomeAroundStoreRequestParamsBuilder.build(
                 state = state,
                 bars = allBars(),
@@ -223,10 +235,15 @@ class HomeViewModel @Inject constructor(
                     _homeListSection.value = section.copy(cards = nextCards)
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
-                        _selectedHomeListCardId.value = section.cards
-                            .filterIsInstance<HomeListCardModel.BasicCard>()
-                            .firstOrNull()
-                            ?.cardId
+                        val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+                        _selectedHomeListCardId.value = if (preserveSelectedStore) {
+                            cards.selectedCardIdAfterRefresh(
+                                previousSelectedCardId = previousSelectedCardId,
+                                previousSelectedStoreId = previousSelectedStoreId,
+                            )
+                        } else {
+                            cards.firstOrNull()?.cardId
+                        }
                     }
                     sendHomeListImpressionLogs(section.cards)
                 } else {
@@ -234,6 +251,17 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun List<HomeListCardModel.BasicCard>.selectedCardIdAfterRefresh(
+        previousSelectedCardId: String?,
+        previousSelectedStoreId: Long?,
+    ): String? {
+        return firstOrNull { it.cardId == previousSelectedCardId }?.cardId
+            ?: previousSelectedStoreId?.let { storeId ->
+                firstOrNull { it.storePreviewStoreIdOrNull() == storeId }?.cardId
+            }
+            ?: firstOrNull()?.cardId
     }
 
     fun selectHomeListCard(card: HomeListCardModel.BasicCard) {
@@ -319,6 +347,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateSelectedStorePreviewFavorite(isFavorite: Boolean) {
+        updateStorePreviewFavorite(isFavorite)
     }
 
     private fun updateStorePreviewFavorite(isFavorite: Boolean) {

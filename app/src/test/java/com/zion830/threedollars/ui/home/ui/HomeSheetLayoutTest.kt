@@ -7,7 +7,7 @@ class HomeSheetLayoutTest {
 
     @Test
     fun `collapsed peek height matches home guide`() {
-        assertEquals(348f, HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP, 0f)
+        assertEquals(293f, HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP, 0f)
     }
 
     @Test

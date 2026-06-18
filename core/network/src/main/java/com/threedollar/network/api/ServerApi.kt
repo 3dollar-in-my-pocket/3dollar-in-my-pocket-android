@@ -343,7 +343,7 @@ interface ServerApi {
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun putStoreReview(
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body storeReviewRequest: StoreReviewRequest,
     ): Response<BaseResponse<EditStoreReviewResponse>>
 
@@ -367,7 +367,7 @@ interface ServerApi {
     @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
     suspend fun reportStoreReview(
         @Path("storeId") storeId: Int,
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body reportReviewRequest: ReportReviewRequest,
     ): Response<BaseResponse<String>>
 

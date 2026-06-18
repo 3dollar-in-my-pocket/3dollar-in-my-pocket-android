@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -82,6 +83,7 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
+import base.compose.Green
 import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
@@ -136,6 +138,8 @@ private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
 private val HomeFeedButtonBottomGap = 16.dp
+private val HomeFeedButtonShape = RoundedCornerShape(16.dp)
+private const val HomeFeedButtonEmoji = "\uD83C\uDF40 "
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
@@ -164,11 +168,11 @@ fun HomeBottomSheetContent(
         val storePreviewHeightPx = with(density) {
             (storePreviewSection?.previewSheetHeight() ?: collapsedPeekHeight).toPx().roundToInt()
         }
-        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx, collapsedPeekHeightPx) {
+        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx) {
             HomeSheetStateCalculator.previewOffset(
                 containerHeightPx = containerHeightPx,
                 desiredVisibleHeightPx = storePreviewHeightPx,
-                minimumVisibleHeightPx = collapsedPeekHeightPx,
+                minimumVisibleHeightPx = 0,
             )
         }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
@@ -396,28 +400,27 @@ private fun HomeFeedButton(
 ) {
     Row(
         modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .shadow(
+                elevation = 6.dp,
+                shape = HomeFeedButtonShape,
+                ambientColor = Green.copy(alpha = 0.4f),
+                spotColor = Green.copy(alpha = 0.4f),
+            )
+            .clip(HomeFeedButtonShape)
             .background(ColorWhite)
-            .border(BorderStroke(1.dp, Gray20), RoundedCornerShape(20.dp))
+            .border(BorderStroke(1.dp, Green), HomeFeedButtonShape)
             .clickable(onClick = onClick)
-            .padding(start = 12.dp, end = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Icon(
-            painter = painterResource(DesignSystemR.drawable.ic_community),
-            contentDescription = null,
-            tint = Gray70,
-            modifier = Modifier.size(18.dp),
-        )
         Text(
-            text = stringResource(CommonR.string.home_feed_button),
-            color = Gray80,
+            text = HomeFeedButtonEmoji + stringResource(CommonR.string.home_feed_button),
+            color = Green,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(13),
-            lineHeight = dpToSp(19),
+            fontSize = dpToSp(14),
+            lineHeight = dpToSp(20),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
