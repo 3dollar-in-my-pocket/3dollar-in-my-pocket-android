@@ -95,15 +95,19 @@ import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.serverdriven.ext.displayText
+import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.HomeListMarkerModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
+import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDLocationModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
@@ -139,6 +143,7 @@ private val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
 private val StorePreviewActionTrailingIconSize = 10.dp
 private val StorePreviewTitleBadgeGap = 4.dp
+private const val TitleBreakOpportunity = "\u200B"
 private const val StorePreviewTitleMaxLines = 2
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
@@ -174,9 +179,13 @@ fun HomeBottomSheetContent(
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
         val storePreviewSection = storeScreen?.previewSectionOrNull()
+        val storePreviewTitle = storeScreen?.resolvedPreviewTitle()
+        val storePreviewTitleText = storePreviewTitle
+            .displayText()
+            .withTitleBreakOpportunities()
         val storePreviewTitleStyle = TextStyle(
             fontFamily = PretendardFontFamily,
-            fontWeight = storePreviewSection?.header?.title?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
+            fontWeight = storePreviewTitle?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
             fontSize = dpToSp(20),
             lineHeight = dpToSp(28),
             lineBreak = LineBreak.Heading,
@@ -189,7 +198,7 @@ fun HomeBottomSheetContent(
                     storePreviewSection.previewTitleMaxWidth(maxWidth).toPx().roundToInt()
                 }
                 textMeasurer.measure(
-                    text = AnnotatedString(storePreviewSection.header.title.displayText()),
+                    text = AnnotatedString(storePreviewTitleText),
                     style = storePreviewTitleStyle,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = StorePreviewTitleMaxLines,
@@ -580,6 +589,17 @@ private fun HomeListBasicCard(
     }
 }
 
+@Preview(name = "Home list card long title", widthDp = 360)
+@Composable
+private fun HomeListBasicCardLongTitlePreview() {
+    AppTheme {
+        HomeListBasicCard(
+            card = previewHomeListBasicCardWithLongTitle(),
+            onClick = {},
+        )
+    }
+}
+
 @Composable
 private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
     Column(
@@ -639,6 +659,7 @@ private fun StorePreviewContent(
         return
     }
 
+    val previewTitle = storeScreen.resolvedPreviewTitle()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(
@@ -650,6 +671,7 @@ private fun StorePreviewContent(
         item {
             StorePreviewHeaderSection(
                 preview = preview,
+                title = previewTitle,
                 onClosePreview = onClosePreview,
                 onActionClick = onActionClick,
                 onFavoriteClick = onFavoriteClick,
@@ -673,6 +695,7 @@ private fun StorePreviewContent(
 @Composable
 private fun StorePreviewHeaderSection(
     preview: StoreSectionModel.Preview,
+    title: SDTextModel?,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit,
@@ -694,7 +717,7 @@ private fun StorePreviewHeaderSection(
                     .clickable(onClick = onPreviewClick),
                 verticalArrangement = Arrangement.spacedBy(StorePreviewTitleMetadataGap),
             ) {
-                StorePreviewTitle(header = preview.header)
+                StorePreviewTitle(title = title, badge = preview.header.badge)
                 MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
@@ -725,17 +748,44 @@ private fun StorePreviewHeaderSection(
     }
 }
 
+@Preview(name = "Store preview long title", widthDp = 360)
 @Composable
-private fun StorePreviewTitle(header: HomeListCardHeaderModel) {
+private fun StorePreviewLongTitlePreview() {
+    AppTheme {
+        val preview = previewStorePreviewWithLongTitle()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorWhite)
+                .padding(horizontal = StorePreviewHorizontalPadding, vertical = StorePreviewVerticalPadding),
+        ) {
+            StorePreviewHeaderSection(
+                preview = preview,
+                title = preview.resolvedTitle(),
+                onClosePreview = {},
+                onActionClick = {},
+                onFavoriteClick = {},
+                onPreviewClick = {},
+            )
+        }
+    }
+}
+
+@Composable
+private fun StorePreviewTitle(
+    title: SDTextModel?,
+    badge: SDImageModel?,
+) {
     TitleWithBadge(
-        title = header.title,
-        badge = header.badge,
+        title = title,
+        badge = badge,
         titleSize = 20,
         titleWeight = FontWeight.SemiBold,
-        titleColor = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
+        titleColor = title?.fontColor.textColorOnWhite(fallback = Gray100),
         maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
         lineBreak = LineBreak.Heading,
+        fillTitleWidth = true,
     )
 }
 
@@ -750,14 +800,21 @@ private fun TitleWithBadge(
     badgeDefaultSize: Dp,
     modifier: Modifier = Modifier,
     lineBreak: LineBreak? = null,
+    fillTitleWidth: Boolean = false,
 ) {
+    val rawTitleText = title.displayText()
+    val titleText = if (lineBreak != null) {
+        rawTitleText.withTitleBreakOpportunities()
+    } else {
+        rawTitleText
+    }
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = title.displayText(),
+            text = titleText,
             color = titleColor,
             fontFamily = PretendardFontFamily,
             fontWeight = title?.fontWeight.toServerDrivenFontWeight(titleWeight),
@@ -770,7 +827,7 @@ private fun TitleWithBadge(
             } else {
                 TextStyle.Default
             },
-            modifier = Modifier.weight(1f, fill = false),
+            modifier = Modifier.weight(1f, fill = fillTitleWidth),
         )
         badge?.let { image ->
             ServerImage(
@@ -978,6 +1035,8 @@ private fun HomeHeader(
         titleColor = titleColor ?: header.title?.fontColor.toColor(fallback = Gray100),
         maxLines = 2,
         badgeDefaultSize = badgeDefaultSize,
+        lineBreak = LineBreak.Heading,
+        fillTitleWidth = true,
     )
 }
 
@@ -1279,6 +1338,69 @@ private fun StoreScreenModel.previewSectionOrNull(): StoreSectionModel.Preview? 
     return sections.filterIsInstance<StoreSectionModel.Preview>().firstOrNull()
 }
 
+private fun StoreScreenModel.resolvedPreviewTitle(): SDTextModel? {
+    val preview = previewSectionOrNull() ?: return null
+    return preview.resolvedTitle(
+        fallbackStoreName = viewLog?.extraParameters?.stringValue("STORE_NAME"),
+    )
+}
+
+private fun StoreSectionModel.Preview.resolvedTitle(fallbackStoreName: String? = null): SDTextModel? {
+    val storeName = listOfNotNull(actionStoreNameOrNull(), fallbackStoreName)
+        .firstNotNullOfOrNull { value ->
+            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
+        } ?: return header.title
+    val headerTitleText = header.title.displayText()
+    if (headerTitleText.isNotBlank() &&
+        !headerTitleText.isCollapsedTitleCandidate() &&
+        headerTitleText.length >= storeName.length
+    ) {
+        return header.title
+    }
+
+    return header.title?.copy(text = storeName, isHtml = false) ?: SDTextModel(
+        text = storeName,
+        isHtml = false,
+    )
+}
+
+private fun StoreSectionModel.Preview.actionStoreNameOrNull(): String? {
+    return (actionBars + topActionBars).firstNotNullOfOrNull { actionBar ->
+        listOfNotNull(
+            actionBar.button.customAction?.extraParams?.stringValue("STORE_NAME"),
+            actionBar.clickLog?.extraParameters?.stringValue("STORE_NAME"),
+        ).firstNotNullOfOrNull { value ->
+            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
+        }
+    }
+}
+
+private fun String.isCollapsedTitleCandidate(): Boolean {
+    val title = trimEnd()
+    return title.endsWith("...") || title.endsWith("…")
+}
+
+private fun String.withTitleBreakOpportunities(): String {
+    if (length <= 1) return this
+
+    return buildString {
+        var index = 0
+        while (index < this@withTitleBreakOpportunities.length) {
+            val codePoint = this@withTitleBreakOpportunities.codePointAt(index)
+            val nextIndex = index + Character.charCount(codePoint)
+            append(this@withTitleBreakOpportunities, index, nextIndex)
+            if (
+                nextIndex < this@withTitleBreakOpportunities.length &&
+                !Character.isWhitespace(codePoint) &&
+                !Character.isWhitespace(this@withTitleBreakOpportunities.codePointAt(nextIndex))
+            ) {
+                append(TitleBreakOpportunity)
+            }
+            index = nextIndex
+        }
+    }
+}
+
 private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): Dp {
     val titleMetadataHeight = StorePreviewTitleLineHeight * titleLineCount.coerceIn(1, StorePreviewTitleMaxLines).toFloat() +
         StorePreviewTitleMetadataGap +
@@ -1377,7 +1499,18 @@ private fun StoreActionBarModel.isNavigationAction(): Boolean {
         button.text.displayText().contains("길안내")
 }
 
-private fun previewStoreActionBars(): List<StoreActionBarModel> {
+private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
+    return when (val value = this[key]) {
+        is SDClickLogValue.StringValue -> value.value
+        is SDClickLogValue.IntValue -> value.value.toString()
+        is SDClickLogValue.DoubleValue -> value.value.toString()
+        is SDClickLogValue.BoolValue -> value.value.toString()
+        SDClickLogValue.Null, null -> null
+    }
+}
+
+private fun previewStoreActionBars(storeName: String = "가게명"): List<StoreActionBarModel> {
+    val actionParams = mapOf("STORE_NAME" to SDClickLogValue.StringValue(storeName))
     return listOf(
         StoreActionBarModel(
             type = "VISIT",
@@ -1397,15 +1530,76 @@ private fun previewStoreActionBars(): List<StoreActionBarModel> {
             type = "SHARE",
             button = SDButtonModel(
                 text = SDTextModel(text = "공유", isHtml = false),
-                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_SHARE"),
+                customAction = SDCustomActionModel(
+                    actionType = "STORE_PREVIEW_SECTION_SHARE",
+                    extraParams = actionParams,
+                ),
             ),
         ),
         StoreActionBarModel(
             type = "NAVIGATION",
             button = SDButtonModel(
                 text = SDTextModel(text = "길안내", isHtml = false),
-                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_NAVIGATION"),
+                customAction = SDCustomActionModel(
+                    actionType = "STORE_PREVIEW_SECTION_NAVIGATION",
+                    extraParams = actionParams,
+                ),
             ),
+        ),
+    )
+}
+
+private fun previewStorePreviewWithLongTitle(): StoreSectionModel.Preview {
+    val storeName = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ"
+    return StoreSectionModel.Preview(
+        type = "PREVIEW",
+        header = HomeListCardHeaderModel(
+            title = SDTextModel(
+                text = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ...",
+                isHtml = false,
+                fontColor = "#0F0F0F",
+            ),
+        ),
+        metadata = HomeListCardMetadataModel(
+            primary = listOf(
+                SDChipModel(text = SDTextModel(text = "떡볶이, 계란빵, 땅콩빵", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "5.0 (1)", isHtml = false)),
+            ),
+            secondary = listOf(
+                SDChipModel(text = SDTextModel(text = "0m", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "최근 방문 0명", isHtml = false)),
+            ),
+        ),
+        additionalInfos = StoreSectionAdditionalInfosModel(type = "STORE", isSubscriber = true),
+        actionBars = previewStoreActionBars(storeName = storeName),
+    )
+}
+
+private fun previewHomeListBasicCardWithLongTitle(): HomeListCardModel.BasicCard {
+    return HomeListCardModel.BasicCard(
+        type = "BASIC_CARD",
+        cardId = "S:100186",
+        header = HomeListCardHeaderModel(
+            title = SDTextModel(
+                text = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ",
+                isHtml = false,
+                fontColor = "#0F0F0F",
+            ),
+        ),
+        metadata = HomeListCardMetadataModel(
+            primary = listOf(
+                SDChipModel(text = SDTextModel(text = "떡볶이, 계란빵, 땅콩빵", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "5.0 (1)", isHtml = false)),
+            ),
+            secondary = listOf(
+                SDChipModel(text = SDTextModel(text = "0m", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "최근 방문 0명", isHtml = false)),
+            ),
+        ),
+        marker = HomeListMarkerModel(
+            focused = SDChipModel(text = SDTextModel(text = "", isHtml = false)),
+            unfocused = SDChipModel(text = SDTextModel(text = "", isHtml = false)),
+            location = SDLocationModel(latitude = 37.1, longitude = 127.2),
         ),
     )
 }
