@@ -789,7 +789,6 @@ private fun StorePreviewTitle(
         maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
         lineBreak = LineBreak.Heading,
-        fillTitleWidth = true,
     )
 }
 
@@ -1040,7 +1039,6 @@ private fun HomeHeader(
         maxLines = 2,
         badgeDefaultSize = badgeDefaultSize,
         lineBreak = LineBreak.Heading,
-        fillTitleWidth = true,
     )
 }
 
