@@ -65,6 +65,35 @@ class HomeListCardStorePreviewTest {
         assertEquals(127.2, (preview.actionBars[3].button.customAction?.extraParams?.get("LONGITUDE") as SDClickLogValue.DoubleValue).value, 0.0)
     }
 
+    @Test
+    fun `fallback store preview screen keeps local favorite state`() {
+        val card = card(
+            cardId = "S:100186",
+            cardLink = "/store?storeType=USER_STORE&storeId=100186",
+            markerLink = "/store_bottom_sheet?storeId=100186",
+        )
+
+        val screen = card.toFallbackStorePreviewScreen(isSubscriber = true)
+        val preview = screen?.sections?.single() as? StoreSectionModel.Preview
+
+        assertEquals(true, preview?.additionalInfos?.isSubscriber)
+    }
+
+    @Test
+    fun `store preview screen applies local favorite state override`() {
+        val card = card(
+            cardId = "S:100186",
+            cardLink = "/store?storeType=USER_STORE&storeId=100186",
+            markerLink = "/store_bottom_sheet?storeId=100186",
+        )
+        val screen = requireNotNull(card.toFallbackStorePreviewScreen(isSubscriber = true))
+
+        val updatedScreen = screen.withStorePreviewFavoriteOverride(isSubscriber = false)
+        val preview = updatedScreen.sections.single() as? StoreSectionModel.Preview
+
+        assertEquals(false, preview?.additionalInfos?.isSubscriber)
+    }
+
     private fun card(
         cardId: String,
         cardLink: String?,
