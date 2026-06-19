@@ -65,6 +65,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -178,6 +179,7 @@ fun HomeBottomSheetContent(
             fontWeight = storePreviewSection?.header?.title?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
             fontSize = dpToSp(20),
             lineHeight = dpToSp(28),
+            lineBreak = LineBreak.Heading,
         )
         val storePreviewTitleLineCount = remember(storePreviewSection, maxWidth, storePreviewTitleStyle, density) {
             if (storePreviewSection == null) {
@@ -733,6 +735,7 @@ private fun StorePreviewTitle(header: HomeListCardHeaderModel) {
         titleColor = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
         maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
+        lineBreak = LineBreak.Heading,
     )
 }
 
@@ -746,6 +749,7 @@ private fun TitleWithBadge(
     maxLines: Int,
     badgeDefaultSize: Dp,
     modifier: Modifier = Modifier,
+    lineBreak: LineBreak? = null,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -761,6 +765,11 @@ private fun TitleWithBadge(
             lineHeight = dpToSp(titleSize + 8),
             maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
+            style = if (lineBreak != null) {
+                TextStyle(lineBreak = lineBreak)
+            } else {
+                TextStyle.Default
+            },
             modifier = Modifier.weight(1f, fill = false),
         )
         badge?.let { image ->
