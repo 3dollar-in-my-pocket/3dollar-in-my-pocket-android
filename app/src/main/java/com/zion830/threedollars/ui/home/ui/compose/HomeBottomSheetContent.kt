@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -83,7 +82,6 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
-import base.compose.Green
 import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
@@ -137,9 +135,6 @@ private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddin
 private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
-private val HomeFeedButtonBottomGap = 16.dp
-private val HomeFeedButtonShape = RoundedCornerShape(16.dp)
-private const val HomeFeedButtonEmoji = "\uD83C\uDF40 "
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
@@ -153,7 +148,6 @@ fun HomeBottomSheetContent(
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
-    onFeedClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -345,15 +339,6 @@ fun HomeBottomSheetContent(
             onFullListBackgroundVisibleChange(isFullListSettled)
         }
 
-        if (storeScreen == null && !isFullListSettled) {
-            HomeFeedButton(
-                onClick = onFeedClick,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 20.dp, bottom = sheetHeight + HomeFeedButtonBottomGap),
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -389,50 +374,6 @@ fun HomeBottomSheetContent(
                         .nestedScroll(listNestedScrollConnection),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun HomeFeedButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .shadow(
-                elevation = 6.dp,
-                shape = HomeFeedButtonShape,
-                ambientColor = Green.copy(alpha = 0.4f),
-                spotColor = Green.copy(alpha = 0.4f),
-            )
-            .clip(HomeFeedButtonShape)
-            .background(ColorWhite)
-            .border(BorderStroke(1.dp, Green), HomeFeedButtonShape)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = HomeFeedButtonEmoji + stringResource(CommonR.string.home_feed_button),
-            color = Green,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(14),
-            lineHeight = dpToSp(20),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Preview(name = "Home feed floating button")
-@Composable
-private fun HomeFeedButtonPreview() {
-    AppTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            HomeFeedButton(onClick = {})
         }
     }
 }
