@@ -61,9 +61,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -118,14 +122,23 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 private val MetadataSeparatorColor = Color(0xFFB7B7B7)
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
 private val StorePreviewReviewButtonBackground = Color(0xFFFFECEE)
-private val StorePreviewBaseVerticalPadding = 32.dp
-private val StorePreviewTitleMetadataHeight = 72.dp
+private val StorePreviewHorizontalPadding = 20.dp
+private val StorePreviewVerticalPadding = 16.dp
+private val StorePreviewBaseVerticalPadding = StorePreviewVerticalPadding + StorePreviewVerticalPadding
+private val StorePreviewTitleLineHeight = 28.dp
+private val StorePreviewTitleMetadataGap = 4.dp
+private val StorePreviewMetadataLineHeight = 20.dp
 private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
+private val StorePreviewHeaderTextActionGap = 4.dp
 private val StorePreviewRootGap = 12.dp
 private val StorePreviewImageHeight = 120.dp
+private val StorePreviewIconButtonSize = 32.dp
+private val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
 private val StorePreviewActionTrailingIconSize = 10.dp
+private val StorePreviewTitleBadgeGap = 4.dp
+private const val StorePreviewTitleMaxLines = 2
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
 private const val StorePreviewReviewVerticalPaddingValue = 11
@@ -155,12 +168,35 @@ fun HomeBottomSheetContent(
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val density = LocalDensity.current
+        val textMeasurer = rememberTextMeasurer()
         val containerHeightPx = with(density) { maxHeight.toPx().roundToInt() }
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
         val storePreviewSection = storeScreen?.previewSectionOrNull()
+        val storePreviewTitleStyle = TextStyle(
+            fontFamily = PretendardFontFamily,
+            fontWeight = storePreviewSection?.header?.title?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
+            fontSize = dpToSp(20),
+            lineHeight = dpToSp(28),
+        )
+        val storePreviewTitleLineCount = remember(storePreviewSection, maxWidth, storePreviewTitleStyle, density) {
+            if (storePreviewSection == null) {
+                1
+            } else {
+                val titleMaxWidthPx = with(density) {
+                    storePreviewSection.previewTitleMaxWidth(maxWidth).toPx().roundToInt()
+                }
+                textMeasurer.measure(
+                    text = AnnotatedString(storePreviewSection.header.title.displayText()),
+                    style = storePreviewTitleStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = StorePreviewTitleMaxLines,
+                    constraints = Constraints(maxWidth = titleMaxWidthPx.coerceAtLeast(1)),
+                ).lineCount.coerceIn(1, StorePreviewTitleMaxLines)
+            }
+        }
         val storePreviewHeightPx = with(density) {
-            (storePreviewSection?.previewSheetHeight() ?: collapsedPeekHeight).toPx().roundToInt()
+            (storePreviewSection?.previewSheetHeight(storePreviewTitleLineCount) ?: collapsedPeekHeight).toPx().roundToInt()
         }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
             HomeSheetStateCalculator.anchors(
@@ -603,7 +639,10 @@ private fun StorePreviewContent(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+        contentPadding = PaddingValues(
+            horizontal = StorePreviewHorizontalPadding,
+            vertical = StorePreviewVerticalPadding,
+        ),
         verticalArrangement = Arrangement.spacedBy(StorePreviewRootGap),
     ) {
         item {
@@ -645,18 +684,18 @@ private fun StorePreviewHeaderSection(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(StorePreviewHeaderTextActionGap),
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .clickable(onClick = onPreviewClick),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(StorePreviewTitleMetadataGap),
             ) {
                 StorePreviewTitle(header = preview.header)
                 MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
                 if (preview.additionalInfos.isStoreType()) {
                     StorePreviewIconButton(
                         iconRes = if (preview.additionalInfos.isSubscriber) {
@@ -692,7 +731,7 @@ private fun StorePreviewTitle(header: HomeListCardHeaderModel) {
         titleSize = 20,
         titleWeight = FontWeight.SemiBold,
         titleColor = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
-        maxLines = 1,
+        maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
     )
 }
@@ -746,7 +785,7 @@ private fun StorePreviewIconButton(
 ) {
     Box(
         modifier = Modifier
-            .size(32.dp)
+            .size(StorePreviewIconButtonSize)
             .clip(CircleShape)
             .background(Gray10)
             .clickable(onClick = onClick),
@@ -1231,8 +1270,11 @@ private fun StoreScreenModel.previewSectionOrNull(): StoreSectionModel.Preview? 
     return sections.filterIsInstance<StoreSectionModel.Preview>().firstOrNull()
 }
 
-private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
-    val headerHeight = StorePreviewTitleMetadataHeight + if (rowActionBars().isNotEmpty()) {
+private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): Dp {
+    val titleMetadataHeight = StorePreviewTitleLineHeight * titleLineCount.coerceIn(1, StorePreviewTitleMaxLines).toFloat() +
+        StorePreviewTitleMetadataGap +
+        metadata.previewHeight()
+    val headerHeight = titleMetadataHeight + if (rowActionBars().isNotEmpty()) {
         StorePreviewHeaderActionGap + StorePreviewActionRowHeight
     } else {
         0.dp
@@ -1245,6 +1287,27 @@ private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
     }
     val mediaBlockHeight = if (mediaHeight > 0.dp) StorePreviewRootGap + mediaHeight else 0.dp
     return StorePreviewBaseVerticalPadding + headerHeight + mediaBlockHeight
+}
+
+private fun StoreSectionModel.Preview.previewTitleMaxWidth(sheetWidth: Dp): Dp {
+    val actionButtonCount = if (additionalInfos.isStoreType()) 2 else 1
+    val actionButtonWidth = StorePreviewIconButtonSize * actionButtonCount.toFloat() +
+        StorePreviewIconButtonGap * (actionButtonCount - 1).toFloat()
+    val badgeWidth = header.badge?.let { image ->
+        (image.style?.width ?: 16.0).dp + StorePreviewTitleBadgeGap
+    } ?: 0.dp
+    val availableWidth = sheetWidth -
+        StorePreviewHorizontalPadding -
+        StorePreviewHorizontalPadding -
+        StorePreviewHeaderTextActionGap -
+        actionButtonWidth -
+        badgeWidth
+    return availableWidth.coerceAtLeast(1.dp)
+}
+
+private fun HomeListCardMetadataModel.previewHeight(): Dp {
+    val rowCount = listOf(primary, secondary).count { it.isNotEmpty() }
+    return StorePreviewMetadataLineHeight * rowCount.toFloat()
 }
 
 private fun StoreSectionModel.Preview.rowActionBars(): List<StoreActionBarModel> {
