@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -62,9 +61,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -83,7 +87,6 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
-import base.compose.Green
 import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
@@ -92,15 +95,19 @@ import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.serverdriven.ext.displayText
+import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.HomeListMarkerModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
+import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDLocationModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
@@ -120,14 +127,24 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 private val MetadataSeparatorColor = Color(0xFFB7B7B7)
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
 private val StorePreviewReviewButtonBackground = Color(0xFFFFECEE)
-private val StorePreviewBaseVerticalPadding = 32.dp
-private val StorePreviewTitleMetadataHeight = 72.dp
+private val StorePreviewHorizontalPadding = 20.dp
+private val StorePreviewVerticalPadding = 16.dp
+private val StorePreviewBaseVerticalPadding = StorePreviewVerticalPadding + StorePreviewVerticalPadding
+private val StorePreviewTitleLineHeight = 28.dp
+private val StorePreviewTitleMetadataGap = 4.dp
+private val StorePreviewMetadataLineHeight = 20.dp
 private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
+private val StorePreviewHeaderTextActionGap = 4.dp
 private val StorePreviewRootGap = 12.dp
 private val StorePreviewImageHeight = 120.dp
+private val StorePreviewIconButtonSize = 32.dp
+private val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
 private val StorePreviewActionTrailingIconSize = 10.dp
+private val StorePreviewTitleBadgeGap = 4.dp
+private const val TitleBreakOpportunity = "\u200B"
+private const val StorePreviewTitleMaxLines = 2
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
 private const val StorePreviewReviewVerticalPaddingValue = 11
@@ -137,9 +154,6 @@ private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddin
 private val StorePreviewReviewEstimatedMaxHeight =
     (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
 private val StorePreviewMediaGap = 8.dp
-private val HomeFeedButtonBottomGap = 16.dp
-private val HomeFeedButtonShape = RoundedCornerShape(16.dp)
-private const val HomeFeedButtonEmoji = "\uD83C\uDF40 "
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 
 @Composable
@@ -153,7 +167,6 @@ fun HomeBottomSheetContent(
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
-    onFeedClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -161,25 +174,54 @@ fun HomeBottomSheetContent(
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val density = LocalDensity.current
+        val textMeasurer = rememberTextMeasurer()
         val containerHeightPx = with(density) { maxHeight.toPx().roundToInt() }
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
         val storePreviewSection = storeScreen?.previewSectionOrNull()
-        val storePreviewHeightPx = with(density) {
-            (storePreviewSection?.previewSheetHeight() ?: collapsedPeekHeight).toPx().roundToInt()
+        val storePreviewTitle = storeScreen?.resolvedPreviewTitle()
+        val storePreviewTitleText = storePreviewTitle
+            .displayText()
+            .withTitleBreakOpportunities()
+        val storePreviewTitleStyle = TextStyle(
+            fontFamily = PretendardFontFamily,
+            fontWeight = storePreviewTitle?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
+            fontSize = dpToSp(20),
+            lineHeight = dpToSp(28),
+            lineBreak = LineBreak.Heading,
+        )
+        val storePreviewTitleLineCount = remember(storePreviewSection, maxWidth, storePreviewTitleStyle, density) {
+            if (storePreviewSection == null) {
+                1
+            } else {
+                val titleMaxWidthPx = with(density) {
+                    storePreviewSection.previewTitleMaxWidth(maxWidth).toPx().roundToInt()
+                }
+                textMeasurer.measure(
+                    text = AnnotatedString(storePreviewTitleText),
+                    style = storePreviewTitleStyle,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = StorePreviewTitleMaxLines,
+                    constraints = Constraints(maxWidth = titleMaxWidthPx.coerceAtLeast(1)),
+                ).lineCount.coerceIn(1, StorePreviewTitleMaxLines)
+            }
         }
-        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx) {
-            HomeSheetStateCalculator.previewOffset(
-                containerHeightPx = containerHeightPx,
-                desiredVisibleHeightPx = storePreviewHeightPx,
-                minimumVisibleHeightPx = 0,
-            )
+        val storePreviewHeightPx = with(density) {
+            (storePreviewSection?.previewSheetHeight(storePreviewTitleLineCount) ?: collapsedPeekHeight).toPx().roundToInt()
         }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
             HomeSheetStateCalculator.anchors(
                 containerHeightPx = containerHeightPx,
                 fullListTopPx = fullListTopPx,
                 collapsedPeekHeightPx = collapsedPeekHeightPx,
+            )
+        }
+        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx, anchors) {
+            HomeSheetStateCalculator.previewTargetOffset(
+                containerHeightPx = containerHeightPx,
+                desiredVisibleHeightPx = storePreviewHeightPx,
+                minimumVisibleHeightPx = 0,
+                anchors = anchors,
             )
         }
         val coroutineScope = rememberCoroutineScope()
@@ -260,7 +302,7 @@ fun HomeBottomSheetContent(
             if (!isSheetInitialized) return@LaunchedEffect
             if (storeScreen != null) {
                 animateSheetToOffset(
-                    targetOffset = anchors.clamp(storePreviewOffsetPx),
+                    targetOffset = storePreviewOffsetPx,
                     settled = HomeSheetValue.Collapsed,
                 )
             } else {
@@ -345,15 +387,6 @@ fun HomeBottomSheetContent(
             onFullListBackgroundVisibleChange(isFullListSettled)
         }
 
-        if (storeScreen == null && !isFullListSettled) {
-            HomeFeedButton(
-                onClick = onFeedClick,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 20.dp, bottom = sheetHeight + HomeFeedButtonBottomGap),
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -389,50 +422,6 @@ fun HomeBottomSheetContent(
                         .nestedScroll(listNestedScrollConnection),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun HomeFeedButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .shadow(
-                elevation = 6.dp,
-                shape = HomeFeedButtonShape,
-                ambientColor = Green.copy(alpha = 0.4f),
-                spotColor = Green.copy(alpha = 0.4f),
-            )
-            .clip(HomeFeedButtonShape)
-            .background(ColorWhite)
-            .border(BorderStroke(1.dp, Green), HomeFeedButtonShape)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = HomeFeedButtonEmoji + stringResource(CommonR.string.home_feed_button),
-            color = Green,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(14),
-            lineHeight = dpToSp(20),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Preview(name = "Home feed floating button")
-@Composable
-private fun HomeFeedButtonPreview() {
-    AppTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
-            HomeFeedButton(onClick = {})
         }
     }
 }
@@ -600,6 +589,17 @@ private fun HomeListBasicCard(
     }
 }
 
+@Preview(name = "Home list card long title", widthDp = 360)
+@Composable
+private fun HomeListBasicCardLongTitlePreview() {
+    AppTheme {
+        HomeListBasicCard(
+            card = previewHomeListBasicCardWithLongTitle(),
+            onClick = {},
+        )
+    }
+}
+
 @Composable
 private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
     Column(
@@ -659,14 +659,19 @@ private fun StorePreviewContent(
         return
     }
 
+    val previewTitle = storeScreen.resolvedPreviewTitle()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+        contentPadding = PaddingValues(
+            horizontal = StorePreviewHorizontalPadding,
+            vertical = StorePreviewVerticalPadding,
+        ),
         verticalArrangement = Arrangement.spacedBy(StorePreviewRootGap),
     ) {
         item {
             StorePreviewHeaderSection(
                 preview = preview,
+                title = previewTitle,
                 onClosePreview = onClosePreview,
                 onActionClick = onActionClick,
                 onFavoriteClick = onFavoriteClick,
@@ -690,6 +695,7 @@ private fun StorePreviewContent(
 @Composable
 private fun StorePreviewHeaderSection(
     preview: StoreSectionModel.Preview,
+    title: SDTextModel?,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit,
@@ -703,18 +709,18 @@ private fun StorePreviewHeaderSection(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(StorePreviewHeaderTextActionGap),
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .clickable(onClick = onPreviewClick),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(StorePreviewTitleMetadataGap),
             ) {
-                StorePreviewTitle(header = preview.header)
+                StorePreviewTitle(title = title, badge = preview.header.badge)
                 MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
                 if (preview.additionalInfos.isStoreType()) {
                     StorePreviewIconButton(
                         iconRes = if (preview.additionalInfos.isSubscriber) {
@@ -742,16 +748,44 @@ private fun StorePreviewHeaderSection(
     }
 }
 
+@Preview(name = "Store preview long title", widthDp = 360)
 @Composable
-private fun StorePreviewTitle(header: HomeListCardHeaderModel) {
+private fun StorePreviewLongTitlePreview() {
+    AppTheme {
+        val preview = previewStorePreviewWithLongTitle()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorWhite)
+                .padding(horizontal = StorePreviewHorizontalPadding, vertical = StorePreviewVerticalPadding),
+        ) {
+            StorePreviewHeaderSection(
+                preview = preview,
+                title = preview.resolvedTitle(),
+                onClosePreview = {},
+                onActionClick = {},
+                onFavoriteClick = {},
+                onPreviewClick = {},
+            )
+        }
+    }
+}
+
+@Composable
+private fun StorePreviewTitle(
+    title: SDTextModel?,
+    badge: SDImageModel?,
+) {
     TitleWithBadge(
-        title = header.title,
-        badge = header.badge,
+        title = title,
+        badge = badge,
         titleSize = 20,
         titleWeight = FontWeight.SemiBold,
-        titleColor = header.title?.fontColor.textColorOnWhite(fallback = Gray100),
-        maxLines = 1,
+        titleColor = title?.fontColor.textColorOnWhite(fallback = Gray100),
+        maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
+        lineBreak = LineBreak.Heading,
+        fillTitleWidth = true,
     )
 }
 
@@ -765,14 +799,22 @@ private fun TitleWithBadge(
     maxLines: Int,
     badgeDefaultSize: Dp,
     modifier: Modifier = Modifier,
+    lineBreak: LineBreak? = null,
+    fillTitleWidth: Boolean = false,
 ) {
+    val rawTitleText = title.displayText()
+    val titleText = if (lineBreak != null) {
+        rawTitleText.withTitleBreakOpportunities()
+    } else {
+        rawTitleText
+    }
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = title.displayText(),
+            text = titleText,
             color = titleColor,
             fontFamily = PretendardFontFamily,
             fontWeight = title?.fontWeight.toServerDrivenFontWeight(titleWeight),
@@ -780,7 +822,12 @@ private fun TitleWithBadge(
             lineHeight = dpToSp(titleSize + 8),
             maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
+            style = if (lineBreak != null) {
+                TextStyle(lineBreak = lineBreak)
+            } else {
+                TextStyle.Default
+            },
+            modifier = Modifier.weight(1f, fill = fillTitleWidth),
         )
         badge?.let { image ->
             ServerImage(
@@ -804,7 +851,7 @@ private fun StorePreviewIconButton(
 ) {
     Box(
         modifier = Modifier
-            .size(32.dp)
+            .size(StorePreviewIconButtonSize)
             .clip(CircleShape)
             .background(Gray10)
             .clickable(onClick = onClick),
@@ -988,6 +1035,8 @@ private fun HomeHeader(
         titleColor = titleColor ?: header.title?.fontColor.toColor(fallback = Gray100),
         maxLines = 2,
         badgeDefaultSize = badgeDefaultSize,
+        lineBreak = LineBreak.Heading,
+        fillTitleWidth = true,
     )
 }
 
@@ -1289,8 +1338,74 @@ private fun StoreScreenModel.previewSectionOrNull(): StoreSectionModel.Preview? 
     return sections.filterIsInstance<StoreSectionModel.Preview>().firstOrNull()
 }
 
-private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
-    val headerHeight = StorePreviewTitleMetadataHeight + if (rowActionBars().isNotEmpty()) {
+private fun StoreScreenModel.resolvedPreviewTitle(): SDTextModel? {
+    val preview = previewSectionOrNull() ?: return null
+    return preview.resolvedTitle(
+        fallbackStoreName = viewLog?.extraParameters?.stringValue("STORE_NAME"),
+    )
+}
+
+private fun StoreSectionModel.Preview.resolvedTitle(fallbackStoreName: String? = null): SDTextModel? {
+    val storeName = listOfNotNull(actionStoreNameOrNull(), fallbackStoreName)
+        .firstNotNullOfOrNull { value ->
+            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
+        } ?: return header.title
+    val headerTitleText = header.title.displayText()
+    if (headerTitleText.isNotBlank() &&
+        !headerTitleText.isCollapsedTitleCandidate() &&
+        headerTitleText.length >= storeName.length
+    ) {
+        return header.title
+    }
+
+    return header.title?.copy(text = storeName, isHtml = false) ?: SDTextModel(
+        text = storeName,
+        isHtml = false,
+    )
+}
+
+private fun StoreSectionModel.Preview.actionStoreNameOrNull(): String? {
+    return (actionBars + topActionBars).firstNotNullOfOrNull { actionBar ->
+        listOfNotNull(
+            actionBar.button.customAction?.extraParams?.stringValue("STORE_NAME"),
+            actionBar.clickLog?.extraParameters?.stringValue("STORE_NAME"),
+        ).firstNotNullOfOrNull { value ->
+            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
+        }
+    }
+}
+
+private fun String.isCollapsedTitleCandidate(): Boolean {
+    val title = trimEnd()
+    return title.endsWith("...") || title.endsWith("…")
+}
+
+private fun String.withTitleBreakOpportunities(): String {
+    if (length <= 1) return this
+
+    return buildString {
+        var index = 0
+        while (index < this@withTitleBreakOpportunities.length) {
+            val codePoint = this@withTitleBreakOpportunities.codePointAt(index)
+            val nextIndex = index + Character.charCount(codePoint)
+            append(this@withTitleBreakOpportunities, index, nextIndex)
+            if (
+                nextIndex < this@withTitleBreakOpportunities.length &&
+                !Character.isWhitespace(codePoint) &&
+                !Character.isWhitespace(this@withTitleBreakOpportunities.codePointAt(nextIndex))
+            ) {
+                append(TitleBreakOpportunity)
+            }
+            index = nextIndex
+        }
+    }
+}
+
+private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): Dp {
+    val titleMetadataHeight = StorePreviewTitleLineHeight * titleLineCount.coerceIn(1, StorePreviewTitleMaxLines).toFloat() +
+        StorePreviewTitleMetadataGap +
+        metadata.previewHeight()
+    val headerHeight = titleMetadataHeight + if (rowActionBars().isNotEmpty()) {
         StorePreviewHeaderActionGap + StorePreviewActionRowHeight
     } else {
         0.dp
@@ -1303,6 +1418,27 @@ private fun StoreSectionModel.Preview.previewSheetHeight(): Dp {
     }
     val mediaBlockHeight = if (mediaHeight > 0.dp) StorePreviewRootGap + mediaHeight else 0.dp
     return StorePreviewBaseVerticalPadding + headerHeight + mediaBlockHeight
+}
+
+private fun StoreSectionModel.Preview.previewTitleMaxWidth(sheetWidth: Dp): Dp {
+    val actionButtonCount = if (additionalInfos.isStoreType()) 2 else 1
+    val actionButtonWidth = StorePreviewIconButtonSize * actionButtonCount.toFloat() +
+        StorePreviewIconButtonGap * (actionButtonCount - 1).toFloat()
+    val badgeWidth = header.badge?.let { image ->
+        (image.style?.width ?: 16.0).dp + StorePreviewTitleBadgeGap
+    } ?: 0.dp
+    val availableWidth = sheetWidth -
+        StorePreviewHorizontalPadding -
+        StorePreviewHorizontalPadding -
+        StorePreviewHeaderTextActionGap -
+        actionButtonWidth -
+        badgeWidth
+    return availableWidth.coerceAtLeast(1.dp)
+}
+
+private fun HomeListCardMetadataModel.previewHeight(): Dp {
+    val rowCount = listOf(primary, secondary).count { it.isNotEmpty() }
+    return StorePreviewMetadataLineHeight * rowCount.toFloat()
 }
 
 private fun StoreSectionModel.Preview.rowActionBars(): List<StoreActionBarModel> {
@@ -1363,7 +1499,18 @@ private fun StoreActionBarModel.isNavigationAction(): Boolean {
         button.text.displayText().contains("길안내")
 }
 
-private fun previewStoreActionBars(): List<StoreActionBarModel> {
+private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
+    return when (val value = this[key]) {
+        is SDClickLogValue.StringValue -> value.value
+        is SDClickLogValue.IntValue -> value.value.toString()
+        is SDClickLogValue.DoubleValue -> value.value.toString()
+        is SDClickLogValue.BoolValue -> value.value.toString()
+        SDClickLogValue.Null, null -> null
+    }
+}
+
+private fun previewStoreActionBars(storeName: String = "가게명"): List<StoreActionBarModel> {
+    val actionParams = mapOf("STORE_NAME" to SDClickLogValue.StringValue(storeName))
     return listOf(
         StoreActionBarModel(
             type = "VISIT",
@@ -1383,15 +1530,76 @@ private fun previewStoreActionBars(): List<StoreActionBarModel> {
             type = "SHARE",
             button = SDButtonModel(
                 text = SDTextModel(text = "공유", isHtml = false),
-                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_SHARE"),
+                customAction = SDCustomActionModel(
+                    actionType = "STORE_PREVIEW_SECTION_SHARE",
+                    extraParams = actionParams,
+                ),
             ),
         ),
         StoreActionBarModel(
             type = "NAVIGATION",
             button = SDButtonModel(
                 text = SDTextModel(text = "길안내", isHtml = false),
-                customAction = SDCustomActionModel(actionType = "STORE_PREVIEW_SECTION_NAVIGATION"),
+                customAction = SDCustomActionModel(
+                    actionType = "STORE_PREVIEW_SECTION_NAVIGATION",
+                    extraParams = actionParams,
+                ),
             ),
+        ),
+    )
+}
+
+private fun previewStorePreviewWithLongTitle(): StoreSectionModel.Preview {
+    val storeName = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ"
+    return StoreSectionModel.Preview(
+        type = "PREVIEW",
+        header = HomeListCardHeaderModel(
+            title = SDTextModel(
+                text = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ...",
+                isHtml = false,
+                fontColor = "#0F0F0F",
+            ),
+        ),
+        metadata = HomeListCardMetadataModel(
+            primary = listOf(
+                SDChipModel(text = SDTextModel(text = "떡볶이, 계란빵, 땅콩빵", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "5.0 (1)", isHtml = false)),
+            ),
+            secondary = listOf(
+                SDChipModel(text = SDTextModel(text = "0m", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "최근 방문 0명", isHtml = false)),
+            ),
+        ),
+        additionalInfos = StoreSectionAdditionalInfosModel(type = "STORE", isSubscriber = true),
+        actionBars = previewStoreActionBars(storeName = storeName),
+    )
+}
+
+private fun previewHomeListBasicCardWithLongTitle(): HomeListCardModel.BasicCard {
+    return HomeListCardModel.BasicCard(
+        type = "BASIC_CARD",
+        cardId = "S:100186",
+        header = HomeListCardHeaderModel(
+            title = SDTextModel(
+                text = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ",
+                isHtml = false,
+                fontColor = "#0F0F0F",
+            ),
+        ),
+        metadata = HomeListCardMetadataModel(
+            primary = listOf(
+                SDChipModel(text = SDTextModel(text = "떡볶이, 계란빵, 땅콩빵", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "5.0 (1)", isHtml = false)),
+            ),
+            secondary = listOf(
+                SDChipModel(text = SDTextModel(text = "0m", isHtml = false)),
+                SDChipModel(text = SDTextModel(text = "최근 방문 0명", isHtml = false)),
+            ),
+        ),
+        marker = HomeListMarkerModel(
+            focused = SDChipModel(text = SDTextModel(text = "", isHtml = false)),
+            unfocused = SDChipModel(text = SDTextModel(text = "", isHtml = false)),
+            location = SDLocationModel(latitude = 37.1, longitude = 127.2),
         ),
     )
 }

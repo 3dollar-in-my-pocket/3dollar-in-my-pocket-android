@@ -72,6 +72,19 @@ internal object HomeSheetStateCalculator {
         return (containerHeightPx - visibleHeight).toFloat()
     }
 
+    fun previewTargetOffset(
+        containerHeightPx: Int,
+        desiredVisibleHeightPx: Int,
+        minimumVisibleHeightPx: Int,
+        anchors: HomeSheetAnchors,
+    ): Float {
+        return previewOffset(
+            containerHeightPx = containerHeightPx,
+            desiredVisibleHeightPx = desiredVisibleHeightPx,
+            minimumVisibleHeightPx = minimumVisibleHeightPx,
+        ).coerceAtLeast(anchors.fullListOffset)
+    }
+
     fun restoreAfterPreview(previousListValue: HomeSheetValue): HomeSheetValue {
         return previousListValue
     }
