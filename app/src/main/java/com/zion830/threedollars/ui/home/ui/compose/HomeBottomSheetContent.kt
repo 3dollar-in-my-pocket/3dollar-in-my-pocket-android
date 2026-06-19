@@ -162,18 +162,19 @@ fun HomeBottomSheetContent(
         val storePreviewHeightPx = with(density) {
             (storePreviewSection?.previewSheetHeight() ?: collapsedPeekHeight).toPx().roundToInt()
         }
-        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx) {
-            HomeSheetStateCalculator.previewOffset(
-                containerHeightPx = containerHeightPx,
-                desiredVisibleHeightPx = storePreviewHeightPx,
-                minimumVisibleHeightPx = 0,
-            )
-        }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
             HomeSheetStateCalculator.anchors(
                 containerHeightPx = containerHeightPx,
                 fullListTopPx = fullListTopPx,
                 collapsedPeekHeightPx = collapsedPeekHeightPx,
+            )
+        }
+        val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx, anchors) {
+            HomeSheetStateCalculator.previewTargetOffset(
+                containerHeightPx = containerHeightPx,
+                desiredVisibleHeightPx = storePreviewHeightPx,
+                minimumVisibleHeightPx = 0,
+                anchors = anchors,
             )
         }
         val coroutineScope = rememberCoroutineScope()
@@ -254,7 +255,7 @@ fun HomeBottomSheetContent(
             if (!isSheetInitialized) return@LaunchedEffect
             if (storeScreen != null) {
                 animateSheetToOffset(
-                    targetOffset = anchors.clamp(storePreviewOffsetPx),
+                    targetOffset = storePreviewOffsetPx,
                     settled = HomeSheetValue.Collapsed,
                 )
             } else {

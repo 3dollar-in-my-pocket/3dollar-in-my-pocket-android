@@ -91,6 +91,44 @@ class HomeSheetStateCalculatorTest {
     }
 
     @Test
+    fun `preview target offset allows shorter than collapsed height`() {
+        val anchors = HomeSheetAnchors(
+            fullListOffset = 188f,
+            collapsedOffset = collapsedOffsetPx.toFloat(),
+        )
+
+        assertEquals(
+            692f,
+            HomeSheetStateCalculator.previewTargetOffset(
+                containerHeightPx = 812,
+                desiredVisibleHeightPx = 120,
+                minimumVisibleHeightPx = 0,
+                anchors = anchors,
+            ),
+            0f,
+        )
+    }
+
+    @Test
+    fun `preview target offset does not pass full list top`() {
+        val anchors = HomeSheetAnchors(
+            fullListOffset = 188f,
+            collapsedOffset = collapsedOffsetPx.toFloat(),
+        )
+
+        assertEquals(
+            188f,
+            HomeSheetStateCalculator.previewTargetOffset(
+                containerHeightPx = 812,
+                desiredVisibleHeightPx = 700,
+                minimumVisibleHeightPx = 0,
+                anchors = anchors,
+            ),
+            0f,
+        )
+    }
+
+    @Test
     fun `closing preview restores previous list sheet value`() {
         assertEquals(
             HomeSheetValue.FullList,
