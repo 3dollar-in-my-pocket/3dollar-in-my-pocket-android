@@ -25,6 +25,7 @@ class NearStoreNaverMapFragment(
     val viewModel: HomeViewModel by activityViewModels()
 
     private var isFirstLoad = true
+    private var locationButtonBottomMarginPx = SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP)
 
     override fun onMapReady(map: NaverMap) {
         setIsShowOverlay(isLocationAvailable())
@@ -34,9 +35,7 @@ class NearStoreNaverMapFragment(
             map.locationTrackingMode = LocationTrackingMode.None
         }
 
-        val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        params.setMargins(0, 0, 0, SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP))
-        binding.btnFindLocation.layoutParams = params
+        applyLocationButtonBottomMargin()
 
         binding.btnFindLocation.setOnClickListener {
             onLocationButtonClicked()
@@ -58,6 +57,21 @@ class NearStoreNaverMapFragment(
             }
             isFirstLoad = false
         }
+    }
+
+    fun updateLocationButtonBottomMargin(bottomMarginPx: Int) {
+        locationButtonBottomMarginPx = bottomMarginPx
+        if (view != null) {
+            applyLocationButtonBottomMargin()
+        }
+    }
+
+    private fun applyLocationButtonBottomMargin() {
+        val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
+        if (params.bottomMargin == locationButtonBottomMarginPx) return
+
+        params.bottomMargin = locationButtonBottomMarginPx
+        binding.btnFindLocation.layoutParams = params
     }
 
     fun enableLocationTracking() {

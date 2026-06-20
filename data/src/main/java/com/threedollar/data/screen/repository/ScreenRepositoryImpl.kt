@@ -5,7 +5,6 @@ import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
-import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.data.screen.asCardsSectionModel
 import com.threedollar.data.screen.asModel
 import com.threedollar.data.screen.datasource.ScreenRemoteDataSource
@@ -42,25 +41,6 @@ class ScreenRepositoryImpl @Inject constructor(
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel() ?: HomeListSectionModel(),
-                message = it.message,
-                resultCode = it.resultCode,
-                error = it.error,
-            )
-        }
-
-    override fun getStoreScreen(
-        storeId: Long,
-        deviceLatitude: Double?,
-        deviceLongitude: Double?,
-    ): Flow<BaseResponse<StoreScreenModel>> =
-        screenRemoteDataSource.getStoreScreen(
-            storeId = storeId,
-            deviceLatitude = deviceLatitude,
-            deviceLongitude = deviceLongitude,
-        ).map {
-            BaseResponse(
-                ok = it.ok,
-                data = it.data?.asModel() ?: StoreScreenModel(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,

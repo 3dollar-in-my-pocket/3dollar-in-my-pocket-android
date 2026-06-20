@@ -6,7 +6,6 @@ import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
-import com.threedollar.network.data.screen.StoreScreenResponse
 import com.threedollar.network.util.apiResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -41,14 +40,6 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
                 )
             )
         )
-    }
-
-    override fun getStoreScreen(
-        storeId: Long,
-        deviceLatitude: Double?,
-        deviceLongitude: Double?,
-    ): Flow<BaseResponse<StoreScreenResponse>> = flow {
-        emit(apiResult(serverApi.getStoreScreen(storeId, deviceLatitude, deviceLongitude)))
     }
 
     override fun getStoreContributorScreen(storeId: String): Flow<BaseResponse<StoreContributorScreenResponse>> = flow {

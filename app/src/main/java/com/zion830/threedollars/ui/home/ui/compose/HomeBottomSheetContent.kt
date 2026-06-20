@@ -170,6 +170,7 @@ fun HomeBottomSheetContent(
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
+    onVisibleHeightChange: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -376,15 +377,18 @@ fun HomeBottomSheetContent(
             settledValue == HomeSheetValue.FullList &&
             abs(sheetOffsetPx - anchors.fullListOffset) <= 1f
         val topCornerRadius = if (isFullListSettled) 0.dp else 16.dp
-        val sheetHeight = with(density) {
-            HomeSheetStateCalculator.visibleHeight(
-                containerHeightPx = containerHeightPx,
-                currentOffset = sheetOffsetPx,
-            ).toDp()
-        }
+        val sheetVisibleHeightPx = HomeSheetStateCalculator.visibleHeight(
+            containerHeightPx = containerHeightPx,
+            currentOffset = sheetOffsetPx,
+        ).roundToInt()
+        val sheetHeight = with(density) { sheetVisibleHeightPx.toDp() }
 
         LaunchedEffect(isFullListSettled) {
             onFullListBackgroundVisibleChange(isFullListSettled)
+        }
+
+        LaunchedEffect(sheetVisibleHeightPx) {
+            onVisibleHeightChange(sheetVisibleHeightPx)
         }
 
         Column(
@@ -785,7 +789,6 @@ private fun StorePreviewTitle(
         maxLines = StorePreviewTitleMaxLines,
         badgeDefaultSize = 16.dp,
         lineBreak = LineBreak.Heading,
-        fillTitleWidth = true,
     )
 }
 
@@ -1036,7 +1039,6 @@ private fun HomeHeader(
         maxLines = 2,
         badgeDefaultSize = badgeDefaultSize,
         lineBreak = LineBreak.Heading,
-        fillTitleWidth = true,
     )
 }
 

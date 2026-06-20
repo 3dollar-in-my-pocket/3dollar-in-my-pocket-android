@@ -5,7 +5,6 @@ import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
-import com.threedollar.common.serverdriven.model.StoreScreenModel
 import kotlinx.coroutines.flow.Flow
 
 interface ScreenRepository {
@@ -20,12 +19,6 @@ interface ScreenRepository {
         dynamicParams: Map<String, String> = emptyMap(),
         cursor: String? = null,
     ): Flow<BaseResponse<HomeListSectionModel>>
-
-    fun getStoreScreen(
-        storeId: Long,
-        deviceLatitude: Double?,
-        deviceLongitude: Double?,
-    ): Flow<BaseResponse<StoreScreenModel>>
 
     fun getStoreContributorScreen(storeId: String): Flow<BaseResponse<SDScreenModel>>
 

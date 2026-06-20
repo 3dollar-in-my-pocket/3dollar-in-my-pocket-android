@@ -302,6 +302,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
                     },
+                    onVisibleHeightChange = ::updateLocationButtonBottomMargin,
                 )
             }
         }
@@ -323,6 +324,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         homeBottomSheetFullListTopPx = binding.filterComposeView.bottom
             .takeIf { it > 0 }
             ?: SizeUtils.dpToPx(188f)
+    }
+
+    private fun updateLocationButtonBottomMargin(sheetVisibleHeightPx: Int) {
+        val bottomMarginPx = sheetVisibleHeightPx + SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP)
+        naverMapFragment.updateLocationButtonBottomMargin(bottomMarginPx)
     }
 
     private fun initButton() {

@@ -30,7 +30,6 @@ import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
-import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.ContentModel
@@ -51,6 +50,7 @@ import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
+import com.zion830.threedollars.ui.home.data.withStorePreviewFavoriteOverride
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -101,6 +101,8 @@ class HomeViewModel @Inject constructor(
 
     private val _storePreviewToast = MutableSharedFlow<String>()
     val storePreviewToast: SharedFlow<String> = _storePreviewToast.asSharedFlow()
+
+    private val storePreviewFavoriteOverrides = mutableMapOf<Long, Boolean>()
 
     private val _selectedHomeListCardId = MutableStateFlow<String?>(null)
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
@@ -236,13 +238,18 @@ class HomeViewModel @Inject constructor(
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
-                        _selectedHomeListCardId.value = if (preserveSelectedStore) {
+                        val selectedCardId = if (preserveSelectedStore) {
                             cards.selectedCardIdAfterRefresh(
                                 previousSelectedCardId = previousSelectedCardId,
                                 previousSelectedStoreId = previousSelectedStoreId,
                             )
                         } else {
                             cards.firstOrNull()?.cardId
+                        }
+                        _selectedHomeListCardId.value = selectedCardId
+                        if (preserveSelectedStore && previousSelectedStoreId != null && _selectedStoreScreen.value != null) {
+                            cards.firstOrNull { it.cardId == selectedCardId }
+                                ?.let { updateStorePreviewFromCard(previousSelectedStoreId, it) }
                         }
                     }
                     sendHomeListImpressionLogs(section.cards)
@@ -287,24 +294,20 @@ class HomeViewModel @Inject constructor(
             return
         }
         _selectedStorePreviewStoreId.value = storeId
-        fallbackCard?.toFallbackStorePreviewScreen()?.let { fallbackScreen ->
+        val card = fallbackCard ?: _homeListSection.value.cards
+            .filterIsInstance<HomeListCardModel.BasicCard>()
+            .firstOrNull { it.storePreviewStoreIdOrNull() == storeId }
+        card?.let { updateStorePreviewFromCard(storeId, it) }
+    }
+
+    private fun updateStorePreviewFromCard(
+        storeId: Long,
+        card: HomeListCardModel.BasicCard,
+    ) {
+        card.toFallbackStorePreviewScreen(
+            isSubscriber = storePreviewFavoriteOverrides[storeId] ?: false,
+        )?.let { fallbackScreen ->
             _selectedStoreScreen.value = fallbackScreen
-        }
-        val state = uiState.value
-        viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getStoreScreen(
-                storeId = storeId,
-                deviceLatitude = state.userLocation.latitude,
-                deviceLongitude = state.userLocation.longitude,
-            ).collect { response ->
-                if (response.ok) {
-                    val screen = response.data ?: StoreScreenModel()
-                    _selectedStoreScreen.value = screen
-                    screen.viewLog?.let { SDClickLogger.send(it) }
-                } else {
-                    _serverError.emit(response.message)
-                }
-            }
         }
     }
 
@@ -326,7 +329,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putFavorite(targetStoreId.toString()).collect { response ->
                 if (response.ok) {
-                    updateStorePreviewFavorite(isFavorite = true)
+                    updateStorePreviewFavorite(storeId = targetStoreId, isFavorite = true)
                     _storePreviewToast.emit("가게를 저장했어요")
                 } else {
                     _serverError.emit(response.message)
@@ -340,7 +343,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.deleteFavorite(targetStoreId.toString()).collect { response ->
                 if (response.ok) {
-                    updateStorePreviewFavorite(isFavorite = false)
+                    updateStorePreviewFavorite(storeId = targetStoreId, isFavorite = false)
                     _storePreviewToast.emit("가게 저장을 취소했어요")
                 } else {
                     _serverError.emit(response.message)
@@ -350,22 +353,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateSelectedStorePreviewFavorite(isFavorite: Boolean) {
-        updateStorePreviewFavorite(isFavorite)
+        updateStorePreviewFavorite(storeId = _selectedStorePreviewStoreId.value, isFavorite = isFavorite)
     }
 
-    private fun updateStorePreviewFavorite(isFavorite: Boolean) {
+    private fun updateStorePreviewFavorite(storeId: Long?, isFavorite: Boolean) {
+        storeId?.let {
+            storePreviewFavoriteOverrides[it] = isFavorite
+        }
         _selectedStoreScreen.update { screen ->
-            screen?.copy(
-                sections = screen.sections.map { section ->
-                    if (section is StoreSectionModel.Preview) {
-                        section.copy(
-                            additionalInfos = section.additionalInfos.copy(isSubscriber = isFavorite),
-                        )
-                    } else {
-                        section
-                    }
-                },
-            )
+            screen?.withStorePreviewFavoriteOverride(isFavorite)
         }
     }
 

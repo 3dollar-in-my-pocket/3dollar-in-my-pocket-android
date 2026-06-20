@@ -5,7 +5,6 @@ import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
-import com.threedollar.network.data.screen.StoreScreenResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ScreenRemoteDataSource {
@@ -20,12 +19,6 @@ interface ScreenRemoteDataSource {
         dynamicParams: Map<String, String>,
         cursor: String?,
     ): Flow<BaseResponse<HomeListSectionResponse>>
-
-    fun getStoreScreen(
-        storeId: Long,
-        deviceLatitude: Double?,
-        deviceLongitude: Double?,
-    ): Flow<BaseResponse<StoreScreenResponse>>
 
     fun getStoreContributorScreen(storeId: String): Flow<BaseResponse<StoreContributorScreenResponse>>
 

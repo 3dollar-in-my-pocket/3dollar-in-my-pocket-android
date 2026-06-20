@@ -13,7 +13,9 @@ import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosMode
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.Constants.USER_STORE
 
-internal fun HomeListCardModel.BasicCard.toFallbackStorePreviewScreen(): StoreScreenModel? {
+internal fun HomeListCardModel.BasicCard.toFallbackStorePreviewScreen(
+    isSubscriber: Boolean = false,
+): StoreScreenModel? {
     val storeId = storePreviewStoreIdOrNull() ?: return null
     val storeType = storePreviewStoreTypeOrNull() ?: USER_STORE
     val storeName = header.title?.text.orEmpty()
@@ -31,7 +33,10 @@ internal fun HomeListCardModel.BasicCard.toFallbackStorePreviewScreen(): StoreSc
                 type = STORE_PREVIEW_SECTION_TYPE,
                 header = header,
                 metadata = metadata,
-                additionalInfos = StoreSectionAdditionalInfosModel(type = STORE_ADDITIONAL_INFO_TYPE),
+                additionalInfos = StoreSectionAdditionalInfosModel(
+                    type = STORE_ADDITIONAL_INFO_TYPE,
+                    isSubscriber = isSubscriber,
+                ),
                 actionBars = listOf(
                     visitAction(storeId),
                     customAction(label = "리뷰 작성", actionType = "STORE_PREVIEW_SECTION_REVIEW_WRITE", params = actionParams),
@@ -43,6 +48,24 @@ internal fun HomeListCardModel.BasicCard.toFallbackStorePreviewScreen(): StoreSc
                 style = style ?: SDSurfaceStyleModel(backgroundColor = "#FFFFFF"),
             )
         ),
+    )
+}
+
+internal fun StoreScreenModel.withStorePreviewFavoriteOverride(
+    isSubscriber: Boolean?,
+): StoreScreenModel {
+    if (isSubscriber == null) return this
+
+    return copy(
+        sections = sections.map { section ->
+            if (section is StoreSectionModel.Preview) {
+                section.copy(
+                    additionalInfos = section.additionalInfos.copy(isSubscriber = isSubscriber),
+                )
+            } else {
+                section
+            }
+        },
     )
 }
 
