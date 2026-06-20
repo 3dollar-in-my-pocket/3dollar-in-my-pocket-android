@@ -1,20 +1,17 @@
 package com.threedollar.network.api
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import retrofit2.http.GET
 
 class ServerApiTest {
 
     @Test
-    fun getStoreScreenUsesV2PreviewStoreEndpoint() {
-        val getAnnotation = requireNotNull(
-            ServerApi::class.java
-                .declaredMethods
-                .first { it.name == "getStoreScreen" }
-                .getAnnotation(GET::class.java),
-        )
+    fun serverApiDoesNotDeclareMissingV2StorePreviewEndpoint() {
+        val paths = ServerApi::class.java
+            .declaredMethods
+            .mapNotNull { it.getAnnotation(GET::class.java)?.value }
 
-        assertEquals("/api/v2/screen/store/{storeId}", getAnnotation.value)
+        assertFalse(paths.contains("/api/v2/screen/store/{storeId}"))
     }
 }

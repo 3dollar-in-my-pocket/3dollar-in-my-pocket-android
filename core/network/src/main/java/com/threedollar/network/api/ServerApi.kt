@@ -26,7 +26,6 @@ import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
-import com.threedollar.network.data.screen.StoreScreenResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -229,13 +228,6 @@ interface ServerApi {
         @QueryMap dynamicParams: Map<String, String> = emptyMap(),
         @Query("cursor") cursor: String? = null,
     ): Response<BaseResponse<HomeListSectionResponse>>
-
-    @GET("/api/v2/screen/store/{storeId}")
-    suspend fun getStoreScreen(
-        @Path("storeId") storeId: Long,
-        @Header("X-Device-Latitude") deviceLatitude: Double?,
-        @Header("X-Device-Longitude") deviceLongitude: Double?,
-    ): Response<BaseResponse<StoreScreenResponse>>
 
     @GET("/api/v1/screen/store/{storeId}/contributors")
     suspend fun getStoreContributorScreen(

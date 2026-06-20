@@ -238,13 +238,18 @@ class HomeViewModel @Inject constructor(
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
-                        _selectedHomeListCardId.value = if (preserveSelectedStore) {
+                        val selectedCardId = if (preserveSelectedStore) {
                             cards.selectedCardIdAfterRefresh(
                                 previousSelectedCardId = previousSelectedCardId,
                                 previousSelectedStoreId = previousSelectedStoreId,
                             )
                         } else {
                             cards.firstOrNull()?.cardId
+                        }
+                        _selectedHomeListCardId.value = selectedCardId
+                        if (preserveSelectedStore && previousSelectedStoreId != null && _selectedStoreScreen.value != null) {
+                            cards.firstOrNull { it.cardId == selectedCardId }
+                                ?.let { updateStorePreviewFromCard(previousSelectedStoreId, it) }
                         }
                     }
                     sendHomeListImpressionLogs(section.cards)
@@ -289,26 +294,20 @@ class HomeViewModel @Inject constructor(
             return
         }
         _selectedStorePreviewStoreId.value = storeId
-        fallbackCard?.toFallbackStorePreviewScreen(
+        val card = fallbackCard ?: _homeListSection.value.cards
+            .filterIsInstance<HomeListCardModel.BasicCard>()
+            .firstOrNull { it.storePreviewStoreIdOrNull() == storeId }
+        card?.let { updateStorePreviewFromCard(storeId, it) }
+    }
+
+    private fun updateStorePreviewFromCard(
+        storeId: Long,
+        card: HomeListCardModel.BasicCard,
+    ) {
+        card.toFallbackStorePreviewScreen(
             isSubscriber = storePreviewFavoriteOverrides[storeId] ?: false,
         )?.let { fallbackScreen ->
             _selectedStoreScreen.value = fallbackScreen
-        }
-        val state = uiState.value
-        viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getStoreScreen(
-                storeId = storeId,
-                deviceLatitude = state.userLocation.latitude,
-                deviceLongitude = state.userLocation.longitude,
-            ).collect { response ->
-                if (response.ok) {
-                    val screen = response.data ?: StoreScreenModel()
-                    _selectedStoreScreen.value = screen.withStorePreviewFavoriteOverride(storePreviewFavoriteOverrides[storeId])
-                    screen.viewLog?.let { SDClickLogger.send(it) }
-                } else {
-                    _serverError.emit(response.message)
-                }
-            }
         }
     }
 
