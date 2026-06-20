@@ -230,7 +230,7 @@ interface ServerApi {
         @Query("cursor") cursor: String? = null,
     ): Response<BaseResponse<HomeListSectionResponse>>
 
-    @GET("/api/v1/screen/store/{storeId}")
+    @GET("/api/v2/screen/store/{storeId}")
     suspend fun getStoreScreen(
         @Path("storeId") storeId: Long,
         @Header("X-Device-Latitude") deviceLatitude: Double?,

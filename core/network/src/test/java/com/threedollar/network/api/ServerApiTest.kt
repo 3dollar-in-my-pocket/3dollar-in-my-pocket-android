@@ -7,7 +7,7 @@ import retrofit2.http.GET
 class ServerApiTest {
 
     @Test
-    fun getStoreScreenUsesV1ScreenStoreEndpoint() {
+    fun getStoreScreenUsesV2PreviewStoreEndpoint() {
         val getAnnotation = requireNotNull(
             ServerApi::class.java
                 .declaredMethods
@@ -15,6 +15,6 @@ class ServerApiTest {
                 .getAnnotation(GET::class.java),
         )
 
-        assertEquals("/api/v1/screen/store/{storeId}", getAnnotation.value)
+        assertEquals("/api/v2/screen/store/{storeId}", getAnnotation.value)
     }
 }
