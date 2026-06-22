@@ -152,6 +152,34 @@ class HomeBottomSheetScreenMapperTest {
     }
 
     @Test
+    fun homeListSectionMapper_preservesLongClickLogNumbers() {
+        val longStoreId = 855453324337299456L
+        val response = HomeListSectionResponse(
+            cards = listOf(
+                HomeListCardResponse(
+                    type = "BASIC_CARD",
+                    cardId = "S:$longStoreId",
+                    header = HomeListCardHeaderResponse(title = SDTextResponse.fromText("long id store")),
+                    marker = HomeListMarkerResponse(
+                        location = SDLocationResponse(latitude = 37.1, longitude = 127.2),
+                    ),
+                    impressionLog = SDImpressionLogResponse(
+                        eventType = "IMPRESSION",
+                        screenName = "home",
+                        objectType = "card",
+                        objectId = "store",
+                        extraParameters = mapOf("STORE_ID" to JsonPrimitive(longStoreId)),
+                    ),
+                ),
+            ),
+        )
+
+        val card = response.asModel().cards.single() as HomeListCardModel.BasicCard
+
+        assertEquals(longStoreId, card.impressionLog?.extraParameters?.get("STORE_ID")?.anyValue)
+    }
+
+    @Test
     fun homeListSectionMapper_mapsAdMobTypeAlias() {
         val response = HomeListSectionResponse(
             cards = listOf(

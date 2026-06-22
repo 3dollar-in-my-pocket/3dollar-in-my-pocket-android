@@ -61,13 +61,13 @@ interface NewServiceApi {
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun editReview(
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body editReviewRequest: EditReviewRequest
     ): Response<NewReviewResponse>
 
     @DELETE("/api/v2/store/review/{reviewId}")
     suspend fun deleteReview(
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
     ): Response<BaseResponse<String>>
 
     // 가게 검색

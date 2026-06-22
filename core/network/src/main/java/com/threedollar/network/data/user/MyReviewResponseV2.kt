@@ -29,11 +29,11 @@ data class ReviewContent(
     @SerializedName("updatedAt")
     val updatedAt: String? = "",
     @SerializedName("reviewId")
-    val reviewId: Int? = 0,
+    val reviewId: Long? = 0L,
     @SerializedName("storeId")
-    val storeId: Int? = 0,
+    val storeId: Long? = 0L,
     @SerializedName("userId")
-    val userId: Int? = 0,
+    val userId: Long? = 0L,
     @SerializedName("rating")
     val rating: Int? = 0,
     @SerializedName("contents")
@@ -73,7 +73,7 @@ data class Store(
 
 data class ReviewWriter(
     @SerializedName("userId")
-    val userId: Int? = 0,
+    val userId: Long? = 0L,
     @SerializedName("name")
     val name: String? = "",
     @SerializedName("socialType")

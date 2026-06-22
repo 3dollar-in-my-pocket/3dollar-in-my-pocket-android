@@ -109,7 +109,7 @@ private fun Long.toStoreIdClickLogValue(): SDClickLogValue {
     return if (this in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
         SDClickLogValue.IntValue(toInt())
     } else {
-        SDClickLogValue.StringValue(toString())
+        SDClickLogValue.LongValue(this)
     }
 }
 
