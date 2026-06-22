@@ -261,6 +261,10 @@ sealed interface SDClickLogValue {
         override val anyValue: Any get() = value
     }
 
+    data class LongValue(val value: Long) : SDClickLogValue {
+        override val anyValue: Any get() = value
+    }
+
     data class DoubleValue(val value: Double) : SDClickLogValue {
         override val anyValue: Any get() = value
     }

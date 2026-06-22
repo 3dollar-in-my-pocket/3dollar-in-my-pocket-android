@@ -71,12 +71,12 @@ class StoreDataSourceImpl @Inject constructor(private val newService: NewService
     ): Response<NewReviewResponse> = newService.saveReview(newReviewRequest)
 
     override suspend fun editReview(
-        reviewId: Int,
+        reviewId: Long,
         editReviewRequest: EditReviewRequest,
     ): Response<NewReviewResponse> = newService.editReview(reviewId, editReviewRequest)
 
     override suspend fun deleteReview(
-        reviewId: Int,
+        reviewId: Long,
     ): Response<BaseResponse<String>> = newService.deleteReview(reviewId)
 
     override fun getCategories() = flow { emit(newService.getCategories()) }

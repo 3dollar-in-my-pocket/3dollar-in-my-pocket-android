@@ -1505,6 +1505,7 @@ private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
     return when (val value = this[key]) {
         is SDClickLogValue.StringValue -> value.value
         is SDClickLogValue.IntValue -> value.value.toString()
+        is SDClickLogValue.LongValue -> value.value.toString()
         is SDClickLogValue.DoubleValue -> value.value.toString()
         is SDClickLogValue.BoolValue -> value.value.toString()
         SDClickLogValue.Null, null -> null

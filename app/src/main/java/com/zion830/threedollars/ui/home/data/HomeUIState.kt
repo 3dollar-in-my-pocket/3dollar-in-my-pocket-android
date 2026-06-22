@@ -13,7 +13,7 @@ data class HomeUIState(
     var filterCertifiedStores: Boolean = false,
     var homeSortType: HomeSortType = HomeSortType.DISTANCE_ASC,
     var homeStoreType: HomeStoreType = HomeStoreType.ALL,
-    var filterConditionsType: List<FilterConditionsTypeModel> = listOf(FilterConditionsTypeModel.RECENT_ACTIVITY),
+    var filterConditionsType: List<FilterConditionsTypeModel> = emptyList(),
     val selectedCategory: StoreCategoryItem? = null,
     val filterSections: List<HomeScreenSection> = emptyList(),
     val radioSelection: Map<String, Int> = emptyMap(),

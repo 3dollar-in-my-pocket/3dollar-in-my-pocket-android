@@ -931,6 +931,7 @@ private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
     return when (val value = this[key]) {
         is SDClickLogValue.StringValue -> value.value
         is SDClickLogValue.IntValue -> value.value.toString()
+        is SDClickLogValue.LongValue -> value.value.toString()
         is SDClickLogValue.DoubleValue -> value.value.toString()
         is SDClickLogValue.BoolValue -> value.value.toString()
         SDClickLogValue.Null, null -> null
@@ -941,6 +942,7 @@ private fun Map<String, SDClickLogValue>.longValue(key: String): Long? {
     return when (val value = this[key]) {
         is SDClickLogValue.StringValue -> value.value.toLongOrNull()
         is SDClickLogValue.IntValue -> value.value.toLong()
+        is SDClickLogValue.LongValue -> value.value
         is SDClickLogValue.DoubleValue -> value.value.toLong()
         is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
     }
@@ -950,6 +952,7 @@ private fun Map<String, SDClickLogValue>.doubleValue(key: String): Double? {
     return when (val value = this[key]) {
         is SDClickLogValue.StringValue -> value.value.toDoubleOrNull()
         is SDClickLogValue.IntValue -> value.value.toDouble()
+        is SDClickLogValue.LongValue -> value.value.toDouble()
         is SDClickLogValue.DoubleValue -> value.value
         is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
     }

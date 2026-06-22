@@ -169,7 +169,12 @@ private fun JsonElement.asClickLogValue(): SDClickLogValue {
             val number = primitive.asNumber
             val asDouble = number.toDouble()
             if (asDouble == asDouble.toLong().toDouble() && !primitive.asString.contains('.')) {
-                SDClickLogValue.IntValue(number.toInt())
+                val asLong = number.toLong()
+                if (asLong in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
+                    SDClickLogValue.IntValue(asLong.toInt())
+                } else {
+                    SDClickLogValue.LongValue(asLong)
+                }
             } else {
                 SDClickLogValue.DoubleValue(asDouble)
             }
