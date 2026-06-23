@@ -12,13 +12,11 @@ import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
-import com.threedollar.common.serverdriven.model.FilterOpenStatuses
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
-import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDChipModel
@@ -37,7 +35,6 @@ import com.threedollar.domain.home.data.store.StoreModel
 import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.threedollar.domain.screen.repository.ScreenRepository
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
@@ -45,8 +42,6 @@ import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
 import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
@@ -125,7 +120,6 @@ class HomeViewModel @Inject constructor(
     val advertisementListModel: StateFlow<AdvertisementModelV2?> get() = _advertisementListModel
 
     init {
-        syncRadioSelectionFromLegacy()
         updateFilterCells()
         fetchHomeFilterScreen()
     }
@@ -397,48 +391,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateHomeFilterEvent(
-        homeSortType: HomeSortType? = null,
-        homeStoreType: HomeStoreType? = null,
-        filterConditionsType: List<FilterConditionsTypeModel>? = null,
         filterCertifiedStores: Boolean? = null,
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             _uiState.update {
                 it.copy(
-                    homeStoreType = homeStoreType ?: it.homeStoreType,
-                    homeSortType = homeSortType ?: it.homeSortType,
-                    filterConditionsType = filterConditionsType ?: it.filterConditionsType,
                     filterCertifiedStores = filterCertifiedStores ?: it.filterCertifiedStores,
                 )
             }
-            syncRadioSelectionFromLegacy()
             fetchAroundStores()
             updateFilterCells()
         }
-    }
-
-    fun updateFilterCondition(
-        type: FilterConditionsTypeModel
-    ) {
-        val current = uiState.value.filterConditionsType
-        val contains = current.contains(type)
-
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = screenName,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
-                additionalParams = mapOf(ParameterName.VALUE to contains.toString())
-            )
-        )
-
-        updateHomeFilterEvent(
-            filterConditionsType = if (contains) {
-                current.minus(type)
-            } else {
-                current.plus(type)
-            }
-        )
     }
 
     fun getAdvertisement(latLng: LatLng) {
@@ -537,7 +500,6 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     initializeRadioSelectionDefaults()
-                    syncRadioSelectionFromLegacy()
                     updateFilterCells()
                 } else {
                     _filterCells.value = makeFallbackFilterCells(uiState.value.selectedCategory)
@@ -551,15 +513,14 @@ class HomeViewModel @Inject constructor(
             (it as? HomeFilterBar.RadioBar)?.paramKey == paramKey
         } as? HomeFilterBar.RadioBar ?: return
         val option = radioBar.options.getOrNull(optionIndex) ?: return
-        val previousState = uiState.value
 
         _uiState.update { state ->
             val newSelection = state.radioSelection.toMutableMap()
             newSelection[paramKey] = optionIndex
             state.copy(radioSelection = newSelection)
         }
-        applyParamValueToLegacyState(paramKey = paramKey, paramValue = option.paramValue)
-        sendClickFilterLog(paramKey = paramKey, option = option, previousState = previousState)
+        option.clickLog?.let { sendClickEvent(it) }
+            ?: sendLegacyFallbackFilterLog(paramKey = paramKey, paramValue = option.paramValue)
         fetchAroundStores()
         updateFilterCells()
     }
@@ -586,63 +547,9 @@ class HomeViewModel @Inject constructor(
         for (bar in allBars()) {
             if (bar is HomeFilterBar.RadioBar && newSelection[bar.paramKey] == null) {
                 newSelection[bar.paramKey] = 0
-                bar.options.firstOrNull()?.let { firstOption ->
-                    applyParamValueToLegacyState(paramKey = bar.paramKey, paramValue = firstOption.paramValue)
-                }
             }
         }
         _uiState.update { it.copy(radioSelection = newSelection) }
-    }
-
-    private fun syncRadioSelectionFromLegacy() {
-        val state = uiState.value
-        val newSelection = state.radioSelection.toMutableMap()
-        for (bar in allBars()) {
-            if (bar is HomeFilterBar.RadioBar) {
-                val target = legacyParamValue(bar.paramKey, state)
-                val matchedIndex = bar.options.indexOfFirst { it.paramValue == target }
-                if (matchedIndex >= 0) {
-                    newSelection[bar.paramKey] = matchedIndex
-                }
-            }
-        }
-        _uiState.update { it.copy(radioSelection = newSelection) }
-    }
-
-    private fun applyParamValueToLegacyState(paramKey: String, paramValue: String?) {
-        when (paramKey) {
-            "filterOpenStatuses" -> {
-                val statuses = paramValue?.let { value ->
-                    val parsed = FilterOpenStatuses.fromRaw(value)
-                    if (parsed == FilterOpenStatuses.UNKNOWN) null else listOf(parsed)
-                }
-                _uiState.update { it.copy(openStatuses = statuses) }
-            }
-            "filterConditions" -> {
-                val list = if (paramValue != null) {
-                    listOf(FilterConditionsTypeModel.RECENT_ACTIVITY)
-                } else {
-                    emptyList()
-                }
-                _uiState.update { it.copy(filterConditionsType = list) }
-            }
-            "sortType" -> {
-                val sort = paramValue?.let { runCatching { HomeSortType.valueOf(it) }.getOrNull() } ?: HomeSortType.DISTANCE_ASC
-                _uiState.update { it.copy(homeSortType = sort) }
-            }
-            "targetStores" -> {
-                val storeType = if (paramValue == "BOSS_STORE") HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-                _uiState.update { it.copy(homeStoreType = storeType) }
-            }
-        }
-    }
-
-    private fun legacyParamValue(paramKey: String, state: HomeUIState): String? = when (paramKey) {
-        "filterOpenStatuses" -> state.openStatuses?.firstOrNull()?.name
-        "filterConditions" -> if (state.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) "RECENT_ACTIVITY" else null
-        "sortType" -> state.homeSortType.name
-        "targetStores" -> if (state.homeStoreType == HomeStoreType.BOSS_STORE) "BOSS_STORE" else null
-        else -> null
     }
 
     private fun updateFilterCells() {
@@ -712,62 +619,6 @@ class HomeViewModel @Inject constructor(
                 clickLog = null,
             ),
         ),
-        fallbackRadioBar(
-            paramKey = "filterOpenStatuses",
-            offText = "영업 중",
-            onText = "영업 중",
-            onValue = "OPEN",
-        ),
-        fallbackRadioBar(
-            paramKey = "filterConditions",
-            offText = "최근 활동",
-            onText = "최근 활동",
-            onValue = "RECENT_ACTIVITY",
-        ),
-        HomeFilterBar.RadioBar(
-            type = HomeFilterBarType.RADIO_BAR,
-            paramKey = "sortType",
-            options = listOf(
-                HomeFilterRadioOption(
-                    chip = fallbackChip(text = "거리순", selected = true),
-                    paramValue = HomeSortType.DISTANCE_ASC.name,
-                    clickLog = null,
-                ),
-                HomeFilterRadioOption(
-                    chip = fallbackChip(text = "최신순", selected = true),
-                    paramValue = HomeSortType.LATEST.name,
-                    clickLog = null,
-                ),
-            ),
-        ),
-        fallbackRadioBar(
-            paramKey = "targetStores",
-            offText = "사장님 직영점만",
-            onText = "사장님 직영점만",
-            onValue = HomeStoreType.BOSS_STORE.name,
-        ),
-    )
-
-    private fun fallbackRadioBar(
-        paramKey: String,
-        offText: String,
-        onText: String,
-        onValue: String,
-    ): HomeFilterBar.RadioBar = HomeFilterBar.RadioBar(
-        type = HomeFilterBarType.RADIO_BAR,
-        paramKey = paramKey,
-        options = listOf(
-            HomeFilterRadioOption(
-                chip = fallbackChip(text = offText),
-                paramValue = null,
-                clickLog = null,
-            ),
-            HomeFilterRadioOption(
-                chip = fallbackChip(text = onText, selected = true),
-                paramValue = onValue,
-                clickLog = null,
-            ),
-        ),
     )
 
     private fun fallbackChip(
@@ -791,42 +642,23 @@ class HomeViewModel @Inject constructor(
         style = null,
     )
 
-    private fun sendClickFilterLog(
-        paramKey: String,
-        option: HomeFilterRadioOption,
-        previousState: HomeUIState,
-    ) {
-        option.clickLog?.let {
-            sendClickEvent(it)
-            return
-        }
-
-        sendLegacyFallbackFilterLog(
-            paramKey = paramKey,
-            paramValue = option.paramValue,
-            previousState = previousState,
-        )
-    }
-
     private fun sendLegacyFallbackFilterLog(
         paramKey: String,
         paramValue: String?,
-        previousState: HomeUIState,
     ) {
         when (paramKey) {
             "filterConditions" -> {
-                val contains = previousState.filterConditionsType.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)
                 LogManager.sendEvent(
                     ClickEvent(
                         screen = screenName,
                         objectType = LogObjectType.BUTTON,
                         objectId = LogObjectId.RECENT_ACTIVITY_FILTER,
-                        additionalParams = mapOf(ParameterName.VALUE to contains.toString())
+                        additionalParams = mapOf(ParameterName.VALUE to (paramValue != null).toString())
                     )
                 )
             }
-            "sortType" -> sendClickSorting(paramValue ?: HomeSortType.DISTANCE_ASC.name)
-            "targetStores" -> sendClickBossFilter(paramValue == HomeStoreType.BOSS_STORE.name)
+            "sortType" -> paramValue?.let(::sendClickSorting)
+            "targetStores" -> sendClickBossFilter(paramValue != null)
         }
     }
 

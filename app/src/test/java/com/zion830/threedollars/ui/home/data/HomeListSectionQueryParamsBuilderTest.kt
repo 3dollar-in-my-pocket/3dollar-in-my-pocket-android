@@ -6,11 +6,11 @@ import org.junit.Test
 class HomeListSectionQueryParamsBuilderTest {
 
     @Test
-    fun build_preservesDistanceAscSortTypeForServerAroundSortEnum() {
+    fun build_preservesServerDrivenDynamicParams() {
         val params = HomeListSectionQueryParamsBuilder.build(
-            dynamicParams = mapOf("sortType" to HomeSortType.DISTANCE_ASC.name),
+            dynamicParams = mapOf("sortType" to "SERVER_DISTANCE"),
         )
 
-        assertEquals(HomeSortType.DISTANCE_ASC.name, params["sortType"])
+        assertEquals("SERVER_DISTANCE", params["sortType"])
     }
 }
