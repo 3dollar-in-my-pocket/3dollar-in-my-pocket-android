@@ -21,7 +21,7 @@ object HomeAroundStoreRequestParamsBuilder {
     ): HomeAroundStoreRequestParams = HomeAroundStoreRequestParams(
         distanceM = state.currentDistanceM,
         categoryIds = state.selectedCategory?.id?.let { arrayOf(it) },
-        targetStores = state.homeStoreType.toArray(),
+        targetStores = null,
         mapLatitude = state.mapPosition.latitude,
         mapLongitude = state.mapPosition.longitude,
         deviceLatitude = state.userLocation.latitude,

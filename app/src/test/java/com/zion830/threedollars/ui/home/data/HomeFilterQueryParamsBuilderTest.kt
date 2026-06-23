@@ -7,6 +7,7 @@ import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class HomeFilterQueryParamsBuilderTest {
@@ -28,12 +29,12 @@ class HomeFilterQueryParamsBuilderTest {
     }
 
     @Test
-    fun build_usesSelectedRadioOptionsAndSkipsTypedTargetStoresQuery() {
+    fun build_usesSelectedRadioOptionsAsDynamicQueries() {
         val bars = listOf(
-            radioBar(paramKey = "filterOpenStatuses", paramValues = listOf(null, "OPEN")),
-            radioBar(paramKey = "filterConditions", paramValues = listOf(null, "RECENT_ACTIVITY")),
-            radioBar(paramKey = "sortType", paramValues = listOf("DISTANCE_ASC", "LATEST")),
-            radioBar(paramKey = "targetStores", paramValues = listOf(null, "BOSS_STORE")),
+            radioBar(paramKey = "filterOpenStatuses", paramValues = listOf(null, "SERVER_OPEN")),
+            radioBar(paramKey = "filterConditions", paramValues = listOf(null, "SERVER_RECENT")),
+            radioBar(paramKey = "sortType", paramValues = listOf("SERVER_DISTANCE", "SERVER_LATEST")),
+            radioBar(paramKey = "targetStores", paramValues = listOf(null, "SERVER_TARGET")),
         )
         val state = HomeUIState(
             radioSelection = mapOf(
@@ -46,10 +47,36 @@ class HomeFilterQueryParamsBuilderTest {
 
         val params = HomeFilterQueryParamsBuilder.build(state = state, bars = bars)
 
-        assertEquals("OPEN", params["filterOpenStatuses"])
-        assertEquals("RECENT_ACTIVITY", params["filterConditions"])
-        assertEquals("LATEST", params["sortType"])
-        assertFalse(params.containsKey("targetStores"))
+        assertEquals("SERVER_OPEN", params["filterOpenStatuses"])
+        assertEquals("SERVER_RECENT", params["filterConditions"])
+        assertEquals("SERVER_LATEST", params["sortType"])
+        assertEquals("SERVER_TARGET", params["targetStores"])
+    }
+
+    @Test
+    fun build_defaultsToFirstRadioOptionWithoutAddingAppFallbackSortType() {
+        val bars = listOf(
+            radioBar(paramKey = "filterConditions", paramValues = listOf(null, "SERVER_RECENT")),
+            radioBar(paramKey = "sortType", paramValues = listOf("SERVER_DISTANCE", "SERVER_LATEST")),
+        )
+
+        val params = HomeFilterQueryParamsBuilder.build(
+            state = HomeUIState(),
+            bars = bars,
+        )
+
+        assertFalse(params.containsKey("filterConditions"))
+        assertEquals("SERVER_DISTANCE", params["sortType"])
+    }
+
+    @Test
+    fun build_doesNotCreateSortTypeWhenServerBarsAreMissing() {
+        val params = HomeFilterQueryParamsBuilder.build(
+            state = HomeUIState(),
+            bars = emptyList(),
+        )
+
+        assertNull(params["sortType"])
     }
 
     private fun radioBar(
