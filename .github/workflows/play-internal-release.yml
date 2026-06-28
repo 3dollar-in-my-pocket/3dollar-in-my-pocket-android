@@ -1,0 +1,278 @@
+name: Play Internal Release
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: read
+
+env:
+  JAVA_VERSION: '17'
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+
+      - name: Resolve release version
+        id: version
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          VERSION_PATTERN='[0-9]+[.][0-9]+[.][0-9]+([-+][0-9A-Za-z.-]+)?'
+          VERSION_NAME=$(printf '%s\n%s\n' "$PR_TITLE" "$HEAD_REF" | grep -Eo "$VERSION_PATTERN" | head -n 1 || true)
+
+          if [ -z "$VERSION_NAME" ]; then
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Release automation skipped"
+              echo "No semantic version was found in the PR title or source branch."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          CURRENT_VERSION_NAME=$(grep -E '^version_name=' gradle.properties | cut -d'=' -f2)
+          CURRENT_VERSION_CODE=$(grep -E '^version_code=' gradle.properties | cut -d'=' -f2)
+          if [ -z "$CURRENT_VERSION_NAME" ]; then
+            echo "version_name is missing from gradle.properties" >&2
+            exit 1
+          fi
+
+          if [ -z "$CURRENT_VERSION_CODE" ]; then
+            echo "version_code is missing from gradle.properties" >&2
+            exit 1
+          fi
+
+          NEXT_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
+          TAG_NAME="v${VERSION_NAME}"
+
+          sed -i "s/^version_name=.*/version_name=${VERSION_NAME}/" gradle.properties
+          sed -i "s/^version_code=.*/version_code=${NEXT_VERSION_CODE}/" gradle.properties
+
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$NEXT_VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 17
+        if: steps.version.outputs.should_release == 'true'
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        if: steps.version.outputs.should_release == 'true'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode Keystore
+        if: steps.version.outputs.should_release == 'true'
+        run: |
+          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/3dollor-android-key.jks
+
+      - name: Create local.properties
+        if: steps.version.outputs.should_release == 'true'
+        run: |
+          cat > local.properties <<EOF
+          sdk.dir=${ANDROID_HOME}
+          google_map_key=${{ secrets.GOOGLE_MAP_KEY }}
+          nmf_client_id=${{ secrets.NMF_CLIENT_ID }}
+          admob_id=${{ secrets.ADMOB_ID }}
+          kakao_key_dev=${{ secrets.KAKAO_KEY_DEV }}
+          kakao_map_key=${{ secrets.KAKAO_MAP_KEY }}
+          develop_url=${{ secrets.DEVELOP_URL }}
+          deep_link=${{ secrets.DEEP_LINK }}
+          application_id_dev=${{ secrets.APPLICATION_ID_DEV }}
+          kakao_key_release=${{ secrets.KAKAO_KEY_RELEASE }}
+          kakao_map_key_release=${{ secrets.KAKAO_MAP_KEY_RELEASE }}
+          release_url=${{ secrets.RELEASE_URL }}
+          deep_link_release=${{ secrets.DEEP_LINK_RELEASE }}
+          EOF
+
+      - name: Grant execute permission for gradlew
+        if: steps.version.outputs.should_release == 'true'
+        run: chmod +x gradlew
+
+      - name: Build release APK and AAB
+        if: steps.version.outputs.should_release == 'true'
+        run: ./gradlew assembleRelease bundleRelease --no-daemon --stacktrace
+
+      - name: Prepare release artifacts
+        if: steps.version.outputs.should_release == 'true'
+        id: artifacts
+        run: |
+          RELEASE_APK="app/build/outputs/apk/release/app-release.apk"
+          RELEASE_AAB="app/build/outputs/bundle/release/app-release.aab"
+
+          test -f "$RELEASE_APK"
+          test -f "$RELEASE_AAB"
+
+          mkdir -p release-artifacts
+          cp "$RELEASE_APK" "release-artifacts/3dollar-${{ steps.version.outputs.tag_name }}.apk"
+          cp "$RELEASE_AAB" "release-artifacts/3dollar-${{ steps.version.outputs.tag_name }}.aab"
+
+          echo "release_aab=$RELEASE_AAB" >> "$GITHUB_OUTPUT"
+
+      - name: Create release notes
+        if: steps.version.outputs.should_release == 'true'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          TAG_NAME: ${{ steps.version.outputs.tag_name }}
+        run: |
+          COMMITS=$(git log --pretty=format:"- %s (%h)" -n 50 "${BASE_SHA}..${HEAD_SHA}" || true)
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- No commits found in PR range."
+          fi
+
+          cat > release-notes.md <<EOF
+          ## ${TAG_NAME}
+
+          PR: [#${PR_NUMBER} ${PR_TITLE}](${PR_URL})
+          Version Name: ${VERSION_NAME}
+          Version Code: ${VERSION_CODE}
+
+          ## Changes
+          ${COMMITS}
+          EOF
+
+          mkdir -p distribution/whatsnew
+          cat > distribution/whatsnew/whatsnew-ko-KR <<EOF
+          ${PR_TITLE}
+
+          Version: ${VERSION_NAME} (${VERSION_CODE})
+          EOF
+
+      - name: Commit version bump
+        if: steps.version.outputs.should_release == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gradle.properties
+
+          if git diff --cached --quiet; then
+            echo "No version changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: bump version to ${{ steps.version.outputs.tag_name }}"
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+
+      - name: Upload to Google Play internal testing
+        if: steps.version.outputs.should_release == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.zion830.threedollars
+          releaseFiles: ${{ steps.artifacts.outputs.release_aab }}
+          tracks: internal
+          status: completed
+          releaseName: ${{ steps.version.outputs.tag_name }}
+          whatsNewDirectory: distribution/whatsnew
+
+      - name: Create git tag
+        if: steps.version.outputs.should_release == 'true'
+        run: |
+          TAG_NAME="${{ steps.version.outputs.tag_name }}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Tag ${TAG_NAME} already exists."
+            exit 0
+          fi
+
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+          git push origin "$TAG_NAME"
+
+      - name: Create GitHub Release
+        if: steps.version.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: Release ${{ steps.version.outputs.tag_name }}
+          body_path: release-notes.md
+          files: |
+            release-artifacts/*.apk
+            release-artifacts/*.aab
+          fail_on_unmatched_files: true
+          overwrite_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Slack on Success
+        if: steps.version.outputs.should_release == 'true' && success()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Play Store 내부 테스트 배포 완료"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Tag:*\n${{ steps.version.outputs.tag_name }}"},
+                    {"type": "mrkdwn", "text": "*Version Code:*\n${{ steps.version.outputs.version_code }}"}
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Slack on Failure
+        if: steps.version.outputs.should_release == 'true' && failure()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {"type": "plain_text", "text": "Play Store 내부 테스트 배포 실패"}
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
