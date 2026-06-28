@@ -57,12 +57,7 @@ jobs:
             exit 1
           fi
 
-          if [ "$CURRENT_VERSION_NAME" = "$VERSION_NAME" ]; then
-            NEXT_VERSION_CODE="$CURRENT_VERSION_CODE"
-          else
-            NEXT_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
-          fi
-
+          NEXT_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
           TAG_NAME="v${VERSION_NAME}"
 
           sed -i "s/^version_name=.*/version_name=${VERSION_NAME}/" gradle.properties
