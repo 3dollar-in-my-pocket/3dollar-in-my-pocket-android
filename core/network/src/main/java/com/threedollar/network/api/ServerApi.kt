@@ -25,6 +25,7 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -215,6 +216,19 @@ interface ServerApi {
     @GET("/api/v1/screen/home")
     suspend fun getHomeFilterScreen(): Response<BaseResponse<HomeFilterScreenResponse>>
 
+    @GET("/api/v1/screen/home/section/list")
+    suspend fun getHomeListSection(
+        @Query("distanceM") distanceM: Double,
+        @Query("categoryIds") categoryIds: Array<String>? = null,
+        @Query("targetStores") targetStores: Array<String>? = null,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @QueryMap dynamicParams: Map<String, String> = emptyMap(),
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<HomeListSectionResponse>>
+
     @GET("/api/v1/screen/store/{storeId}/contributors")
     suspend fun getStoreContributorScreen(
         @Path("storeId") storeId: String,
@@ -321,7 +335,7 @@ interface ServerApi {
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun putStoreReview(
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body storeReviewRequest: StoreReviewRequest,
     ): Response<BaseResponse<EditStoreReviewResponse>>
 
@@ -345,7 +359,7 @@ interface ServerApi {
     @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
     suspend fun reportStoreReview(
         @Path("storeId") storeId: Int,
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body reportReviewRequest: ReportReviewRequest,
     ): Response<BaseResponse<String>>
 

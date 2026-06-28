@@ -88,7 +88,7 @@ interface HomeRepository {
 
     fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
 
-    fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
+    fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
 
     fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
 
@@ -99,7 +99,7 @@ interface HomeRepository {
     fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>>
 
 
-    fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
+    fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
 

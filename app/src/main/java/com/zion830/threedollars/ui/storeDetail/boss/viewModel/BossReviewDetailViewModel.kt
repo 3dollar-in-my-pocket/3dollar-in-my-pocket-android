@@ -89,7 +89,7 @@ class BossReviewDetailViewModel @Inject constructor(private val homeRepository: 
         }
     }
 
-    fun reportReview(storeId: Int, reviewId: Int, request: ReportReviewModelRequest) {
+    fun reportReview(storeId: Int, reviewId: Long, request: ReportReviewModelRequest) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.reportStoreReview(storeId, reviewId, request).collect { res ->
                 if (res.ok) {

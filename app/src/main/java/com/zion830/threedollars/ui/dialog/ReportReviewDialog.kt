@@ -27,9 +27,9 @@ class ReportReviewDialog(
     private var reportReasons: List<ReasonModel> = emptyList()
     private var reportReviewModelRequest = ReportReviewModelRequest()
 
-    private var onReportClick: ((storeId: Int, reviewId: Int, request: ReportReviewModelRequest) -> Unit)? = null
+    private var onReportClick: ((storeId: Int, reviewId: Long, request: ReportReviewModelRequest) -> Unit)? = null
 
-    fun setOnReportClickListener(listener: (storeId: Int, reviewId: Int, request: ReportReviewModelRequest) -> Unit) {
+    fun setOnReportClickListener(listener: (storeId: Int, reviewId: Long, request: ReportReviewModelRequest) -> Unit) {
         onReportClick = listener
     }
 
@@ -122,7 +122,7 @@ class ReportReviewDialog(
         }
 
         binding.finishButton.onSingleClick {
-            onReportClick?.invoke(storeId ?: -1, content?.review?.reviewId ?: -1, reportReviewModelRequest)
+            onReportClick?.invoke(storeId ?: -1, content?.review?.reviewId ?: -1L, reportReviewModelRequest)
             dismiss()
         }
     }

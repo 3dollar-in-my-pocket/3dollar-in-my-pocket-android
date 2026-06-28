@@ -64,7 +64,11 @@ class GlobalApplication : Application() {
         LogManager.initialize(eventTracker)
         com.threedollar.common.analytics.SDClickLogger.initialize(eventTracker)
 
-        RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf(DEVICE_ID_EMULATOR))
+                .build()
+        )
         MobileAds.initialize(this)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
         NaverMapSdk.getInstance(this).client =

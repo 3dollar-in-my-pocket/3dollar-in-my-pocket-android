@@ -65,6 +65,7 @@ import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapt
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.ui.storeDetail.boss.ui.compose.VerifiedStoreBanner
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
 import com.zion830.threedollars.utils.SizeUtils.dpToPx
@@ -196,6 +197,7 @@ class BossStoreDetailActivity :
     private var storeId = ""
     private var latitude = 0.0
     private var longitude = 0.0
+    private var currentFavoriteState: Boolean? = null
 
     private val naverMapFragment: StoreDetailNaverMapFragment by lazy {
         StoreDetailNaverMapFragment()
@@ -203,8 +205,7 @@ class BossStoreDetailActivity :
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
     }
     private val appearanceDayModels = listOf(
@@ -298,8 +299,7 @@ class BossStoreDetailActivity :
 
     private fun initButton() {
         binding.btnBack.onSingleClick {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
         binding.bottomReviewTextView.onSingleClick {
             viewModel.sendClickWriteReview()
@@ -510,6 +510,7 @@ class BossStoreDetailActivity :
                 }
                 launch {
                     viewModel.favoriteModel.collect {
+                        currentFavoriteState = it.isFavorite
                         setFavoriteIcon(it.isFavorite)
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
@@ -595,6 +596,7 @@ class BossStoreDetailActivity :
     private fun clickFavoriteButton() {
         val isOn = !viewModel.favoriteModel.value.isFavorite
         viewModel.sendClickFavorite(isOn)
+        currentFavoriteState = isOn
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(storeId)
         } else {
@@ -607,6 +609,14 @@ class BossStoreDetailActivity :
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+    }
+
+    private fun finishWithResult() {
+        val resultIntent = Intent().apply {
+            putExtra(StoreDetailActivity.EXTRA_IS_FAVORITE, currentFavoriteState ?: viewModel.favoriteModel.value.isFavorite)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
     }
 
     override fun finish() {

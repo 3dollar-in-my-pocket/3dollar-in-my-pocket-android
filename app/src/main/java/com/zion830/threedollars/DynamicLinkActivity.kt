@@ -28,6 +28,8 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val HOME = "home"
         const val MEDAL = "medal"
         const val STORE = "store"
+        const val STORE_PREVIEW = "storePreview"
+        const val VISIT = "visit"
         const val POLL = "pollDetail"
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
@@ -133,6 +135,19 @@ class DynamicLinkActivity : AppCompatActivity() {
                         )
                     )
                 }
+            }
+
+            STORE_PREVIEW -> {
+                val id = deeplink.getQueryParameter(STORE_ID)?.toLongOrNull()
+                startActivity(MainActivity.getIntent(this).apply {
+                    id?.let { putExtra(STORE_PREVIEW, it) }
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
+
+            VISIT -> {
+                val id = deeplink.getQueryParameter(STORE_ID)?.toIntOrNull()
+                startActivity(StoreDetailActivity.getIntent(this, storeId = id, startCertification = true))
             }
 
             POLL -> {

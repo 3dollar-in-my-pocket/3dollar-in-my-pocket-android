@@ -114,6 +114,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val addStoreViewModel: AddStoreViewModel by viewModels()
 
     private var isStoreUpdated = false
+    private var currentFavoriteState: Boolean? = null
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -127,6 +128,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
 
     private var startCertificationExactly: Boolean? = false
+    private var openReviewWriteExactly: Boolean? = false
 
     private val photoAdapter: PhotoRecyclerAdapter by lazy {
         PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
@@ -193,6 +195,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             if (result.resultCode == RESULT_OK) {
+                isStoreUpdated = true
                 refreshStoreInfo()
             }
         }
@@ -217,13 +220,16 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initRelatedStoreSection()
         initScrollListener()
 
-        viewModel.addReviewResult.observe(this) {
-            viewModel.getUserStoreDetail(
-                storeId = storeId,
-                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
-                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
-                filterVisitStartDate = getMonthFirstDate(),
-            )
+        viewModel.addReviewResult.observe(this) { isSuccess ->
+            if (isSuccess) {
+                isStoreUpdated = true
+                viewModel.getUserStoreDetail(
+                    storeId = storeId,
+                    deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                    deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                    filterVisitStartDate = getMonthFirstDate(),
+                )
+            }
         }
     }
 
@@ -468,6 +474,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             initPhotoLayout(it)
                             initMap(it)
                             isStartCertification()
+                            openReviewWriteIfNeeded()
                             initImageView(it)
                             initTextView(it)
                             initVisitHistory(it.visits)
@@ -477,6 +484,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
                 launch {
                     viewModel.favoriteModel.collect {
+                        currentFavoriteState = it.isFavorite
                         setFavoriteIcon(it.isFavorite)
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
@@ -492,6 +500,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 launch {
                     viewModel.photoDeleted.collect {
                         if (it) {
+                            isStoreUpdated = true
                             viewModel.getUserStoreDetail(
                                 storeId = storeId,
                                 deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
@@ -516,6 +525,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             progressDialog?.show()
                         } else {
                             progressDialog?.dismiss()
+                            isStoreUpdated = true
                             refreshStoreInfo()
                         }
                     }
@@ -530,6 +540,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 launch {
                     viewModel.reviewSuccessEvent.collect {
                         if (it) {
+                            isStoreUpdated = true
                             refreshStoreInfo()
                         }
                     }
@@ -590,6 +601,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (startCertificationExactly == true) {
             startCertification()
             startCertificationExactly = null
+        }
+    }
+
+    private fun openReviewWriteIfNeeded() {
+        openReviewWriteExactly = if (openReviewWriteExactly != null) {
+            intent.getBooleanExtra(KEY_OPEN_REVIEW_WRITE, false)
+        } else {
+            null
+        }
+        if (openReviewWriteExactly == true) {
+            AddReviewDialog.getInstance(storeId = storeId)
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+            openReviewWriteExactly = null
         }
     }
 
@@ -810,6 +834,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun clickFavoriteButton() {
         val isOn = !viewModel.favoriteModel.value.isFavorite
         viewModel.sendClickFavorite(isOn)
+        isStoreUpdated = true
+        currentFavoriteState = isOn
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(storeId.toString())
         } else {
@@ -946,6 +972,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun finishWithResult() {
         val resultIntent = Intent().apply {
             putExtra(EXTRA_IS_UPDATED, isStoreUpdated)
+            putExtra(EXTRA_IS_FAVORITE, currentFavoriteState ?: viewModel.favoriteModel.value.isFavorite)
             if (isStoreUpdated) {
                 putExtra(EXTRA_USER_STORE, viewModel.userStoreDetailModel.value?.store)
             }
@@ -962,14 +989,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     companion object {
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
+        private const val KEY_OPEN_REVIEW_WRITE = "KEY_OPEN_REVIEW_WRITE"
         const val EXTRA_IS_UPDATED = "extra_is_updated"
         const val EXTRA_USER_STORE = "extra_user_store"
+        const val EXTRA_IS_FAVORITE = "extra_is_favorite"
 
         fun getIntent(
             context: Context,
             storeId: Int? = null,
             startCertification: Boolean = false,
             deepLinkStoreId: String? = null,
+            openReviewWrite: Boolean = false,
         ) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 storeId?.let {
@@ -979,6 +1009,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     putExtra(STORE_ID, it.toInt())
                 }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
+                putExtra(KEY_OPEN_REVIEW_WRITE, openReviewWrite)
             }
     }
 }

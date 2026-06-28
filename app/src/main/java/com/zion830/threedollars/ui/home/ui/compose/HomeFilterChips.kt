@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +31,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import base.compose.ColorWhite
 import base.compose.Gray30
 import base.compose.Gray70
@@ -41,6 +39,7 @@ import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
@@ -259,16 +258,6 @@ private fun HomeFilterText(text: SDTextModel) {
     )
 }
 
-@Composable
-private fun SDTextModel.displayText(): String = remember(text, isHtml) {
-    if (isHtml) {
-        HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
-    } else {
-        text
-    }
-}
-
-@Composable
 private fun SDChipModel.accessibilityText(): String {
     val mainText = text.displayText()
     val additional = additionalText?.displayText()

@@ -96,7 +96,7 @@ interface HomeRemoteDataSource {
 
     fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>>
 
-    fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
+    fun putStoreReview(reviewId: Long, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 
     fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<AroundStoreResponse>>
 
@@ -104,7 +104,7 @@ interface HomeRemoteDataSource {
 
     fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>>
 
-    fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
+    fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
 

@@ -48,12 +48,12 @@ interface StoreDataSource {
     ): Response<NewReviewResponse>
 
     suspend fun editReview(
-        reviewId: Int,
+        reviewId: Long,
         editReviewRequest: EditReviewRequest,
     ): Response<NewReviewResponse>
 
     suspend fun deleteReview(
-        reviewId: Int,
+        reviewId: Long,
     ): Response<BaseResponse<String>>
 
     fun getCategories(): Flow<Response<CategoriesResponse>>

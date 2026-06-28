@@ -263,7 +263,7 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
+    override fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
         homeRemoteDataSource.putStoreReview(reviewId, StoreReviewRequest(contents = contents, rating = rating)).map {
             BaseResponse(
                 ok = it.ok,
@@ -311,7 +311,7 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
+    override fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
         homeRemoteDataSource.reportStoreReview(storeId, reviewId, reportReviewModelRequest.asRequest())
 
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>> =

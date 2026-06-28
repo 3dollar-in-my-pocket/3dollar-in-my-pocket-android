@@ -1,9 +1,11 @@
 package com.threedollar.data.screen
 
+import com.google.gson.JsonPrimitive
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.network.data.screen.HomeFilterBarResponse
 import com.threedollar.network.data.screen.HomeFilterChipResponse
+import com.threedollar.network.data.screen.HomeFilterClickLogResponse
 import com.threedollar.network.data.screen.HomeFilterImageResponse
 import com.threedollar.network.data.screen.HomeFilterImageStyleResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
@@ -55,5 +57,36 @@ class HomeFilterScreenMapperTest {
         assertEquals("NEW", categoryBar.categoriesFilter.additionalText?.text)
         assertEquals(18.0, categoryBar.categoriesFilter.image?.style?.width)
         assertEquals(18.0, categoryBar.categoriesFilter.image?.style?.height)
+    }
+
+    @Test
+    fun homeFilterMapper_preservesLongClickLogNumbers() {
+        val longStoreId = 855453324337299456L
+        val response = HomeFilterScreenResponse(
+            sections = listOf(
+                HomeFilterSectionResponse(
+                    type = "HOME_FILTER",
+                    bars = listOf(
+                        HomeFilterBarResponse(
+                            type = "CATEGORY_BAR",
+                            categoriesFilter = HomeFilterChipResponse(
+                                text = HomeFilterTextResponse(text = "음식 종류"),
+                            ),
+                            categoriesFilterClickLog = HomeFilterClickLogResponse(
+                                screenName = "home",
+                                objectType = "filter",
+                                objectId = "category",
+                                extraParameters = mapOf("STORE_ID" to JsonPrimitive(longStoreId)),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        val section = response.asModel().sections.single() as HomeScreenSection.HomeFilterSectionModel
+        val categoryBar = section.bars.single() as HomeFilterBar.CategoryBar
+
+        assertEquals(longStoreId, categoryBar.categoriesFilterClickLog?.extraParameters?.get("STORE_ID")?.anyValue)
     }
 }

@@ -214,12 +214,15 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
-            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
-            if (isUpdated && data != null) {
-                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let { viewModel.updateStoreItem(it) }
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                val resultData = data
+                if (resultData?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) == true) {
+                    val userStore = IntentCompat.getSerializableExtra(resultData, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
+                    userStore?.let { viewModel.updateStoreItem(it) }
+                }
             }
+            viewModel.refreshHomeListSectionAfterStoreUpdate()
         }
     }
 }

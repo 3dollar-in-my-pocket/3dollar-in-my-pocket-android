@@ -152,7 +152,7 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+    fun putStoreReview(reviewId: Long, content: String, rating: Int) {
         if (content.isBlank()) {
             _addReviewResult.postValue(false)
             return
@@ -262,7 +262,7 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun reportReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest) {
+    fun reportReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest) {
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {
