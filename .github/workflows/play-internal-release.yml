@@ -245,6 +245,13 @@ jobs:
                     "type": "mrkdwn",
                     "text": "*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}>"
                   }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Internal Test:* <https://play.google.com/apps/testing/com.zion830.threedollars|테스터 참여 링크>\n*Play Store:* <https://play.google.com/store/apps/details?id=com.zion830.threedollars|스토어 앱 링크>"
+                  }
                 }
               ]
             }
