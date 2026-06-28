@@ -138,22 +138,48 @@ jobs:
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
           TAG_NAME: ${{ steps.version.outputs.tag_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMITS=$(git log --pretty=format:"- %s (%h)" -n 50 "${BASE_SHA}..${HEAD_SHA}" || true)
-          if [ -z "$COMMITS" ]; then
-            COMMITS="- No commits found in PR range."
+          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-version:refname | grep -v "^${TAG_NAME}$" | head -n 1 || true)
+          TARGET_COMMIT=$(git rev-parse HEAD)
+          GENERATED_NOTES_FILE="generated-release-notes.md"
+
+          if [ -n "$PREVIOUS_TAG" ]; then
+            gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="$TAG_NAME" \
+              -f target_commitish="$TARGET_COMMIT" \
+              -f previous_tag_name="$PREVIOUS_TAG" \
+              --jq '.body' > "$GENERATED_NOTES_FILE" || true
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+              -f tag_name="$TAG_NAME" \
+              -f target_commitish="$TARGET_COMMIT" \
+              --jq '.body' > "$GENERATED_NOTES_FILE" || true
           fi
 
           cat > release-notes.md <<EOF
           ## ${TAG_NAME}
 
-          PR: [#${PR_NUMBER} ${PR_TITLE}](${PR_URL})
           Version Name: ${VERSION_NAME}
           Version Code: ${VERSION_CODE}
+          Release PR: [#${PR_NUMBER} ${PR_TITLE}](${PR_URL})
+
+          EOF
+
+          if [ -s "$GENERATED_NOTES_FILE" ]; then
+            cat "$GENERATED_NOTES_FILE" >> release-notes.md
+          else
+            COMMITS=$(git log --pretty=format:"- %s (%h)" -n 20 "${BASE_SHA}..${HEAD_SHA}" || true)
+            if [ -z "$COMMITS" ]; then
+              COMMITS="- No changes found."
+            fi
+
+            cat >> release-notes.md <<EOF
 
           ## Changes
           ${COMMITS}
           EOF
+          fi
 
           mkdir -p distribution/whatsnew
           cat > distribution/whatsnew/whatsnew-ko-KR <<EOF
