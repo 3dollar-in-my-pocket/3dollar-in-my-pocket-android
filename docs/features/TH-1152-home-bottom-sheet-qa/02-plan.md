@@ -101,7 +101,7 @@ Parent: `TH-1152` `[유저앱/AOS] 홈 탐색 개선: 바텀 시트 전환`
 - `TH-1181`: 방문 인증 버튼은 상세 화면을 건너뛰고 방문 인증 화면으로 직접 진입한다. 현재 `StoreDetailActivity(startCertification=true)` 경유는 제거한다.
 - `TH-1182`: 리뷰 버튼은 홈에서 바로 다이얼로그를 띄우지 않고, 가게 상세로 이동한 뒤 리뷰 다이얼로그를 띄운다. 현재 Android의 `StoreReviewDetailActivity(openReviewWrite=true)`는 "가게 상세" 경유가 아니므로 `StoreDetailActivity`에서 `AddReviewDialog`를 여는 경로로 맞춘다.
 - `TH-1185`: GitHub의 iOS repo `3dollar-in-my-pocket/3dollars-in-my-pocket-ios` `develop` branch 기준, iOS는 `AppModuleInterfaceImpl.shareKakao()`에서 `KakaoSDKShare`/`KakaoSDKTemplate`의 `ShareApi.shared.shareDefault`를 사용하고, `storeId`/`storeType`을 `androidExecutionParams`와 `iosExecutionParams`에 함께 넣은 뒤 Kakao가 반환한 URL을 연다. `StoreType.kakaoParameterValue`는 boss store `foodTruck`, user store `streetFood`이며 Android string 값과 같다. OS 공유 시트 fallback은 없다.
-- `TH-1175`: 서버 응답 계약은 `marker.focused`/`marker.unfocused`를 내려주는 구조다. `docs/home-bottom-sheet-transition-analysis.md`와 `HomeBottomSheetScreenMapperTest`에도 `marker.focused.text = "영업중"`, `marker.unfocused.text = ""` 케이스가 이미 있다. 앱은 metadata에서 임의 fallback을 만들지 않고 서버 marker chip을 그대로 렌더링한다. 실데이터에서 marker가 비어 있으면 서버 계약 이슈로 분리한다.
+- `TH-1175`: 서버 응답 계약은 `marker.focused`/`marker.unfocused`를 내려주는 구조다. `docs/features/home-bottom-sheet-transition/01-analysis.md`와 `HomeBottomSheetScreenMapperTest`에도 `marker.focused.text = "영업중"`, `marker.unfocused.text = ""` 케이스가 이미 있다. 앱은 metadata에서 임의 fallback을 만들지 않고 서버 marker chip을 그대로 렌더링한다. 실데이터에서 marker가 비어 있으면 서버 계약 이슈로 분리한다.
 
 ## 작업 순서
 
@@ -894,7 +894,7 @@ Manual QA:
 확인된 근거:
 
 - `core/network/.../HomeBottomSheetScreenResponse.kt`: `HomeListMarkerResponse(focused, unfocused, location, link, clickLog)`
-- `docs/home-bottom-sheet-transition-analysis.md`: `marker.focused.text`는 영업 중이면 `영업중`, 영업 종료면 빈 문자열
+- `docs/features/home-bottom-sheet-transition/01-analysis.md`: `marker.focused.text`는 영업 중이면 `영업중`, 영업 종료면 빈 문자열
 - `HomeBottomSheetScreenMapperTest`: focused `영업중`, unfocused `""` fixture 존재
 
 - [ ] **Step 2: mapper 테스트는 서버 marker 보존을 강화**

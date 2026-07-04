@@ -14,9 +14,9 @@
 
 - 현재 브랜치: `feature/TH-1134-filter-chip`
 - 기준 PR 커밋: `37cff3d4ed8ff9c8cd8cbe845afcd954c958cf00` (`TH-1134 : 홈 화면 필터 서버 드리븐 UI 적용`)
-- 서버 Jira/PDF: `docs/superpowers/plans/[#TH-1138] ... 서버드리븐 UI 적용.pdf`
-- API 초안: `docs/superpowers/plans/api.txt`
-- 기존 계획: `docs/superpowers/plans/2026-05-02-home-map-filter-pin.md`
+- 서버 Jira/PDF: feature assets 또는 작업 세션에 첨부된 TH-1138 서버드리븐 UI 적용 PDF
+- API 초안: feature assets 또는 작업 세션에 첨부된 `api.txt`
+- 기존 계획: `docs/features/TH-1134-home-map-filter-pin/02-plan.md`
 - Compose skill 참고: `@compose-expert`
   - `references/view-composition.md`: XML 화면 안 `ComposeView` 생명주기
   - `references/lists-scrolling.md`: `LazyRow` key/contentType
