@@ -42,10 +42,27 @@ git diff --check
 - effect key를 `storeId + itemType`으로 변경하고 최신 item/callback은 `rememberUpdatedState`로 참조하도록 수정했다.
 - 방문 제출 상태와 신고 사유 transient 상태가 effect key를 바꾸지 않는 회귀 테스트를 추가했다.
 
-## 남은 수동 확인
+## 서버 복구 후 재검증
 
-- 수정 APK에서 impression이 정확히 한 번만 전송되는 실서버 재검증은 dev 서버가 `503 Service Unavailable`, 이후 `502 Bad Gateway`를 반환해 완료하지 못했다.
-- 사라진 가게 신고 제출은 서버 테스트 데이터 변경을 피하기 위해 실행하지 않았다.
+- 직접 API 확인:
+  - `GET /api/v4/store/120023`: `200`
+  - `GET /api/v1/store/120023/display-items`: `200`
+  - `GET /api/v1/report/group/STORE/reasons`: `200`, 사유 4개
+- 첫 번째 상세 진입:
+  - 사라진 가게 item 노출 및 impression POST 1회 `200`
+  - 방문 유도 impression 미전송
+- 두 번째 상세 진입:
+  - 서버가 사라진 가게 item을 `isVisible=false`로 전환한 것을 확인
+  - 방문 유도 item 노출 및 impression POST 1회 `200`
+- 방문 액션:
+  - store `120024`에 `EXISTS` 제출 결과 `200`, `ok=true`
+  - 제출 후 store `120024` 상세 조회가 `403 forbidden`을 반환해 인원 증가 비교는 완료하지 못함
+- 관련 테스트 3종을 `--rerun-tasks`로 재실행했고 모두 통과했다.
+- 재검증 로그에 `502`, `503`, `FATAL EXCEPTION`은 없었다.
+
+증적은 `build/harness/th-1128-server-retest/`에 저장했다.
+
+## 남은 제한
+
+- 사라진 가게 신고 제출은 테스트 가게 삭제 상태를 변경할 수 있어 실행하지 않았다.
 - 성공 감사 토스트는 API 성공과 상세 갱신까지 확인했지만 캡처 타이밍 문제로 시각 증적을 남기지 못했다.
-
-위 항목은 외부 서버 상태 및 테스트 데이터 제약이며 자동 테스트와 debug build는 통과했다.
