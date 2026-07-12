@@ -25,7 +25,8 @@ enum class ParameterName(val value: String) {
     STORE_TYPE("store_type"),
     EXPERIMENT_KEY("experiment_key"),
     EXPERIMENT_TYPE("experiment_type"),
-    EXPERIMENT_VARIANT("experiment_variant");
+    EXPERIMENT_VARIANT("experiment_variant"),
+    REASON_TYPE("reason_type");
 
     override fun toString(): String = value
 }

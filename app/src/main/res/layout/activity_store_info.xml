@@ -1054,4 +1054,15 @@
         android:layout_height="match_parent"
         android:elevation="9dp"
         android:orientation="vertical" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/displayItemOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomConstraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
