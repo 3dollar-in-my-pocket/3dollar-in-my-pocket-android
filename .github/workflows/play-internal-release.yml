@@ -285,6 +285,42 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
+      - name: Notify Discord on Success
+        if: steps.version.outputs.should_release == 'true' && success()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TAG_NAME: ${{ steps.version.outputs.tag_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg tag_name "$TAG_NAME" \
+            --arg version_code "$VERSION_CODE" \
+            --arg pr_number "$PR_NUMBER" \
+            --arg pr_url "$PR_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: "Play Store 내부 테스트 배포 완료",
+                color: 3066993,
+                url: $pr_url,
+                description: "[내부 테스트 참여](https://play.google.com/apps/testing/com.zion830.threedollars) · [Play Store](https://play.google.com/store/apps/details?id=com.zion830.threedollars)",
+                fields: [
+                  {name: "Tag", value: $tag_name, inline: true},
+                  {name: "Version Code", value: $version_code, inline: true},
+                  {name: "PR", value: ("#" + $pr_number), inline: false}
+                ]
+              }]
+            }')
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null
+
       - name: Notify Slack on Failure
         if: steps.version.outputs.should_release == 'true' && failure()
         continue-on-error: true
@@ -309,3 +345,27 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Discord on Failure
+        if: steps.version.outputs.should_release == 'true' && failure()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg workflow_url "$WORKFLOW_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: "Play Store 내부 테스트 배포 실패",
+                color: 15158332,
+                description: ("[워크플로 실행 결과 확인](" + $workflow_url + ")")
+              }]
+            }')
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null
