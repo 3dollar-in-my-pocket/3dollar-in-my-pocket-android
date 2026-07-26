@@ -48,12 +48,10 @@ class NearStoreNaverMapFragment(
         }
         if (isFirstLoad) {
             val savedPosition = viewModel.getSavedMapPosition()
-            if (savedPosition != null) {
-                moveCamera(savedPosition)
-            } else {
-                if (isLocationAvailable()) {
-                    moveToCurrentLocation()
-                }
+            when {
+                savedPosition != null -> moveCamera(savedPosition)
+                isLocationAvailable() -> moveToCurrentLocation()
+                else -> moveCamera(NaverMapUtils.DEFAULT_LOCATION)
             }
             isFirstLoad = false
         }

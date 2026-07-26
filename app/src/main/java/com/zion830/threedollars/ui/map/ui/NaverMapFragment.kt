@@ -58,7 +58,7 @@ import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.TouchableWrapper
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.requestPermissionIfNeeds
 import com.zion830.threedollars.utils.urlToBitmap
@@ -84,6 +84,15 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     var listener: OnMapTouchListener? = null
 
     private var isShowOverlay = true
+
+    /**
+     * 지도가 최초 카메라 위치로 이동했는지 여부.
+     *
+     * 지도 SDK는 준비 직후 자체 기본 위치(서울시청)에 카메라를 두고 변경 이벤트를 발생시킨다.
+     * 이 값을 저장된 지도 위치로 남기면 다음 실행에서 현재 위치를 요청하지 않고 그 위치로 이동해버리므로,
+     * 실제 위치가 정해지기 전까지는 [mapPosition]을 갱신하지 않는다.
+     */
+    private var isInitialCameraPlaced = false
 
     var onAdMarkerClicked: ((Int) -> Unit)? = null
 
@@ -144,7 +153,9 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             map.locationOverlay.bearing = 0f
         }
         map.addOnCameraChangeListener { _, _ ->
-            mapPosition.value = map.cameraPosition.target
+            if (isInitialCameraPlaced) {
+                mapPosition.value = map.cameraPosition.target
+            }
             map.contentBounds.let {
                 val northWest = it.northWest
                 val southEast = it.southEast
@@ -462,7 +473,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     @SuppressLint("MissingPermission")
     private fun requestCurrentLocation(onLocationLoaded: (LatLng?) -> Unit) {
-        if (!isLocationAvailable() || !isGpsAvailable()) {
+        if (!isLocationAvailable() || !isLocationServiceEnabled()) {
             onLocationLoaded(null)
             return
         }
@@ -517,6 +528,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             return
         }
 
+        isInitialCameraPlaced = true
         val cameraUpdate = CameraUpdate.scrollTo(position)
         naverMap?.moveCamera(cameraUpdate)
     }
@@ -526,6 +538,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             return
         }
 
+        isInitialCameraPlaced = true
         val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
         naverMap?.moveCamera(cameraUpdate)
     }

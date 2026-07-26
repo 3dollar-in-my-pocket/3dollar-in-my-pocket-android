@@ -30,7 +30,7 @@ import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
@@ -114,7 +114,7 @@ class SplashActivity :
     private fun initAdvertisements() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
-        if (isLocationAvailable() && isGpsAvailable()) {
+        if (isLocationAvailable() && isLocationServiceEnabled()) {
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {

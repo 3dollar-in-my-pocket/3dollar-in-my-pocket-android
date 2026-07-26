@@ -33,7 +33,7 @@ import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.popup.PopupViewModel
 import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.ui.webview.WebActivity
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +59,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         setDarkSystemBars()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
-        if (isLocationAvailable() && isGpsAvailable()) {
+        if (isLocationAvailable() && isLocationServiceEnabled()) {
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {
