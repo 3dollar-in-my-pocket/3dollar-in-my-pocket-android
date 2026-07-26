@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.login.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -55,6 +56,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
 
     override fun initView() {
         setDarkSystemBars()
+        if (intent.getBooleanExtra(SESSION_EXPIRED, false)) {
+            showToast(CommonR.string.session_expired)
+        }
         collectFlows()
         binding.btnLoginKakao.onSingleClick {
             viewModel.sendClickKakaoLogin()
@@ -231,6 +235,19 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
             UserApiClient.instance.loginWithKakaoTalk(this, callback = loginResCallback)
         } else {
             UserApiClient.instance.loginWithKakaoAccount(this, callback = loginResCallback)
+        }
+    }
+
+    companion object {
+        private const val SESSION_EXPIRED = "sessionExpired"
+
+        /**
+         * 세션 만료로 로그인이 필요할 때 사용하는 Intent.
+         * 기존 화면 스택을 모두 정리하고 로그인 화면을 새 태스크의 시작점으로 만든다.
+         */
+        fun getSessionExpiredIntent(context: Context) = Intent(context, LoginActivity::class.java).apply {
+            putExtra(SESSION_EXPIRED, true)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
     }
 }

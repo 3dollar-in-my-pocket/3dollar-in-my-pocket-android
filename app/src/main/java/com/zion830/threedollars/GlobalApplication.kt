@@ -15,9 +15,15 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.utils.GlobalEvent
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 @HiltAndroidApp
 class GlobalApplication : Application() {
@@ -56,6 +62,8 @@ class GlobalApplication : Application() {
         }
     }
 
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -77,5 +85,30 @@ class GlobalApplication : Application() {
         if (isLoggedIn) {
             loginPlatform = LoginType.of(LegacySharedPrefUtils.getLoginType())
         }
+
+        observeSessionExpired()
+    }
+
+    /**
+     * 세션 만료(401)를 프로세스 단위로 관찰한다.
+     *
+     * 딥링크/푸시로 진입한 화면은 [MainActivity]가 아닐 수 있어 화면별로 관찰하면 누락된다.
+     * 이벤트는 로그인에 성공해 [MainActivity]에 진입할 때 초기화되므로,
+     * 세션이 만료된 동안 요청이 여러 번 실패해도 로그인 화면으로 한 번만 이동한다.
+     */
+    private fun observeSessionExpired() {
+        applicationScope.launch {
+            GlobalEvent.logoutEvent.collect { isSessionExpired ->
+                if (isSessionExpired) {
+                    moveToLoginBySessionExpired()
+                }
+            }
+        }
+    }
+
+    private fun moveToLoginBySessionExpired() {
+        LegacySharedPrefUtils.clearUserInfo()
+        loginPlatform = LoginType.NONE
+        startActivity(LoginActivity.getSessionExpiredIntent(this))
     }
 }
