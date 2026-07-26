@@ -9,13 +9,47 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.domain.login.repository.LoginRepository
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class ThreedollarsMessagingService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var loginRepository: LoginRepository
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    /**
+     * 재설치, 앱 데이터 복원, 토큰 만료 등으로 FCM 토큰이 회전되면 호출된다.
+     * 갱신된 토큰을 서버에 다시 등록하지 않으면 해당 기기는 푸시 발송 대상에서 빠진다.
+     */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        if (sharedPrefUtils.getAccessToken().isNullOrBlank()) return
+
+        serviceScope.launch {
+            loginRepository.putPushInformation(token).collect()
+        }
+    }
+
+    override fun onDestroy() {
+        serviceScope.cancel()
+        super.onDestroy()
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
