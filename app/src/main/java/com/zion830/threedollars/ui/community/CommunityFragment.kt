@@ -214,12 +214,10 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.pollItems.collect {
                         if (it.isEmpty()) return@collect
-                        pollItems.addAll(it.toList().map { poll -> PollListData.Poll(poll) })
-                        advertisementModelV2?.let { advertisement ->
-                            if (pollItems.size > 3) pollItems.add(2, PollListData.Ad(advertisement))
-                            else pollItems.add(PollListData.Ad(advertisement))
-                        }
-                        pollAdapter.submitList(pollItems)
+                        pollItems.clear()
+                        pollItems.addAll(it.map { poll -> PollListData.Poll(poll) })
+                        injectAdvertisement()
+                        pollAdapter.submitList(pollItems.toList())
                     }
                 }
                 launch {
@@ -229,7 +227,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                         val selectPoll = pollItems.find { pollListData -> pollListData.isSelectPoll(pollId) } as? PollListData.Poll ?: return@collect
                         pollItems[pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollId) }] =
                             PollListData.Poll(selectedPoll(selectPoll.pollItem, optionId))
-                        pollAdapter.submitList(pollItems)
+                        pollAdapter.submitList(pollItems.toList())
                         pollAdapter.notifyDataSetChanged()
                     }
                 }
@@ -262,9 +260,29 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.advertisements.collect {
                         advertisementModelV2 = it.firstOrNull()
+                        if (pollItems.isEmpty()) return@collect
+                        pollItems.removeAll { pollListData -> pollListData is PollListData.Ad }
+                        injectAdvertisement()
+                        pollAdapter.submitList(pollItems.toList())
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * 광고 응답의 [AdvertisementModelV2.MetaData.exposureIndex] 위치에 광고 카드를 끼워 넣는다.
+     * 노출 순서가 음수면 광고를 노출하지 않고, 투표 목록 길이를 넘어서면 마지막에 배치한다.
+     */
+    private fun injectAdvertisement() {
+        val advertisement = advertisementModelV2 ?: return
+        val exposureIndex = advertisement.metadata.exposureIndex
+        if (exposureIndex < 0) return
+
+        if (exposureIndex > pollItems.lastIndex) {
+            pollItems.add(PollListData.Ad(advertisement))
+        } else {
+            pollItems.add(exposureIndex, PollListData.Ad(advertisement))
         }
     }
 
