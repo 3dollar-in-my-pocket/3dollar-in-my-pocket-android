@@ -214,10 +214,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.pollItems.collect {
                         if (it.isEmpty()) return@collect
-                        pollItems.clear()
-                        pollItems.addAll(it.map { poll -> PollListData.Poll(poll) })
-                        injectAdvertisement()
-                        pollAdapter.submitList(pollItems.toList())
+                        submitPollList(it.map { poll -> PollListData.Poll(poll) })
                     }
                 }
                 launch {
@@ -228,7 +225,6 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                         pollItems[pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollId) }] =
                             PollListData.Poll(selectedPoll(selectPoll.pollItem, optionId))
                         pollAdapter.submitList(pollItems.toList())
-                        pollAdapter.notifyDataSetChanged()
                     }
                 }
                 launch {
@@ -261,28 +257,37 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                     viewModel.advertisements.collect {
                         advertisementModelV2 = it.firstOrNull()
                         if (pollItems.isEmpty()) return@collect
-                        pollItems.removeAll { pollListData -> pollListData is PollListData.Ad }
-                        injectAdvertisement()
-                        pollAdapter.submitList(pollItems.toList())
+                        submitPollList(pollItems.filterIsInstance<PollListData.Poll>())
                     }
                 }
             }
         }
     }
 
-    /**
-     * 광고 응답의 [AdvertisementModelV2.MetaData.exposureIndex] 위치에 광고 카드를 끼워 넣는다.
-     * 노출 순서가 음수면 광고를 노출하지 않고, 투표 목록 길이를 넘어서면 마지막에 배치한다.
-     */
-    private fun injectAdvertisement() {
-        val advertisement = advertisementModelV2 ?: return
-        val exposureIndex = advertisement.metadata.exposureIndex
-        if (exposureIndex < 0) return
+    private fun submitPollList(polls: List<PollListData.Poll>) {
+        pollItems.clear()
+        pollItems.addAll(advertisementModelV2?.let { polls.injectAd(it) } ?: polls)
+        pollAdapter.submitList(pollItems.toList())
+    }
 
-        if (exposureIndex > pollItems.lastIndex) {
-            pollItems.add(PollListData.Ad(advertisement))
-        } else {
-            pollItems.add(exposureIndex, PollListData.Ad(advertisement))
+    private fun List<PollListData.Poll>.injectAd(
+        target: AdvertisementModelV2
+    ): List<PollListData> {
+        val originList = this
+        val targetIndex = target.metadata.exposureIndex
+
+        if (targetIndex < 0) {
+            return this
+        }
+
+        return buildList(originList.size + 1) {
+            addAll(originList)
+
+            if (targetIndex > lastIndex) {
+                add(PollListData.Ad(target))
+            } else {
+                add(targetIndex, PollListData.Ad(target))
+            }
         }
     }
 
