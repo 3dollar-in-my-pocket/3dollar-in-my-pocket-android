@@ -43,6 +43,7 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.common.serverdriven.ext.displayText
+import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.MarkerModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
@@ -66,6 +67,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -76,6 +78,9 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     var mapViewPortDistance: MutableLiveData<Double> = MutableLiveData(DEFAULT_DISTANCE_M)
 
     protected lateinit var binding: FragmentNaverMapBinding
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -481,7 +486,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         fusedLocationProviderClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    onLocationLoaded(location.toLatLng())
+                    onLocationLoaded(location.toLatLng().also { cacheUserLocation(it) })
                 } else {
                     requestFreshCurrentLocation(onLocationLoaded)
                 }
@@ -491,6 +496,18 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 requestFreshCurrentLocation(onLocationLoaded)
             }
     }
+
+    private fun cacheUserLocation(position: LatLng) {
+        sharedPrefUtils.saveUserLastLocation(latitude = position.latitude, longitude = position.longitude)
+    }
+
+    /**
+     * 마지막으로 확인된 사용자 위치. 저장된 값이 없으면 null.
+     *
+     * 위치 획득에 실패했을 때 서울 중심 좌표로 떨어지기 전에 우선 사용한다.
+     */
+    fun getCachedUserLocation(): LatLng? =
+        sharedPrefUtils.getUserLastLocation()?.let { (latitude, longitude) -> LatLng(latitude, longitude) }
 
     @SuppressLint("MissingPermission")
     private fun requestFreshCurrentLocation(onLocationLoaded: (LatLng?) -> Unit) {
@@ -502,7 +519,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         fusedLocationProviderClient
             .getCurrentLocation(request, cancellationTokenSource.token)
             .addOnSuccessListener { location ->
-                onLocationLoaded(location?.toLatLng())
+                onLocationLoaded(location?.toLatLng()?.also { cacheUserLocation(it) })
             }
             .addOnFailureListener { exception ->
                 Log.e(this::class.java.name, exception.message ?: "")
@@ -516,7 +533,13 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private fun Location.toLatLng(): LatLng = LatLng(latitude, longitude)
 
     private companion object {
-        const val CURRENT_LOCATION_TIMEOUT_MILLIS = 5_000L
+        /**
+         * 위치 수신 대기 시간.
+         *
+         * 실내나 측위가 느린 환경에서 5초는 첫 fix를 받기에 부족해 기본 위치로 떨어지는 경우가 잦았다.
+         * iOS는 타임아웃 없이 첫 fix까지 기다린다.
+         */
+        const val CURRENT_LOCATION_TIMEOUT_MILLIS = 10_000L
     }
 
     fun setIsShowOverlay(isVisible: Boolean) {

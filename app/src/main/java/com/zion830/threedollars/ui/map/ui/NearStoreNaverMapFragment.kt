@@ -51,7 +51,7 @@ class NearStoreNaverMapFragment(
             when {
                 savedPosition != null -> moveCamera(savedPosition)
                 isLocationAvailable() -> moveToCurrentLocation()
-                else -> moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+                else -> moveCamera(getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION)
             }
             isFirstLoad = false
         }
