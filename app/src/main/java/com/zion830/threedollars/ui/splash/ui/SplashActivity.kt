@@ -104,11 +104,7 @@ class SplashActivity :
         }
     }
 
-    /**
-     * 푸시 토큰 등록은 인증이 필요한 API다.
-     * 비로그인 상태에서 호출하면 401이 내려와 세션 만료로 처리되므로 로그인 상태에서만 요청한다.
-     * 비로그인 유저의 토큰은 로그인에 성공하는 시점에 등록된다.
-     */
+    // 푸시 토큰 등록은 인증이 필요한 API라 비로그인 상태에서 호출하면 401이 내려온다. 토큰은 로그인 성공 시점에 등록된다.
     private fun initPushToken() {
         if (LegacySharedPrefUtils.getAccessToken().isNullOrBlank()) return
 

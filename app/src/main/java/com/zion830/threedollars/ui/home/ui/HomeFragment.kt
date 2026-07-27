@@ -135,18 +135,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    /**
-     * 위치 권한과 함께 요청할 권한 목록.
-     *
-     * Android 13+의 알림 권한은 별도로 요청하면 위치 권한 다이얼로그와 겹쳐 한쪽이 자동 거부될 수 있어,
-     * 시스템이 순차적으로 처리하도록 한 번에 요청한다.
-     */
-    private val startUpPermissions: Array<String>
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
+    // Android 13+ 알림 권한을 따로 요청하면 위치 권한 다이얼로그와 겹쳐 한쪽이 자동 거부될 수 있어 함께 요청한다.
+    private val startUpPermissions: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
 
     override fun initView() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
