@@ -80,6 +80,7 @@ jobs:
           MANUAL_NOTES: ${{ github.event.inputs.release_notes }}
         run: |
           VERSION=$(grep "version_name=" gradle.properties | cut -d'=' -f2)
+          VERSION_CODE=$(grep -E '^version_code=' gradle.properties | cut -d'=' -f2)
 
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             HEADLINE="수동 배포: ${GITHUB_REF_NAME}"
@@ -107,6 +108,7 @@ jobs:
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "headline=$HEADLINE" >> $GITHUB_OUTPUT
           echo "source=$SOURCE" >> $GITHUB_OUTPUT
           echo "link=$LINK" >> $GITHUB_OUTPUT
@@ -160,30 +162,50 @@ jobs:
         continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          RELEASE_VERSION: ${{ steps.release_notes.outputs.version }}
-          SOURCE_BRANCH: ${{ steps.release_notes.outputs.source }}
-          HEADLINE: ${{ steps.release_notes.outputs.headline }}
+          VERSION: ${{ steps.release_notes.outputs.version }}
+          BUILD: ${{ steps.release_notes.outputs.version_code }}
+          BRANCH: ${{ steps.release_notes.outputs.source }}
+          WORKFLOW: ${{ github.workflow }}
           SOURCE_URL: ${{ steps.release_notes.outputs.link }}
         run: |
-          PAYLOAD=$(jq -n \
-            --arg version "$RELEASE_VERSION" \
-            --arg branch "$SOURCE_BRANCH" \
-            --arg headline "$HEADLINE" \
-            --arg source_url "$SOURCE_URL" \
-            '{
-              username: "가슴속삼천원 배포 알림",
-              allowed_mentions: {parse: []},
-              embeds: [{
-                title: "Firebase App Distribution 배포 완료",
-                color: 3066993,
-                url: $source_url,
-                fields: [
-                  {name: "Version", value: $version, inline: true},
-                  {name: "Branch", value: $branch, inline: true},
-                  {name: "Source", value: $headline, inline: false}
-                ]
-              }]
-            }')
+          SHORT_SHA="$(git rev-parse --short=7 HEAD)"
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+
+          PAYLOAD="$(VERSION="$VERSION" BUILD="$BUILD" BRANCH="$BRANCH" \
+            WORKFLOW="$WORKFLOW" SHORT_SHA="$SHORT_SHA" COMMIT_MSG="$COMMIT_MSG" \
+            SOURCE_URL="$SOURCE_URL" \
+            python3 - <<'PY'
+          import os, json
+
+          version  = os.environ.get("VERSION") or "-"
+          build    = os.environ.get("BUILD") or "-"
+          branch   = os.environ.get("BRANCH") or "-"
+          workflow = os.environ.get("WORKFLOW") or "-"
+          sha      = os.environ.get("SHORT_SHA") or "-"
+          url      = os.environ.get("SOURCE_URL") or ""
+          # Discord embed description은 4096자 제한이라 넉넉히 자른다
+          msg      = (os.environ.get("COMMIT_MSG") or "").strip()[:1500] or "-"
+
+          embed = {
+              "title": "🤖 [AOS] Firebase App Distribution 업로드",
+              "color": 5814783,
+              "fields": [
+                  {"name": "버전",       "value": f"{version} ({build})", "inline": True},
+                  {"name": "브랜치",     "value": branch,                 "inline": True},
+                  {"name": "워크플로우", "value": workflow,               "inline": True},
+              ],
+              "description": f"**커밋** `{sha}`\n```\n{msg}\n```",
+          }
+          if url:
+              embed["url"] = url
+
+          print(json.dumps({
+              "username": "GitHub Actions",
+              "allowed_mentions": {"parse": []},
+              "embeds": [embed],
+          }))
+          PY
+          )"
 
           curl --fail-with-body --silent --show-error --retry 2 \
             --header "Content-Type: application/json" \
@@ -225,11 +247,12 @@ jobs:
           PAYLOAD=$(jq -n \
             --arg workflow_url "$WORKFLOW_URL" \
             '{
-              username: "가슴속삼천원 배포 알림",
+              username: "GitHub Actions",
               allowed_mentions: {parse: []},
               embeds: [{
-                title: "Firebase App Distribution 배포 실패",
+                title: "❌ [AOS] Firebase App Distribution 실패",
                 color: 15158332,
+                url: $workflow_url,
                 description: ("[워크플로 실행 결과 확인](" + $workflow_url + ")")
               }]
             }')
