@@ -31,7 +31,6 @@ import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.databinding.ActivityHomeBinding
 import com.zion830.threedollars.ui.popup.PopupViewModel
-import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.ui.webview.WebActivity
 import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
@@ -57,6 +56,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     override fun initView() {
         setDarkSystemBars()
+        // 정상적으로 메인에 진입했으므로 다음 세션 만료를 다시 감지할 수 있도록 초기화한다.
+        GlobalEvent.resetLogoutEvent()
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
         if (isLocationAvailable() && isLocationServiceEnabled()) {
@@ -99,8 +100,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                         }
                     }
                 }
-            }
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     popupViewModel.serverError.collect {
                         it?.let {
@@ -108,18 +107,8 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                         }
                     }
                 }
-                launch {
-                    GlobalEvent.logoutEvent.collect {
-                        if (it) {
-                            startActivity(Intent(this@MainActivity, SplashActivity::class.java))
-                            finish()
-                            GlobalEvent.resetLogoutEvent()
-                        }
-                    }
-                }
             }
         }
-
     }
 
     private fun initNavView() {
