@@ -24,6 +24,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -114,10 +115,16 @@ fun isLocationAvailable(): Boolean =
         ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
-fun isGpsAvailable(): Boolean {
+/**
+ * 기기의 위치 서비스가 켜져 있는지 확인한다.
+ *
+ * GPS 프로바이더만 확인하면 실내이거나 위치 정확도가 "배터리 절약"으로 설정된 경우
+ * 네트워크 측위로는 위치를 받을 수 있는데도 실패로 처리된다.
+ */
+fun isLocationServiceEnabled(): Boolean {
     val locationManager =
         GlobalApplication.getContext().getSystemService(LOCATION_SERVICE) as LocationManager
-    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    return LocationManagerCompat.isLocationEnabled(locationManager)
 }
 
 fun getCurrentLocationName(location: LatLng?): String? {
