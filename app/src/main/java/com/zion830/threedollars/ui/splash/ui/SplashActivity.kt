@@ -21,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.loadImage
+import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
@@ -31,7 +32,7 @@ import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.ui.dialog.VersionUpdateDialog
@@ -40,11 +41,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import javax.inject.Inject
 import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class SplashActivity :
     BaseActivity<ActivitySplashBinding, SplashViewModel>({ ActivitySplashBinding.inflate(it) }) {
+
+    @Inject
+    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: SplashViewModel by viewModels()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -118,10 +123,12 @@ class SplashActivity :
     private fun initAdvertisements() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
-        if (isLocationAvailable() && isGpsAvailable()) {
+        if (isLocationAvailable() && isLocationServiceEnabled()) {
             val locationResult = fusedLocationProviderClient.lastLocation
             locationResult.addOnSuccessListener {
                 if (it != null) {
+                    // 홈 진입 시 위치 획득에 실패해도 재사용할 수 있도록 저장해둔다.
+                    sharedPrefUtils.saveUserLastLocation(latitude = it.latitude, longitude = it.longitude)
                     viewModel.getStoreMarkerAdvertisements(
                         latLng = LatLng(it.latitude, it.longitude)
                     )

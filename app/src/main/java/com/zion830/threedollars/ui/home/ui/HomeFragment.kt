@@ -778,14 +778,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
     
+    /**
+     * 현재 위치를 확인하지 못했을 때 사용할 위치로 지도를 이동한다.
+     *
+     * 마지막으로 확인된 위치가 있으면 그 위치를, 없으면 기본 위치(서울 중심)를 쓴다.
+     */
     private fun useDefaultLocation() {
-        naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+        val fallbackLocation = naverMapFragment.getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION
+        naverMapFragment.moveCamera(fallbackLocation)
 
         viewModel.fetchAroundStores(
-            mapPosition = NaverMapUtils.DEFAULT_LOCATION,
-            userLocation = NaverMapUtils.DEFAULT_LOCATION,
+            mapPosition = fallbackLocation,
+            userLocation = fallbackLocation,
         )
-        viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
+        viewModel.getAdvertisement(latLng = fallbackLocation)
     }
     
     private fun showLocationPermissionDialog() {
