@@ -6,6 +6,7 @@ import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.network.data.screen.HomeFilterBarResponse
 import com.threedollar.network.data.screen.HomeFilterChipResponse
 import com.threedollar.network.data.screen.HomeFilterClickLogResponse
+import com.threedollar.network.data.screen.HomeFilterConfigurationResponse
 import com.threedollar.network.data.screen.HomeFilterImageResponse
 import com.threedollar.network.data.screen.HomeFilterImageStyleResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
@@ -13,6 +14,7 @@ import com.threedollar.network.data.screen.HomeFilterSectionResponse
 import com.threedollar.network.data.screen.HomeFilterTextResponse
 import com.threedollar.network.data.screen.HomeFilterViewLogResponse
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class HomeFilterScreenMapperTest {
@@ -88,5 +90,21 @@ class HomeFilterScreenMapperTest {
         val categoryBar = section.bars.single() as HomeFilterBar.CategoryBar
 
         assertEquals(longStoreId, categoryBar.categoriesFilterClickLog?.extraParameters?.get("STORE_ID")?.anyValue)
+    }
+
+    @Test
+    fun homeFilterMapper_mapsInitialMapZoomLevel() {
+        val response = HomeFilterScreenResponse(
+            configuration = HomeFilterConfigurationResponse(initialMapZoomLevel = 15.0),
+        )
+
+        assertEquals(15.0, response.asModel().configuration?.initialMapZoomLevel)
+    }
+
+    @Test
+    fun homeFilterMapper_keepsNullConfigurationWhenResponseHasNone() {
+        val response = HomeFilterScreenResponse()
+
+        assertNull(response.asModel().configuration)
     }
 }

@@ -35,7 +35,17 @@ enum class FilterOpenStatuses {
 
 data class HomeFilterScreenModel(
     val sections: List<HomeScreenSection> = emptyList(),
+    val configuration: HomeFilterConfiguration? = null,
     val viewLog: SDViewLogModel? = null,
+)
+
+/**
+ * 홈 화면 동작을 서버에서 제어하는 설정값.
+ *
+ * @property initialMapZoomLevel 홈 지도의 최초 줌 레벨. 값이 없으면 지도 SDK 기본 줌을 유지한다.
+ */
+data class HomeFilterConfiguration(
+    val initialMapZoomLevel: Double? = null,
 )
 
 sealed interface HomeScreenSection {
