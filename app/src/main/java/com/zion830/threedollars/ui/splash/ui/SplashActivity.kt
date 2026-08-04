@@ -31,6 +31,7 @@ import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
@@ -108,7 +109,10 @@ class SplashActivity :
         }
     }
 
+    // 푸시 토큰 등록은 인증이 필요한 API라 비로그인 상태에서 호출하면 401이 내려온다. 토큰은 로그인 성공 시점에 등록된다.
     private fun initPushToken() {
+        if (LegacySharedPrefUtils.getAccessToken().isNullOrBlank()) return
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful) {
                 viewModel.putPushInformation(PushInformationRequest(pushToken = it.result))

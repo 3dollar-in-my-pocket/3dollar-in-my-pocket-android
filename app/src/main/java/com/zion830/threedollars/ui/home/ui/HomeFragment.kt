@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.home.ui
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
@@ -117,10 +118,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { results ->
         when {
-            isGranted -> {
+            results[Manifest.permission.ACCESS_FINE_LOCATION] == true -> {
                 onLocationPermissionGranted()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
@@ -132,6 +133,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 showLocationPermissionDialog()
             }
         }
+    }
+
+    // Android 13+ 알림 권한을 따로 요청하면 위치 권한 다이얼로그와 겹쳐 한쪽이 자동 거부될 수 있어 함께 요청한다.
+    private val startUpPermissions: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     override fun initView() {
@@ -741,7 +749,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 // 이전에 거부했지만 재요청 가능: 바로 권한 요청
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                locationPermissionLauncher.launch(startUpPermissions)
             }
             hasRequestedLocationPermission -> {
                 // "다시 묻지 않음" 상태: 설명 다이얼로그
@@ -750,7 +758,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             else -> {
                 // 첫 요청: 바로 권한 요청
                 hasRequestedLocationPermission = true
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                locationPermissionLauncher.launch(startUpPermissions)
             }
         }
     }
@@ -800,7 +808,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 dialog.dismiss()
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     // 재요청 가능한 상태: 권한 요청
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    locationPermissionLauncher.launch(startUpPermissions)
                 } else {
                     // "다시 묻지 않음" 상태: 설정 페이지로
                     requireContext().goToPermissionSetting()
