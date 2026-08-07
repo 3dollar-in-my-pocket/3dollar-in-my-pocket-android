@@ -7,5 +7,6 @@ data class ShareFormat(
     val storeName: String,
     val location: LatLng?
 ) {
-    val shareUrl = "$url${storeName.trim()},${location?.latitude},${location?.longitude}"
+    val shareUrl: String
+        get() = location?.let { "$url${storeName.trim()},${it.latitude},${it.longitude}" } ?: url
 }

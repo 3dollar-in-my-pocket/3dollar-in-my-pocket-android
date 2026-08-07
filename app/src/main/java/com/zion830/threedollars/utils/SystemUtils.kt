@@ -24,6 +24,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -42,7 +43,6 @@ import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
-import com.kakao.sdk.user.UserApiClient
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
@@ -115,10 +115,16 @@ fun isLocationAvailable(): Boolean =
         ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
-fun isGpsAvailable(): Boolean {
+/**
+ * 기기의 위치 서비스가 켜져 있는지 확인한다.
+ *
+ * GPS 프로바이더만 확인하면 실내이거나 위치 정확도가 "배터리 절약"으로 설정된 경우
+ * 네트워크 측위로는 위치를 받을 수 있는데도 실패로 처리된다.
+ */
+fun isLocationServiceEnabled(): Boolean {
     val locationManager =
         GlobalApplication.getContext().getSystemService(LOCATION_SERVICE) as LocationManager
-    return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    return LocationManagerCompat.isLocationEnabled(locationManager)
 }
 
 fun getCurrentLocationName(location: LatLng?): String? {
@@ -178,36 +184,39 @@ fun Context.shareWithKakao(
     storeId: String?,
     type: String?
 ) {
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-        val feed = FeedTemplate(
-            content = Content(
-                title = title ?: "",
-                description = description,
-                imageUrl = imageUrl ?: "",
-                link = Link(getString(CommonR.string.download_url), getString(CommonR.string.download_url))
-            ),
-            buttons = listOf(
-                Button(
-                    title = getString(CommonR.string.find_location),
-                    link = Link(
-                        webUrl = shareFormat.shareUrl,
-                        mobileWebUrl = shareFormat.shareUrl,
-                        androidExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString()),
-                        iosExecutionParams = mapOf("storeId" to storeId.toString(), "storeType" to type.toString())
-                    )
-                )
+    if (storeId.isNullOrBlank() || type.isNullOrBlank()) {
+        showToast(getString(CommonR.string.exist_location_error))
+        return
+    }
+
+    val feed = FeedTemplate(
+        content = Content(
+            title = title ?: "",
+            description = description,
+            imageUrl = imageUrl ?: "",
+            link = Link(getString(CommonR.string.download_url), getString(CommonR.string.download_url)),
+        ),
+        buttons = listOf(
+            Button(
+                title = getString(CommonR.string.find_location),
+                link = Link(
+                    webUrl = shareFormat.shareUrl,
+                    mobileWebUrl = shareFormat.shareUrl,
+                    androidExecutionParams = mapOf("storeId" to storeId, "storeType" to type),
+                    iosExecutionParams = mapOf("storeId" to storeId, "storeType" to type),
+                ),
             )
         )
+    )
 
-        ShareClient.instance.shareDefault(this, feed) { linkResult, error ->
-            if (error != null) {
-                shareUrl(shareFormat.url)
-            } else if (linkResult != null) {
-                this.startActivity(linkResult.intent)
-            }
+    ShareClient.instance.shareDefault(this, feed) { linkResult, error ->
+        if (error != null) {
+            showToast(error.localizedMessage ?: getString(CommonR.string.exist_location_error))
+        } else if (linkResult != null) {
+            startActivity(linkResult.intent)
+        } else {
+            showToast(getString(CommonR.string.exist_location_error))
         }
-    } else {
-        shareUrl(shareFormat.shareUrl)
     }
 }
 

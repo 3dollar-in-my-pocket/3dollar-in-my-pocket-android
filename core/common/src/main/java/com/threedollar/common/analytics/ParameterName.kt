@@ -22,7 +22,10 @@ enum class ParameterName(val value: String) {
     POLL_SECOND_OPTION("poll_second_option"),
     BUILDING_NAME("building_name"),
     MEDAL_ID("medal_id"),
-    STORE_TYPE("store_type");
+    STORE_TYPE("store_type"),
+    EXPERIMENT_KEY("experiment_key"),
+    EXPERIMENT_TYPE("experiment_type"),
+    EXPERIMENT_VARIANT("experiment_variant");
 
     override fun toString(): String = value
 }

@@ -18,7 +18,6 @@ import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PlaceType
@@ -37,13 +36,11 @@ interface HomeRemoteDataSource {
         distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
-        sortType: String,
-        filterCertifiedStores: Boolean?,
-        filterConditionsType: List<FilterConditionsType>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
+        dynamicParams: Map<String, String> = emptyMap(),
     ): Flow<BaseResponse<AroundStoreResponse>>
 
     fun getBossStoreDetail(
@@ -99,7 +96,7 @@ interface HomeRemoteDataSource {
 
     fun postStoreReview(storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<StoreReviewDetailResponse>>
 
-    fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
+    fun putStoreReview(reviewId: Long, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>>
 
     fun getStoreNearExists(distance: Double, mapLatitude: Double, mapLongitude: Double): Flow<BaseResponse<AroundStoreResponse>>
 
@@ -107,7 +104,7 @@ interface HomeRemoteDataSource {
 
     fun putUserStore(userStoreRequest: UserStoreRequest, storeId: Int): Flow<BaseResponse<PostUserStoreResponse>>
 
-    fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
+    fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
 

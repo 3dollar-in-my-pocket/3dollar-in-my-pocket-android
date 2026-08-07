@@ -8,7 +8,8 @@ enum class LogObjectType(val value: String) {
     TAB("tab"),
     REVIEW("review"),
     MEDAL("medal"),
-    MENU("menu");
+    MENU("menu"),
+    CAROUSEL("carousel");
 
     override fun toString(): String = value
 }

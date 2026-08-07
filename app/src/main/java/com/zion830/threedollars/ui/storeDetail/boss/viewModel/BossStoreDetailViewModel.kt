@@ -20,6 +20,7 @@ import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.request.ReportReviewModelRequest
+import com.threedollar.domain.store.repository.StoreRepository
 import com.zion830.threedollars.utils.FileTypeConstants
 import com.zion830.threedollars.utils.ImageUtils
 import com.zion830.threedollars.utils.StringUtils.getString
@@ -35,7 +36,8 @@ import com.threedollar.common.R as CommonR
 
 @HiltViewModel
 class BossStoreDetailViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val storeRepository: StoreRepository
 ) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.BOSS_STORE_DETAIL
@@ -79,6 +81,14 @@ class BossStoreDetailViewModel @Inject constructor(
         latitude: Double,
         longitude: Double,
     ) {
+        viewModelScope.launch {
+            storeRepository.getScreenStore(
+                storeId = bossStoreId.toInt(),
+                lat = latitude,
+                lng = longitude
+            )
+        }
+
         viewModelScope.launch(coroutineExceptionHandler) {
             _isInitialLoad.value = true
             homeRepository.getBossStoreDetail(bossStoreId = bossStoreId, deviceLatitude = latitude, deviceLongitude = longitude).collect {
@@ -234,7 +244,7 @@ class BossStoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+    fun putStoreReview(reviewId: Long, content: String, rating: Int) {
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putStoreReview(reviewId, content, rating).collect {
                 if (it.ok) {
@@ -262,7 +272,7 @@ class BossStoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun reportReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest) {
+    fun reportReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest) {
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {

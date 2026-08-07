@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.user.ui
 
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvailableBinding, StoreCertificationViewModel>() {
@@ -31,12 +33,17 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
 
     private lateinit var naverMapFragment: StoreCertificationNaverMapFragment
 
+    private var pendingVisitExists = false
+
     private val userStoreModel: UserStoreModel? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getSerializable(USER_STORE_MODEL, UserStoreModel::class.java)
         } else {
             arguments?.getSerializable(USER_STORE_MODEL) as? UserStoreModel
         }
+    }
+    private val finishActivityOnClose: Boolean by lazy {
+        arguments?.getBoolean(FINISH_ACTIVITY_ON_CLOSE, false) ?: false
     }
 
     override fun initView() {
@@ -70,13 +77,15 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
 
     private fun initButton() {
         binding.ibClose.onSingleClick {
-            requireActivity().supportFragmentManager.popBackStack()
+            closeCertificationFlow(Activity.RESULT_CANCELED)
         }
         binding.layoutSuccess.onSingleClick {
+            pendingVisitExists = true
             viewModel.sendClickVisitSuccess()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, true)
         }
         binding.layoutFailed.onSingleClick {
+            pendingVisitExists = false
             viewModel.sendClickVisitFail()
             viewModel.postStoreVisit(userStoreModel?.storeId ?: -1, false)
         }
@@ -86,8 +95,12 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    viewModel.storeVisitResult.collect {
-                        activity?.supportFragmentManager?.popBackStack()
+                    viewModel.storeVisitResult.collect { isSuccess ->
+                        if (!isSuccess) return@collect
+                        if (pendingVisitExists) {
+                            showToast(CommonR.string.add_certification_success)
+                        }
+                        closeCertificationFlow(Activity.RESULT_OK)
                     }
                 }
                 launch {
@@ -104,15 +117,31 @@ class StoreCertificationAvailableFragment : BaseFragment<LayoutCertificationAvai
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): LayoutCertificationAvailableBinding =
         LayoutCertificationAvailableBinding.inflate(inflater, container, false)
 
+    private fun closeCertificationFlow(resultCode: Int) {
+        if (finishActivityOnClose) {
+            requireActivity().setResult(resultCode)
+            requireActivity().finish()
+        } else {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
     companion object {
         const val MIN_DISTANCE = 100
         private const val USER_STORE_MODEL = "userStoreModel"
-        fun getInstance(userStoreModel: UserStoreModel?) = StoreCertificationAvailableFragment().apply {
-            userStoreModel?.let {
-                val bundle = Bundle()
-                bundle.putSerializable(USER_STORE_MODEL, userStoreModel)
-                arguments = bundle
+        private const val FINISH_ACTIVITY_ON_CLOSE = "finishActivityOnClose"
+
+        fun getInstance(
+            userStoreModel: UserStoreModel?,
+            finishActivityOnClose: Boolean = false,
+        ) = StoreCertificationAvailableFragment().apply {
+            val bundle = Bundle().apply {
+                putBoolean(FINISH_ACTIVITY_ON_CLOSE, finishActivityOnClose)
+                userStoreModel?.let {
+                    putSerializable(USER_STORE_MODEL, userStoreModel)
+                }
             }
+            arguments = bundle
         }
     }
 }

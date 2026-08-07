@@ -11,6 +11,7 @@ enum class ScreenName(val value: String) {
     MAIN_AD_BANNER("main_ad_banner"),
     SEARCH_ADDRESS("search_address"),
     EDIT_STORE("edit_store"),
+    STORE_CONTRIBUTORS("store_contributors"),
     STORE_DETAIL("store_detail"),
     REVIEW_LIST("review_list"),
     REPORT_STORE("report_store"),

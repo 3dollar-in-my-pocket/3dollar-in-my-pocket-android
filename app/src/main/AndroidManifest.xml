@@ -70,6 +70,12 @@
             android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.user.ui.StoreCertificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.storeDetail.contributor.ui.StoreContributorActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
             android:screenOrientation="portrait" />
         <activity

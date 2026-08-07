@@ -8,7 +8,9 @@ import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.api.StoreApi
 import com.threedollar.network.interceptor.ABTestInterceptor
+import com.threedollar.network.sdui.core.gson.SDUIGson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,7 +46,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun getLoggerInterceptor() = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.HEADERS
+        level = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
     }
 
     @Provides
@@ -141,4 +147,13 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(LoginApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStoreApi(@OkhttpClient okHttpClient: OkHttpClient) = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create(SDUIGson.provideGson()))
+        .client(okHttpClient)
+        .build()
+        .create(StoreApi::class.java)
 }

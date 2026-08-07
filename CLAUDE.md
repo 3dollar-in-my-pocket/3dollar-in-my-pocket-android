@@ -1,137 +1,77 @@
-# CLAUDE.md
+# Project Agent Instructions
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Language
 
-## Build Commands
+- 기본 사용자 응답은 한국어로 작성한다.
+- 코드, 경로, 명령어, API 이름은 프로젝트의 기존 표기를 유지한다.
 
-- **Build the project**: `./gradlew build`
-- **Build debug APK**: `./gradlew assembleDebug`  
-- **Build release APK**: `./gradlew assembleRelease`
-- **Clean project**: `./gradlew clean`
-- **Run tests**: `./gradlew test`
-- **Run instrumented tests**: `./gradlew connectedAndroidTest`
-- **Run single test class**: `./gradlew test --tests "com.example.ClassName"`
-- **Check dependencies**: `./gradlew dependencies`
+## Repository Purpose
 
-## Project Architecture
+이 저장소는 "가슴속삼천원" Android 앱이다. 위치 기반 가게 탐색, 리뷰, 커뮤니티, 로그인/사용자 관리, 광고/푸시/지도 연동을 포함한다.
 
-This is a multi-module Android application following Clean Architecture principles with MVVM pattern:
+## Project Shape
 
-### Module Structure
-- **app**: Main application module containing UI, Activities, Fragments, ViewModels, and legacy datasources
-- **core/common**: Shared utilities and common data models
-- **core/network**: Network layer with API definitions and responses
-- **Feature modules** (following domain-data-presentation pattern):
-  - **home**: Store discovery, map view, search functionality
-  - **community**: Polling system and neighborhood features  
-  - **my**: User profile, reviews, favorites, medals
-  - **login**: Authentication with Kakao and Google
-- **common**: Legacy shared module
+- Gradle Kotlin DSL 기반 Android multi-module 프로젝트다.
+- 모듈 목록은 `settings.gradle.kts`를 원천으로 확인한다.
+- 현재 주요 모듈: `:app`, `:common`, `:core:network`, `:core:common`, `:core:ui`, `:core:designsystem`, `:core:abtest`, `:domain`, `:data`.
+- 아키텍처/리소스 세부 규칙은 `DEPENDENCY_MAP.md`와 `MIGRATION_RULES.md`를 참고한다.
 
-### Key Technologies
-- **Language**: Kotlin
-- **Dependency Injection**: Hilt/Dagger
-- **Networking**: Retrofit + OkHttp with Moshi/Kotlinx Serialization
-- **UI**: ViewBinding + DataBinding
-- **Architecture**: MVVM with LiveData
-- **Maps**: Naver Maps SDK (primary), Kakao Map (external navigation)
-- **Image Loading**: Glide
-- **Analytics**: Firebase Analytics, Crashlytics, Remote Config
-- **Login**: Kakao SDK, Google Sign-In
-- **Navigation**: Navigation Component
-- **Animations**: Lottie
+## Current Toolchain
 
-### Configuration
-- **Target SDK**: 34
-- **Min SDK**: 24
-- **Kotlin Version**: 1.8.0
-- **AGP Version**: 8.3.1
-- **Current Version**: 4.7.3 (versionCode 98)
+- 버전 원천은 `gradle/libs.versions.toml`이다.
+- 현재 확인된 값: AGP `8.13.2`, Kotlin `2.2.20`, compileSdk `36`, targetSdk `36`, minSdk `24`.
+- Java/Kotlin toolchain은 JDK 17 기준이다.
+- 버전 변경이나 의존성 업그레이드는 사용자 승인 없이 하지 않는다.
 
-### Build Configuration
-- Two build variants: `debug` (with `.dev` suffix) and `release`
-- Signing configuration uses `3dollor-android-key.jks`
-- API keys and sensitive data stored in `local.properties`
-- Proguard disabled in both variants for debugging
+## Canonical Commands
 
-### Testing
-- Unit tests in each module's `test` directory
-- Instrumented tests in `androidTest` directories
-- Test runner: AndroidJUnitRunner
+- 전체 빌드: `./gradlew build`
+- Debug APK: `./gradlew assembleDebug`
+- Release APK: `./gradlew assembleRelease`
+- 단위 테스트: `./gradlew test`
+- 기기/에뮬레이터 테스트: `./gradlew connectedAndroidTest`
+- 의존성 확인: `./gradlew dependencies`
+- 필요한 범위의 최소 Gradle task를 우선 사용하고, full clean build는 필요한 경우에만 실행한다.
 
-The app is a location-based service for finding street food vendors ("3달러 가게") with features for store discovery, reviews, community polling, and user management.
+## Agent Workflow
 
-## Coding Guidelines
+- 작업 전 짧은 구현 계획을 먼저 보고한다.
+- 변경은 작고 원자적인 단위로 수행한다.
+- 관련 없는 파일은 수정하지 않는다.
+- 기존 사용자 변경사항을 되돌리지 않는다.
+- 대규모 리팩터링, 의존성 추가/업그레이드, 포맷 전용 변경은 명시적 승인 없이 하지 않는다.
+- 완료 전 변경 범위에 맞는 최소 검증을 실행하고, 실행하지 못한 검증은 보고한다.
 
-### Comment Style
-- **Use KDoc comments (`/** */`) for documentation**: Public APIs, classes, and functions that need documentation
-- **Avoid single-line comments (`//`)**: Do not use `//` comments in production code
-- **Only use KDoc when necessary**: Add comments only when they provide meaningful information beyond what the code itself conveys
+## Project Skills
 
-### Code Style
-- Follow Kotlin coding conventions
-- Use meaningful variable and function names that are self-documenting
-- Keep functions small and focused on a single responsibility
+- Android 관련 로컬 skill은 `.skills/android/` 아래에 있다.
+- Android 구현, 마이그레이션, 빌드 도구, 성능/R8 작업 전 관련 `SKILL.md`를 확인한다.
+- 현재 포함된 Android skills: `android-cli`, `migrate-xml-views-to-jetpack-compose`, `edge-to-edge`, `navigation-3`, `r8-analyzer`, `agp-9-upgrade`.
+- `android-cli` skill은 `android` 명령 설치가 필요하다. 사용 전 `command -v android`로 확인하고, 없으면 기존 Gradle/adb workflow를 사용한다.
+- `.claude/`는 Claude 전용 설정/플러그인 자료로 취급한다. 매 작업마다 필수로 읽지 말고, 사용자가 요청하거나 Claude 전용 설정을 다룰 때만 참고한다.
 
-## Development Notes
+## Serena
 
-### Data Layer Patterns
-- Repository pattern with data/domain/presentation separation in feature modules
-- API responses handled in `core/network` with centralized error handling
-- SharedPreferences used for local data persistence
+- Serena는 코드 구조 탐색, 심볼 검색, 참조 추적, 리팩터링이 필요할 때만 사용한다.
+- 단순 문서 수정, 작은 텍스트 변경, 디자인/기획/자료 정리 작업에서는 Serena를 사용하지 않는다.
+- `/Users/jeongjin-yong` 같은 넓은 상위 폴더를 Serena 프로젝트로 activate하지 않는다.
 
-### UI Patterns
-- Single Activity architecture with Navigation Component
-- Custom views for rating bars, hashtag displays, and image pickers
-- Material Design components with custom theming
+## Architecture And Resources
 
-### External Integrations
-- Deep linking support with Firebase Dynamic Links
-- Push notifications via Firebase Cloud Messaging
-- AdMob integration for monetization
-- Social login with Kakao and Google SDKs
+- 기존 MVVM/Clean Architecture 흐름과 모듈 경계를 유지한다.
+- 공통 문자열은 `core:common`, 공통 UI는 `core:ui`, 디자인 리소스는 `core:designsystem` 우선 원칙을 따른다.
+- 새 리소스를 만들기 전에 기존 리소스와 마이그레이션 규칙을 확인한다.
+- 프로젝트 기존 유틸리티와 패턴을 새 추상화보다 우선한다.
 
-## Resource Migration Guidelines
+## Coding Style
 
-This project follows Clean Architecture with strict resource management rules.
-See `MIGRATION_RULES.md` for comprehensive migration guidelines.
+- Kotlin coding conventions와 주변 코드 스타일을 따른다.
+- 의미 있는 이름과 작은 함수 단위를 선호한다.
+- 공개 API나 설명이 필요한 타입/함수에는 KDoc을 사용한다.
+- production code에 의미 없는 `//` 주석을 추가하지 않는다.
 
-### Quick Reference
-- **ALL strings**: `core:common/strings.xml` (centralized)
-- **Colors/Drawables**: `core:designsystem`
-- **Reusable UI**: `core:ui`
-- **ScaleRatingBar**: Access only through `core:ui`
+## Safety
 
-### Module Dependencies Template
-```gradle
-dependencies {
-    implementation project(':core:common')      
-    implementation project(':core:ui')          
-    implementation project(':core:designsystem')
-}
-```
-
-### Current Migration Status
-
-**Phase 2-1: String Resource Centralization** ✅ **COMPLETED**
-- All string resources have been moved to `core:common/strings.xml`
-- All modules now reference strings via `import com.threedollar.common.R as CommonR`
-- Feature modules (`home`, `my`, `community`, `login`) use `CommonR.string.xxx` syntax
-- App module manifest strings (`app_name_3dollar*`) remain in app module for AndroidManifest.xml
-- Google Services strings (`default_web_client_id`) remain in app module (auto-generated)
-
-### String Resource Usage
-```kotlin
-// In any module (except core:common itself):
-import com.threedollar.common.R as CommonR
-
-// Usage:
-getString(CommonR.string.your_string_name)
-showToast(CommonR.string.your_string_name)
-```
-
-### Important Migration Notes
-- Never create new resources without checking existing ones
-- Follow Clean Architecture dependency rules
-- Maintain module independence
-- See MIGRATION_RULES.md for detailed patterns
+- `local.properties`, 키스토어, API 키, Firebase/AdMob/지도/소셜 로그인 키 등 민감정보를 노출하지 않는다.
+- destructive git 명령은 사용자가 명시적으로 요청한 경우에만 수행한다.
+- 문서 변경은 사실을 코드베이스에서 확인한 뒤 반영한다.

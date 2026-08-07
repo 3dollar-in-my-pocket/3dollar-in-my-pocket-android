@@ -15,6 +15,7 @@ object EditStoreContract {
         val storeId: Int = 0,
         val storeName: String = "",
         val storeType: String? = null,
+        val photoCount: Int = 0,
         val address: String = "",
         val selectedLocation: LatLng? = null,
         val tempLocation: LatLng? = null,
@@ -31,7 +32,11 @@ object EditStoreContract {
         val hasLocationChanges: Boolean = false,
         val hasInfoChanges: Boolean = false,
         val hasMenuChanges: Boolean = false,
+        val pendingPhotos: List<PendingPhoto> = emptyList(),
+        val isPhotoUploading: Boolean = false,
         val showExitConfirmDialog: Boolean = false,
+        val showSubmitErrorDialog: Boolean = false,
+        val submitErrorMessage: String? = null,
         val selectedCategoryId: String? = null,
         val tempStoreName: String? = null,
         val tempStoreType: String? = null,
@@ -41,10 +46,19 @@ object EditStoreContract {
         val tempSelectCategoryList: List<SelectCategoryModel>? = null
     ) {
         val totalChangedCount: Int
-            get() = listOf(hasLocationChanges, hasInfoChanges, hasMenuChanges).count { it }
+            get() = listOf(hasLocationChanges, hasInfoChanges, hasMenuChanges, hasPhotoChanges).count { it }
+
+        val pendingPhotoCount: Int
+            get() = pendingPhotos.size
+
+        val totalPhotoCount: Int
+            get() = photoCount + pendingPhotoCount
+
+        val hasPhotoChanges: Boolean
+            get() = pendingPhotos.isNotEmpty()
 
         val hasAnyChanges: Boolean
-            get() = hasLocationChanges || hasInfoChanges || hasMenuChanges
+            get() = hasLocationChanges || hasInfoChanges || hasMenuChanges || hasPhotoChanges
 
         val menuCount: Int
             get() = selectCategoryList.sumOf { it.menuDetail?.size ?: 0 }
@@ -52,6 +66,13 @@ object EditStoreContract {
         val isSubmitEnabled: Boolean
             get() = hasAnyChanges && !isLoading
     }
+
+    data class PendingPhoto(
+        val id: String,
+        val uriString: String,
+        val cachedFilePath: String,
+        val displayName: String,
+    )
 
     enum class EditScreen {
         Selection,
@@ -96,9 +117,13 @@ object EditStoreContract {
         data class RemoveCategory(val category: CategoryModel) : Intent
         data object RemoveAllCategories : Intent
         data class SubmitEdit(val request: UserStoreModelRequest? = null) : Intent
+        data object RetrySubmit : Intent
 
         data class NavigateToScreen(val screen: EditScreen) : Intent
         data object NavigateBack : Intent
+        data object OpenPhotoPicker : Intent
+        data class AddPendingPhotos(val photos: List<PendingPhoto>) : Intent
+        data class RemovePendingPhoto(val photoId: String) : Intent
 
         data class UpdateStoreName(val name: String) : Intent
         data class UpdateStoreType(val type: String) : Intent
@@ -125,6 +150,7 @@ object EditStoreContract {
         data object ConfirmExit : Intent
 
         data object ClearError : Intent
+        data object DismissSubmitError : Intent
 
         data object StartInfoEdit : Intent
         data object ConfirmInfoChanges : Intent
@@ -141,6 +167,7 @@ object EditStoreContract {
         data class ShowToast(val message: String) : Effect
         data object NavigateToLocationEdit : Effect
         data object NavigateBack : Effect
+        data object LaunchPhotoPicker : Effect
         data object CloseScreen : Effect
     }
 }

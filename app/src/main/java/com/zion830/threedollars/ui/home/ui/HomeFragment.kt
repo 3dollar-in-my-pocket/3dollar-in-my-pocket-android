@@ -2,25 +2,30 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.core.content.IntentCompat
-import androidx.core.net.toUri
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.CustomEvent
@@ -32,52 +37,64 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
+import com.threedollar.common.serverdriven.ext.displayText
+import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
+import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.SDClickLogValue
+import com.threedollar.common.serverdriven.model.SDCustomActionModel
+import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.StoreActionBarModel
+import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.BOSS_STORE
-import com.threedollar.common.utils.SharedPrefUtils
+import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.UserStoreModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
+import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
-import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
-import com.zion830.threedollars.ui.home.data.HomeSortType
-import com.zion830.threedollars.ui.home.data.HomeStoreType
+import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
+import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
+import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
+import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
+import com.zion830.threedollars.utils.ShareFormat
+import com.zion830.threedollars.utils.SizeUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.isLocationAvailable
+import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
+import base.compose.AppTheme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
-import javax.inject.Inject
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
-
-    @Inject
-    lateinit var sharedPrefUtils: SharedPrefUtils
 
     override val viewModel: HomeViewModel by activityViewModels()
 
@@ -87,19 +104,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
 
-    private var homeStoreType = HomeStoreType.ALL
-    private var homeSortType = HomeSortType.DISTANCE_ASC
-
     private var hasRequestedLocationPermission = false
     private var locationPermissionDialog: AlertDialog? = null
 
     private var isFirstLoad = true
 
+    private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
+
+    private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            viewModel.closeStorePreview()
+        }
+    }
+
     private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { results ->
         when {
-            isGranted -> {
+            results[Manifest.permission.ACCESS_FINE_LOCATION] == true -> {
                 onLocationPermissionGranted()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
@@ -113,19 +135,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    // Android 13+ 알림 권한을 따로 요청하면 위치 권한 다이얼로그와 겹쳐 한쪽이 자동 거부될 수 있어 함께 요청한다.
+    private val startUpPermissions: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
     override fun initView() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
         initMap()
         initAdapter()
+        initFilterComposeView()
+        initHomeBottomSheetBehavior()
+        initHomeBottomSheetComposeView()
         initViewModel()
         initFlow()
         initButton()
         initScroll()
-        binding.filterConditionsSpeechBubbleLayout.isVisible = !sharedPrefUtils.getIsClickFilterConditions()
 
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
             startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
         }
+        consumeStorePreviewDeepLink()
     }
 
     private fun initScroll() {
@@ -161,7 +194,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initViewModel() {
         viewModel.getUserInfo()
-        viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
     }
 
     private fun initAdapter() {
@@ -234,6 +266,79 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun initFilterComposeView() {
+        binding.filterComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        binding.filterComposeView.setContent {
+            AppTheme {
+                val cells = viewModel.filterCells.collectAsStateWithLifecycle().value
+                HomeFilterChipsRow(
+                    cells = cells,
+                    contentPadding = PaddingValues(horizontal = 0.dp),
+                    onCategoryClick = {
+                        viewModel.sendClickCategoryFilter()
+                        showSelectCategoryDialog()
+                    },
+                    onRadioClick = viewModel::selectRadioOption,
+                    onActionClick = viewModel::handleActionLink,
+                    onCloseSelectedCategoryClick = viewModel::closeSelectedCategory,
+                )
+            }
+        }
+    }
+
+    private fun initHomeBottomSheetComposeView() {
+        binding.homeBottomSheetComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        binding.homeBottomSheetComposeView.setContent {
+            AppTheme {
+                val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
+                val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
+                HomeBottomSheetContent(
+                    homeListSection = homeListSection,
+                    storeScreen = storeScreen,
+                    onCardClick = ::moveHomeListCardDetail,
+                    onLoadNextPage = viewModel::fetchNextHomeListSection,
+                    onClosePreview = viewModel::closeStorePreview,
+                    onActionClick = ::handleStorePreviewAction,
+                    onFavoriteClick = ::toggleStorePreviewFavorite,
+                    onStorePreviewClick = ::moveStorePreviewDetail,
+                    onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
+                    fullListTopPx = homeBottomSheetFullListTopPx,
+                    onFullListBackgroundVisibleChange = { isVisible ->
+                        binding.homeFullListTopBackgroundView.isVisible = isVisible
+                    },
+                    onVisibleHeightChange = ::updateLocationButtonBottomMargin,
+                )
+            }
+        }
+    }
+
+    private fun initHomeBottomSheetBehavior() {
+        binding.homeBottomSheetComposeView.apply {
+            isVisible = true
+            elevation = SizeUtils.dpToPx(10f).toFloat()
+            bringToFront()
+            translationY = 0f
+        }
+        binding.homeFullListTopBackgroundView.isVisible = false
+        binding.root.doOnLayout { updateHomeBottomSheetFullListTop() }
+        binding.filterComposeView.doOnLayout { updateHomeBottomSheetFullListTop() }
+    }
+
+    private fun updateHomeBottomSheetFullListTop() {
+        homeBottomSheetFullListTopPx = binding.filterComposeView.bottom
+            .takeIf { it > 0 }
+            ?: SizeUtils.dpToPx(188f)
+    }
+
+    private fun updateLocationButtonBottomMargin(sheetVisibleHeightPx: Int) {
+        val bottomMarginPx = sheetVisibleHeightPx + SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP)
+        naverMapFragment.updateLocationButtonBottomMargin(bottomMarginPx)
+    }
+
     private fun initButton() {
         binding.layoutAddress.onSingleClick {
             viewModel.sendClickAddress()
@@ -242,36 +347,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 SearchAddressFragment.newInstance(),
                 SearchAddressFragment::class.java.name
             )
-        }
-
-        binding.allMenuTextView.onSingleClick {
-            viewModel.sendClickCategoryFilter()
-            showSelectCategoryDialog()
-        }
-
-        binding.filterConditionsTextView.onSingleClick {
-            sharedPrefUtils.setIsClickFilterConditions()
-            binding.filterConditionsSpeechBubbleLayout.isVisible = false
-            viewModel.updateFilterCondition(FilterConditionsTypeModel.RECENT_ACTIVITY)
-        }
-        binding.filterConditionsSpeechBubbleLayout.onSingleClick {
-            sharedPrefUtils.setIsClickFilterConditions()
-            binding.filterConditionsSpeechBubbleLayout.isVisible = false
-        }
-        binding.filterTextView.onSingleClick {
-            homeSortType = if (homeSortType == HomeSortType.DISTANCE_ASC) {
-                HomeSortType.LATEST
-            } else {
-                HomeSortType.DISTANCE_ASC
-            }
-            viewModel.sendClickSorting(homeSortType.name)
-            viewModel.updateHomeFilterEvent(homeSortType = homeSortType)
-        }
-
-        binding.bossFilterTextView.onSingleClick {
-            homeStoreType = if (homeStoreType == HomeStoreType.ALL) HomeStoreType.BOSS_STORE else HomeStoreType.ALL
-            viewModel.sendClickBossFilter(homeStoreType == HomeStoreType.BOSS_STORE)
-            viewModel.updateHomeFilterEvent(homeStoreType = homeStoreType)
         }
 
         binding.listViewTextView.onSingleClick {
@@ -287,14 +362,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initFlow() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState
-                        .map { it.selectedCategory }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectSelectedCategory(it)
-                        }
-                }
                 launch {
                     viewModel.userInfo.collect {
                         if (it.marketingConsent == "UNVERIFIED") {
@@ -312,34 +379,46 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.homeSortType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectHomeSortType(it)
-                        }
+                    viewModel.filterDeepLink.collect { link ->
+                        handleFilterDeepLink(link)
+                    }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.homeStoreType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectHomeStoreType(it)
+                    viewModel.homeListSection.collect { section ->
+                        val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+                        if (cards.isEmpty()) {
+                            naverMapFragment.clearMarker()
+                            return@collect
                         }
+                        naverMapFragment.addHomeListMarkers(
+                            drawableRes = DesignSystemR.drawable.ic_store_off,
+                            list = cards,
+                        ) { card ->
+                            viewModel.selectHomeListMarker(card)
+                        }
+                        updateHomeListMarkerSelection(cards, viewModel.selectedHomeListCardId.value)
+                    }
                 }
                 launch {
-                    viewModel.uiState
-                        .map { it.filterConditionsType }
-                        .distinctUntilChanged()
-                        .collect {
-                            collectFilterConditionsType(it)
-                        }
+                    viewModel.selectedHomeListCardId.collect { selectedCardId ->
+                        updateHomeListMarkerSelection(currentHomeListCards(), selectedCardId)
+                    }
+                }
+                launch {
+                    viewModel.selectedStoreScreen.collect { screen ->
+                        homeBackPressedCallback.isEnabled = screen != null
+                    }
                 }
                 launch {
                     viewModel.serverError.collect {
                         it?.let {
                             showToast(it)
                         }
+                    }
+                }
+                launch {
+                    viewModel.storePreviewToast.collect {
+                        showToast(it)
                     }
                 }
                 launch {
@@ -358,19 +437,252 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun loadImageUriIntoDrawable(imageUri: Uri, callback: (Drawable?) -> Unit) {
-        Glide.with(requireContext())
-            .load(imageUri)
-            .override(64)
-            .into(object : CustomTarget<Drawable>() {
-                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                    callback(resource)
+    private fun handleFilterDeepLink(link: SDLinkModel) {
+        val url = link.link
+        if (url.isBlank()) return
+        if (link.type == "APP_SCHEME") {
+            startActivity(
+                Intent(requireContext(), DynamicLinkActivity::class.java).apply {
+                    putExtra("link", url)
                 }
+            )
+        } else {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
+    }
 
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    callback(null)
-                }
-            })
+    private fun consumeStorePreviewDeepLink() {
+        val intent = requireActivity().intent
+        val storeId = intent.getLongExtra(DynamicLinkActivity.STORE_PREVIEW, 0L).takeIf { it > 0L } ?: return
+        intent.removeExtra(DynamicLinkActivity.STORE_PREVIEW)
+        viewModel.fetchStoreScreen(storeId)
+    }
+
+    private fun handleStorePreviewAction(actionBar: StoreActionBarModel) {
+        viewModel.sendStorePreviewActionLog(actionBar)
+        val button = actionBar.button
+        val link = button.link
+        if (link != null) {
+            handleStorePreviewLink(link)
+            return
+        }
+        button.customAction?.let(::handleStorePreviewCustomAction)
+    }
+
+    private fun handleStorePreviewLink(link: SDLinkModel) {
+        val url = link.link
+        if (url.isBlank()) return
+        if (link.type == "APP_SCHEME" && url.startsWith("/visit")) {
+            val storeId = url.queryValue("storeId")?.toIntOrNull() ?: return
+            moveStorePreviewVisit(storeId)
+            return
+        }
+        handleFilterDeepLink(link)
+    }
+
+    private fun handleStorePreviewCustomAction(customAction: SDCustomActionModel) {
+        when (customAction.actionType) {
+            "STORE_PREVIEW_SECTION_SHARE" -> shareStorePreview(customAction)
+            "STORE_PREVIEW_SECTION_NAVIGATION" -> showStorePreviewDirection(customAction)
+            "STORE_PREVIEW_SECTION_REVIEW_WRITE" -> moveStorePreviewReviewWrite(customAction)
+            "STORE_PREVIEW_SECTION_CLOSE" -> viewModel.closeStorePreview()
+        }
+    }
+
+    private fun toggleStorePreviewFavorite(isSubscriber: Boolean) {
+        val storeId = viewModel.selectedStorePreviewStoreId.value
+            ?: currentStorePreviewRoute()?.storeId
+            ?: return
+        if (isSubscriber) {
+            viewModel.deleteFavoriteFromStorePreview(storeId)
+        } else {
+            viewModel.putFavoriteFromStorePreview(storeId)
+        }
+    }
+
+    private fun moveStorePreviewReviewWrite(customAction: SDCustomActionModel) {
+        val route = currentStorePreviewRoute(
+            fallbackStoreId = customAction.extraParams.longValue("STORE_ID"),
+            fallbackStoreType = customAction.extraParams.stringValue("STORE_TYPE"),
+        ) ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(
+                context = requireContext(),
+                storeId = route.storeId.toInt(),
+                openReviewWrite = true,
+            )
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+    }
+
+    private fun moveStorePreviewPhotoAdd() {
+        val route = currentStorePreviewRoute() ?: return
+        startActivityForResult(
+            MoreImageActivity.getIntent(requireContext(), route.storeId.toInt()),
+            Constants.SHOW_STORE_BY_CATEGORY,
+        )
+    }
+
+    private fun canAddPhotoToStorePreview(): Boolean {
+        return currentStorePreviewRoute()?.storeType == USER_STORE
+    }
+
+    private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
+        viewModel.sendClickHomeListCard(card)
+        val route = HomeStorePreviewRoute.fromLink(
+            link = card.link?.link,
+            fallbackStoreId = card.storePreviewStoreIdOrNull(),
+            fallbackStoreType = card.storePreviewStoreTypeOrNull(),
+        ) ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+    }
+
+    private fun moveStorePreviewDetail() {
+        val route = currentStorePreviewRoute() ?: return
+        val intent = if (route.storeType == BOSS_STORE) {
+            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
+        } else {
+            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
+        }
+        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+    }
+
+    private fun shareStorePreview(customAction: SDCustomActionModel) {
+        val params = customAction.extraParams
+        val route = currentStorePreviewRoute(
+            fallbackStoreId = params.longValue("STORE_ID"),
+            fallbackStoreType = params.stringValue("STORE_TYPE"),
+        )
+        val storeId = route?.storeId?.toString()
+        val storeType = route?.storeType ?: USER_STORE
+        val storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle()
+        val currentCard = currentHomeListCard()
+        val latitude = params.doubleValue("LATITUDE") ?: currentCard?.marker?.location?.latitude
+        val longitude = params.doubleValue("LONGITUDE") ?: currentCard?.marker?.location?.longitude
+        if (storeId.isNullOrBlank() || latitude == null || longitude == null) {
+            showToast(getString(CommonR.string.exist_location_error))
+            return
+        }
+        val location = LatLng(latitude, longitude)
+        val kakaoType = if (storeType == BOSS_STORE) {
+            getString(CommonR.string.scheme_host_kakao_link_food_truck_type)
+        } else {
+            getString(CommonR.string.scheme_host_kakao_link_road_food_type)
+        }
+        requireContext().shareWithKakao(
+            shareFormat = ShareFormat(
+                url = getString(CommonR.string.kakao_map_format),
+                storeName = storeName,
+                location = location,
+            ),
+            title = if (storeType == BOSS_STORE) {
+                getString(CommonR.string.share_kakao_food_truck_title, storeName)
+            } else {
+                getString(CommonR.string.share_kakao_road_food_title, storeName)
+            },
+            description = if (storeType == BOSS_STORE) {
+                getString(CommonR.string.share_kakao_food_truck, storeName)
+            } else {
+                getString(CommonR.string.share_kakao_road_food, storeName)
+            },
+            imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
+            storeId = storeId,
+            type = kakaoType,
+        )
+    }
+
+    private fun moveStorePreviewVisit(storeId: Int) {
+        val args = currentStoreCertificationArgs(storeId) ?: run {
+            showToast(getString(CommonR.string.exist_location_error))
+            return
+        }
+        startActivityForResult(
+            StoreCertificationActivity.getIntent(requireContext(), args),
+            Constants.SHOW_STORE_BY_CATEGORY,
+        )
+    }
+
+    private fun showStorePreviewDirection(customAction: SDCustomActionModel) {
+        val params = customAction.extraParams
+        DirectionBottomDialog.getInstance(
+            latitude = params.doubleValue("LATITUDE"),
+            longitude = params.doubleValue("LONGITUDE"),
+            storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle(),
+        ).show(parentFragmentManager, "")
+    }
+
+    private fun currentStorePreviewTitle(): String {
+        return viewModel.selectedStoreScreen.value
+            ?.sections
+            ?.filterIsInstance<StoreSectionModel.Preview>()
+            ?.firstOrNull()
+            ?.header
+            ?.title
+            .displayText()
+            .orEmpty()
+    }
+
+    private fun currentStoreCertificationArgs(storeId: Int): StoreCertificationArgs? {
+        val card = currentHomeListCard()
+        val markerLocation = card?.marker?.location ?: return null
+        return StoreCertificationArgs(
+            storeId = storeId,
+            storeName = currentStorePreviewTitle().ifBlank { card.header.title.displayText() },
+            latitude = markerLocation.latitude,
+            longitude = markerLocation.longitude,
+            categories = card.metadata.primary.mapNotNull { chip ->
+                val name = chip.text.displayText().takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                StoreCertificationCategoryArgs(
+                    name = name,
+                    imageUrl = chip.image?.url.orEmpty(),
+                )
+            },
+        )
+    }
+
+    private fun currentHomeListCards(): List<HomeListCardModel.BasicCard> {
+        return viewModel.homeListSection.value.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+    }
+
+    private fun currentHomeListCard(): HomeListCardModel.BasicCard? {
+        val selectedCardId = viewModel.selectedHomeListCardId.value
+        return currentHomeListCards().firstOrNull { it.cardId == selectedCardId }
+    }
+
+    private fun currentStorePreviewRoute(
+        fallbackStoreId: Long? = null,
+        fallbackStoreType: String? = null,
+    ): HomeStorePreviewRoute? {
+        val card = currentHomeListCard()
+        return HomeStorePreviewRoute.fromLink(
+            link = card?.link?.link,
+            fallbackStoreId = fallbackStoreId
+                ?: viewModel.selectedStorePreviewStoreId.value
+                ?: card?.storePreviewStoreIdOrNull(),
+            fallbackStoreType = fallbackStoreType ?: card?.storePreviewStoreTypeOrNull(),
+        )
+    }
+
+    private fun updateHomeListMarkerSelection(
+        cards: List<HomeListCardModel.BasicCard>,
+        selectedCardId: String?,
+    ) {
+        cards.forEachIndexed { index, card ->
+            val selected = card.cardId == selectedCardId
+            naverMapFragment.updateHomeListMarkerIcon(
+                drawableRes = if (selected) DesignSystemR.drawable.ic_mappin_focused_on else DesignSystemR.drawable.ic_store_off,
+                position = index,
+                card = card,
+                isSelected = selected,
+            )
+        }
     }
 
     private fun showSelectCategoryDialog() {
@@ -433,13 +745,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun checkAndRequestLocationPermission() {
         when {
             isLocationAvailable() -> {
-                naverMapFragment.enableLocationTracking()
-                naverMapFragment.moveToCurrentLocation(false)
-                viewModel.fetchAroundStores()
+                loadHomeWithCurrentLocation(showAnim = false)
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 // 이전에 거부했지만 재요청 가능: 바로 권한 요청
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                locationPermissionLauncher.launch(startUpPermissions)
             }
             hasRequestedLocationPermission -> {
                 // "다시 묻지 않음" 상태: 설명 다이얼로그
@@ -448,7 +758,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             else -> {
                 // 첫 요청: 바로 권한 요청
                 hasRequestedLocationPermission = true
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                locationPermissionLauncher.launch(startUpPermissions)
             }
         }
     }
@@ -457,22 +767,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (isLocationAvailable()) {
             naverMapFragment.enableLocationTracking()
             val mapCenter = naverMapFragment.getMapCenterLatLng()
-            val currentLocation = naverMapFragment.currentPosition.value
-            naverMapFragment.moveToCurrentLocation(true)
-            val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
-            if (distance > 100f) {
-                binding.tvRetrySearch.isVisible = true
+            naverMapFragment.moveToCurrentLocation(true) { currentLocation ->
+                val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
+                if (distance > 100f) {
+                    binding.tvRetrySearch.isVisible = true
+                }
             }
         } else {
             showLocationPermissionDialog()
         }
     }
     
+    /**
+     * 현재 위치를 확인하지 못했을 때 사용할 위치로 지도를 이동한다.
+     *
+     * 마지막으로 확인된 위치가 있으면 그 위치를, 없으면 기본 위치(서울 중심)를 쓴다.
+     */
     private fun useDefaultLocation() {
-        naverMapFragment.moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+        val fallbackLocation = naverMapFragment.getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION
+        naverMapFragment.moveCamera(fallbackLocation)
 
-        viewModel.fetchAroundStores()
-        viewModel.getAdvertisement(latLng = NaverMapUtils.DEFAULT_LOCATION)
+        viewModel.fetchAroundStores(
+            mapPosition = fallbackLocation,
+            userLocation = fallbackLocation,
+        )
+        viewModel.getAdvertisement(latLng = fallbackLocation)
     }
     
     private fun showLocationPermissionDialog() {
@@ -489,7 +808,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 dialog.dismiss()
                 if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     // 재요청 가능한 상태: 권한 요청
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    locationPermissionLauncher.launch(startUpPermissions)
                 } else {
                     // "다시 묻지 않음" 상태: 설정 페이지로
                     requireContext().goToPermissionSetting()
@@ -506,38 +825,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
     
     private fun onLocationPermissionGranted() {
-        naverMapFragment.enableLocationTracking()
-        naverMapFragment.moveToCurrentLocation(true)
-        
-        lifecycleScope.launch {
-            delay(1000L)
-            val currentLocation = naverMapFragment.currentPosition.value
-            if (currentLocation != null) {
-                viewModel.fetchAroundStores()
-                viewModel.getAdvertisement(latLng = currentLocation)
-            }
-        }
+        loadHomeWithCurrentLocation(showAnim = true)
     }
 
-    private fun collectSelectedCategory(category: StoreCategoryItem?) {
-        val text = category?.name ?: getString(CommonR.string.fragment_home_all_menu)
-        val textColor = if (category == null) DesignSystemR.color.gray70 else DesignSystemR.color.pink
-        val background = if (category == null) DesignSystemR.drawable.rect_white_radius10_stroke_gray30 else DesignSystemR.drawable.rect_white_radius10_stroke_black_fill_black
-
-        binding.run {
-            allMenuTextView.text = text
-            allMenuTextView.setTextColor(resources.getColor(textColor, null))
-            allMenuTextView.setBackgroundResource(background)
-
-            if (category == null) {
-                allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(
-                    ContextCompat.getDrawable(requireContext(), DesignSystemR.drawable.ic_category), null, null, null
-                )
-            } else {
-                loadImageUriIntoDrawable(category.imageUrl.toUri()) { drawable ->
-                    allMenuTextView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                }
+    private fun loadHomeWithCurrentLocation(showAnim: Boolean) {
+        naverMapFragment.enableLocationTracking()
+        naverMapFragment.moveToCurrentLocation(showAnim) { currentLocation ->
+            if (currentLocation == null) {
+                useDefaultLocation()
+                return@moveToCurrentLocation
             }
+
+            viewModel.fetchAroundStores(
+                mapPosition = currentLocation,
+                userLocation = currentLocation,
+            )
+            viewModel.getAdvertisement(latLng = currentLocation)
         }
     }
 
@@ -568,40 +871,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    private fun collectHomeSortType(sortType: HomeSortType) {
-        binding.run {
-            filterTextView.text = if (sortType == HomeSortType.DISTANCE_ASC) {
-                getString(CommonR.string.fragment_home_filter_distance)
-            } else {
-                getString(CommonR.string.fragment_home_filter_latest)
-            }
-        }
-    }
-
-    private fun collectHomeStoreType(storeType: HomeStoreType) {
-        binding.run {
-            if (storeType == HomeStoreType.BOSS_STORE) {
-                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
-                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-            } else {
-                bossFilterTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
-                bossFilterTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-            }
-        }
-    }
-
-    private fun collectFilterConditionsType(list: List<FilterConditionsTypeModel>) {
-        binding.run {
-            if (list.contains(FilterConditionsTypeModel.RECENT_ACTIVITY)) {
-                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.pink, null))
-                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_radius10_pink100_stroke_pink)
-            } else {
-                filterConditionsTextView.setTextColor(resources.getColor(DesignSystemR.color.gray40, null))
-                filterConditionsTextView.setBackgroundResource(DesignSystemR.drawable.rect_white_radius10_stroke_gray30)
-            }
-        }
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -610,24 +879,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             naverMapFragment.onActivityResult(requestCode, resultCode, data)
         }
 
-        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY && resultCode == android.app.Activity.RESULT_OK) {
-            val isUpdated = data?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) ?: false
-            if (isUpdated && data != null) {
-                val userStore = IntentCompat.getSerializableExtra(data, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                userStore?.let {
-                    viewModel.updateStoreItem(it)
-                    naverMapFragment.updateMarkerPosition(
-                        it.storeId.toString(),
-                        it.location.latitude,
-                        it.location.longitude
-                    )
+        if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                data?.favoriteStateOrNull()?.let(viewModel::updateSelectedStorePreviewFavorite)
+                data?.takeIf { it.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) }?.let { result ->
+                    val userStore = IntentCompat.getSerializableExtra(result, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
+                    userStore?.let {
+                        viewModel.updateStoreItem(it)
+                        naverMapFragment.updateMarkerPosition(
+                            it.storeId.toString(),
+                            it.location.latitude,
+                            it.location.longitude
+                        )
+                    }
                 }
             }
+            refreshHomeAfterStoreUpdate()
         }
+    }
+
+    private fun refreshHomeAfterStoreUpdate() {
+        viewModel.refreshHomeListSectionAfterStoreUpdate()
+        if (viewModel.selectedStoreScreen.value == null) return
+        viewModel.refreshSelectedStorePreview()
     }
     
     override fun onResume() {
         super.onResume()
+        consumeStorePreviewDeepLink()
         // Check if permission was granted from settings
         if (hasRequestedLocationPermission && isLocationAvailable()) {
             onLocationPermissionGranted()
@@ -649,5 +928,46 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         super.onDestroy()
         locationPermissionDialog?.dismiss()
         locationPermissionDialog = null
+    }
+}
+
+private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryParameter(key)
+
+private fun Intent.favoriteStateOrNull(): Boolean? {
+    return if (hasExtra(StoreDetailActivity.EXTRA_IS_FAVORITE)) {
+        getBooleanExtra(StoreDetailActivity.EXTRA_IS_FAVORITE, false)
+    } else {
+        null
+    }
+}
+
+private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
+    return when (val value = this[key]) {
+        is SDClickLogValue.StringValue -> value.value
+        is SDClickLogValue.IntValue -> value.value.toString()
+        is SDClickLogValue.LongValue -> value.value.toString()
+        is SDClickLogValue.DoubleValue -> value.value.toString()
+        is SDClickLogValue.BoolValue -> value.value.toString()
+        SDClickLogValue.Null, null -> null
+    }
+}
+
+private fun Map<String, SDClickLogValue>.longValue(key: String): Long? {
+    return when (val value = this[key]) {
+        is SDClickLogValue.StringValue -> value.value.toLongOrNull()
+        is SDClickLogValue.IntValue -> value.value.toLong()
+        is SDClickLogValue.LongValue -> value.value
+        is SDClickLogValue.DoubleValue -> value.value.toLong()
+        is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
+    }
+}
+
+private fun Map<String, SDClickLogValue>.doubleValue(key: String): Double? {
+    return when (val value = this[key]) {
+        is SDClickLogValue.StringValue -> value.value.toDoubleOrNull()
+        is SDClickLogValue.IntValue -> value.value.toDouble()
+        is SDClickLogValue.LongValue -> value.value.toDouble()
+        is SDClickLogValue.DoubleValue -> value.value
+        is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
     }
 }

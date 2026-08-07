@@ -23,6 +23,9 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.domain.store.repository.StoreRepository
+import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
+import com.threedollar.network.sdui.model.section.SDSectionType
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
@@ -31,6 +34,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -39,8 +43,10 @@ import com.threedollar.common.R as CommonR
 
 // TODO : Edit 로직 분리 필요
 @HiltViewModel
-class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeRepository) :
-    BaseViewModel() {
+class StoreDetailViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val storeRepository: StoreRepository
+) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.STORE_DETAIL
 
@@ -77,6 +83,9 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
     private val _reviewSuccessEvent = MutableSharedFlow<Boolean>()
     val reviewSuccessEvent: SharedFlow<Boolean> get() = _reviewSuccessEvent
 
+    private val _relatedStoreSection = MutableStateFlow<SDRelatedStoresSectionModel?>(null)
+    val relatedStoreSection = _relatedStoreSection.asStateFlow()
+
     init {
         getReportReasons()
     }
@@ -90,6 +99,20 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         visitHistoriesCount: Int? = null,
         filterVisitStartDate: String,
     ) {
+        viewModelScope.launch {
+            storeRepository.getScreenStore(
+                storeId = storeId,
+                lat = deviceLatitude ?: 0.0,
+                lng = deviceLongitude ?: 0.0
+            ).onSuccess { ret ->
+                _relatedStoreSection.update {
+                    ret.sections?.find { it.type == SDSectionType.RELATED_STORES } as? SDRelatedStoresSectionModel
+                }
+            }.onFailure {
+                _reportReasons.update { null }
+            }
+        }
+
         viewModelScope.launch(coroutineExceptionHandler) {
             if (deviceLatitude != null && deviceLongitude != null) {
                 homeRepository.getUserStoreDetail(
@@ -129,7 +152,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun putStoreReview(reviewId: Int, content: String, rating: Int) {
+    fun putStoreReview(reviewId: Long, content: String, rating: Int) {
         if (content.isBlank()) {
             _addReviewResult.postValue(false)
             return
@@ -239,7 +262,7 @@ class StoreDetailViewModel @Inject constructor(private val homeRepository: HomeR
         }
     }
 
-    fun reportReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest) {
+    fun reportReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest) {
         viewModelScope.launch {
             homeRepository.reportStoreReview(storeId, reviewId, reportReviewModelRequest).collect {
                 if (it.ok) {

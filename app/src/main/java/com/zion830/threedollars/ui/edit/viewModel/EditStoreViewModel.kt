@@ -4,9 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
+import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
+import com.threedollar.domain.home.data.store.PostUserStoreModel
+import com.threedollar.domain.home.data.store.SaveImagesModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.repository.HomeRepository
@@ -16,8 +20,12 @@ import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.datasource.StoreDataSource
 import com.zion830.threedollars.datasource.model.v2.response.store.toStoreCategories
 import com.zion830.threedollars.utils.TimeUtils
-import kotlinx.coroutines.flow.collect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,6 +34,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +51,9 @@ class EditStoreViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<EditStoreContract.Effect>()
     val effect: SharedFlow<EditStoreContract.Effect> = _effect.asSharedFlow()
+    private var pendingStoreUpdateRetry = false
+    private var pendingPhotoUploadRetry = false
+    private var lastSubmitRequest: UserStoreModelRequest? = null
 
     init {
         loadAvailableCategories()
@@ -72,8 +86,12 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
             is EditStoreContract.Intent.RemoveAllCategories -> removeAllCategories()
             is EditStoreContract.Intent.SubmitEdit -> submitEdit(intent.request)
+            is EditStoreContract.Intent.RetrySubmit -> retrySubmit()
             is EditStoreContract.Intent.NavigateToScreen -> navigateToScreen(intent.screen)
             is EditStoreContract.Intent.NavigateBack -> navigateBack()
+            is EditStoreContract.Intent.OpenPhotoPicker -> openPhotoPicker()
+            is EditStoreContract.Intent.AddPendingPhotos -> addPendingPhotos(intent.photos)
+            is EditStoreContract.Intent.RemovePendingPhoto -> removePendingPhoto(intent.photoId)
             is EditStoreContract.Intent.UpdateStoreName -> updateStoreName(intent.name)
             is EditStoreContract.Intent.UpdateStoreType -> updateStoreType(intent.type)
             is EditStoreContract.Intent.TogglePaymentMethod -> togglePaymentMethod(intent.method)
@@ -89,6 +107,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.HideExitConfirmDialog -> hideExitConfirmDialog()
             is EditStoreContract.Intent.ConfirmExit -> confirmExit()
             is EditStoreContract.Intent.ClearError -> clearError()
+            is EditStoreContract.Intent.DismissSubmitError -> dismissSubmitError()
             is EditStoreContract.Intent.StartInfoEdit -> startInfoEdit()
             is EditStoreContract.Intent.ConfirmInfoChanges -> confirmInfoChanges()
             is EditStoreContract.Intent.CancelInfoEdit -> cancelInfoEdit()
@@ -120,7 +139,7 @@ class EditStoreViewModel @Inject constructor(
                 if (response.ok && storeDetail != null) {
                     initializeFromStoreDetail(storeDetail)
                 } else {
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(isLoading = false, isPhotoUploading = false) }
                     _effect.emit(EditStoreContract.Effect.ShowError(response.message ?: "Failed to load store"))
                 }
             }
@@ -148,6 +167,7 @@ class EditStoreViewModel @Inject constructor(
                 storeId = store.storeId,
                 storeName = store.name,
                 storeType = store.salesType.name,
+                photoCount = storeDetail.images.cursor.totalCount.toDefaultInt(),
                 selectedLocation = location,
                 address = store.address.fullAddress,
                 selectCategoryList = selectCategoryModelList,
@@ -155,7 +175,11 @@ class EditStoreViewModel @Inject constructor(
                 selectedDays = store.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = openingHours,
                 isLoading = false,
+                isPhotoUploading = false,
                 isInitialized = true,
+                pendingPhotos = emptyList(),
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
                 originalStoreData = EditStoreContract.OriginalStoreData(
                     storeName = store.name,
                     storeType = store.salesType.name,
@@ -176,6 +200,7 @@ class EditStoreViewModel @Inject constructor(
                 storeId = intent.storeId,
                 storeName = intent.storeName,
                 storeType = intent.storeType,
+                photoCount = 0,
                 selectedLocation = intent.location,
                 address = intent.address,
                 selectCategoryList = intent.categories,
@@ -183,6 +208,10 @@ class EditStoreViewModel @Inject constructor(
                 selectedDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
                 openingHours = intent.openingHours,
                 isInitialized = true,
+                pendingPhotos = emptyList(),
+                isPhotoUploading = false,
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
                 originalStoreData = EditStoreContract.OriginalStoreData(
                     storeName = intent.storeName,
                     storeType = intent.storeType,
@@ -408,26 +437,220 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun submitEdit(requestParam: UserStoreModelRequest? = null) {
-        val request = requestParam ?: buildSubmitRequest()
         val storeId = _state.value.storeId
         if (storeId == 0) return
-
-        _state.update { it.copy(isLoading = true, error = null) }
-        showLoading()
+        val request = requestParam ?: buildSubmitRequest()
+        lastSubmitRequest = request
 
         viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putUserStore(request, storeId).collect {
-                hideLoading()
-                if (it.ok) {
-                    _state.update { state -> state.copy(isLoading = false) }
-                    _effect.emit(EditStoreContract.Effect.StoreUpdated)
-                } else {
-                    _state.update { state -> state.copy(isLoading = false, error = it.message) }
-                    _effect.emit(EditStoreContract.Effect.ShowError(it.message ?: "Unknown error"))
-                    _serverError.emit(it.message)
-                }
-            }
+            submitEditInternal(
+                storeId = storeId,
+                request = request,
+                retryPendingOnly = false,
+            )
         }
+    }
+
+    private fun retrySubmit() {
+        val storeId = _state.value.storeId
+        if (storeId == 0) return
+        val request = lastSubmitRequest ?: buildSubmitRequest()
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            submitEditInternal(
+                storeId = storeId,
+                request = request,
+                retryPendingOnly = true,
+            )
+        }
+    }
+
+    private suspend fun submitEditInternal(
+        storeId: Int,
+        request: UserStoreModelRequest,
+        retryPendingOnly: Boolean,
+    ) = coroutineScope {
+        val currentState = _state.value
+        val hasFieldChanges = currentState.hasLocationChanges ||
+            currentState.hasInfoChanges ||
+            currentState.hasMenuChanges
+        val hasPendingRetry = pendingStoreUpdateRetry || pendingPhotoUploadRetry
+        val shouldUpdateStore = pendingStoreUpdateRetry ||
+            hasFieldChanges ||
+            (currentState.pendingPhotos.isNotEmpty() && !hasPendingRetry && !retryPendingOnly)
+        val shouldUploadPhotos = pendingPhotoUploadRetry || currentState.pendingPhotos.isNotEmpty()
+
+        if (!shouldUpdateStore && !shouldUploadPhotos) {
+            return@coroutineScope
+        }
+
+        val photoParts = if (shouldUploadPhotos) {
+            buildPendingPhotoParts(currentState.pendingPhotos)
+        } else {
+            emptyList()
+        }
+
+        if (shouldUploadPhotos && photoParts == null) {
+            pendingStoreUpdateRetry = shouldUpdateStore
+            pendingPhotoUploadRetry = true
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    isPhotoUploading = false,
+                    showSubmitErrorDialog = true,
+                    submitErrorMessage = "사진 파일을 다시 선택한 뒤 재시도해주세요.",
+                )
+            }
+            return@coroutineScope
+        }
+
+        pendingStoreUpdateRetry = shouldUpdateStore
+        pendingPhotoUploadRetry = shouldUploadPhotos
+        _state.update {
+            it.copy(
+                isLoading = true,
+                isPhotoUploading = shouldUploadPhotos,
+                error = null,
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
+            )
+        }
+        showLoading()
+
+        val storeDeferred = if (shouldUpdateStore) {
+            async {
+                runCatching {
+                    homeRepository.putUserStore(request, storeId).first()
+                }.getOrNull()
+            }
+        } else {
+            null
+        }
+        val photoDeferred = if (shouldUploadPhotos) {
+            async {
+                runCatching {
+                    homeRepository.saveImages(photoParts.orEmpty(), storeId)
+                }.getOrNull()
+            }
+        } else {
+            null
+        }
+
+        val storeResult = storeDeferred?.await()
+        val photoResult = photoDeferred?.await()
+        hideLoading()
+        handleSubmitResults(
+            shouldUpdateStore = shouldUpdateStore,
+            shouldUploadPhotos = shouldUploadPhotos,
+            storeResult = storeResult,
+            photoResult = photoResult,
+        )
+    }
+
+    private suspend fun handleSubmitResults(
+        shouldUpdateStore: Boolean,
+        shouldUploadPhotos: Boolean,
+        storeResult: BaseResponse<PostUserStoreModel>?,
+        photoResult: BaseResponse<List<SaveImagesModel>>?,
+    ) {
+        val storeSuccess = !shouldUpdateStore || storeResult?.ok == true
+        val photoSuccess = !shouldUploadPhotos || photoResult?.ok == true
+        var nextState = _state.value.copy(
+            isLoading = false,
+            isPhotoUploading = false,
+        )
+
+        if (storeSuccess && shouldUpdateStore) {
+            pendingStoreUpdateRetry = false
+            nextState = syncStateAfterStoreUpdate(nextState)
+        }
+
+        if (photoSuccess && shouldUploadPhotos) {
+            pendingPhotoUploadRetry = false
+            nextState = syncStateAfterPhotoUpload(nextState)
+        }
+
+        if (storeSuccess && photoSuccess) {
+            lastSubmitRequest = null
+            _state.update {
+                nextState.copy(
+                    showSubmitErrorDialog = false,
+                    submitErrorMessage = null,
+                )
+            }
+            _effect.emit(EditStoreContract.Effect.StoreUpdated)
+            return
+        }
+
+        pendingStoreUpdateRetry = shouldUpdateStore && !storeSuccess
+        pendingPhotoUploadRetry = shouldUploadPhotos && !photoSuccess
+        _state.update {
+            nextState.copy(
+                showSubmitErrorDialog = true,
+                submitErrorMessage = buildSubmitErrorMessage(
+                    storeResult = storeResult,
+                    photoResult = photoResult,
+                ),
+            )
+        }
+    }
+
+    private fun syncStateAfterStoreUpdate(state: EditStoreContract.State): EditStoreContract.State {
+        val updatedOriginal = EditStoreContract.OriginalStoreData(
+            storeName = state.storeName,
+            storeType = state.storeType,
+            location = state.selectedLocation,
+            address = state.address,
+            paymentMethods = state.selectedPaymentMethods,
+            appearanceDays = state.selectedDays,
+            openingHours = state.openingHours,
+            categories = state.selectCategoryList,
+        )
+
+        return state.copy(
+            originalStoreData = updatedOriginal,
+            hasLocationChanges = false,
+            hasInfoChanges = false,
+            hasMenuChanges = false,
+        )
+    }
+
+    private fun syncStateAfterPhotoUpload(state: EditStoreContract.State): EditStoreContract.State {
+        return state.copy(
+            photoCount = state.photoCount + state.pendingPhotoCount,
+            pendingPhotos = emptyList(),
+        )
+    }
+
+    private fun buildPendingPhotoParts(
+        pendingPhotos: List<EditStoreContract.PendingPhoto>,
+    ): List<MultipartBody.Part>? {
+        val parts = mutableListOf<MultipartBody.Part>()
+        pendingPhotos.forEach { photo ->
+            val file = File(photo.cachedFilePath)
+            if (!file.exists()) {
+                return null
+            }
+            val requestFile = file.asRequestBody("image/*".toMediaType())
+            parts.add(
+                MultipartBody.Part.createFormData(
+                    "images",
+                    photo.displayName.ifEmpty { file.name },
+                    requestFile,
+                )
+            )
+        }
+        return parts
+    }
+
+    private fun buildSubmitErrorMessage(
+        storeResult: BaseResponse<PostUserStoreModel>?,
+        photoResult: BaseResponse<List<SaveImagesModel>>?,
+    ): String {
+        return listOfNotNull(
+            storeResult?.message?.takeIf { it.isNotBlank() },
+            photoResult?.message?.takeIf { it.isNotBlank() },
+        ).firstOrNull() ?: "가게 정보 수정 또는 사진 업로드에 실패했어요. 다시 시도해주세요."
     }
 
     private fun navigateToScreen(screen: EditStoreContract.EditScreen) {
@@ -459,6 +682,33 @@ class EditStoreViewModel @Inject constructor(
             }
         } else {
             _state.update { it.copy(currentScreen = EditStoreContract.EditScreen.Selection) }
+        }
+    }
+
+    private fun openPhotoPicker() {
+        viewModelScope.launch {
+            _effect.emit(EditStoreContract.Effect.LaunchPhotoPicker)
+        }
+    }
+
+    private fun addPendingPhotos(photos: List<EditStoreContract.PendingPhoto>) {
+        _state.update { currentState ->
+            val existingUris = currentState.pendingPhotos.map { it.uriString }.toSet()
+            val deduplicatedPhotos = photos.filterNot { it.uriString in existingUris }
+
+            currentState.copy(
+                pendingPhotos = currentState.pendingPhotos + deduplicatedPhotos,
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
+            )
+        }
+    }
+
+    private fun removePendingPhoto(photoId: String) {
+        _state.update { currentState ->
+            currentState.copy(
+                pendingPhotos = currentState.pendingPhotos.filterNot { it.id == photoId }
+            )
         }
     }
 
@@ -588,7 +838,22 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun clearError() {
-        _state.update { it.copy(error = null) }
+        _state.update {
+            it.copy(
+                error = null,
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
+            )
+        }
+    }
+
+    private fun dismissSubmitError() {
+        _state.update {
+            it.copy(
+                showSubmitErrorDialog = false,
+                submitErrorMessage = null,
+            )
+        }
     }
 
     private fun startInfoEdit() {

@@ -6,13 +6,19 @@ on:
       - 'release/**'
     types:
       - closed
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: '배포 노트 (비우면 해당 브랜치 최근 커밋 20개를 사용)'
+        required: false
+        type: string
 
 env:
   JAVA_VERSION: '17'
 
 jobs:
   build-and-distribute:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -61,26 +67,51 @@ jobs:
           APK_PATH=$(find app/build/outputs/apk -name "*.apk" -type f | head -1)
           echo "path=$APK_PATH" >> $GITHUB_OUTPUT
 
-      - name: Get PR commits for release notes
+      - name: Build release notes
         id: release_notes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          MANUAL_NOTES: ${{ github.event.inputs.release_notes }}
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_TITLE="${{ github.event.pull_request.title }}"
-
-          COMMITS=$(git log --pretty=format:"- %s" ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | head -20)
-
           VERSION=$(grep "version_name=" gradle.properties | cut -d'=' -f2)
+          VERSION_CODE=$(grep -E '^version_code=' gradle.properties | cut -d'=' -f2)
 
-          RELEASE_NOTES="PR #${PR_NUMBER}: ${PR_TITLE}
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            HEADLINE="수동 배포: ${GITHUB_REF_NAME}"
+            SOURCE="$GITHUB_REF_NAME"
+            LINK="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            if [ -n "$MANUAL_NOTES" ]; then
+              BODY="$MANUAL_NOTES"
+            else
+              BODY=$(git log --pretty=format:"- %s" -20)
+            fi
+          else
+            HEADLINE="PR #${PR_NUMBER}: ${PR_TITLE}"
+            SOURCE="$BASE_REF"
+            LINK="$PR_URL"
+            BODY=$(git log --pretty=format:"- %s" "${BASE_SHA}..${HEAD_SHA}" | head -20)
+          fi
+
+          RELEASE_NOTES="${HEADLINE}
           Version: ${VERSION}
 
           Changes:
-          ${COMMITS}"
+          ${BODY}"
 
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "headline=$HEADLINE" >> $GITHUB_OUTPUT
+          echo "source=$SOURCE" >> $GITHUB_OUTPUT
+          echo "link=$LINK" >> $GITHUB_OUTPUT
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -110,14 +141,14 @@ jobs:
                   "type": "section",
                   "fields": [
                     {"type": "mrkdwn", "text": "*Version:*\n${{ steps.release_notes.outputs.version }}"},
-                    {"type": "mrkdwn", "text": "*Branch:*\n${{ github.event.pull_request.base.ref }}"}
+                    {"type": "mrkdwn", "text": "*Branch:*\n${{ steps.release_notes.outputs.source }}"}
                   ]
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*PR:* <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}>"
+                    "text": "*Source:* <${{ steps.release_notes.outputs.link }}|${{ steps.release_notes.outputs.headline }}>"
                   }
                 }
               ]
@@ -125,6 +156,61 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Discord on Success
+        if: success()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          VERSION: ${{ steps.release_notes.outputs.version }}
+          BUILD: ${{ steps.release_notes.outputs.version_code }}
+          BRANCH: ${{ steps.release_notes.outputs.source }}
+          WORKFLOW: ${{ github.workflow }}
+          SOURCE_URL: ${{ steps.release_notes.outputs.link }}
+        run: |
+          SHORT_SHA="$(git rev-parse --short=7 HEAD)"
+          COMMIT_MSG="$(git log -1 --pretty=%B)"
+
+          PAYLOAD="$(VERSION="$VERSION" BUILD="$BUILD" BRANCH="$BRANCH" \
+            WORKFLOW="$WORKFLOW" SHORT_SHA="$SHORT_SHA" COMMIT_MSG="$COMMIT_MSG" \
+            SOURCE_URL="$SOURCE_URL" \
+            python3 - <<'PY'
+          import os, json
+
+          version  = os.environ.get("VERSION") or "-"
+          build    = os.environ.get("BUILD") or "-"
+          branch   = os.environ.get("BRANCH") or "-"
+          workflow = os.environ.get("WORKFLOW") or "-"
+          sha      = os.environ.get("SHORT_SHA") or "-"
+          url      = os.environ.get("SOURCE_URL") or ""
+          # Discord embed description은 4096자 제한이라 넉넉히 자른다
+          msg      = (os.environ.get("COMMIT_MSG") or "").strip()[:1500] or "-"
+
+          embed = {
+              "title": "🤖 [AOS] Firebase App Distribution 업로드",
+              "color": 5814783,
+              "fields": [
+                  {"name": "버전",       "value": f"{version} ({build})", "inline": True},
+                  {"name": "브랜치",     "value": branch,                 "inline": True},
+                  {"name": "워크플로우", "value": workflow,               "inline": True},
+              ],
+              "description": f"**커밋** `{sha}`\n```\n{msg}\n```",
+          }
+          if url:
+              embed["url"] = url
+
+          print(json.dumps({
+              "username": "GitHub Actions",
+              "allowed_mentions": {"parse": []},
+              "embeds": [embed],
+          }))
+          PY
+          )"
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null
 
       - name: Notify Slack on Failure
         if: failure()
@@ -150,3 +236,28 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Discord on Failure
+        if: failure()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg workflow_url "$WORKFLOW_URL" \
+            '{
+              username: "GitHub Actions",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: "❌ [AOS] Firebase App Distribution 실패",
+                color: 15158332,
+                url: $workflow_url,
+                description: ("[워크플로 실행 결과 확인](" + $workflow_url + ")")
+              }]
+            }')
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null

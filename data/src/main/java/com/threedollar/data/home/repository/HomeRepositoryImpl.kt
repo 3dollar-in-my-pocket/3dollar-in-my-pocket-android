@@ -32,7 +32,6 @@ import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.domain.home.request.PlaceType
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -60,24 +59,20 @@ class HomeRepositoryImpl @Inject constructor(
         distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
-        sortType: String,
-        filterCertifiedStores: Boolean?,
-        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
+        dynamicParams: Map<String, String>,
     ): Flow<BaseResponse<AroundStoreModel>> = homeRemoteDataSource.getAroundStores(
         distanceM = distanceM,
         categoryIds = categoryIds,
         targetStores = targetStores,
-        sortType = sortType,
-        filterCertifiedStores = filterCertifiedStores,
-        filterConditionsType = filterConditionsTypeModel.map { it.asType() },
         mapLatitude = mapLatitude,
         mapLongitude = mapLongitude,
         deviceLatitude = deviceLatitude,
         deviceLongitude = deviceLongitude,
+        dynamicParams = dynamicParams,
     ).map {
         BaseResponse(
             ok = it.ok,
@@ -268,7 +263,7 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
+    override fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
         homeRemoteDataSource.putStoreReview(reviewId, StoreReviewRequest(contents = contents, rating = rating)).map {
             BaseResponse(
                 ok = it.ok,
@@ -316,7 +311,7 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
+    override fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>> =
         homeRemoteDataSource.reportStoreReview(storeId, reviewId, reportReviewModelRequest.asRequest())
 
     override fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>> =

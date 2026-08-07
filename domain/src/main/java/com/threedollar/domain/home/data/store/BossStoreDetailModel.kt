@@ -5,6 +5,7 @@ data class BossStoreDetailModel(
     val distanceM: Int = 0,
     val favoriteModel: FavoriteModel = FavoriteModel(),
     val feedbackModels: List<FeedbackModel> = listOf(),
+    val lastContributor: CreatorModel = CreatorModel(),
     val openStatusModel: OpenStatusModel = OpenStatusModel(),
     val store: BossStoreModel = BossStoreModel(),
     val tags: TagsModel = TagsModel(),
@@ -12,4 +13,5 @@ data class BossStoreDetailModel(
     val reviews: List<ReviewContentModel> = listOf(),
     val reviewTotalCount: Int = 0,
     val hasMoreReviews: Boolean = false,
+    val uniqueContributorCount: Int = 0,
 )

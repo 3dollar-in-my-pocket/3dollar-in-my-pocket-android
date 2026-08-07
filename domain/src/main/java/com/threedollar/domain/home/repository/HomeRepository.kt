@@ -20,7 +20,6 @@ import com.threedollar.domain.home.data.store.SaveImagesModel
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.user.UserModel
-import com.threedollar.domain.home.request.FilterConditionsTypeModel
 import com.threedollar.domain.home.request.PlaceRequest
 import com.threedollar.domain.home.request.PlaceType
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -35,13 +34,11 @@ interface HomeRepository {
         distanceM:Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
-        sortType: String,
-        filterCertifiedStores: Boolean?,
-        filterConditionsTypeModel: List<FilterConditionsTypeModel>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
+        dynamicParams: Map<String, String> = emptyMap(),
     ): Flow<BaseResponse<AroundStoreModel>>
 
     fun getBossStoreDetail(bossStoreId: String, deviceLatitude: Double, deviceLongitude: Double): Flow<BaseResponse<BossStoreDetailModel>>
@@ -91,7 +88,7 @@ interface HomeRepository {
 
     fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
 
-    fun putStoreReview(reviewId: Int, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
+    fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
 
     fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
 
@@ -102,7 +99,7 @@ interface HomeRepository {
     fun putUserStore(userStoreModelRequest: UserStoreModelRequest, storeId: Int): Flow<BaseResponse<PostUserStoreModel>>
 
 
-    fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
+    fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewModelRequest: ReportReviewModelRequest): Flow<BaseResponse<String>>
 
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
 

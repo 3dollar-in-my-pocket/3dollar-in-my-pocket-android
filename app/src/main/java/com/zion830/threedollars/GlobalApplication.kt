@@ -15,9 +15,15 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.utils.GlobalEvent
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 @HiltAndroidApp
 class GlobalApplication : Application() {
@@ -56,14 +62,21 @@ class GlobalApplication : Application() {
         }
     }
 
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         APPLICATION_CONTEXT = applicationContext
         eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
         LogManager.initialize(eventTracker)
+        com.threedollar.common.analytics.SDClickLogger.initialize(eventTracker)
 
-        RequestConfiguration.Builder().setTestDeviceIds(listOf(DEVICE_ID_EMULATOR)).build()
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(listOf(DEVICE_ID_EMULATOR))
+                .build()
+        )
         MobileAds.initialize(this)
         KakaoSdk.init(this, BuildConfig.KAKAO_KEY)
         NaverMapSdk.getInstance(this).client =
@@ -72,5 +85,24 @@ class GlobalApplication : Application() {
         if (isLoggedIn) {
             loginPlatform = LoginType.of(LegacySharedPrefUtils.getLoginType())
         }
+
+        observeSessionExpired()
+    }
+
+    // 딥링크/푸시 진입 화면은 MainActivity가 아닐 수 있어 세션 만료(401)는 프로세스 단위로 관찰한다.
+    private fun observeSessionExpired() {
+        applicationScope.launch {
+            GlobalEvent.logoutEvent.collect { isSessionExpired ->
+                if (isSessionExpired) {
+                    moveToLoginBySessionExpired()
+                }
+            }
+        }
+    }
+
+    private fun moveToLoginBySessionExpired() {
+        LegacySharedPrefUtils.clearUserInfo()
+        loginPlatform = LoginType.NONE
+        startActivity(LoginActivity.getSessionExpiredIntent(this))
     }
 }

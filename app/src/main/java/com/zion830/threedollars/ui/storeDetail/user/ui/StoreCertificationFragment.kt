@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.user.ui
 
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -45,6 +46,9 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
             arguments?.getSerializable(USER_STORE_MODEL) as? UserStoreModel
         }
     }
+    private val finishActivityOnClose: Boolean by lazy {
+        arguments?.getBoolean(FINISH_ACTIVITY_ON_CLOSE, false) ?: false
+    }
 
     override fun initView() {
         minX = binding.progressIndicator.x
@@ -76,7 +80,7 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
 
     private fun initButton() {
         binding.ibClose.onSingleClick {
-            requireActivity().supportFragmentManager.popBackStack()
+            closeCertificationFlow()
         }
     }
 
@@ -101,10 +105,19 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         requireActivity().supportFragmentManager.popBackStack()
         requireActivity().supportFragmentManager.addNewFragment(
             R.id.container,
-            StoreCertificationAvailableFragment.getInstance(userStoreModel),
+            StoreCertificationAvailableFragment.getInstance(userStoreModel, finishActivityOnClose),
             StoreCertificationAvailableFragment::class.java.name,
             false
         )
+    }
+
+    private fun closeCertificationFlow() {
+        if (finishActivityOnClose) {
+            requireActivity().setResult(Activity.RESULT_CANCELED)
+            requireActivity().finish()
+        } else {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun initTextView() {
@@ -125,12 +138,19 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
 
     companion object {
         private const val USER_STORE_MODEL = "userStoreModel"
-        fun getInstance(userStoreModel: UserStoreModel?) = StoreCertificationFragment().apply {
-            userStoreModel?.let {
-                val bundle = Bundle()
-                bundle.putSerializable(USER_STORE_MODEL, userStoreModel)
-                arguments = bundle
+        private const val FINISH_ACTIVITY_ON_CLOSE = "finishActivityOnClose"
+
+        fun getInstance(
+            userStoreModel: UserStoreModel?,
+            finishActivityOnClose: Boolean = false,
+        ) = StoreCertificationFragment().apply {
+            val bundle = Bundle().apply {
+                putBoolean(FINISH_ACTIVITY_ON_CLOSE, finishActivityOnClose)
+                userStoreModel?.let {
+                    putSerializable(USER_STORE_MODEL, userStoreModel)
+                }
             }
+            arguments = bundle
         }
     }
 }

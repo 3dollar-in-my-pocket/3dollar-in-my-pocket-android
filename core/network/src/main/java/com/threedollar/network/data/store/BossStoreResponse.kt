@@ -15,8 +15,12 @@ data class BossStoreResponse(
     val store: BossStore = BossStore(),
     @SerializedName("tags")
     val tags: Tags? = Tags(),
+    @SerializedName("lastContributor")
+    val lastContributor: Creator? = Creator(),
     @SerializedName("newsPosts")
     val newsPosts: ContentsWithCursorWithTotalCountResponse<NewsPost>? = ContentsWithCursorWithTotalCountResponse(),
     @SerializedName("reviews")
-    val reviews: ContentsWithCursorWithTotalCountResponse<StoreReviewDetailResponse>? = ContentsWithCursorWithTotalCountResponse()
+    val reviews: ContentsWithCursorWithTotalCountResponse<StoreReviewDetailResponse>? = ContentsWithCursorWithTotalCountResponse(),
+    @SerializedName("uniqueContributorCount")
+    val uniqueContributorCount: Int? = 0,
 )

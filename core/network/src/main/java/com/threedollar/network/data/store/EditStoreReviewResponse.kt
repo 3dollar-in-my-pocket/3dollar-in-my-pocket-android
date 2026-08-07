@@ -11,7 +11,7 @@ data class EditStoreReviewResponse(
     @SerializedName("rating")
     val rating: Int? = null,
     @SerializedName("reviewId")
-    val reviewId: Int? = null,
+    val reviewId: Long? = null,
     @SerializedName("status")
     val status: String? = null,
     @SerializedName("storeId")

@@ -20,7 +20,6 @@ import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
-import com.threedollar.network.request.FilterConditionsType
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PlaceType
@@ -48,13 +47,11 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         distanceM: Double,
         categoryIds: Array<String>?,
         targetStores: Array<String>?,
-        sortType: String,
-        filterCertifiedStores: Boolean?,
-        filterConditionsType: List<FilterConditionsType>,
         mapLatitude: Double,
         mapLongitude: Double,
         deviceLatitude: Double,
         deviceLongitude: Double,
+        dynamicParams: Map<String, String>,
     ): Flow<BaseResponse<AroundStoreResponse>> = flow {
         emit(
             apiResult(
@@ -62,13 +59,11 @@ class HomeRemoteDataSourceImpl @Inject constructor(
                     distanceM = if (distanceM.isNaN() || distanceM <= 0) 100000.0 else distanceM,
                     categoryIds = categoryIds,
                     targetStores = targetStores,
-                    sortType = sortType,
-                    filterCertifiedStores = filterCertifiedStores,
-                    filterConditions = filterConditionsType.map { it.name },
                     mapLatitude = mapLatitude,
                     mapLongitude = mapLongitude,
                     deviceLatitude = deviceLatitude,
                     deviceLongitude = deviceLongitude,
+                    dynamicParams = dynamicParams,
                 )
             )
         )
@@ -186,7 +181,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.postStoreReview(storeReviewRequest)))
     }
 
-    override fun putStoreReview(reviewId: Int, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>> = flow {
+    override fun putStoreReview(reviewId: Long, storeReviewRequest: StoreReviewRequest): Flow<BaseResponse<EditStoreReviewResponse>> = flow {
         emit(apiResult(serverApi.putStoreReview(reviewId, storeReviewRequest)))
     }
 
@@ -197,9 +192,8 @@ class HomeRemoteDataSourceImpl @Inject constructor(
             mapLongitude = mapLongitude,
             deviceLatitude = mapLatitude,
             deviceLongitude = mapLongitude,
-            sortType = "DISTANCE_ASC",
-            filterCertifiedStores = null,
-            categoryIds = null
+            categoryIds = null,
+            dynamicParams = mapOf("sortType" to "DISTANCE_ASC"),
         )))
     }
 
@@ -211,7 +205,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.putUserStore(userStoreRequest = userStoreRequest, storeId = storeId)))
     }
 
-    override fun reportStoreReview(storeId: Int, reviewId: Int, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>> = flow {
+    override fun reportStoreReview(storeId: Int, reviewId: Long, reportReviewRequest: ReportReviewRequest): Flow<BaseResponse<String>> = flow {
         emit(apiResult(serverApi.reportStoreReview(storeId, reviewId, reportReviewRequest)))
     }
 

@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -28,6 +30,7 @@ import com.threedollar.domain.home.data.store.BossStoreDetailModel
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.FeedbackType
 import com.threedollar.domain.home.data.store.ImageModel
+import com.threedollar.domain.home.data.store.MenuModel
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.StatusType
 import com.naver.maps.geometry.LatLng
@@ -54,6 +57,7 @@ import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.AppearanceDayRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.BossMenuRecyclerAdapter
 import com.zion830.threedollars.ui.storeDetail.boss.adapter.FeedbackRecyclerAdapter
@@ -61,11 +65,12 @@ import com.zion830.threedollars.ui.storeDetail.boss.adapter.FoodTruckReviewAdapt
 import com.zion830.threedollars.ui.storeDetail.boss.listener.OnReviewImageClickListener
 import com.zion830.threedollars.ui.storeDetail.boss.ui.compose.VerifiedStoreBanner
 import com.zion830.threedollars.ui.storeDetail.boss.viewModel.BossStoreDetailViewModel
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
 import com.zion830.threedollars.utils.SizeUtils.dpToPx
 import com.zion830.threedollars.utils.SpaceItemDecoration
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.shareWithKakao
@@ -76,6 +81,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.ext.textPartTypeface
 
 @AndroidEntryPoint
 class BossStoreDetailActivity :
@@ -86,9 +92,14 @@ class BossStoreDetailActivity :
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val foodTruckMenuAdapter: BossMenuRecyclerAdapter by lazy {
-        BossMenuRecyclerAdapter {
-            foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
-        }
+        BossMenuRecyclerAdapter(
+            onMoreClick = {
+                foodTruckMenuAdapter.submitList(viewModel.bossStoreDetailModel.value.store.menus)
+            },
+            onMenuImageClick = { menu, position ->
+                openMenuImageDialog(menu, position)
+            },
+        )
     }
     private val appearanceDayAdapter: AppearanceDayRecyclerAdapter by lazy {
         AppearanceDayRecyclerAdapter()
@@ -152,9 +163,41 @@ class BossStoreDetailActivity :
         )
     }
 
+    private val reviewWriteLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            lifecycleScope.launch {
+                kotlinx.coroutines.delay(500L)
+                try {
+                    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                        viewModel.getFoodTruckStoreDetail(
+                            bossStoreId = storeId,
+                            latitude = location?.latitude ?: 0.0,
+                            longitude = location?.longitude ?: 0.0,
+                        )
+                    }.addOnFailureListener {
+                        viewModel.getFoodTruckStoreDetail(
+                            bossStoreId = storeId,
+                            latitude = 0.0,
+                            longitude = 0.0,
+                        )
+                    }
+                } catch (e: SecurityException) {
+                    viewModel.getFoodTruckStoreDetail(
+                        bossStoreId = storeId,
+                        latitude = 0.0,
+                        longitude = 0.0,
+                    )
+                }
+            }
+        }
+    }
+
     private var storeId = ""
     private var latitude = 0.0
     private var longitude = 0.0
+    private var currentFavoriteState: Boolean? = null
 
     private val naverMapFragment: StoreDetailNaverMapFragment by lazy {
         StoreDetailNaverMapFragment()
@@ -162,8 +205,7 @@ class BossStoreDetailActivity :
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
     }
     private val appearanceDayModels = listOf(
@@ -234,7 +276,7 @@ class BossStoreDetailActivity :
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getStringExtra(STORE_ID).toString()
         try {
-            if (isLocationAvailable() && isGpsAvailable()) {
+            if (isLocationAvailable() && isLocationServiceEnabled()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location != null) {
                         viewModel.getFoodTruckStoreDetail(
@@ -257,8 +299,7 @@ class BossStoreDetailActivity :
 
     private fun initButton() {
         binding.btnBack.onSingleClick {
-            setResult(RESULT_OK)
-            finish()
+            finishWithResult()
         }
         binding.bottomReviewTextView.onSingleClick {
             viewModel.sendClickWriteReview()
@@ -301,6 +342,7 @@ class BossStoreDetailActivity :
             viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
+        binding.contributorSummaryLayout.isVisible = false
 
         binding.favoriteButton.onSingleClick {
             clickFavoriteButton()
@@ -320,6 +362,24 @@ class BossStoreDetailActivity :
         }
     }
 
+    private fun bindContributorSummary(bossStoreDetailModel: BossStoreDetailModel) {
+        val contributorName = bossStoreDetailModel.lastContributor.name.ifBlank {
+            getString(CommonR.string.store_contributor_summary_default_name)
+        }
+        val uniqueContributorCount = bossStoreDetailModel.uniqueContributorCount.coerceAtLeast(1)
+        val additionalContributorCount = (uniqueContributorCount - 1).coerceAtLeast(0)
+        binding.contributorSummaryTextView.text = if (additionalContributorCount > 0) {
+            getString(
+                CommonR.string.store_contributor_summary_format,
+                contributorName,
+                additionalContributorCount,
+            )
+        } else {
+            getString(CommonR.string.store_contributor_summary_single_format, contributorName)
+        }
+        binding.contributorSummaryTextView.textPartTypeface("${contributorName}님", Typeface.BOLD)
+    }
+
     private fun moveFullScreenMap() {
         val store = viewModel.bossStoreDetailModel.value.store
         val intent = FullScreenMapActivity.getIntent(
@@ -335,6 +395,33 @@ class BossStoreDetailActivity :
     private fun showDirectionBottomDialog() {
         val store = viewModel.bossStoreDetailModel.value.store
         DirectionBottomDialog.getInstance(store.location?.latitude, store.location?.longitude, store.name).show(supportFragmentManager, "")
+    }
+
+    private fun openMenuImageDialog(clickedMenu: MenuModel, clickedMenuPosition: Int) {
+        if (clickedMenu.imageUrl.isNullOrBlank()) return
+
+        val menus = viewModel.bossStoreDetailModel.value.store.menus
+        if (clickedMenuPosition !in menus.indices) return
+
+        val menuImages = menus
+            .filter { !it.imageUrl.isNullOrBlank() }
+            .map {
+                ImageModel(
+                    imageUrl = it.imageUrl.orEmpty(),
+                    width = 0,
+                    height = 0,
+                    ratio = 0,
+                )
+            }
+        if (menuImages.isEmpty()) return
+
+        val clickedImageIndex = menus
+            .subList(0, clickedMenuPosition + 1)
+            .count { !it.imageUrl.isNullOrBlank() } - 1
+        if (clickedImageIndex !in menuImages.indices) return
+
+        ReviewPhotoDialog.getInstance(menuImages, clickedImageIndex)
+            .show(supportFragmentManager, "ReviewPhotoDialog")
     }
 
     private fun initFlows() {
@@ -414,6 +501,7 @@ class BossStoreDetailActivity :
                             reviewRatingAvgTextView.text = getString(CommonR.string.score, bossStoreDetailModel.store.rating)
                         }
 
+                        bindContributorSummary(bossStoreDetailModel)
                         initAccount(bossStoreDetailModel)
                         renderVerifiedBanner(
                             isVerified = bossStoreDetailModel.tags.isVerifiedStore
@@ -422,6 +510,7 @@ class BossStoreDetailActivity :
                 }
                 launch {
                     viewModel.favoriteModel.collect {
+                        currentFavoriteState = it.isFavorite
                         setFavoriteIcon(it.isFavorite)
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
@@ -440,7 +529,7 @@ class BossStoreDetailActivity :
                                 showToast(getString(CommonR.string.already_reviewed_today))
                             } else {
                                 val intent = BossReviewWriteActivity.getIntent(this@BossStoreDetailActivity, storeId)
-                                startActivity(intent)
+                                reviewWriteLauncher.launch(intent)
                             }
                             // Reset the state after handling
                             viewModel.resetFeedbackExistsState()
@@ -507,6 +596,7 @@ class BossStoreDetailActivity :
     private fun clickFavoriteButton() {
         val isOn = !viewModel.favoriteModel.value.isFavorite
         viewModel.sendClickFavorite(isOn)
+        currentFavoriteState = isOn
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(storeId)
         } else {
@@ -519,6 +609,14 @@ class BossStoreDetailActivity :
 
         binding.favoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, favoriteIcon, 0, 0)
         binding.bottomFavoriteButton.setCompoundDrawablesRelativeWithIntrinsicBounds(favoriteIcon, 0, 0, 0)
+    }
+
+    private fun finishWithResult() {
+        val resultIntent = Intent().apply {
+            putExtra(StoreDetailActivity.EXTRA_IS_FAVORITE, currentFavoriteState ?: viewModel.favoriteModel.value.isFavorite)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
     }
 
     override fun finish() {

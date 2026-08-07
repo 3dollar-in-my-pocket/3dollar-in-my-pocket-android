@@ -20,7 +20,7 @@ data class NewReview(
     @SerializedName("rating")
     val rating: Float = 0f,
     @SerializedName("reviewId")
-    val reviewId: Int = 0,
+    val reviewId: Long = 0L,
     @SerializedName("storeId")
     val storeId: Int = 0,
     @SerializedName("updatedAt")

@@ -9,6 +9,7 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.common.utils.Constants
+import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
@@ -24,6 +25,7 @@ class NearStoreNaverMapFragment(
     val viewModel: HomeViewModel by activityViewModels()
 
     private var isFirstLoad = true
+    private var locationButtonBottomMarginPx = SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP)
 
     override fun onMapReady(map: NaverMap) {
         setIsShowOverlay(isLocationAvailable())
@@ -33,9 +35,7 @@ class NearStoreNaverMapFragment(
             map.locationTrackingMode = LocationTrackingMode.None
         }
 
-        val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        params.setMargins(0, 0, 0, SizeUtils.dpToPx(178f))
-        binding.btnFindLocation.layoutParams = params
+        applyLocationButtonBottomMargin()
 
         binding.btnFindLocation.setOnClickListener {
             onLocationButtonClicked()
@@ -48,15 +48,28 @@ class NearStoreNaverMapFragment(
         }
         if (isFirstLoad) {
             val savedPosition = viewModel.getSavedMapPosition()
-            if (savedPosition != null) {
-                moveCamera(savedPosition)
-            } else {
-                if (isLocationAvailable()) {
-                    moveToCurrentLocation()
-                }
+            when {
+                savedPosition != null -> moveCamera(savedPosition)
+                isLocationAvailable() -> moveToCurrentLocation()
+                else -> moveCamera(getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION)
             }
             isFirstLoad = false
         }
+    }
+
+    fun updateLocationButtonBottomMargin(bottomMarginPx: Int) {
+        locationButtonBottomMarginPx = bottomMarginPx
+        if (view != null) {
+            applyLocationButtonBottomMargin()
+        }
+    }
+
+    private fun applyLocationButtonBottomMargin() {
+        val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
+        if (params.bottomMargin == locationButtonBottomMarginPx) return
+
+        params.bottomMargin = locationButtonBottomMarginPx
+        binding.btnFindLocation.layoutParams = params
     }
 
     fun enableLocationTracking() {

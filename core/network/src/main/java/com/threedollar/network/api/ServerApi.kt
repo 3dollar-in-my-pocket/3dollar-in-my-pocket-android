@@ -24,6 +24,10 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeListSectionResponse
+import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
+import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -65,6 +69,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ServerApi {
 
@@ -183,13 +188,11 @@ interface ServerApi {
         @Query("distanceM") distanceM: Double = 100000.0,
         @Query("categoryIds") categoryIds: Array<String>? = null,
         @Query("targetStores") targetStores: Array<String>? = null,
-        @Query("sortType") sortType: String,
-        @Query("filterCertifiedStores") filterCertifiedStores: Boolean? = null,
-        @Query("filterConditions") filterConditions: List<String> = listOf(),
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Header("X-Device-Latitude") deviceLatitude: Double,
         @Header("X-Device-Longitude") deviceLongitude: Double,
+        @QueryMap dynamicParams: Map<String, String> = emptyMap(),
     ): Response<BaseResponse<AroundStoreResponse>>
 
     @GET("/api/v4/boss-store/{bossStoreId}")
@@ -209,6 +212,33 @@ interface ServerApi {
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
         @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
+
+    @GET("/api/v1/screen/home")
+    suspend fun getHomeFilterScreen(): Response<BaseResponse<HomeFilterScreenResponse>>
+
+    @GET("/api/v1/screen/home/section/list")
+    suspend fun getHomeListSection(
+        @Query("distanceM") distanceM: Double,
+        @Query("categoryIds") categoryIds: Array<String>? = null,
+        @Query("targetStores") targetStores: Array<String>? = null,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double,
+        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @QueryMap dynamicParams: Map<String, String> = emptyMap(),
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<HomeListSectionResponse>>
+
+    @GET("/api/v1/screen/store/{storeId}/contributors")
+    suspend fun getStoreContributorScreen(
+        @Path("storeId") storeId: String,
+    ): Response<BaseResponse<StoreContributorScreenResponse>>
+
+    @GET("/api/v1/screen/store/{storeId}/contributors/section/histories")
+    suspend fun getStoreContributorHistories(
+        @Path("storeId") storeId: String,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<StoreContributorHistoriesResponse>>
 
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
@@ -305,7 +335,7 @@ interface ServerApi {
 
     @PUT("/api/v2/store/review/{reviewId}")
     suspend fun putStoreReview(
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body storeReviewRequest: StoreReviewRequest,
     ): Response<BaseResponse<EditStoreReviewResponse>>
 
@@ -329,7 +359,7 @@ interface ServerApi {
     @POST("/api/v1/store/{storeId}/review/{reviewId}/report")
     suspend fun reportStoreReview(
         @Path("storeId") storeId: Int,
-        @Path("reviewId") reviewId: Int,
+        @Path("reviewId") reviewId: Long,
         @Body reportReviewRequest: ReportReviewRequest,
     ): Response<BaseResponse<String>>
 

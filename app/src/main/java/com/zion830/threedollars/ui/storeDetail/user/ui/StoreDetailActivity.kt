@@ -17,24 +17,34 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import base.compose.AppTheme
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
+import com.threedollar.common.analytics.sendClick
+import com.threedollar.common.analytics.sendImpression
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.ext.convertUpdateAt
 import com.threedollar.common.ext.getMonthFirstDate
 import com.threedollar.common.ext.isNotNullOrEmpty
+import com.threedollar.common.ext.isVisibleInWindow
 import com.threedollar.common.ext.loadImage
+import com.threedollar.common.ext.openUrl
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.ext.textPartColor
 import com.threedollar.common.ext.textPartTypeface
@@ -51,6 +61,8 @@ import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.threedollar.domain.home.data.store.VisitsModel
+import com.threedollar.network.sdui.model.element.SDLinkType
+import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding
 import com.zion830.threedollars.ui.dialog.AddReviewDialog
@@ -58,15 +70,17 @@ import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.map.ui.StoreDetailNaverMapFragment
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
+import com.zion830.threedollars.ui.storeDetail.ui.StoreDetailRelatedStoresSection
 import com.zion830.threedollars.ui.storeDetail.user.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.storeDetail.user.adapter.VisitHistoryAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
-import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
-import com.zion830.threedollars.ui.edit.ui.EditStoreFragment.Companion.STORE_EDITED_RESULT_KEY
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
@@ -74,14 +88,13 @@ import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
 import com.zion830.threedollars.utils.goToPermissionSetting
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -101,6 +114,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val addStoreViewModel: AddStoreViewModel by viewModels()
 
     private var isStoreUpdated = false
+    private var currentFavoriteState: Boolean? = null
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -114,6 +128,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
 
     private var startCertificationExactly: Boolean? = false
+    private var openReviewWriteExactly: Boolean? = false
 
     private val photoAdapter: PhotoRecyclerAdapter by lazy {
         PhotoRecyclerAdapter(object : OnItemClickListener<StoreImage> {
@@ -180,6 +195,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             if (result.resultCode == RESULT_OK) {
+                isStoreUpdated = true
                 refreshStoreInfo()
             }
         }
@@ -201,14 +217,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initAdapter()
         initFlows()
         initAdmob()
+        initRelatedStoreSection()
+        initScrollListener()
 
-        viewModel.addReviewResult.observe(this) {
-            viewModel.getUserStoreDetail(
-                storeId = storeId,
-                deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
-                deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
-                filterVisitStartDate = getMonthFirstDate(),
-            )
+        viewModel.addReviewResult.observe(this) { isSuccess ->
+            if (isSuccess) {
+                isStoreUpdated = true
+                viewModel.getUserStoreDetail(
+                    storeId = storeId,
+                    deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
+                    deviceLongitude = viewModel.userStoreDetailModel.value?.store?.location?.longitude,
+                    filterVisitStartDate = getMonthFirstDate(),
+                )
+            }
         }
     }
 
@@ -226,6 +247,87 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initAdmob() {
         val adRequest = AdRequest.Builder().build()
         binding.admob.loadAd(adRequest)
+    }
+
+    private fun initRelatedStoreSection() {
+        binding.relatedStoreSection.setContent {
+            AppTheme {
+                val section by viewModel.relatedStoreSection.collectAsStateWithLifecycle()
+                section?.let {
+                    StoreDetailRelatedStoresSection(
+                        section = it,
+                        onCardPressed = { card, ref ->
+                            val cardRef = card.refs?.firstOrNull()
+
+                            LogManager.sendClick(
+                                viewModel.screenName,
+                                objectType = LogObjectType.CARD,
+                                objectId = LogObjectId.RECOMMEND_STORE,
+                                additionalParams = mapOf(
+                                    ParameterName.STORE_ID to cardRef?.storeId.orEmpty(),
+                                    ParameterName.STORE_TYPE to cardRef?.storeType.orEmpty(),
+                                    ParameterName.EXPERIMENT_KEY to ref?.experimentKey.orEmpty(),
+                                    ParameterName.EXPERIMENT_TYPE to ref?.type.orEmpty(),
+                                    ParameterName.EXPERIMENT_VARIANT to ref?.variant.orEmpty(),
+                                )
+                            )
+
+                            when (card.link?.type) {
+                                SDLinkType.WEB -> {
+                                    openUrl(card.link?.link)
+                                }
+
+                                SDLinkType.APP_SCHEME -> {
+                                    DynamicLinkActivity.launch(this, card.link?.link.orEmpty())
+                                }
+
+                                else -> {
+                                    // do nothing
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    private fun initScrollListener() {
+        binding.scroll.setOnScrollChangeListener(
+            object : NestedScrollView.OnScrollChangeListener {
+                var isRelatedStoreSectionConsumed = false
+
+                override fun onScrollChange(
+                    v: NestedScrollView,
+                    scrollX: Int,
+                    scrollY: Int,
+                    oldScrollX: Int,
+                    oldScrollY: Int
+                ) {
+                    /**
+                     * NestedScrollView로 인해 Compose에서 처리 불가
+                     * TODO : NestedScrollView를 LazyColumn으로 마이그레이션
+                     */
+                    if (!isRelatedStoreSectionConsumed && binding.relatedStoreSection.isVisibleInWindow(threshold = 0.5f)) {
+                        viewModel.relatedStoreSection.value?.reference?.forEach { reference ->
+                            LogManager.sendImpression(
+                                screen = ScreenName.STORE_DETAIL,
+                                objectType = LogObjectType.CAROUSEL,
+                                objectId = LogObjectId.RECOMMEND,
+                                additionalParams = viewModel.relatedStoreSection.value?.let {
+                                    mapOf(
+                                        ParameterName.EXPERIMENT_KEY to reference.experimentKey.orEmpty(),
+                                        ParameterName.EXPERIMENT_TYPE to reference.type.orEmpty(),
+                                        ParameterName.EXPERIMENT_VARIANT to reference.variant.orEmpty(),
+                                    )
+                                } ?: emptyMap()
+                            )
+                        }
+                        isRelatedStoreSectionConsumed = true
+                    }
+                }
+            }
+        )
     }
 
     private fun initAdapter() {
@@ -328,6 +430,14 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
             viewModel.sendClickNavigation()
             showDirectionBottomDialog()
         }
+        binding.contributorSummaryLayout.onSingleClick {
+            activityResultLauncher.launch(
+                StoreContributorActivity.getIntent(
+                    context = this,
+                    storeId = storeId.toString(),
+                )
+            )
+        }
     }
 
     private fun initShared() {
@@ -364,6 +474,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             initPhotoLayout(it)
                             initMap(it)
                             isStartCertification()
+                            openReviewWriteIfNeeded()
                             initImageView(it)
                             initTextView(it)
                             initVisitHistory(it.visits)
@@ -373,6 +484,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 }
                 launch {
                     viewModel.favoriteModel.collect {
+                        currentFavoriteState = it.isFavorite
                         setFavoriteIcon(it.isFavorite)
                         binding.favoriteButton.text = it.totalSubscribersCount.toString()
                     }
@@ -388,6 +500,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 launch {
                     viewModel.photoDeleted.collect {
                         if (it) {
+                            isStoreUpdated = true
                             viewModel.getUserStoreDetail(
                                 storeId = storeId,
                                 deviceLatitude = viewModel.userStoreDetailModel.value?.store?.location?.latitude,
@@ -412,6 +525,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                             progressDialog?.show()
                         } else {
                             progressDialog?.dismiss()
+                            isStoreUpdated = true
                             refreshStoreInfo()
                         }
                     }
@@ -426,6 +540,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 launch {
                     viewModel.reviewSuccessEvent.collect {
                         if (it) {
+                            isStoreUpdated = true
                             refreshStoreInfo()
                         }
                     }
@@ -486,6 +601,19 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         if (startCertificationExactly == true) {
             startCertification()
             startCertificationExactly = null
+        }
+    }
+
+    private fun openReviewWriteIfNeeded() {
+        openReviewWriteExactly = if (openReviewWriteExactly != null) {
+            intent.getBooleanExtra(KEY_OPEN_REVIEW_WRITE, false)
+        } else {
+            null
+        }
+        if (openReviewWriteExactly == true) {
+            AddReviewDialog.getInstance(storeId = storeId)
+                .show(supportFragmentManager, AddReviewDialog::class.java.name)
+            openReviewWriteExactly = null
         }
     }
 
@@ -556,6 +684,23 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun initTextView(userStoreDetailModel: UserStoreDetailModel) {
         binding.storeNameTextView.text = userStoreDetailModel.store.name
         binding.creatorTextView.text = getString(CommonR.string.creator, userStoreDetailModel.creator.name)
+        val contributorName = userStoreDetailModel.lastContributor.name.ifBlank {
+            userStoreDetailModel.creator.name.ifBlank {
+                getString(CommonR.string.store_contributor_summary_default_name)
+            }
+        }
+        val uniqueContributorCount = userStoreDetailModel.uniqueContributorCount.coerceAtLeast(1)
+        val additionalContributorCount = (uniqueContributorCount - 1).coerceAtLeast(0)
+        binding.contributorSummaryTextView.text = if (additionalContributorCount > 0) {
+            getString(
+                CommonR.string.store_contributor_summary_format,
+                contributorName,
+                additionalContributorCount,
+            )
+        } else {
+            getString(CommonR.string.store_contributor_summary_single_format, contributorName)
+        }
+        binding.contributorSummaryTextView.textPartTypeface("${contributorName}님", Typeface.BOLD)
         binding.distanceTextView.text = getDistanceText(userStoreDetailModel.distanceM)
         binding.reviewTextView.text = getString(CommonR.string.food_truck_review_count, userStoreDetailModel.reviews.cursor.totalCount)
         binding.favoriteButton.text = userStoreDetailModel.favorite.totalSubscribersCount.toString()
@@ -689,6 +834,8 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun clickFavoriteButton() {
         val isOn = !viewModel.favoriteModel.value.isFavorite
         viewModel.sendClickFavorite(isOn)
+        isStoreUpdated = true
+        currentFavoriteState = isOn
         if (viewModel.favoriteModel.value.isFavorite) {
             viewModel.deleteFavorite(storeId.toString())
         } else {
@@ -747,7 +894,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
 
     private fun refreshStoreInfo() {
         try {
-            if (isLocationAvailable() && isGpsAvailable()) {
+            if (isLocationAvailable() && isLocationServiceEnabled()) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnSuccessListener {
                     if (it != null) {
@@ -825,6 +972,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     private fun finishWithResult() {
         val resultIntent = Intent().apply {
             putExtra(EXTRA_IS_UPDATED, isStoreUpdated)
+            putExtra(EXTRA_IS_FAVORITE, currentFavoriteState ?: viewModel.favoriteModel.value.isFavorite)
             if (isStoreUpdated) {
                 putExtra(EXTRA_USER_STORE, viewModel.userStoreDetailModel.value?.store)
             }
@@ -841,14 +989,17 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
     companion object {
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
+        private const val KEY_OPEN_REVIEW_WRITE = "KEY_OPEN_REVIEW_WRITE"
         const val EXTRA_IS_UPDATED = "extra_is_updated"
         const val EXTRA_USER_STORE = "extra_user_store"
+        const val EXTRA_IS_FAVORITE = "extra_is_favorite"
 
         fun getIntent(
             context: Context,
             storeId: Int? = null,
             startCertification: Boolean = false,
             deepLinkStoreId: String? = null,
+            openReviewWrite: Boolean = false,
         ) =
             Intent(context, StoreDetailActivity::class.java).apply {
                 storeId?.let {
@@ -858,6 +1009,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                     putExtra(STORE_ID, it.toInt())
                 }
                 putExtra(KEY_START_CERTIFICATION, startCertification)
+                putExtra(KEY_OPEN_REVIEW_WRITE, openReviewWrite)
             }
     }
 }
