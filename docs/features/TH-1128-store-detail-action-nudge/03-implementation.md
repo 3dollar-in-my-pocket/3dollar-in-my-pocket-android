@@ -34,6 +34,9 @@
 
 - `activity_store_info.xml`에 `ComposeView` overlay를 추가했다.
 - `StoreDetailDisplayItemOverlay`가 방문 유도와 사라진 가게 유도 UI를 표시한다.
+- iOS와 동일하게 overlay는 모달 높이만 차지하며, 모달 바깥 영역의 탭과 스크롤은 상세 화면에 전달한다.
+- 모달 카드 내부의 비버튼 영역은 터치를 소비해 아래 상세 화면으로 이벤트가 전달되지 않는다.
+- 모달은 바깥 영역 터치로 닫히지 않고 서버 유지 시간 만료 또는 사용자 액션 API 성공 시 닫힌다.
 - 방문 유도, 신고 사유 로딩, 신고 사유 선택 상태 Preview를 제공한다.
 
 ## 테스트

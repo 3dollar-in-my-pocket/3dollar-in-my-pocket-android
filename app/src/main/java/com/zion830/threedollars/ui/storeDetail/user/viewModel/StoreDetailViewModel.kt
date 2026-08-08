@@ -187,10 +187,6 @@ class StoreDetailViewModel @Inject constructor(
         scheduleAutoDismiss(item.trigger?.displayDurationSeconds)
     }
 
-    fun dismissCurrentDisplayItem() {
-        dismissCurrentDisplayItem(showNext = true)
-    }
-
     fun onVisitInducementClick(isOpened: Boolean) {
         val item = displayItemState.value.item as? StoreDetailDisplayItem.VisitInducement ?: return
         if (item.isSubmitting) return

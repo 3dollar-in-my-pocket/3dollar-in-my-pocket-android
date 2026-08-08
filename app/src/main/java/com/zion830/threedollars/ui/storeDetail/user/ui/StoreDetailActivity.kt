@@ -305,7 +305,6 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                 StoreDetailDisplayItemOverlay(
                     state = state,
                     onDisplayed = viewModel::onDisplayItemDisplayed,
-                    onDismiss = viewModel::dismissCurrentDisplayItem,
                     onVisitClick = viewModel::onVisitInducementClick,
                     onReasonClick = viewModel::onDisappearanceReasonClick,
                     onReportClick = viewModel::onDisappearanceReportClick,

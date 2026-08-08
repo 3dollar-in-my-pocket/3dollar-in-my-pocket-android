@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -71,7 +70,6 @@ private const val SLIDE_OUT_MILLIS = 300
 fun StoreDetailDisplayItemOverlay(
     state: StoreDetailDisplayItemState,
     onDisplayed: (StoreDetailDisplayItem) -> Unit,
-    onDismiss: () -> Unit,
     onVisitClick: (Boolean) -> Unit,
     onReasonClick: (ReasonModel) -> Unit,
     onReportClick: () -> Unit,
@@ -81,7 +79,6 @@ fun StoreDetailDisplayItemOverlay(
     val displayEffectKey = item.displayEffectKey()
     val currentItem = rememberUpdatedState(item)
     val currentOnDisplayed = rememberUpdatedState(onDisplayed)
-    val rootInteractionSource = remember { MutableInteractionSource() }
     LaunchedEffect(displayEffectKey, state.isVisible) {
         if (displayEffectKey != null && state.isVisible) {
             kotlinx.coroutines.delay(SLIDE_IN_MILLIS.toLong())
@@ -91,14 +88,7 @@ fun StoreDetailDisplayItemOverlay(
 
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .clickable(
-                enabled = item != null && state.isVisible,
-                indication = null,
-                interactionSource = rootInteractionSource,
-            ) {
-                onDismiss()
-            },
+            .fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter,
     ) {
         AnimatedVisibility(
@@ -414,7 +404,6 @@ private fun StoreDetailDisplayItemOverlayVisitPreview() {
             isVisible = true,
         ),
         onDisplayed = {},
-        onDismiss = {},
         onVisitClick = {},
         onReasonClick = {},
         onReportClick = {},
@@ -439,7 +428,6 @@ private fun StoreDetailDisplayItemOverlayReasonLoadingPreview() {
             isVisible = true,
         ),
         onDisplayed = {},
-        onDismiss = {},
         onVisitClick = {},
         onReasonClick = {},
         onReportClick = {},
@@ -468,7 +456,6 @@ private fun StoreDetailDisplayItemOverlayReasonSelectedPreview() {
             isVisible = true,
         ),
         onDisplayed = {},
-        onDismiss = {},
         onVisitClick = {},
         onReasonClick = {},
         onReportClick = {},
