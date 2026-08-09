@@ -128,8 +128,32 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         saveUserId(-1)
     }
 
+    /**
+     * 마지막으로 확인된 사용자 위치를 저장한다.
+     *
+     * 위치 획득에 실패했을 때 서울 중심 좌표로 떨어지는 대신 직전에 확인된 위치를 쓰기 위한 캐시다.
+     */
+    fun saveUserLastLocation(latitude: Double, longitude: Double) = sharedPreferences.edit {
+        putLong(USER_LAST_LATITUDE, latitude.toRawBits())
+        putLong(USER_LAST_LONGITUDE, longitude.toRawBits())
+        commit()
+    }
+
+    /** 저장된 사용자 위치를 `위도 to 경도`로 반환한다. 저장된 값이 없으면 null. */
+    fun getUserLastLocation(): Pair<Double, Double>? {
+        if (!sharedPreferences.contains(USER_LAST_LATITUDE) || !sharedPreferences.contains(USER_LAST_LONGITUDE)) {
+            return null
+        }
+
+        val latitude = Double.fromBits(sharedPreferences.getLong(USER_LAST_LATITUDE, 0L))
+        val longitude = Double.fromBits(sharedPreferences.getLong(USER_LAST_LONGITUDE, 0L))
+        return latitude to longitude
+    }
+
     companion object {
         private const val PREFERENCE_FILE_KEY = "preference_file_key"
+        private const val USER_LAST_LATITUDE = "user_last_latitude"
+        private const val USER_LAST_LONGITUDE = "user_last_longitude"
         private const val KAKAO_ACCESS_TOKEN = "kakao_access_token"
         private const val KAKAO_REFRESH_TOKEN = "kakao_refresh_token"
         private const val USER_ID_KEY = "user_id_key"

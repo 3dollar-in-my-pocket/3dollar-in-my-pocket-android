@@ -14,7 +14,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreCertificationBinding
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreCertificationViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,7 +40,7 @@ class StoreCertificationActivity :
 
     @SuppressLint("MissingPermission")
     private fun openCertification(args: StoreCertificationArgs) {
-        if (!isLocationAvailable() || !isGpsAvailable()) {
+        if (!isLocationAvailable() || !isLocationServiceEnabled()) {
             showCertificationFragment(args = args, currentLocation = null)
             return
         }

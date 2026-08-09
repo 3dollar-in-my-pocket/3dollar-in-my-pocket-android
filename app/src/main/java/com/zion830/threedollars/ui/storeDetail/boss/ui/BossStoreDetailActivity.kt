@@ -70,7 +70,7 @@ import com.zion830.threedollars.utils.OnMapTouchListener
 import com.zion830.threedollars.utils.ShareFormat
 import com.zion830.threedollars.utils.SizeUtils.dpToPx
 import com.zion830.threedollars.utils.SpaceItemDecoration
-import com.zion830.threedollars.utils.isGpsAvailable
+import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.shareWithKakao
@@ -276,7 +276,7 @@ class BossStoreDetailActivity :
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         storeId = intent.getStringExtra(STORE_ID).toString()
         try {
-            if (isLocationAvailable() && isGpsAvailable()) {
+            if (isLocationAvailable() && isLocationServiceEnabled()) {
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location != null) {
                         viewModel.getFoodTruckStoreDetail(

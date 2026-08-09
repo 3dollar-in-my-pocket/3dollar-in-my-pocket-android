@@ -214,12 +214,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.pollItems.collect {
                         if (it.isEmpty()) return@collect
-                        pollItems.addAll(it.toList().map { poll -> PollListData.Poll(poll) })
-                        advertisementModelV2?.let { advertisement ->
-                            if (pollItems.size > 3) pollItems.add(2, PollListData.Ad(advertisement))
-                            else pollItems.add(PollListData.Ad(advertisement))
-                        }
-                        pollAdapter.submitList(pollItems)
+                        submitPollList(it.map { poll -> PollListData.Poll(poll) })
                     }
                 }
                 launch {
@@ -229,8 +224,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                         val selectPoll = pollItems.find { pollListData -> pollListData.isSelectPoll(pollId) } as? PollListData.Poll ?: return@collect
                         pollItems[pollItems.indexOfFirst { pollListData -> pollListData.isSelectPoll(pollId) }] =
                             PollListData.Poll(selectedPoll(selectPoll.pollItem, optionId))
-                        pollAdapter.submitList(pollItems)
-                        pollAdapter.notifyDataSetChanged()
+                        pollAdapter.submitList(pollItems.toList())
                     }
                 }
                 launch {
@@ -262,8 +256,37 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 launch {
                     viewModel.advertisements.collect {
                         advertisementModelV2 = it.firstOrNull()
+                        if (pollItems.isEmpty()) return@collect
+                        submitPollList(pollItems.filterIsInstance<PollListData.Poll>())
                     }
                 }
+            }
+        }
+    }
+
+    private fun submitPollList(polls: List<PollListData.Poll>) {
+        pollItems.clear()
+        pollItems.addAll(advertisementModelV2?.let { polls.injectAd(it) } ?: polls)
+        pollAdapter.submitList(pollItems.toList())
+    }
+
+    private fun List<PollListData.Poll>.injectAd(
+        target: AdvertisementModelV2
+    ): List<PollListData> {
+        val originList = this
+        val targetIndex = target.metadata.exposureIndex
+
+        if (targetIndex < 0) {
+            return this
+        }
+
+        return buildList(originList.size + 1) {
+            addAll(originList)
+
+            if (targetIndex > lastIndex) {
+                add(PollListData.Ad(target))
+            } else {
+                add(targetIndex, PollListData.Ad(target))
             }
         }
     }

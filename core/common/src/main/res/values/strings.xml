@@ -613,4 +613,5 @@
     <string name="str_vote_empty_title">내가 올린 투표가 없어요</string>
     <string name="str_vote_empty_message">가게 상세에서 추가해 보세요</string>
     <string name="str_team_title">팀원소개</string>
+    <string name="session_expired">세션이 만료되었습니다.\n다시 로그인해주세요.</string>
 </resources>
