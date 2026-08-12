@@ -15,8 +15,11 @@ import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.request.ReportReviewModelRequest
+import com.threedollar.domain.store.model.StoreDisplayItemModel
+import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.ClickEvent
+import com.threedollar.common.analytics.ImpressionEvent
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.LogObjectId
 import com.threedollar.common.analytics.LogObjectType
@@ -26,14 +29,21 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.store.repository.StoreRepository
 import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.network.sdui.model.section.SDSectionType
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItem
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemState
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailViewSessionCounter
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -86,6 +96,17 @@ class StoreDetailViewModel @Inject constructor(
     private val _relatedStoreSection = MutableStateFlow<SDRelatedStoresSectionModel?>(null)
     val relatedStoreSection = _relatedStoreSection.asStateFlow()
 
+    private val _displayItemState = MutableStateFlow(StoreDetailDisplayItemState())
+    val displayItemState = _displayItemState.asStateFlow()
+
+    private val _displayItemEffect = MutableSharedFlow<StoreDetailDisplayItemEffect>()
+    val displayItemEffect = _displayItemEffect.asSharedFlow()
+
+    private val pendingDisplayItems = ArrayDeque<StoreDisplayItemModel>()
+    private var displayItemShowJob: Job? = null
+    private var displayItemAutoDismissJob: Job? = null
+    private var displayItemStoreId: Int? = null
+
     init {
         getReportReasons()
     }
@@ -99,6 +120,14 @@ class StoreDetailViewModel @Inject constructor(
         visitHistoriesCount: Int? = null,
         filterVisitStartDate: String,
     ) {
+        if (deviceLatitude != null && deviceLongitude != null) {
+            getStoreDisplayItems(
+                storeId = storeId,
+                deviceLatitude = deviceLatitude,
+                deviceLongitude = deviceLongitude,
+            )
+        }
+
         viewModelScope.launch {
             storeRepository.getScreenStore(
                 storeId = storeId,
@@ -147,6 +176,68 @@ class StoreDetailViewModel @Inject constructor(
             homeRepository.deleteStore(userStoreDetailModel.value?.store?.storeId ?: -1, deleteType.key).collect {
                 if (!it.ok) {
                     _serverError.emit(it.message)
+                }
+            }
+        }
+    }
+
+    fun onDisplayItemDisplayed(item: StoreDetailDisplayItem) {
+        recordDisplayItemImpression(item.storeId, item.itemType)
+        sendDisplayItemImpressionLog(item)
+        scheduleAutoDismiss(item.trigger?.displayDurationSeconds)
+    }
+
+    fun onVisitInducementClick(isOpened: Boolean) {
+        val item = displayItemState.value.item as? StoreDetailDisplayItem.VisitInducement ?: return
+        if (item.isSubmitting) return
+
+        cancelAutoDismiss()
+        updateCurrentDisplayItem(item.copy(isSubmitting = true))
+        sendClickVisitInducement(isOpened)
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.postStoreVisit(
+                storeId = item.storeId,
+                visitType = if (isOpened) VISIT_TYPE_EXISTS else VISIT_TYPE_NOT_EXISTS,
+            ).collect { response ->
+                if (response.ok) {
+                    dismissCurrentDisplayItem(showNext = true)
+                    _displayItemEffect.emit(StoreDetailDisplayItemEffect.RefreshStoreDetail)
+                    _displayItemEffect.emit(StoreDetailDisplayItemEffect.ShowToast(StringUtils.getString(CommonR.string.display_item_modal_thanks_toast)))
+                } else {
+                    updateCurrentDisplayItem(item.copy(isSubmitting = false))
+                    _serverError.emit(response.message)
+                }
+            }
+        }
+    }
+
+    fun onDisappearanceReasonClick(reason: ReasonModel) {
+        val item = displayItemState.value.item as? StoreDetailDisplayItem.DisappearanceInquiry ?: return
+        if (item.isSubmitting) return
+
+        updateCurrentDisplayItem(item.copy(selectedReason = reason))
+        sendSelectReasonLog(item.storeId, reason.type)
+        scheduleAutoDismiss(item.trigger?.displayDurationSeconds)
+    }
+
+    fun onDisappearanceReportClick() {
+        val item = displayItemState.value.item as? StoreDetailDisplayItem.DisappearanceInquiry ?: return
+        if (item.isSubmitting) return
+        val reason = item.selectedReason ?: return
+
+        cancelAutoDismiss()
+        updateCurrentDisplayItem(item.copy(isSubmitting = true))
+        sendClickDisappearanceReport(item.storeId, reason.type)
+
+        viewModelScope.launch(coroutineExceptionHandler) {
+            homeRepository.deleteStore(item.storeId, reason.type).collect { response ->
+                if (response.ok) {
+                    dismissCurrentDisplayItem(showNext = true)
+                    _displayItemEffect.emit(StoreDetailDisplayItemEffect.ShowToast(StringUtils.getString(CommonR.string.display_item_modal_thanks_toast)))
+                } else {
+                    updateCurrentDisplayItem(item.copy(isSubmitting = false))
+                    _serverError.emit(response.message)
                 }
             }
         }
@@ -287,6 +378,115 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
+    private fun getStoreDisplayItems(
+        storeId: Int,
+        deviceLatitude: Double,
+        deviceLongitude: Double,
+    ) {
+        viewModelScope.launch {
+            val viewCount = StoreDetailViewSessionCounter.increment(storeId)
+            storeRepository.getStoreDisplayItems(
+                storeId = storeId,
+                lat = deviceLatitude,
+                lng = deviceLongitude,
+                itemTypes = DISPLAY_ITEM_TYPES,
+            ).onSuccess { response ->
+                displayItemStoreId = storeId
+                pendingDisplayItems.clear()
+                pendingDisplayItems.addAll(
+                    response.contents.filter { item ->
+                        item.isVisible &&
+                            item.itemType != StoreDisplayItemType.UNKNOWN &&
+                            (item.trigger?.conditions?.sessionViewCountRange?.contains(viewCount) ?: true)
+                    },
+                )
+                if (displayItemState.value.item == null && displayItemShowJob?.isActive != true) {
+                    showNextDisplayItem()
+                }
+            }
+        }
+    }
+
+    private fun showNextDisplayItem() {
+        val item = pendingDisplayItems.removeFirstOrNull() ?: return
+        displayItemShowJob?.cancel()
+        displayItemShowJob = viewModelScope.launch {
+            delay(item.trigger?.displayAfterSeconds.toDelayMillis())
+            val modal = item.toDisplayItem(displayItemStoreId ?: return@launch)
+            _displayItemState.value = StoreDetailDisplayItemState(item = modal, isVisible = true)
+            if (modal is StoreDetailDisplayItem.DisappearanceInquiry) {
+                getStoreReportReasons(modal.storeId)
+            }
+        }
+    }
+
+    private fun getStoreReportReasons(storeId: Int) {
+        viewModelScope.launch {
+            homeRepository.getReportReasons(ReportReasonsGroupType.STORE).collect { response ->
+                if (response.ok) {
+                    val item = displayItemState.value.item as? StoreDetailDisplayItem.DisappearanceInquiry ?: return@collect
+                    if (item.storeId == storeId) {
+                        updateCurrentDisplayItem(
+                            item.copy(
+                                reasons = response.data?.reasonModels ?: listOf(),
+                                isReasonLoading = false,
+                            ),
+                        )
+                    }
+                } else {
+                    _serverError.emit(response.message)
+                }
+            }
+        }
+    }
+
+    private fun dismissCurrentDisplayItem(showNext: Boolean) {
+        cancelAutoDismiss()
+        displayItemShowJob?.cancel()
+        val currentItem = displayItemState.value.item ?: return
+        _displayItemState.value = StoreDetailDisplayItemState(item = currentItem, isVisible = false)
+        viewModelScope.launch {
+            delay(DISPLAY_ITEM_SLIDE_OUT_MILLIS)
+            _displayItemState.value = StoreDetailDisplayItemState()
+            if (showNext) {
+                showNextDisplayItem()
+            }
+        }
+    }
+
+    private fun updateCurrentDisplayItem(item: StoreDetailDisplayItem) {
+        _displayItemState.update { state ->
+            if (state.item?.itemType == item.itemType) {
+                state.copy(item = item)
+            } else {
+                state
+            }
+        }
+    }
+
+    private fun recordDisplayItemImpression(storeId: Int, itemType: StoreDisplayItemType) {
+        viewModelScope.launch {
+            storeRepository.postStoreDisplayItemImpression(
+                storeId = storeId,
+                itemTypes = listOf(itemType),
+            )
+        }
+    }
+
+    private fun scheduleAutoDismiss(displayDurationSeconds: Double?) {
+        cancelAutoDismiss()
+        displayDurationSeconds ?: return
+        displayItemAutoDismissJob = viewModelScope.launch {
+            delay(displayDurationSeconds.toDelayMillis())
+            dismissCurrentDisplayItem(showNext = true)
+        }
+    }
+
+    private fun cancelAutoDismiss() {
+        displayItemAutoDismissJob?.cancel()
+        displayItemAutoDismissJob = null
+    }
+
     // GA Events - Review Bottom Sheet
     fun sendClickWriteReviewSubmit(rating: Int) {
         LogManager.sendEvent(
@@ -393,6 +593,60 @@ class StoreDetailViewModel @Inject constructor(
         )
     }
 
+    private fun sendDisplayItemImpressionLog(item: StoreDetailDisplayItem) {
+        LogManager.sendEvent(
+            ImpressionEvent(
+                screen = screenName,
+                objectType = LogObjectType.BANNER,
+                objectId = item.itemType.toLogObjectId(),
+                additionalParams = mapOf(ParameterName.STORE_ID to item.storeId.toString()),
+            ),
+        )
+    }
+
+    private fun sendClickVisitInducement(isOpened: Boolean) {
+        val item = displayItemState.value.item as? StoreDetailDisplayItem.VisitInducement ?: return
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.VISIT_INDUCEMENT_MODAL,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to item.storeId.toString(),
+                    ParameterName.VALUE to if (isOpened) LogObjectId.VISIT_SUCCESS.value else LogObjectId.VISIT_FAIL.value,
+                ),
+            ),
+        )
+    }
+
+    private fun sendSelectReasonLog(storeId: Int, reasonType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.SELECT_REASON,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId.toString(),
+                    ParameterName.REASON_TYPE to reasonType,
+                ),
+            ),
+        )
+    }
+
+    private fun sendClickDisappearanceReport(storeId: Int, reasonType: String) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.REPORT,
+                additionalParams = mapOf(
+                    ParameterName.STORE_ID to storeId.toString(),
+                    ParameterName.REASON_TYPE to reasonType,
+                ),
+            ),
+        )
+    }
+
     // GA Events - Review List
     fun sendClickSortReviewList(sortType: String) {
         LogManager.sendEvent(
@@ -439,5 +693,41 @@ class StoreDetailViewModel @Inject constructor(
         super.handleError(t)
         _msgTextId.postValue(CommonR.string.connection_failed)
         hideLoading()
+    }
+
+    private fun StoreDisplayItemModel.toDisplayItem(storeId: Int): StoreDetailDisplayItem =
+        when (itemType) {
+            StoreDisplayItemType.DISAPPEARANCE_INQUIRY_MODAL -> StoreDetailDisplayItem.DisappearanceInquiry(
+                storeId = storeId,
+                trigger = trigger,
+            )
+
+            StoreDisplayItemType.VISIT_CERTIFICATION_INDUCEMENT_MODAL -> StoreDetailDisplayItem.VisitInducement(
+                storeId = storeId,
+                trigger = trigger,
+            )
+
+            StoreDisplayItemType.UNKNOWN -> error("Unknown display item cannot be shown.")
+        }
+
+    private fun StoreDisplayItemType.toLogObjectId(): LogObjectId =
+        when (this) {
+            StoreDisplayItemType.DISAPPEARANCE_INQUIRY_MODAL -> LogObjectId.DISAPPEARANCE_INQUIRY_MODAL
+            StoreDisplayItemType.VISIT_CERTIFICATION_INDUCEMENT_MODAL -> LogObjectId.VISIT_INDUCEMENT_MODAL
+            StoreDisplayItemType.UNKNOWN -> LogObjectId.STORE
+        }
+
+    private fun Double?.toDelayMillis(): Long =
+        ((this ?: 0.0).coerceAtLeast(0.0) * 1_000).toLong()
+
+    companion object {
+        private const val VISIT_TYPE_EXISTS = "EXISTS"
+        private const val VISIT_TYPE_NOT_EXISTS = "NOT_EXISTS"
+        private const val DISPLAY_ITEM_SLIDE_OUT_MILLIS = 300L
+
+        private val DISPLAY_ITEM_TYPES = listOf(
+            StoreDisplayItemType.DISAPPEARANCE_INQUIRY_MODAL,
+            StoreDisplayItemType.VISIT_CERTIFICATION_INDUCEMENT_MODAL,
+        )
     }
 }

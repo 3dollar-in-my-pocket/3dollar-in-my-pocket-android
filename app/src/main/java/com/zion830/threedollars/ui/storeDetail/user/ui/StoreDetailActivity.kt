@@ -25,6 +25,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import base.compose.AppTheme
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -78,6 +79,8 @@ import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorAc
 import com.zion830.threedollars.ui.storeDetail.ui.StoreDetailRelatedStoresSection
 import com.zion830.threedollars.ui.storeDetail.user.adapter.UserStoreMenuAdapter
 import com.zion830.threedollars.ui.storeDetail.user.adapter.VisitHistoryAdapter
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
+import com.zion830.threedollars.ui.storeDetail.user.ui.compose.StoreDetailDisplayItemOverlay
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.ui.write.adapter.PhotoRecyclerAdapter
 import com.zion830.threedollars.ui.write.adapter.ReviewRecyclerAdapter
@@ -95,6 +98,7 @@ import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -218,6 +222,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         initFlows()
         initAdmob()
         initRelatedStoreSection()
+        initDisplayItemOverlay()
         initScrollListener()
 
         viewModel.addReviewResult.observe(this) { isSuccess ->
@@ -288,6 +293,22 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         }
                     )
                 }
+            }
+        }
+    }
+
+    private fun initDisplayItemOverlay() {
+        binding.displayItemOverlay.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        binding.displayItemOverlay.setContent {
+            AppTheme {
+                val state by viewModel.displayItemState.collectAsStateWithLifecycle()
+                StoreDetailDisplayItemOverlay(
+                    state = state,
+                    onDisplayed = viewModel::onDisplayItemDisplayed,
+                    onVisitClick = viewModel::onVisitInducementClick,
+                    onReasonClick = viewModel::onDisappearanceReasonClick,
+                    onReportClick = viewModel::onDisappearanceReportClick,
+                )
             }
         }
     }
@@ -542,6 +563,26 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
                         if (it) {
                             isStoreUpdated = true
                             refreshStoreInfo()
+                        }
+                    }
+                }
+                launch {
+                    viewModel.displayItemState.collect { state ->
+                        binding.displayItemOverlay.isVisible = state.item != null
+                    }
+                }
+                launch {
+                    viewModel.displayItemEffect.collect { effect ->
+                        when (effect) {
+                            StoreDetailDisplayItemEffect.RefreshStoreDetail -> {
+                                isStoreUpdated = true
+                                refreshStoreInfo()
+                            }
+
+                            is StoreDetailDisplayItemEffect.ShowToast -> {
+                                delay(DISPLAY_ITEM_TOAST_DELAY_MILLIS)
+                                showToast(effect.message)
+                            }
                         }
                     }
                 }
@@ -990,6 +1031,7 @@ class StoreDetailActivity : BaseActivity<ActivityStoreInfoBinding, StoreDetailVi
         private const val STORE_ID = "storeId"
         private const val KEY_START_CERTIFICATION = "KEY_START_CERTIFICATION"
         private const val KEY_OPEN_REVIEW_WRITE = "KEY_OPEN_REVIEW_WRITE"
+        private const val DISPLAY_ITEM_TOAST_DELAY_MILLIS = 800L
         const val EXTRA_IS_UPDATED = "extra_is_updated"
         const val EXTRA_USER_STORE = "extra_user_store"
         const val EXTRA_IS_FAVORITE = "extra_is_favorite"
