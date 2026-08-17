@@ -278,6 +278,12 @@
     <string name="request_delete">신고하기</string>
     <string name="request_delete_title">삭제 요청 하시는 이유가 궁금해요!</string>
     <string name="request_delete_description">3건 이상의 요청이 들어오면 자동 삭제됩니다</string>
+    <string name="disappearance_inquiry_modal_title">혹시... 이 가게 사라졌나요?</string>
+    <string name="visit_inducement_modal_title">다시 찾은 이 가게, 지금 열었나요?</string>
+    <string name="visit_inducement_modal_subtitle">3초면 충분해요!</string>
+    <string name="visit_inducement_modal_opened">열었어요</string>
+    <string name="visit_inducement_modal_closed">닫았어요</string>
+    <string name="display_item_modal_thanks_toast">고마워요! 덕분에 정보가 업데이트 됐어요!</string>
     <string name="request_delete_reason1">없어진 가게예요</string>
     <string name="request_delete_reason2">허위 제보로 요청된 가게에요</string>
     <string name="request_delete_reason3">가게가 중복으로 등록되어 있어요.</string>
