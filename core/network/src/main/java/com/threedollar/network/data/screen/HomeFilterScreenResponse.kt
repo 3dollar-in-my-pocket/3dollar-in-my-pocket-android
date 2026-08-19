@@ -6,8 +6,15 @@ import com.google.gson.annotations.SerializedName
 data class HomeFilterScreenResponse(
     @SerializedName("sections")
     val sections: List<HomeFilterSectionResponse>? = emptyList(),
+    @SerializedName("configuration")
+    val configuration: HomeFilterConfigurationResponse? = null,
     @SerializedName("viewLog")
     val viewLog: HomeFilterViewLogResponse? = null,
+)
+
+data class HomeFilterConfigurationResponse(
+    @SerializedName("initialMapZoomLevel")
+    val initialMapZoomLevel: Double? = null,
 )
 
 data class HomeFilterViewLogResponse(

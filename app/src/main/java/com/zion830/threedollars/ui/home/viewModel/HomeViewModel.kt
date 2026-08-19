@@ -82,6 +82,10 @@ class HomeViewModel @Inject constructor(
     private val _filterCells = MutableStateFlow<List<HomeFilterCellType>>(emptyList())
     val filterCells: StateFlow<List<HomeFilterCellType>> = _filterCells.asStateFlow()
 
+    /** 서버가 내려준 홈 지도 최초 줌 레벨. 응답이 없거나 설정값이 없으면 null이다. */
+    private val _initialMapZoomLevel = MutableStateFlow<Double?>(null)
+    val initialMapZoomLevel: StateFlow<Double?> = _initialMapZoomLevel.asStateFlow()
+
     private val _filterDeepLink = MutableSharedFlow<SDLinkModel>(extraBufferCapacity = 1)
     val filterDeepLink: SharedFlow<SDLinkModel> = _filterDeepLink.asSharedFlow()
 
@@ -492,13 +496,14 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             screenRepository.getHomeFilterScreen().collect { response ->
                 if (response.ok && response.data != null) {
-                    val sections = response.data!!.sections
+                    val screen = response.data!!
                     _uiState.update {
                         it.copy(
-                            filterSections = sections,
+                            filterSections = screen.sections,
                             hasLoadedFilterScreen = true,
                         )
                     }
+                    _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
                     initializeRadioSelectionDefaults()
                     updateFilterCells()
                 } else {
