@@ -27,5 +27,5 @@ interface ScreenRepository {
         cursor: String?,
     ): Flow<BaseResponse<SDSectionModel.CardsSection>>
 
-    fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenModel>>
+    fun getHomeFilterScreen(preset: String? = null): Flow<BaseResponse<HomeFilterScreenModel>>
 }

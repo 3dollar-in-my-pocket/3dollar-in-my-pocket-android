@@ -17,6 +17,7 @@ import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.serverdriven.model.SDLocationModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
@@ -40,6 +41,7 @@ import com.threedollar.network.data.screen.SDImageResponse
 import com.threedollar.network.data.screen.SDImageStyleResponse
 import com.threedollar.network.data.screen.SDImpressionLogResponse
 import com.threedollar.network.data.screen.SDLinkResponse
+import com.threedollar.network.data.screen.SDLocationBoundsResponse
 import com.threedollar.network.data.screen.SDLocationResponse
 import com.threedollar.network.data.screen.SDPageViewLogResponse
 import com.threedollar.network.data.screen.SDSurfaceStyleResponse
@@ -52,7 +54,17 @@ import com.threedollar.network.data.screen.StoreSectionResponse
 fun HomeListSectionResponse.asModel(): HomeListSectionModel = HomeListSectionModel(
     cards = cards.orEmpty().mapNotNull { it.asHomeListCardModelOrNull() },
     cursor = cursor?.asModel(),
+    focusBounds = focusBounds?.asModelOrNull(),
 )
+
+private fun SDLocationBoundsResponse.asModelOrNull(): SDLocationBoundsModel? {
+    val southWestModel = southWest?.asModelOrNull() ?: return null
+    val northEastModel = northEast?.asModelOrNull() ?: return null
+    return SDLocationBoundsModel(
+        southWest = southWestModel,
+        northEast = northEastModel,
+    )
+}
 
 fun StoreScreenResponse.asModel(): StoreScreenModel = StoreScreenModel(
     sections = sections.orEmpty().mapNotNull { it.asStoreSectionModelOrNull() },

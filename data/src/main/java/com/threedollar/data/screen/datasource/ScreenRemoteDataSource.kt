@@ -27,5 +27,5 @@ interface ScreenRemoteDataSource {
         cursor: String?,
     ): Flow<BaseResponse<StoreContributorHistoriesResponse>>
 
-    fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenResponse>>
+    fun getHomeFilterScreen(preset: String? = null): Flow<BaseResponse<HomeFilterScreenResponse>>
 }
