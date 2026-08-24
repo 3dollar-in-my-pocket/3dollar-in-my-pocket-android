@@ -160,9 +160,15 @@ data class SDLocationModel(
     val longitude: Double,
 )
 
+data class SDLocationBoundsModel(
+    val southWest: SDLocationModel,
+    val northEast: SDLocationModel,
+)
+
 data class HomeListSectionModel(
     val cards: List<HomeListCardModel> = emptyList(),
     val cursor: SDCursorModel? = null,
+    val focusBounds: SDLocationBoundsModel? = null,
 )
 
 sealed interface HomeListCardModel {

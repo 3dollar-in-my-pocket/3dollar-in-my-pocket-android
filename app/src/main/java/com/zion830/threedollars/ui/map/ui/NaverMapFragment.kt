@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
@@ -588,6 +589,23 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
         isInitialCameraPlaced = true
         naverMap?.moveCamera(cameraUpdateForMove(position).animate(CameraAnimation.Easing))
+    }
+
+    fun moveCameraToBounds(
+        southWest: LatLng,
+        northEast: LatLng,
+        paddingPx: IntArray,
+    ) {
+        if (naverMap == null || paddingPx.size != 4) {
+            return
+        }
+
+        isInitialCameraPlaced = true
+        val bounds = LatLngBounds(southWest, northEast)
+        val cameraUpdate = CameraUpdate
+            .fitBounds(bounds, paddingPx[0], paddingPx[1], paddingPx[2], paddingPx[3])
+            .animate(CameraAnimation.Easing)
+        naverMap?.moveCamera(cameraUpdate)
     }
 
     private fun cameraUpdateForMove(position: LatLng): CameraUpdate {
