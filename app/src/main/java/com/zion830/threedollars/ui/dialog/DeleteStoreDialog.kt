@@ -26,6 +26,7 @@ import zion830.com.common.base.onSingleClick
 @AndroidEntryPoint
 class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+    private val resultKey: String? by lazy { arguments?.getString(ARG_RESULT_KEY) }
     override val screenName: ScreenName = ScreenName.REPORT_STORE
 
     private lateinit var deleteType: DeleteType
@@ -44,7 +45,7 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
         binding.tvTitle2.textPartColor("3건 이상", requireContext().getColor(DesignSystemR.color.gray80))
 
         initButton()
-        initFlow()
+        if (resultKey == null) initFlow()
     }
 
     private fun initFlow() {
@@ -66,6 +67,14 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
             dismiss()
         }
         binding.btnFinish.onSingleClick {
+            resultKey?.let { key ->
+                parentFragmentManager.setFragmentResult(
+                    key,
+                    Bundle().apply { putString(RESULT_DELETE_REASON_TYPE, deleteType.key) },
+                )
+                dismiss()
+                return@onSingleClick
+            }
             viewModel.sendClickReportStore(deleteType.key)
             viewModel.deleteStore(deleteType)
             dismiss()
@@ -101,6 +110,13 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     }
 
     companion object {
+        const val RESULT_DELETE_REASON_TYPE = "delete_reason_type"
+        private const val ARG_RESULT_KEY = "result_key"
+
         fun getInstance() = DeleteStoreDialog()
+
+        fun getInstance(resultKey: String) = DeleteStoreDialog().apply {
+            arguments = Bundle().apply { putString(ARG_RESULT_KEY, resultKey) }
+        }
     }
 }
