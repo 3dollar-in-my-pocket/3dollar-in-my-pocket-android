@@ -89,3 +89,37 @@ internal object HomeSheetStateCalculator {
         return previousListValue
     }
 }
+
+internal enum class SelectedStoreSheetValue {
+    Preview,
+    Expanded,
+}
+
+internal data class SelectedStoreSheetAnchors(
+    val expandedOffset: Float,
+    val previewOffset: Float,
+) {
+    fun clamp(offset: Float): Float = offset.coerceIn(expandedOffset, previewOffset)
+
+    fun offsetOf(value: SelectedStoreSheetValue): Float = when (value) {
+        SelectedStoreSheetValue.Preview -> previewOffset
+        SelectedStoreSheetValue.Expanded -> expandedOffset
+    }
+}
+
+internal object SelectedStoreSheetCalculator {
+    private const val FlingThresholdPxPerSecond = 1_200f
+
+    fun settleValue(
+        currentOffset: Float,
+        anchors: SelectedStoreSheetAnchors,
+        velocityY: Float = 0f,
+    ): SelectedStoreSheetValue = when {
+        velocityY <= -FlingThresholdPxPerSecond -> SelectedStoreSheetValue.Expanded
+        velocityY >= FlingThresholdPxPerSecond -> SelectedStoreSheetValue.Preview
+        currentOffset <= (anchors.expandedOffset + anchors.previewOffset) / 2f -> SelectedStoreSheetValue.Expanded
+        else -> SelectedStoreSheetValue.Preview
+    }
+
+    fun shouldCollapse(contentAtTop: Boolean, dragY: Float): Boolean = contentAtTop && dragY > 0f
+}

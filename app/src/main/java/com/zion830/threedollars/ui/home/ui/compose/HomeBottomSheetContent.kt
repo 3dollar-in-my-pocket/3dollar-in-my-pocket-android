@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -111,9 +112,11 @@ import com.threedollar.common.serverdriven.model.SDLocationModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
+import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Content
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -160,12 +163,17 @@ private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
 fun HomeBottomSheetContent(
     homeListSection: HomeListSectionModel,
     storeScreen: StoreScreenModel?,
+    storeDetailScreen: StoreDetailScreenModel? = null,
+    selectedStoreExpanded: Boolean = false,
+    onSelectedStoreExpandedChange: (Boolean) -> Unit = {},
+    onStoreDetailAction: (StoreActionBarModel) -> Unit = {},
+    onStoreDetailFavoriteToggle: (Boolean) -> Unit = {},
+    onStoreDetailImpression: (String, com.threedollar.common.serverdriven.model.SDImpressionLogModel) -> Unit = { _, _ -> },
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
-    onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
@@ -225,8 +233,15 @@ fun HomeBottomSheetContent(
                 anchors = anchors,
             )
         }
+        val selectedStoreAnchors = remember(storePreviewOffsetPx) {
+            SelectedStoreSheetAnchors(
+                expandedOffset = 0f,
+                previewOffset = storePreviewOffsetPx,
+            )
+        }
         val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
+        val detailListState = rememberLazyListState()
         val isListAtTop = remember(listState) {
             derivedStateOf {
                 listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
@@ -248,7 +263,11 @@ fun HomeBottomSheetContent(
             sheetOffsetPx = anchors.clamp(sheetOffsetPx + deltaY)
         }
 
-        fun animateSheetToOffset(targetOffset: Float, settled: HomeSheetValue) {
+        fun animateSheetToOffset(
+            targetOffset: Float,
+            settled: HomeSheetValue,
+            durationMillis: Int = 220,
+        ) {
             stopSheetAnimation()
             settledValue = settled
             val initialOffset = sheetOffsetPx
@@ -256,7 +275,7 @@ fun HomeBottomSheetContent(
                 animate(
                     initialValue = initialOffset,
                     targetValue = targetOffset,
-                    animationSpec = tween(durationMillis = 220),
+                    animationSpec = tween(durationMillis = durationMillis),
                 ) { animatedOffset, _ ->
                     sheetOffsetPx = animatedOffset
                 }
@@ -269,6 +288,30 @@ fun HomeBottomSheetContent(
                 lastListSettledValue = value
             }
             animateSheetToOffset(targetOffset = anchors.offsetOf(value), settled = value)
+        }
+
+        fun snapSelectedSheetBy(deltaY: Float) {
+            stopSheetAnimation()
+            sheetOffsetPx = selectedStoreAnchors.clamp(sheetOffsetPx + deltaY)
+        }
+
+        fun animateSelectedSheetTo(value: SelectedStoreSheetValue) {
+            onSelectedStoreExpandedChange(value == SelectedStoreSheetValue.Expanded)
+            animateSheetToOffset(
+                targetOffset = selectedStoreAnchors.offsetOf(value),
+                settled = HomeSheetValue.Collapsed,
+                durationMillis = 300,
+            )
+        }
+
+        fun settleSelectedSheet(velocityY: Float = 0f) {
+            animateSelectedSheetTo(
+                SelectedStoreSheetCalculator.settleValue(
+                    currentOffset = sheetOffsetPx,
+                    anchors = selectedStoreAnchors,
+                    velocityY = velocityY,
+                )
+            )
         }
 
         fun settleSheet(velocityY: Float = 0f, totalDragY: Float = 0f) {
@@ -299,12 +342,15 @@ fun HomeBottomSheetContent(
             }
         }
 
-        LaunchedEffect(storeScreen, anchors, storePreviewOffsetPx) {
+        LaunchedEffect(storeScreen, anchors, selectedStoreAnchors, selectedStoreExpanded) {
             if (!isSheetInitialized) return@LaunchedEffect
             if (storeScreen != null) {
                 animateSheetToOffset(
-                    targetOffset = storePreviewOffsetPx,
+                    targetOffset = selectedStoreAnchors.offsetOf(
+                        if (selectedStoreExpanded) SelectedStoreSheetValue.Expanded else SelectedStoreSheetValue.Preview
+                    ),
                     settled = HomeSheetValue.Collapsed,
+                    durationMillis = 300,
                 )
             } else {
                 animateSheetTo(HomeSheetStateCalculator.restoreAfterPreview(lastListSettledValue))
@@ -372,11 +418,37 @@ fun HomeBottomSheetContent(
                 }
             }
         }
+        val detailNestedScrollConnection = remember(selectedStoreAnchors, storeScreen, detailListState) {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    if (storeScreen == null) return Offset.Zero
+                    val dragY = available.y
+                    val contentAtTop = detailListState.firstVisibleItemIndex == 0 &&
+                        detailListState.firstVisibleItemScrollOffset == 0
+                    val shouldPullDown = SelectedStoreSheetCalculator.shouldCollapse(contentAtTop, dragY) &&
+                        sheetOffsetPx < selectedStoreAnchors.previewOffset
+                    val shouldPushUp = dragY < 0f && sheetOffsetPx > selectedStoreAnchors.expandedOffset
+                    if (!shouldPullDown && !shouldPushUp) return Offset.Zero
+
+                    val previousOffset = sheetOffsetPx
+                    snapSelectedSheetBy(dragY)
+                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                }
+
+                override suspend fun onPreFling(available: Velocity): Velocity {
+                    val isBetween = sheetOffsetPx > selectedStoreAnchors.expandedOffset &&
+                        sheetOffsetPx < selectedStoreAnchors.previewOffset
+                    if (!isBetween) return Velocity.Zero
+                    settleSelectedSheet(available.y)
+                    return available
+                }
+            }
+        }
 
         val isFullListSettled = storeScreen == null &&
             settledValue == HomeSheetValue.FullList &&
             abs(sheetOffsetPx - anchors.fullListOffset) <= 1f
-        val topCornerRadius = if (isFullListSettled) 0.dp else 16.dp
+        val topCornerRadius = if (isFullListSettled || (storeScreen != null && selectedStoreExpanded)) 0.dp else 16.dp
         val sheetVisibleHeightPx = HomeSheetStateCalculator.visibleHeight(
             containerHeightPx = containerHeightPx,
             currentOffset = sheetOffsetPx,
@@ -399,22 +471,52 @@ fun HomeBottomSheetContent(
                 .clip(RoundedCornerShape(topStart = topCornerRadius, topEnd = topCornerRadius))
                 .background(ColorWhite),
         ) {
-            if (storeScreen == null && !isFullListSettled) {
+            if ((storeScreen == null && !isFullListSettled) || storeScreen != null) {
                 HomeBottomSheetHandle(
-                    onHandleDrag = ::snapSheetBy,
-                    onHandleDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
+                    onHandleDrag = { deltaY ->
+                        if (storeScreen == null) snapSheetBy(deltaY) else snapSelectedSheetBy(deltaY)
+                    },
+                    onHandleDragEnd = { totalDragY ->
+                        if (storeScreen == null) {
+                            settleSheet(totalDragY = totalDragY)
+                        } else {
+                            settleSelectedSheet()
+                        }
+                    },
                 )
             }
             if (storeScreen != null) {
-                StorePreviewContent(
-                    storeScreen = storeScreen,
-                    onClosePreview = onClosePreview,
-                    onActionClick = onActionClick,
-                    onFavoriteClick = onFavoriteClick,
-                    onPreviewClick = onStorePreviewClick,
-                    onAddPhotoClick = onAddPhotoClick,
-                    modifier = Modifier.weight(1f),
-                )
+                if (selectedStoreExpanded && storeDetailScreen != null) {
+                    StoreDetailV2Content(
+                        screen = storeDetailScreen,
+                        onAction = onStoreDetailAction,
+                        onFavoriteToggle = onStoreDetailFavoriteToggle,
+                        onImpression = onStoreDetailImpression,
+                        listState = detailListState,
+                        modifier = Modifier.weight(1f).nestedScroll(detailNestedScrollConnection),
+                    )
+                } else {
+                    Box(modifier = Modifier.weight(1f)) {
+                        StorePreviewContent(
+                            storeScreen = storeScreen,
+                            onClosePreview = {
+                                onSelectedStoreExpandedChange(false)
+                                onClosePreview()
+                            },
+                            onActionClick = onActionClick,
+                            onFavoriteClick = onFavoriteClick,
+                            onPreviewClick = { animateSelectedSheetTo(SelectedStoreSheetValue.Expanded) },
+                            onAddPhotoClick = onAddPhotoClick,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                        if (selectedStoreExpanded && storeDetailScreen == null) {
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
+                                color = Pink,
+                            )
+                        }
+                    }
+                }
             } else {
                 HomeListContent(
                     homeListSection = homeListSection,

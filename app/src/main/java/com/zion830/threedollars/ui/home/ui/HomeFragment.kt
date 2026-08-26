@@ -2,16 +2,20 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
 import android.content.Intent
+import android.content.ClipboardManager
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
@@ -19,6 +23,7 @@ import androidx.core.content.IntentCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -58,6 +63,7 @@ import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.MarketingDialog
+import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
@@ -67,13 +73,20 @@ import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
+import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Event
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2PlatformAction
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2UiState
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2ViewModel
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -99,6 +112,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override val viewModel: HomeViewModel by activityViewModels()
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
+    private val legacyStoreDetailViewModel: StoreDetailViewModel by activityViewModels()
+
+    private val storeDetailV2ViewModel: StoreDetailV2ViewModel by viewModels()
 
     private lateinit var adapter: AroundStoreMapViewRecyclerAdapter
 
@@ -110,10 +126,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var isFirstLoad = true
 
     private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
+    private var isStoreDetailExpanded by mutableStateOf(false)
 
     private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
-            viewModel.closeStorePreview()
+            if (isStoreDetailExpanded) {
+                isStoreDetailExpanded = false
+            } else {
+                viewModel.closeStorePreview()
+            }
         }
     }
 
@@ -144,6 +165,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initView() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
+        parentFragmentManager.setFragmentResultListener(EditStoreFragment.STORE_EDITED_RESULT_KEY, viewLifecycleOwner) { _, _ ->
+            refreshHomeAfterStoreUpdate()
+        }
         initMap()
         initAdapter()
         initFilterComposeView()
@@ -156,7 +180,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
-            startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
+            startActivity(
+                StoreDetailV2Activity.getIntent(
+                    context = requireContext(),
+                    storeId = storeId.toLong(),
+                    storeType = USER_STORE,
+                )
+            )
         }
         consumeStorePreviewDeepLink()
     }
@@ -200,15 +230,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
                 viewModel.sendClickStore(item.storeModel)
-                if (item.storeModel.storeType == BOSS_STORE) {
-                    val intent =
-                        BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                } else {
-                    val intent =
-                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                }
+                val intent = StoreDetailV2Activity.getIntent(
+                    context = requireContext(),
+                    storeId = item.storeModel.storeId.toLongOrNull(),
+                    storeType = item.storeModel.storeType,
+                )
+                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
 
             }
         }, object : OnItemClickListener<AdvertisementModelV2> {
@@ -226,7 +253,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }) { item ->
             viewModel.sendClickVisitButtonLog()
-            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
+            val intent = StoreDetailV2Activity.getIntent(
+                context = requireContext(),
+                storeId = item.storeModel.storeId.toLongOrNull(),
+                storeType = item.storeModel.storeType,
+                startCertification = true,
+            )
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
         binding.aroundStoreRecyclerView.adapter = adapter
@@ -296,15 +328,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             AppTheme {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
+                val storeDetailState = storeDetailV2ViewModel.uiState.collectAsStateWithLifecycle().value
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
+                    storeDetailScreen = (storeDetailState as? StoreDetailV2UiState.Content)?.screen,
+                    selectedStoreExpanded = isStoreDetailExpanded,
+                    onSelectedStoreExpandedChange = { isStoreDetailExpanded = it },
+                    onStoreDetailAction = storeDetailV2ViewModel::onAction,
+                    onStoreDetailFavoriteToggle = storeDetailV2ViewModel::toggleFavorite,
+                    onStoreDetailImpression = storeDetailV2ViewModel::sendImpression,
                     onCardClick = ::moveHomeListCardDetail,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
                     onFavoriteClick = ::toggleStorePreviewFavorite,
-                    onStorePreviewClick = ::moveStorePreviewDetail,
                     onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
@@ -407,6 +445,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
+                        if (screen == null) isStoreDetailExpanded = false
+                    }
+                }
+                launch {
+                    viewModel.selectedStorePreviewStoreId.collect { storeId ->
+                        if (storeId == null) return@collect
+                        isStoreDetailExpanded = false
+                        val deviceLocation = naverMapFragment.currentPosition.value
+                            ?.takeIf { isLocationAvailable() }
+                        storeDetailV2ViewModel.load(
+                            storeId = storeId,
+                            deviceLatitude = deviceLocation?.latitude,
+                            deviceLongitude = deviceLocation?.longitude,
+                        )
+                    }
+                }
+                launch {
+                    storeDetailV2ViewModel.events.collect(::handleStoreDetailV2Event)
+                }
+                launch {
+                    storeDetailV2ViewModel.uiState.collect { state ->
+                        val favorite = (state as? StoreDetailV2UiState.Content)
+                            ?.screen
+                            ?.sections
+                            ?.filterIsInstance<com.threedollar.common.serverdriven.model.StoreDetailSectionModel.Preview>()
+                            ?.firstOrNull()
+                            ?.additionalInfos
+                            ?.isSubscriber
+                        favorite?.let(viewModel::updateSelectedStorePreviewFavorite)
+                    }
+                }
+                launch {
+                    legacyStoreDetailViewModel.photoDeleted.collect { success ->
+                        if (success) storeDetailV2ViewModel.onChildResult(updated = true)
                     }
                 }
                 launch {
@@ -489,6 +561,113 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun handleStoreDetailV2Event(event: StoreDetailV2Event) {
+        when (event) {
+            is StoreDetailV2Event.ShowMessage -> event.message?.let(::showToast)
+            is StoreDetailV2Event.CloseContainer -> {
+                event.message?.let(::showToast)
+                isStoreDetailExpanded = false
+                viewModel.closeStorePreview()
+                viewModel.refreshHomeListSectionAfterStoreUpdate()
+            }
+            is StoreDetailV2Event.Platform -> handleStoreDetailV2PlatformAction(event.action)
+            is StoreDetailV2Event.ShowReviewReportDialog -> showStoreReviewReportReasonDialog(event)
+        }
+    }
+
+    private fun handleStoreDetailV2PlatformAction(action: StoreDetailV2PlatformAction) {
+        when (action) {
+            is StoreDetailV2PlatformAction.OpenLink -> handleStorePreviewLink(action.link)
+            is StoreDetailV2PlatformAction.Share -> shareStorePreview(action.customAction)
+            is StoreDetailV2PlatformAction.Navigation -> showStorePreviewDirection(action.customAction)
+            is StoreDetailV2PlatformAction.ReviewWrite -> moveStorePreviewReviewWrite(action.customAction)
+            is StoreDetailV2PlatformAction.EditStore -> openStoreEdit(action.customAction)
+            is StoreDetailV2PlatformAction.ReportStore -> showStoreDeleteReasonDialog()
+            is StoreDetailV2PlatformAction.AddImage -> moveStorePreviewPhotoAdd()
+            is StoreDetailV2PlatformAction.EnlargeImage -> enlargeStoreImage(action.customAction)
+            is StoreDetailV2PlatformAction.ReportReview -> showStoreReviewReportDialog(action.customAction)
+            is StoreDetailV2PlatformAction.CopyAddress -> copyStoreDetailAddress(action.customAction)
+            is StoreDetailV2PlatformAction.EnlargeMap -> enlargeStoreDetailMap(action.customAction)
+        }
+    }
+
+    private fun openStoreEdit(customAction: SDCustomActionModel) {
+        val storeId = customAction.extraParams.longValue("STORE_ID")
+            ?: viewModel.selectedStorePreviewStoreId.value
+            ?: return
+        parentFragmentManager.addNewFragment(
+            R.id.layout_container,
+            EditStoreFragment.newInstance(storeId.toInt()),
+            EditStoreFragment::class.java.name,
+            false,
+        )
+    }
+
+    private fun enlargeStoreImage(customAction: SDCustomActionModel) {
+        val storeId = customAction.extraParams.longValue("STORE_ID")
+            ?: viewModel.selectedStorePreviewStoreId.value
+            ?: return
+        val imageIndex = customAction.extraParams.longValue("IMAGE_INDEX")?.toInt() ?: 0
+        StorePhotoDialog.getInstance(imageIndex, storeId.toInt())
+            .show(parentFragmentManager, StorePhotoDialog::class.java.name)
+    }
+
+    private fun copyStoreDetailAddress(customAction: SDCustomActionModel) {
+        val address = customAction.extraParams.stringValue("ADDRESS") ?: return
+        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).text = address
+        showToast(getString(CommonR.string.address_copied))
+    }
+
+    private fun enlargeStoreDetailMap(customAction: SDCustomActionModel) {
+        val params = customAction.extraParams
+        val currentLocation = currentHomeListCard()?.marker?.location
+        startActivity(
+            FullScreenMapActivity.getIntent(
+                context = requireContext(),
+                latitude = params.doubleValue("LATITUDE") ?: currentLocation?.latitude,
+                longitude = params.doubleValue("LONGITUDE") ?: currentLocation?.longitude,
+                name = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle(),
+            )
+        )
+    }
+
+    private fun showStoreDeleteReasonDialog() {
+        // 기존 DeleteStoreDialog를 V2 result mode로 열어 선택된 사유만 ViewModel에 전달한다.
+        val resultKey = "store_detail_v2_delete_reason"
+        parentFragmentManager.setFragmentResultListener(resultKey, viewLifecycleOwner) { _, bundle ->
+            bundle.getString("delete_reason_type")?.let(storeDetailV2ViewModel::reportMissingStore)
+        }
+        com.zion830.threedollars.ui.dialog.DeleteStoreDialog.getInstance(resultKey)
+            .show(parentFragmentManager, com.zion830.threedollars.ui.dialog.DeleteStoreDialog::class.java.name)
+    }
+
+    private fun showStoreReviewReportDialog(customAction: SDCustomActionModel) {
+        storeDetailV2ViewModel.requestReviewReport(customAction)
+    }
+
+    private fun showStoreReviewReportReasonDialog(event: StoreDetailV2Event.ShowReviewReportDialog) {
+        var selectedIndex = 0
+        val detailInput = EditText(requireContext()).apply {
+            hint = getString(CommonR.string.review_report_reason_detail_hint)
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(CommonR.string.review_report_dialog_title))
+            .setSingleChoiceItems(event.reasons.map { it.description }.toTypedArray(), selectedIndex) { _, which ->
+                selectedIndex = which
+            }
+            .setView(detailInput)
+            .setPositiveButton(CommonR.string.report_confirm) { _, _ ->
+                val reason = event.reasons[selectedIndex]
+                storeDetailV2ViewModel.submitReviewReport(
+                    customAction = event.customAction,
+                    reason = reason.type,
+                    reasonDetail = detailInput.text?.toString()?.takeIf { reason.hasReasonDetail && it.isNotBlank() },
+                )
+            }
+            .setNegativeButton(CommonR.string.cancel, null)
+            .show()
+    }
+
     private fun toggleStorePreviewFavorite(isSubscriber: Boolean) {
         val storeId = viewModel.selectedStorePreviewStoreId.value
             ?: currentStorePreviewRoute()?.storeId
@@ -508,9 +687,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val intent = if (route.storeType == BOSS_STORE) {
             BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
         } else {
-            StoreDetailActivity.getIntent(
+            StoreDetailV2Activity.getIntent(
                 context = requireContext(),
-                storeId = route.storeId.toInt(),
+                storeId = route.storeId,
+                storeType = route.storeType,
                 openReviewWrite = true,
             )
         }
@@ -536,21 +716,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             fallbackStoreId = card.storePreviewStoreIdOrNull(),
             fallbackStoreType = card.storePreviewStoreTypeOrNull(),
         ) ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
-        }
-        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-    }
-
-    private fun moveStorePreviewDetail() {
-        val route = currentStorePreviewRoute() ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
-        }
+        val intent = StoreDetailV2Activity.getIntent(
+            context = requireContext(),
+            storeId = route.storeId,
+            storeType = route.storeType,
+        )
         startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
@@ -902,6 +1072,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.refreshHomeListSectionAfterStoreUpdate()
         if (viewModel.selectedStoreScreen.value == null) return
         viewModel.refreshSelectedStorePreview()
+        storeDetailV2ViewModel.onChildResult(updated = true)
     }
     
     override fun onResume() {

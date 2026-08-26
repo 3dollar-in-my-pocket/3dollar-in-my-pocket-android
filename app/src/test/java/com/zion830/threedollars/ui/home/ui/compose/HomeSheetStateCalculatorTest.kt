@@ -139,4 +139,24 @@ class HomeSheetStateCalculatorTest {
             HomeSheetStateCalculator.restoreAfterPreview(HomeSheetValue.Collapsed),
         )
     }
+
+    @Test
+    fun `selected store settles between preview and expanded anchors`() {
+        val anchors = SelectedStoreSheetAnchors(
+            expandedOffset = 0f,
+            previewOffset = 420f,
+        )
+
+        assertEquals(SelectedStoreSheetValue.Expanded, SelectedStoreSheetCalculator.settleValue(100f, anchors))
+        assertEquals(SelectedStoreSheetValue.Preview, SelectedStoreSheetCalculator.settleValue(350f, anchors))
+        assertEquals(SelectedStoreSheetValue.Expanded, SelectedStoreSheetCalculator.settleValue(350f, anchors, -1_300f))
+        assertEquals(SelectedStoreSheetValue.Preview, SelectedStoreSheetCalculator.settleValue(100f, anchors, 1_300f))
+    }
+
+    @Test
+    fun `expanded content collapses only for downward drag while list is at top`() {
+        assertEquals(true, SelectedStoreSheetCalculator.shouldCollapse(contentAtTop = true, dragY = 1f))
+        assertEquals(false, SelectedStoreSheetCalculator.shouldCollapse(contentAtTop = false, dragY = 1f))
+        assertEquals(false, SelectedStoreSheetCalculator.shouldCollapse(contentAtTop = true, dragY = -1f))
+    }
 }
