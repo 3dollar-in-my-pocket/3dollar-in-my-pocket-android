@@ -19,8 +19,7 @@ import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,11 +34,13 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         FavoriteMyFolderRecyclerAdapter(object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
                 viewModel.sendClickStore(item.storeId, item.storeType)
-                if (item.storeType == Constants.BOSS_STORE) {
-                    activityResultLauncher.launch(BossStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
-                } else {
-                    activityResultLauncher.launch(StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt()))
-                }
+                activityResultLauncher.launch(
+                    StoreDetailV2Activity.getIntent(
+                        context = this@FavoriteMyFolderActivity,
+                        storeId = item.storeId.toLongOrNull(),
+                        storeType = item.storeType,
+                    )
+                )
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {

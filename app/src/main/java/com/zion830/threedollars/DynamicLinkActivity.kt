@@ -16,9 +16,8 @@ import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -120,34 +119,35 @@ class DynamicLinkActivity : AppCompatActivity() {
             STORE -> {
                 val id = deeplink.getQueryParameter(STORE_ID).toStringDefault()
                 val type = deeplink.getQueryParameter(STORE_TYPE).toStringDefault()
-                if (type == BOSS_STORE) {
-                    startActivity(
-                        BossStoreDetailActivity.getIntent(
-                            this,
-                            deepLinkStoreId = id
-                        )
+                startActivity(
+                    StoreDetailV2Activity.getIntent(
+                        context = this,
+                        storeType = type,
+                        deepLinkStoreId = id,
                     )
-                } else {
-                    startActivity(
-                        StoreDetailActivity.getIntent(
-                            this,
-                            deepLinkStoreId = id
-                        )
-                    )
-                }
+                )
             }
 
             STORE_PREVIEW -> {
                 val id = deeplink.getQueryParameter(STORE_ID)?.toLongOrNull()
-                startActivity(MainActivity.getIntent(this).apply {
-                    id?.let { putExtra(STORE_PREVIEW, it) }
-                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                })
+                startActivity(
+                    StoreDetailV2Activity.getIntent(
+                        context = this,
+                        storeId = id,
+                        storeType = deeplink.getQueryParameter(STORE_TYPE),
+                    )
+                )
             }
 
             VISIT -> {
                 val id = deeplink.getQueryParameter(STORE_ID)?.toIntOrNull()
-                startActivity(StoreDetailActivity.getIntent(this, storeId = id, startCertification = true))
+                startActivity(
+                    StoreDetailV2Activity.getIntent(
+                        context = this,
+                        storeId = id?.toLong(),
+                        startCertification = true,
+                    )
+                )
             }
 
             POLL -> {
@@ -182,10 +182,11 @@ class DynamicLinkActivity : AppCompatActivity() {
                     stackBuilder.addNextIntent(MainActivity.getIntent(this))
 
                     // 상점 상세 Activity 추가
-                    val storeDetailIntent = when (storeType) {
-                        BOSS_STORE -> BossStoreDetailActivity.getIntent(this, storeId = storeId)
-                        else -> StoreDetailActivity.getIntent(this, storeId = storeId.toIntOrNull())
-                    }
+                    val storeDetailIntent = StoreDetailV2Activity.getIntent(
+                        context = this,
+                        storeId = storeId.toLongOrNull(),
+                        storeType = storeType,
+                    )
                     stackBuilder.addNextIntent(storeDetailIntent)
 
                     // 리뷰 Activity 추가

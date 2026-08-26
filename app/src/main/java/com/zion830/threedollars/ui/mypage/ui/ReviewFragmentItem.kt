@@ -24,8 +24,7 @@ import com.threedollar.network.data.user.MyReviewResponseData
 import com.zion830.threedollars.databinding.FragmentReviewItemBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,19 +39,12 @@ class ReviewFragmentItem : Fragment() {
         adapter = MyReviewRecyclerAdapter(object : OnItemClickListener<MyReviewResponseData> {
             override fun onClick(item: MyReviewResponseData) {
                 sendClickReview(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
-                if (item.store.storeType == BOSS_STORE) {
-                    val intent = BossStoreDetailActivity.getIntent(
-                        requireContext(),
-                        item.store.storeId.toString()
-                    )
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                } else {
-                    val intent = StoreDetailActivity.getIntent(
-                        requireContext(),
-                        item.store.storeId?.toIntOrNull()
-                    )
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                }
+                val intent = StoreDetailV2Activity.getIntent(
+                    context = requireContext(),
+                    storeId = item.store.storeId?.toLongOrNull(),
+                    storeType = item.store.storeType,
+                )
+                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })
     }
@@ -113,4 +105,3 @@ class ReviewFragmentItem : Fragment() {
     }
 
 }
-

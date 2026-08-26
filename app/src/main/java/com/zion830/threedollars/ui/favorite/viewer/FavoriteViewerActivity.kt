@@ -17,8 +17,7 @@ import com.zion830.threedollars.databinding.ActivityFavoriteViewerBinding
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.ui.dialog.LoginRequestDialog
 import com.zion830.threedollars.ui.login.ui.SignUpActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import com.zion830.threedollars.utils.requestPermissionFirst
 import dagger.hilt.android.AndroidEntryPoint
@@ -143,11 +142,11 @@ class FavoriteViewerActivity : BaseActivity<ActivityFavoriteViewerBinding, Favor
     }
 
     private fun moveToDetailActivity(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
-        val intent = if (item.storeType == Constants.BOSS_STORE) {
-            BossStoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId)
-        } else {
-            StoreDetailActivity.getIntent(this@FavoriteViewerActivity, item.storeId.toInt())
-        }
+        val intent = StoreDetailV2Activity.getIntent(
+            context = this@FavoriteViewerActivity,
+            storeId = item.storeId.toLongOrNull(),
+            storeType = item.storeType,
+        )
         startActivity(intent)
     }
 }

@@ -5,18 +5,34 @@ import android.content.Context
 import android.content.Intent
 import com.threedollar.common.listener.ActivityStarter
 import com.zion830.threedollars.ui.favorite.FavoriteMyFolderActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.threedollar.common.utils.Constants.BOSS_STORE
+import com.threedollar.common.utils.Constants.USER_STORE
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import com.zion830.threedollars.utils.navigateToMainActivityOnCloseIfNeeded
 import javax.inject.Inject
 
 class ActivityStarterImpl @Inject constructor() : ActivityStarter {
     override fun startStoreDetailActivity(context: Context, storeId: Int?, startCertification: Boolean, deepLinkStoreId: String?) {
-        context.startActivity(StoreDetailActivity.getIntent(context, storeId, startCertification, deepLinkStoreId))
+        context.startActivity(
+            StoreDetailV2Activity.getIntent(
+                context = context,
+                storeId = storeId?.toLong(),
+                storeType = USER_STORE,
+                startCertification = startCertification,
+                deepLinkStoreId = deepLinkStoreId,
+            )
+        )
     }
 
     override fun startBossDetailActivity(context: Context, storeId: String?, deepLinkStoreId: String?) {
-        context.startActivity(BossStoreDetailActivity.getIntent(context, storeId, deepLinkStoreId))
+        context.startActivity(
+            StoreDetailV2Activity.getIntent(
+                context = context,
+                storeId = storeId?.toLongOrNull(),
+                storeType = BOSS_STORE,
+                deepLinkStoreId = deepLinkStoreId,
+            )
+        )
     }
 
     override fun startFavoriteActivity(context: Context) {

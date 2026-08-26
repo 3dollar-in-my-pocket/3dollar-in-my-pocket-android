@@ -35,8 +35,8 @@ import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
@@ -181,11 +181,11 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private fun getStoreItemClickListener() = object : OnItemClickListener<ContentModel> {
         override fun onClick(item: ContentModel) {
             viewModel.sendClickStoreInList(item.storeModel.storeId, item.storeModel.storeType)
-            val intent = if (item.storeModel.storeType == Constants.BOSS_STORE) {
-                BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-            } else {
-                StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-            }
+            val intent = StoreDetailV2Activity.getIntent(
+                context = requireContext(),
+                storeId = item.storeModel.storeId.toLongOrNull(),
+                storeType = item.storeModel.storeType,
+            )
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
     }

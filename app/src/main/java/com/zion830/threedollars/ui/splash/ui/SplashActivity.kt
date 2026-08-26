@@ -29,8 +29,7 @@ import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Activity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
@@ -196,8 +195,9 @@ class SplashActivity :
         when {
             deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) -> {
                 startActivity(
-                    BossStoreDetailActivity.getIntent(
-                        this@SplashActivity,
+                    StoreDetailV2Activity.getIntent(
+                        context = this@SplashActivity,
+                        storeType = com.threedollar.common.utils.Constants.BOSS_STORE,
                         deepLinkStoreId = intent.getStringExtra(STORE_ID),
                     ),
                 )
@@ -205,8 +205,9 @@ class SplashActivity :
 
             deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
                 startActivity(
-                    StoreDetailActivity.getIntent(
-                        this@SplashActivity,
+                    StoreDetailV2Activity.getIntent(
+                        context = this@SplashActivity,
+                        storeType = com.threedollar.common.utils.Constants.USER_STORE,
                         deepLinkStoreId = intent.getStringExtra(STORE_ID),
                     ),
                 )
