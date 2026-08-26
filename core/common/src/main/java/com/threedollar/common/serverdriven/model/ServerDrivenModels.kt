@@ -34,6 +34,8 @@ data class SDActionBarModel(
 
 data class SDHeaderModel(
     val title: SDTextModel,
+    val subTitle: SDTextModel? = null,
+    val trailingAction: SDButtonModel? = null,
 )
 
 sealed interface SDCardModel {
@@ -97,6 +99,7 @@ data class SDButtonModel(
     val link: SDLinkModel? = null,
     val customAction: SDCustomActionModel? = null,
     val style: SDSurfaceStyleModel? = null,
+    val clickLog: SDClickLogModel? = null,
 )
 
 data class SDChipModel(
@@ -104,6 +107,8 @@ data class SDChipModel(
     val text: SDTextModel,
     val additionalText: SDTextModel? = null,
     val style: SDSurfaceStyleModel? = null,
+    val imageAlignment: String? = null,
+    val contentSpacing: Double? = null,
 )
 
 data class SDLinkModel(
@@ -242,6 +247,8 @@ sealed interface StoreSectionModel {
 data class StoreSectionAdditionalInfosModel(
     val type: String = "EMPTY",
     val isSubscriber: Boolean = false,
+    val storeId: String? = null,
+    val storeType: String? = null,
 )
 
 data class StoreActionBarModel(

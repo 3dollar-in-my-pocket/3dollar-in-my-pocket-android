@@ -5,6 +5,7 @@ import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import kotlinx.coroutines.flow.Flow
 
 interface ScreenRepository {
@@ -28,4 +29,18 @@ interface ScreenRepository {
     ): Flow<BaseResponse<SDSectionModel.CardsSection>>
 
     fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenModel>>
+
+    fun getStoreDetailScreen(
+        storeId: Long,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<StoreDetailScreenModel>>
+
+    fun putStorePostStickers(storeId: Long, postId: Long, stickers: List<String>): Flow<BaseResponse<Boolean>>
+
+    fun issueStoreCoupon(storeId: Long, couponId: String): Flow<BaseResponse<Boolean>>
+
+    fun useIssuedCoupon(issuedKey: String): Flow<BaseResponse<Boolean>>
+
+    fun deleteStoreReview(reviewId: Long): Flow<BaseResponse<Boolean>>
 }

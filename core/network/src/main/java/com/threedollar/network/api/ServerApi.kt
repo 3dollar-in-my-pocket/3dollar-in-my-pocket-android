@@ -1,5 +1,6 @@
 package com.threedollar.network.api
 
+import com.google.gson.JsonElement
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.AppStatusResponse
 import com.threedollar.network.data.ReportReasonsResponse
@@ -28,6 +29,7 @@ import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
+import com.threedollar.network.data.screen.StoreDetailScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -240,6 +242,14 @@ interface ServerApi {
         @Query("cursor") cursor: String? = null,
     ): Response<BaseResponse<StoreContributorHistoriesResponse>>
 
+    @GET("/api/v2/screen/store/{storeId}")
+    suspend fun getStoreDetailScreen(
+        @Path("storeId") storeId: Long,
+        @Header("Experiment-Context") experimentContext: String? = null,
+        @Header("X-Device-Latitude") deviceLatitude: Double? = null,
+        @Header("X-Device-Longitude") deviceLongitude: Double? = null,
+    ): Response<BaseResponse<StoreDetailScreenResponse>>
+
     @DELETE("/api/v2/store/{storeId}")
     suspend fun deleteStore(
         @Path("storeId") storeId: Int,
@@ -405,6 +415,29 @@ interface ServerApi {
         @Path("reviewId") reviewId: String,
         @Body stickerRequest: StickerRequest
     ): Response<BaseResponse<String>>
+
+    @PUT("/api/v1/store/{storeId}/news-post/{postId}/stickers")
+    suspend fun putStorePostStickers(
+        @Path("storeId") storeId: Long,
+        @Path("postId") postId: Long,
+        @Body stickerRequest: StickerRequest,
+    ): Response<BaseResponse<JsonElement>>
+
+    @POST("/api/v1/store/{storeId}/coupon/{couponId}/issue")
+    suspend fun issueStoreCoupon(
+        @Path("storeId") storeId: Long,
+        @Path("couponId") couponId: String,
+    ): Response<BaseResponse<JsonElement>>
+
+    @PUT("/api/v1/issued-coupon/{issuedKey}/use")
+    suspend fun useIssuedCoupon(
+        @Path("issuedKey") issuedKey: String,
+    ): Response<BaseResponse<JsonElement>>
+
+    @DELETE("/api/v2/store/review/{reviewId}")
+    suspend fun deleteStoreReview(
+        @Path("reviewId") reviewId: Long,
+    ): Response<BaseResponse<JsonElement>>
 
     @GET("/api/v1/app/status")
     suspend fun getAppStatus(): Response<BaseResponse<AppStatusResponse>>

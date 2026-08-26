@@ -1,12 +1,15 @@
 package com.threedollar.data.screen.repository
 
+import com.google.gson.JsonElement
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.data.screen.asCardsSectionModel
 import com.threedollar.data.screen.asModel
+import com.threedollar.data.screen.asStoreDetailModelOrNull
 import com.threedollar.data.screen.datasource.ScreenRemoteDataSource
 import com.threedollar.domain.screen.repository.ScreenRepository
 import kotlinx.coroutines.flow.Flow
@@ -83,4 +86,48 @@ class ScreenRepositoryImpl @Inject constructor(
                 error = it.error,
             )
         }
+
+    override fun getStoreDetailScreen(
+        storeId: Long,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<StoreDetailScreenModel>> =
+        screenRemoteDataSource.getStoreDetailScreen(
+            storeId = storeId,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude,
+        ).map { response ->
+            val model = response.data?.asStoreDetailModelOrNull()
+            BaseResponse(
+                ok = response.ok && model != null,
+                data = model,
+                message = response.message,
+                resultCode = response.resultCode,
+                error = response.error,
+            )
+        }
+
+    override fun putStorePostStickers(
+        storeId: Long,
+        postId: Long,
+        stickers: List<String>,
+    ): Flow<BaseResponse<Boolean>> =
+        screenRemoteDataSource.putStorePostStickers(storeId, postId, stickers).map(BaseResponse<JsonElement>::asMutationResult)
+
+    override fun issueStoreCoupon(storeId: Long, couponId: String): Flow<BaseResponse<Boolean>> =
+        screenRemoteDataSource.issueStoreCoupon(storeId, couponId).map(BaseResponse<JsonElement>::asMutationResult)
+
+    override fun useIssuedCoupon(issuedKey: String): Flow<BaseResponse<Boolean>> =
+        screenRemoteDataSource.useIssuedCoupon(issuedKey).map(BaseResponse<JsonElement>::asMutationResult)
+
+    override fun deleteStoreReview(reviewId: Long): Flow<BaseResponse<Boolean>> =
+        screenRemoteDataSource.deleteStoreReview(reviewId).map(BaseResponse<JsonElement>::asMutationResult)
 }
+
+private fun BaseResponse<JsonElement>.asMutationResult(): BaseResponse<Boolean> = BaseResponse(
+    ok = ok,
+    data = ok,
+    message = message,
+    resultCode = resultCode,
+    error = error,
+)

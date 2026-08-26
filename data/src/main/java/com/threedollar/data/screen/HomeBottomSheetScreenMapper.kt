@@ -136,6 +136,8 @@ private fun StoreSectionAdditionalInfosResponse?.asModel(): StoreSectionAddition
     return StoreSectionAdditionalInfosModel(
         type = this?.type ?: "EMPTY",
         isSubscriber = this?.isSubscriber ?: false,
+        storeId = this?.storeId,
+        storeType = this?.storeType,
     )
 }
 
@@ -165,6 +167,7 @@ private fun SDButtonResponse?.asModel(): SDButtonModel {
         link = linkModel,
         customAction = if (linkModel == null) this?.customAction?.asModelOrNull() else null,
         style = this?.style?.asModel(),
+        clickLog = this?.clickLog?.asModel(),
     )
 }
 
@@ -173,6 +176,8 @@ private fun SDChipResponse?.asModel(): SDChipModel = SDChipModel(
     text = this?.text.asModel(),
     additionalText = this?.additionalText?.asModel(),
     style = this?.style?.asModel(),
+    imageAlignment = this?.imageAlignment,
+    contentSpacing = this?.contentSpacing,
 )
 
 private fun SDTextResponse?.asModel(): SDTextModel = SDTextModel(

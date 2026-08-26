@@ -98,6 +98,10 @@ data class StoreSectionAdditionalInfosResponse(
     val type: String? = null,
     @SerializedName("isSubscriber")
     val isSubscriber: Boolean? = false,
+    @SerializedName("storeId")
+    val storeId: String? = null,
+    @SerializedName("storeType")
+    val storeType: String? = null,
 )
 
 data class StoreActionBarResponse(
@@ -190,6 +194,10 @@ data class SDChipResponse(
     val additionalText: SDTextResponse? = null,
     @SerializedName("style")
     val style: SDSurfaceStyleResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
+    @SerializedName("contentSpacing")
+    val contentSpacing: Double? = null,
 )
 
 data class SDButtonResponse(
@@ -205,6 +213,8 @@ data class SDButtonResponse(
     val customAction: SDCustomActionResponse? = null,
     @SerializedName("style")
     val style: SDSurfaceStyleResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: SDClickLogResponse? = null,
 )
 
 data class SDLinkResponse(
