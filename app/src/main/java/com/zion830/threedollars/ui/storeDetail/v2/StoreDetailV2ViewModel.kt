@@ -6,6 +6,7 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
+import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -13,6 +14,7 @@ import com.threedollar.domain.home.request.ReportReviewModelRequest
 import com.threedollar.domain.screen.repository.ScreenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,11 +39,15 @@ class StoreDetailV2ViewModel @Inject constructor(
     private val _hasUpdates = MutableStateFlow(false)
     val hasUpdates = _hasUpdates.asStateFlow()
 
+    private val _favoriteOverride = MutableStateFlow<Boolean?>(null)
+    val favoriteOverride = _favoriteOverride.asStateFlow()
+
     private var currentStoreId: Long? = null
     private var currentDeviceLatitude: Double? = null
     private var currentDeviceLongitude: Double? = null
     private var loadJob: Job? = null
-    private var viewLoggedStoreId: Long? = null
+    internal var viewLoggedStoreId: Long? = null
+        private set
     private val sentImpressionKeys = mutableSetOf<String>()
 
     fun load(
@@ -49,6 +55,10 @@ class StoreDetailV2ViewModel @Inject constructor(
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ) {
+        if (currentStoreId != storeId) {
+            _favoriteOverride.value = null
+            sentImpressionKeys.clear()
+        }
         currentStoreId = storeId
         currentDeviceLatitude = deviceLatitude
         currentDeviceLongitude = deviceLongitude
@@ -67,7 +77,8 @@ class StoreDetailV2ViewModel @Inject constructor(
                 homeRepository.deleteFavorite(storeId.toString())
             } else {
                 homeRepository.putFavorite(storeId.toString())
-            }
+            },
+            onSuccess = { _favoriteOverride.value = !isFavorite },
         )
     }
 
@@ -111,6 +122,13 @@ class StoreDetailV2ViewModel @Inject constructor(
         if (sentImpressionKeys.add(stableId)) runCatching { SDClickLogger.send(log) }
     }
 
+    fun sendViewLog(log: SDViewLogModel) {
+        val storeId = currentStoreId ?: return
+        if (viewLoggedStoreId == storeId) return
+        viewLoggedStoreId = storeId
+        runCatching { SDClickLogger.send(log) }
+    }
+
     fun onChildResult(updated: Boolean) {
         if (!updated) return
         _hasUpdates.value = true
@@ -120,26 +138,36 @@ class StoreDetailV2ViewModel @Inject constructor(
     fun reportMissingStore(deleteReasonType: String) {
         val storeId = currentStoreId?.takeIf { it in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong() }?.toInt() ?: return
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            homeRepository.deleteStore(storeId, deleteReasonType).collect { response ->
-                if (response.ok) {
-                    _hasUpdates.value = true
-                    _events.emit(StoreDetailV2Event.CloseContainer(response.message))
-                } else {
-                    _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+            try {
+                homeRepository.deleteStore(storeId, deleteReasonType).collect { response ->
+                    if (response.ok) {
+                        _hasUpdates.value = true
+                        _events.emit(StoreDetailV2Event.CloseContainer(response.message))
+                    } else {
+                        _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+                    }
                 }
+            } catch (throwable: Throwable) {
+                throwable.rethrowCancellation()
+                _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }
 
     fun requestReviewReport(customAction: com.threedollar.common.serverdriven.model.SDCustomActionModel) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            homeRepository.getReportReasons(ReportReasonsGroupType.REVIEW).collect { response ->
-                val reasons = response.data?.reasonModels.orEmpty()
-                if (response.ok && reasons.isNotEmpty()) {
-                    _events.emit(StoreDetailV2Event.ShowReviewReportDialog(customAction, reasons))
-                } else {
-                    _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+            try {
+                homeRepository.getReportReasons(ReportReasonsGroupType.REVIEW).collect { response ->
+                    val reasons = response.data?.reasonModels.orEmpty()
+                    if (response.ok && reasons.isNotEmpty()) {
+                        _events.emit(StoreDetailV2Event.ShowReviewReportDialog(customAction, reasons))
+                    } else {
+                        _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+                    }
                 }
+            } catch (throwable: Throwable) {
+                throwable.rethrowCancellation()
+                _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }
@@ -178,17 +206,26 @@ class StoreDetailV2ViewModel @Inject constructor(
         runMutation(homeRepository.putStickers(storeId.toString(), reviewId.toString(), stickers))
     }
 
-    private fun <T> runMutation(responseFlow: Flow<BaseResponse<T>>) {
+    private fun <T> runMutation(
+        responseFlow: Flow<BaseResponse<T>>,
+        onSuccess: () -> Unit = {},
+    ) {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            responseFlow.collect { response ->
-                if (response.ok) {
-                    _hasUpdates.value = true
-                    requestScreen(showLoading = false)
-                } else if (response.error == NOT_EXISTS_STORE) {
-                    _events.emit(StoreDetailV2Event.CloseContainer(response.message))
-                } else {
-                    _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+            try {
+                responseFlow.collect { response ->
+                    if (response.ok) {
+                        onSuccess()
+                        _hasUpdates.value = true
+                        requestScreen(showLoading = false)
+                    } else if (response.error == NOT_EXISTS_STORE) {
+                        _events.emit(StoreDetailV2Event.CloseContainer(response.message))
+                    } else {
+                        _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+                    }
                 }
+            } catch (throwable: Throwable) {
+                throwable.rethrowCancellation()
+                _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }
@@ -200,31 +237,40 @@ class StoreDetailV2ViewModel @Inject constructor(
             _uiState.value = StoreDetailV2UiState.Loading(storeId)
         }
         loadJob = viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            screenRepository.getStoreDetailScreen(
-                storeId = storeId,
-                deviceLatitude = currentDeviceLatitude,
-                deviceLongitude = currentDeviceLongitude,
-            ).collect { response ->
-                if (currentStoreId != storeId) return@collect
-                val screen = response.data
-                if (response.ok && screen != null) {
-                    if (viewLoggedStoreId != storeId) {
-                        viewLoggedStoreId = storeId
-                        sentImpressionKeys.clear()
-                        runCatching { SDClickLogger.send(screen.viewLog) }
-                    }
-                    _uiState.value = StoreDetailV2UiState.Content(storeId = storeId, screen = screen)
-                } else {
-                    if (response.error == NOT_EXISTS_STORE) {
-                        _events.emit(StoreDetailV2Event.CloseContainer(response.message))
+            try {
+                screenRepository.getStoreDetailScreen(
+                    storeId = storeId,
+                    deviceLatitude = currentDeviceLatitude,
+                    deviceLongitude = currentDeviceLongitude,
+                ).collect { response ->
+                    if (currentStoreId != storeId) return@collect
+                    val screen = response.data
+                    if (response.ok && screen != null) {
+                        _uiState.value = StoreDetailV2UiState.Content(storeId = storeId, screen = screen)
                     } else {
-                        _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+                        if (response.error == NOT_EXISTS_STORE) {
+                            _events.emit(StoreDetailV2Event.CloseContainer(response.message))
+                        } else {
+                            _events.emit(StoreDetailV2Event.ShowMessage(response.message))
+                        }
+                        if (showLoading) {
+                            _uiState.value = StoreDetailV2UiState.Error(
+                                storeId = storeId,
+                                message = response.message,
+                                error = response.error,
+                            )
+                        }
                     }
+                }
+            } catch (throwable: Throwable) {
+                throwable.rethrowCancellation()
+                if (currentStoreId == storeId) {
+                    _events.emit(StoreDetailV2Event.ShowMessage(null))
                     if (showLoading) {
                         _uiState.value = StoreDetailV2UiState.Error(
                             storeId = storeId,
-                            message = response.message,
-                            error = response.error,
+                            message = null,
+                            error = null,
                         )
                     }
                 }
@@ -280,4 +326,8 @@ private fun Map<String, SDClickLogValue>.longValue(key: String): Long? = when (v
     is SDClickLogValue.LongValue -> value.value
     is SDClickLogValue.DoubleValue -> value.value.toLong()
     is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
+}
+
+private fun Throwable.rethrowCancellation() {
+    if (this is CancellationException) throw this
 }

@@ -43,3 +43,12 @@ sealed interface StoreDetailV2PlatformAction {
     data class CopyAddress(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
     data class EnlargeMap(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
 }
+
+internal fun canSubmitStoreDetailReviewReport(
+    reasons: List<ReasonModel>,
+    selectedIndex: Int,
+    detail: String,
+): Boolean {
+    val reason = reasons.getOrNull(selectedIndex) ?: return false
+    return !reason.hasReasonDetail || detail.isNotBlank()
+}

@@ -36,6 +36,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +50,7 @@ import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDCustomActionModel
+import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.threedollar.common.utils.Constants.BOSS_STORE
@@ -62,7 +64,10 @@ import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
+import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
@@ -96,6 +101,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initialActionHandled = savedInstanceState?.getBoolean(STATE_INITIAL_ACTION_HANDLED) == true
         if (storeId <= 0L) {
             finish()
             return
@@ -107,8 +113,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         val root = FrameLayout(this)
         val composeView = ComposeView(this).apply { id = View.generateViewId() }
         fragmentContainer = FragmentContainerView(this).apply {
-            id = View.generateViewId()
-            isVisible = false
+            id = R.id.store_detail_v2_fragment_container
         }
         ViewCompat.setOnApplyWindowInsetsListener(fragmentContainer) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -118,6 +123,8 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         root.addView(composeView, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         root.addView(fragmentContainer, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         setContentView(root)
+        fragmentContainer.isVisible = supportFragmentManager.findFragmentById(fragmentContainer.id) != null ||
+            supportFragmentManager.backStackEntryCount > 0
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (supportFragmentManager.backStackEntryCount > 0) {
@@ -137,7 +144,6 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         }
         supportFragmentManager.addOnBackStackChangedListener {
             fragmentContainer.isVisible = supportFragmentManager.backStackEntryCount > 0
-            if (!fragmentContainer.isVisible) viewModel.onChildResult(updated = true)
         }
         supportFragmentManager.setFragmentResultListener(EditStoreFragment.STORE_EDITED_RESULT_KEY, this) { _, _ ->
             viewModel.onChildResult(updated = true)
@@ -199,7 +205,9 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     private fun handleEvent(event: StoreDetailV2Event) {
         when (event) {
-            is StoreDetailV2Event.ShowMessage -> event.message?.let(::showToast)
+            is StoreDetailV2Event.ShowMessage -> showToast(
+                event.message?.takeIf(String::isNotBlank) ?: getString(CommonR.string.connection_failed)
+            )
             is StoreDetailV2Event.CloseContainer -> {
                 event.message?.let(::showToast)
                 finishWithResult()
@@ -211,13 +219,15 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     private fun handlePlatformAction(action: StoreDetailV2PlatformAction) {
         when (action) {
-            is StoreDetailV2PlatformAction.OpenLink -> openLink(action.link.type, action.link.link)
+            is StoreDetailV2PlatformAction.OpenLink -> openLink(action.link)
             is StoreDetailV2PlatformAction.Share -> share(action.customAction)
             is StoreDetailV2PlatformAction.Navigation -> showDirections(action.customAction)
             is StoreDetailV2PlatformAction.ReviewWrite -> openReviewWrite(customAction = action.customAction)
             is StoreDetailV2PlatformAction.EditStore -> openEditStore(action.customAction)
             is StoreDetailV2PlatformAction.ReportStore -> showDeleteReasonDialog()
-            is StoreDetailV2PlatformAction.AddImage -> childLauncher.launch(MoreImageActivity.getIntent(this, storeId.toInt()))
+            is StoreDetailV2PlatformAction.AddImage -> storeIdAsIntOrNull()?.let { resolvedStoreId ->
+                childLauncher.launch(MoreImageActivity.getIntent(this, resolvedStoreId))
+            } ?: showUnsupportedAction()
             is StoreDetailV2PlatformAction.EnlargeImage -> enlargeImage(action.customAction)
             is StoreDetailV2PlatformAction.ReportReview -> viewModel.requestReviewReport(action.customAction)
             is StoreDetailV2PlatformAction.CopyAddress -> copyAddress(action.customAction)
@@ -225,17 +235,29 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         }
     }
 
-    private fun openLink(type: String, link: String) {
-        if (type == "APP_SCHEME" && link.startsWith("/visit")) {
-            currentScreen()?.let(::startCertification)
-            return
+    private fun openLink(link: SDLinkModel) {
+        when (link.storeDetailV2Route()) {
+            StoreDetailV2LinkRoute.Visit -> currentScreen()?.let(::startCertification)
+            StoreDetailV2LinkRoute.Contributors -> childLauncher.launch(
+                StoreContributorActivity.getIntent(this, storeId.toString())
+            )
+            StoreDetailV2LinkRoute.Reviews -> openReviewList()
+            StoreDetailV2LinkRoute.Dynamic -> DynamicLinkActivity.launch(this, link.link)
+            StoreDetailV2LinkRoute.External -> runCatching {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link.link)))
+            }.onFailure { showUnsupportedAction() }
+            StoreDetailV2LinkRoute.Unsupported -> showUnsupportedAction()
         }
-        val intent = if (type == "APP_SCHEME") {
-            Intent(this, DynamicLinkActivity::class.java).putExtra("link", link)
+    }
+
+    private fun openReviewList() {
+        val resolvedStoreId = storeIdAsIntOrNull() ?: return showUnsupportedAction()
+        val intent = if (resolvedStoreType() == BOSS_STORE) {
+            BossReviewDetailActivity.getIntent(this, storeId = resolvedStoreId.toString())
         } else {
-            Intent(Intent.ACTION_VIEW, Uri.parse(link))
+            StoreReviewDetailActivity.getInstance(this, resolvedStoreId)
         }
-        startActivity(intent)
+        childLauncher.launch(intent)
     }
 
     private fun openReviewWrite(
@@ -248,7 +270,8 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         if (resolvedStoreType == BOSS_STORE) {
             childLauncher.launch(BossReviewWriteActivity.getIntent(this, storeId.toString()))
         } else {
-            AddReviewDialog.getInstance(storeId = storeId.toInt())
+            val resolvedStoreId = storeIdAsIntOrNull() ?: return showUnsupportedAction()
+            AddReviewDialog.getInstance(storeId = resolvedStoreId)
                 .show(supportFragmentManager, AddReviewDialog::class.java.name)
         }
     }
@@ -266,7 +289,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
             StoreCertificationActivity.getIntent(
                 this,
                 StoreCertificationArgs(
-                    storeId = storeId.toInt(),
+                    storeId = storeIdAsIntOrNull() ?: return showUnsupportedAction(),
                     storeName = preview?.header?.title?.text.orEmpty(),
                     latitude = location.latitude,
                     longitude = location.longitude,
@@ -282,10 +305,11 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     private fun openEditStore(customAction: SDCustomActionModel) {
         val targetId = customAction.extraParams.longValue("STORE_ID") ?: storeId
+        val resolvedStoreId = targetId.toIntOrNullExact() ?: return showUnsupportedAction()
         fragmentContainer.isVisible = true
         supportFragmentManager.addNewFragment(
             fragmentContainer.id,
-            EditStoreFragment.newInstance(targetId.toInt()),
+            EditStoreFragment.newInstance(resolvedStoreId),
             EditStoreFragment::class.java.name,
             false,
         )
@@ -300,13 +324,16 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
     }
 
     private fun enlargeImage(customAction: SDCustomActionModel) {
-        val imageIndex = customAction.extraParams.longValue("IMAGE_INDEX")?.toInt() ?: 0
-        StorePhotoDialog.getInstance(imageIndex, storeId.toInt())
+        val imageIndex = customAction.extraParams.longValue("IMAGE_INDEX")?.toIntOrNullExact() ?: 0
+        val resolvedStoreId = storeIdAsIntOrNull() ?: return showUnsupportedAction()
+        StorePhotoDialog.getInstance(imageIndex, resolvedStoreId)
             .show(supportFragmentManager, StorePhotoDialog::class.java.name)
     }
 
     private fun copyAddress(customAction: SDCustomActionModel) {
-        val address = customAction.extraParams.stringValue("ADDRESS") ?: return
+        val address = customAction.extraParams.stringValue("ADDRESS")
+            ?: customAction.extraParams.stringValue("VALUE")
+            ?: return
         (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).text = address
         showToast(getString(CommonR.string.address_copied))
     }
@@ -352,18 +379,49 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
     }
 
     private fun showReviewReportDialog(event: StoreDetailV2Event.ShowReviewReportDialog) {
-        var selectedIndex = 0
-        val input = EditText(this).apply { hint = getString(CommonR.string.review_report_reason_detail_hint) }
-        AlertDialog.Builder(this)
+        var selectedIndex = -1
+        val input = EditText(this).apply {
+            hint = getString(CommonR.string.review_report_reason_detail_hint)
+            isVisible = false
+        }
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(CommonR.string.review_report_dialog_title))
-            .setSingleChoiceItems(event.reasons.map { it.description }.toTypedArray(), selectedIndex) { _, which -> selectedIndex = which }
+            .setSingleChoiceItems(event.reasons.map { it.description }.toTypedArray(), selectedIndex, null)
             .setView(input)
-            .setPositiveButton(CommonR.string.report_confirm) { _, _ ->
-                val reason = event.reasons[selectedIndex]
-                viewModel.submitReviewReport(event.customAction, reason.type, input.text?.toString()?.takeIf { reason.hasReasonDetail && it.isNotBlank() })
-            }
+            .setPositiveButton(CommonR.string.report_confirm, null)
             .setNegativeButton(CommonR.string.cancel, null)
-            .show()
+            .create()
+        dialog.setOnShowListener {
+            val confirmButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            fun updateValidation() {
+                val reason = event.reasons.getOrNull(selectedIndex)
+                input.isVisible = reason?.hasReasonDetail == true
+                confirmButton.isEnabled = canSubmitStoreDetailReviewReport(
+                    reasons = event.reasons,
+                    selectedIndex = selectedIndex,
+                    detail = input.text?.toString().orEmpty(),
+                )
+            }
+            dialog.listView.setOnItemClickListener { _, _, position, _ ->
+                selectedIndex = position
+                if (event.reasons[position].hasReasonDetail.not()) input.setText("")
+                updateValidation()
+            }
+            input.doAfterTextChanged { updateValidation() }
+            confirmButton.setOnClickListener {
+                val reason = event.reasons.getOrNull(selectedIndex) ?: return@setOnClickListener
+                val detail = input.text?.toString().orEmpty()
+                if (!canSubmitStoreDetailReviewReport(event.reasons, selectedIndex, detail)) return@setOnClickListener
+                viewModel.submitReviewReport(
+                    event.customAction,
+                    reason.type,
+                    detail.takeIf { reason.hasReasonDetail },
+                )
+                dialog.dismiss()
+            }
+            updateValidation()
+        }
+        dialog.show()
     }
 
     private fun currentScreen(): StoreDetailScreenModel? =
@@ -378,7 +436,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         .displayText()
 
     private fun finishWithResult() {
-        val favorite = currentScreen()
+        val favorite = viewModel.favoriteOverride.value ?: currentScreen()
             ?.sections
             ?.filterIsInstance<StoreDetailSectionModel.Preview>()
             ?.firstOrNull()
@@ -394,6 +452,24 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         finish()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(STATE_INITIAL_ACTION_HANDLED, initialActionHandled)
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun resolvedStoreType(): String? = storeType ?: currentScreen()
+        ?.sections
+        ?.filterIsInstance<StoreDetailSectionModel.Preview>()
+        ?.firstOrNull()
+        ?.additionalInfos
+        ?.storeType
+
+    private fun storeIdAsIntOrNull(): Int? = storeId.toIntOrNullExact()
+
+    private fun showUnsupportedAction() {
+        showToast(getString(CommonR.string.store_detail_link_not_supported))
+    }
+
     override fun finish() {
         navigateToMainActivityOnCloseIfNeeded()
         super.finish()
@@ -404,6 +480,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         private const val EXTRA_STORE_TYPE = "store_detail_v2_store_type"
         private const val EXTRA_START_CERTIFICATION = "store_detail_v2_start_certification"
         private const val EXTRA_OPEN_REVIEW_WRITE = "store_detail_v2_open_review_write"
+        private const val STATE_INITIAL_ACTION_HANDLED = "store_detail_v2_initial_action_handled"
 
         fun getIntent(
             context: Context,
@@ -428,6 +505,7 @@ private fun StoreDetailV2Screen(
     onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val favoriteOverride by viewModel.favoriteOverride.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -453,6 +531,8 @@ private fun StoreDetailV2Screen(
                 screen = value.screen,
                 onAction = viewModel::onAction,
                 onFavoriteToggle = viewModel::toggleFavorite,
+                favoriteOverride = favoriteOverride,
+                onViewLog = viewModel::sendViewLog,
                 onImpression = viewModel::sendImpression,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             )
@@ -477,6 +557,9 @@ private fun Map<String, SDClickLogValue>.longValue(key: String): Long? = when (v
     is SDClickLogValue.DoubleValue -> value.value.toLong()
     is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
 }
+
+private fun Long.toIntOrNullExact(): Int? =
+    takeIf { it in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong() }?.toInt()
 
 private fun Map<String, SDClickLogValue>.doubleValue(key: String): Double? = when (val value = this[key]) {
     is SDClickLogValue.StringValue -> value.value.toDoubleOrNull()

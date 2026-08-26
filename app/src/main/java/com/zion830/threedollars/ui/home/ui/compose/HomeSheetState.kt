@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
+import kotlin.math.abs
+
 internal enum class HomeSheetValue {
     Collapsed,
     FullList,
@@ -122,4 +124,14 @@ internal object SelectedStoreSheetCalculator {
     }
 
     fun shouldCollapse(contentAtTop: Boolean, dragY: Float): Boolean = contentAtTop && dragY > 0f
+
+    fun valueAtAnchor(
+        currentOffset: Float,
+        anchors: SelectedStoreSheetAnchors,
+        tolerancePx: Float = 1f,
+    ): SelectedStoreSheetValue? = when {
+        abs(currentOffset - anchors.expandedOffset) <= tolerancePx -> SelectedStoreSheetValue.Expanded
+        abs(currentOffset - anchors.previewOffset) <= tolerancePx -> SelectedStoreSheetValue.Preview
+        else -> null
+    }
 }

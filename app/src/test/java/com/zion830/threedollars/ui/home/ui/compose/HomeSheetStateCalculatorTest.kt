@@ -159,4 +159,29 @@ class HomeSheetStateCalculatorTest {
         assertEquals(false, SelectedStoreSheetCalculator.shouldCollapse(contentAtTop = false, dragY = 1f))
         assertEquals(false, SelectedStoreSheetCalculator.shouldCollapse(contentAtTop = true, dragY = -1f))
     }
+
+    @Test
+    fun `selected store exact anchors resolve to matching external state`() {
+        val anchors = SelectedStoreSheetAnchors(
+            expandedOffset = 0f,
+            previewOffset = 420f,
+        )
+
+        assertEquals(
+            SelectedStoreSheetValue.Expanded,
+            SelectedStoreSheetCalculator.valueAtAnchor(0.5f, anchors),
+        )
+        assertEquals(
+            SelectedStoreSheetValue.Preview,
+            SelectedStoreSheetCalculator.valueAtAnchor(419.5f, anchors),
+        )
+        assertEquals(null, SelectedStoreSheetCalculator.valueAtAnchor(200f, anchors))
+    }
+
+    @Test
+    fun `selected store loading indicator stops after first load error`() {
+        assertEquals(true, shouldShowSelectedStoreLoading(isExpanded = true, isLoading = true))
+        assertEquals(false, shouldShowSelectedStoreLoading(isExpanded = true, isLoading = false))
+        assertEquals(false, shouldShowSelectedStoreLoading(isExpanded = false, isLoading = true))
+    }
 }

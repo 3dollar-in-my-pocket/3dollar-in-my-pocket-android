@@ -19,8 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
+import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
@@ -44,6 +47,8 @@ fun StoreDetailV2Content(
     screen: StoreDetailScreenModel,
     onAction: (StoreActionBarModel) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit = {},
+    favoriteOverride: Boolean? = null,
+    onViewLog: (SDViewLogModel) -> Unit = {},
     onImpression: (String, SDImpressionLogModel) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
@@ -51,11 +56,20 @@ fun StoreDetailV2Content(
     val coroutineScope = rememberCoroutineScope()
     val preview = screen.sections.filterIsInstance<StoreDetailSectionModel.Preview>().firstOrNull()
     val previewIndex = screen.sections.indexOfFirst { it is StoreDetailSectionModel.Preview }
+    var previewActionsVisible by remember(screen) { mutableStateOf(true) }
     val showStickyActions by remember(screen.sections, listState) {
         derivedStateOf {
-            preview != null && preview.actionBars.isNotEmpty() &&
-                previewIndex >= 0 && listState.firstVisibleItemIndex > previewIndex
+            shouldShowStoreDetailStickyActions(
+                hasActions = preview?.actionBars?.isNotEmpty() == true,
+                previewIndex = previewIndex,
+                firstVisibleItemIndex = listState.firstVisibleItemIndex,
+                previewActionsVisible = previewActionsVisible,
+            )
         }
+    }
+
+    LaunchedEffect(screen.viewLog) {
+        onViewLog(screen.viewLog)
     }
 
     LaunchedEffect(screen.sections, listState) {
@@ -83,8 +97,14 @@ fun StoreDetailV2Content(
             ) { _, section ->
                 when (section) {
                     is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section, onAction)
-                    is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(section, onAction, onFavoriteToggle)
-                    is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section)
+                    is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(
+                        section = section,
+                        onAction = onAction,
+                        onFavoriteToggle = onFavoriteToggle,
+                        favoriteOverride = favoriteOverride,
+                        onActionRowVisibilityChanged = { previewActionsVisible = it },
+                    )
+                    is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section, onImpression)
                     is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
                         val targetType = actionBar.targetSectionTypeOrNull()
                         val targetIndex = targetType?.let { target ->
@@ -122,6 +142,14 @@ fun StoreDetailV2Content(
         }
     }
 }
+
+internal fun shouldShowStoreDetailStickyActions(
+    hasActions: Boolean,
+    previewIndex: Int,
+    firstVisibleItemIndex: Int,
+    previewActionsVisible: Boolean,
+): Boolean = hasActions && previewIndex >= 0 &&
+    (!previewActionsVisible || firstVisibleItemIndex > previewIndex)
 
 @Composable
 private fun StoreDetailStickyActions(

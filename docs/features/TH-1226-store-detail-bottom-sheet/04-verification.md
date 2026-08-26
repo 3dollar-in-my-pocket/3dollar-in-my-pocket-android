@@ -12,14 +12,19 @@
 git diff --check
 ```
 
-- app 관련 범위: 44 tests 통과
+- app 관련 범위: 55 tests 통과
+- data 관련 범위: 15 tests 통과
+- network 관련 범위: 2 tests 통과
 - `StoreDetailActivity.getIntent`/`BossStoreDetailActivity.getIntent` direct caller: 0건
 - V2 package의 legacy Activity fallback: 0건
 - OpenAPI custom action enum 18개와 ViewModel 처리 목록 일치
 - `StoreDetailV2Content` direct `when`에 section 16개 존재
 - staged 파일 없음, 보호 파일 stage 없음
+- final review 보강 회귀 test: repository exception/content 보존, Home loading 종료, favorite override, false child result, display 시점 view log, APP_SCHEME routing, exact sheet anchor, sticky action sentinel, review report validation
 
 기존 프로젝트의 Kotlin plugin 중복 로드, deprecated API와 annotation target warning은 baseline과 동일하게 출력됐다.
+
+추가로 final gate에서 `./gradlew test :app:assembleDebug`를 실행했으나, TH-1226 변경 범위 밖의 기존 `:core:abtest:kaptDebugUnitTestKotlin`과 `:core:abtest:kaptReleaseUnitTestKotlin`이 `ExampleUnitTest`의 `@error.NonExistentClass` stub 오류로 실패했다. 해당 test 파일은 기준 커밋 `4ab76e8f65aed8608f3afd1df8237b6181f7c222`과 동일하고, `core/abtest` 및 Gradle 설정에는 이번 변경이 없다. 위에 기록한 TH-1226 관련 test/compile과 독립 `:app:assembleDebug`는 모두 성공했다.
 
 ## 사용자 수동 확인 checklist
 

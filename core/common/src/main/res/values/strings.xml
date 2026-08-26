@@ -616,4 +616,5 @@
     <string name="session_expired">세션이 만료되었습니다.\n다시 로그인해주세요.</string>
     <string name="review_report_reason_detail_hint">신고 사유 직접 입력</string>
     <string name="store_detail_saved">저장됨</string>
+    <string name="store_detail_link_not_supported">지원하지 않는 링크입니다.</string>
 </resources>

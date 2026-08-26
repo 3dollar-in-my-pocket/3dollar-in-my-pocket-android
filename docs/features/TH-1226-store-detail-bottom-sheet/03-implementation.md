@@ -12,6 +12,15 @@
 - `StoreDetailV2Activity.getIntent()`와 공통 `StoreDetailV2Content`를 추가하고 deep link, push, list, favorite, my page 등 direct legacy caller를 V2로 전환했다.
 - legacy `StoreDetailActivity`/`BossStoreDetailActivity`와 기존 Dialog/하위 Activity는 삭제하지 않았다.
 - `DeleteStoreDialog`에는 legacy 동작을 유지하는 optional FragmentResult mode만 추가했다.
+- final code review에서 확인한 예외/상태 경계를 보강했다.
+  - repository exception은 first load를 `Error`로 전환하고 refresh/mutation에서는 기존 content를 유지한 채 공통 오류를 표시한다.
+  - Home first load 실패 시 기존 Preview는 유지하되 loading indicator를 종료하며, 필수 위치 누락은 오류를 표시하고 현재 sheet를 닫는다.
+  - 즐겨찾기 성공 상태는 refresh 실패와 무관하게 화면/caller result에 보존한다.
+  - APP_SCHEME은 기존 방문·제보자·리뷰·DynamicLink 목적지를 명시적으로 구분하고, 알 수 없는 route가 Home으로 오진입하지 않게 차단한다.
+  - Preview action row visibility sentinel과 exact anchor 동기화를 추가해 sticky action/외부 expanded state를 맞춘다.
+  - visit/review stars, image subtitle, related context label을 렌더링하고 AdMob impression을 ViewModel dedupe 경계로 통합했다.
+  - Home background preload에서는 page view를 보내지 않고, 공유 `StoreDetailV2Content`가 실제 표시될 때 host instance/store당 한 번 전송한다.
+  - 리뷰 신고는 사유 선택과 필수 상세 입력을 검증하며, child result·initial action·Fragment container 복원 상태를 실제 성공 결과에만 연동한다.
 
 ## 범위 확인
 

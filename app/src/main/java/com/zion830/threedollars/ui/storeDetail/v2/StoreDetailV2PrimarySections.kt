@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -51,6 +54,7 @@ import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
+import com.threedollar.common.serverdriven.model.StoreDetailRatingModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.R as CommonR
@@ -84,7 +88,10 @@ internal fun StoreDetailPreviewSection(
     section: StoreDetailSectionModel.Preview,
     onAction: (StoreActionBarModel) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
+    favoriteOverride: Boolean?,
+    onActionRowVisibilityChanged: (Boolean) -> Unit,
 ) {
+    val isSubscriber = favoriteOverride ?: section.additionalInfos.isSubscriber
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -100,13 +107,13 @@ internal fun StoreDetailPreviewSection(
             section.header.badge?.let { StoreDetailImage(it, Modifier.size(20.dp), ContentScale.Fit) }
             Text(
                 text = stringResource(
-                    if (section.additionalInfos.isSubscriber) CommonR.string.store_detail_saved else CommonR.string.save
+                    if (isSubscriber) CommonR.string.store_detail_saved else CommonR.string.save
                 ),
-                color = if (section.additionalInfos.isSubscriber) Pink else Gray70,
+                color = if (isSubscriber) Pink else Gray70,
                 fontFamily = PretendardFontFamily,
                 fontSize = dpToSp(13),
-                modifier = Modifier.clip(CircleShape).background(Gray10).clickable {
-                    onFavoriteToggle(section.additionalInfos.isSubscriber)
+                modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp).clip(CircleShape).background(Gray10).clickable {
+                    onFavoriteToggle(isSubscriber)
                 }.padding(horizontal = 10.dp, vertical = 8.dp),
             )
         }
@@ -122,7 +129,14 @@ internal fun StoreDetailPreviewSection(
             }
         }
         if (section.actionBars.isNotEmpty()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        onActionRowVisibilityChanged(coordinates.boundsInRoot().bottom > 0f)
+                    },
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 section.actionBars.forEach { action ->
                     StoreDetailActionButton(
                         action = action,
@@ -266,11 +280,25 @@ internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit) {
         StoreDetailSectionHeader(section.header.title, section.header.subTitle)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(section.summary.title.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+            StoreDetailRating(section.summary.stars)
             Text(section.summary.rating.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(20))
         }
         StoreDetailChipRow(section.history.items)
         section.history.moreText?.let {
             Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
+        }
+    }
+}
+
+@Composable
+internal fun StoreDetailRating(rating: StoreDetailRatingModel) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        rating.images.forEach { image ->
+            StoreDetailImage(
+                image = image,
+                modifier = Modifier.size(18.dp),
+                contentScale = ContentScale.Fit,
+            )
         }
     }
 }
@@ -310,7 +338,7 @@ internal fun StoreDetailActionButton(
 ) {
     val primary = action.button.text.text.contains("방문") || action.button.text.text.contains("발급")
     Box(
-        modifier = modifier.height(44.dp).clip(RoundedCornerShape(12.dp))
+        modifier = modifier.height(48.dp).clip(RoundedCornerShape(12.dp))
             .background(if (primary) Pink else ColorWhite)
             .then(if (primary) Modifier else Modifier.border(BorderStroke(1.dp, Gray20), RoundedCornerShape(12.dp)))
             .clickable(onClick = onClick)
@@ -336,7 +364,8 @@ internal fun StoreDetailTextButton(
         color = Pink,
         fontFamily = PretendardFontFamily,
         fontSize = dpToSp(14),
-        modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(8.dp),
+        modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+            .clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(8.dp),
     )
 }
 

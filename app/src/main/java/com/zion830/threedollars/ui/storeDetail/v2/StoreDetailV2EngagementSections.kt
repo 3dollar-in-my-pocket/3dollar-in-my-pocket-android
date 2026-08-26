@@ -42,6 +42,7 @@ import com.google.android.gms.ads.AdView
 import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.threedollar.common.R as CommonR
@@ -135,7 +136,7 @@ internal fun StoreDetailImageSection(
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             section.cards.forEach { card ->
                 Column(
-                    modifier = Modifier.size(width = 132.dp, height = 168.dp).clip(RoundedCornerShape(10.dp)).background(Gray10)
+                    modifier = Modifier.size(width = 132.dp, height = 196.dp).clip(RoundedCornerShape(10.dp)).background(Gray10)
                         .clickable {
                             onAction(
                                 StoreActionBarModel(
@@ -151,7 +152,12 @@ internal fun StoreDetailImageSection(
                         },
                 ) {
                     StoreDetailImage(card.image, Modifier.fillMaxWidth().height(132.dp), ContentScale.Crop)
-                    card.title?.let { Text(it.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(12), modifier = Modifier.padding(8.dp)) }
+                    card.title?.let {
+                        Text(it.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(12), modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp))
+                    }
+                    card.subTitle?.let {
+                        Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(11), modifier = Modifier.padding(horizontal = 8.dp))
+                    }
                 }
             }
         }
@@ -171,7 +177,7 @@ internal fun StoreDetailRelatedStoresSection(
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             section.cards.forEach { card ->
                 Column(
-                    modifier = Modifier.size(width = 176.dp, height = 220.dp).clip(RoundedCornerShape(12.dp)).background(Gray10)
+                    modifier = Modifier.size(width = 176.dp, height = 248.dp).clip(RoundedCornerShape(12.dp)).background(Gray10)
                         .clickable {
                             card.link?.let { link ->
                                 onAction(
@@ -189,6 +195,7 @@ internal fun StoreDetailRelatedStoresSection(
                     Text(card.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14), modifier = Modifier.padding(horizontal = 10.dp))
                     Column(Modifier.padding(horizontal = 10.dp)) {
                         StoreDetailChipRow(card.metricLabel)
+                        StoreDetailChipRow(card.contextLabel)
                     }
                 }
             }
@@ -208,6 +215,7 @@ internal fun StoreDetailReviewSection(
         StoreDetailSectionHeader(section.header.title, section.header.subTitle, section.header.trailingAction, onAction)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(section.summary.title.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+            StoreDetailRating(section.summary.stars)
             Text(section.summary.rating.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(22))
         }
         section.cards.forEach { card ->
@@ -225,6 +233,7 @@ internal fun StoreDetailReviewSection(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 StoreDetailSectionHeader(card.header.title, card.header.subTitle, card.header.trailingAction, onAction)
+                StoreDetailRating(card.stars)
                 StoreDetailChipRow(card.metadata)
                 if (card.images.isNotEmpty()) {
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -270,7 +279,10 @@ internal fun StoreDetailCtaSection(
 }
 
 @Composable
-internal fun StoreDetailAdMobSection(section: StoreDetailSectionModel.AdMob) {
+internal fun StoreDetailAdMobSection(
+    section: StoreDetailSectionModel.AdMob,
+    onImpression: (String, SDImpressionLogModel) -> Unit,
+) {
     val card = section.cards.firstOrNull() ?: return
     val context = androidx.compose.ui.platform.LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -280,11 +292,11 @@ internal fun StoreDetailAdMobSection(section: StoreDetailSectionModel.AdMob) {
             adUnitId = context.getString(CommonR.string.admob_list_banner)
             adListener = object : AdListener() {
                 override fun onAdClicked() {
-                    SDClickLogger.send(card.clickLog)
+                    runCatching { SDClickLogger.send(card.clickLog) }
                 }
 
                 override fun onAdImpression() {
-                    SDClickLogger.send(card.impressionLog)
+                    onImpression("AD_MOB:${card.cardId}", card.impressionLog)
                 }
             }
             loadAd(AdRequest.Builder().build())

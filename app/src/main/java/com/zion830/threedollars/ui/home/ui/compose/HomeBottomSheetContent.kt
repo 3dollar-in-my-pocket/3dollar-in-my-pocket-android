@@ -164,10 +164,13 @@ fun HomeBottomSheetContent(
     homeListSection: HomeListSectionModel,
     storeScreen: StoreScreenModel?,
     storeDetailScreen: StoreDetailScreenModel? = null,
+    isStoreDetailLoading: Boolean = false,
     selectedStoreExpanded: Boolean = false,
     onSelectedStoreExpandedChange: (Boolean) -> Unit = {},
     onStoreDetailAction: (StoreActionBarModel) -> Unit = {},
     onStoreDetailFavoriteToggle: (Boolean) -> Unit = {},
+    storeDetailFavoriteOverride: Boolean? = null,
+    onStoreDetailViewLog: (com.threedollar.common.serverdriven.model.SDViewLogModel) -> Unit = {},
     onStoreDetailImpression: (String, com.threedollar.common.serverdriven.model.SDImpressionLogModel) -> Unit = { _, _ -> },
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
@@ -436,6 +439,22 @@ fun HomeBottomSheetContent(
                 }
 
                 override suspend fun onPreFling(available: Velocity): Velocity {
+                    SelectedStoreSheetCalculator.valueAtAnchor(sheetOffsetPx, selectedStoreAnchors)?.let { value ->
+                        onSelectedStoreExpandedChange(value == SelectedStoreSheetValue.Expanded)
+                        return Velocity.Zero
+                    }
+                    val isBetween = sheetOffsetPx > selectedStoreAnchors.expandedOffset &&
+                        sheetOffsetPx < selectedStoreAnchors.previewOffset
+                    if (!isBetween) return Velocity.Zero
+                    settleSelectedSheet(available.y)
+                    return available
+                }
+
+                override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                    SelectedStoreSheetCalculator.valueAtAnchor(sheetOffsetPx, selectedStoreAnchors)?.let { value ->
+                        onSelectedStoreExpandedChange(value == SelectedStoreSheetValue.Expanded)
+                        return Velocity.Zero
+                    }
                     val isBetween = sheetOffsetPx > selectedStoreAnchors.expandedOffset &&
                         sheetOffsetPx < selectedStoreAnchors.previewOffset
                     if (!isBetween) return Velocity.Zero
@@ -491,6 +510,8 @@ fun HomeBottomSheetContent(
                         screen = storeDetailScreen,
                         onAction = onStoreDetailAction,
                         onFavoriteToggle = onStoreDetailFavoriteToggle,
+                        favoriteOverride = storeDetailFavoriteOverride,
+                        onViewLog = onStoreDetailViewLog,
                         onImpression = onStoreDetailImpression,
                         listState = detailListState,
                         modifier = Modifier.weight(1f).nestedScroll(detailNestedScrollConnection),
@@ -509,7 +530,7 @@ fun HomeBottomSheetContent(
                             onAddPhotoClick = onAddPhotoClick,
                             modifier = Modifier.fillMaxSize(),
                         )
-                        if (selectedStoreExpanded && storeDetailScreen == null) {
+                        if (shouldShowSelectedStoreLoading(selectedStoreExpanded, isStoreDetailLoading)) {
                             LinearProgressIndicator(
                                 modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
                                 color = Pink,
@@ -531,6 +552,11 @@ fun HomeBottomSheetContent(
         }
     }
 }
+
+internal fun shouldShowSelectedStoreLoading(
+    isExpanded: Boolean,
+    isLoading: Boolean,
+): Boolean = isExpanded && isLoading
 
 @Preview(name = "Home collapsed sheet height", widthDp = 360, heightDp = 812)
 @Composable

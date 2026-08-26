@@ -14,6 +14,7 @@ import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.screen.repository.ScreenRepository
 import java.lang.reflect.Proxy
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
@@ -122,6 +123,89 @@ class StoreDetailV2ViewModelTest {
                 .first()
         }
         Unit
+    }
+
+    @Test
+    fun repositoryExceptionLeavesLoadingAndPublishesFallbackMessage() = runBlocking {
+        val repository = DeferredScreenRepository().apply {
+            loadFailure = IOException("offline")
+        }
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        val messageEvent = async(start = CoroutineStart.UNDISPATCHED) {
+            withTimeout(3_000) {
+                viewModel.events.filterIsInstance<StoreDetailV2Event.ShowMessage>().first()
+            }
+        }
+
+        viewModel.load(storeId = 6L, deviceLatitude = null, deviceLongitude = null)
+
+        val error = withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Error>().first()
+        }
+        assertEquals(6L, error.storeId)
+        assertEquals(null, error.message)
+        assertEquals(null, messageEvent.await().message)
+    }
+
+    @Test
+    fun refreshExceptionKeepsContentAndFavoriteResultUsesSuccessfulLocalMutation() = runBlocking {
+        val repository = DeferredScreenRepository()
+        val viewModel = StoreDetailV2ViewModel(
+            repository,
+            favoriteHomeRepository(BaseResponse(ok = true, data = true)),
+        )
+        viewModel.load(7L, null, null)
+        repository.respond(7L, successResponse("initial"))
+        withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first()
+        }
+        repository.loadFailure = IOException("refresh failed")
+        val messageEvent = async(start = CoroutineStart.UNDISPATCHED) {
+            withTimeout(3_000) {
+                viewModel.events.filterIsInstance<StoreDetailV2Event.ShowMessage>().first()
+            }
+        }
+
+        viewModel.toggleFavorite(isFavorite = false)
+
+        withTimeout(3_000) {
+            while (viewModel.favoriteOverride.value != true) yield()
+        }
+        assertEquals("initial", viewModel.currentContentTitle())
+        assertEquals(true, viewModel.hasUpdates.value)
+        assertEquals(null, messageEvent.await().message)
+    }
+
+    @Test
+    fun unchangedChildResultDoesNotRefreshOrMarkStoreUpdated() = runBlocking {
+        val repository = DeferredScreenRepository()
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        viewModel.load(8L, null, null)
+        repository.respond(8L, successResponse("initial"))
+        withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first()
+        }
+
+        viewModel.onChildResult(updated = false)
+
+        yield()
+        assertEquals(1, repository.loadCount)
+        assertEquals(false, viewModel.hasUpdates.value)
+    }
+
+    @Test
+    fun backgroundLoadDoesNotLogViewUntilSharedContentIsDisplayed() = runBlocking {
+        val repository = DeferredScreenRepository()
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        viewModel.load(9L, null, null)
+        repository.respond(9L, successResponse("loaded-in-background"))
+        val content = withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first()
+        }
+
+        assertEquals(null, viewModel.viewLoggedStoreId)
+        viewModel.sendViewLog(content.screen.viewLog)
+        assertEquals(9L, viewModel.viewLoggedStoreId)
     }
 
     @Test
@@ -234,6 +318,7 @@ private class DeferredScreenRepository : ScreenRepository {
     val latitudes = ConcurrentHashMap<Long, Double?>()
     val longitudes = ConcurrentHashMap<Long, Double?>()
     var loadCount: Int = 0
+    var loadFailure: Throwable? = null
     var mutationResponse: BaseResponse<Boolean> = BaseResponse(ok = true, data = true)
     val postStickerCalls = mutableListOf<Triple<Long, Long, List<String>>>()
     var issuedCouponId: String? = null
@@ -250,6 +335,7 @@ private class DeferredScreenRepository : ScreenRepository {
         deviceLongitude: Double?,
     ): Flow<BaseResponse<StoreDetailScreenModel>> = flow {
         loadCount += 1
+        loadFailure?.let { throw it }
         deviceLatitude?.let { latitudes[storeId] = it }
         deviceLongitude?.let { longitudes[storeId] = it }
         emit(responses.getOrPut(storeId) { Channel(Channel.UNLIMITED) }.receive())
@@ -287,6 +373,16 @@ private fun unusedHomeRepository(): HomeRepository = Proxy.newProxyInstance(
     HomeRepository::class.java.classLoader,
     arrayOf(HomeRepository::class.java),
 ) { _, method, _ -> error("Unexpected HomeRepository call: ${method.name}") } as HomeRepository
+
+private fun favoriteHomeRepository(response: BaseResponse<Boolean>): HomeRepository = Proxy.newProxyInstance(
+    HomeRepository::class.java.classLoader,
+    arrayOf(HomeRepository::class.java),
+) { _, method, _ ->
+    when (method.name) {
+        "putFavorite", "deleteFavorite" -> flowOf(response)
+        else -> error("Unexpected HomeRepository call: ${method.name}")
+    }
+} as HomeRepository
 
 private data class HomeMutationTracker(
     val reviewStickerCalls: MutableList<Triple<String, String, List<String>>> = mutableListOf(),
