@@ -33,7 +33,7 @@ internal fun SDLinkModel.storeDetailV2Route(): StoreDetailV2LinkRoute {
 
     return when (route.lowercase()) {
         "visit" -> StoreDetailV2LinkRoute.Visit
-        "contributors" -> StoreDetailV2LinkRoute.Contributors
+        "contributors", "store-contributors" -> StoreDetailV2LinkRoute.Contributors
         "review", "reviews", "reviewlist" -> StoreDetailV2LinkRoute.Reviews
         "bookmark", "home", "medal", "store", "storepreview", "polldetail", "community", "browser" -> {
             StoreDetailV2LinkRoute.Dynamic

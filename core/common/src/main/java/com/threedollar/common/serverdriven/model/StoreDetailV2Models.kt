@@ -96,7 +96,7 @@ sealed interface StoreDetailSectionModel {
     data class Visit(
         override val type: String,
         val header: SDHeaderModel,
-        val summary: StoreDetailSummaryModel,
+        val summary: StoreDetailVisitSummaryModel,
         val history: StoreDetailHistoryModel,
     ) : StoreDetailSectionModel
 }
@@ -230,6 +230,11 @@ data class StoreDetailSummaryModel(
     val stars: StoreDetailRatingModel,
     val rating: SDTextModel,
     val style: SDSurfaceStyleModel,
+)
+
+data class StoreDetailVisitSummaryModel(
+    val chips: List<SDChipModel>,
+    val ratingSummary: StoreDetailSummaryModel?,
 )
 
 data class StoreDetailHistoryModel(

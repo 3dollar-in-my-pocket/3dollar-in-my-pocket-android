@@ -188,8 +188,16 @@ data class StoreDetailHistoryResponse(
 
 data class StoreDetailVisitSectionResponse(
     @SerializedName("header") val header: StoreDetailHeaderResponse? = null,
-    @SerializedName("summary") val summary: StoreDetailSummaryResponse? = null,
+    @SerializedName("summary") val summary: StoreDetailVisitSummaryResponse? = null,
     @SerializedName("history") val history: StoreDetailHistoryResponse? = null,
+)
+
+data class StoreDetailVisitSummaryResponse(
+    @SerializedName("chips") val chips: List<SDChipResponse>? = null,
+    @SerializedName("title") val title: SDTextResponse? = null,
+    @SerializedName("stars") val stars: StoreDetailRatingResponse? = null,
+    @SerializedName("rating") val rating: SDTextResponse? = null,
+    @SerializedName("style") val style: SDSurfaceStyleResponse? = null,
 )
 
 data class StoreDetailToggleActionResponse(

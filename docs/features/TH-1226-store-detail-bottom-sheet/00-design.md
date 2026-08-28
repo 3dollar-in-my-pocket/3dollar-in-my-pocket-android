@@ -10,7 +10,7 @@
 
 TH-1226은 기존 Home과 상세 기능을 대체하는 새 아키텍처를 만드는 작업이 아니다. 현재 Home Preview, sheet 계산, legacy 상세 action, Repository, Dialog, 하위 Activity를 유지하면서 다음 두 container만 V2로 연결한다.
 
-- Home map marker: 현재 Preview를 열고 같은 bottom sheet를 V2 전체 상세로 확장한다.
+- Home map marker와 Home bottom sheet list card: 현재 Preview를 열고 같은 bottom sheet를 V2 전체 상세로 확장한다.
 - 그 외 모든 상세 진입: 같은 V2 상세 content를 full-screen으로 연다.
 
 UI는 Figma 개선 화면을, 데이터 계약은 현재 Swagger를 source of truth로 사용한다. 기존 `StoreDetailActivity`와 `BossStoreDetailActivity`는 삭제하지 않지만 더 이상 상세 진입 목적지나 실패 fallback으로 사용하지 않는다.
@@ -21,7 +21,7 @@ UI는 Figma 개선 화면을, 데이터 계약은 현재 Swagger를 source of tr
 2. rollout gate와 Remote Config 분기는 추가하지 않는다.
 3. V2 실패 시 legacy Activity로 이동하지 않는다.
 4. Home marker는 `Preview -> 같은 sheet의 Expanded` 흐름이다.
-5. Home list card, deep link, push, share와 기존 legacy 상세을 열던 다른 caller는 V2 full-screen으로 연결한다.
+5. Home bottom sheet list card는 marker와 같은 Preview/Expanded sheet 흐름으로 연결하고, 별도 Home list 화면, deep link, push, share와 기존 legacy 상세을 열던 다른 caller는 V2 full-screen으로 연결한다.
 6. V2 section의 모든 action을 구현한다. action을 후속 작업으로 미루지 않는다.
 7. 기존 action의 사용자 동작, Dialog, 하위 Activity와 mutation 의미는 바꾸지 않는다.
 8. 오류 UX는 현재 USER/BOSS legacy 상세의 동작을 따른다.
@@ -160,11 +160,12 @@ marker 선택
 - back은 `Expanded -> Preview -> 닫기/기존 list 상태 복원` 순서다.
 - Preview 내부 action tap은 sheet drag나 Preview 전체 tap보다 우선한다.
 
+Home bottom sheet list card 선택도 동일한 store의 marker 선택과 같은 Preview를 열며, 첫 tap에서 full-screen Activity를 시작하지 않는다.
+
 ### Full-screen
 
 다음 진입은 모두 V2 full-screen을 사용한다.
 
-- Home list card
 - deep link와 Kakao link
 - push
 - share link 재진입
@@ -441,7 +442,8 @@ PUT        /v1/issued-coupon/{issuedKey}/use
 
 - Figma `10582:31339`의 제보 가게/사장님 직영 TO-BE가 V2 response에 따라 표시된다.
 - Home marker에서 기존 Preview가 열리고 같은 sheet로 Expanded 된다.
-- Home list/deep link/push/share/related와 모든 기존 상세 caller가 V2 full-screen을 연다.
+- Home marker와 Home bottom sheet list card에서 기존 Preview가 열리고 같은 sheet로 Expanded 된다.
+- deep link/push/share/related와 모든 기존 상세 caller가 V2 full-screen을 연다.
 - 16개 section을 server order로 처리하고 unknown section은 다른 content를 깨지 않는다.
 - 현재 상세에서 가능했던 모든 action이 동일한 사용자 결과를 낸다.
 - action 성공 후 V2 content와 caller 결과가 갱신된다.

@@ -1,8 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.v2
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +54,11 @@ import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailRatingModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
+import com.zion830.threedollars.ui.home.ui.compose.StorePreviewActionBarRow
+import com.zion830.threedollars.core.ui.serverdriven.SDActionButton as ServerDrivenActionButton
+import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
+import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.R as CommonR
 
@@ -71,9 +74,9 @@ internal fun StoreDetailCalloutSection(
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(section.content.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(15))
+        SDTextRenderer(section.content.title, fontSizeDp = 15, lineHeightDp = 21)
         section.content.subTitle?.let {
-            Text(it.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
+            SDTextRenderer(it, color = Gray70, fontSizeDp = 13, lineHeightDp = 19)
         }
         section.content.footerLeftButton?.let { button ->
             StoreDetailTextButton(button = button) {
@@ -97,13 +100,15 @@ internal fun StoreDetailPreviewSection(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                text = section.header.title?.text.orEmpty(),
-                color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(22),
-                modifier = Modifier.weight(1f),
-            )
+            section.header.title?.let { title ->
+                SDTextRenderer(
+                    text = title,
+                    color = Gray100,
+                    fontSizeDp = 20,
+                    lineHeightDp = 28,
+                    modifier = Modifier.weight(1f),
+                )
+            }
             section.header.badge?.let { StoreDetailImage(it, Modifier.size(20.dp), ContentScale.Fit) }
             Text(
                 text = stringResource(
@@ -120,30 +125,26 @@ internal fun StoreDetailPreviewSection(
         section.metadata.primary.takeIf(List<*>::isNotEmpty)?.let { StoreDetailChipRow(it) }
         section.metadata.secondary.takeIf(List<*>::isNotEmpty)?.let { StoreDetailChipRow(it) }
         section.contributorActionBar?.let { action ->
-            Row(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Gray10)
-                    .clickable { onAction(action) }.padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(action.button.text.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
-            }
+            StoreDetailActionButton(
+                action = action.copy(
+                    button = action.button.copy(text = action.button.text.withoutMissingContributorName()),
+                ),
+                onClick = { onAction(action) },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
         if (section.actionBars.isNotEmpty()) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .onGloballyPositioned { coordinates ->
                         onActionRowVisibilityChanged(coordinates.boundsInRoot().bottom > 0f)
                     },
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                section.actionBars.forEach { action ->
-                    StoreDetailActionButton(
-                        action = action,
-                        onClick = { onAction(action) },
-                        modifier = Modifier.weight(1f),
-                    )
-                }
+                StorePreviewActionBarRow(
+                    actionBars = section.actionBars,
+                    onActionClick = onAction,
+                )
             }
         }
         if (section.images.isNotEmpty()) {
@@ -161,12 +162,15 @@ internal fun StoreDetailPreviewSection(
             }
         }
         section.bodies.forEach { body ->
-            Text(
-                text = body.text.text,
+            SDTextRenderer(
+                text = body.text,
                 color = Gray70,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(13),
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Gray10).padding(12.dp),
+                fontSizeDp = 13,
+                lineHeightDp = 19,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .serverDrivenSurface(body.style, RoundedCornerShape(10.dp), Gray10)
+                    .padding(12.dp),
             )
         }
     }
@@ -278,14 +282,20 @@ internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         StoreDetailSectionHeader(section.header.title, section.header.subTitle)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(section.summary.title.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
-            StoreDetailRating(section.summary.stars)
-            Text(section.summary.rating.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(20))
+        if (section.summary.chips.isNotEmpty()) {
+            StoreDetailChipRow(section.summary.chips)
+        } else {
+            section.summary.ratingSummary?.let { summary ->
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SDTextRenderer(summary.title, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
+                    StoreDetailRating(summary.stars)
+                    SDTextRenderer(summary.rating, color = Gray100, fontSizeDp = 20, lineHeightDp = 28)
+                }
+            }
         }
         StoreDetailChipRow(section.history.items)
         section.history.moreText?.let {
-            Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
+            SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
         }
     }
 }
@@ -320,10 +330,10 @@ internal fun StoreDetailAppearanceDaySection(
         )
         section.items.forEach { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(item.leadingText.text, color = Pink, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+                SDTextRenderer(item.leadingText, color = Pink, fontSizeDp = 14, lineHeightDp = 20)
                 Column(Modifier.weight(1f)) {
-                    Text(item.primaryText.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
-                    item.secondaryText?.let { Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12)) }
+                    SDTextRenderer(item.primaryText, color = Gray100, fontSizeDp = 14, lineHeightDp = 20)
+                    item.secondaryText?.let { SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18) }
                 }
             }
         }
@@ -336,22 +346,12 @@ internal fun StoreDetailActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val primary = action.button.text.text.contains("방문") || action.button.text.text.contains("발급")
-    Box(
-        modifier = modifier.height(48.dp).clip(RoundedCornerShape(12.dp))
-            .background(if (primary) Pink else ColorWhite)
-            .then(if (primary) Modifier else Modifier.border(BorderStroke(1.dp, Gray20), RoundedCornerShape(12.dp)))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = action.button.text.text,
-            color = if (primary) ColorWhite else Gray100,
-            fontFamily = PretendardFontFamily,
-            fontSize = dpToSp(14),
-        )
-    }
+    ServerDrivenActionButton(
+        button = action.button,
+        fillMaxWidth = true,
+        modifier = modifier,
+        onClick = onClick,
+    )
 }
 
 @Composable
@@ -359,13 +359,11 @@ internal fun StoreDetailTextButton(
     button: SDButtonModel,
     onClick: () -> Unit,
 ) {
-    Text(
-        text = button.text.text,
-        color = Pink,
-        fontFamily = PretendardFontFamily,
-        fontSize = dpToSp(14),
-        modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-            .clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(8.dp),
+    ServerDrivenActionButton(
+        button = button,
+        fillMaxWidth = false,
+        modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
+        onClick = onClick,
     )
 }
 
@@ -376,13 +374,7 @@ internal fun StoreDetailChipRow(chips: List<SDChipModel>) {
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         chips.forEach { chip ->
-            Text(
-                text = listOfNotNull(chip.text.text, chip.additionalText?.text).joinToString(" "),
-                color = Gray70,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(13),
-                modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(Gray10).padding(horizontal = 10.dp, vertical = 6.dp),
-            )
+            SDChipRenderer(chip = chip)
         }
     }
 }

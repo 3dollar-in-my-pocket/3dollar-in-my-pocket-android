@@ -51,6 +51,7 @@ import com.threedollar.common.serverdriven.model.StoreDetailSummaryModel
 import com.threedollar.common.serverdriven.model.StoreDetailStoreReferenceModel
 import com.threedollar.common.serverdriven.model.StoreDetailTextMenuItemModel
 import com.threedollar.common.serverdriven.model.StoreDetailToggleActionModel
+import com.threedollar.common.serverdriven.model.StoreDetailVisitSummaryModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.network.data.screen.HomeListCardHeaderResponse
 import com.threedollar.network.data.screen.HomeListCardMetadataResponse
@@ -102,6 +103,7 @@ import com.threedollar.network.data.screen.StoreDetailTextRowResponse
 import com.threedollar.network.data.screen.StoreDetailToggleActionResponse
 import com.threedollar.network.data.screen.StoreDetailTrailingTextRowResponse
 import com.threedollar.network.data.screen.StoreDetailVisitSectionResponse
+import com.threedollar.network.data.screen.StoreDetailVisitSummaryResponse
 import com.threedollar.network.data.screen.StoreSectionAdditionalInfosResponse
 
 fun StoreDetailScreenResponse.asStoreDetailModelOrNull(): StoreDetailScreenModel? {
@@ -379,6 +381,21 @@ private fun StoreDetailSummaryResponse.asModelOrNull(): StoreDetailSummaryModel?
         ),
         rating = ratingModel,
         style = styleModel,
+    )
+}
+
+private fun StoreDetailVisitSummaryResponse.asModelOrNull(): StoreDetailVisitSummaryModel? {
+    val chipModels = chips?.map(SDChipResponse::asModel).orEmpty()
+    val ratingSummary = StoreDetailSummaryResponse(
+        title = title,
+        stars = stars,
+        rating = rating,
+        style = style,
+    ).asModelOrNull()
+    if (chips == null && ratingSummary == null) return null
+    return StoreDetailVisitSummaryModel(
+        chips = chipModels,
+        ratingSummary = ratingSummary,
     )
 }
 

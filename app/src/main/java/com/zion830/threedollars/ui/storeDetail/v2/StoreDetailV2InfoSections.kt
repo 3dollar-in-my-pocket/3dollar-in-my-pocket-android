@@ -30,6 +30,9 @@ import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailDetailRowModel
 import com.threedollar.common.serverdriven.model.StoreDetailInformationRowModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
+import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
+import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 
 @Composable
 internal fun StoreDetailInfoV1Section(section: StoreDetailSectionModel.InfoV1) {
@@ -46,11 +49,11 @@ internal fun StoreDetailInfoV1Section(section: StoreDetailSectionModel.InfoV1) {
                 is StoreDetailInformationRowModel.InlineOption -> StoreDetailLabelRow(row.label) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         row.items.forEach { item ->
-                            Text(
-                                text = item.text.text,
+                            SDTextRenderer(
+                                text = item.text,
                                 color = if (item.isSelected) Gray100 else Gray50,
-                                fontFamily = PretendardFontFamily,
-                                fontSize = dpToSp(13),
+                                fontSizeDp = 13,
+                                lineHeightDp = 19,
                             )
                         }
                     }
@@ -59,7 +62,7 @@ internal fun StoreDetailInfoV1Section(section: StoreDetailSectionModel.InfoV1) {
             }
         }
         section.menuCard?.groups?.forEach { group ->
-            Text(group.header.text.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(15))
+            SDChipRenderer(group.header)
             group.items.forEach { item -> StoreDetailLabelValueRow(item.primaryText, item.secondaryText) }
         }
     }
@@ -102,24 +105,27 @@ internal fun StoreDetailInfoV2Section(
                     }.padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Text(row.label.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
-                    Text(row.value.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(13), modifier = Modifier.weight(1f))
+                    SDTextRenderer(row.label, color = Gray50, fontSizeDp = 13, lineHeightDp = 19)
+                    SDTextRenderer(row.value, color = Gray100, fontSizeDp = 13, lineHeightDp = 19, modifier = Modifier.weight(1f))
                 }
                 is StoreDetailDetailRowModel.Text -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(row.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
-                    Text(row.body.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
+                    SDTextRenderer(row.title, color = Gray100, fontSizeDp = 14, lineHeightDp = 20)
+                    SDTextRenderer(row.body, color = Gray70, fontSizeDp = 13, lineHeightDp = 19)
                 }
             }
         }
         section.accountCards.forEach { card ->
             Row(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Gray10).padding(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(card.title.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
-                    Text(card.account.text.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+                    SDTextRenderer(card.title, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
+                    SDChipRenderer(card.account)
                 }
                 StoreDetailTextButton(card.copyButton) {
                     onAction(syntheticActionBar(card.copyButton, "ACCOUNT_COPY"))
@@ -136,9 +142,9 @@ internal fun StoreDetailInfoV2Section(
                     StoreDetailImage(it, Modifier.size(72.dp).clip(RoundedCornerShape(8.dp)), ContentScale.Crop)
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(item.primaryText.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+                    SDTextRenderer(item.primaryText, color = Gray100, fontSizeDp = 14, lineHeightDp = 20)
                     item.secondaryText?.let { text ->
-                        Text(text.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
+                        SDTextRenderer(text, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
                     }
                 }
             }
@@ -152,7 +158,7 @@ private fun StoreDetailLabelRow(
     content: @Composable () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(label.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
+        SDTextRenderer(label, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
         content()
     }
 }
@@ -160,7 +166,7 @@ private fun StoreDetailLabelRow(
 @Composable
 private fun StoreDetailLabelValueRow(label: SDTextModel, value: SDTextModel?) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(label.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14), modifier = Modifier.weight(1f))
-        value?.let { Text(it.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(13)) }
+        SDTextRenderer(label, color = Gray100, fontSizeDp = 14, lineHeightDp = 20, modifier = Modifier.weight(1f))
+        value?.let { SDTextRenderer(it, color = Gray70, fontSizeDp = 13, lineHeightDp = 19) }
     }
 }

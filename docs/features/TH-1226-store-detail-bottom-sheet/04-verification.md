@@ -2,9 +2,10 @@
 
 ## 자동 검증
 
-아래 명령은 2026-08-27 실제 실행해 모두 통과했다.
+아래 명령은 2026-08-28 실응답 교정 후 실제 실행해 모두 통과했다.
 
 ```bash
+./gradlew :core:common:testDebugUnitTest --tests '*ServerDrivenText*'
 ./gradlew :core:network:testDebugUnitTest --tests '*StoreDetail*' --tests com.threedollar.network.api.ServerApiTest
 ./gradlew :data:testDebugUnitTest --tests '*StoreDetail*' --tests com.threedollar.data.screen.HomeBottomSheetScreenMapperTest
 ./gradlew :app:compileDebugKotlin :app:testDebugUnitTest --tests '*StoreDetail*' --tests 'com.zion830.threedollars.ui.home.*'
@@ -12,26 +13,39 @@
 git diff --check
 ```
 
-- app 관련 범위: 55 tests 통과
-- data 관련 범위: 15 tests 통과
+- app 관련 범위: 59 tests 통과
+- data 관련 범위: 16 tests 통과
 - network 관련 범위: 2 tests 통과
+- common server-driven text 범위: 5 tests 통과
 - `StoreDetailActivity.getIntent`/`BossStoreDetailActivity.getIntent` direct caller: 0건
 - V2 package의 legacy Activity fallback: 0건
 - OpenAPI custom action enum 18개와 ViewModel 처리 목록 일치
 - `StoreDetailV2Content` direct `when`에 section 16개 존재
 - staged 파일 없음, 보호 파일 stage 없음
 - final review 보강 회귀 test: repository exception/content 보존, Home loading 종료, favorite override, false child result, display 시점 view log, APP_SCHEME routing, exact sheet anchor, sticky action sentinel, review report validation
+- 실응답 교정 회귀 test: CSS span style/plain text, `VISIT.summary.chips`, contributor route, hash tab anchor, generic INFO anchor, `IMAGE_ID`/`IMAGE_URL`, 누락 contributor 이름 fallback
 
 기존 프로젝트의 Kotlin plugin 중복 로드, deprecated API와 annotation target warning은 baseline과 동일하게 출력됐다.
 
 추가로 final gate에서 `./gradlew test :app:assembleDebug`를 실행했으나, TH-1226 변경 범위 밖의 기존 `:core:abtest:kaptDebugUnitTestKotlin`과 `:core:abtest:kaptReleaseUnitTestKotlin`이 `ExampleUnitTest`의 `@error.NonExistentClass` stub 오류로 실패했다. 해당 test 파일은 기준 커밋 `4ab76e8f65aed8608f3afd1df8237b6181f7c222`과 동일하고, `core/abtest` 및 Gradle 설정에는 이번 변경이 없다. 위에 기록한 TH-1226 관련 test/compile과 독립 `:app:assembleDebug`는 모두 성공했다.
 
-## 사용자 수동 확인 checklist
+## emulator 실서버 확인
 
-에이전트는 지시에 따라 아래 항목을 실행하지 않았다.
+Debug APK를 `emulator-5554`의 `com.zion830.threedollars.dev`에 설치하고 로그인된 dev 환경에서 확인했다.
+
+- [x] Home bottom sheet 첫 list card tap 후 foreground가 `MainActivity`를 유지하며 기존 Preview를 표시한다.
+- [x] Preview title tap 후 Activity 전환 없이 같은 sheet에서 V2 Expanded가 열린다.
+- [x] `GET /api/v2/screen/store/120024`의 `PREVIEW, AD_MOB, TAB, MAP, EDIT, VISIT, INFO_V1, IMAGE, REVIEW, CTA` 응답으로 화면이 구성된다.
+- [x] Expanded 화면에 raw `<span>`과 literal `null`이 노출되지 않고 title/metadata/contributor 문구가 일반 UI로 표시된다.
+- [x] 상단 방문·리뷰·공유·길찾기 action row가 기존 Preview UI와 같은 icon/한 줄 배치로 표시된다.
+- [x] `가게 정보 & 메뉴` tab이 `INFO_V1` section으로 이동한다.
+- [x] contributor row의 `/store-contributors?storeId=...`가 `StoreContributorActivity`로 이동한다.
+- [x] TalkBack을 끈 상태에서 앱 화면에 초록색 접근성 focus 테두리가 남지 않는다.
+
+## 남은 수동 확인 checklist
 
 - [ ] Home marker 선택 시 기존 Preview가 즉시 표시되고 V2는 background load된다.
-- [ ] Preview tap/upward drag로 같은 sheet가 300ms Expanded 되고, back/downward drag가 Preview로 돌아간다.
+- [ ] upward/downward drag와 back으로 `Preview <-> Expanded`가 왕복한다.
 - [ ] 기존 Home list `Collapsed <-> FullList`와 Preview 내부 action tap이 회귀하지 않는다.
 - [ ] USER/BOSS 실제 응답의 16개 section 조합이 server order와 TO-BE 구성대로 표시된다.
 - [ ] 상단 action이 사라질 때만 하단 sticky action이 표시된다.

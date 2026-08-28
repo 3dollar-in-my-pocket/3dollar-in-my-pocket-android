@@ -32,3 +32,13 @@
 
 - `AGENTS.md`, `docs/features/TH-1128-store-detail-action-nudge/03-implementation.md`는 수정·stage·commit하지 않는다.
 - dependency/toolchain, legacy Activity 파일, 범용 renderer/action/state framework는 변경하지 않는다.
+
+## 2026-08-28 실응답 교정 계획
+
+사용자 emulator QA와 `GET /api/v2/screen/store/120024` 실응답으로 확인된 계약을 우선 재현한다.
+
+1. Home list card가 Activity를 열지 않고 marker와 같은 Preview를 선택하는 계약을 실패 테스트로 추가한다.
+2. `isHtml=true` text, image가 포함된 chip/button, surface style을 실제 응답 형태 fixture로 고정하고 기존 공통 SDUI element renderer를 재사용한다.
+3. 런타임 응답과 Swagger가 충돌하는 `VISIT.summary.chips`는 실제 응답도 손실 없이 처리하되, 기존 review summary 모델과 분리한다.
+4. 실제 `/store-contributors`, `/stores/{id}#home|info|images|reviews`, `IMAGE_ID`/`IMAGE_URL` action을 실패 테스트로 고정한다.
+5. 관련 unit test, compile, `assembleDebug`, debug APK install 후 Home list/marker 양 경로를 emulator에서 재검증한다.

@@ -290,11 +290,11 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
                 this,
                 StoreCertificationArgs(
                     storeId = storeIdAsIntOrNull() ?: return showUnsupportedAction(),
-                    storeName = preview?.header?.title?.text.orEmpty(),
+                    storeName = preview?.header?.title.displayText(),
                     latitude = location.latitude,
                     longitude = location.longitude,
                     categories = preview?.metadata?.primary.orEmpty().mapNotNull { chip ->
-                        chip.text.text.takeIf(String::isNotBlank)?.let { name ->
+                        chip.text.displayText().takeIf(String::isNotBlank)?.let { name ->
                             StoreCertificationCategoryArgs(name = name, imageUrl = chip.image?.url.orEmpty())
                         }
                     },
@@ -324,7 +324,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
     }
 
     private fun enlargeImage(customAction: SDCustomActionModel) {
-        val imageIndex = customAction.extraParams.longValue("IMAGE_INDEX")?.toIntOrNullExact() ?: 0
+        val imageIndex = currentScreen()?.imageIndexFor(customAction) ?: 0
         val resolvedStoreId = storeIdAsIntOrNull() ?: return showUnsupportedAction()
         StorePhotoDialog.getInstance(imageIndex, resolvedStoreId)
             .show(supportFragmentManager, StorePhotoDialog::class.java.name)

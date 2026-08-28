@@ -94,6 +94,7 @@ import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2UiState
 import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2ViewModel
 import com.zion830.threedollars.ui.storeDetail.v2.storeDetailV2Route
 import com.zion830.threedollars.ui.storeDetail.v2.canSubmitStoreDetailReviewReport
+import com.zion830.threedollars.ui.storeDetail.v2.imageIndexFor
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -647,7 +648,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ?: viewModel.selectedStorePreviewStoreId.value
             ?: return
         val resolvedStoreId = storeId.toIntOrNullExact() ?: return showUnsupportedStoreDetailAction()
-        val imageIndex = customAction.extraParams.longValue("IMAGE_INDEX")?.toIntOrNullExact() ?: 0
+        val imageIndex = (storeDetailV2ViewModel.uiState.value as? StoreDetailV2UiState.Content)
+            ?.screen
+            ?.imageIndexFor(customAction)
+            ?: 0
         StorePhotoDialog.getInstance(imageIndex, resolvedStoreId)
             .show(parentFragmentManager, StorePhotoDialog::class.java.name)
     }
@@ -780,18 +784,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
-        viewModel.sendClickHomeListCard(card)
-        val route = HomeStorePreviewRoute.fromLink(
-            link = card.link?.link,
-            fallbackStoreId = card.storePreviewStoreIdOrNull(),
-            fallbackStoreType = card.storePreviewStoreTypeOrNull(),
-        ) ?: return
-        val intent = StoreDetailV2Activity.getIntent(
-            context = requireContext(),
-            storeId = route.storeId,
-            storeType = route.storeType,
-        )
-        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+        viewModel.selectHomeListCard(card)
     }
 
     private fun shareStorePreview(customAction: SDCustomActionModel) {

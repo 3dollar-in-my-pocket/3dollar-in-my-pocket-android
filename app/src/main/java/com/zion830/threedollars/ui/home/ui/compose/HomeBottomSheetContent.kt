@@ -998,7 +998,7 @@ private fun StorePreviewIconButton(
 }
 
 @Composable
-private fun StorePreviewActionBarRow(
+internal fun StorePreviewActionBarRow(
     actionBars: List<StoreActionBarModel>,
     onActionClick: (StoreActionBarModel) -> Unit,
 ) {

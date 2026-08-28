@@ -45,6 +45,9 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
+import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
+import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 import com.threedollar.common.R as CommonR
 
 @Composable
@@ -59,14 +62,17 @@ internal fun StoreDetailCouponSection(
         section.header?.let { StoreDetailSectionHeader(it.title, it.subTitle, it.trailingAction, onAction) }
         section.cards.forEach { card ->
             Row(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Gray10).padding(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
+                    .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    card.badge?.let { Text(it.text.text, color = Pink, fontFamily = PretendardFontFamily, fontSize = dpToSp(11)) }
-                    Text(card.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(15))
-                    Text(card.subTitle.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12))
+                    card.badge?.let { SDChipRenderer(it) }
+                    SDTextRenderer(card.title, color = Gray100, fontSizeDp = 15, lineHeightDp = 21)
+                    SDTextRenderer(card.subTitle, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
                 }
                 StoreDetailTextButton(card.trailingButton) {
                     onAction(StoreActionBarModel(type = "COUPON", button = card.trailingButton, clickLog = card.clickLog))
@@ -88,7 +94,7 @@ internal fun StoreDetailPostSection(
         StoreDetailSectionHeader(section.header.title, section.header.subTitle, section.header.trailingAction, onAction)
         section.cards.forEach { card ->
             Column(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Gray10)
+                modifier = Modifier.fillMaxWidth().serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
                     .then(
                         card.link?.let { link ->
                             Modifier.clickable {
@@ -105,7 +111,7 @@ internal fun StoreDetailPostSection(
                     .padding(14.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Text(card.header.text.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
+                SDChipRenderer(card.header)
                 if (card.images.isNotEmpty()) {
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         card.images.forEach { image ->
@@ -113,7 +119,7 @@ internal fun StoreDetailPostSection(
                         }
                     }
                 }
-                Text(card.body.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+                SDTextRenderer(card.body, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
                 card.like?.let { like ->
                     val button = if (like.isSelected) like.selected else like.unselected
                     StoreDetailTextButton(button) { onAction(syntheticActionBar(button, "POST_LIKE")) }
@@ -136,7 +142,9 @@ internal fun StoreDetailImageSection(
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             section.cards.forEach { card ->
                 Column(
-                    modifier = Modifier.size(width = 132.dp, height = 196.dp).clip(RoundedCornerShape(10.dp)).background(Gray10)
+                    modifier = Modifier
+                        .size(width = 132.dp, height = 196.dp)
+                        .serverDrivenSurface(card.style, RoundedCornerShape(10.dp), Gray10)
                         .clickable {
                             onAction(
                                 StoreActionBarModel(
@@ -153,10 +161,10 @@ internal fun StoreDetailImageSection(
                 ) {
                     StoreDetailImage(card.image, Modifier.fillMaxWidth().height(132.dp), ContentScale.Crop)
                     card.title?.let {
-                        Text(it.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(12), modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp))
+                        SDTextRenderer(it, color = Gray100, fontSizeDp = 12, lineHeightDp = 18, modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp))
                     }
                     card.subTitle?.let {
-                        Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(11), modifier = Modifier.padding(horizontal = 8.dp))
+                        SDTextRenderer(it, color = Gray50, fontSizeDp = 11, lineHeightDp = 17, modifier = Modifier.padding(horizontal = 8.dp))
                     }
                 }
             }
@@ -177,7 +185,9 @@ internal fun StoreDetailRelatedStoresSection(
         Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             section.cards.forEach { card ->
                 Column(
-                    modifier = Modifier.size(width = 176.dp, height = 248.dp).clip(RoundedCornerShape(12.dp)).background(Gray10)
+                    modifier = Modifier
+                        .size(width = 176.dp, height = 248.dp)
+                        .serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
                         .clickable {
                             card.link?.let { link ->
                                 onAction(
@@ -192,7 +202,7 @@ internal fun StoreDetailRelatedStoresSection(
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     StoreDetailImage(card.image, Modifier.fillMaxWidth().height(136.dp), ContentScale.Crop)
-                    Text(card.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(14), modifier = Modifier.padding(horizontal = 10.dp))
+                    SDTextRenderer(card.title, color = Gray100, fontSizeDp = 14, lineHeightDp = 20, modifier = Modifier.padding(horizontal = 10.dp))
                     Column(Modifier.padding(horizontal = 10.dp)) {
                         StoreDetailChipRow(card.metricLabel)
                         StoreDetailChipRow(card.contextLabel)
@@ -214,9 +224,9 @@ internal fun StoreDetailReviewSection(
     ) {
         StoreDetailSectionHeader(section.header.title, section.header.subTitle, section.header.trailingAction, onAction)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(section.summary.title.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+            SDTextRenderer(section.summary.title, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
             StoreDetailRating(section.summary.stars)
-            Text(section.summary.rating.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(22))
+            SDTextRenderer(section.summary.rating, color = Gray100, fontSizeDp = 22, lineHeightDp = 30)
         }
         section.cards.forEach { card ->
             Column(
@@ -240,15 +250,15 @@ internal fun StoreDetailReviewSection(
                         card.images.forEach { StoreDetailImage(it, Modifier.size(100.dp).clip(RoundedCornerShape(8.dp)), ContentScale.Crop) }
                     }
                 }
-                Text(card.body.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(14))
+                SDTextRenderer(card.body, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
                 card.like?.let { like ->
                     val button = if (like.isSelected) like.selected else like.unselected
                     StoreDetailTextButton(button) { onAction(syntheticActionBar(button, "REVIEW_LIKE")) }
                 }
                 card.reply?.let { reply ->
-                    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Gray10).padding(12.dp)) {
-                        Text(reply.header.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
-                        Text(reply.body.text, color = Gray70, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
+                    Column(Modifier.fillMaxWidth().serverDrivenSurface(reply.style, RoundedCornerShape(10.dp), Gray10).padding(12.dp)) {
+                        SDTextRenderer(reply.header.title, color = Gray100, fontSizeDp = 13, lineHeightDp = 19)
+                        SDTextRenderer(reply.body, color = Gray70, fontSizeDp = 13, lineHeightDp = 19)
                     }
                 }
             }
@@ -269,8 +279,8 @@ internal fun StoreDetailCtaSection(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(Modifier.weight(1f)) {
-            Text(section.content.title.text, color = Gray100, fontFamily = PretendardFontFamily, fontSize = dpToSp(15))
-            section.content.subTitle?.let { Text(it.text, color = Gray50, fontFamily = PretendardFontFamily, fontSize = dpToSp(12)) }
+            SDTextRenderer(section.content.title, color = Gray100, fontSizeDp = 15, lineHeightDp = 21)
+            section.content.subTitle?.let { SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18) }
         }
         section.content.footerLeftButton?.let { button ->
             StoreDetailTextButton(button) { onAction(syntheticActionBar(button, "CTA")) }

@@ -1,12 +1,42 @@
 package com.threedollar.data.screen
 
 import com.google.gson.Gson
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.threedollar.network.data.screen.StoreDetailScreenResponse
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class StoreDetailScreenMapperEngagementTest {
+
+    @Test
+    fun mapperMapsLiveVisitSummaryChipShapeWithoutDroppingSection() {
+        val response = Gson().fromJson(
+            """
+            {
+              "sections": [
+                {
+                  "type":"VISIT",
+                  "header":{"title":{"text":"<span style=\"font-size:16px; font-weight:700; color:#0F0F0F\">이번 달 방문 인증 내역</span>","isHtml":true,"fontColor":"#0F0F0F"}},
+                  "summary":{"chips":[
+                    {"image":{"url":"visit-success","style":{"width":24,"height":24}},"text":{"text":"<span style=\"font-size:14px; font-weight:400; color:#0F0F0F\">방문 성공</span><span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">0명</span>","isHtml":true},"style":{"backgroundColor":"#F1FFF8"}},
+                    {"image":{"url":"visit-failed","style":{"width":24,"height":24}},"text":{"text":"방문 실패 0명","isHtml":false},"style":{"backgroundColor":"#FFF3F4"}}
+                  ]},
+                  "history":{"items":[],"style":{"backgroundColor":"#FAFAFA"}}
+                }
+              ],
+              "viewLog":{"screenName":"store_detail"}
+            }
+            """.trimIndent(),
+            StoreDetailScreenResponse::class.java,
+        )
+
+        val visit = requireNotNull(response.asStoreDetailModelOrNull())
+            .sections
+            .single() as StoreDetailSectionModel.Visit
+
+        assertEquals(listOf("방문 성공0명", "방문 실패 0명"), visit.summary.chips.map { it.text.displayText() })
+    }
 
     @Test
     fun mapperMapsCouponVisitPostAndReviewInteractionPayloads() {
@@ -33,7 +63,7 @@ class StoreDetailScreenMapperEngagementTest {
 
         assertEquals("coupon-1", coupon.cards.single().cardId)
         assertEquals("STORE_COUPON_SECTION_COUPON_ISSUE", coupon.cards.single().trailingButton.customAction?.actionType)
-        assertEquals("4.5", visit.summary.rating.text)
+        assertEquals("4.5", visit.summary.ratingSummary?.rating?.text)
         assertEquals("외 2회", visit.history.moreText?.text)
         assertEquals("post-7", post.cards.single().cardId)
         assertEquals("STORE_POST_SECTION_ADD_LIKE", post.cards.single().like?.unselected?.customAction?.actionType)

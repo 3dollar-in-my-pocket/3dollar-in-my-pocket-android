@@ -22,9 +22,21 @@
   - Home background preload에서는 page view를 보내지 않고, 공유 `StoreDetailV2Content`가 실제 표시될 때 host instance/store당 한 번 전송한다.
   - 리뷰 신고는 사유 선택과 필수 상세 입력을 검증하며, child result·initial action·Fragment container 복원 상태를 실제 성공 결과에만 연동한다.
 
+## 2026-08-28 실응답 교정
+
+사용자 emulator QA와 로그인 세션의 `GET /api/v2/screen/store/120024` 응답을 기준으로 다음 계약 차이를 수정했다.
+
+- Home bottom sheet list card 첫 tap이 full-screen `StoreDetailV2Activity`를 열던 연결을 제거하고, marker와 동일하게 기존 Preview를 선택한 뒤 같은 `MainActivity` sheet에서 Expanded로 전환하도록 연결했다. 별도 Home list 화면과 deep link 등 기존 full-screen caller는 그대로 유지한다.
+- 실제 `isHtml=true`의 CSS `<span style="font-size:...; font-weight:...; color:...">`를 공통 `SDTextRenderer`가 `AnnotatedString`으로 해석하도록 보강했다. V2 section의 raw `.text` 출력은 공통 text/chip/button/surface renderer로 교체했다.
+- V2 상단 4개 action은 기존 Home Preview의 `StorePreviewActionBarRow`를 그대로 재사용해 icon, 문구, 간격과 한 줄 배치를 동일하게 맞췄다.
+- 실제 `VISIT.summary.chips`를 별도 visit summary model로 수용하면서 Swagger의 기존 rating summary 형태도 호환하도록 mapper를 분리했다.
+- 실제 `/store-contributors`, `/stores/{id}#home|info|images|reviews`, `IMAGE_ID`/`IMAGE_URL` action을 route와 image index 해석에 반영했다.
+- 서버의 누락된 제보자 이름이 `null님이 ...`로 노출되지 않도록 해당 contributor 문구만 안전한 fallback으로 정리했다.
+
 ## 범위 확인
 
 - dependency, Gradle, toolchain 변경 없음
 - rollout gate와 legacy fallback 없음
 - 보호 대상 `AGENTS.md`, `docs/features/TH-1128-store-detail-action-nudge/03-implementation.md`에 대한 에이전트 수정·stage 없음
-- emulator/실기기/browser/screenshot/authenticated live preflight 실행 없음
+- 실기기는 실행하지 않았고, authenticated dev API와 `emulator-5554`의 Debug APK로 Home list card → Preview → 같은 sheet Expanded, HTML/style, action row, tab, contributor route를 확인했다.
+- emulator의 초록색 focus 테두리는 앱 UI가 아니라 TalkBack 접근성 focus였으며 QA 중 접근성 service를 비활성화한 상태에서 다시 확인했다.

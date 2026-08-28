@@ -40,7 +40,9 @@ import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
 import kotlinx.coroutines.launch
+import java.net.URI
 
 @Composable
 fun StoreDetailV2Content(
@@ -107,9 +109,7 @@ fun StoreDetailV2Content(
                     is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section, onImpression)
                     is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
                         val targetType = actionBar.targetSectionTypeOrNull()
-                        val targetIndex = targetType?.let { target ->
-                            screen.sections.indexOfFirst { it.type.equals(target, ignoreCase = true) }
-                        } ?: -1
+                        val targetIndex = targetType?.let(screen.sections::indexOfStoreDetailTarget) ?: -1
                         if (targetIndex >= 0) {
                             coroutineScope.launch { listState.animateScrollToItem(targetIndex) }
                         } else {
@@ -189,14 +189,14 @@ internal fun StoreDetailSectionHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title.text,
+            SDTextRenderer(
+                text = title,
                 color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(18),
+                fontSizeDp = 18,
+                lineHeightDp = 24,
             )
-            subTitle?.text?.takeIf(String::isNotBlank)?.let { subtitle ->
-                Text(text = subtitle, fontFamily = PretendardFontFamily, fontSize = dpToSp(13))
+            subTitle?.let { subtitle ->
+                SDTextRenderer(text = subtitle, fontSizeDp = 13, lineHeightDp = 19)
             }
         }
         if (trailingButton != null && onAction != null) {
@@ -230,11 +230,25 @@ internal fun StoreActionBarModel.targetSectionTypeOrNull(): String? {
         .firstOrNull()
     if (!extraTarget.isNullOrBlank()) return extraTarget
     val link = button.link?.link.orEmpty()
-    return Regex("(?:sectionType|targetSectionType)=([^&]+)", RegexOption.IGNORE_CASE)
+    val queryTarget = Regex("(?:sectionType|targetSectionType)=([^&]+)", RegexOption.IGNORE_CASE)
         .find(link)
         ?.groupValues
         ?.getOrNull(1)
+    if (!queryTarget.isNullOrBlank()) return queryTarget
+    return when (runCatching { URI(link).fragment?.lowercase() }.getOrNull()) {
+        "home" -> "PREVIEW"
+        "info" -> "INFO"
+        "images" -> "IMAGE"
+        "reviews" -> "REVIEW"
+        else -> null
+    }
 }
+
+internal fun List<StoreDetailSectionModel>.indexOfStoreDetailTarget(target: String): Int =
+    indexOfFirst { section ->
+        section.type.equals(target, ignoreCase = true) ||
+            (target.equals("INFO", ignoreCase = true) && section.type.startsWith("INFO_", ignoreCase = true))
+    }
 
 private fun SDClickLogValue?.stringValueOrNull(): String? = when (this) {
     is SDClickLogValue.StringValue -> value

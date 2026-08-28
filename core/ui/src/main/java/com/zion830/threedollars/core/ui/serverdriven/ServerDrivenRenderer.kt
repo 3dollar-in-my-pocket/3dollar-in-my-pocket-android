@@ -1,14 +1,14 @@
 package com.zion830.threedollars.core.ui.serverdriven
 
-import android.text.TextUtils
-import android.widget.TextView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,7 +33,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
@@ -49,6 +49,7 @@ import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.threedollar.common.serverdriven.ext.styledSegments
 
 private val Gray100 = Color(0xFF0F0F0F)
 private val Gray50 = Color(0xFF666666)
@@ -215,19 +216,29 @@ fun SDActionButton(
     button: SDButtonModel,
     fillMaxWidth: Boolean,
     onAction: (SDLinkModel) -> Unit,
+) = SDActionButton(
+    button = button,
+    fillMaxWidth = fillMaxWidth,
+    onClick = { button.link?.let(onAction) },
+)
+
+@Composable
+fun SDActionButton(
+    button: SDButtonModel,
+    fillMaxWidth: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
-    val modifier = if (fillMaxWidth) {
-        Modifier
+    val sizeModifier = if (fillMaxWidth) {
+        modifier
             .fillMaxWidth()
             .height(48.dp)
     } else {
-        Modifier.defaultMinSize(minHeight = 40.dp)
+        modifier.defaultMinSize(minHeight = 40.dp)
     }
     Button(
-        onClick = {
-            button.link?.let(onAction)
-        },
-        modifier = modifier,
+        onClick = onClick,
+        modifier = sizeModifier,
         shape = DefaultButtonShape,
         border = button.style.toBorderStroke(defaultColor = Gray100),
         colors = ButtonDefaults.buttonColors(
@@ -238,19 +249,28 @@ fun SDActionButton(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
         ),
+        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
     ) {
+        val image = button.image
+        val imageAtEnd = button.imageAlignment.equals("END", ignoreCase = true)
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = if (imageAtEnd && fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            button.image?.let { image ->
+            if (image != null && !imageAtEnd) {
                 SDImageRenderer(image = image)
             }
             SDTextRenderer(
                 text = button.text,
                 fontSizeDp = 16,
                 lineHeightDp = 24,
+                maxLines = 1,
             )
+            if (image != null && imageAtEnd) {
+                if (fillMaxWidth) Spacer(Modifier.weight(1f))
+                SDImageRenderer(image = image)
+            }
         }
     }
 }
@@ -267,7 +287,7 @@ fun SDChipRenderer(
             .background(chip.style.toBackgroundColor(default = Color.Transparent))
             .then(chip.style.toBorderModifier(shape = shape, defaultColor = Color.Transparent))
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy((chip.contentSpacing ?: 4.0).dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         chip.image?.let { image ->
@@ -291,6 +311,12 @@ fun SDChipRenderer(
     }
 }
 
+fun Modifier.serverDrivenSurface(
+    style: SDSurfaceStyleModel?,
+    shape: Shape,
+    defaultColor: Color = ColorWhite,
+): Modifier = then(style.toSurfaceModifier(shape = shape, defaultColor = defaultColor))
+
 @Composable
 fun SDTextRenderer(
     text: SDTextModel,
@@ -301,39 +327,35 @@ fun SDTextRenderer(
     lineHeightDp: Int = 20,
     maxLines: Int = Int.MAX_VALUE,
 ) {
-    if (text.isHtml) {
-        val density = LocalDensity.current
-        val fontSizeSp = remember(fontSizeDp, density.fontScale) { fontSizeDp / density.fontScale }
-        val lineSpacingExtra = remember(lineHeightDp, fontSizeDp) { (lineHeightDp - fontSizeDp).coerceAtLeast(0) }
-        AndroidView(
-            modifier = modifier,
-            factory = { context ->
-                TextView(context).apply {
-                    includeFontPadding = false
-                }
-            },
-            update = { textView ->
-                textView.text = HtmlCompat.fromHtml(text.text, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                textView.setTextColor(text.fontColor.toAndroidColor(default = android.graphics.Color.BLACK))
-                textView.textSize = fontSizeSp
-                textView.maxLines = maxLines
-                textView.ellipsize = if (maxLines == Int.MAX_VALUE) null else TextUtils.TruncateAt.END
-                textView.setLineSpacing(lineSpacingExtra.toFloat(), 1f)
-            },
-        )
-    } else {
-        Text(
-            text = text.text,
-            modifier = modifier,
-            color = color,
-            fontFamily = PretendardFontFamily,
-            fontWeight = fontWeight,
-            fontSize = dpToSp(fontSizeDp),
-            lineHeight = dpToSp(lineHeightDp),
-            maxLines = maxLines,
-            overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
-        )
+    val density = LocalDensity.current
+    val annotatedText = remember(text, color, fontWeight, fontSizeDp, density.fontScale) {
+        buildAnnotatedString {
+            text.styledSegments().forEach { segment ->
+                pushStyle(
+                    SpanStyle(
+                        color = segment.fontColor.toComposeColor(default = color),
+                        fontWeight = segment.fontWeight.toComposeFontWeight(default = fontWeight),
+                        fontSize = segment.fontSizePx
+                            ?.let { (it / density.fontScale).sp }
+                            ?: (fontSizeDp / density.fontScale).sp,
+                    )
+                )
+                append(segment.text)
+                pop()
+            }
+        }
     }
+    Text(
+        text = annotatedText,
+        modifier = modifier,
+        color = color,
+        fontFamily = PretendardFontFamily,
+        fontWeight = fontWeight,
+        fontSize = dpToSp(fontSizeDp),
+        lineHeight = dpToSp(lineHeightDp),
+        maxLines = maxLines,
+        overflow = if (maxLines == Int.MAX_VALUE) TextOverflow.Clip else TextOverflow.Ellipsis,
+    )
 }
 
 @Composable
@@ -379,9 +401,12 @@ fun SDImageRenderer(
     )
 }
 
-private fun SDSurfaceStyleModel?.toSurfaceModifier(shape: Shape): Modifier = Modifier
+private fun SDSurfaceStyleModel?.toSurfaceModifier(
+    shape: Shape,
+    defaultColor: Color = ColorWhite,
+): Modifier = Modifier
     .clip(shape)
-    .background(this.toBackgroundColor(default = ColorWhite))
+    .background(this.toBackgroundColor(default = defaultColor))
     .then(this.toBorderModifier(shape = shape, defaultColor = Color.Transparent))
 
 private fun SDSurfaceStyleModel?.toBorderModifier(
@@ -414,6 +439,15 @@ private fun String?.toComposeColor(default: Color): Color = runCatching {
     if (this.isNullOrBlank()) default else Color(android.graphics.Color.parseColor(this))
 }.getOrDefault(default)
 
-private fun String?.toAndroidColor(default: Int): Int = runCatching {
-    if (this.isNullOrBlank()) default else android.graphics.Color.parseColor(this)
-}.getOrDefault(default)
+private fun Int?.toComposeFontWeight(default: FontWeight): FontWeight = when (this) {
+    100 -> FontWeight.Thin
+    200 -> FontWeight.ExtraLight
+    300 -> FontWeight.Light
+    400 -> FontWeight.Normal
+    500 -> FontWeight.Medium
+    600 -> FontWeight.SemiBold
+    700 -> FontWeight.Bold
+    800 -> FontWeight.ExtraBold
+    900 -> FontWeight.Black
+    else -> default
+}
