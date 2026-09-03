@@ -29,6 +29,21 @@ git diff --check
 
 추가로 final gate에서 `./gradlew test :app:assembleDebug`를 실행했으나, TH-1226 변경 범위 밖의 기존 `:core:abtest:kaptDebugUnitTestKotlin`과 `:core:abtest:kaptReleaseUnitTestKotlin`이 `ExampleUnitTest`의 `@error.NonExistentClass` stub 오류로 실패했다. 해당 test 파일은 기준 커밋 `4ab76e8f65aed8608f3afd1df8237b6181f7c222`과 동일하고, `core/abtest` 및 Gradle 설정에는 이번 변경이 없다. 위에 기록한 TH-1226 관련 test/compile과 독립 `:app:assembleDebug`는 모두 성공했다.
 
+## 2026-09-03 renderer fidelity 자동 검증
+
+```bash
+./gradlew :core:common:testDebugUnitTest --tests '*ServerDrivenText*' --tests com.threedollar.common.compose.utils.ComposeColorUtilsTest
+./gradlew :data:testDebugUnitTest --tests '*StoreDetail*' --tests com.threedollar.data.screen.HomeBottomSheetScreenMapperTest
+./gradlew :app:compileDebugKotlin :app:testDebugUnitTest --tests '*StoreDetail*' --tests 'com.zion830.threedollars.ui.home.*'
+./gradlew :app:assembleDebug
+git diff --check
+```
+
+- app 관련 범위: 61 tests, failures 0, errors 0
+- data 관련 범위: 16 tests, failures 0, errors 0
+- common text/color 범위: 7 tests, failures 0, errors 0
+- TDD RED 확인: `normalizeServerDrivenColor` 미구현, 빈 menu item 2개 유지, presentation policy 미구현으로 각각 실패한 뒤 GREEN을 확인했다.
+
 ## emulator 실서버 확인
 
 Debug APK를 `emulator-5554`의 `com.zion830.threedollars.dev`에 설치하고 로그인된 dev 환경에서 확인했다.
@@ -42,13 +57,25 @@ Debug APK를 `emulator-5554`의 `com.zion830.threedollars.dev`에 설치하고 �
 - [x] contributor row의 `/store-contributors?storeId=...`가 `StoreContributorActivity`로 이동한다.
 - [x] TalkBack을 끈 상태에서 앱 화면에 초록색 접근성 focus 테두리가 남지 않는다.
 
+### store 120120 renderer 재검증
+
+- [x] Home FullList에서 store `120120` 선택 후 Preview → 같은 `MainActivity` bottom sheet Expanded로 진입한다.
+- [x] `PREVIEW, AD_MOB, TAB, MAP, EDIT, VISIT, INFO_V1, IMAGE, REVIEW, CTA`가 server order로 표시된다.
+- [x] PREVIEW metadata 사이에 server separator가 표시된다.
+- [x] AdMob error code 3 발생 후 빈 72dp slot이 제거된다.
+- [x] MAP action은 검은 반투명 배경, 주소 가변 폭, 48dp 확대 버튼과 local fallback icon으로 표시된다.
+- [x] EDIT action의 local edit/report fallback icon이 표시된다.
+- [x] INFO information/menu card가 `#FAFAFA` surface로 표시되고 빈 menu row가 제거된다.
+- [x] REVIEW summary가 `#FFF3F4` surface와 server의 24x24 star 크기로 표시된다.
+- [x] `가게 정보 & 메뉴` tab이 INFO_V1 section 시작 위치로 이동한다.
+
 ## 남은 수동 확인 checklist
 
 - [ ] Home marker 선택 시 기존 Preview가 즉시 표시되고 V2는 background load된다.
 - [ ] upward/downward drag와 back으로 `Preview <-> Expanded`가 왕복한다.
 - [ ] 기존 Home list `Collapsed <-> FullList`와 Preview 내부 action tap이 회귀하지 않는다.
 - [ ] USER/BOSS 실제 응답의 16개 section 조합이 server order와 TO-BE 구성대로 표시된다.
-- [ ] 상단 action이 사라질 때만 하단 sticky action이 표시된다.
+- [x] 상단 action이 사라질 때만 하단 sticky action이 표시된다.
 - [ ] list/deep link/push/share/favorite/my page/related store가 V2 full-screen을 연다.
 - [ ] 저장, 방문, 리뷰 작성·신고·삭제·좋아요, 공유, 길안내, 지도/주소, 수정/없는 장소, 사진, 쿠폰, post, CTA/link action의 성공·실패가 legacy UX와 일치한다.
 - [ ] child Activity/Dialog 성공 후 V2 content와 caller 목록이 refresh된다.

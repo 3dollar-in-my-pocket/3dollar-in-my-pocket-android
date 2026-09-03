@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,9 +35,8 @@ import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray100
 import base.compose.Pink
-import base.compose.PretendardFontFamily
-import base.compose.dpToSp
 import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -223,7 +224,14 @@ internal fun StoreDetailReviewSection(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         StoreDetailSectionHeader(section.header.title, section.header.subTitle, section.header.trailingAction, onAction)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .serverDrivenSurface(section.summary.style, RoundedCornerShape(12.dp), ColorWhite)
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             SDTextRenderer(section.summary.title, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
             StoreDetailRating(section.summary.stars)
             SDTextRenderer(section.summary.rating, color = Gray100, fontSizeDp = 22, lineHeightDp = 30)
@@ -296,11 +304,20 @@ internal fun StoreDetailAdMobSection(
     val card = section.cards.firstOrNull() ?: return
     val context = androidx.compose.ui.platform.LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var loadState by remember(card.cardId) { mutableStateOf(StoreDetailAdLoadState.Loading) }
     val adView = remember(card.cardId, context) {
         runCatching { AdView(context).apply {
             setAdSize(AdSize.BANNER)
             adUnitId = context.getString(CommonR.string.admob_list_banner)
             adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    loadState = StoreDetailAdLoadState.Loaded
+                }
+
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    loadState = StoreDetailAdLoadState.Failed
+                }
+
                 override fun onAdClicked() {
                     runCatching { SDClickLogger.send(card.clickLog) }
                 }
@@ -312,6 +329,7 @@ internal fun StoreDetailAdMobSection(
             loadAd(AdRequest.Builder().build())
         } }.getOrNull()
     } ?: return
+    if (!loadState.shouldRender) return
     DisposableEffect(adView, lifecycle) {
         var destroyed = false
         val observer = LifecycleEventObserver { _, event ->

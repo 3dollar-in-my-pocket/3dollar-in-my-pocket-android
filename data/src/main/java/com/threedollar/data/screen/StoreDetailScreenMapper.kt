@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.SDBorderModel
@@ -519,10 +520,14 @@ private fun StoreDetailMenuCardResponse.asModelOrNull(): StoreDetailMenuCardMode
         val header = group.header?.asModel() ?: return@mapNotNull null
         val items = group.items?.mapNotNull { item ->
             val primary = item.primaryText?.asModel() ?: return@mapNotNull null
-            StoreDetailTextMenuItemModel(
+            val menuItem = StoreDetailTextMenuItemModel(
                 primaryText = primary,
                 secondaryText = item.secondaryText?.asModel(),
             )
+            menuItem.takeIf {
+                it.primaryText.displayText().isNotBlank() ||
+                    it.secondaryText.displayText().isNotBlank()
+            }
         } ?: return@mapNotNull null
         StoreDetailMenuGroupModel(header = header, items = items)
     } ?: return null

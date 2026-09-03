@@ -39,6 +39,7 @@ import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
+import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDCardModel
 import com.threedollar.common.serverdriven.model.SDChipModel
@@ -227,6 +228,7 @@ fun SDActionButton(
     button: SDButtonModel,
     fillMaxWidth: Boolean,
     modifier: Modifier = Modifier,
+    imageOverride: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     val sizeModifier = if (fillMaxWidth) {
@@ -252,14 +254,15 @@ fun SDActionButton(
         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp),
     ) {
         val image = button.image
+        val hasImage = image != null || imageOverride != null
         val imageAtEnd = button.imageAlignment.equals("END", ignoreCase = true)
         Row(
             modifier = if (imageAtEnd && fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (image != null && !imageAtEnd) {
-                SDImageRenderer(image = image)
+            if (hasImage && !imageAtEnd) {
+                imageOverride?.invoke() ?: image?.let { SDImageRenderer(image = it) }
             }
             SDTextRenderer(
                 text = button.text,
@@ -267,9 +270,9 @@ fun SDActionButton(
                 lineHeightDp = 24,
                 maxLines = 1,
             )
-            if (image != null && imageAtEnd) {
+            if (hasImage && imageAtEnd) {
                 if (fillMaxWidth) Spacer(Modifier.weight(1f))
-                SDImageRenderer(image = image)
+                imageOverride?.invoke() ?: image?.let { SDImageRenderer(image = it) }
             }
         }
     }
@@ -435,9 +438,7 @@ private fun SDSurfaceStyleModel?.toBorderStroke(defaultColor: Color): BorderStro
 private fun SDSurfaceStyleModel?.toBackgroundColor(default: Color): Color =
     this?.backgroundColor.toComposeColor(default)
 
-private fun String?.toComposeColor(default: Color): Color = runCatching {
-    if (this.isNullOrBlank()) default else Color(android.graphics.Color.parseColor(this))
-}.getOrDefault(default)
+private fun String?.toComposeColor(default: Color): Color = toColor(fallback = default)
 
 private fun Int?.toComposeFontWeight(default: FontWeight): FontWeight = when (this) {
     100 -> FontWeight.Thin

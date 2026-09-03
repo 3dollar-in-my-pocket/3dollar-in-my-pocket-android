@@ -26,7 +26,10 @@ class StoreDetailScreenMapperInfoTest {
                     {"type":"TRAILING_TEXT","label":{"text":"위치","isHtml":false,"fontColor":"#111111"},"value":{"text":"역 1번 출구","isHtml":false,"fontColor":"#555555"}},
                     {"type":"FUTURE_ROW","label":{"text":"skip","isHtml":false,"fontColor":"#111111"}}
                   ]},
-                  "menuCard":{"style":{"backgroundColor":"#FFFFFF"},"groups":[{"header":{"text":{"text":"간식","isHtml":false,"fontColor":"#111111"}},"items":[{"primaryText":{"text":"붕어빵","isHtml":false,"fontColor":"#111111"},"secondaryText":{"text":"1,000원","isHtml":false,"fontColor":"#555555"}}]}]}
+                  "menuCard":{"style":{"backgroundColor":"#FFFFFF"},"groups":[{"header":{"text":{"text":"간식","isHtml":false,"fontColor":"#111111"}},"items":[
+                    {"primaryText":{"text":"붕어빵","isHtml":false,"fontColor":"#111111"},"secondaryText":{"text":"1,000원","isHtml":false,"fontColor":"#555555"}},
+                    {"primaryText":{"text":"<span style=\"font-size:12px\"></span>","isHtml":true,"fontColor":"#111111"}}
+                  ]}]}
                 },
                 {
                   "type":"INFO_V2",
@@ -62,7 +65,9 @@ class StoreDetailScreenMapperInfoTest {
         assertTrue(informationRows[0] is StoreDetailInformationRowModel.ChipGroup)
         assertTrue(informationRows[1] is StoreDetailInformationRowModel.InlineOption)
         assertTrue(informationRows[2] is StoreDetailInformationRowModel.TrailingText)
-        assertEquals("붕어빵", requireNotNull(infoV1.menuCard).groups.single().items.single().primaryText.text)
+        val menuItems = requireNotNull(infoV1.menuCard).groups.single().items
+        assertEquals(1, menuItems.size)
+        assertEquals("붕어빵", menuItems.single().primaryText.text)
         assertEquals("menu-image", requireNotNull(infoV2.imageGallery).images.single().url)
         val detailRows = requireNotNull(infoV2.detailCard).rows
         assertEquals(2, detailRows.size)

@@ -42,3 +42,13 @@
 3. 런타임 응답과 Swagger가 충돌하는 `VISIT.summary.chips`는 실제 응답도 손실 없이 처리하되, 기존 review summary 모델과 분리한다.
 4. 실제 `/store-contributors`, `/stores/{id}#home|info|images|reviews`, `IMAGE_ID`/`IMAGE_URL` action을 실패 테스트로 고정한다.
 5. 관련 unit test, compile, `assembleDebug`, debug APK install 후 Home list/marker 양 경로를 emulator에서 재검증한다.
+
+## 2026-09-03 renderer fidelity 교정 계획
+
+`GET /api/v2/screen/store/120120` 실응답과 Android emulator 전체 스크롤 결과에서 확인된 client-side 표현 손실을 교정한다.
+
+1. server의 8자리 `#RRGGBBAA` 색상을 Android `#AARRGGBB`로 정규화하는 실패 테스트를 추가한다.
+2. MAP/EDIT action type에 기존 design system icon fallback을 연결하고, MAP 주소 action은 가변 폭, 확대 action은 48dp 고정 폭으로 분리한다.
+3. 광고 load 실패 시 `AD_MOB` slot을 제거하고, INFO/REVIEW card의 server surface style을 적용한다.
+4. 빈 menu item은 mapper 경계에서 제외하고, PREVIEW metadata separator와 rating image server size를 렌더링한다.
+5. 관련 unit test, compile, `assembleDebug`, APK install 후 store `120120`을 emulator에서 다시 전체 스크롤한다.

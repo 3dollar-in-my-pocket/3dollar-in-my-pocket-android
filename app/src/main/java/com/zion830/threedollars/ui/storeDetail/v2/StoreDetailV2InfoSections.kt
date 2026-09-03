@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.storeDetail.v2
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +20,6 @@ import base.compose.Gray10
 import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray100
-import base.compose.PretendardFontFamily
-import base.compose.dpToSp
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
@@ -41,29 +37,49 @@ internal fun StoreDetailInfoV1Section(section: StoreDetailSectionModel.InfoV1) {
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         StoreDetailSectionHeader(section.header.title, section.header.subTitle)
-        section.informationCard?.rows?.forEach { row ->
-            when (row) {
-                is StoreDetailInformationRowModel.ChipGroup -> StoreDetailLabelRow(row.label) {
-                    StoreDetailChipRow(row.chips)
-                }
-                is StoreDetailInformationRowModel.InlineOption -> StoreDetailLabelRow(row.label) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        row.items.forEach { item ->
-                            SDTextRenderer(
-                                text = item.text,
-                                color = if (item.isSelected) Gray100 else Gray50,
-                                fontSizeDp = 13,
-                                lineHeightDp = 19,
-                            )
+        section.informationCard?.let { card ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                card.rows.forEach { row ->
+                    when (row) {
+                        is StoreDetailInformationRowModel.ChipGroup -> StoreDetailLabelRow(row.label) {
+                            StoreDetailChipRow(row.chips)
                         }
+                        is StoreDetailInformationRowModel.InlineOption -> StoreDetailLabelRow(row.label) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                row.items.forEach { item ->
+                                    SDTextRenderer(
+                                        text = item.text,
+                                        color = if (item.isSelected) Gray100 else Gray50,
+                                        fontSizeDp = 13,
+                                        lineHeightDp = 19,
+                                    )
+                                }
+                            }
+                        }
+                        is StoreDetailInformationRowModel.TrailingText -> StoreDetailLabelValueRow(row.label, row.value)
                     }
                 }
-                is StoreDetailInformationRowModel.TrailingText -> StoreDetailLabelValueRow(row.label, row.value)
             }
         }
-        section.menuCard?.groups?.forEach { group ->
-            SDChipRenderer(group.header)
-            group.items.forEach { item -> StoreDetailLabelValueRow(item.primaryText, item.secondaryText) }
+        section.menuCard?.let { card ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .serverDrivenSurface(card.style, RoundedCornerShape(12.dp), Gray10)
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                card.groups.forEach { group ->
+                    SDChipRenderer(group.header)
+                    group.items.forEach { item -> StoreDetailLabelValueRow(item.primaryText, item.secondaryText) }
+                }
+            }
         }
     }
 }

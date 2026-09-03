@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -41,6 +43,7 @@ import base.compose.Gray70
 import base.compose.Gray100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
+import base.compose.Red
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.naver.maps.geometry.LatLng
@@ -57,6 +60,7 @@ import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.zion830.threedollars.ui.home.ui.compose.StorePreviewActionBarRow
 import com.zion830.threedollars.core.ui.serverdriven.SDActionButton as ServerDrivenActionButton
 import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDImageRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
 import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -122,8 +126,12 @@ internal fun StoreDetailPreviewSection(
                 }.padding(horizontal = 10.dp, vertical = 8.dp),
             )
         }
-        section.metadata.primary.takeIf(List<*>::isNotEmpty)?.let { StoreDetailChipRow(it) }
-        section.metadata.secondary.takeIf(List<*>::isNotEmpty)?.let { StoreDetailChipRow(it) }
+        section.metadata.primary.takeIf(List<*>::isNotEmpty)?.let {
+            StoreDetailChipRow(it, section.metadata.separator)
+        }
+        section.metadata.secondary.takeIf(List<*>::isNotEmpty)?.let {
+            StoreDetailChipRow(it, section.metadata.separator)
+        }
         section.contributorActionBar?.let { action ->
             StoreDetailActionButton(
                 action = action.copy(
@@ -207,7 +215,12 @@ internal fun StoreDetailMapSection(
             section.footerLeft?.let { action ->
                 StoreDetailActionButton(action, { onAction(action) }, Modifier.weight(1f))
             }
-            StoreDetailActionButton(section.footerRight, { onAction(section.footerRight) }, Modifier.weight(1f))
+            StoreDetailActionButton(
+                action = section.footerRight,
+                onClick = { onAction(section.footerRight) },
+                modifier = Modifier.size(48.dp),
+                fillMaxWidth = false,
+            )
         }
     }
 }
@@ -306,7 +319,10 @@ internal fun StoreDetailRating(rating: StoreDetailRatingModel) {
         rating.images.forEach { image ->
             StoreDetailImage(
                 image = image,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(
+                    width = (image.style?.width ?: 18.0).dp,
+                    height = (image.style?.height ?: 18.0).dp,
+                ),
                 contentScale = ContentScale.Fit,
             )
         }
@@ -345,12 +361,41 @@ internal fun StoreDetailActionButton(
     action: StoreActionBarModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    fillMaxWidth: Boolean = true,
 ) {
+    val iconRole = action.localIconRoleOrNull()
+    val imageOverride: (@Composable () -> Unit)? = iconRole?.let { role ->
+        { StoreDetailLocalActionIcon(role) }
+    }
     ServerDrivenActionButton(
         button = action.button,
-        fillMaxWidth = true,
+        fillMaxWidth = fillMaxWidth,
         modifier = modifier,
+        imageOverride = imageOverride,
         onClick = onClick,
+    )
+}
+
+@Composable
+private fun StoreDetailLocalActionIcon(role: StoreDetailActionIconRole) {
+    val iconRes = when (role) {
+        StoreDetailActionIconRole.Copy -> DesignSystemR.drawable.ic_copy_18
+        StoreDetailActionIconRole.Zoom -> DesignSystemR.drawable.ic_zoom
+        StoreDetailActionIconRole.Edit -> DesignSystemR.drawable.ic_write_16
+        StoreDetailActionIconRole.Report -> DesignSystemR.drawable.ic_report
+    }
+    val tint = when (role) {
+        StoreDetailActionIconRole.Copy,
+        StoreDetailActionIconRole.Zoom,
+        -> ColorWhite
+        StoreDetailActionIconRole.Edit -> Gray70
+        StoreDetailActionIconRole.Report -> Red
+    }
+    Icon(
+        painter = painterResource(iconRes),
+        contentDescription = null,
+        tint = tint,
+        modifier = Modifier.size(if (role == StoreDetailActionIconRole.Copy) 16.dp else 20.dp),
     )
 }
 
@@ -368,12 +413,19 @@ internal fun StoreDetailTextButton(
 }
 
 @Composable
-internal fun StoreDetailChipRow(chips: List<SDChipModel>) {
+internal fun StoreDetailChipRow(
+    chips: List<SDChipModel>,
+    separator: SDImageModel? = null,
+) {
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        chips.forEach { chip ->
+        chips.forEachIndexed { index, chip ->
+            if (index > 0 && separator != null) {
+                SDImageRenderer(separator)
+            }
             SDChipRenderer(chip = chip)
         }
     }

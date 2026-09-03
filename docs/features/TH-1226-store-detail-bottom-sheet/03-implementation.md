@@ -40,3 +40,17 @@
 - 보호 대상 `AGENTS.md`, `docs/features/TH-1128-store-detail-action-nudge/03-implementation.md`에 대한 에이전트 수정·stage 없음
 - 실기기는 실행하지 않았고, authenticated dev API와 `emulator-5554`의 Debug APK로 Home list card → Preview → 같은 sheet Expanded, HTML/style, action row, tab, contributor route를 확인했다.
 - emulator의 초록색 focus 테두리는 앱 UI가 아니라 TalkBack 접근성 focus였으며 QA 중 접근성 service를 비활성화한 상태에서 다시 확인했다.
+
+## 2026-09-03 renderer fidelity 교정
+
+store `120120`의 현재 dev 실응답과 emulator 캡처를 대조해 다음 표현 경계를 보강했다.
+
+- server의 CSS식 8자리 색상 `#RRGGBBAA`를 Android가 해석하는 `#AARRGGBB`로 정규화했다. `#18181899` MAP action 배경은 60% alpha의 `#181818`로 표시된다.
+- 공통 `SDActionButton`에 image override slot을 추가하고, 403인 MAP/EDIT server asset에는 기존 design system copy/zoom/edit/report icon을 action type 기반 fallback으로 표시한다.
+- MAP 주소 action은 남은 폭을 사용하고 icon-only 확대 action은 48dp로 제한했다.
+- AdMob load 실패 시 고정 72dp slot을 제거해 section 사이 빈 공간이 남지 않게 했다.
+- `INFO_V1.informationCard`, `INFO_V1.menuCard`, `REVIEW.summary`의 server surface style을 적용했다.
+- 표시 텍스트가 모두 빈 menu item은 mapper에서 제외해 빈 row가 section 높이를 늘리지 않게 했다.
+- PREVIEW metadata separator와 rating image의 server width/height를 렌더링했다.
+
+서버 원인은 별도로 남아 있다. root 경로의 `Edit_fill.png`, `deletion.png`, `copy.png`, `zoom_3x.png`는 2026-09-03 GET 기준 HTTP 403이며, `리뷰`/`0개`와 `방문 성공`/`0명` span 사이에는 공백이 없다. Android는 알려진 action icon만 local fallback하고 문구는 서버 원문을 유지한다.
