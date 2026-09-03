@@ -66,8 +66,9 @@ class StoreDetailScreenMapperInfoTest {
         assertTrue(informationRows[1] is StoreDetailInformationRowModel.InlineOption)
         assertTrue(informationRows[2] is StoreDetailInformationRowModel.TrailingText)
         val menuItems = requireNotNull(infoV1.menuCard).groups.single().items
-        assertEquals(1, menuItems.size)
-        assertEquals("붕어빵", menuItems.single().primaryText.text)
+        assertEquals(2, menuItems.size)
+        assertEquals("붕어빵", menuItems.first().primaryText.text)
+        assertEquals("<span style=\"font-size:12px\"></span>", menuItems.last().primaryText.text)
         assertEquals("menu-image", requireNotNull(infoV2.imageGallery).images.single().url)
         val detailRows = requireNotNull(infoV2.detailCard).rows
         assertEquals(2, detailRows.size)

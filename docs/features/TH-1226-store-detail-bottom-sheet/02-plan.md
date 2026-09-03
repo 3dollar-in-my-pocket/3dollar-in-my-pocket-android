@@ -52,3 +52,13 @@
 3. 광고 load 실패 시 `AD_MOB` slot을 제거하고, INFO/REVIEW card의 server surface style을 적용한다.
 4. 빈 menu item은 mapper 경계에서 제외하고, PREVIEW metadata separator와 rating image server size를 렌더링한다.
 5. 관련 unit test, compile, `assembleDebug`, APK install 후 store `120120`을 emulator에서 다시 전체 스크롤한다.
+
+## 2026-09-03 strict server-driven 표시 계획
+
+사용자 확인에 따라 Figma 보정 UI보다 현재 V2 응답을 우선하는 비교용 strict 표시를 적용한다.
+
+1. 상세 renderer가 서버 section 밖에서 추가한 저장 action, section/review divider, sticky action을 제거한다.
+2. MAP/EDIT action의 local icon fallback과 contributor 문구 보정, 빈 menu item 필터를 제거해 서버값을 그대로 사용한다.
+3. Home Expanded에서는 sheet handle과 Home bottom navigation을 숨기고, full-screen 상세의 local top app bar를 제거한다.
+4. MAP/AD_MOB처럼 section type을 플랫폼 컴포넌트로 해석하는 필수 renderer와 action routing은 유지한다.
+5. source contract와 mapper test를 RED→GREEN으로 고정하고, 관련 unit test, `assembleDebug`, emulator 스크롤로 검증한다.

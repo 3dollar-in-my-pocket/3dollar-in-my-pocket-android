@@ -16,22 +16,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -82,7 +73,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import base.compose.AppTheme
 import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
 class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
@@ -136,10 +126,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
         })
         composeView.setContent {
             AppTheme {
-                StoreDetailV2Screen(
-                    viewModel = viewModel,
-                    onBack = ::finishWithResult,
-                )
+                StoreDetailV2Screen(viewModel = viewModel)
             }
         }
         supportFragmentManager.addOnBackStackChangedListener {
@@ -499,44 +486,26 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun StoreDetailV2Screen(
     viewModel: StoreDetailV2ViewModel,
-    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val favoriteOverride by viewModel.favoriteOverride.collectAsStateWithLifecycle()
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-                            contentDescription = "뒤로",
-                        )
-                    }
-                },
-            )
-        },
-        containerColor = Color.White,
-    ) { innerPadding ->
+    Box(
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+    ) {
         when (val value = state) {
             is StoreDetailV2UiState.Loading -> Box(
-                Modifier.fillMaxSize().padding(innerPadding),
+                Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) { CircularProgressIndicator() }
             is StoreDetailV2UiState.Content -> StoreDetailV2Content(
                 screen = value.screen,
                 onAction = viewModel::onAction,
-                onFavoriteToggle = viewModel::toggleFavorite,
-                favoriteOverride = favoriteOverride,
                 onViewLog = viewModel::sendViewLog,
                 onImpression = viewModel::sendImpression,
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier.fillMaxSize(),
             )
-            is StoreDetailV2UiState.Error -> Box(Modifier.fillMaxSize().padding(innerPadding))
+            is StoreDetailV2UiState.Error -> Unit
         }
     }
 }

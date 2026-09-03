@@ -227,6 +227,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     fun showBottomNavigation(state: Boolean) {
         if (isBindingInitialized()) {
             binding.navView.isVisible = state
+            binding.divider.isVisible = state
         }
     }
 

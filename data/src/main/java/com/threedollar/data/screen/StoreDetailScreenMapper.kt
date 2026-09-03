@@ -520,14 +520,10 @@ private fun StoreDetailMenuCardResponse.asModelOrNull(): StoreDetailMenuCardMode
         val header = group.header?.asModel() ?: return@mapNotNull null
         val items = group.items?.mapNotNull { item ->
             val primary = item.primaryText?.asModel() ?: return@mapNotNull null
-            val menuItem = StoreDetailTextMenuItemModel(
+            StoreDetailTextMenuItemModel(
                 primaryText = primary,
                 secondaryText = item.secondaryText?.asModel(),
             )
-            menuItem.takeIf {
-                it.primaryText.displayText().isNotBlank() ||
-                    it.secondaryText.displayText().isNotBlank()
-            }
         } ?: return@mapNotNull null
         StoreDetailMenuGroupModel(header = header, items = items)
     } ?: return null

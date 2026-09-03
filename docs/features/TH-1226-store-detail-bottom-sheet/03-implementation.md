@@ -54,3 +54,18 @@ store `120120`의 현재 dev 실응답과 emulator 캡처를 대조해 다음 �
 - PREVIEW metadata separator와 rating image의 server width/height를 렌더링했다.
 
 서버 원인은 별도로 남아 있다. root 경로의 `Edit_fill.png`, `deletion.png`, `copy.png`, `zoom_3x.png`는 2026-09-03 GET 기준 HTTP 403이며, `리뷰`/`0개`와 `방문 성공`/`0명` span 사이에는 공백이 없다. Android는 알려진 action icon만 local fallback하고 문구는 서버 원문을 유지한다.
+
+## 2026-09-03 strict server-driven 표시
+
+사용자 요청으로 상세 화면을 현재 서버 응답만 비교할 수 있는 strict 표시로 전환했다. 이 결정은 앞선 Figma fidelity 보정보다 우선한다.
+
+- `StoreDetailV2Content`는 `screen.sections`만 server order로 렌더링하며 section divider와 scroll sticky action을 추가하지 않는다.
+- PREVIEW의 local 저장 action과 contributor `null` 문구 보정을 제거했다. action row는 서버 `actionBars`를 한 번만 표시한다.
+- MAP/EDIT action의 local icon fallback을 제거하고 서버 image만 사용한다.
+- INFO_V1의 빈 menu item도 서버가 보낸 항목이면 보존한다.
+- REVIEW card 사이에 Android가 추가한 1dp divider를 제거했다.
+- Home Expanded 상태에서는 bottom sheet handle과 Home bottom navigation/divider를 숨긴다.
+- V2 full-screen Activity의 local top app bar를 제거하고 system back만 유지한다.
+- MAP의 `location`을 Naver Map으로, AD_MOB card를 AdView로 해석하는 section renderer와 action 처리는 유지한다.
+
+이에 따라 HTTP 403인 서버 image는 local icon으로 대체되지 않아 빈 icon 영역으로 보일 수 있고, 서버가 `null` 또는 빈 text를 보내면 그대로 화면에 나타난다. 이는 strict 비교 모드의 의도된 결과다.

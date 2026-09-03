@@ -13,6 +13,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +61,7 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.UserStoreModel
 import com.zion830.threedollars.DynamicLinkActivity
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -330,6 +333,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initHomeBottomSheetComposeView() {
+        val mainActivity = activity as? MainActivity
         binding.homeBottomSheetComposeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
@@ -338,7 +342,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val storeDetailState = storeDetailV2ViewModel.uiState.collectAsStateWithLifecycle().value
-                val storeDetailFavoriteOverride = storeDetailV2ViewModel.favoriteOverride.collectAsStateWithLifecycle().value
+                LaunchedEffect(isStoreDetailExpanded) {
+                    mainActivity?.showBottomNavigation(!isStoreDetailExpanded)
+                }
+                DisposableEffect(mainActivity) {
+                    onDispose { mainActivity?.showBottomNavigation(true) }
+                }
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
@@ -347,8 +356,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     selectedStoreExpanded = isStoreDetailExpanded,
                     onSelectedStoreExpandedChange = { isStoreDetailExpanded = it },
                     onStoreDetailAction = storeDetailV2ViewModel::onAction,
-                    onStoreDetailFavoriteToggle = storeDetailV2ViewModel::toggleFavorite,
-                    storeDetailFavoriteOverride = storeDetailFavoriteOverride,
                     onStoreDetailViewLog = storeDetailV2ViewModel::sendViewLog,
                     onStoreDetailImpression = storeDetailV2ViewModel::sendImpression,
                     onCardClick = ::moveHomeListCardDetail,

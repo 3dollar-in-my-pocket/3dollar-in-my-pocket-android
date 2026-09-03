@@ -2,13 +2,10 @@ package com.zion830.threedollars.ui.storeDetail.v2
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,18 +14,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import base.compose.ColorWhite
-import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
@@ -48,27 +39,12 @@ import java.net.URI
 fun StoreDetailV2Content(
     screen: StoreDetailScreenModel,
     onAction: (StoreActionBarModel) -> Unit,
-    onFavoriteToggle: (Boolean) -> Unit = {},
-    favoriteOverride: Boolean? = null,
     onViewLog: (SDViewLogModel) -> Unit = {},
     onImpression: (String, SDImpressionLogModel) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val preview = screen.sections.filterIsInstance<StoreDetailSectionModel.Preview>().firstOrNull()
-    val previewIndex = screen.sections.indexOfFirst { it is StoreDetailSectionModel.Preview }
-    var previewActionsVisible by remember(screen) { mutableStateOf(true) }
-    val showStickyActions by remember(screen.sections, listState) {
-        derivedStateOf {
-            shouldShowStoreDetailStickyActions(
-                hasActions = preview?.actionBars?.isNotEmpty() == true,
-                previewIndex = previewIndex,
-                firstVisibleItemIndex = listState.firstVisibleItemIndex,
-                previewActionsVisible = previewActionsVisible,
-            )
-        }
-    }
 
     LaunchedEffect(screen.viewLog) {
         onViewLog(screen.viewLog)
@@ -86,91 +62,41 @@ fun StoreDetailV2Content(
             }
     }
 
-    Box(modifier = modifier.fillMaxSize().background(ColorWhite)) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = if (showStickyActions) 84.dp else 24.dp),
-        ) {
-            itemsIndexed(
-                items = screen.sections,
-                key = { index, section -> "${section.type}-$index" },
-                contentType = { _, section -> section.type },
-            ) { _, section ->
-                when (section) {
-                    is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section, onAction)
-                    is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(
-                        section = section,
-                        onAction = onAction,
-                        onFavoriteToggle = onFavoriteToggle,
-                        favoriteOverride = favoriteOverride,
-                        onActionRowVisibilityChanged = { previewActionsVisible = it },
-                    )
-                    is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section, onImpression)
-                    is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
-                        val targetType = actionBar.targetSectionTypeOrNull()
-                        val targetIndex = targetType?.let(screen.sections::indexOfStoreDetailTarget) ?: -1
-                        if (targetIndex >= 0) {
-                            coroutineScope.launch { listState.animateScrollToItem(targetIndex) }
-                        } else {
-                            onAction(actionBar)
-                        }
-                    }
-                    is StoreDetailSectionModel.Map -> StoreDetailMapSection(section, onAction)
-                    is StoreDetailSectionModel.Edit -> StoreDetailEditSection(section, onAction)
-                    is StoreDetailSectionModel.Coupon -> StoreDetailCouponSection(section, onAction)
-                    is StoreDetailSectionModel.Visit -> StoreDetailVisitSection(section)
-                    is StoreDetailSectionModel.Post -> StoreDetailPostSection(section, onAction)
-                    is StoreDetailSectionModel.Image -> StoreDetailImageSection(section, onAction)
-                    is StoreDetailSectionModel.AppearanceDay -> StoreDetailAppearanceDaySection(section, onAction)
-                    is StoreDetailSectionModel.RelatedStores -> StoreDetailRelatedStoresSection(section, onAction)
-                    is StoreDetailSectionModel.Cta -> StoreDetailCtaSection(section, onAction)
-                    is StoreDetailSectionModel.Review -> StoreDetailReviewSection(section, onAction)
-                    is StoreDetailSectionModel.InfoV1 -> StoreDetailInfoV1Section(section)
-                    is StoreDetailSectionModel.InfoV2 -> StoreDetailInfoV2Section(section, onAction)
-                }
-                StoreDetailSectionDivider()
-            }
-        }
-
-        if (showStickyActions && preview != null) {
-            StoreDetailStickyActions(
-                actions = preview.actionBars,
-                onAction = onAction,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
-        }
-    }
-}
-
-internal fun shouldShowStoreDetailStickyActions(
-    hasActions: Boolean,
-    previewIndex: Int,
-    firstVisibleItemIndex: Int,
-    previewActionsVisible: Boolean,
-): Boolean = hasActions && previewIndex >= 0 &&
-    (!previewActionsVisible || firstVisibleItemIndex > previewIndex)
-
-@Composable
-private fun StoreDetailStickyActions(
-    actions: List<StoreActionBarModel>,
-    onAction: (StoreActionBarModel) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(ColorWhite)
-            .navigationBarsPadding()
-            .padding(horizontal = 20.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    LazyColumn(
+        state = listState,
+        modifier = modifier.fillMaxSize().background(ColorWhite),
     ) {
-        actions.take(2).forEach { action ->
-            StoreDetailActionButton(
-                action = action,
-                onClick = { onAction(action) },
-                modifier = Modifier.weight(1f),
-            )
+        itemsIndexed(
+            items = screen.sections,
+            key = { index, section -> "${section.type}-$index" },
+            contentType = { _, section -> section.type },
+        ) { _, section ->
+            when (section) {
+                is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section, onAction)
+                is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(section, onAction)
+                is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section, onImpression)
+                is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
+                    val targetType = actionBar.targetSectionTypeOrNull()
+                    val targetIndex = targetType?.let(screen.sections::indexOfStoreDetailTarget) ?: -1
+                    if (targetIndex >= 0) {
+                        coroutineScope.launch { listState.animateScrollToItem(targetIndex) }
+                    } else {
+                        onAction(actionBar)
+                    }
+                }
+                is StoreDetailSectionModel.Map -> StoreDetailMapSection(section, onAction)
+                is StoreDetailSectionModel.Edit -> StoreDetailEditSection(section, onAction)
+                is StoreDetailSectionModel.Coupon -> StoreDetailCouponSection(section, onAction)
+                is StoreDetailSectionModel.Visit -> StoreDetailVisitSection(section)
+                is StoreDetailSectionModel.Post -> StoreDetailPostSection(section, onAction)
+                is StoreDetailSectionModel.Image -> StoreDetailImageSection(section, onAction)
+                is StoreDetailSectionModel.AppearanceDay -> StoreDetailAppearanceDaySection(section, onAction)
+                is StoreDetailSectionModel.RelatedStores -> StoreDetailRelatedStoresSection(section, onAction)
+                is StoreDetailSectionModel.Cta -> StoreDetailCtaSection(section, onAction)
+                is StoreDetailSectionModel.Review -> StoreDetailReviewSection(section, onAction)
+                is StoreDetailSectionModel.InfoV1 -> StoreDetailInfoV1Section(section)
+                is StoreDetailSectionModel.InfoV2 -> StoreDetailInfoV2Section(section, onAction)
+            }
         }
     }
 }
@@ -206,16 +132,6 @@ internal fun StoreDetailSectionHeader(
             )
         }
     }
-}
-
-@Composable
-private fun StoreDetailSectionDivider() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Gray10)
-            .padding(top = 8.dp),
-    )
 }
 
 internal fun syntheticActionBar(

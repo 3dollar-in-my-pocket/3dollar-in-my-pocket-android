@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +29,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import base.compose.ColorWhite
 import base.compose.Gray10
-import base.compose.Gray20
 import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray100
@@ -270,7 +268,6 @@ internal fun StoreDetailReviewSection(
                     }
                 }
             }
-            Box(Modifier.fillMaxWidth().height(1.dp).background(Gray20))
         }
         section.more?.let { action -> StoreDetailActionButton(action, { onAction(action) }, Modifier.fillMaxWidth()) }
     }

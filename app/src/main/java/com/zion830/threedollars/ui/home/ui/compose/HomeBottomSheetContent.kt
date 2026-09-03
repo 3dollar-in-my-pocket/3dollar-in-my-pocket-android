@@ -168,8 +168,6 @@ fun HomeBottomSheetContent(
     selectedStoreExpanded: Boolean = false,
     onSelectedStoreExpandedChange: (Boolean) -> Unit = {},
     onStoreDetailAction: (StoreActionBarModel) -> Unit = {},
-    onStoreDetailFavoriteToggle: (Boolean) -> Unit = {},
-    storeDetailFavoriteOverride: Boolean? = null,
     onStoreDetailViewLog: (com.threedollar.common.serverdriven.model.SDViewLogModel) -> Unit = {},
     onStoreDetailImpression: (String, com.threedollar.common.serverdriven.model.SDImpressionLogModel) -> Unit = { _, _ -> },
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
@@ -490,7 +488,7 @@ fun HomeBottomSheetContent(
                 .clip(RoundedCornerShape(topStart = topCornerRadius, topEnd = topCornerRadius))
                 .background(ColorWhite),
         ) {
-            if ((storeScreen == null && !isFullListSettled) || storeScreen != null) {
+            if (!selectedStoreExpanded && ((storeScreen == null && !isFullListSettled) || storeScreen != null)) {
                 HomeBottomSheetHandle(
                     onHandleDrag = { deltaY ->
                         if (storeScreen == null) snapSheetBy(deltaY) else snapSelectedSheetBy(deltaY)
@@ -509,8 +507,6 @@ fun HomeBottomSheetContent(
                     StoreDetailV2Content(
                         screen = storeDetailScreen,
                         onAction = onStoreDetailAction,
-                        onFavoriteToggle = onStoreDetailFavoriteToggle,
-                        favoriteOverride = storeDetailFavoriteOverride,
                         onViewLog = onStoreDetailViewLog,
                         onImpression = onStoreDetailImpression,
                         listState = detailListState,

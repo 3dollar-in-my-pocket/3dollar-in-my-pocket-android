@@ -82,3 +82,34 @@ Debug APK를 `emulator-5554`의 `com.zion830.threedollars.dev`에 설치하고 �
 - [ ] first load/action/refresh 실패는 Toast/Snackbar를 표시하고 가능한 기존 content를 유지한다.
 - [ ] `not_exists_store`와 initial 방문의 필수 위치 누락은 현재 container를 닫는다.
 - [ ] Map/Ad가 pause/resume/화면 이탈 후 정상 동작하며 다른 section을 깨지 않는다.
+
+## 2026-09-03 strict server-driven 검증
+
+TDD RED에서 아래 기존 동작을 확인했다.
+
+- scroll sticky action이 표시됨
+- MAP/EDIT action이 local icon을 선택함
+- contributor `null` 문구를 Android가 보정함
+- 빈 INFO_V1 menu item을 mapper가 제거함
+- 상세 renderer source에 local 저장 action, section/review divider, top app bar가 존재함
+
+GREEN 이후 아래 검증을 실행해 통과했다.
+
+```bash
+./gradlew :app:testDebugUnitTest --tests "com.zion830.threedollars.ui.storeDetail.v2.*" --tests "com.zion830.threedollars.ui.home.*" :data:testDebugUnitTest --tests "com.threedollar.data.screen.*" :app:assembleDebug
+git diff --check
+```
+
+- app 상세/홈 관련 57 tests: failures 0, errors 0
+- data screen mapper 관련 21 tests: failures 0, errors 0
+- `:app:assembleDebug`: 성공
+- `git diff --check`: 오류 없음
+
+Emulator `emulator-5554` 확인 항목:
+
+- Home Preview → Expanded 후 `저장하기`, sheet handle, Home bottom navigation이 없음
+- PREVIEW action은 서버 action row 한 세트만 표시되고 scroll 후 sticky action이 없음
+- contributor `null`과 빈 menu item을 포함한 서버값을 client 보정 없이 유지함
+- full-screen 상세에 local top app bar가 없음
+- REVIEW card 사이의 client 1dp divider가 없음
+- 캡처: `/tmp/store-detail-strict-full.png`, `/tmp/home-expanded-strict.png`, `/tmp/home-expanded-scrolled-strict.png`, `/tmp/store-120024-final-review.png`, `/tmp/final-home-expanded.png`

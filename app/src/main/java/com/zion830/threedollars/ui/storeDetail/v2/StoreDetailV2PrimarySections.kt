@@ -1,10 +1,8 @@
 package com.zion830.threedollars.ui.storeDetail.v2
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -25,26 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import base.compose.ColorWhite
 import base.compose.Gray10
-import base.compose.Gray20
 import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray100
 import base.compose.Pink
-import base.compose.PretendardFontFamily
-import base.compose.Red
-import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -64,7 +50,6 @@ import com.zion830.threedollars.core.ui.serverdriven.SDImageRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
 import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
-import com.threedollar.common.R as CommonR
 
 @Composable
 internal fun StoreDetailCalloutSection(
@@ -94,11 +79,7 @@ internal fun StoreDetailCalloutSection(
 internal fun StoreDetailPreviewSection(
     section: StoreDetailSectionModel.Preview,
     onAction: (StoreActionBarModel) -> Unit,
-    onFavoriteToggle: (Boolean) -> Unit,
-    favoriteOverride: Boolean?,
-    onActionRowVisibilityChanged: (Boolean) -> Unit,
 ) {
-    val isSubscriber = favoriteOverride ?: section.additionalInfos.isSubscriber
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -114,17 +95,6 @@ internal fun StoreDetailPreviewSection(
                 )
             }
             section.header.badge?.let { StoreDetailImage(it, Modifier.size(20.dp), ContentScale.Fit) }
-            Text(
-                text = stringResource(
-                    if (isSubscriber) CommonR.string.store_detail_saved else CommonR.string.save
-                ),
-                color = if (isSubscriber) Pink else Gray70,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(13),
-                modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp).clip(CircleShape).background(Gray10).clickable {
-                    onFavoriteToggle(isSubscriber)
-                }.padding(horizontal = 10.dp, vertical = 8.dp),
-            )
         }
         section.metadata.primary.takeIf(List<*>::isNotEmpty)?.let {
             StoreDetailChipRow(it, section.metadata.separator)
@@ -134,26 +104,16 @@ internal fun StoreDetailPreviewSection(
         }
         section.contributorActionBar?.let { action ->
             StoreDetailActionButton(
-                action = action.copy(
-                    button = action.button.copy(text = action.button.text.withoutMissingContributorName()),
-                ),
+                action = action,
                 onClick = { onAction(action) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         if (section.actionBars.isNotEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onGloballyPositioned { coordinates ->
-                        onActionRowVisibilityChanged(coordinates.boundsInRoot().bottom > 0f)
-                    },
-            ) {
-                StorePreviewActionBarRow(
-                    actionBars = section.actionBars,
-                    onActionClick = onAction,
-                )
-            }
+            StorePreviewActionBarRow(
+                actionBars = section.actionBars,
+                onActionClick = onAction,
+            )
         }
         if (section.images.isNotEmpty()) {
             Row(
@@ -363,39 +323,11 @@ internal fun StoreDetailActionButton(
     modifier: Modifier = Modifier,
     fillMaxWidth: Boolean = true,
 ) {
-    val iconRole = action.localIconRoleOrNull()
-    val imageOverride: (@Composable () -> Unit)? = iconRole?.let { role ->
-        { StoreDetailLocalActionIcon(role) }
-    }
     ServerDrivenActionButton(
         button = action.button,
         fillMaxWidth = fillMaxWidth,
         modifier = modifier,
-        imageOverride = imageOverride,
         onClick = onClick,
-    )
-}
-
-@Composable
-private fun StoreDetailLocalActionIcon(role: StoreDetailActionIconRole) {
-    val iconRes = when (role) {
-        StoreDetailActionIconRole.Copy -> DesignSystemR.drawable.ic_copy_18
-        StoreDetailActionIconRole.Zoom -> DesignSystemR.drawable.ic_zoom
-        StoreDetailActionIconRole.Edit -> DesignSystemR.drawable.ic_write_16
-        StoreDetailActionIconRole.Report -> DesignSystemR.drawable.ic_report
-    }
-    val tint = when (role) {
-        StoreDetailActionIconRole.Copy,
-        StoreDetailActionIconRole.Zoom,
-        -> ColorWhite
-        StoreDetailActionIconRole.Edit -> Gray70
-        StoreDetailActionIconRole.Report -> Red
-    }
-    Icon(
-        painter = painterResource(iconRes),
-        contentDescription = null,
-        tint = tint,
-        modifier = Modifier.size(if (role == StoreDetailActionIconRole.Copy) 16.dp else 20.dp),
     )
 }
 
