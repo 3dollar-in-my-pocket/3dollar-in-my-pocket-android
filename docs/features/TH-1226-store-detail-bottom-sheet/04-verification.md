@@ -113,3 +113,14 @@ Emulator `emulator-5554` 확인 항목:
 - full-screen 상세에 local top app bar가 없음
 - REVIEW card 사이의 client 1dp divider가 없음
 - 캡처: `/tmp/store-detail-strict-full.png`, `/tmp/home-expanded-strict.png`, `/tmp/home-expanded-scrolled-strict.png`, `/tmp/store-120024-final-review.png`, `/tmp/final-home-expanded.png`
+
+## 2026-09-03 AdMob scroll 생명주기 검증
+
+- 재현: 광고 section을 화면 밖으로 보냈다가 돌아오면 새로운 AdMob request가 발생했고 `Ad failed to load : 3`으로 slot이 제거됐다.
+- 원인: Lazy item dispose에서 `AdView.destroy()`를 호출하고, 재진입 시 새 `AdView`와 request를 생성했다.
+- TDD RED: `Loaded` 이후 실패가 `Failed`로 바뀌는 상태 전이와 lazy item 내부 destroy source contract가 실패하는 것을 확인했다.
+- TDD GREEN: `Loaded` 보존, parent-owned state, `onReset` 재사용, item release pause, parent dispose destroy 계약이 통과했다.
+- `./gradlew :app:testDebugUnitTest --tests "com.zion830.threedollars.ui.storeDetail.v2.*" --tests "com.zion830.threedollars.ui.home.*" :app:assembleDebug`: app 59 tests 및 Debug APK build 성공.
+- 최신 APK에서 최초 No fill 완료 후 logcat을 지우고 광고 section을 화면 밖으로 보냈다가 돌아왔을 때 추가 AdMob request가 0건임을 확인했다. 수정 전 동일 절차에서는 재요청 1건과 error code 3이 발생했다.
+- 스크롤 왕복 후 `StoreDetailV2Activity`가 foreground를 유지했고 crash buffer는 비어 있었다.
+- emulator의 현재 production ad unit test-device 요청은 error code 3(No fill)이어서 실제 loaded creative의 왕복은 확인할 수 없고, 최초 실패 slot 제거와 crash 없음까지만 수동 확인한다.

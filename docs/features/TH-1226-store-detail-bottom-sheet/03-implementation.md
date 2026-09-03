@@ -69,3 +69,11 @@ store `120120`의 현재 dev 실응답과 emulator 캡처를 대조해 다음 �
 - MAP의 `location`을 Naver Map으로, AD_MOB card를 AdView로 해석하는 section renderer와 action 처리는 유지한다.
 
 이에 따라 HTTP 403인 서버 image는 local icon으로 대체되지 않아 빈 icon 영역으로 보일 수 있고, 서버가 `null` 또는 빈 text를 보내면 그대로 화면에 나타난다. 이는 strict 비교 모드의 의도된 결과다.
+
+## 2026-09-03 AdMob scroll 생명주기 수정
+
+- 상세 `AD_MOB`의 `AdView`와 load state를 `LazyColumn` section item 밖의 `StoreDetailV2Content` scope에서 store ID와 card ID로 유지한다.
+- Lazy item 이탈·재진입은 `AndroidView.onReset`, `update`, `onRelease`에서 resume/pause만 수행한다.
+- screen/store 교체 또는 상세 종료로 parent effect가 dispose될 때만 보유한 `AdView`를 destroy한다.
+- 최초 load 실패는 기존처럼 slot을 제거하지만, 이미 `Loaded`인 상태의 refresh 실패는 기존 광고를 유지한다.
+- 광고 click/impression callback은 재사용되는 state에 최신 server card/log callback을 갱신한다.

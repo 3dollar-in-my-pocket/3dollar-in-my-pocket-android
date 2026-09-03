@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.storeDetail.v2
 
+import android.content.Context
+import android.view.ViewGroup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -14,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +46,7 @@ import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
+import com.threedollar.common.serverdriven.model.StoreDetailAdMobCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
@@ -294,60 +298,133 @@ internal fun StoreDetailCtaSection(
 }
 
 @Composable
-internal fun StoreDetailAdMobSection(
-    section: StoreDetailSectionModel.AdMob,
+internal fun rememberStoreDetailAdMobStates(
+    sections: List<StoreDetailSectionModel>,
     onImpression: (String, SDImpressionLogModel) -> Unit,
-) {
-    val card = section.cards.firstOrNull() ?: return
+): Map<String, StoreDetailAdMobState> {
     val context = androidx.compose.ui.platform.LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    var loadState by remember(card.cardId) { mutableStateOf(StoreDetailAdLoadState.Loading) }
-    val adView = remember(card.cardId, context) {
-        runCatching { AdView(context).apply {
-            setAdSize(AdSize.BANNER)
-            adUnitId = context.getString(CommonR.string.admob_list_banner)
-            adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    loadState = StoreDetailAdLoadState.Loaded
-                }
+    val cards = sections
+        .filterIsInstance<StoreDetailSectionModel.AdMob>()
+        .mapNotNull { it.cards.firstOrNull() }
+    val storeId = sections
+        .filterIsInstance<StoreDetailSectionModel.Preview>()
+        .firstOrNull()
+        ?.additionalInfos
+        ?.storeId
+    val cardIds = cards.map(StoreDetailAdMobCardModel::cardId)
+    val adStates = remember(context, storeId, cardIds) {
+        cards.associate { card ->
+            card.cardId to StoreDetailAdMobState(
+                card = card,
+                onImpression = onImpression,
+            )
+        }
+    }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    loadState = StoreDetailAdLoadState.Failed
-                }
+    SideEffect {
+        cards.forEach { card -> adStates[card.cardId]?.update(card, onImpression) }
+    }
 
-                override fun onAdClicked() {
-                    runCatching { SDClickLogger.send(card.clickLog) }
-                }
-
-                override fun onAdImpression() {
-                    onImpression("AD_MOB:${card.cardId}", card.impressionLog)
-                }
-            }
-            loadAd(AdRequest.Builder().build())
-        } }.getOrNull()
-    } ?: return
-    if (!loadState.shouldRender) return
-    DisposableEffect(adView, lifecycle) {
-        var destroyed = false
+    DisposableEffect(adStates, lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> runCatching { adView.resume() }
-                Lifecycle.Event.ON_PAUSE -> runCatching { adView.pause() }
-                Lifecycle.Event.ON_DESTROY -> {
-                    runCatching { adView.destroy() }
-                    destroyed = true
-                }
+                Lifecycle.Event.ON_RESUME -> adStates.values.forEach { it.resume() }
+                Lifecycle.Event.ON_PAUSE -> adStates.values.forEach { it.pause() }
                 else -> Unit
             }
         }
         lifecycle.addObserver(observer)
         onDispose {
             lifecycle.removeObserver(observer)
-            if (!destroyed) runCatching { adView.destroy() }
+            adStates.values.forEach { it.destroy() }
         }
     }
+
+    return adStates
+}
+
+@Composable
+internal fun StoreDetailAdMobSection(
+    section: StoreDetailSectionModel.AdMob,
+    adState: StoreDetailAdMobState?,
+) {
+    val card = section.cards.firstOrNull() ?: return
+    val state = adState?.takeIf { it.cardId == card.cardId } ?: return
+    if (!state.loadState.shouldRender) return
     AndroidView(
-        factory = { adView },
+        factory = { context ->
+            state.obtain(context).also { adView ->
+                (adView.parent as? ViewGroup)?.removeView(adView)
+            }
+        },
         modifier = Modifier.fillMaxWidth().height(72.dp).background(ColorWhite).padding(vertical = 8.dp),
+        onReset = { reusableAdView ->
+            reusableAdView.resume()
+        },
+        onRelease = { releasedAdView ->
+            releasedAdView.pause()
+        },
+        update = { attachedAdView -> attachedAdView.resume() },
     )
+}
+
+internal class StoreDetailAdMobState(
+    card: StoreDetailAdMobCardModel,
+    onImpression: (String, SDImpressionLogModel) -> Unit,
+) {
+    var loadState by mutableStateOf(StoreDetailAdLoadState.Loading)
+        private set
+
+    val cardId: String = card.cardId
+    private var currentCard = card
+    private var currentOnImpression = onImpression
+    private var isDestroyed = false
+    private var managedAdView: AdView? = null
+
+    fun obtain(context: Context): AdView = managedAdView ?: AdView(context).apply {
+        setAdSize(AdSize.BANNER)
+        adUnitId = context.getString(CommonR.string.admob_list_banner)
+        adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                loadState = StoreDetailAdLoadState.Loaded
+            }
+
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                loadState = loadState.afterLoadFailure()
+            }
+
+            override fun onAdClicked() {
+                runCatching { SDClickLogger.send(currentCard.clickLog) }
+            }
+
+            override fun onAdImpression() {
+                currentOnImpression("AD_MOB:$cardId", currentCard.impressionLog)
+            }
+        }
+        loadAd(AdRequest.Builder().build())
+    }.also { managedAdView = it }
+
+    fun update(
+        card: StoreDetailAdMobCardModel,
+        onImpression: (String, SDImpressionLogModel) -> Unit,
+    ) {
+        currentCard = card
+        currentOnImpression = onImpression
+    }
+
+    fun pause() {
+        if (!isDestroyed) runCatching { managedAdView?.pause() }
+    }
+
+    fun resume() {
+        if (!isDestroyed) runCatching { managedAdView?.resume() }
+    }
+
+    fun destroy() {
+        if (isDestroyed) return
+        isDestroyed = true
+        runCatching { managedAdView?.destroy() }
+        managedAdView = null
+    }
 }

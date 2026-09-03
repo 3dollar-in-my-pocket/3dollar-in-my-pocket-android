@@ -45,6 +45,7 @@ fun StoreDetailV2Content(
     listState: LazyListState = rememberLazyListState(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val adStates = rememberStoreDetailAdMobStates(screen.sections, onImpression)
 
     LaunchedEffect(screen.viewLog) {
         onViewLog(screen.viewLog)
@@ -74,7 +75,10 @@ fun StoreDetailV2Content(
             when (section) {
                 is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section, onAction)
                 is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(section, onAction)
-                is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(section, onImpression)
+                is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(
+                    section = section,
+                    adState = section.cards.firstOrNull()?.cardId?.let(adStates::get),
+                )
                 is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
                     val targetType = actionBar.targetSectionTypeOrNull()
                     val targetIndex = targetType?.let(screen.sections::indexOfStoreDetailTarget) ?: -1

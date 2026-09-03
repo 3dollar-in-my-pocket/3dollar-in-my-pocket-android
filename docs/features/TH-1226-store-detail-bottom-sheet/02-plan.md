@@ -62,3 +62,11 @@
 3. Home Expanded에서는 sheet handle과 Home bottom navigation을 숨기고, full-screen 상세의 local top app bar를 제거한다.
 4. MAP/AD_MOB처럼 section type을 플랫폼 컴포넌트로 해석하는 필수 renderer와 action routing은 유지한다.
 5. source contract와 mapper test를 RED→GREEN으로 고정하고, 관련 unit test, `assembleDebug`, emulator 스크롤로 검증한다.
+
+## 2026-09-03 AdMob scroll 생명주기 수정 계획
+
+1. 상세 `AD_MOB`의 상태와 `AdView` 소유권을 Lazy item 밖의 상세 content로 올린다.
+2. `AndroidView`는 `onReset`으로 재사용하고 item release에서는 pause만 수행한다.
+3. store/screen이 바뀌거나 상세 content가 종료될 때만 `AdView.destroy()`를 호출한다.
+4. 한 번 `Loaded`가 된 광고는 이후 refresh 실패가 와도 기존 광고를 유지하고, 최초 load 실패만 slot을 접는다.
+5. state transition과 source lifecycle contract를 RED→GREEN으로 검증한 뒤 관련 app test, assemble, emulator 로그를 확인한다.
