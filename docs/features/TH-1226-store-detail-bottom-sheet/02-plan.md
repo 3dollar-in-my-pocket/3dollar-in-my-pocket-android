@@ -70,3 +70,19 @@
 3. store/screen이 바뀌거나 상세 content가 종료될 때만 `AdView.destroy()`를 호출한다.
 4. 한 번 `Loaded`가 된 광고는 이후 refresh 실패가 와도 기존 광고를 유지하고, 최초 load 실패만 slot을 접는다.
 5. state transition과 source lifecycle contract를 RED→GREEN으로 검증한 뒤 관련 app test, assemble, emulator 로그를 확인한다.
+
+## 2026-09-06 클릭·표시 재검증 보정
+
+1. store `120024`의 실제 화면 클릭과 제공 payload, 기존 caller를 대조한다. 서버 데이터 변경은 승인 범위와 구분한다.
+2. 취소 요청, 소비된 TAB 로그, 선택 replay, 방문 category의 기존 오류를 실패 테스트로 재현한다.
+3. 기존 renderer/ViewModel/Home 범위에서 사진 크기·별점 배경·동일 가게 복귀·리뷰 dialog를 보정한다.
+4. 코드 리뷰에서 확인한 이전 가게의 지연 응답을 재현하고 현재 선택에만 UI 결과를 반영한다.
+5. 관련 app/data test와 Debug assemble 후 emulator에서 원래 실패 흐름을 재검증한다. 상세 결과는 `06-click-verification-2026-09-06.md`에 기록한다.
+
+## 2026-09-06 아이콘 경로 보정
+
+사용자 요청에 따라 확인된 6개 루트 아이콘 URL만 mapper에서 `/app/` 경로로 보완한다. 원본 response·정상 URL·다른 host/path·action link·style/log 보존을 회귀 테스트한 뒤 Debug APK를 업데이트해 실제 아이콘을 확인한다. 상세 결과는 `07-icon-url-compatibility-2026-09-06.md`에 기록한다.
+
+## 2026-09-06 중앙 정렬 보정
+
+아이콘 전용 버튼의 빈 Text 간격과 리뷰 신고/닉네임의 정렬을 보정한다. 구분선은 변경하지 않는다. 실제 UI bounds를 수정 전후 비교하고 기존 상세·홈 테스트 및 Debug assemble을 검증한다. 결과는 `08-alignment-2026-09-06.md`에 기록한다.

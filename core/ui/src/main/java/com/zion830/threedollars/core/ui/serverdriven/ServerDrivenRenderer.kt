@@ -51,6 +51,7 @@ import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.ext.styledSegments
+import com.threedollar.common.serverdriven.ext.displayText
 
 private val Gray100 = Color(0xFF0F0F0F)
 private val Gray50 = Color(0xFF666666)
@@ -255,23 +256,26 @@ fun SDActionButton(
     ) {
         val image = button.image
         val hasImage = image != null || imageOverride != null
+        val hasText = remember(button.text) { button.text.displayText().isNotBlank() }
         val imageAtEnd = button.imageAlignment.equals("END", ignoreCase = true)
         Row(
-            modifier = if (imageAtEnd && fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
+            modifier = if (hasText && imageAtEnd && fillMaxWidth) Modifier.fillMaxWidth() else Modifier,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (hasImage && !imageAtEnd) {
                 imageOverride?.invoke() ?: image?.let { SDImageRenderer(image = it) }
             }
-            SDTextRenderer(
-                text = button.text,
-                fontSizeDp = 16,
-                lineHeightDp = 24,
-                maxLines = 1,
-            )
+            if (hasText) {
+                SDTextRenderer(
+                    text = button.text,
+                    fontSizeDp = 16,
+                    lineHeightDp = 24,
+                    maxLines = 1,
+                )
+            }
             if (hasImage && imageAtEnd) {
-                if (fillMaxWidth) Spacer(Modifier.weight(1f))
+                if (hasText && fillMaxWidth) Spacer(Modifier.weight(1f))
                 imageOverride?.invoke() ?: image?.let { SDImageRenderer(image = it) }
             }
         }

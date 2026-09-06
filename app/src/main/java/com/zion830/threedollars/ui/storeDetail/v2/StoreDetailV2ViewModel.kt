@@ -50,6 +50,20 @@ class StoreDetailV2ViewModel @Inject constructor(
         private set
     private val sentImpressionKeys = mutableSetOf<String>()
 
+    fun selectStore(storeId: Long?, deviceLatitude: Double?, deviceLongitude: Double?): Boolean {
+        // A lifecycle re-subscription is not a new Home selection.
+        if (currentStoreId == storeId) return false
+        if (storeId == null) {
+            loadJob?.cancel()
+            currentStoreId = null
+            _uiState.value = StoreDetailV2UiState.Loading()
+            _favoriteOverride.value = null
+            return true
+        }
+        load(storeId, deviceLatitude, deviceLongitude)
+        return true
+    }
+
     fun load(
         storeId: Long,
         deviceLatitude: Double?,
@@ -108,13 +122,13 @@ class StoreDetailV2ViewModel @Inject constructor(
             ACTION_COUPON_USE -> params.stringValue(PARAM_ISSUED_KEY)?.let { issuedKey ->
                 runMutation(screenRepository.useIssuedCoupon(issuedKey))
             }
-            ACTION_POST_ADD_LIKE,
-            ACTION_POST_CANCEL_LIKE -> mutatePostSticker(params)
+            ACTION_POST_ADD_LIKE -> mutatePostSticker(params, cancel = false)
+            ACTION_POST_CANCEL_LIKE -> mutatePostSticker(params, cancel = true)
             ACTION_REVIEW_DELETE -> params.longValue(PARAM_REVIEW_ID)?.let { reviewId ->
                 runMutation(screenRepository.deleteStoreReview(reviewId))
             }
-            ACTION_REVIEW_ADD_LIKE,
-            ACTION_REVIEW_CANCEL_LIKE -> mutateReviewSticker(params)
+            ACTION_REVIEW_ADD_LIKE -> mutateReviewSticker(params, cancel = false)
+            ACTION_REVIEW_CANCEL_LIKE -> mutateReviewSticker(params, cancel = true)
         }
     }
 
@@ -140,8 +154,9 @@ class StoreDetailV2ViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             try {
                 homeRepository.deleteStore(storeId, deleteReasonType).collect { response ->
+                    if (response.ok) _hasUpdates.value = true
+                    if (currentStoreId != storeId.toLong()) return@collect
                     if (response.ok) {
-                        _hasUpdates.value = true
                         _events.emit(StoreDetailV2Event.CloseContainer(response.message))
                     } else {
                         _events.emit(StoreDetailV2Event.ShowMessage(response.message))
@@ -149,15 +164,17 @@ class StoreDetailV2ViewModel @Inject constructor(
                 }
             } catch (throwable: Throwable) {
                 throwable.rethrowCancellation()
-                _events.emit(StoreDetailV2Event.ShowMessage(null))
+                if (currentStoreId == storeId.toLong()) _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }
 
     fun requestReviewReport(customAction: com.threedollar.common.serverdriven.model.SDCustomActionModel) {
+        val storeId = currentStoreId ?: return
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             try {
                 homeRepository.getReportReasons(ReportReasonsGroupType.REVIEW).collect { response ->
+                    if (currentStoreId != storeId) return@collect
                     val reasons = response.data?.reasonModels.orEmpty()
                     if (response.ok && reasons.isNotEmpty()) {
                         _events.emit(StoreDetailV2Event.ShowReviewReportDialog(customAction, reasons))
@@ -167,7 +184,7 @@ class StoreDetailV2ViewModel @Inject constructor(
                 }
             } catch (throwable: Throwable) {
                 throwable.rethrowCancellation()
-                _events.emit(StoreDetailV2Event.ShowMessage(null))
+                if (currentStoreId == storeId) _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }
@@ -192,17 +209,17 @@ class StoreDetailV2ViewModel @Inject constructor(
         _events.tryEmit(StoreDetailV2Event.Platform(action))
     }
 
-    private fun mutatePostSticker(params: Map<String, SDClickLogValue>) {
+    private fun mutatePostSticker(params: Map<String, SDClickLogValue>, cancel: Boolean) {
         val storeId = currentStoreId ?: return
         val postId = params.longValue(PARAM_POST_ID) ?: return
-        val stickers = params.stringValue(PARAM_STICKER_ID)?.let(::listOf).orEmpty()
+        val stickers = if (cancel) emptyList() else params.stringValue(PARAM_STICKER_ID)?.let(::listOf).orEmpty()
         runMutation(screenRepository.putStorePostStickers(storeId, postId, stickers))
     }
 
-    private fun mutateReviewSticker(params: Map<String, SDClickLogValue>) {
+    private fun mutateReviewSticker(params: Map<String, SDClickLogValue>, cancel: Boolean) {
         val storeId = currentStoreId ?: return
         val reviewId = params.longValue(PARAM_REVIEW_ID) ?: return
-        val stickers = params.stringValue(PARAM_STICKER_ID)?.let(::listOf).orEmpty()
+        val stickers = if (cancel) emptyList() else params.stringValue(PARAM_STICKER_ID)?.let(::listOf).orEmpty()
         runMutation(homeRepository.putStickers(storeId.toString(), reviewId.toString(), stickers))
     }
 
@@ -210,12 +227,14 @@ class StoreDetailV2ViewModel @Inject constructor(
         responseFlow: Flow<BaseResponse<T>>,
         onSuccess: () -> Unit = {},
     ) {
+        val storeId = currentStoreId ?: return
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             try {
                 responseFlow.collect { response ->
+                    if (response.ok) _hasUpdates.value = true
+                    if (currentStoreId != storeId) return@collect
                     if (response.ok) {
                         onSuccess()
-                        _hasUpdates.value = true
                         requestScreen(showLoading = false)
                     } else if (response.error == NOT_EXISTS_STORE) {
                         _events.emit(StoreDetailV2Event.CloseContainer(response.message))
@@ -225,7 +244,7 @@ class StoreDetailV2ViewModel @Inject constructor(
                 }
             } catch (throwable: Throwable) {
                 throwable.rethrowCancellation()
-                _events.emit(StoreDetailV2Event.ShowMessage(null))
+                if (currentStoreId == storeId) _events.emit(StoreDetailV2Event.ShowMessage(null))
             }
         }
     }

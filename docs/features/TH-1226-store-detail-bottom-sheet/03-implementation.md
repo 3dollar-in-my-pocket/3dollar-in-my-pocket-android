@@ -77,3 +77,21 @@ store `120120`의 현재 dev 실응답과 emulator 캡처를 대조해 다음 �
 - screen/store 교체 또는 상세 종료로 parent effect가 dispose될 때만 보유한 `AdView`를 destroy한다.
 - 최초 load 실패는 기존처럼 slot을 제거하지만, 이미 `Loaded`인 상태의 refresh 실패는 기존 광고를 유지한다.
 - 광고 click/impression callback은 재사용되는 state에 최신 server card/log callback을 갱신한다.
+
+## 2026-09-06 클릭·표시 보정
+
+- IMAGE는 서버 크기와 실제 텍스트 높이를 사용하며, 별점은 `stars.style`과 투명 이미지를 유지한다.
+- POST/REVIEW 좋아요 취소는 action type으로 구분해 빈 stickers 목록을 전송한다. TAB 내부 이동도 clickLog를 한 번 처리한다.
+- 같은 Home 선택의 lifecycle replay는 reload/collapse하지 않으며, 선택 해제 시 상태를 정리한다. 취소된 child result는 refresh하지 않는다.
+- USER 리뷰 작성은 MainActivity 위에서 기존 AddReviewDialog를 사용하고 성공/실패를 연결한다.
+- 방문 인증 category에서 rating metadata를 제외한다.
+- 이전 가게의 mutation·삭제·신고 사유 응답이 현재 선택의 화면을 갱신하거나 닫지 않도록 요청 store ID를 대조한다.
+- 수정 범위, 실제 클릭 증거, 남은 외부 검증은 [06-click-verification-2026-09-06.md](06-click-verification-2026-09-06.md)에 기록한다.
+
+## 2026-09-06 아이콘 경로 호환 보정
+
+서버 수정이 어렵다는 사용자 요청으로, V2 mapper가 확인된 6개 루트 아이콘 URL에만 `/app/`을 추가한다. 정상 URL과 다른 리소스, 원본 JSON 및 action link/style/log는 보존한다. [구현 범위와 검증](07-icon-url-compatibility-2026-09-06.md).
+
+## 2026-09-06 중앙 정렬 보정
+
+아이콘 전용 공통 버튼의 빈 Text/Spacer를 제거하고, REVIEW card header의 제목과 trailing action을 첫 baseline으로 정렬했다. 다른 section header의 기본 정렬과 구분선 정책은 유지한다. [좌표 검증](08-alignment-2026-09-06.md).

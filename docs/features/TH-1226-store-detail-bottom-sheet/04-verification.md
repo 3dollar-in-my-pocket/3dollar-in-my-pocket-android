@@ -124,3 +124,18 @@ Emulator `emulator-5554` 확인 항목:
 - 최신 APK에서 최초 No fill 완료 후 logcat을 지우고 광고 section을 화면 밖으로 보냈다가 돌아왔을 때 추가 AdMob request가 0건임을 확인했다. 수정 전 동일 절차에서는 재요청 1건과 error code 3이 발생했다.
 - 스크롤 왕복 후 `StoreDetailV2Activity`가 foreground를 유지했고 crash buffer는 비어 있었다.
 - emulator의 현재 production ad unit test-device 요청은 error code 3(No fill)이어서 실제 loaded creative의 왕복은 확인할 수 없고, 최초 실패 slot 제거와 crash 없음까지만 수동 확인한다.
+
+## 2026-09-06 클릭·표시 보정 검증
+
+- 현재 payload의 클릭 진입·취소·복귀를 emulator에서 검증한 뒤 요청·표시·lifecycle 오류를 수정했다.
+- 최종 관련 app 67 tests와 data screen 21 tests가 failures/errors/skipped 0으로 통과했다.
+- `:app:assembleDebug` 성공, 기존 앱 데이터 보존 업데이트 후 사진·별점·직접 리뷰 dialog·방문 category·Expanded/스크롤 복귀를 확인했다.
+- RED assertion 증거와 실제 클릭별 범위/미실행 항목은 [06-click-verification-2026-09-06.md](06-click-verification-2026-09-06.md)를 따른다.
+
+## 2026-09-06 아이콘 경로 보정 검증
+
+아이콘 URL 회귀 테스트의 실패를 확인한 뒤 보정했다. 전체 screen mapper 24 tests 통과, Debug assemble 성공, emulator에서 지도·수정·제보·리뷰 하트 표시를 확인했다. [검증 범위와 캡처](07-icon-url-compatibility-2026-09-06.md).
+
+## 2026-09-06 중앙 정렬 검증
+
+관련 app 67 tests와 Debug assemble이 통과했다. 실제 좌표 비교에서 확대 아이콘 중심 오차가 -5.5px에서 +0.5px로, 두 리뷰의 닉네임/신고 텍스트 높이 차이가 각각 25px에서 0px로 줄어 1px 허용 오차 검사를 통과했다. [검증 기록](08-alignment-2026-09-06.md).

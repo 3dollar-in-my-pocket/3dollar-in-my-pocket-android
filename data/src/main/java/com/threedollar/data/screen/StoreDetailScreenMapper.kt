@@ -619,7 +619,20 @@ private fun SDTextResponse.asModel(): SDTextModel = SDTextModel(
 
 private fun SDImageResponse.asModelOrNull(): SDImageModel? {
     val imageUrl = url?.takeIf(String::isNotBlank) ?: return null
-    return SDImageModel(url = imageUrl, style = style?.asModel())
+    return SDImageModel(url = imageUrl.withKnownStoreDetailIconPath(), style = style?.asModel())
+}
+
+private fun String.withKnownStoreDetailIconPath(): String {
+    val storageRoot = "https://storage.threedollars.co.kr/"
+    if (!startsWith(storageRoot)) return this
+    val relativeUrl = removePrefix(storageRoot)
+    return when (relativeUrl.substringBefore('?').substringBefore('#')) {
+        "copy.png", "zoom_3x.png", "deletion.png", "Edit_fill.png", "heart_fill.png", "heart_line.png" -> {
+            // These server URLs omit /app/; preserve any query and fragment verbatim.
+            "${storageRoot}app/$relativeUrl"
+        }
+        else -> this
+    }
 }
 
 private fun SDImageStyleResponse.asModel(): SDImageStyleModel = SDImageStyleModel(

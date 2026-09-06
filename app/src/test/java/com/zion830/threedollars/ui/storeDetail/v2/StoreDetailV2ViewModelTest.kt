@@ -17,7 +17,11 @@ import java.lang.reflect.Proxy
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filter
@@ -32,6 +36,90 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class StoreDetailV2ViewModelTest {
+
+    @Test
+    fun resumedSelectionKeepsContentButClosingAndReselectingLoadsAgain() = runBlocking {
+        val repository = DeferredScreenRepository()
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+
+        assertEquals(false, viewModel.selectStore(null, null, null))
+        assertEquals(true, viewModel.selectStore(120024L, null, null))
+        repository.respond(120024L, successResponse("initial"))
+        withTimeout(3_000) { viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first() }
+
+        assertEquals(false, viewModel.selectStore(120024L, 37.5, 127.0))
+        assertEquals("initial", viewModel.currentContentTitle())
+        assertEquals(1, repository.loadCount)
+
+        assertEquals(true, viewModel.selectStore(null, null, null))
+        assertEquals(StoreDetailV2UiState.Loading(), viewModel.uiState.value)
+        assertEquals(true, viewModel.selectStore(120024L, null, null))
+        repository.respond(120024L, successResponse("reopened"))
+        withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>()
+                .filter { it.title() == "reopened" }.first()
+        }
+        assertEquals(2, repository.loadCount)
+    }
+
+    @Test
+    fun oldStoreMutationSuccessDoesNotRestartNewStoreLoad() = runBlocking {
+        val result = CompletableDeferred<BaseResponse<Boolean>>()
+        val delivered = CompletableDeferred<Unit>()
+        val repository = DeferredScreenRepository().apply {
+            mutationFlow = flow {
+                emit(result.await())
+                delivered.complete(Unit)
+            }
+        }
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        viewModel.selectStore(1L, null, null)
+        repository.respond(1L, successResponse("first"))
+        withTimeout(3_000) { viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first() }
+        viewModel.issueCoupon("coupon")
+        viewModel.selectStore(2L, null, null)
+        withTimeout(3_000) { while (repository.loadCount < 2) yield() }
+
+        result.complete(BaseResponse(ok = true, data = true))
+        withTimeout(3_000) { delivered.await() }
+        repository.respond(2L, successResponse("second"))
+        withTimeout(3_000) {
+            viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>()
+                .filter { it.storeId == 2L }.first()
+        }
+
+        assertEquals("second", viewModel.currentContentTitle())
+        assertEquals(2, repository.loadCount)
+    }
+
+    @Test
+    fun oldStoreMutationErrorCannotCloseNewStore() = runBlocking {
+        val result = CompletableDeferred<BaseResponse<Boolean>>()
+        val delivered = CompletableDeferred<Unit>()
+        val repository = DeferredScreenRepository().apply {
+            mutationFlow = flow {
+                emit(result.await())
+                delivered.complete(Unit)
+            }
+        }
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        val events = mutableListOf<StoreDetailV2Event>()
+        val observer = launch(Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
+            viewModel.events.collect { events += it }
+        }
+        try {
+            viewModel.selectStore(1L, null, null)
+            viewModel.issueCoupon("coupon")
+            viewModel.selectStore(2L, null, null)
+            result.complete(BaseResponse(ok = false, data = false, error = "not_exists_store", message = "old store"))
+            withTimeout(3_000) { delivered.await() }
+
+            assertEquals(emptyList<StoreDetailV2Event>(), events)
+            assertEquals(StoreDetailV2UiState.Loading(2L), viewModel.uiState.value)
+        } finally {
+            observer.cancel()
+        }
+    }
 
     @Test
     fun changingStoreCancelsOldLoadAndOnlyPublishesLatestStoreContent() = runBlocking {
@@ -260,22 +348,43 @@ class StoreDetailV2ViewModelTest {
 
         viewModel.onAction(actionBar("STORE_COUPON_SECTION_COUPON_ISSUE", extraParams = mapOf("COUPON_ID" to SDClickLogValue.StringValue("coupon"))))
         viewModel.onAction(actionBar("STORE_COUPON_SECTION_COUPON_USE", extraParams = mapOf("ISSUED_KEY" to SDClickLogValue.StringValue("issued"))))
-        viewModel.onAction(actionBar("STORE_POST_SECTION_ADD_LIKE", extraParams = mapOf("POST_ID" to SDClickLogValue.LongValue(7), "STICKER_ID" to SDClickLogValue.StringValue("like"))))
-        viewModel.onAction(actionBar("STORE_POST_SECTION_CANCEL_LIKE", extraParams = mapOf("POST_ID" to SDClickLogValue.LongValue(7), "STICKER_ID" to SDClickLogValue.StringValue(""))))
+        viewModel.onAction(actionBar("STORE_POST_SECTION_ADD_LIKE", extraParams = mapOf("POST_ID" to SDClickLogValue.LongValue(7), "STICKER_ID" to SDClickLogValue.StringValue("LIKE"))))
+        viewModel.onAction(actionBar("STORE_POST_SECTION_CANCEL_LIKE", extraParams = mapOf("POST_ID" to SDClickLogValue.LongValue(7), "STICKER_ID" to SDClickLogValue.StringValue("LIKE"))))
         viewModel.onAction(actionBar("STORE_REVIEW_SECTION_DELETE", extraParams = mapOf("REVIEW_ID" to SDClickLogValue.LongValue(9))))
-        viewModel.onAction(actionBar("STORE_REVIEW_SECTION_ADD_LIKE", extraParams = mapOf("REVIEW_ID" to SDClickLogValue.LongValue(9), "STICKER_ID" to SDClickLogValue.StringValue("like"))))
-        viewModel.onAction(actionBar("STORE_REVIEW_SECTION_CANCEL_LIKE", extraParams = mapOf("REVIEW_ID" to SDClickLogValue.LongValue(9), "STICKER_ID" to SDClickLogValue.StringValue(""))))
+        viewModel.onAction(actionBar("STORE_REVIEW_SECTION_ADD_LIKE", extraParams = mapOf("REVIEW_ID" to SDClickLogValue.LongValue(9), "STICKER_ID" to SDClickLogValue.StringValue("LIKE"))))
+        viewModel.onAction(actionBar("STORE_REVIEW_SECTION_CANCEL_LIKE", extraParams = mapOf("REVIEW_ID" to SDClickLogValue.LongValue(9), "STICKER_ID" to SDClickLogValue.StringValue("LIKE"))))
 
         withTimeout(3_000) {
             while (repository.postStickerCalls.size < 2 || homeTracker.reviewStickerCalls.size < 2 || repository.deletedReviewId == null) yield()
         }
         assertEquals("coupon", repository.issuedCouponId)
         assertEquals("issued", repository.usedIssuedKey)
-        assertEquals(listOf("like"), repository.postStickerCalls[0].third)
-        assertEquals(listOf(""), repository.postStickerCalls[1].third)
+        assertEquals(listOf("LIKE"), repository.postStickerCalls[0].third)
+        assertEquals(emptyList<String>(), repository.postStickerCalls[1].third)
         assertEquals(9L, repository.deletedReviewId)
-        assertEquals(listOf("like"), homeTracker.reviewStickerCalls[0].third)
-        assertEquals(listOf(""), homeTracker.reviewStickerCalls[1].third)
+        assertEquals(listOf("LIKE"), homeTracker.reviewStickerCalls[0].third)
+        assertEquals(emptyList<String>(), homeTracker.reviewStickerCalls[1].third)
+    }
+
+    @Test
+    fun cancelLikeClearsStickersForBothCurrentAndLegacyPayloads() = runBlocking {
+        val repository = DeferredScreenRepository()
+        val homeTracker = HomeMutationTracker()
+        val viewModel = StoreDetailV2ViewModel(repository, trackingHomeRepository(homeTracker))
+        viewModel.load(120024L, null, null)
+        repository.respond(120024L, successResponse("initial"))
+        withTimeout(3_000) { viewModel.uiState.filterIsInstance<StoreDetailV2UiState.Content>().first() }
+
+        for (sticker in listOf("LIKE", "", null)) {
+            val stickerParams = sticker?.let { mapOf("STICKER_ID" to SDClickLogValue.StringValue(it)) }.orEmpty()
+            viewModel.onAction(actionBar("STORE_REVIEW_SECTION_CANCEL_LIKE", extraParams = stickerParams +
+                ("REVIEW_ID" to SDClickLogValue.LongValue(1665))))
+            viewModel.onAction(actionBar("STORE_POST_SECTION_CANCEL_LIKE", extraParams = stickerParams +
+                ("POST_ID" to SDClickLogValue.LongValue(7))))
+        }
+
+        assertEquals(List(3) { Triple("120024", "1665", emptyList<String>()) }, homeTracker.reviewStickerCalls)
+        assertEquals(List(3) { Triple(120024L, 7L, emptyList<String>()) }, repository.postStickerCalls)
     }
 
     private fun successResponse(title: String): BaseResponse<StoreDetailScreenModel> = BaseResponse(
@@ -320,6 +429,7 @@ private class DeferredScreenRepository : ScreenRepository {
     var loadCount: Int = 0
     var loadFailure: Throwable? = null
     var mutationResponse: BaseResponse<Boolean> = BaseResponse(ok = true, data = true)
+    var mutationFlow: Flow<BaseResponse<Boolean>>? = null
     val postStickerCalls = mutableListOf<Triple<Long, Long, List<String>>>()
     var issuedCouponId: String? = null
     var usedIssuedKey: String? = null
@@ -345,7 +455,7 @@ private class DeferredScreenRepository : ScreenRepository {
         flowOf(mutationResponse).also { postStickerCalls += Triple(storeId, postId, stickers) }
 
     override fun issueStoreCoupon(storeId: Long, couponId: String): Flow<BaseResponse<Boolean>> =
-        flowOf(mutationResponse).also { issuedCouponId = couponId }
+        (mutationFlow ?: flowOf(mutationResponse)).also { issuedCouponId = couponId }
     override fun useIssuedCoupon(issuedKey: String): Flow<BaseResponse<Boolean>> =
         flowOf(mutationResponse).also { usedIssuedKey = issuedKey }
     override fun deleteStoreReview(reviewId: Long): Flow<BaseResponse<Boolean>> =

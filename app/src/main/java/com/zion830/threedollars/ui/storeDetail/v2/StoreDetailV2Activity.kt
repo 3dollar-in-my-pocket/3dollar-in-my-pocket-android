@@ -61,7 +61,7 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.storeCertificationCategories
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.ShareFormat
@@ -280,11 +280,7 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
                     storeName = preview?.header?.title.displayText(),
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    categories = preview?.metadata?.primary.orEmpty().mapNotNull { chip ->
-                        chip.text.displayText().takeIf(String::isNotBlank)?.let { name ->
-                            StoreCertificationCategoryArgs(name = name, imageUrl = chip.image?.url.orEmpty())
-                        }
-                    },
+                    categories = preview?.metadata?.primary.orEmpty().storeCertificationCategories(),
                 )
             )
         )

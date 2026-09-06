@@ -1,5 +1,7 @@
 # TH-1226 Store Detail V2 Bottom Sheet Design
 
+2026-09-06 사용자 승인 예외: 상세의 확인된 6개 아이콘에 한해 잘못된 루트 image URL을 동일 host의 `/app/` 경로로 보정한다. 범위와 검증은 [아이콘 URL 호환 보정](07-icon-url-compatibility-2026-09-06.md)을 따른다.
+
 - 상태: 사용자 검토 요청
 - 작성일: 2026-08-26
 - 작업 브랜치: `feature/TH-1226-store-detail-bottomsheet`

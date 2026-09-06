@@ -66,6 +66,7 @@ import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
+import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
@@ -84,7 +85,7 @@ import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
+import com.zion830.threedollars.ui.storeDetail.user.ui.storeCertificationCategories
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
@@ -470,15 +471,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     viewModel.selectedStorePreviewStoreId.collect { storeId ->
-                        if (storeId == null) return@collect
-                        isStoreDetailExpanded = false
                         val deviceLocation = naverMapFragment.currentPosition.value
                             ?.takeIf { isLocationAvailable() }
-                        storeDetailV2ViewModel.load(
+                        val selectionChanged = storeDetailV2ViewModel.selectStore(
                             storeId = storeId,
                             deviceLatitude = deviceLocation?.latitude,
                             deviceLongitude = deviceLocation?.longitude,
                         )
+                        if (selectionChanged) isStoreDetailExpanded = false
                     }
                 }
                 launch {
@@ -499,6 +499,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }.collect { favorite ->
                         favorite?.let(viewModel::updateSelectedStorePreviewFavorite)
                     }
+                }
+                launch {
+                    legacyStoreDetailViewModel.reviewSuccessEvent.collect { success ->
+                        if (success) refreshHomeAfterStoreUpdate()
+                    }
+                }
+                launch {
+                    legacyStoreDetailViewModel.serverError.collect { message -> message?.let(::showToast) }
                 }
                 launch {
                     legacyStoreDetailViewModel.photoDeleted.collect { success ->
@@ -760,17 +768,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             fallbackStoreId = customAction.extraParams.longValue("STORE_ID"),
             fallbackStoreType = customAction.extraParams.stringValue("STORE_TYPE"),
         ) ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailV2Activity.getIntent(
-                context = requireContext(),
-                storeId = route.storeId,
-                storeType = route.storeType,
-                openReviewWrite = true,
+        if (route.storeType == BOSS_STORE) {
+            startActivityForResult(
+                BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString()),
+                Constants.SHOW_STORE_BY_CATEGORY,
             )
+        } else {
+            val storeId = route.storeId.toIntOrNullExact() ?: return showUnsupportedStoreDetailAction()
+            AddReviewDialog.getInstance(storeId = storeId)
+                .show(parentFragmentManager, AddReviewDialog::class.java.name)
         }
-        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
     private fun moveStorePreviewPhotoAdd() {
@@ -879,13 +886,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             storeName = currentStorePreviewTitle().ifBlank { card.header.title.displayText() },
             latitude = markerLocation.latitude,
             longitude = markerLocation.longitude,
-            categories = card.metadata.primary.mapNotNull { chip ->
-                val name = chip.text.displayText().takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                StoreCertificationCategoryArgs(
-                    name = name,
-                    imageUrl = chip.image?.url.orEmpty(),
-                )
-            },
+            categories = card.metadata.primary.storeCertificationCategories(),
         )
     }
 
@@ -1135,8 +1136,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         )
                     }
                 }
+                refreshHomeAfterStoreUpdate()
             }
-            refreshHomeAfterStoreUpdate()
         }
     }
 

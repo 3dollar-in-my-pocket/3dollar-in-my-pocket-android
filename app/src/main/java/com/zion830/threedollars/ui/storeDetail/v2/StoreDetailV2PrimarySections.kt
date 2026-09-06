@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -275,7 +277,10 @@ internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit) {
 
 @Composable
 internal fun StoreDetailRating(rating: StoreDetailRatingModel) {
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Row(
+        modifier = Modifier.serverDrivenSurface(rating.style, RectangleShape, Color.Transparent),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
         rating.images.forEach { image ->
             StoreDetailImage(
                 image = image,
@@ -373,6 +378,6 @@ internal fun StoreDetailImage(
         model = image.url,
         contentDescription = null,
         contentScale = contentScale,
-        modifier = modifier.background(Gray10),
+        modifier = modifier,
     )
 }

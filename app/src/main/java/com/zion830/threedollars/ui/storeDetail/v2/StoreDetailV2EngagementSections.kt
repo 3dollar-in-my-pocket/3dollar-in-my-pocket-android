@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -146,7 +147,7 @@ internal fun StoreDetailImageSection(
             section.cards.forEach { card ->
                 Column(
                     modifier = Modifier
-                        .size(width = 132.dp, height = 196.dp)
+                        .width((card.image.style?.width ?: 132.0).dp)
                         .serverDrivenSurface(card.style, RoundedCornerShape(10.dp), Gray10)
                         .clickable {
                             onAction(
@@ -162,7 +163,11 @@ internal fun StoreDetailImageSection(
                             )
                         },
                 ) {
-                    StoreDetailImage(card.image, Modifier.fillMaxWidth().height(132.dp), ContentScale.Crop)
+                    StoreDetailImage(
+                        card.image,
+                        Modifier.fillMaxWidth().height((card.image.style?.height ?: 132.0).dp),
+                        ContentScale.Crop,
+                    )
                     card.title?.let {
                         SDTextRenderer(it, color = Gray100, fontSizeDp = 12, lineHeightDp = 18, modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp))
                     }
@@ -252,7 +257,13 @@ internal fun StoreDetailReviewSection(
                     } } ?: Modifier),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                StoreDetailSectionHeader(card.header.title, card.header.subTitle, card.header.trailingAction, onAction)
+                StoreDetailSectionHeader(
+                    card.header.title,
+                    card.header.subTitle,
+                    card.header.trailingAction,
+                    onAction,
+                    alignActionWithTitle = true,
+                )
                 StoreDetailRating(card.stars)
                 StoreDetailChipRow(card.metadata)
                 if (card.images.isNotEmpty()) {

@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.storeDetail.v2
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,13 +19,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.unit.dp
 import base.compose.ColorWhite
 import base.compose.Gray100
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
+import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
+import com.threedollar.common.serverdriven.model.SDClickLogModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
@@ -80,13 +84,13 @@ fun StoreDetailV2Content(
                     adState = section.cards.firstOrNull()?.cardId?.let(adStates::get),
                 )
                 is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
-                    val targetType = actionBar.targetSectionTypeOrNull()
-                    val targetIndex = targetType?.let(screen.sections::indexOfStoreDetailTarget) ?: -1
-                    if (targetIndex >= 0) {
-                        coroutineScope.launch { listState.animateScrollToItem(targetIndex) }
-                    } else {
-                        onAction(actionBar)
-                    }
+                    handleStoreDetailTabClick(
+                        actionBar = actionBar,
+                        sections = screen.sections,
+                        onScrollToSection = { index -> coroutineScope.launch { listState.animateScrollToItem(index) } },
+                        onAction = onAction,
+                        onClickLog = { log -> runCatching { SDClickLogger.send(log) } },
+                    )
                 }
                 is StoreDetailSectionModel.Map -> StoreDetailMapSection(section, onAction)
                 is StoreDetailSectionModel.Edit -> StoreDetailEditSection(section, onAction)
@@ -105,6 +109,22 @@ fun StoreDetailV2Content(
     }
 }
 
+internal fun handleStoreDetailTabClick(
+    actionBar: StoreActionBarModel,
+    sections: List<StoreDetailSectionModel>,
+    onScrollToSection: (Int) -> Unit,
+    onAction: (StoreActionBarModel) -> Unit,
+    onClickLog: (SDClickLogModel) -> Unit,
+) {
+    val targetIndex = actionBar.targetSectionTypeOrNull()?.let(sections::indexOfStoreDetailTarget) ?: -1
+    if (targetIndex >= 0) {
+        (actionBar.clickLog ?: actionBar.button.clickLog)?.let(onClickLog)
+        onScrollToSection(targetIndex)
+    } else {
+        onAction(actionBar)
+    }
+}
+
 @Composable
 internal fun StoreDetailSectionHeader(
     title: SDTextModel,
@@ -112,13 +132,15 @@ internal fun StoreDetailSectionHeader(
     trailingButton: SDButtonModel? = null,
     onAction: ((StoreActionBarModel) -> Unit)? = null,
     modifier: Modifier = Modifier,
+    alignActionWithTitle: Boolean = false,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        val titleAlignment = if (alignActionWithTitle) Modifier.alignBy(FirstBaseline) else Modifier
+        Column(modifier = Modifier.weight(1f).then(titleAlignment)) {
             SDTextRenderer(
                 text = title,
                 color = Gray100,
@@ -130,10 +152,12 @@ internal fun StoreDetailSectionHeader(
             }
         }
         if (trailingButton != null && onAction != null) {
-            StoreDetailTextButton(
-                button = trailingButton,
-                onClick = { onAction(StoreActionBarModel(type = "HEADER_TRAILING", button = trailingButton)) },
-            )
+            Box(modifier = titleAlignment) {
+                StoreDetailTextButton(
+                    button = trailingButton,
+                    onClick = { onAction(StoreActionBarModel(type = "HEADER_TRAILING", button = trailingButton)) },
+                )
+            }
         }
     }
 }
