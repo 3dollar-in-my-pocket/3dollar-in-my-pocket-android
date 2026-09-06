@@ -20,8 +20,8 @@
 - targetSdk: `36`
 - minSdk: `24`
 - Java/Kotlin toolchain: JDK 17
-- versionName: `4.20.0`
-- versionCode: `123`
+- versionName: `4.22.1`
+- versionCode: `128`
 
 ## 주요 기술
 
