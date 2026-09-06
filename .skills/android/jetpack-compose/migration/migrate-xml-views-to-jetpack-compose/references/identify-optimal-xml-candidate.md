@@ -28,4 +28,9 @@ Provide a ranked list of the top 3-5 candidates. For each candidate, include:
 3. **Complexity score:** A rating from 1-5 (1 being simplest).
 4. **Dependency count:** List of custom/external views found within.
 
-**Action:** If you support user interaction, ask the user to choose which XML to proceed with. Else proceed with the best option, based on the previous criteria.
+**Action:** Reuse a target already selected by the user. If the user explicitly
+delegated candidate selection, choose the best candidate using these criteria.
+Otherwise, include the recommended target and alternatives in the Step 3
+migration plan for approval. Do not add a separate selection question when the
+target is already decided. Lack of user interaction does not authorize a target
+or bypass the migration-plan approval.

@@ -17,9 +17,11 @@ Imported on: 2026-05-14
 
 ## Codex Usage
 
-Before Android-specific implementation, migration, build-tooling, or performance work, check whether one of the `SKILL.md` files below this directory applies. If it does, follow that skill alongside the repository rules in `AGENTS.md`.
+Before Android-specific implementation, migration, build-tooling, or performance work, check whether one of the `SKILL.md` files below this directory applies. Follow the repository [AGENTS.md](../../AGENTS.md), [workflow](../../docs/agents/codex-workflow.md), and [verification matrix](../../docs/context/verification-matrix.md) alongside the relevant skill. The files here include project adaptations to the imported source.
 
 The Android CLI skill assumes the `android` command is installed. Verify with `command -v android` before using Android CLI commands; if it is unavailable, use the project's existing Gradle wrapper and adb workflows.
+
+Explicit migration-plan approvals, the AGP Upgrade Assistant requirement or its explicit user waiver, and the R8 analyzer's read-only boundary remain in force. Reuse an existing approval for the same scope. Capture available evidence yourself, continue independent investigation while blocked, and report artifacts, material errors, and unverified requirements.
 
 ## Updating
 
@@ -35,4 +37,4 @@ Manual update path:
 git clone --depth 1 https://github.com/android/skills /private/tmp/android-skills
 ```
 
-Then copy only the project-relevant skill directories and keep `LICENSE.txt` with the vendored files.
+Then compare the upstream files with the project adaptations before copying only the project-relevant changes. Preserve the approval, reporting, and verification rules above, keep `LICENSE.txt`, and validate links and frontmatter. The `build/agp` documentation is explicitly included in Git despite the general Gradle `build` ignore rule.

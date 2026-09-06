@@ -47,18 +47,20 @@
 
 ## Agent Workflow
 
-- 작업 전 짧은 구현 계획을 먼저 보고한다.
+- 구현 전 짧은 계획을 보고하고 승인된 범위의 작업과 검증을 이어간다. 계획 보고 자체는 승인 요청이 아니며, 적용 Skill의 명시적 설계·구현 승인 단계는 유지한다.
+- 이미 받은 동일 범위의 명시적 승인은 재사용한다. 질문·실패가 일부 단계만 막으면 독립적인 작업은 계속한다. 세부 기준은 `docs/agents/codex-workflow.md`를 따른다.
 - 변경은 작고 원자적인 단위로 수행한다.
 - Jira나 feature 작업은 `docs/features/` 아래에 brief, investigation, plan, implementation log, verification 문서를 남긴다.
 - 관련 없는 파일은 수정하지 않는다.
 - 기존 사용자 변경사항을 되돌리지 않는다.
 - 대규모 리팩터링, 의존성 추가/업그레이드, 포맷 전용 변경은 명시적 승인 없이 하지 않는다.
-- 완료 전 변경 범위에 맞는 최소 검증을 실행하고, 실행하지 못한 검증은 보고한다.
+- 완료 전 변경 범위에 맞는 최소 검증을 직접 실행한다. 필수 요구사항이나 검증이 남으면 미완료로 보고하며, 반복 횟수나 검토 비용만으로 완료 처리하지 않는다.
 
 ## Skills And Tools
 
 - Android 관련 로컬 skill은 `.skills/android/` 아래에 있다.
 - Android 구현, 마이그레이션, 빌드 도구, 성능/R8 작업 전 `docs/agents/skill-index.md`와 관련 `SKILL.md`를 확인한다.
+- Skill은 플랫폼의 시스템·도구 제약을 재정의하지 않는다. 사용자 지시와 이 프로젝트의 승인·완료 규칙을 우선하며, 중복 Skill 원본 선택은 `docs/agents/skill-index.md`를 따른다.
 - `android-cli` skill은 `android` 명령 설치가 필요하다. 사용 전 `command -v android`로 확인하고, 없으면 기존 Gradle/adb workflow를 사용한다.
 - `.claude/`는 Claude 전용 설정/플러그인 자료로 취급한다. 사용자가 요청하거나 Claude 전용 설정을 다룰 때만 참고한다.
 - Serena는 코드 구조 탐색, 심볼 검색, 참조 추적, 리팩터링이 필요할 때만 사용한다.
@@ -72,6 +74,7 @@
 
 ## Safety
 
+- 결제·예약·배포·전송·삭제 등 외부 상태 변경은 실행 전에 명시적 확인을 받는다. 로컬 조사·초안·검증의 승인을 외부 실행 승인으로 확대하지 않는다.
 - `local.properties`, 키스토어, API 키, Firebase/AdMob/지도/소셜 로그인 키 등 민감정보를 노출하지 않는다.
 - destructive git 명령은 사용자가 명시적으로 요청한 경우에만 수행한다.
 - 문서 변경은 사실을 코드베이스에서 확인한 뒤 반영한다.

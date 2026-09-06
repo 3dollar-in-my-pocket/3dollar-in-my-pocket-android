@@ -97,6 +97,11 @@ proguard/
 /*/local.properties
 /*/out
 /*/*/build
+# Keep vendored build-tool skill documentation; continue ignoring build outputs.
+!/.skills/android/build/
+/.skills/android/build/**
+!/.skills/android/build/**/
+!/.skills/android/build/**/*.md
 /*/*/production
 captures/
 .navigation/

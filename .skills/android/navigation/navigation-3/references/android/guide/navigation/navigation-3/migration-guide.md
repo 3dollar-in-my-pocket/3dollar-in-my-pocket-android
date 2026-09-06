@@ -85,23 +85,31 @@ understand how to implement them.
 
 **AI Agent**: Before changing any code, check if the project contains any
 features supported through recipes. If it does, check the recipe's README and
-source code. Create a migration plan based on the recipe. Do not proceed without
-confirming the plan with the user.
+source code. Create a migration plan based on the recipe and obtain explicit
+approval before changing code. Reuse an existing approval when the same
+features, behavior, dependencies, and scope are already covered. Confirm only
+new policy or scope changes; recipe discovery itself does not require the user
+to approve the same plan again.
 
-### Unsupported features
+### Features outside this basic guide
 
-This migration guide and the code recipes don't yet support the following
-features. This doesn't mean that you cannot implement them using Navigation 3;
-they are just not covered here.
+This basic migration guide does not cover the following features. Coverage in
+individual recipes must be checked separately; this list is not a claim that
+Navigation 3 cannot implement them.
 
 - More than one level of nested navigation
 - Shared destinations: screens that can move between different back stacks
 - [Custom destination types](https://developer.android.com/guide/navigation/design/kotlin-dsl#custom)
-- Deep links
+- Deep links: this package includes [basic](recipes/deeplinks-basic.md) and
+  [advanced](recipes/deeplinks-advanced.md) recipes. Check the required Intent
+  parsing, back stack, and Up-navigation behavior against the relevant recipe.
 
-**AI Agent**: Before changing any code, check if the project contains any of the
-unsupported features. If it does, do not proceed. Inform the user of the
-unsupported feature and ask for further instructions.
+**AI Agent**: Before changing code, inspect existing behavior and the relevant
+recipes for these features. Continue read-only investigation while support is
+uncertain. If a required behavior remains unsupported or cannot be verified,
+hold the affected migration and ask for instructions with the concrete gap.
+If the recipe covers the requirement, include the evidence and verification
+steps in the migration plan and follow the explicit plan-approval rule above.
 
 ## Step 1: Add Navigation 3 dependencies
 

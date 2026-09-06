@@ -35,6 +35,8 @@ metadata:
 
 ## Migration guide
 
+Project policy: [Android skill usage](../../README.md#codex-usage).
+
 - *[Navigation 2 to Navigation 3 migration guide](references/android/guide/navigation/navigation-3/migration-guide.md)*: Step-by-step guide to migrate an Android application from Navigation 2 to Navigation 3, covering dependency updates, route changes, state management, and UI component replacements.
 
 ### Requirements

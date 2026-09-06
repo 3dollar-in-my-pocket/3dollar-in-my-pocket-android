@@ -19,8 +19,15 @@ metadata:
 
 ## Prerequisites
 
+Project policy: [Android skill usage](../../README.md#codex-usage).
+
 - Project **MUST** use Android Jetpack Compose.
-- Project **MUST** target SDK 35 or later. If the SDK is lower than 35, increase the SDK to 35.
+- Project **MUST** target SDK 35 or later. If the SDK is lower than 35, propose
+  the required SDK change and obtain the repository's version-change approval
+  before applying it.
+
+Apply the steps below to the requested Activities and components. A targeted
+inset fix does not authorize an app-wide migration.
 
 ## Step 1: plan
 

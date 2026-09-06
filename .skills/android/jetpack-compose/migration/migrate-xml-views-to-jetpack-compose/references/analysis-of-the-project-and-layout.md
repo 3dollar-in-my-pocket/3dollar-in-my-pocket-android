@@ -1,8 +1,18 @@
 ## 1. Project health \& build validation
 
-Before performing any analysis, you must confirm the project is in a functional state.
-\* **Integrity check:** Verify the project syncs (Gradle) and builds successfully.
-\* **Error resolution:** If there are pre-existing build errors or sync failures, you must report these immediately and attempt to fix. **Do not proceed** with migration until a stable baseline is established.
+Establish a baseline for the affected modules before changing migration code.
+Use the project's minimum relevant Gradle checks and record existing failures
+separately from failures introduced by the migration.
+
+- **Integrity check:** Verify the affected configuration resolves and builds.
+  Report IDE sync separately if it cannot be observed from the available tools.
+- **Error resolution:** Investigate failures and fix only issues within the
+  approved migration scope. Do not change unrelated modules or unapproved
+  dependencies to make the baseline green.
+- **Independent analysis:** Continue reading layouts, resources, and references
+  while investigating a failed baseline. If the affected baseline cannot be
+  established, hold dependent migration changes and report the specific blocker;
+  an unrelated failure does not prevent independent read-only analysis.
 
 ## 2. Compose pattern \& consistency analysis
 

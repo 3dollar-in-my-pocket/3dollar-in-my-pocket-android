@@ -25,6 +25,8 @@ to Jetpack Compose. It performs a stable, safe and visually consistent
 transition by following a structured, 10-step methodology. This skill migrates
 UI (XML to Jetpack Compose) only.
 
+Project policy: [Android skill usage](../../../README.md#codex-usage).
+
 ## Objective
 
 To systematically convert a single legacy XML layout into modern, declarative
@@ -40,8 +42,8 @@ integrity.
 5. **Set up Compose dependencies and compiler**
 6. **Set up Compose theming**
 7. **Migrate the XML layout to Compose**
-8. **Validate the migration**
-9. **Replace usages**
+8. **Replace usages**
+9. **Validate the migration**
 10. **XML code removal**
 
 ## Detailed steps
@@ -61,27 +63,31 @@ guide your technical audit of the layout and surrounding project context.
 
 ### Step 3: Create a plan
 
-Using the outputs and analysis done in the Step 1 and 2, generate a
-step-by-step plan for the migration. If you support user interaction, present
-to the user and ask for approval before proceeding. If user interaction is not
-supported, proceed to Step 4 following the generated plan.
+Using the outputs of Steps 1 and 2, present a migration plan covering the target,
+behavior to preserve, affected files, dependencies, and verification. Obtain
+explicit plan approval before implementation. If the same plan and scope have
+already been approved, reuse that approval and continue without asking again.
+Capture available baseline evidence while waiting. Lack of user interaction
+does not grant approval; keep dependent implementation pending until approved.
 
 ### Step 4: Capture the XML View UI
 
-**IF** you support user interaction, ask the user to upload a screenshot of the
-XML View UI or provide an absolute path to a file. Use this image as a visual
-reference for the layout migration in Step 7.
-**ELSE IF** you are able to run an Android emulator, locate an existing
-screenshot test for the XML candidate. If none exists, create one using the
-existing project testing framework. If no framework exists,
-use **UI Automator** or **Espresso** to create a screenshot test with minimum
-required setup. Run the test and take a baseline screenshot of the XML UI.
-**ELSE** proceed to Step 5.
+Use a supplied image or an existing screenshot of the requested UI state. If no
+usable image exists, capture the XML UI with the project's existing emulator,
+adb, design harness, or screenshot tests. User interaction being available is
+not a reason to require the user to capture an image that you can obtain.
+
+If the required UI state cannot be captured, explain the missing evidence and
+request only the needed image or access. Continue independent analysis and
+approved preparation. Do not claim visual parity without baseline evidence.
+Adding a new test framework or dependency requires the repository's approval;
+prefer existing capture tools.
 
 ### Step 5: Set up Compose dependencies and compiler
 
 Check `build.gradle` or `libs.versions.toml` for Compose dependencies and
-compiler setup. If missing, use
+compiler setup. Preserve existing versions. If additions or upgrades are needed,
+include the exact changes in the approval scope before applying them, using
 [Setup Compose Dependencies and Compiler](references/android/develop/ui/compose/setup-compose-dependencies-and-compiler.md).
 Run a sync to ensure dependencies resolve without errors.
 
@@ -117,6 +123,9 @@ Compare the baseline screenshot image from Step 4 with the rendered Compose
 Preview of the new composable. Ignore string content; focus on layout and
 styling. Iterate on the Compose code until visual parity is achieved. Once
 verified, write a Compose UI test for the new composable.
+Run the relevant checks from the project's verification matrix. If baseline,
+preview, or runtime verification cannot be completed, report that specific gap
+instead of marking the migration fully verified.
 
 ### Step 10: XML code removal
 

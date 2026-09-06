@@ -17,6 +17,14 @@ metadata:
 
 This skill provides instructions for using the `android` CLI tool. The tool includes various commands for creating projects, running applications, interacting with devices, and managing the CLI environment.
 
+Project policy: [Android skill usage](../../README.md#codex-usage).
+
+Check `command -v android` before using these commands. If it is unavailable,
+continue with the project's Gradle wrapper, adb, existing harnesses, and official
+Android documentation as appropriate. Do not require a new CLI installation to
+perform work these tools already support. SDK changes and external actions in
+the examples remain subject to the project's approval rules.
+
 ## SDK management
 To manage the installation of Android SDKs and tools, use the `sdk` command. For example:
 
@@ -41,7 +49,9 @@ The `docs` command searches authoritative, high-quality Android developer docume
 By providing a few keywords, this tool will return high quality articles that contain examples or guidance on how to use Android APIs or libraries.
 Use this tool to obtain additional information on how to achieve Android-specific tasks or to know more about Android APIs, surfaces, libraries, or devices.
 
-Always use this tool to get the most up-to-date information about Android concepts. Typical good use cases are:
+When the CLI is available, use this tool for current Android documentation.
+Otherwise, consult official Android documentation using an available search or
+browser tool. Typical good use cases are:
   - Finding migration guides for APIs.
   - Finding examples for APIs.
   - Finding up-to-date information about Android APIs.
