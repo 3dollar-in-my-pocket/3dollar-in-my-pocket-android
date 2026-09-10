@@ -82,8 +82,8 @@ class HomeBottomSheetScreenMapperTest {
         assertEquals("<span style=\"font-size:12px; color:#5A5A5A\">따뜻한 리뷰</span>", card.bodies.single().text)
         assertEquals(true, card.bodies.single().isHtml)
         assertEquals("#5A5A5A", card.bodies.single().fontColor)
-        assertEquals(37.1, card.marker.location.latitude, 0.0)
-        assertEquals(127.2, card.marker.location.longitude, 0.0)
+        assertEquals(37.1, requireNotNull(card.marker).location.latitude, 0.0)
+        assertEquals(127.2, requireNotNull(card.marker).location.longitude, 0.0)
         assertEquals("/storePreview?storeId=100186", card.link?.link)
     }
 
@@ -143,9 +143,9 @@ class HomeBottomSheetScreenMapperTest {
         assertEquals(listOf("영업 중", "1km +", "최근 방문 5명"), card.metadata.secondary.map { it.text.text })
         assertEquals("https://example.com/store.png", card.images.single().url)
         assertEquals("따뜻한 리뷰", card.bodies.single().text)
-        assertEquals(37.1, card.marker.location.latitude, 0.0)
-        assertEquals(127.2, card.marker.location.longitude, 0.0)
-        assertEquals("/storePreview?storeId=100186", card.marker.link?.link)
+        assertEquals(37.1, requireNotNull(card.marker).location.latitude, 0.0)
+        assertEquals(127.2, requireNotNull(card.marker).location.longitude, 0.0)
+        assertEquals("/storePreview?storeId=100186", requireNotNull(card.marker).link?.link)
         assertEquals("store", card.clickLog?.objectId)
         assertEquals("IMPRESSION", card.impressionLog?.eventType)
         assertEquals(100186, (card.impressionLog?.extraParameters?.get("STORE_ID") as SDClickLogValue.IntValue).value)
@@ -241,8 +241,8 @@ class HomeBottomSheetScreenMapperTest {
         assertEquals("BOLD", card.header.title?.fontWeight)
         assertEquals("NORMAL", card.metadata.secondary[0].text.fontWeight)
         assertEquals("SEMI_BOLD", card.metadata.secondary[1].text.fontWeight)
-        assertEquals("영업중", card.marker.focused.text.text)
-        assertEquals("", card.marker.unfocused.text.text)
+        assertEquals("영업중", requireNotNull(card.marker).focused.text.text)
+        assertEquals("", requireNotNull(card.marker).unfocused.text.text)
     }
 
     @Test

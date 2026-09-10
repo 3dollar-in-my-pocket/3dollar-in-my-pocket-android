@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
 import android.content.Intent
+import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
@@ -26,6 +27,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +41,9 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.CustomEvent
 import com.threedollar.common.analytics.EventName
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.SDClickLogger
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.addNewFragment
@@ -48,6 +53,7 @@ import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.SDLocationModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
@@ -73,6 +79,7 @@ import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
+import com.zion830.threedollars.ui.home.data.HomeFocusBoundsEffect
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
 import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
@@ -99,6 +106,7 @@ import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2ViewModel
 import com.zion830.threedollars.ui.storeDetail.v2.storeDetailV2Route
 import com.zion830.threedollars.ui.storeDetail.v2.canSubmitStoreDetailReviewReport
 import com.zion830.threedollars.ui.storeDetail.v2.imageIndexFor
+import com.zion830.threedollars.ui.storeDetail.v2.resolveStoreDetailLocation
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
@@ -139,7 +147,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var isFirstLoad = true
 
     private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
+    private var homeBottomSheetVisibleHeightPx = 0
     private var isStoreDetailExpanded by mutableStateOf(false)
+    private val initialCameraPolicy = HomeInitialCameraPolicy()
+    private val searchFocusPolicy = HomeSearchFocusPolicy()
+    private var pendingFocusBoundsEffect: HomeFocusBoundsEffect? = null
+    private var isHomeMapReady = false
+    private var editOpening = false
+    private var pendingEditRefresh = false
+
+    private val editBackStackListener = FragmentManager.OnBackStackChangedListener {
+        val editVisible = requireActivity().supportFragmentManager
+            .findFragmentByTag(EditStoreFragment::class.java.name) != null
+        if (!editVisible) {
+            editOpening = false
+            if (pendingEditRefresh) {
+                pendingEditRefresh = false
+                refreshHomeAfterStoreUpdate()
+            }
+        }
+        homeBackPressedCallback.isEnabled = viewModel.selectedStoreScreen.value != null && !editVisible
+    }
 
     private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
@@ -178,8 +206,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initView() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
-        parentFragmentManager.setFragmentResultListener(EditStoreFragment.STORE_EDITED_RESULT_KEY, viewLifecycleOwner) { _, _ ->
-            refreshHomeAfterStoreUpdate()
+        requireActivity().supportFragmentManager.addOnBackStackChangedListener(editBackStackListener)
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            EditStoreFragment.STORE_EDITED_RESULT_KEY,
+            viewLifecycleOwner,
+        ) { _, result ->
+            if (result.getBoolean(EditStoreFragment.STORE_UPDATED, false)) pendingEditRefresh = true
         }
         initMap()
         initAdapter()
@@ -202,6 +234,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         }
         consumeStorePreviewDeepLink()
+    }
+
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        viewModel.requestHomePageView()
     }
 
     private fun initScroll() {
@@ -278,19 +314,39 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initMap() {
-        naverMapFragment = NearStoreNaverMapFragment(
+        naverMapFragment = childFragmentManager.findFragmentByTag(HOME_MAP_FRAGMENT_TAG) as? NearStoreNaverMapFragment
+            ?: NearStoreNaverMapFragment()
+        naverMapFragment.attachCallbacks(
             cameraMoved = {
+                initialCameraPolicy.onUserGesture()
+                viewModel.onHomeMapGesture()
+                pendingFocusBoundsEffect = null
                 binding.tvRetrySearch.isVisible = true
             },
             onLocationButtonClicked = {
                 viewModel.sendClickCurrentLocationLog()
                 checkLocationPermissionForButton()
-            }
+            },
+            onMapReady = {
+                isHomeMapReady = true
+                applyInitialCameraCommand(initialCameraPolicy.onMapReady())
+                applyPendingFocusBounds()
+            },
         )
         naverMapFragment.onAdMarkerClicked = { advertisementId ->
             viewModel.sendClickAdvertisementMarkerLog(advertisementId)
         }
-        childFragmentManager.beginTransaction().replace(R.id.container, naverMapFragment).commit()
+        if (!naverMapFragment.isAdded) {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.container, naverMapFragment, HOME_MAP_FRAGMENT_TAG)
+                .commit()
+        }
+
+        viewModel.getSavedMapPosition()?.let { savedPosition ->
+            applyInitialCameraCommand(
+                initialCameraPolicy.onInitialTarget(savedPosition.toServerLocation(), restored = true)
+            )
+        }
         
         // Check and request location permission after login
         lifecycleScope.launch {
@@ -360,6 +416,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onStoreDetailViewLog = storeDetailV2ViewModel::sendViewLog,
                     onStoreDetailImpression = storeDetailV2ViewModel::sendImpression,
                     onCardClick = ::moveHomeListCardDetail,
+                    onAdMobClick = viewModel::sendClickHomeListAdMob,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
@@ -394,8 +451,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun updateLocationButtonBottomMargin(sheetVisibleHeightPx: Int) {
+        homeBottomSheetVisibleHeightPx = sheetVisibleHeightPx.coerceAtLeast(0)
         val bottomMarginPx = sheetVisibleHeightPx + SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP)
         naverMapFragment.updateLocationButtonBottomMargin(bottomMarginPx)
+        applyPendingFocusBounds()
+    }
+
+    private fun applyInitialCameraCommand(command: HomeInitialCameraCommand?) {
+        command ?: return
+        val target = LatLng(command.target.latitude, command.target.longitude)
+        command.zoom?.let { zoom -> naverMapFragment.moveCamera(target, zoom) }
+            ?: naverMapFragment.moveCamera(target)
+    }
+
+    private fun applyPendingFocusBounds() {
+        if (!isHomeMapReady) return
+        val effect = pendingFocusBoundsEffect ?: return
+        if (!viewModel.isHomeFocusBoundsCurrent(effect)) {
+            pendingFocusBoundsEffect = null
+            return
+        }
+        val mapLocation = IntArray(2)
+        val filterLocation = IntArray(2)
+        binding.container.getLocationInWindow(mapLocation)
+        binding.filterComposeView.getLocationInWindow(filterLocation)
+        val padding = calculateHomeMapPadding(
+            mapHeightPx = binding.container.height,
+            mapWindowTopPx = mapLocation[1],
+            filterWindowBottomPx = filterLocation[1] + binding.filterComposeView.height,
+            sheetVisibleHeightPx = homeBottomSheetVisibleHeightPx,
+            edgeMarginPx = SizeUtils.dpToPx(HOME_MAP_EDGE_MARGIN_DP),
+        ) ?: return
+        naverMapFragment.fitHomeListBounds(effect.bounds, padding)
+        pendingFocusBoundsEffect = null
+        viewModel.consumeHomeFocusBounds(effect)
     }
 
     private fun initButton() {
@@ -412,7 +501,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             findNavController().navigate(R.id.action_home_to_home_list_view)
         }
         binding.tvRetrySearch.onSingleClick {
-            viewModel.fetchAroundStores()
+            if (!viewModel.retryHomeFilterScreenIfFailed()) {
+                viewModel.fetchAroundStores()
+            }
             viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
@@ -443,6 +534,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
+                    viewModel.uiState.collect { state ->
+                        if (state.hasResolvedFilterScreen) {
+                            applyInitialCameraCommand(
+                                initialCameraPolicy.onFilterResolved(state.initialMapZoomLevel)
+                            )
+                        }
+                    }
+                }
+                launch {
+                    viewModel.homeFocusBounds.collect { effect ->
+                        pendingFocusBoundsEffect = effect
+                        if (effect != null) applyPendingFocusBounds()
+                    }
+                }
+                launch {
+                    viewModel.homePageViewEvent.collect { event ->
+                        event.serverLog?.let(SDClickLogger::send)
+                            ?: LogManager.sendPageView(viewModel.screenName, this@HomeFragment::class.java.simpleName)
+                    }
+                }
+                launch {
                     viewModel.homeListSection.collect { section ->
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
                         if (cards.isEmpty()) {
@@ -451,7 +563,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         }
                         naverMapFragment.addHomeListMarkers(
                             drawableRes = DesignSystemR.drawable.ic_store_off,
+                            selectedDrawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
                             list = cards,
+                            selectedCardId = viewModel.selectedHomeListCardId.value,
                         ) { card ->
                             viewModel.selectHomeListMarker(card)
                         }
@@ -465,7 +579,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
-                        homeBackPressedCallback.isEnabled = screen != null
+                        val editVisible = activity?.supportFragmentManager
+                            ?.findFragmentByTag(EditStoreFragment::class.java.name) != null || editOpening
+                        homeBackPressedCallback.isEnabled = screen != null && !editVisible
                         if (screen == null) isStoreDetailExpanded = false
                     }
                 }
@@ -631,6 +747,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun handleStoreDetailV2PlatformAction(action: StoreDetailV2PlatformAction) {
         when (action) {
+            is StoreDetailV2PlatformAction.CopyAccount -> {
+                (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                    .setPrimaryClip(ClipData.newPlainText(null, action.text))
+                showToast(getString(CommonR.string.account_number_copied))
+            }
             is StoreDetailV2PlatformAction.OpenLink -> handleStorePreviewLink(action.link)
             is StoreDetailV2PlatformAction.Share -> shareStorePreview(action.customAction)
             is StoreDetailV2PlatformAction.Navigation -> showStorePreviewDirection(action.customAction)
@@ -650,7 +771,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ?: viewModel.selectedStorePreviewStoreId.value
             ?: return
         val resolvedStoreId = storeId.toIntOrNullExact() ?: return showUnsupportedStoreDetailAction()
-        parentFragmentManager.addNewFragment(
+        val fragmentManager = requireActivity().supportFragmentManager
+        if (editOpening || fragmentManager.isStateSaved || fragmentManager.findFragmentByTag(EditStoreFragment::class.java.name) != null) {
+            return
+        }
+        editOpening = true
+        homeBackPressedCallback.isEnabled = false
+        fragmentManager.addNewFragment(
             R.id.layout_container,
             EditStoreFragment.newInstance(resolvedStoreId),
             EditStoreFragment::class.java.name,
@@ -681,12 +808,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun enlargeStoreDetailMap(customAction: SDCustomActionModel) {
         val params = customAction.extraParams
-        val currentLocation = currentHomeListCard()?.marker?.location
+        val location = currentStorePreviewLocation(customAction)
+            ?: return showToast(getString(CommonR.string.exist_location_error))
         startActivity(
             FullScreenMapActivity.getIntent(
                 context = requireContext(),
-                latitude = params.doubleValue("LATITUDE") ?: currentLocation?.latitude,
-                longitude = params.doubleValue("LONGITUDE") ?: currentLocation?.longitude,
+                latitude = location.latitude,
+                longitude = location.longitude,
                 name = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle(),
             )
         )
@@ -810,14 +938,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val storeId = route?.storeId?.toString()
         val storeType = route?.storeType ?: USER_STORE
         val storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle()
-        val currentCard = currentHomeListCard()
-        val latitude = params.doubleValue("LATITUDE") ?: currentCard?.marker?.location?.latitude
-        val longitude = params.doubleValue("LONGITUDE") ?: currentCard?.marker?.location?.longitude
-        if (storeId.isNullOrBlank() || latitude == null || longitude == null) {
+        val resolvedLocation = currentStorePreviewLocation(customAction)
+        if (storeId.isNullOrBlank() || resolvedLocation == null) {
             showToast(getString(CommonR.string.exist_location_error))
             return
         }
-        val location = LatLng(latitude, longitude)
+        val location = LatLng(resolvedLocation.latitude, resolvedLocation.longitude)
         val kakaoType = if (storeType == BOSS_STORE) {
             getString(CommonR.string.scheme_host_kakao_link_food_truck_type)
         } else {
@@ -848,8 +974,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun moveStorePreviewVisit(storeId: Int) {
         val args = currentStoreCertificationArgs(storeId) ?: run {
             showToast(getString(CommonR.string.exist_location_error))
-            isStoreDetailExpanded = false
-            viewModel.closeStorePreview()
             return
         }
         startActivityForResult(
@@ -860,9 +984,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun showStorePreviewDirection(customAction: SDCustomActionModel) {
         val params = customAction.extraParams
+        val location = currentStorePreviewLocation(customAction)
+            ?: return showToast(getString(CommonR.string.exist_location_error))
         DirectionBottomDialog.getInstance(
-            latitude = params.doubleValue("LATITUDE"),
-            longitude = params.doubleValue("LONGITUDE"),
+            latitude = location.latitude,
+            longitude = location.longitude,
             storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle(),
         ).show(parentFragmentManager, "")
     }
@@ -880,13 +1006,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun currentStoreCertificationArgs(storeId: Int): StoreCertificationArgs? {
         val card = currentHomeListCard()
-        val markerLocation = card?.marker?.location ?: return null
+        val location = currentStorePreviewLocation() ?: return null
         return StoreCertificationArgs(
             storeId = storeId,
-            storeName = currentStorePreviewTitle().ifBlank { card.header.title.displayText() },
-            latitude = markerLocation.latitude,
-            longitude = markerLocation.longitude,
-            categories = card.metadata.primary.storeCertificationCategories(),
+            storeName = currentStorePreviewTitle().ifBlank { card?.header?.title.displayText() },
+            latitude = location.latitude,
+            longitude = location.longitude,
+            categories = card?.metadata?.primary.orEmpty().storeCertificationCategories(),
+        )
+    }
+
+    private fun currentStorePreviewLocation(customAction: SDCustomActionModel? = null): SDLocationModel? {
+        val card = currentHomeListCard()
+        val route = currentStorePreviewRoute(
+            fallbackStoreId = customAction?.extraParams?.longValue("STORE_ID"),
+            fallbackStoreType = customAction?.extraParams?.stringValue("STORE_TYPE"),
+        )
+        val screen = (storeDetailV2ViewModel.uiState.value as? StoreDetailV2UiState.Content)?.screen
+        return screen.resolveStoreDetailLocation(
+            action = customAction,
+            storeId = route?.storeId,
+            markerStoreId = card?.storePreviewStoreIdOrNull(),
+            markerLocation = card?.marker?.location,
         )
     }
 
@@ -904,8 +1045,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         fallbackStoreType: String? = null,
     ): HomeStorePreviewRoute? {
         val card = currentHomeListCard()
-        return HomeStorePreviewRoute.fromLink(
-            link = card?.link?.link,
+        return HomeStorePreviewRoute.fromCard(
+            card = card,
             fallbackStoreId = fallbackStoreId
                 ?: viewModel.selectedStorePreviewStoreId.value
                 ?: card?.storePreviewStoreIdOrNull(),
@@ -917,15 +1058,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         cards: List<HomeListCardModel.BasicCard>,
         selectedCardId: String?,
     ) {
-        cards.forEachIndexed { index, card ->
-            val selected = card.cardId == selectedCardId
-            naverMapFragment.updateHomeListMarkerIcon(
-                drawableRes = if (selected) DesignSystemR.drawable.ic_mappin_focused_on else DesignSystemR.drawable.ic_store_off,
-                position = index,
-                card = card,
-                isSelected = selected,
-            )
-        }
+        naverMapFragment.updateHomeListMarkerSelection(
+            drawableRes = DesignSystemR.drawable.ic_store_off,
+            selectedDrawableRes = DesignSystemR.drawable.ic_mappin_focused_on,
+            cards = cards,
+            selectedCardId = selectedCardId,
+        )
     }
 
     private fun showSelectCategoryDialog() {
@@ -1028,11 +1166,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
      */
     private fun useDefaultLocation() {
         val fallbackLocation = naverMapFragment.getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION
-        naverMapFragment.moveCamera(fallbackLocation)
+        val savedPosition = viewModel.getSavedMapPosition()
+        val searchPosition = savedPosition ?: fallbackLocation
+        applyInitialCameraCommand(
+            initialCameraPolicy.onInitialTarget(searchPosition.toServerLocation(), restored = savedPosition != null)
+        )
 
         viewModel.fetchAroundStores(
-            mapPosition = fallbackLocation,
+            mapPosition = searchPosition,
             userLocation = fallbackLocation,
+            requestFocusBounds = searchFocusPolicy.shouldRequestFocus(hasSavedPosition = savedPosition != null),
         )
         viewModel.getAdvertisement(latLng = fallbackLocation)
     }
@@ -1073,15 +1216,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun loadHomeWithCurrentLocation(showAnim: Boolean) {
         naverMapFragment.enableLocationTracking()
-        naverMapFragment.moveToCurrentLocation(showAnim) { currentLocation ->
+        naverMapFragment.moveToCurrentLocation(showAnim = showAnim, moveCameraOnLoad = false) { currentLocation ->
             if (currentLocation == null) {
                 useDefaultLocation()
                 return@moveToCurrentLocation
             }
 
+            val savedPosition = viewModel.getSavedMapPosition()
+            val searchPosition = savedPosition ?: currentLocation
+            applyInitialCameraCommand(
+                initialCameraPolicy.onInitialTarget(searchPosition.toServerLocation(), restored = savedPosition != null)
+            )
+
             viewModel.fetchAroundStores(
-                mapPosition = currentLocation,
+                mapPosition = searchPosition,
                 userLocation = currentLocation,
+                requestFocusBounds = searchFocusPolicy.shouldRequestFocus(hasSavedPosition = savedPosition != null),
             )
             viewModel.getAdvertisement(latLng = currentLocation)
         }
@@ -1167,13 +1317,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =
         FragmentHomeBinding.inflate(inflater, container, false)
+
+    override fun onDestroyView() {
+        requireActivity().supportFragmentManager.removeOnBackStackChangedListener(editBackStackListener)
+        if (::naverMapFragment.isInitialized) {
+            naverMapFragment.attachCallbacks(cameraMoved = {}, onLocationButtonClicked = {}, onMapReady = {})
+        }
+        super.onDestroyView()
+    }
     
     override fun onDestroy() {
         super.onDestroy()
         locationPermissionDialog?.dismiss()
         locationPermissionDialog = null
     }
+
+    private companion object {
+        const val HOME_MAP_FRAGMENT_TAG = "NearStoreNaverMapFragment"
+        const val HOME_MAP_EDGE_MARGIN_DP = 16f
+    }
 }
+
+private fun LatLng.toServerLocation(): SDLocationModel = SDLocationModel(latitude, longitude)
 
 private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryParameter(key)
 

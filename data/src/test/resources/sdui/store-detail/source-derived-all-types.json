@@ -1,0 +1,21 @@
+{
+  "sections": [
+    {"type":"CALLOUT","content":{"image":{"url":"https://storage.threedollars.co.kr/app/star_3.png","style":{"width":21,"height":21}},"text":{"text":"verified","isHtml":false},"style":{"backgroundColor":"#232323"}}},
+    {"type":"PREVIEW","header":{},"metadata":{"primary":[],"secondary":[],"separator":{"url":"dot","style":{"width":2,"height":2}}},"actionBars":[],"images":[],"bodies":[],"style":{"backgroundColor":"#FFFFFF"},"additionalInfos":{"type":"EMPTY"}},
+    {"type":"MARGIN","height":8},
+    {"type":"AD_MOB","cards":[]},
+    {"type":"TAB","tabs":[]},
+    {"type":"EDIT","map":{"location":{"latitude":37.1,"longitude":127.2},"footerLeft":{"type":"ACTION_BAR","button":{"text":{"text":"test address","isHtml":false},"customAction":{"actionType":"STORE_EDIT_SECTION_COPY_ADDRESS","extraParams":{"ADDRESS":"test address"}}}},"footerRight":{"type":"ACTION_BAR","button":{"image":{"url":"https://storage.threedollars.co.kr/app/zoom_3x.png","style":{"width":20,"height":20}},"customAction":{"actionType":"STORE_EDIT_SECTION_MAP_ENLARGE","extraParams":{}}}}},"actionBars":[]},
+    {"type":"COUPON","header":{"title":{"text":"coupon","isHtml":false}},"cards":[{"cardId":"coupon-test","title":{"text":"coupon title","isHtml":false},"subTitle":{"text":"coupon subtitle","isHtml":false},"trailingButton":{"text":{"text":"use","isHtml":false},"customAction":{"actionType":"STORE_COUPON_SECTION_COUPON_USE","extraParams":{"COUPON_ISSUED_KEY":"issued-test"}}},"style":{"backgroundColor":"#FFFFFF"}}]},
+    {"type":"VISIT","header":{"title":{"text":"visit","isHtml":false}},"summary":{"chips":[]},"history":{"items":[],"style":{"backgroundColor":"#FAFAFA"}}},
+    {"type":"POST","header":{"title":{"text":"post","isHtml":false}},"cards":[{"cardId":"post-test","header":{"text":{"text":"author","isHtml":false}},"images":[],"body":{"text":"post body","isHtml":false},"style":{"backgroundColor":"#FFFFFF"}}]},
+    {"type":"IMAGE","header":{"title":{"text":"image","isHtml":false}},"cards":[]},
+    {"type":"APPEARANCE_DAY","header":{"title":{"text":"appearance","isHtml":false}},"items":[]},
+    {"type":"RELATED_STORES","header":{"title":{"text":"related","isHtml":false}},"cards":[],"reference":[],"impressionLog":{"eventType":"IMPRESSION","screenName":"store_detail","objectType":"section","objectId":"related","extraParameters":{}}},
+    {"type":"CTA","content":{"title":{"text":"cta","isHtml":false}}},
+    {"type":"REVIEW","header":{"title":{"text":"review","isHtml":false}},"summary":{"title":{"text":"summary","isHtml":false},"stars":{"images":[]},"rating":{"text":"0","isHtml":false},"style":{"backgroundColor":"#FFFFFF"}},"cards":[]},
+    {"type":"INFO_V1","header":{"title":{"text":"info v1","isHtml":false}}},
+    {"type":"INFO_V2","header":{"title":{"text":"info v2","isHtml":false}},"accountCards":[]}
+  ],
+  "viewLog":{"eventType":"PAGE_VIEW","screenName":"store_detail","objectType":"screen","objectId":"detail","extraParameters":{}}
+}

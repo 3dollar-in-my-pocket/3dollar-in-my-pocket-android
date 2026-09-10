@@ -19,6 +19,11 @@ internal object HomeFilterQueryParamsBuilder {
             params["filterCertifiedStores"] = "true"
         }
 
+        params.putIfAbsent(SORT_TYPE_PARAM_KEY, DEFAULT_SORT_TYPE)
+
         return params
     }
+
+    private const val SORT_TYPE_PARAM_KEY = "sortType"
+    private const val DEFAULT_SORT_TYPE = "POPULAR"
 }

@@ -1,5 +1,6 @@
 package com.threedollar.data.screen
 
+import com.google.gson.JsonElement
 import com.threedollar.common.serverdriven.model.SDActionBarModel
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDButtonModel
@@ -10,6 +11,10 @@ import com.threedollar.common.serverdriven.model.SDHeaderModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDClickLogModel
+import com.threedollar.common.serverdriven.model.SDClickLogValue
+import com.threedollar.common.serverdriven.model.SDCustomActionModel
+import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
@@ -29,9 +34,13 @@ import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.screen.StoreContributorSectionResponse
 import com.threedollar.network.data.screen.StoreContributorSurfaceStyleResponse
 import com.threedollar.network.data.screen.StoreContributorTextResponse
+import com.threedollar.network.data.screen.StoreContributorClickLogResponse
+import com.threedollar.network.data.screen.StoreContributorCustomActionResponse
+import com.threedollar.network.data.screen.SDPageViewLogResponse
 
 fun StoreContributorScreenResponse.asModel(): SDScreenModel = SDScreenModel(
-    sections = sections.orEmpty().map { it.asModel() }
+    sections = sections.orEmpty().map { it.asModel() },
+    viewLog = viewLog?.asModelOrNull(),
 )
 
 fun StoreContributorHistoriesResponse.asCardsSectionModel(): SDSectionModel.CardsSection = SDSectionModel.CardsSection(
@@ -67,11 +76,14 @@ fun StoreContributorSectionResponse.asModel(): SDSectionModel {
 }
 
 private fun StoreContributorActionBarResponse?.asModel(): SDActionBarModel = SDActionBarModel(
-    button = this?.button.asModel()
+    button = this?.button.asModel(),
+    clickLog = this?.clickLog?.asModel(),
 )
 
 private fun StoreContributorHeaderResponse?.asModel(): SDHeaderModel = SDHeaderModel(
-    title = this?.title.asModel()
+    title = this?.title.asModel(),
+    subTitle = this?.subTitle?.asModel(),
+    trailingAction = this?.trailingAction?.asModel(),
 )
 
 private fun StoreContributorCardResponse.asModel(): SDCardModel {
@@ -79,12 +91,13 @@ private fun StoreContributorCardResponse.asModel(): SDCardModel {
     val descriptionValue = description
     val subTitlesValue = subTitles.orEmpty()
     return when {
-        normalizedType.contains("DESCRIPTION") || descriptionValue != null -> SDCardModel.DescriptionCard(
+        normalizedType == "CALLOUT_CARD" || normalizedType.contains("DESCRIPTION") || descriptionValue != null -> SDCardModel.DescriptionCard(
             type = type.orEmpty(),
             cardId = cardId.orEmpty(),
             title = title.asModel(),
             description = descriptionValue.asModel(),
             style = style?.asModel(),
+            clickLog = clickLog?.asModel(),
         )
 
         normalizedType.contains("HISTORY") ||
@@ -100,6 +113,7 @@ private fun StoreContributorCardResponse.asModel(): SDCardModel {
             image = image?.asModel(),
             metadata = metadata?.asModel(),
             style = style?.asModel(),
+            clickLog = clickLog?.asModel(),
         )
 
         else -> SDCardModel.Unknown(
@@ -107,6 +121,7 @@ private fun StoreContributorCardResponse.asModel(): SDCardModel {
             cardId = cardId.orEmpty(),
             title = title.asModel(),
             style = style?.asModel(),
+            clickLog = clickLog?.asModel(),
         )
     }
 }
@@ -115,6 +130,7 @@ private fun StoreContributorTextResponse?.asModel(): SDTextModel = SDTextModel(
     text = this?.text.orEmpty(),
     isHtml = this?.isHtml ?: false,
     fontColor = this?.fontColor,
+    fontWeight = this?.fontWeight,
 )
 
 private fun StoreContributorImageResponse.asModel(): SDImageModel = SDImageModel(
@@ -127,19 +143,78 @@ private fun StoreContributorImageStyleResponse.asModel(): SDImageStyleModel = SD
     height = height,
 )
 
-private fun StoreContributorButtonResponse?.asModel(): SDButtonModel = SDButtonModel(
-    text = this?.text.asModel(),
-    image = this?.image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
-    link = this?.link?.takeIf { !it.link.isNullOrBlank() }?.asModel(),
-    style = this?.style?.asModel(),
-)
+private fun StoreContributorButtonResponse?.asModel(): SDButtonModel {
+    val linkModel = this?.link?.takeIf { !it.link.isNullOrBlank() }?.asModel()
+    return SDButtonModel(
+        text = this?.text.asModel(),
+        image = this?.image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
+        imageAlignment = this?.imageAlignment,
+        link = linkModel,
+        customAction = if (linkModel == null) this?.customAction?.asModelOrNull() else null,
+        style = this?.style?.asModel(),
+        clickLog = this?.clickLog?.asModel(),
+    )
+}
 
 private fun StoreContributorChipResponse.asModel(): SDChipModel = SDChipModel(
     image = image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
     text = text.asModel(),
     additionalText = additionalText?.asModel(),
     style = style?.asModel(),
+    imageAlignment = imageAlignment,
+    contentSpacing = contentSpacing,
 )
+
+private fun StoreContributorCustomActionResponse.asModelOrNull(): SDCustomActionModel? {
+    val action = actionType?.takeIf(String::isNotBlank) ?: return null
+    return SDCustomActionModel(
+        actionType = action,
+        extraParams = extraParams.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
+}
+
+private fun StoreContributorClickLogResponse.asModel(): SDClickLogModel = SDClickLogModel(
+    eventType = eventType.orEmpty(),
+    screenName = screenName.orEmpty(),
+    objectType = objectType.orEmpty(),
+    objectId = objectId.orEmpty(),
+    extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
+)
+
+private fun SDPageViewLogResponse.asModelOrNull(): SDViewLogModel? {
+    val screen = screenName?.takeIf(String::isNotBlank) ?: return null
+    return SDViewLogModel(
+        screenName = screen,
+        eventType = eventType.orEmpty(),
+        objectType = objectType.orEmpty(),
+        objectId = objectId.orEmpty(),
+        extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
+}
+
+private fun JsonElement.asClickLogValue(): SDClickLogValue {
+    if (isJsonNull) return SDClickLogValue.Null
+    if (!isJsonPrimitive) return SDClickLogValue.StringValue(toString())
+    val primitive = asJsonPrimitive
+    return when {
+        primitive.isBoolean -> SDClickLogValue.BoolValue(primitive.asBoolean)
+        primitive.isNumber -> {
+            val number = primitive.asNumber
+            val doubleValue = number.toDouble()
+            if (!primitive.asString.contains('.') && doubleValue == doubleValue.toLong().toDouble()) {
+                val longValue = number.toLong()
+                if (longValue in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
+                    SDClickLogValue.IntValue(longValue.toInt())
+                } else {
+                    SDClickLogValue.LongValue(longValue)
+                }
+            } else {
+                SDClickLogValue.DoubleValue(doubleValue)
+            }
+        }
+        else -> SDClickLogValue.StringValue(primitive.asString)
+    }
+}
 
 private fun StoreContributorLinkResponse.asModel(): SDLinkModel = SDLinkModel(
     type = type.orEmpty(),

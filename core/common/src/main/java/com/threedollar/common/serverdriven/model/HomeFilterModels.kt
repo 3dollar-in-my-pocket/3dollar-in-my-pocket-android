@@ -36,6 +36,11 @@ enum class FilterOpenStatuses {
 data class HomeFilterScreenModel(
     val sections: List<HomeScreenSection> = emptyList(),
     val viewLog: SDViewLogModel? = null,
+    val configuration: HomeScreenConfigurationModel? = null,
+)
+
+data class HomeScreenConfigurationModel(
+    val initialMapZoomLevel: Double,
 )
 
 sealed interface HomeScreenSection {

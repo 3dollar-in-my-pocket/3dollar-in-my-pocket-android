@@ -8,6 +8,33 @@ import org.junit.Test
 class ServerDrivenTextExtTest {
 
     @Test
+    fun styledSegments_inheritNestedStylesAndRestoreParentAfterClosingTag() {
+        val text = SDTextModel(
+            "<span style='color:#FFFFFF;font-size:16px'>공식 <span style='color:#FF0000;font-weight:700'>인증</span> 가게</span>!",
+            true,
+            fontColor = "#000000",
+            fontWeight = "400",
+        )
+        assertEquals(
+            listOf(
+                SDStyledTextSegment("공식 ", 16, 400, "#FFFFFF"),
+                SDStyledTextSegment("인증", 16, 700, "#FF0000"),
+                SDStyledTextSegment(" 가게", 16, 400, "#FFFFFF"),
+                SDStyledTextSegment("!", null, 400, "#000000"),
+            ),
+            text.styledSegments(),
+        )
+    }
+
+    @Test
+    fun styledSegments_preserveLineBreakBoldAndDecodeEntitiesOnce() {
+        val text = SDTextModel("<span>A<b>B</b><br/>C &amp;lt; &#x1F35E;</span>", true)
+        assertEquals("AB\nC &lt; 🍞", text.styledSegments().joinToString("") { it.text })
+        assertEquals(700, text.styledSegments().first { it.text == "B" }.fontWeight)
+        assertEquals("&lt;", "&amp;lt;".toServerDrivenPlainText())
+    }
+
+    @Test
     fun displayText_stripsHtmlTagsWhenTextIsHtml() {
         val text = SDTextModel(
             text = "<span style=\"font-size:20px; font-weight:700; color:#0F0F0F\">오소로</span>",

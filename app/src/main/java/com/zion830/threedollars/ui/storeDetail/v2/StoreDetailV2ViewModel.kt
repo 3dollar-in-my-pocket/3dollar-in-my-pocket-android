@@ -7,6 +7,7 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
+import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -104,6 +105,12 @@ class StoreDetailV2ViewModel @Inject constructor(
             _events.tryEmit(StoreDetailV2Event.Platform(StoreDetailV2PlatformAction.OpenLink(link)))
             return
         }
+        if (actionBar.type == STORE_DETAIL_ACCOUNT_COPY_ACTION) {
+            actionBar.button.text.displayText().takeIf(String::isNotBlank)?.let {
+                emitPlatform(StoreDetailV2PlatformAction.CopyAccount(it))
+            }
+            return
+        }
         val customAction = actionBar.button.customAction ?: return
         val params = customAction.extraParams
         when (customAction.actionType) {
@@ -116,10 +123,13 @@ class StoreDetailV2ViewModel @Inject constructor(
             ACTION_IMAGE_ADD -> emitPlatform(StoreDetailV2PlatformAction.AddImage(customAction))
             ACTION_IMAGE_ENLARGE -> emitPlatform(StoreDetailV2PlatformAction.EnlargeImage(customAction))
             ACTION_REVIEW_REPORT -> emitPlatform(StoreDetailV2PlatformAction.ReportReview(customAction))
+            ACTION_EDIT_COPY_ADDRESS,
             ACTION_MAP_COPY_ADDRESS -> emitPlatform(StoreDetailV2PlatformAction.CopyAddress(customAction))
+            ACTION_EDIT_MAP_ENLARGE,
             ACTION_MAP_ENLARGE -> emitPlatform(StoreDetailV2PlatformAction.EnlargeMap(customAction))
             ACTION_COUPON_ISSUE -> params.stringValue(PARAM_COUPON_ID)?.let(::issueCoupon)
-            ACTION_COUPON_USE -> params.stringValue(PARAM_ISSUED_KEY)?.let { issuedKey ->
+            ACTION_COUPON_USE -> (params.stringValue(PARAM_COUPON_ISSUED_KEY)?.takeIf(String::isNotBlank)
+                ?: params.stringValue(PARAM_ISSUED_KEY)?.takeIf(String::isNotBlank))?.let { issuedKey ->
                 runMutation(screenRepository.useIssuedCoupon(issuedKey))
             }
             ACTION_POST_ADD_LIKE -> mutatePostSticker(params, cancel = false)
@@ -322,7 +332,10 @@ class StoreDetailV2ViewModel @Inject constructor(
         const val ACTION_REVIEW_CANCEL_LIKE = "STORE_REVIEW_SECTION_CANCEL_LIKE"
         const val ACTION_MAP_COPY_ADDRESS = "STORE_MAP_SECTION_COPY_ADDRESS"
         const val ACTION_MAP_ENLARGE = "STORE_MAP_SECTION_MAP_ENLARGE"
+        const val ACTION_EDIT_COPY_ADDRESS = "STORE_EDIT_SECTION_COPY_ADDRESS"
+        const val ACTION_EDIT_MAP_ENLARGE = "STORE_EDIT_SECTION_MAP_ENLARGE"
         const val PARAM_COUPON_ID = "COUPON_ID"
+        const val PARAM_COUPON_ISSUED_KEY = "COUPON_ISSUED_KEY"
         const val PARAM_ISSUED_KEY = "ISSUED_KEY"
         const val PARAM_POST_ID = "POST_ID"
         const val PARAM_REVIEW_ID = "REVIEW_ID"

@@ -6,6 +6,7 @@ import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
+import com.threedollar.common.serverdriven.model.HomeScreenConfigurationModel
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.HomeScreenSectionType
 import com.threedollar.common.serverdriven.model.SDBorderModel
@@ -38,6 +39,7 @@ import com.threedollar.network.data.screen.HomeFilterViewLogResponse
 fun HomeFilterScreenResponse.asModel(): HomeFilterScreenModel = HomeFilterScreenModel(
     sections = sections.orEmpty().map { it.asModel() },
     viewLog = viewLog?.asModelOrNull(),
+    configuration = configuration?.initialMapZoomLevel?.let(::HomeScreenConfigurationModel),
 )
 
 private fun HomeFilterSectionResponse.asModel(): HomeScreenSection {
@@ -101,14 +103,22 @@ private fun HomeFilterChipResponse.asModel(): SDChipModel = SDChipModel(
     text = text.asModel(),
     additionalText = additionalText?.asModel(),
     style = style?.let { SDSurfaceStyleModel(backgroundColor = it.backgroundColor, border = it.border?.asModel()) },
+    imageAlignment = imageAlignment,
+    contentSpacing = contentSpacing,
 )
 
-private fun HomeFilterButtonResponse.asModel(): SDButtonModel = SDButtonModel(
-    text = text.asModel(),
-    image = image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
-    link = link?.takeIf { !it.link.isNullOrBlank() }?.asModel(),
-    style = style?.let { SDSurfaceStyleModel(backgroundColor = it.backgroundColor, border = it.border?.asModel()) },
-)
+private fun HomeFilterButtonResponse.asModel(): SDButtonModel {
+    val linkModel = link?.takeIf { !it.link.isNullOrBlank() }?.asModel()
+    return SDButtonModel(
+        text = text.asModel(),
+        image = image?.takeIf { !it.url.isNullOrBlank() }?.asModel(),
+        imageAlignment = imageAlignment,
+        link = linkModel,
+        customAction = if (linkModel == null) customAction?.asModelOrNull() else null,
+        style = style?.let { SDSurfaceStyleModel(backgroundColor = it.backgroundColor, border = it.border?.asModel()) },
+        clickLog = clickLog?.asModel(),
+    )
+}
 
 private fun HomeFilterCurrentCategoryResponse.asModel(): HomeFilterCurrentCategory = HomeFilterCurrentCategory(
     fontColor = fontColor,
@@ -120,6 +130,7 @@ private fun HomeFilterTextResponse?.asModel(): SDTextModel = SDTextModel(
     text = this?.text.orEmpty(),
     isHtml = this?.isHtml ?: false,
     fontColor = this?.fontColor,
+    fontWeight = this?.fontWeight,
 )
 
 private fun HomeFilterImageResponse.asModel(): SDImageModel = SDImageModel(
@@ -148,6 +159,7 @@ private fun HomeFilterBorderResponse.asModel(): SDBorderModel = SDBorderModel(
 )
 
 private fun HomeFilterClickLogResponse.asModel(): SDClickLogModel = SDClickLogModel(
+    eventType = eventType.orEmpty(),
     screenName = screenName.orEmpty(),
     objectType = objectType.orEmpty(),
     objectId = objectId.orEmpty(),
@@ -156,7 +168,21 @@ private fun HomeFilterClickLogResponse.asModel(): SDClickLogModel = SDClickLogMo
 
 private fun HomeFilterViewLogResponse.asModelOrNull(): SDViewLogModel? {
     val screen = screenName?.takeIf { it.isNotBlank() } ?: return null
-    return SDViewLogModel(screenName = screen)
+    return SDViewLogModel(
+        screenName = screen,
+        eventType = eventType.orEmpty(),
+        objectType = objectType.orEmpty(),
+        objectId = objectId.orEmpty(),
+        extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
+}
+
+private fun com.threedollar.network.data.screen.SDCustomActionResponse.asModelOrNull(): com.threedollar.common.serverdriven.model.SDCustomActionModel? {
+    val action = actionType?.takeIf(String::isNotBlank) ?: return null
+    return com.threedollar.common.serverdriven.model.SDCustomActionModel(
+        actionType = action,
+        extraParams = extraParams.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
 }
 
 private fun JsonElement.asClickLogValue(): SDClickLogValue {

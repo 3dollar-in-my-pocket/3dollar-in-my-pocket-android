@@ -116,6 +116,10 @@ import com.threedollar.common.serverdriven.model.StoreDetailScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
+import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDImageRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
+import com.zion830.threedollars.core.ui.serverdriven.serverDrivenSurface
 import com.zion830.threedollars.ui.storeDetail.v2.StoreDetailV2Content
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -146,7 +150,6 @@ private val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
 private val StorePreviewActionTrailingIconSize = 10.dp
 private val StorePreviewTitleBadgeGap = 4.dp
-private const val TitleBreakOpportunity = "\u200B"
 private const val StorePreviewTitleMaxLines = 2
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
@@ -171,6 +174,7 @@ fun HomeBottomSheetContent(
     onStoreDetailViewLog: (com.threedollar.common.serverdriven.model.SDViewLogModel) -> Unit = {},
     onStoreDetailImpression: (String, com.threedollar.common.serverdriven.model.SDImpressionLogModel) -> Unit = { _, _ -> },
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
     onLoadNextPage: () -> Unit,
     onClosePreview: () -> Unit,
     onActionClick: (StoreActionBarModel) -> Unit,
@@ -191,8 +195,8 @@ fun HomeBottomSheetContent(
         val storePreviewSection = storeScreen?.previewSectionOrNull()
         val storePreviewTitle = storeScreen?.resolvedPreviewTitle()
         val storePreviewTitleText = storePreviewTitle
+            .homeTitleForRendering(addBreakOpportunities = true)
             .displayText()
-            .withTitleBreakOpportunities()
         val storePreviewTitleStyle = TextStyle(
             fontFamily = PretendardFontFamily,
             fontWeight = storePreviewTitle?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
@@ -539,6 +543,7 @@ fun HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     listState = listState,
                     onCardClick = onCardClick,
+                    onAdMobClick = onAdMobClick,
                     onLoadNextPage = onLoadNextPage,
                     modifier = Modifier
                         .weight(1f)
@@ -618,6 +623,7 @@ private fun HomeListContent(
     homeListSection: HomeListSectionModel,
     listState: LazyListState,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -646,14 +652,14 @@ private fun HomeListContent(
                     onClick = { onCardClick(card) },
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
-                is HomeListCardModel.AdMobCard -> HomeListAdMobCard()
+                is HomeListCardModel.AdMobCard -> HomeListAdMobCard(onClick = { onAdMobClick(card) })
             }
         }
     }
 }
 
 @Composable
-private fun HomeListAdMobCard() {
+private fun HomeListAdMobCard(onClick: () -> Unit) {
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
@@ -673,6 +679,10 @@ private fun HomeListAdMobCard() {
                     override fun onAdFailedToLoad(error: LoadAdError) {
                         Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
                     }
+
+                    override fun onAdClicked() {
+                        onClick()
+                    }
                 }
                 loadAd(AdRequest.Builder().build())
             }
@@ -688,7 +698,7 @@ private fun HomeListBasicCard(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorWhite)
+            .serverDrivenSurface(card.style, RoundedCornerShape(0.dp), ColorWhite)
             .clickable(onClick = onClick),
     ) {
         Column(
@@ -733,32 +743,28 @@ private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ColorWhite)
+            .serverDrivenSurface(card.style, RoundedCornerShape(0.dp), ColorWhite)
             .padding(horizontal = 20.dp, vertical = 28.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val title = card.header?.title?.displayText()?.takeIf { it.isNotBlank() } ?: "조건에 맞는 가게가 없어요"
-        Text(
-            text = title,
+        SDTextRenderer(
+            text = card.header?.title ?: SDTextModel(title, false),
             color = card.header?.title?.fontColor.toColor(fallback = Gray100),
-            fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(16),
-            lineHeight = dpToSp(24),
+            fontSizeDp = 16,
+            lineHeightDp = 24,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
         )
         card.bodies.firstOrNull()?.let { body ->
-            Text(
-                text = body.displayText(),
+            SDTextRenderer(
+                text = body,
                 color = body.fontColor.toColor(fallback = Gray70),
-                fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.Medium,
-                fontSize = dpToSp(13),
-                lineHeight = dpToSp(19),
+                fontSizeDp = 13,
+                lineHeightDp = 19,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -929,42 +935,27 @@ private fun TitleWithBadge(
     lineBreak: LineBreak? = null,
     fillTitleWidth: Boolean = false,
 ) {
-    val rawTitleText = title.displayText()
-    val titleText = if (lineBreak != null) {
-        rawTitleText.withTitleBreakOpportunities()
-    } else {
-        rawTitleText
-    }
+    val titleModel = title.homeTitleForRendering(addBreakOpportunities = lineBreak != null)
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            text = titleText,
+        SDTextRenderer(
+            text = titleModel,
             color = titleColor,
-            fontFamily = PretendardFontFamily,
             fontWeight = title?.fontWeight.toServerDrivenFontWeight(titleWeight),
-            fontSize = dpToSp(titleSize),
-            lineHeight = dpToSp(titleSize + 8),
+            fontSizeDp = titleSize,
+            lineHeightDp = titleSize + 8,
             maxLines = maxLines,
-            overflow = TextOverflow.Ellipsis,
-            style = if (lineBreak != null) {
-                TextStyle(lineBreak = lineBreak)
-            } else {
-                TextStyle.Default
-            },
             modifier = Modifier.weight(1f, fill = fillTitleWidth),
         )
         badge?.let { image ->
-            ServerImage(
+            SDImageRenderer(
                 image = image,
-                modifier = Modifier.size(
-                    width = (image.style?.width ?: badgeDefaultSize.value.toDouble()).dp,
-                    height = (image.style?.height ?: badgeDefaultSize.value.toDouble()).dp,
-                ),
+                defaultWidthDp = badgeDefaultSize.value.toDouble(),
+                defaultHeightDp = badgeDefaultSize.value.toDouble(),
                 contentScale = ContentScale.Fit,
-                drawPlaceholderBackground = false,
             )
         }
     }
@@ -1084,15 +1075,13 @@ private fun StorePreviewActionButton(
         if (button.imageAlignment != "END") {
             StorePreviewActionImage(actionBar = actionBar, tint = textColor)
         }
-        Text(
-            text = button.text.displayText(),
+        SDTextRenderer(
+            text = button.text,
             color = textColor,
-            fontFamily = PretendardFontFamily,
             fontWeight = if (isVisit || isReview) FontWeight.SemiBold else FontWeight.Normal,
-            fontSize = dpToSp(13),
-            lineHeight = dpToSp(19),
+            fontSizeDp = 13,
+            lineHeightDp = 19,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
         if (button.imageAlignment == "END" || isVisit) {
             StorePreviewActionImage(actionBar = actionBar, tint = textColor, trailing = true)
@@ -1172,9 +1161,10 @@ private fun MetadataRows(
     verticalGap: Dp = 4.dp,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(verticalGap)) {
-        MetadataRow(chips = metadata.primary, defaultTextColor = Gray60)
+        MetadataRow(chips = metadata.primary, separator = metadata.separator, defaultTextColor = Gray60)
         MetadataRow(
             chips = metadata.secondary,
+            separator = metadata.separator,
             defaultTextColor = Gray60,
             firstChipColor = Gray80,
         )
@@ -1184,6 +1174,7 @@ private fun MetadataRows(
 @Composable
 private fun MetadataRow(
     chips: List<SDChipModel>,
+    separator: SDImageModel?,
     defaultTextColor: Color,
     firstChipColor: Color? = null,
 ) {
@@ -1195,21 +1186,19 @@ private fun MetadataRow(
     ) {
         chips.forEachIndexed { index, chip ->
             if (index > 0) {
-                Box(
-                    modifier = Modifier
-                        .size(2.dp)
-                        .clip(CircleShape)
-                        .background(MetadataSeparatorColor),
-                )
+                if (separator != null) {
+                    SDImageRenderer(separator, defaultWidthDp = 2.0, defaultHeightDp = 2.0)
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(2.dp)
+                            .clip(CircleShape)
+                            .background(MetadataSeparatorColor),
+                    )
+                }
             }
             MetadataChip(
                 chip = chip,
-                textColor = if (index == 0 && firstChipColor != null) {
-                    firstChipColor
-                } else {
-                    chip.text.fontColor.toColor(fallback = defaultTextColor)
-                },
-                fontWeight = chip.text.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
                 modifier = if (index == 0 && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
         }
@@ -1219,50 +1208,13 @@ private fun MetadataRow(
 @Composable
 private fun MetadataChip(
     chip: SDChipModel,
-    textColor: Color,
-    fontWeight: FontWeight,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    SDChipRenderer(
+        chip = chip,
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        chip.image?.let { image ->
-            AsyncImage(
-                model = image.url,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(
-                    width = (image.style?.width ?: 12.0).dp,
-                    height = (image.style?.height ?: 12.0).dp,
-                ),
-            )
-        }
-        Text(
-            text = chip.text.displayText(),
-            color = textColor,
-            fontFamily = PretendardFontFamily,
-            fontWeight = fontWeight,
-            fontSize = dpToSp(14),
-            lineHeight = dpToSp(20),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        chip.additionalText?.let { additionalText ->
-            Text(
-                text = additionalText.displayText(),
-                color = textColor,
-                fontFamily = PretendardFontFamily,
-                fontWeight = additionalText.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
-                fontSize = dpToSp(14),
-                lineHeight = dpToSp(20),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+        contentPadding = PaddingValues(0.dp),
+    )
 }
 
 @Composable
@@ -1275,11 +1227,11 @@ private fun HomeImages(
     val cornerRadius = if (listMode) 8.dp else 10.dp
     LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
-            ServerImage(
+            SDImageRenderer(
                 image = image,
-                modifier = Modifier
-                    .size(StorePreviewImageHeight)
-                    .clip(RoundedCornerShape(cornerRadius)),
+                modifier = Modifier.clip(RoundedCornerShape(cornerRadius)),
+                defaultWidthDp = StorePreviewImageHeight.value.toDouble(),
+                defaultHeightDp = StorePreviewImageHeight.value.toDouble(),
                 contentScale = ContentScale.Crop,
             )
         }
@@ -1361,19 +1313,16 @@ private fun BodiesRow(bodies: List<SDTextModel>) {
             Box(
                 modifier = Modifier
                     .then(if (bodies.size == 1) Modifier.fillParentMaxWidth() else Modifier.width(300.dp))
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Gray10)
+                    .serverDrivenSurface(body.style, RoundedCornerShape(12.dp), Gray10)
                     .padding(horizontal = 12.dp, vertical = StorePreviewReviewVerticalPadding),
             ) {
-                Text(
-                    text = body.displayText(),
+                SDTextRenderer(
+                    text = body,
                     color = body.fontColor.toColor(fallback = Gray70),
-                    fontFamily = PretendardFontFamily,
                     fontWeight = body.fontWeight.toServerDrivenFontWeight(FontWeight.Medium),
-                    fontSize = dpToSp(12),
-                    lineHeight = dpToSp(StorePreviewReviewLineHeight),
+                    fontSizeDp = 12,
+                    lineHeightDp = StorePreviewReviewLineHeight,
                     maxLines = StorePreviewReviewMaxLines,
-                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -1504,27 +1453,6 @@ private fun StoreSectionModel.Preview.actionStoreNameOrNull(): String? {
 private fun String.isCollapsedTitleCandidate(): Boolean {
     val title = trimEnd()
     return title.endsWith("...") || title.endsWith("…")
-}
-
-private fun String.withTitleBreakOpportunities(): String {
-    if (length <= 1) return this
-
-    return buildString {
-        var index = 0
-        while (index < this@withTitleBreakOpportunities.length) {
-            val codePoint = this@withTitleBreakOpportunities.codePointAt(index)
-            val nextIndex = index + Character.charCount(codePoint)
-            append(this@withTitleBreakOpportunities, index, nextIndex)
-            if (
-                nextIndex < this@withTitleBreakOpportunities.length &&
-                !Character.isWhitespace(codePoint) &&
-                !Character.isWhitespace(this@withTitleBreakOpportunities.codePointAt(nextIndex))
-            ) {
-                append(TitleBreakOpportunity)
-            }
-            index = nextIndex
-        }
-    }
 }
 
 private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): Dp {

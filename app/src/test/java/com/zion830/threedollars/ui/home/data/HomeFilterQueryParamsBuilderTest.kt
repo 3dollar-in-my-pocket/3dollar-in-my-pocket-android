@@ -7,10 +7,19 @@ import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Test
 
 class HomeFilterQueryParamsBuilderTest {
+
+    @Test
+    fun `build defaults sort type to popular when server bars do not provide it`() {
+        val params = HomeFilterQueryParamsBuilder.build(
+            state = HomeUIState(),
+            bars = emptyList(),
+        )
+
+        assertEquals("POPULAR", params["sortType"])
+    }
 
     @Test
     fun build_includesCertifiedStoreQueryOnlyWhenEnabled() {
@@ -70,13 +79,13 @@ class HomeFilterQueryParamsBuilderTest {
     }
 
     @Test
-    fun build_doesNotCreateSortTypeWhenServerBarsAreMissing() {
+    fun build_createsPopularSortTypeWhenServerBarsAreMissing() {
         val params = HomeFilterQueryParamsBuilder.build(
             state = HomeUIState(),
             bars = emptyList(),
         )
 
-        assertNull(params["sortType"])
+        assertEquals("POPULAR", params["sortType"])
     }
 
     private fun radioBar(

@@ -31,6 +31,7 @@ sealed interface StoreDetailV2Event {
 }
 
 sealed interface StoreDetailV2PlatformAction {
+    data class CopyAccount(val text: String) : StoreDetailV2PlatformAction
     data class OpenLink(val link: SDLinkModel) : StoreDetailV2PlatformAction
     data class Share(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
     data class Navigation(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
@@ -43,6 +44,8 @@ sealed interface StoreDetailV2PlatformAction {
     data class CopyAddress(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
     data class EnlargeMap(val customAction: SDCustomActionModel) : StoreDetailV2PlatformAction
 }
+
+internal const val STORE_DETAIL_ACCOUNT_COPY_ACTION = "ACCOUNT_COPY"
 
 internal fun canSubmitStoreDetailReviewReport(
     reasons: List<ReasonModel>,

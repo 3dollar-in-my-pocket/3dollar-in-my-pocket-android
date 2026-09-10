@@ -9,6 +9,15 @@ data class HomeListSectionResponse(
     val cards: List<HomeListCardResponse>? = emptyList(),
     @SerializedName("cursor")
     val cursor: SDCursorResponse? = null,
+    @SerializedName("focusBounds")
+    val focusBounds: SDLocationBoundsResponse? = null,
+)
+
+data class SDLocationBoundsResponse(
+    @SerializedName("southWest")
+    val southWest: SDLocationResponse? = null,
+    @SerializedName("northEast")
+    val northEast: SDLocationResponse? = null,
 )
 
 data class HomeListCardResponse(
@@ -34,6 +43,17 @@ data class HomeListCardResponse(
     val clickLog: SDClickLogResponse? = null,
     @SerializedName("impressionLog")
     val impressionLog: SDImpressionLogResponse? = null,
+    @SerializedName("refs")
+    val refs: List<HomeListStoreReferenceResponse>? = emptyList(),
+)
+
+data class HomeListStoreReferenceResponse(
+    @SerializedName("type")
+    val type: String? = null,
+    @SerializedName("storeId")
+    val storeId: String? = null,
+    @SerializedName("storeType")
+    val storeType: String? = null,
 )
 
 data class HomeListCardHeaderResponse(
@@ -122,6 +142,8 @@ data class SDTextResponse(
     private val rawFontColor: String? = null,
     @SerializedName("fontWeight")
     private val rawFontWeight: String? = null,
+    @SerializedName("style")
+    val style: SDSurfaceStyleResponse? = null,
 ) {
     val text: String?
         get() = rawText.textContent()

@@ -2,6 +2,7 @@ package com.threedollar.common.serverdriven.model
 
 data class SDScreenModel(
     val sections: List<SDSectionModel> = emptyList(),
+    val viewLog: SDViewLogModel? = null,
 )
 
 sealed interface SDSectionModel {
@@ -30,6 +31,7 @@ sealed interface SDSectionModel {
 
 data class SDActionBarModel(
     val button: SDButtonModel,
+    val clickLog: SDClickLogModel? = null,
 )
 
 data class SDHeaderModel(
@@ -50,6 +52,7 @@ sealed interface SDCardModel {
         override val title: SDTextModel,
         val description: SDTextModel,
         override val style: SDSurfaceStyleModel? = null,
+        val clickLog: SDClickLogModel? = null,
     ) : SDCardModel
 
     data class HistoryCard(
@@ -61,6 +64,7 @@ sealed interface SDCardModel {
         val image: SDImageModel? = null,
         val metadata: SDTextModel? = null,
         override val style: SDSurfaceStyleModel? = null,
+        val clickLog: SDClickLogModel? = null,
     ) : SDCardModel
 
     data class Unknown(
@@ -68,6 +72,7 @@ sealed interface SDCardModel {
         override val cardId: String,
         override val title: SDTextModel,
         override val style: SDSurfaceStyleModel? = null,
+        val clickLog: SDClickLogModel? = null,
     ) : SDCardModel
 }
 
@@ -76,6 +81,7 @@ data class SDTextModel(
     val isHtml: Boolean,
     val fontColor: String? = null,
     val fontWeight: String? = null,
+    val style: SDSurfaceStyleModel? = null,
 )
 
 data class SDTextSpansModel(
@@ -168,6 +174,18 @@ data class SDLocationModel(
 data class HomeListSectionModel(
     val cards: List<HomeListCardModel> = emptyList(),
     val cursor: SDCursorModel? = null,
+    val focusBounds: SDLocationBoundsModel? = null,
+)
+
+data class SDLocationBoundsModel(
+    val southWest: SDLocationModel,
+    val northEast: SDLocationModel,
+)
+
+data class HomeListStoreReferenceModel(
+    val type: String,
+    val storeId: String,
+    val storeType: String,
 )
 
 sealed interface HomeListCardModel {
@@ -181,11 +199,12 @@ sealed interface HomeListCardModel {
         val metadata: HomeListCardMetadataModel,
         val images: List<SDImageModel> = emptyList(),
         val bodies: List<SDTextModel> = emptyList(),
-        val marker: HomeListMarkerModel,
+        val marker: HomeListMarkerModel? = null,
         val link: SDLinkModel? = null,
         val style: SDSurfaceStyleModel? = null,
         val clickLog: SDClickLogModel? = null,
         val impressionLog: SDImpressionLogModel? = null,
+        val refs: List<HomeListStoreReferenceModel> = emptyList(),
     ) : HomeListCardModel
 
     data class EmptyCard(
@@ -194,6 +213,7 @@ sealed interface HomeListCardModel {
         val header: HomeListCardHeaderModel? = null,
         val bodies: List<SDTextModel> = emptyList(),
         val style: SDSurfaceStyleModel? = null,
+        val impressionLog: SDImpressionLogModel? = null,
     ) : HomeListCardModel
 
     data class AdMobCard(

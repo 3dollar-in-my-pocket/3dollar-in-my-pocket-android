@@ -3,6 +3,8 @@ package com.zion830.threedollars.ui.storeDetail.v2
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,11 +47,12 @@ fun StoreDetailV2Content(
     onAction: (StoreActionBarModel) -> Unit,
     onViewLog: (SDViewLogModel) -> Unit = {},
     onImpression: (String, SDImpressionLogModel) -> Unit = { _, _ -> },
+    onClickLog: (SDClickLogModel) -> Unit = { runCatching { SDClickLogger.send(it) } },
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val adStates = rememberStoreDetailAdMobStates(screen.sections, onImpression)
+    val adStates = rememberStoreDetailAdMobStates(screen.sections, onImpression, onClickLog)
 
     LaunchedEffect(screen.viewLog) {
         onViewLog(screen.viewLog)
@@ -77,32 +80,38 @@ fun StoreDetailV2Content(
             contentType = { _, section -> section.type },
         ) { _, section ->
             when (section) {
-                is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section, onAction)
+                is StoreDetailSectionModel.Callout -> StoreDetailCalloutSection(section)
+                is StoreDetailSectionModel.Margin -> Spacer(Modifier.fillMaxWidth().height(section.height.coerceAtLeast(0).dp))
                 is StoreDetailSectionModel.Preview -> StoreDetailPreviewSection(section, onAction)
                 is StoreDetailSectionModel.AdMob -> StoreDetailAdMobSection(
                     section = section,
-                    adState = section.cards.firstOrNull()?.cardId?.let(adStates::get),
+                    adStates = adStates,
                 )
-                is StoreDetailSectionModel.Tab -> StoreDetailTabSection(section) { actionBar ->
+                is StoreDetailSectionModel.Tab -> StoreDetailTabSection(
+                    section,
+                    isActionEnabled = { action ->
+                        action.targetSectionTypeOrNull()?.let { screen.sections.indexOfStoreDetailTarget(it) >= 0 } ?: true
+                    },
+                ) { actionBar ->
                     handleStoreDetailTabClick(
                         actionBar = actionBar,
                         sections = screen.sections,
                         onScrollToSection = { index -> coroutineScope.launch { listState.animateScrollToItem(index) } },
                         onAction = onAction,
-                        onClickLog = { log -> runCatching { SDClickLogger.send(log) } },
+                        onClickLog = onClickLog,
                     )
                 }
                 is StoreDetailSectionModel.Map -> StoreDetailMapSection(section, onAction)
                 is StoreDetailSectionModel.Edit -> StoreDetailEditSection(section, onAction)
                 is StoreDetailSectionModel.Coupon -> StoreDetailCouponSection(section, onAction)
-                is StoreDetailSectionModel.Visit -> StoreDetailVisitSection(section)
+                is StoreDetailSectionModel.Visit -> StoreDetailVisitSection(section, onAction)
                 is StoreDetailSectionModel.Post -> StoreDetailPostSection(section, onAction)
                 is StoreDetailSectionModel.Image -> StoreDetailImageSection(section, onAction)
                 is StoreDetailSectionModel.AppearanceDay -> StoreDetailAppearanceDaySection(section, onAction)
                 is StoreDetailSectionModel.RelatedStores -> StoreDetailRelatedStoresSection(section, onAction)
                 is StoreDetailSectionModel.Cta -> StoreDetailCtaSection(section, onAction)
                 is StoreDetailSectionModel.Review -> StoreDetailReviewSection(section, onAction)
-                is StoreDetailSectionModel.InfoV1 -> StoreDetailInfoV1Section(section)
+                is StoreDetailSectionModel.InfoV1 -> StoreDetailInfoV1Section(section, onAction)
                 is StoreDetailSectionModel.InfoV2 -> StoreDetailInfoV2Section(section, onAction)
             }
         }
@@ -116,7 +125,9 @@ internal fun handleStoreDetailTabClick(
     onAction: (StoreActionBarModel) -> Unit,
     onClickLog: (SDClickLogModel) -> Unit,
 ) {
-    val targetIndex = actionBar.targetSectionTypeOrNull()?.let(sections::indexOfStoreDetailTarget) ?: -1
+    val targetType = actionBar.targetSectionTypeOrNull()
+    val targetIndex = targetType?.let(sections::indexOfStoreDetailTarget) ?: -1
+    if (targetType != null && targetIndex < 0) return
     if (targetIndex >= 0) {
         (actionBar.clickLog ?: actionBar.button.clickLog)?.let(onClickLog)
         onScrollToSection(targetIndex)
@@ -184,6 +195,7 @@ internal fun StoreActionBarModel.targetSectionTypeOrNull(): String? {
         "info" -> "INFO"
         "images" -> "IMAGE"
         "reviews" -> "REVIEW"
+        "post" -> "POST"
         else -> null
     }
 }

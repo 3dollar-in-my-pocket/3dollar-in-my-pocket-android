@@ -16,12 +16,12 @@ class StoreDetailScreenMapperDiscriminatorTest {
             """
             {
               "sections": [
-                {"type":"CALLOUT","content":{"title":{"text":"callout","isHtml":false,"fontColor":"#000000"}}},
+                {"type":"CALLOUT","content":{"image":{"url":"verified","style":{"width":21,"height":21}},"text":{"text":"callout","isHtml":false,"fontColor":"#FFFFFF"},"style":{"backgroundColor":"#232323"}}},
                 {"type":"PREVIEW","header":{},"metadata":{"primary":[],"secondary":[],"separator":{"url":"dot","style":{"width":2,"height":2}}},"actionBars":[],"images":[],"bodies":[],"style":{"backgroundColor":"#FFFFFF"},"additionalInfos":{"type":"EMPTY"}},
+                {"type":"MARGIN","height":8},
                 {"type":"AD_MOB","cards":[]},
                 {"type":"TAB","tabs":[]},
-                {"type":"MAP","location":{"latitude":37.1,"longitude":127.2},"footerRight":{"button":{"style":{"backgroundColor":"#FFFFFF"}}}},
-                {"type":"EDIT","actionBars":[]},
+                {"type":"EDIT","map":{"location":{"latitude":37.1,"longitude":127.2},"footerRight":{"button":{"style":{"backgroundColor":"#FFFFFF"}}}},"actionBars":[]},
                 {"type":"COUPON","cards":[]},
                 {"type":"VISIT","header":{"title":{"text":"visit","isHtml":false,"fontColor":"#000000"}},"summary":{"title":{"text":"summary","isHtml":false,"fontColor":"#000000"},"stars":{"images":[]},"rating":{"text":"0","isHtml":false,"fontColor":"#000000"},"style":{"backgroundColor":"#FFFFFF"}},"history":{"items":[],"style":{"backgroundColor":"#FFFFFF"}}},
                 {"type":"POST","header":{"title":{"text":"post","isHtml":false,"fontColor":"#000000"}},"cards":[]},
@@ -45,16 +45,16 @@ class StoreDetailScreenMapperDiscriminatorTest {
         requireNotNull(model)
         assertEquals(
             listOf(
-                "CALLOUT", "PREVIEW", "AD_MOB", "TAB", "MAP", "EDIT", "COUPON", "VISIT",
+                "CALLOUT", "PREVIEW", "MARGIN", "AD_MOB", "TAB", "EDIT", "COUPON", "VISIT",
                 "POST", "IMAGE", "APPEARANCE_DAY", "RELATED_STORES", "CTA", "REVIEW", "INFO_V1", "INFO_V2",
             ),
             model.sections.map { it.type },
         )
         assertTrue(model.sections[0] is StoreDetailSectionModel.Callout)
         assertTrue(model.sections[1] is StoreDetailSectionModel.Preview)
-        assertTrue(model.sections[2] is StoreDetailSectionModel.AdMob)
-        assertTrue(model.sections[3] is StoreDetailSectionModel.Tab)
-        assertTrue(model.sections[4] is StoreDetailSectionModel.Map)
+        assertTrue(model.sections[2] is StoreDetailSectionModel.Margin)
+        assertTrue(model.sections[3] is StoreDetailSectionModel.AdMob)
+        assertTrue(model.sections[4] is StoreDetailSectionModel.Tab)
         assertTrue(model.sections[5] is StoreDetailSectionModel.Edit)
         assertTrue(model.sections[6] is StoreDetailSectionModel.Coupon)
         assertTrue(model.sections[7] is StoreDetailSectionModel.Visit)
@@ -66,6 +66,24 @@ class StoreDetailScreenMapperDiscriminatorTest {
         assertTrue(model.sections[13] is StoreDetailSectionModel.Review)
         assertTrue(model.sections[14] is StoreDetailSectionModel.InfoV1)
         assertTrue(model.sections[15] is StoreDetailSectionModel.InfoV2)
+    }
+
+    @Test
+    fun mapperKeepsLegacyStandaloneMapCompatibility() {
+        val response = Gson().fromJson(
+            """
+            {
+              "sections":[{"type":"MAP","location":{"latitude":37.1,"longitude":127.2},"footerRight":{"button":{"style":{"backgroundColor":"#FFFFFF"}}}}],
+              "viewLog":{"screenName":"store_detail"}
+            }
+            """.trimIndent(),
+            StoreDetailScreenResponse::class.java,
+        )
+
+        val section = requireNotNull(response.asStoreDetailModelOrNull()).sections.single()
+
+        assertTrue(section is StoreDetailSectionModel.Map)
+        assertEquals(37.1, (section as StoreDetailSectionModel.Map).location.latitude, 0.0)
     }
 
     @Test

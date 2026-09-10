@@ -18,21 +18,33 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @AndroidEntryPoint
-class NearStoreNaverMapFragment(
-    private val cameraMoved: () -> Unit = {},
-    private val onLocationButtonClicked: () -> Unit = {}
-) : NaverMapFragment() {
+class NearStoreNaverMapFragment : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
-    private var isFirstLoad = true
     private var locationButtonBottomMarginPx = SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP)
+    private var cameraMoved: () -> Unit = {}
+    private var onLocationButtonClicked: () -> Unit = {}
+    private var mapReady: () -> Unit = {}
+
+    fun attachCallbacks(
+        cameraMoved: () -> Unit,
+        onLocationButtonClicked: () -> Unit,
+        onMapReady: () -> Unit,
+    ) {
+        this.cameraMoved = cameraMoved
+        this.onLocationButtonClicked = onLocationButtonClicked
+        this.mapReady = onMapReady
+        if (naverMap != null) onMapReady()
+    }
 
     override fun onMapReady(map: NaverMap) {
         setIsShowOverlay(isLocationAvailable())
         super.onMapReady(map)
 
-        if (!isLocationAvailable()) {
-            map.locationTrackingMode = LocationTrackingMode.None
+        map.locationTrackingMode = if (isLocationAvailable()) {
+            LocationTrackingMode.NoFollow
+        } else {
+            LocationTrackingMode.None
         }
 
         applyLocationButtonBottomMargin()
@@ -46,15 +58,7 @@ class NearStoreNaverMapFragment(
                 cameraMoved()
             }
         }
-        if (isFirstLoad) {
-            val savedPosition = viewModel.getSavedMapPosition()
-            when {
-                savedPosition != null -> moveCamera(savedPosition)
-                isLocationAvailable() -> moveToCurrentLocation()
-                else -> moveCamera(getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION)
-            }
-            isFirstLoad = false
-        }
+        mapReady()
     }
 
     fun updateLocationButtonBottomMargin(bottomMarginPx: Int) {

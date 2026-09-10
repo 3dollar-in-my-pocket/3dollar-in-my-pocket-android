@@ -49,6 +49,7 @@ import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
+import com.zion830.threedollars.core.ui.serverdriven.SDChipRenderer
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -174,11 +175,15 @@ private fun HomeFilterButtonChip(
         contentDescription = button.text.displayText(),
         modifier = Modifier.clickable(role = Role.Button, onClick = onClick),
     ) {
-        button.image?.let { image ->
-            HomeFilterImage(image = image)
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-        HomeFilterText(text = button.text)
+        SDChipRenderer(
+            chip = SDChipModel(
+                image = button.image,
+                text = button.text,
+                imageAlignment = button.imageAlignment,
+                contentSpacing = 6.0,
+            ),
+            contentPadding = PaddingValues(0.dp),
+        )
     }
 }
 
@@ -219,15 +224,10 @@ private fun HomeFilterChipSurface(
 
 @Composable
 private fun HomeFilterChipContent(chip: SDChipModel) {
-    chip.image?.let { image ->
-        HomeFilterImage(image = image)
-        Spacer(modifier = Modifier.width(6.dp))
-    }
-    HomeFilterText(text = chip.text)
-    chip.additionalText?.let { additionalText ->
-        Spacer(modifier = Modifier.width(4.dp))
-        HomeFilterText(text = additionalText)
-    }
+    SDChipRenderer(
+        chip = chip.copy(style = null),
+        contentPadding = PaddingValues(0.dp),
+    )
 }
 
 @Composable

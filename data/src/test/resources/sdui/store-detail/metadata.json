@@ -1,0 +1,40 @@
+{
+  "source": {
+    "serverCommit": "3d2691298340fe1a53923cbc1c88b0060dd44c3a",
+    "release": "v4.76.1"
+  },
+  "sourceDerived": {
+    "file": "source-derived-all-types.json",
+    "sectionTypeCount": 16,
+    "basis": "backend-prod StoreSection implementations and production composers, including coupon and POST payload shapes"
+  },
+  "fixtures": [
+    {
+      "file": "prod-store-120024-anonymized.json",
+      "storeKind": "USER_STORE",
+      "sectionCount": 14
+    },
+    {
+      "file": "prod-store-106775-anonymized.json",
+      "storeKind": "BOSS_STORE",
+      "sectionCount": 15
+    },
+    {
+      "file": "prod-store-121173-anonymized.json",
+      "storeKind": "USER_STORE",
+      "sectionCount": 15
+    },
+    {
+      "file": "prod-store-525611-anonymized.json",
+      "storeKind": "BOSS_STORE",
+      "sectionCount": 16
+    }
+  ],
+  "redaction": "IDs, store/user/author text, bodies, addresses, account labels, and user/store photo URLs were replaced with test values. Structure, types, nullability, server icon URLs, dimensions, and styles were retained.",
+  "additionalSourceDerived": [
+    {
+      "file": "source-derived-review-reply.json",
+      "basis": "StoreReviewSectionComposer.kt:293-312 at 3d269129; anonymous review card plus first comment writer, createdAt, body and non-owner reply background"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "sections": [
+    {
+      "type": "REVIEW",
+      "header": {
+        "title": {
+          "text": "<span style=\"font-size:16px; font-weight:700; color:#0F0F0F\">테스트 문구</span><span style=\"font-size:16px; font-weight:400; color:#0F0F0F\">테스트 문구</span>",
+          "isHtml": true,
+          "fontColor": "#0F0F0F"
+        },
+        "trailingAction": {
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:700; color:#FF858F\">테스트 문구</span>",
+            "isHtml": true,
+            "fontColor": "#FF858F"
+          },
+          "customAction": {
+            "actionType": "STORE_REVIEW_SECTION_REVIEW_WRITE",
+            "extraParams": {
+              "STORE_ID": "test-id"
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_detail",
+            "objectType": "button",
+            "objectId": "write_review",
+            "extraParameters": {
+              "store_id": "test-id"
+            }
+          },
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      },
+      "summary": {
+        "title": {
+          "text": "<span style=\"font-size:10px; font-weight:500; color:#969696\">테스트 문구</span>",
+          "isHtml": true,
+          "fontColor": "#969696"
+        },
+        "stars": {
+          "images": [
+            {
+              "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+              "style": {
+                "width": 24.0,
+                "height": 24.0
+              }
+            },
+            {
+              "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+              "style": {
+                "width": 24.0,
+                "height": 24.0
+              }
+            },
+            {
+              "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+              "style": {
+                "width": 24.0,
+                "height": 24.0
+              }
+            },
+            {
+              "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+              "style": {
+                "width": 24.0,
+                "height": 24.0
+              }
+            },
+            {
+              "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+              "style": {
+                "width": 24.0,
+                "height": 24.0
+              }
+            }
+          ]
+        },
+        "rating": {
+          "text": "<span style=\"font-size:20px; font-weight:600; color:#2E2E2E\">테스트 문구</span>",
+          "isHtml": true,
+          "fontColor": "#2E2E2E"
+        },
+        "style": {
+          "backgroundColor": "#FFF3F4"
+        }
+      },
+      "cards": [
+        {
+          "cardId": "T:test-card",
+          "header": {
+            "title": {
+              "text": "<span style=\"font-size:12px; font-weight:500; color:#2E2E2E\">테스트 문구</span>",
+              "isHtml": true,
+              "fontColor": "#2E2E2E"
+            },
+            "subTitle": {
+              "text": "<span style=\"font-size:12px; font-weight:500; color:#B7B7B7\">테스트 문구</span>",
+              "isHtml": true,
+              "fontColor": "#B7B7B7"
+            },
+            "trailingAction": {
+              "text": {
+                "text": "<span style=\"font-size:12px; font-weight:700; color:#787878\">테스트 문구</span>",
+                "isHtml": true,
+                "fontColor": "#787878"
+              },
+              "customAction": {
+                "actionType": "STORE_REVIEW_SECTION_REPORT",
+                "extraParams": {
+                  "STORE_ID": "test-id",
+                  "REVIEW_ID": "test-id"
+                }
+              },
+              "clickLog": {
+                "eventType": "CLICK",
+                "screenName": "store_detail",
+                "objectType": "button",
+                "objectId": "review_report",
+                "extraParameters": {}
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF"
+              }
+            }
+          },
+          "metadata": [
+            {
+              "image": {
+                "url": "https://storage.threedollars.co.kr/medal/v1-56cf5108-0b61-406d-a38d-192e3d22872d.png",
+                "style": {
+                  "width": 16.0,
+                  "height": 16.0
+                }
+              },
+              "imageAlignment": "START",
+              "text": {
+                "text": "<span style=\"font-size:10px; font-weight:500; color:#FF858F\">테스트 문구</span>",
+                "isHtml": true,
+                "fontColor": "#FF858F"
+              },
+              "contentSpacing": 2.0,
+              "style": {
+                "backgroundColor": "#FFF3F4"
+              }
+            }
+          ],
+          "stars": {
+            "images": [
+              {
+                "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+                "style": {
+                  "width": 24.0,
+                  "height": 24.0
+                }
+              },
+              {
+                "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+                "style": {
+                  "width": 24.0,
+                  "height": 24.0
+                }
+              },
+              {
+                "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+                "style": {
+                  "width": 24.0,
+                  "height": 24.0
+                }
+              },
+              {
+                "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+                "style": {
+                  "width": 24.0,
+                  "height": 24.0
+                }
+              },
+              {
+                "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+                "style": {
+                  "width": 24.0,
+                  "height": 24.0
+                }
+              }
+            ],
+            "style": {
+              "backgroundColor": "#FFF3F4"
+            }
+          },
+          "images": [],
+          "body": {
+            "text": "<span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">테스트 문구</span>",
+            "isHtml": true,
+            "fontColor": "#2E2E2E"
+          },
+          "like": {
+            "selected": {
+              "text": {
+                "text": "<span style=\"font-size:10px; font-weight:500; color:#FF5C43\">테스트 문구</span>",
+                "isHtml": true,
+                "fontColor": "#FF5C43"
+              },
+              "image": {
+                "url": "https://storage.threedollars.co.kr/app/heart_fill.png",
+                "style": {
+                  "width": 16.0,
+                  "height": 16.0
+                }
+              },
+              "customAction": {
+                "actionType": "STORE_REVIEW_SECTION_CANCEL_LIKE",
+                "extraParams": {
+                  "STORE_ID": "test-id",
+                  "REVIEW_ID": "test-id",
+                  "STICKER_ID": "test-id"
+                }
+              },
+              "clickLog": {
+                "eventType": "CLICK",
+                "screenName": "store_detail",
+                "objectType": "button",
+                "objectId": "review_like",
+                "extraParameters": {
+                  "type": "cancel"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF"
+              }
+            },
+            "unselected": {
+              "text": {
+                "text": "<span style=\"font-size:10px; font-weight:500; color:#191919\">테스트 문구</span>",
+                "isHtml": true,
+                "fontColor": "#191919"
+              },
+              "image": {
+                "url": "https://storage.threedollars.co.kr/app/heart_line.png",
+                "style": {
+                  "width": 16.0,
+                  "height": 16.0
+                }
+              },
+              "customAction": {
+                "actionType": "STORE_REVIEW_SECTION_ADD_LIKE",
+                "extraParams": {
+                  "STORE_ID": "test-id",
+                  "REVIEW_ID": "test-id",
+                  "STICKER_ID": "test-id"
+                }
+              },
+              "clickLog": {
+                "eventType": "CLICK",
+                "screenName": "store_detail",
+                "objectType": "button",
+                "objectId": "review_like",
+                "extraParameters": {
+                  "type": "add"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF"
+              }
+            },
+            "isSelected": false
+          },
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          },
+          "reply": {
+            "header": {
+              "title": {
+                "text": "<span style=\"font-size:12px; font-weight:700; color:#2E2E2E\">테스트 사장님</span>",
+                "isHtml": true,
+                "fontColor": "#2E2E2E"
+              },
+              "subTitle": {
+                "text": "<span style=\"font-size:12px; font-weight:500; color:#B7B7B7\">2026.09.09</span>",
+                "isHtml": true,
+                "fontColor": "#B7B7B7"
+              }
+            },
+            "body": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">답글 계약 확인</span>",
+              "isHtml": true,
+              "fontColor": "#2E2E2E"
+            },
+            "style": {
+              "backgroundColor": "#F4F4F4"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "viewLog": {
+    "eventType": "PAGE_VIEW",
+    "screenName": "store_detail",
+    "extraParameters": {
+      "store_id": "test-id",
+      "store_type": "USER_STORE"
+    }
+  }
+}

@@ -16,6 +16,7 @@ apply(from = "../common.gradle")
 android {
     namespace = "com.zion830.threedollars"
     compileSdk = libs.versions.compileSdk.get().toInt()
+    sourceSets.getByName("debug").assets.srcDir("../data/src/test/resources/sdui")
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()

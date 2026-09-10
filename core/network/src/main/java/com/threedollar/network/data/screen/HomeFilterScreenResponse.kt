@@ -8,11 +8,26 @@ data class HomeFilterScreenResponse(
     val sections: List<HomeFilterSectionResponse>? = emptyList(),
     @SerializedName("viewLog")
     val viewLog: HomeFilterViewLogResponse? = null,
+    @SerializedName("configuration")
+    val configuration: HomeScreenConfigurationResponse? = null,
+)
+
+data class HomeScreenConfigurationResponse(
+    @SerializedName("initialMapZoomLevel")
+    val initialMapZoomLevel: Double? = null,
 )
 
 data class HomeFilterViewLogResponse(
     @SerializedName("screenName")
     val screenName: String? = null,
+    @SerializedName("eventType")
+    val eventType: String? = null,
+    @SerializedName("objectType")
+    val objectType: String? = null,
+    @SerializedName("objectId")
+    val objectId: String? = null,
+    @SerializedName("extraParameters")
+    val extraParameters: Map<String, JsonElement>? = null,
 )
 
 data class HomeFilterSectionResponse(
@@ -50,6 +65,10 @@ data class HomeFilterChipResponse(
     val additionalText: HomeFilterTextResponse? = null,
     @SerializedName("style")
     val style: HomeFilterChipStyleResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
+    @SerializedName("contentSpacing")
+    val contentSpacing: Double? = null,
 )
 
 data class HomeFilterChipStyleResponse(
@@ -64,10 +83,16 @@ data class HomeFilterButtonResponse(
     val text: HomeFilterTextResponse? = null,
     @SerializedName("image")
     val image: HomeFilterImageResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
     @SerializedName("link")
     val link: HomeFilterLinkResponse? = null,
+    @SerializedName("customAction")
+    val customAction: SDCustomActionResponse? = null,
     @SerializedName("style")
     val style: HomeFilterButtonStyleResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: HomeFilterClickLogResponse? = null,
 )
 
 data class HomeFilterButtonStyleResponse(
@@ -102,6 +127,8 @@ data class HomeFilterTextResponse(
     val isHtml: Boolean? = false,
     @SerializedName("fontColor")
     val fontColor: String? = null,
+    @SerializedName("fontWeight")
+    val fontWeight: String? = null,
 )
 
 data class HomeFilterImageResponse(
@@ -140,6 +167,8 @@ data class HomeFilterBorderResponse(
 )
 
 data class HomeFilterClickLogResponse(
+    @SerializedName("eventType")
+    val eventType: String? = null,
     @SerializedName("screenName")
     val screenName: String? = null,
     @SerializedName("objectType")

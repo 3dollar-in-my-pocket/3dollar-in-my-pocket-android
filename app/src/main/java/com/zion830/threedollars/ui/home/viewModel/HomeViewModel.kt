@@ -15,6 +15,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
+import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.HomeScreenSection
@@ -41,13 +42,21 @@ import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
+import com.zion830.threedollars.ui.home.data.HomeFocusBoundsEffect
 import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
+import com.zion830.threedollars.ui.home.data.HomePageViewEvent
+import com.zion830.threedollars.ui.home.data.HomePageViewCoordinator
 import com.zion830.threedollars.ui.home.data.HomeUIState
+import com.zion830.threedollars.ui.home.data.reconcileHomeRadioSelection
+import com.zion830.threedollars.ui.home.data.homeImpressionLogs
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
 import com.zion830.threedollars.ui.home.data.withStorePreviewFavoriteOverride
 import com.zion830.threedollars.utils.NaverMapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -55,6 +64,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -88,6 +98,12 @@ class HomeViewModel @Inject constructor(
     private val _homeListSection = MutableStateFlow(HomeListSectionModel())
     val homeListSection: StateFlow<HomeListSectionModel> = _homeListSection.asStateFlow()
 
+    private val _homeFocusBounds = MutableStateFlow<HomeFocusBoundsEffect?>(null)
+    val homeFocusBounds: StateFlow<HomeFocusBoundsEffect?> = _homeFocusBounds.asStateFlow()
+
+    private val homePageViewEvents = Channel<HomePageViewEvent>(Channel.BUFFERED)
+    val homePageViewEvent = homePageViewEvents.receiveAsFlow()
+
     private val _selectedStoreScreen = MutableStateFlow<StoreScreenModel?>(null)
     val selectedStoreScreen: StateFlow<StoreScreenModel?> = _selectedStoreScreen.asStateFlow()
 
@@ -103,7 +119,19 @@ class HomeViewModel @Inject constructor(
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
 
     private var homeListNextCursor: String? = null
+    private var currentFirstPageParams: com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParams? = null
     private var isHomeListLoading = false
+    private val homeRequestCoordinator = HomeRequestCoordinator()
+    private var currentFirstPageToken: HomeRequestToken? = null
+    private var homeListJob: Job? = null
+    private var homePaginationJob: Job? = null
+    private var filterJob: Job? = null
+    private var filterGeneration = 0L
+    private var isFirstFilterAttemptResolved = false
+    private var lastSuccessfulFilterScreen: HomeFilterScreenModel? = null
+    private val firstPageGate = HomeFirstPageGate<PendingFirstPageRequest>()
+    private val homePageViewCoordinator = HomePageViewCoordinator()
+    private var homeMapGestureEpoch = 0L
 
     private var shouldResetScroll = false
 
@@ -157,112 +185,176 @@ class HomeViewModel @Inject constructor(
         _uiState.update { it.copy(userLocation = latLng) }
     }
 
-    fun fetchAroundStores() {
-        fetchAroundStores(uiState.value)
+    fun fetchAroundStores(requestFocusBounds: Boolean = false) {
+        requestFirstHomeListPage(
+            PendingFirstPageRequest(
+                preserveSelectedStore = false,
+                requestFocusBounds = requestFocusBounds,
+                focusGestureEpoch = homeMapGestureEpoch,
+            )
+        )
     }
 
     fun fetchAroundStores(
         mapPosition: LatLng,
         userLocation: LatLng = mapPosition,
+        requestFocusBounds: Boolean = true,
     ) {
-        val state = uiState.value.copy(
-            mapPosition = mapPosition,
-            userLocation = userLocation,
-        )
-        _uiState.value = state
+        _uiState.update { state ->
+            state.copy(
+                mapPosition = mapPosition,
+                userLocation = userLocation,
+            )
+        }
         savedStateHandle[KEY_MAP_POSITION] = mapPosition
-        fetchAroundStores(state)
-    }
-
-    private fun fetchAroundStores(state: HomeUIState) {
-        fetchHomeListSection(state = state, cursor = null, append = false)
+        fetchAroundStores(requestFocusBounds = requestFocusBounds)
     }
 
     fun refreshHomeListSectionAfterStoreUpdate() {
-        fetchHomeListSection(
-            state = uiState.value,
-            cursor = null,
-            append = false,
-            preserveSelectedStore = true,
+        requestFirstHomeListPage(
+            PendingFirstPageRequest(
+                preserveSelectedStore = true,
+                requestFocusBounds = false,
+                focusGestureEpoch = homeMapGestureEpoch,
+            )
         )
     }
 
     fun fetchNextHomeListSection() {
         val cursor = homeListNextCursor ?: return
-        if (isHomeListLoading) return
-        fetchHomeListSection(state = uiState.value, cursor = cursor, append = true)
+        val parentToken = currentFirstPageToken ?: return
+        val token = homeRequestCoordinator.beginNextPage(parentToken, cursor) ?: return
+        val params = currentFirstPageParams ?: return
+        homePaginationJob = launchHomeListRequest(
+            token = token,
+            state = uiState.value,
+            params = params,
+            append = true,
+            preserveSelectedStore = false,
+            requestFocusBounds = false,
+            focusGestureEpoch = homeMapGestureEpoch,
+        )
     }
 
-    private fun fetchHomeListSection(
-        state: HomeUIState,
-        cursor: String?,
-        append: Boolean,
-        preserveSelectedStore: Boolean = false,
-    ) {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            isHomeListLoading = true
-            val previousSelectedCardId = _selectedHomeListCardId.value
-            val previousSelectedStoreId = _selectedStorePreviewStoreId.value
-            val params = HomeAroundStoreRequestParamsBuilder.build(
-                state = state,
-                bars = allBars(),
-            )
+    private fun requestFirstHomeListPage(request: PendingFirstPageRequest) {
+        val readyRequest = firstPageGate.submit(request) ?: return
+        val state = uiState.value
+        val bars = barsForState(state)
+        val params = HomeAroundStoreRequestParamsBuilder.build(state = state, bars = bars)
+        val token = homeRequestCoordinator.beginFirstPage()
+        currentFirstPageToken = token
+        currentFirstPageParams = params
+        _homeFocusBounds.value = null
+        homeListJob?.cancel()
+        homePaginationJob?.cancel()
+        homePaginationJob = null
+        homeListNextCursor = null
+        homeListJob = launchHomeListRequest(
+            token = token,
+            state = state,
+            params = params,
+            append = false,
+            preserveSelectedStore = readyRequest.preserveSelectedStore,
+            requestFocusBounds = readyRequest.requestFocusBounds,
+            focusGestureEpoch = readyRequest.focusGestureEpoch,
+        )
+    }
 
-            screenRepository.getHomeListSection(
-                distanceM = params.distanceM,
-                categoryIds = params.categoryIds,
-                targetStores = params.targetStores,
-                mapLatitude = params.mapLatitude,
-                mapLongitude = params.mapLongitude,
-                deviceLatitude = params.deviceLatitude,
-                deviceLongitude = params.deviceLongitude,
-                dynamicParams = HomeListSectionQueryParamsBuilder.build(params.dynamicParams),
-                cursor = cursor,
-            ).collect { response ->
-                isHomeListLoading = false
-                if (response.ok) {
-                    val section = response.data ?: HomeListSectionModel()
-                    val nextCards = if (append) {
-                        _homeListSection.value.cards + section.cards
-                    } else {
-                        section.cards
-                    }
-                    _currentLocation.emit(state.mapPosition)
-                    _homeListSection.value = section.copy(cards = nextCards)
-                    homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
-                    if (!append) {
-                        val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
-                        val selectedCardId = if (preserveSelectedStore) {
-                            cards.selectedCardIdAfterRefresh(
-                                previousSelectedCardId = previousSelectedCardId,
-                                previousSelectedStoreId = previousSelectedStoreId,
-                            )
+    private fun launchHomeListRequest(
+        token: HomeRequestToken,
+        state: HomeUIState,
+        params: com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParams,
+        append: Boolean,
+        preserveSelectedStore: Boolean,
+        requestFocusBounds: Boolean,
+        focusGestureEpoch: Long,
+    ): Job {
+        val selectedCardIdAtStart = _selectedHomeListCardId.value
+        return viewModelScope.launch {
+            isHomeListLoading = true
+            try {
+                screenRepository.getHomeListSection(
+                    distanceM = params.distanceM,
+                    categoryIds = params.categoryIds,
+                    targetStores = params.targetStores,
+                    mapLatitude = params.mapLatitude,
+                    mapLongitude = params.mapLongitude,
+                    deviceLatitude = params.deviceLatitude,
+                    deviceLongitude = params.deviceLongitude,
+                    dynamicParams = HomeListSectionQueryParamsBuilder.build(params.dynamicParams),
+                    cursor = token.cursor,
+                ).collect { response ->
+                    if (!homeRequestCoordinator.isCurrent(token)) return@collect
+                    if (response.ok) {
+                        val section = response.data ?: HomeListSectionModel()
+                        val nextCards = if (append) {
+                            _homeListSection.value.cards + section.cards
                         } else {
-                            cards.firstOrNull()?.cardId
+                            section.cards
                         }
-                        _selectedHomeListCardId.value = selectedCardId
-                        if (preserveSelectedStore && previousSelectedStoreId != null && _selectedStoreScreen.value != null) {
-                            cards.firstOrNull { it.cardId == selectedCardId }
-                                ?.let { updateStorePreviewFromCard(previousSelectedStoreId, it) }
+                        _currentLocation.emit(state.mapPosition)
+                        _homeListSection.value = section.copy(cards = nextCards)
+                        homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
+                        if (!append) {
+                            val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+                            val latestSelectedCardId = _selectedHomeListCardId.value
+                            val latestSelectedStoreId = _selectedStorePreviewStoreId.value
+                            val selectedCardId = resolveHomeSelectedCardId(
+                                cards = cards,
+                                selectedCardIdAtStart = selectedCardIdAtStart,
+                                latestSelectedCardId = latestSelectedCardId,
+                                latestSelectedStoreId = latestSelectedStoreId,
+                                preserveSelectedStore = preserveSelectedStore,
+                            )
+                            _selectedHomeListCardId.value = selectedCardId
+                            if (preserveSelectedStore && latestSelectedStoreId != null && _selectedStoreScreen.value != null) {
+                                cards.firstOrNull { it.cardId == selectedCardId }
+                                    ?.let { updateStorePreviewFromCard(latestSelectedStoreId, it) }
+                            }
+                            if (requestFocusBounds && focusGestureEpoch == homeMapGestureEpoch) {
+                                section.focusBounds?.let { bounds ->
+                                    _homeFocusBounds.value = HomeFocusBoundsEffect(
+                                        generation = token.generation,
+                                        gestureEpoch = focusGestureEpoch,
+                                        bounds = bounds,
+                                    )
+                                }
+                            }
                         }
+                        sendHomeListImpressionLogs(section.cards)
+                    } else {
+                        _serverError.emit(response.message)
                     }
-                    sendHomeListImpressionLogs(section.cards)
-                } else {
-                    _serverError.emit(response.message)
                 }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                if (homeRequestCoordinator.isCurrent(token)) {
+                    _serverError.emit(throwable.message)
+                }
+            } finally {
+                homeRequestCoordinator.finish(token)
+                if (homeRequestCoordinator.isCurrent(token)) isHomeListLoading = false
             }
         }
     }
 
-    private fun List<HomeListCardModel.BasicCard>.selectedCardIdAfterRefresh(
-        previousSelectedCardId: String?,
-        previousSelectedStoreId: Long?,
-    ): String? {
-        return firstOrNull { it.cardId == previousSelectedCardId }?.cardId
-            ?: previousSelectedStoreId?.let { storeId ->
-                firstOrNull { it.storePreviewStoreIdOrNull() == storeId }?.cardId
-            }
-            ?: firstOrNull()?.cardId
+    fun onHomeMapGesture() {
+        homeMapGestureEpoch += 1
+        _homeFocusBounds.value = null
+    }
+
+    fun consumeHomeFocusBounds(effect: HomeFocusBoundsEffect) {
+        if (isHomeFocusBoundsCurrent(effect)) {
+            _homeFocusBounds.value = null
+        }
+    }
+
+    fun isHomeFocusBoundsCurrent(effect: HomeFocusBoundsEffect): Boolean {
+        val current = _homeFocusBounds.value ?: return false
+        return current == effect &&
+            current.gestureEpoch == homeMapGestureEpoch &&
+            currentFirstPageToken?.generation == current.generation
     }
 
     fun selectHomeListCard(card: HomeListCardModel.BasicCard) {
@@ -276,9 +368,13 @@ class HomeViewModel @Inject constructor(
         card.clickLog?.let { SDClickLogger.send(it) }
     }
 
+    fun sendClickHomeListAdMob(card: HomeListCardModel.AdMobCard) {
+        card.clickLog?.let { SDClickLogger.send(it) }
+    }
+
     fun selectHomeListMarker(card: HomeListCardModel.BasicCard) {
         _selectedHomeListCardId.value = card.cardId
-        card.marker.clickLog?.let { SDClickLogger.send(it) }
+        card.marker?.clickLog?.let { SDClickLogger.send(it) }
         val storeId = card.storePreviewStoreIdOrNull()
         fetchStoreScreen(storeId, fallbackCard = card)
     }
@@ -385,7 +481,7 @@ class HomeViewModel @Inject constructor(
 
         viewModelScope.launch(coroutineExceptionHandler) {
             _uiState.update { it.copy(selectedCategory = selected) }
-            fetchAroundStores()
+            fetchAroundStores(requestFocusBounds = true)
             updateFilterCells()
         }
     }
@@ -399,7 +495,7 @@ class HomeViewModel @Inject constructor(
                     filterCertifiedStores = filterCertifiedStores ?: it.filterCertifiedStores,
                 )
             }
-            fetchAroundStores()
+            fetchAroundStores(requestFocusBounds = true)
             updateFilterCells()
         }
     }
@@ -457,13 +553,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun sendHomeListImpressionLogs(cards: List<HomeListCardModel>) {
-        cards.forEach { card ->
-            when (card) {
-                is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.EmptyCard -> Unit
-            }
-        }
+        cards.homeImpressionLogs().forEach(SDClickLogger::send)
     }
 
     fun updateStoreItem(userStore: UserStoreModel) {
@@ -488,24 +578,114 @@ class HomeViewModel @Inject constructor(
 
     // ----- SDU filter -----
 
+    fun retryHomeFilterScreen() {
+        fetchHomeFilterScreen()
+    }
+
+    fun retryHomeFilterScreenIfFailed(): Boolean {
+        if (!uiState.value.hasFilterScreenFailure) return false
+        fetchHomeFilterScreen()
+        return true
+    }
+
     private fun fetchHomeFilterScreen() {
-        viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getHomeFilterScreen().collect { response ->
-                if (response.ok && response.data != null) {
-                    val sections = response.data!!.sections
-                    _uiState.update {
-                        it.copy(
-                            filterSections = sections,
-                            hasLoadedFilterScreen = true,
-                        )
+        filterJob?.cancel()
+        val generation = ++filterGeneration
+        filterJob = viewModelScope.launch {
+            try {
+                screenRepository.getHomeFilterScreen().collect { response ->
+                    if (generation != filterGeneration) return@collect
+                    val screen = response.data?.takeIf { response.ok }
+                    if (screen != null) {
+                        applyHomeFilterScreen(screen)
+                    } else {
+                        resolveHomeFilterFailure()
                     }
-                    initializeRadioSelectionDefaults()
-                    updateFilterCells()
-                } else {
-                    _filterCells.value = makeFallbackFilterCells(uiState.value.selectedCategory)
+                }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (throwable: Throwable) {
+                if (generation == filterGeneration) {
+                    resolveHomeFilterFailure()
+                    _serverError.emit(throwable.message)
                 }
             }
         }
+    }
+
+    private fun applyHomeFilterScreen(screen: HomeFilterScreenModel) {
+        val oldState = uiState.value
+        val oldBars = barsForState(oldState)
+        val newBars = screen.sections
+            .filterIsInstance<HomeScreenSection.HomeFilterSectionModel>()
+            .flatMap { it.bars }
+        val newSelection = reconcileHomeRadioSelection(
+            oldSelection = oldState.radioSelection,
+            oldBars = oldBars,
+            newBars = newBars,
+        )
+        val wasResolved = isFirstFilterAttemptResolved
+        val changed = screen != lastSuccessfulFilterScreen
+        _uiState.value = oldState.copy(
+            filterSections = screen.sections,
+            radioSelection = newSelection,
+            hasLoadedFilterScreen = true,
+            hasResolvedFilterScreen = true,
+            hasFilterScreenFailure = false,
+            initialMapZoomLevel = screen.configuration?.initialMapZoomLevel,
+        )
+        lastSuccessfulFilterScreen = screen
+        isFirstFilterAttemptResolved = true
+        updateFilterCells()
+        resolveHomePageView(HomePageViewEvent(serverLog = screen.viewLog))
+        if (!wasResolved) {
+            flushPendingFirstPageRequest()
+        } else if (changed) {
+            requestFirstHomeListPage(
+                PendingFirstPageRequest(
+                    preserveSelectedStore = true,
+                    requestFocusBounds = false,
+                    focusGestureEpoch = homeMapGestureEpoch,
+                )
+            )
+        }
+    }
+
+    private fun resolveHomeFilterFailure() {
+        val wasResolved = isFirstFilterAttemptResolved
+        isFirstFilterAttemptResolved = true
+        _uiState.update {
+            it.copy(
+                hasResolvedFilterScreen = true,
+                hasFilterScreenFailure = true,
+                initialMapZoomLevel = null,
+            )
+        }
+        _filterCells.value = makeFallbackFilterCells(uiState.value.selectedCategory)
+        resolveHomePageView(HomePageViewEvent(serverLog = null))
+        if (!wasResolved) {
+            flushPendingFirstPageRequest()
+        } else {
+            requestFirstHomeListPage(
+                PendingFirstPageRequest(
+                    preserveSelectedStore = true,
+                    requestFocusBounds = false,
+                    focusGestureEpoch = homeMapGestureEpoch,
+                )
+            )
+        }
+    }
+
+    private fun flushPendingFirstPageRequest() {
+        firstPageGate.resolve()?.let(::requestFirstHomeListPage)
+    }
+
+    private fun resolveHomePageView(event: HomePageViewEvent) {
+        homePageViewCoordinator.resolve(event).forEach(homePageViewEvents::trySend)
+    }
+
+    fun requestHomePageView() {
+        homePageViewCoordinator.onEntry()?.let(homePageViewEvents::trySend)
     }
 
     fun selectRadioOption(paramKey: String, optionIndex: Int) {
@@ -521,7 +701,7 @@ class HomeViewModel @Inject constructor(
         }
         option.clickLog?.let { sendClickEvent(it) }
             ?: sendLegacyFallbackFilterLog(paramKey = paramKey, paramValue = option.paramValue)
-        fetchAroundStores()
+        fetchAroundStores(requestFocusBounds = true)
         updateFilterCells()
     }
 
@@ -535,8 +715,10 @@ class HomeViewModel @Inject constructor(
         changeSelectCategory(null)
     }
 
-    private fun allBars(): List<HomeFilterBar> {
-        val serverBars = uiState.value.filterSections
+    private fun allBars(): List<HomeFilterBar> = barsForState(uiState.value)
+
+    private fun barsForState(state: HomeUIState): List<HomeFilterBar> {
+        val serverBars = state.filterSections
             .filterIsInstance<HomeScreenSection.HomeFilterSectionModel>()
             .flatMap { it.bars }
         return serverBars.ifEmpty { fallbackBars() }
@@ -891,3 +1073,9 @@ class HomeViewModel @Inject constructor(
         )
     }
 }
+
+private data class PendingFirstPageRequest(
+    val preserveSelectedStore: Boolean,
+    val requestFocusBounds: Boolean,
+    val focusGestureEpoch: Long,
+)

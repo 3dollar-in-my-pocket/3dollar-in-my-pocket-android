@@ -49,6 +49,7 @@ class StoreContributorViewModel @Inject constructor(
             StoreContributorUiIntent.OnCloseClick -> _effect.trySend(StoreContributorUiEffect.Close)
             StoreContributorUiIntent.OnLoadNextPage -> loadNextPage()
             is StoreContributorUiIntent.OnActionClick -> _effect.trySend(StoreContributorUiEffect.ExecuteAction(intent.action))
+            is StoreContributorUiIntent.OnButtonActionClick -> _effect.trySend(StoreContributorUiEffect.ExecuteButtonAction(intent.button))
         }
     }
 

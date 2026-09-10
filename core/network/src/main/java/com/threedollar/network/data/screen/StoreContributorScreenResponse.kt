@@ -1,10 +1,13 @@
 package com.threedollar.network.data.screen
 
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 
 data class StoreContributorScreenResponse(
     @SerializedName("sections")
     val sections: List<StoreContributorSectionResponse>? = emptyList(),
+    @SerializedName("viewLog")
+    val viewLog: SDPageViewLogResponse? = null,
 )
 
 data class StoreContributorHistoriesResponse(
@@ -32,11 +35,17 @@ data class StoreContributorSectionResponse(
 data class StoreContributorActionBarResponse(
     @SerializedName("button")
     val button: StoreContributorButtonResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: StoreContributorClickLogResponse? = null,
 )
 
 data class StoreContributorHeaderResponse(
     @SerializedName("title")
     val title: StoreContributorTextResponse? = null,
+    @SerializedName("subTitle")
+    val subTitle: StoreContributorTextResponse? = null,
+    @SerializedName("trailingAction")
+    val trailingAction: StoreContributorButtonResponse? = null,
 )
 
 data class StoreContributorCardResponse(
@@ -58,6 +67,8 @@ data class StoreContributorCardResponse(
     val metadata: StoreContributorTextResponse? = null,
     @SerializedName("style")
     val style: StoreContributorSurfaceStyleResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: StoreContributorClickLogResponse? = null,
 )
 
 data class StoreContributorTextResponse(
@@ -67,6 +78,8 @@ data class StoreContributorTextResponse(
     val isHtml: Boolean? = false,
     @SerializedName("fontColor")
     val fontColor: String? = null,
+    @SerializedName("fontWeight")
+    val fontWeight: String? = null,
 )
 
 data class StoreContributorImageResponse(
@@ -88,10 +101,16 @@ data class StoreContributorButtonResponse(
     val text: StoreContributorTextResponse? = null,
     @SerializedName("image")
     val image: StoreContributorImageResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
     @SerializedName("link")
     val link: StoreContributorLinkResponse? = null,
+    @SerializedName("customAction")
+    val customAction: StoreContributorCustomActionResponse? = null,
     @SerializedName("style")
     val style: StoreContributorSurfaceStyleResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: StoreContributorClickLogResponse? = null,
 )
 
 data class StoreContributorChipResponse(
@@ -103,6 +122,30 @@ data class StoreContributorChipResponse(
     val additionalText: StoreContributorTextResponse? = null,
     @SerializedName("style")
     val style: StoreContributorSurfaceStyleResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
+    @SerializedName("contentSpacing")
+    val contentSpacing: Double? = null,
+)
+
+data class StoreContributorCustomActionResponse(
+    @SerializedName("actionType")
+    val actionType: String? = null,
+    @SerializedName("extraParams")
+    val extraParams: Map<String, JsonElement>? = null,
+)
+
+data class StoreContributorClickLogResponse(
+    @SerializedName("eventType")
+    val eventType: String? = null,
+    @SerializedName("screenName")
+    val screenName: String? = null,
+    @SerializedName("objectType")
+    val objectType: String? = null,
+    @SerializedName("objectId")
+    val objectId: String? = null,
+    @SerializedName("extraParameters")
+    val extraParameters: Map<String, JsonElement>? = null,
 )
 
 data class StoreContributorLinkResponse(

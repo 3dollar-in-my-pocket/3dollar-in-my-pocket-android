@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -79,18 +82,21 @@ fun SDScreenBodyRenderer(
 fun SDSectionRenderer(
     section: SDSectionModel,
     onAction: (SDLinkModel) -> Unit,
+    onButtonAction: (SDButtonModel) -> Unit = { button -> button.link?.let(onAction) },
 ) {
     when (section) {
         is SDSectionModel.ActionBarSection -> {
             SDActionButton(
                 button = section.actionBar.button,
                 fillMaxWidth = true,
-                onAction = onAction,
+                onClick = {
+                    onButtonAction(section.actionBar.button.copy(clickLog = section.actionBar.clickLog ?: section.actionBar.button.clickLog))
+                },
             )
         }
 
         is SDSectionModel.HeaderSection -> {
-            SDHeaderRenderer(header = section.header)
+            SDHeaderRenderer(header = section.header, onButtonAction = onButtonAction)
         }
 
         is SDSectionModel.CardsSection -> {
@@ -106,13 +112,18 @@ fun SDSectionRenderer(
 }
 
 @Composable
-private fun SDHeaderRenderer(header: SDHeaderModel) {
-    SDTextRenderer(
-        text = header.title,
-        fontWeight = FontWeight.Bold,
-        fontSizeDp = 24,
-        lineHeightDp = 32,
-    )
+private fun SDHeaderRenderer(header: SDHeaderModel, onButtonAction: (SDButtonModel) -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            SDTextRenderer(header.title, fontWeight = FontWeight.Bold, fontSizeDp = 24, lineHeightDp = 32)
+            header.subTitle?.takeIf { it.displayText().isNotBlank() }?.let {
+                SDTextRenderer(it, fontSizeDp = 14, lineHeightDp = 20)
+            }
+        }
+        header.trailingAction?.let { button ->
+            SDActionButton(button, fillMaxWidth = false, onClick = { onButtonAction(button) })
+        }
+    }
 }
 
 @Composable
@@ -132,13 +143,15 @@ fun SDCardRenderer(card: SDCardModel) {
                     fontSizeDp = 16,
                     lineHeightDp = 24,
                 )
-                SDTextRenderer(
-                    text = card.description,
-                    color = Gray50,
-                    fontWeight = FontWeight.Medium,
-                    fontSizeDp = 12,
-                    lineHeightDp = 18,
-                )
+                if (card.description.displayText().isNotBlank()) {
+                    SDTextRenderer(
+                        text = card.description,
+                        color = Gray50,
+                        fontWeight = FontWeight.Medium,
+                        fontSizeDp = 12,
+                        lineHeightDp = 18,
+                    )
+                }
             }
         }
 
@@ -230,6 +243,7 @@ fun SDActionButton(
     fillMaxWidth: Boolean,
     modifier: Modifier = Modifier,
     imageOverride: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     val sizeModifier = if (fillMaxWidth) {
@@ -241,6 +255,7 @@ fun SDActionButton(
     }
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = sizeModifier,
         shape = DefaultButtonShape,
         border = button.style.toBorderStroke(defaultColor = Gray100),
@@ -286,27 +301,36 @@ fun SDActionButton(
 fun SDChipRenderer(
     chip: SDChipModel,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
 ) {
+    val image = chip.image?.takeIf { it.url.isNotBlank() }
+    val hasText = chip.text.displayText().isNotBlank()
+    val additionalText = chip.additionalText?.takeIf { it.displayText().isNotBlank() }
+    if (image == null && !hasText && additionalText == null) return
+    val imageAtEnd = chip.imageAlignment.equals("END", ignoreCase = true)
+    val spacing = chip.contentSpacing?.takeIf { it.isFinite() }?.coerceAtLeast(0.0) ?: 4.0
     val shape = RoundedCornerShape(999.dp)
     Row(
         modifier = modifier
             .clip(shape)
             .background(chip.style.toBackgroundColor(default = Color.Transparent))
             .then(chip.style.toBorderModifier(shape = shape, defaultColor = Color.Transparent))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy((chip.contentSpacing ?: 4.0).dp),
+            .padding(contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(spacing.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        chip.image?.let { image ->
-            SDImageRenderer(image = image)
+        if (image != null && !imageAtEnd) {
+            SDImageRenderer(image)
         }
-        SDTextRenderer(
-            text = chip.text,
-            fontWeight = FontWeight.Medium,
-            fontSizeDp = 12,
-            lineHeightDp = 18,
-        )
-        chip.additionalText?.let {
+        if (hasText) {
+            SDTextRenderer(
+                text = chip.text,
+                fontWeight = FontWeight.Medium,
+                fontSizeDp = 12,
+                lineHeightDp = 18,
+            )
+        }
+        additionalText?.let {
             SDTextRenderer(
                 text = it,
                 color = Gray50,
@@ -314,6 +338,9 @@ fun SDChipRenderer(
                 fontSizeDp = 12,
                 lineHeightDp = 18,
             )
+        }
+        if (image != null && imageAtEnd) {
+            SDImageRenderer(image)
         }
     }
 }
@@ -397,14 +424,18 @@ fun buildAnnotatedStringFromSpans(spans: List<SDTextModel>): AnnotatedString = b
 fun SDImageRenderer(
     image: SDImageModel,
     modifier: Modifier = Modifier,
+    defaultWidthDp: Double = 16.0,
+    defaultHeightDp: Double = 16.0,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
+    val width = image.style?.width ?: defaultWidthDp
+    val height = image.style?.height ?: defaultHeightDp
+    if (!width.isFinite() || !height.isFinite() || width <= 0.0 || height <= 0.0) return
     AsyncImage(
         model = image.url,
         contentDescription = null,
-        modifier = modifier.size(
-            width = (image.style?.width ?: 16.0).dp,
-            height = (image.style?.height ?: 16.0).dp,
-        ),
+        contentScale = contentScale,
+        modifier = modifier.width(width.dp).aspectRatio((width / height).toFloat()),
     )
 }
 

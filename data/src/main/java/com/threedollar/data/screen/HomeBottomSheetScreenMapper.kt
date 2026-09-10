@@ -5,6 +5,7 @@ import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListMarkerModel
+import com.threedollar.common.serverdriven.model.HomeListStoreReferenceModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDButtonModel
@@ -18,6 +19,7 @@ import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDLocationModel
+import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
@@ -52,6 +54,7 @@ import com.threedollar.network.data.screen.StoreSectionResponse
 fun HomeListSectionResponse.asModel(): HomeListSectionModel = HomeListSectionModel(
     cards = cards.orEmpty().mapNotNull { it.asHomeListCardModelOrNull() },
     cursor = cursor?.asModel(),
+    focusBounds = focusBounds?.asModelOrNull(),
 )
 
 fun StoreScreenResponse.asModel(): StoreScreenModel = StoreScreenModel(
@@ -63,19 +66,19 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
     val normalizedType = type.orEmpty().uppercase()
     return when {
         normalizedType == "BASIC_CARD" || normalizedType == "BASIC" || hasBasicCardShape() -> {
-            val markerModel = marker?.asModelOrNull() ?: return null
             HomeListCardModel.BasicCard(
                 type = type.orEmpty(),
                 cardId = cardId.orEmpty(),
                 header = header.asModel(),
                 metadata = metadata.asModel(),
                 images = images.orEmpty().mapNotNull { it.asModelOrNull() },
-                bodies = bodies.orEmpty().map { it.asModel() },
-                marker = markerModel,
+                bodies = bodies.orEmpty().map { it.asModel().copy(style = it.style?.asModel()) },
+                marker = marker?.asModelOrNull(),
                 link = link?.takeIf { !it.link.isNullOrBlank() }?.asModel(),
                 style = style?.asModel(),
                 clickLog = clickLog?.asModel(),
                 impressionLog = impressionLog?.asModel(),
+                refs = refs.orEmpty().mapNotNull { it.asModelOrNull() },
             )
         }
 
@@ -85,6 +88,7 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
             header = header?.asModel(),
             bodies = bodies.orEmpty().map { it.asModel() },
             style = style?.asModel(),
+            impressionLog = impressionLog?.asModel(),
         )
 
         normalizedType == "ADMOB_CARD" || normalizedType == "AD_MOB" -> HomeListCardModel.AdMobCard(
@@ -99,7 +103,20 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
 }
 
 private fun HomeListCardResponse.hasBasicCardShape(): Boolean {
-    return header != null && metadata != null && marker != null
+    return header != null && metadata != null
+}
+
+private fun com.threedollar.network.data.screen.HomeListStoreReferenceResponse.asModelOrNull(): HomeListStoreReferenceModel? {
+    val referenceType = type?.takeIf(String::isNotBlank) ?: return null
+    val id = storeId?.takeIf(String::isNotBlank) ?: return null
+    val sourceStoreType = storeType?.takeIf(String::isNotBlank) ?: return null
+    return HomeListStoreReferenceModel(referenceType, id, sourceStoreType)
+}
+
+private fun com.threedollar.network.data.screen.SDLocationBoundsResponse.asModelOrNull(): SDLocationBoundsModel? {
+    val southWestModel = southWest?.asModelOrNull() ?: return null
+    val northEastModel = northEast?.asModelOrNull() ?: return null
+    return SDLocationBoundsModel(southWestModel, northEastModel)
 }
 
 private fun StoreSectionResponse.asStoreSectionModelOrNull(): StoreSectionModel? {

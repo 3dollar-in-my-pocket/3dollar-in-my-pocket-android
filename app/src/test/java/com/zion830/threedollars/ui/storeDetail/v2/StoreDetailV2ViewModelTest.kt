@@ -38,6 +38,60 @@ import org.junit.Test
 class StoreDetailV2ViewModelTest {
 
     @Test
+    fun localAccountCopyCarriesPlainDisplayedBankAndAccount() = runBlocking {
+        val viewModel = StoreDetailV2ViewModel(DeferredScreenRepository(), unusedHomeRepository())
+        val copiedTexts = mutableListOf<String?>()
+        val observer = launch(Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
+            viewModel.events.filterIsInstance<StoreDetailV2Event.Platform>().collect {
+                copiedTexts += com.google.gson.Gson().toJsonTree(it.action).asJsonObject.get("text")?.asString
+            }
+        }
+        try {
+            viewModel.onAction(StoreActionBarModel("ACCOUNT_COPY", SDButtonModel(
+                text = SDTextModel("<span style=\"font-weight:500\">테스트은행 123-456</span>", true),
+            )))
+            yield()
+            assertEquals(listOf("테스트은행 123-456"), copiedTexts)
+        } finally {
+            observer.cancel()
+        }
+    }
+
+    @Test
+    fun deployedEditMapActionsEmitTheirHostEvents() = runBlocking {
+        val viewModel = StoreDetailV2ViewModel(DeferredScreenRepository(), unusedHomeRepository())
+        val actions = mutableListOf<StoreDetailV2PlatformAction>()
+        val observer = launch(Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
+            viewModel.events.filterIsInstance<StoreDetailV2Event.Platform>().collect { actions += it.action }
+        }
+        try {
+            viewModel.onAction(actionBar("STORE_EDIT_SECTION_COPY_ADDRESS"))
+            viewModel.onAction(actionBar("STORE_EDIT_SECTION_MAP_ENLARGE"))
+            yield()
+            assertEquals(
+                listOf(StoreDetailV2PlatformAction.CopyAddress::class.java, StoreDetailV2PlatformAction.EnlargeMap::class.java),
+                actions.map { it.javaClass },
+            )
+        } finally {
+            observer.cancel()
+        }
+    }
+
+    @Test
+    fun couponUsePrefersTheDeployedIssuedKeyOverLegacyKey() = runBlocking {
+        val repository = DeferredScreenRepository().apply {
+            mutationResponse = BaseResponse(ok = false, data = false)
+        }
+        val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())
+        viewModel.load(5L, null, null)
+        viewModel.onAction(actionBar("STORE_COUPON_SECTION_COUPON_USE", extraParams = mapOf(
+            "COUPON_ISSUED_KEY" to SDClickLogValue.StringValue("deployed-issued"),
+            "ISSUED_KEY" to SDClickLogValue.StringValue("legacy-issued"),
+        )))
+        assertEquals("deployed-issued", repository.usedIssuedKey)
+    }
+
+    @Test
     fun resumedSelectionKeepsContentButClosingAndReselectingLoadsAgain() = runBlocking {
         val repository = DeferredScreenRepository()
         val viewModel = StoreDetailV2ViewModel(repository, unusedHomeRepository())

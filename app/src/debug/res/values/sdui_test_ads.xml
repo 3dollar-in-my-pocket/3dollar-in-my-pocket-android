@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google fixed-size banner demo unit; debug builds only. -->
+    <string name="admob_list_banner" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+</resources>

@@ -33,7 +33,6 @@ import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray100
 import base.compose.Pink
-import coil3.compose.AsyncImage
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapView
@@ -44,6 +43,7 @@ import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailRatingModel
+import com.threedollar.common.serverdriven.model.StoreDetailMapModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
 import com.zion830.threedollars.ui.home.ui.compose.StorePreviewActionBarRow
 import com.zion830.threedollars.core.ui.serverdriven.SDActionButton as ServerDrivenActionButton
@@ -56,24 +56,17 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 @Composable
 internal fun StoreDetailCalloutSection(
     section: StoreDetailSectionModel.Callout,
-    onAction: (StoreActionBarModel) -> Unit,
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Gray10)
+            .serverDrivenSurface(section.content.style, RectangleShape, Color.Transparent)
             .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        SDTextRenderer(section.content.title, fontSizeDp = 15, lineHeightDp = 21)
-        section.content.subTitle?.let {
-            SDTextRenderer(it, color = Gray70, fontSizeDp = 13, lineHeightDp = 19)
-        }
-        section.content.footerLeftButton?.let { button ->
-            StoreDetailTextButton(button = button) {
-                onAction(syntheticActionBar(button, "CALLOUT"))
-            }
-        }
+        SDImageRenderer(section.content.image)
+        SDTextRenderer(section.content.text, modifier = Modifier.weight(1f), fontSizeDp = 14, lineHeightDp = 20)
     }
 }
 
@@ -83,7 +76,8 @@ internal fun StoreDetailPreviewSection(
     onAction: (StoreActionBarModel) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
+        modifier = Modifier.fillMaxWidth().serverDrivenSurface(section.style, RectangleShape, Color.Transparent)
+            .padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -96,7 +90,7 @@ internal fun StoreDetailPreviewSection(
                     modifier = Modifier.weight(1f),
                 )
             }
-            section.header.badge?.let { StoreDetailImage(it, Modifier.size(20.dp), ContentScale.Fit) }
+            section.header.badge?.let { StoreDetailImage(it, Modifier, ContentScale.Fit, 20.0, 20.0) }
         }
         section.metadata.primary.takeIf(List<*>::isNotEmpty)?.let {
             StoreDetailChipRow(it, section.metadata.separator)
@@ -125,8 +119,10 @@ internal fun StoreDetailPreviewSection(
                 section.images.forEach { image ->
                     StoreDetailImage(
                         image = image,
-                        modifier = Modifier.size(120.dp).clip(RoundedCornerShape(10.dp)),
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp)),
                         contentScale = ContentScale.Crop,
+                        defaultWidthDp = 120.0,
+                        defaultHeightDp = 120.0,
                     )
                 }
             }
@@ -149,6 +145,7 @@ internal fun StoreDetailPreviewSection(
 @Composable
 internal fun StoreDetailTabSection(
     section: StoreDetailSectionModel.Tab,
+    isActionEnabled: (StoreActionBarModel) -> Boolean = { true },
     onAction: (StoreActionBarModel) -> Unit,
 ) {
     Row(
@@ -156,7 +153,7 @@ internal fun StoreDetailTabSection(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         section.tabs.forEach { action ->
-            StoreDetailTextButton(button = action.button) { onAction(action) }
+            StoreDetailTextButton(button = action.button, enabled = isActionEnabled(action)) { onAction(action) }
         }
     }
 }
@@ -164,6 +161,14 @@ internal fun StoreDetailTabSection(
 @Composable
 internal fun StoreDetailMapSection(
     section: StoreDetailSectionModel.Map,
+    onAction: (StoreActionBarModel) -> Unit,
+) {
+    StoreDetailMapContent(StoreDetailMapModel(section.location, section.footerLeft, section.footerRight), onAction)
+}
+
+@Composable
+private fun StoreDetailMapContent(
+    section: StoreDetailMapModel,
     onAction: (StoreActionBarModel) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp)) {
@@ -240,23 +245,28 @@ internal fun StoreDetailEditSection(
     section: StoreDetailSectionModel.Edit,
     onAction: (StoreActionBarModel) -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        section.actionBars.forEach { action ->
-            StoreDetailActionButton(action, { onAction(action) }, Modifier.weight(1f))
+    Column(Modifier.fillMaxWidth()) {
+        section.map?.let { StoreDetailMapContent(it, onAction) }
+        if (section.actionBars.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                section.actionBars.forEach { action ->
+                    StoreDetailActionButton(action, { onAction(action) }, Modifier.weight(1f))
+                }
+            }
         }
     }
 }
 
 @Composable
-internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit) {
+internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit, onAction: (StoreActionBarModel) -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        StoreDetailSectionHeader(section.header.title, section.header.subTitle)
+        StoreDetailSectionHeader(section.header.title, section.header.subTitle, section.header.trailingAction, onAction)
         if (section.summary.chips.isNotEmpty()) {
             StoreDetailChipRow(section.summary.chips)
         } else {
@@ -268,9 +278,14 @@ internal fun StoreDetailVisitSection(section: StoreDetailSectionModel.Visit) {
                 }
             }
         }
-        StoreDetailChipRow(section.history.items)
-        section.history.moreText?.let {
-            SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
+        Column(
+            Modifier.fillMaxWidth().serverDrivenSurface(section.history.style, RectangleShape, Color.Transparent),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            StoreDetailChipRow(section.history.items)
+            section.history.moreText?.let {
+                SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18)
+            }
         }
     }
 }
@@ -310,7 +325,7 @@ internal fun StoreDetailAppearanceDaySection(
             onAction = onAction,
         )
         section.items.forEach { item ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().serverDrivenSurface(item.style, RectangleShape, Color.Transparent), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SDTextRenderer(item.leadingText, color = Pink, fontSizeDp = 14, lineHeightDp = 20)
                 Column(Modifier.weight(1f)) {
                     SDTextRenderer(item.primaryText, color = Gray100, fontSizeDp = 14, lineHeightDp = 20)
@@ -339,12 +354,14 @@ internal fun StoreDetailActionButton(
 @Composable
 internal fun StoreDetailTextButton(
     button: SDButtonModel,
+    enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     ServerDrivenActionButton(
         button = button,
         fillMaxWidth = false,
         modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
+        enabled = enabled,
         onClick = onClick,
     )
 }
@@ -373,11 +390,14 @@ internal fun StoreDetailImage(
     image: SDImageModel,
     modifier: Modifier,
     contentScale: ContentScale,
+    defaultWidthDp: Double = 16.0,
+    defaultHeightDp: Double = 16.0,
 ) {
-    AsyncImage(
-        model = image.url,
-        contentDescription = null,
+    SDImageRenderer(
+        image = image,
         contentScale = contentScale,
         modifier = modifier,
+        defaultWidthDp = defaultWidthDp,
+        defaultHeightDp = defaultHeightDp,
     )
 }

@@ -19,12 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,6 +49,7 @@ import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDImpressionLogModel
+import com.threedollar.common.serverdriven.model.SDClickLogModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreDetailAdMobCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailSectionModel
@@ -119,7 +123,7 @@ internal fun StoreDetailPostSection(
                 if (card.images.isNotEmpty()) {
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         card.images.forEach { image ->
-                            StoreDetailImage(image, Modifier.size(160.dp).clip(RoundedCornerShape(8.dp)), ContentScale.Crop)
+                            StoreDetailImage(image, Modifier.clip(RoundedCornerShape(8.dp)), ContentScale.Crop, 160.0, 160.0)
                         }
                     }
                 }
@@ -209,7 +213,7 @@ internal fun StoreDetailRelatedStoresSection(
                         },
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    StoreDetailImage(card.image, Modifier.fillMaxWidth().height(136.dp), ContentScale.Crop)
+                    StoreDetailImage(card.image, Modifier.align(Alignment.CenterHorizontally), ContentScale.Crop, 176.0, 136.0)
                     SDTextRenderer(card.title, color = Gray100, fontSizeDp = 14, lineHeightDp = 20, modifier = Modifier.padding(horizontal = 10.dp))
                     Column(Modifier.padding(horizontal = 10.dp)) {
                         StoreDetailChipRow(card.metricLabel)
@@ -245,7 +249,7 @@ internal fun StoreDetailReviewSection(
         }
         section.cards.forEach { card ->
             Column(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth().serverDrivenSurface(card.style, RectangleShape, Color.Transparent).padding(vertical = 8.dp)
                     .then(card.link?.let { link -> Modifier.clickable {
                         onAction(
                             StoreActionBarModel(
@@ -268,7 +272,7 @@ internal fun StoreDetailReviewSection(
                 StoreDetailChipRow(card.metadata)
                 if (card.images.isNotEmpty()) {
                     Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        card.images.forEach { StoreDetailImage(it, Modifier.size(100.dp).clip(RoundedCornerShape(8.dp)), ContentScale.Crop) }
+                        card.images.forEach { StoreDetailImage(it, Modifier.clip(RoundedCornerShape(8.dp)), ContentScale.Crop, 100.0, 100.0) }
                     }
                 }
                 SDTextRenderer(card.body, color = Gray70, fontSizeDp = 14, lineHeightDp = 20)
@@ -279,6 +283,10 @@ internal fun StoreDetailReviewSection(
                 card.reply?.let { reply ->
                     Column(Modifier.fillMaxWidth().serverDrivenSurface(reply.style, RoundedCornerShape(10.dp), Gray10).padding(12.dp)) {
                         SDTextRenderer(reply.header.title, color = Gray100, fontSizeDp = 13, lineHeightDp = 19)
+                        reply.header.subTitle?.let { SDTextRenderer(it, color = Gray50, fontSizeDp = 12, lineHeightDp = 18) }
+                        reply.header.trailingAction?.let { button ->
+                            StoreDetailTextButton(button) { onAction(syntheticActionBar(button, "REPLY_HEADER")) }
+                        }
                         SDTextRenderer(reply.body, color = Gray70, fontSizeDp = 13, lineHeightDp = 19)
                     }
                 }
@@ -312,12 +320,13 @@ internal fun StoreDetailCtaSection(
 internal fun rememberStoreDetailAdMobStates(
     sections: List<StoreDetailSectionModel>,
     onImpression: (String, SDImpressionLogModel) -> Unit,
+    onClickLog: (SDClickLogModel) -> Unit = { runCatching { SDClickLogger.send(it) } },
 ): Map<String, StoreDetailAdMobState> {
     val context = androidx.compose.ui.platform.LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val cards = sections
         .filterIsInstance<StoreDetailSectionModel.AdMob>()
-        .mapNotNull { it.cards.firstOrNull() }
+        .flatMap { it.cards }
     val storeId = sections
         .filterIsInstance<StoreDetailSectionModel.Preview>()
         .firstOrNull()
@@ -329,12 +338,13 @@ internal fun rememberStoreDetailAdMobStates(
             card.cardId to StoreDetailAdMobState(
                 card = card,
                 onImpression = onImpression,
+                onClickLog = onClickLog,
             )
         }
     }
 
     SideEffect {
-        cards.forEach { card -> adStates[card.cardId]?.update(card, onImpression) }
+        cards.forEach { card -> adStates[card.cardId]?.update(card, onImpression, onClickLog) }
     }
 
     DisposableEffect(adStates, lifecycle) {
@@ -358,30 +368,33 @@ internal fun rememberStoreDetailAdMobStates(
 @Composable
 internal fun StoreDetailAdMobSection(
     section: StoreDetailSectionModel.AdMob,
-    adState: StoreDetailAdMobState?,
+    adStates: Map<String, StoreDetailAdMobState>,
 ) {
-    val card = section.cards.firstOrNull() ?: return
-    val state = adState?.takeIf { it.cardId == card.cardId } ?: return
-    if (!state.loadState.shouldRender) return
-    AndroidView(
-        factory = { context ->
-            state.obtain(context).also { adView ->
-                (adView.parent as? ViewGroup)?.removeView(adView)
+    Column {
+        section.cards.forEach { card ->
+            val state = adStates[card.cardId]
+            if (state != null && state.loadState.shouldRender) {
+                key(card.cardId) {
+                    AndroidView(
+                        factory = { context ->
+                            state.obtain(context).also { adView ->
+                                (adView.parent as? ViewGroup)?.removeView(adView)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(72.dp).background(ColorWhite).padding(vertical = 8.dp),
+                        onReset = { reusableAdView -> reusableAdView.resume() },
+                        onRelease = { releasedAdView -> releasedAdView.pause() },
+                        update = { attachedAdView -> attachedAdView.resume() },
+                    )
+                }
             }
-        },
-        modifier = Modifier.fillMaxWidth().height(72.dp).background(ColorWhite).padding(vertical = 8.dp),
-        onReset = { reusableAdView ->
-            reusableAdView.resume()
-        },
-        onRelease = { releasedAdView ->
-            releasedAdView.pause()
-        },
-        update = { attachedAdView -> attachedAdView.resume() },
-    )
+        }
+    }
 }
 
 internal class StoreDetailAdMobState(
     card: StoreDetailAdMobCardModel,
+    onClickLog: (SDClickLogModel) -> Unit = { runCatching { SDClickLogger.send(it) } },
     onImpression: (String, SDImpressionLogModel) -> Unit,
 ) {
     var loadState by mutableStateOf(StoreDetailAdLoadState.Loading)
@@ -390,6 +403,7 @@ internal class StoreDetailAdMobState(
     val cardId: String = card.cardId
     private var currentCard = card
     private var currentOnImpression = onImpression
+    private var currentOnClickLog = onClickLog
     private var isDestroyed = false
     private var managedAdView: AdView? = null
 
@@ -398,19 +412,19 @@ internal class StoreDetailAdMobState(
         adUnitId = context.getString(CommonR.string.admob_list_banner)
         adListener = object : AdListener() {
             override fun onAdLoaded() {
-                loadState = StoreDetailAdLoadState.Loaded
+                onLoaded()
             }
 
             override fun onAdFailedToLoad(error: LoadAdError) {
-                loadState = loadState.afterLoadFailure()
+                onLoadFailed()
             }
 
             override fun onAdClicked() {
-                runCatching { SDClickLogger.send(currentCard.clickLog) }
+                onClicked()
             }
 
             override fun onAdImpression() {
-                currentOnImpression("AD_MOB:$cardId", currentCard.impressionLog)
+                onImpressed()
             }
         }
         loadAd(AdRequest.Builder().build())
@@ -419,9 +433,28 @@ internal class StoreDetailAdMobState(
     fun update(
         card: StoreDetailAdMobCardModel,
         onImpression: (String, SDImpressionLogModel) -> Unit,
+        onClickLog: (SDClickLogModel) -> Unit = currentOnClickLog,
     ) {
+        if (isDestroyed) return
         currentCard = card
         currentOnImpression = onImpression
+        currentOnClickLog = onClickLog
+    }
+
+    fun onLoaded() {
+        if (!isDestroyed) loadState = StoreDetailAdLoadState.Loaded
+    }
+
+    fun onLoadFailed() {
+        if (!isDestroyed) loadState = loadState.afterLoadFailure()
+    }
+
+    fun onClicked() {
+        if (!isDestroyed) currentOnClickLog(currentCard.clickLog)
+    }
+
+    fun onImpressed() {
+        if (!isDestroyed) currentOnImpression("AD_MOB:$cardId", currentCard.impressionLog)
     }
 
     fun pause() {

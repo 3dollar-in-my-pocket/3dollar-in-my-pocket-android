@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.storeDetail.contributor.model
 
 import androidx.compose.runtime.Immutable
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 
 @Immutable
@@ -26,10 +27,12 @@ sealed interface StoreContributorUiIntent {
     data object OnCloseClick : StoreContributorUiIntent
     data object OnLoadNextPage : StoreContributorUiIntent
     data class OnActionClick(val action: SDLinkModel) : StoreContributorUiIntent
+    data class OnButtonActionClick(val button: SDButtonModel) : StoreContributorUiIntent
 }
 
 @Immutable
 sealed interface StoreContributorUiEffect {
     data object Close : StoreContributorUiEffect
     data class ExecuteAction(val action: SDLinkModel) : StoreContributorUiEffect
+    data class ExecuteButtonAction(val button: SDButtonModel) : StoreContributorUiEffect
 }

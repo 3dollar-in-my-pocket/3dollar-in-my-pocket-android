@@ -14,6 +14,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +26,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -49,13 +53,18 @@ import androidx.core.view.updatePadding
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import base.compose.AppTheme
 import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.serverdriven.model.SDActionBarModel
+import com.threedollar.common.serverdriven.model.SDButtonModel
+import com.threedollar.common.serverdriven.model.SDHeaderModel
 import com.threedollar.common.serverdriven.model.SDCardModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
@@ -68,6 +77,8 @@ import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLif
 import com.zion830.threedollars.core.ui.serverdriven.SDActionButton
 import com.zion830.threedollars.core.ui.serverdriven.SDCardRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDSectionRenderer
+import com.zion830.threedollars.core.ui.serverdriven.SDTextRenderer
+import com.threedollar.common.serverdriven.ext.displayText
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.storeDetail.contributor.model.createStoreContributorEditClickEvent
 import com.zion830.threedollars.ui.storeDetail.contributor.model.isStoreUpdateAction
@@ -111,6 +122,21 @@ class StoreContributorActivity : AppCompatActivity() {
             navigationBarStyle = SystemBarStyle.light(Color.WHITE, Color.BLACK),
         )
         setContentView(R.layout.activity_store_contributor)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                var pageViewSent = false
+                viewModel.state.collect { state ->
+                    if (pageViewSent || state is StoreContributorUiState.Loading) return@collect
+                    pageViewSent = true
+                    val viewLog = (state as? StoreContributorUiState.Success)?.screen?.viewLog
+                    if (viewLog != null) {
+                        SDClickLogger.send(viewLog)
+                    } else {
+                        LogManager.sendPageView(storeContributorScreenName, this@StoreContributorActivity.javaClass.simpleName)
+                    }
+                }
+            }
+        }
         applyFragmentContainerInsets()
         updateFragmentContainerVisibility()
         supportFragmentManager.addOnBackStackChangedListener {
@@ -131,6 +157,7 @@ class StoreContributorActivity : AppCompatActivity() {
                         viewModel = viewModel,
                         onClose = ::finish,
                         onAction = ::handleAction,
+                        onButtonAction = ::handleButtonAction,
                     )
                 }
             }
@@ -143,11 +170,6 @@ class StoreContributorActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onResume() {
-        super.onResume()
-        LogManager.sendPageView(storeContributorScreenName, this::class.java.simpleName)
-    }
-
     override fun finish() {
         if (hasStoreUpdated) {
             setResult(RESULT_OK)
@@ -156,14 +178,29 @@ class StoreContributorActivity : AppCompatActivity() {
     }
 
     private fun handleAction(action: SDLinkModel) {
-        if (handleLocalEditAction(action)) return
+        routeAction(action, serverClickLogged = false)
+    }
+
+    private fun handleButtonAction(button: SDButtonModel) {
+        button.clickLog?.let(SDClickLogger::send)
+        val link = button.link ?: button.customAction
+            ?.takeIf { it.actionType == "STORE_EDIT_SECTION_UPDATE" }
+            ?.extraParams?.get("STORE_ID")?.anyValue?.toString()?.toLongOrNull()
+            ?.takeIf { it > 0L }
+            ?.let { SDLinkModel("APP_SCHEME", "/storeUpdate?storeId=$it") }
+            ?: return
+        routeAction(link, serverClickLogged = button.clickLog != null)
+    }
+
+    private fun routeAction(action: SDLinkModel, serverClickLogged: Boolean) {
+        if (handleLocalEditAction(action, serverClickLogged)) return
         actionHandler.onAction(action)
     }
 
-    private fun handleLocalEditAction(action: SDLinkModel): Boolean {
+    private fun handleLocalEditAction(action: SDLinkModel, serverClickLogged: Boolean): Boolean {
         if (!action.isStoreUpdateAction()) return false
 
-        LogManager.sendEvent(createStoreContributorEditClickEvent())
+        if (!serverClickLogged) LogManager.sendEvent(createStoreContributorEditClickEvent())
         val uri = Uri.parse(action.link)
 
         val targetStoreId = uri.getQueryParameter("storeId")
@@ -225,6 +262,7 @@ private fun StoreContributorRoute(
     viewModel: StoreContributorViewModel,
     onClose: () -> Unit,
     onAction: (SDLinkModel) -> Unit,
+    onButtonAction: (SDButtonModel) -> Unit,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -236,6 +274,7 @@ private fun StoreContributorRoute(
         when (effect) {
             StoreContributorUiEffect.Close -> onClose()
             is StoreContributorUiEffect.ExecuteAction -> onAction(effect.action)
+            is StoreContributorUiEffect.ExecuteButtonAction -> onButtonAction(effect.button)
         }
     }
 
@@ -243,6 +282,7 @@ private fun StoreContributorRoute(
         state = state,
         onClose = { viewModel.dispatch(StoreContributorUiIntent.OnCloseClick) },
         onActionClick = { viewModel.dispatch(StoreContributorUiIntent.OnActionClick(it)) },
+        onButtonAction = { viewModel.dispatch(StoreContributorUiIntent.OnButtonActionClick(it)) },
         onLoadNextPage = { viewModel.dispatch(StoreContributorUiIntent.OnLoadNextPage) },
     )
 }
@@ -253,6 +293,7 @@ private fun StoreContributorScreen(
     onClose: () -> Unit,
     onActionClick: (SDLinkModel) -> Unit,
     onLoadNextPage: () -> Unit,
+    onButtonAction: (SDButtonModel) -> Unit = { button -> button.link?.let(onActionClick) },
 ) {
     val listState = rememberLazyListState()
     if (state is StoreContributorUiState.Success) {
@@ -270,21 +311,21 @@ private fun StoreContributorScreen(
         ?.filterIsInstance<SDSectionModel.ActionBarSection>()
         ?.firstOrNull()
         ?.actionBar
-    val screenHeaderTitle = (state as? StoreContributorUiState.Success)
+    val screenHeader = (state as? StoreContributorUiState.Success)
         ?.screen
         ?.sections
         ?.filterIsInstance<SDSectionModel.HeaderSection>()
         ?.firstOrNull { it.type.equals("SCREEN_HEADER", ignoreCase = true) }
         ?.header
-        ?.title
 
     Scaffold(
         containerColor = Gray0,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             StoreContributorTopBar(
-                title = screenHeaderTitle,
+                header = screenHeader,
                 onClose = onClose,
+                onButtonAction = onButtonAction,
             )
         },
         bottomBar = {
@@ -298,7 +339,7 @@ private fun StoreContributorScreen(
                 actionBar?.let {
                     BottomActionBar(
                         actionBar = it,
-                        onActionClick = onActionClick,
+                        onButtonAction = onButtonAction,
                     )
                 }
             }
@@ -311,16 +352,17 @@ private fun StoreContributorScreen(
                 screen = state.screen,
                 listState = listState,
                 isPaging = state.isPaging,
-            paddingValues = paddingValues,
+                paddingValues = paddingValues,
+                onButtonAction = onButtonAction,
             )
         }
     }
 }
 
 @Composable
-private fun BottomActionBar(
+internal fun BottomActionBar(
     actionBar: SDActionBarModel,
-    onActionClick: (SDLinkModel) -> Unit,
+    onButtonAction: (SDButtonModel) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -330,7 +372,9 @@ private fun BottomActionBar(
         SDActionButton(
             button = actionBar.button,
             fillMaxWidth = true,
-            onAction = onActionClick,
+            onClick = {
+                onButtonAction(actionBar.button.copy(clickLog = actionBar.clickLog ?: actionBar.button.clickLog))
+            },
         )
     }
 }
@@ -402,6 +446,7 @@ private fun SuccessContent(
     listState: LazyListState,
     isPaging: Boolean,
     paddingValues: PaddingValues,
+    onButtonAction: (SDButtonModel) -> Unit,
 ) {
     val bodySections = screen.sections.filterNot { section ->
         section is SDSectionModel.ActionBarSection ||
@@ -419,7 +464,7 @@ private fun SuccessContent(
             when (section) {
                 is SDSectionModel.HeaderSection -> {
                     item(key = "header-$index-${section.type}") {
-                        SDSectionRenderer(section = section, onAction = {})
+                        SDSectionRenderer(section = section, onAction = {}, onButtonAction = onButtonAction)
                     }
                 }
 
@@ -454,31 +499,33 @@ private fun SuccessContent(
 
 @Composable
 private fun StoreContributorTopBar(
-    title: SDTextModel?,
+    header: SDHeaderModel?,
     onClose: () -> Unit,
+    onButtonAction: (SDButtonModel) -> Unit,
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(ColorWhite)
             .statusBarsPadding()
-            .height(56.dp),
+            .defaultMinSize(minHeight = 56.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        title?.let {
-            Text(
-                text = it.text,
-                modifier = Modifier.align(Alignment.Center),
-                color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = dpToSp(16),
-                lineHeight = dpToSp(24),
-            )
+        Spacer(Modifier.width(48.dp))
+        Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+            header?.let {
+                SDTextRenderer(it.title, fontSizeDp = 16, lineHeightDp = 24)
+                it.subTitle?.takeIf { text -> text.displayText().isNotBlank() }?.let { subtitle ->
+                    SDTextRenderer(subtitle, fontSizeDp = 12, lineHeightDp = 16)
+                }
+            }
+        }
+        header?.trailingAction?.let { button ->
+            SDActionButton(button, fillMaxWidth = false, onClick = { onButtonAction(button) })
         }
 
         IconButton(
             onClick = onClose,
-            modifier = Modifier.align(Alignment.CenterEnd),
         ) {
             Icon(
                 painter = painterResource(DesignSystemR.drawable.ic_close_black),

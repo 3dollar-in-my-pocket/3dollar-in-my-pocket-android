@@ -19,9 +19,9 @@ class StoreDetailScreenMapperHeaderActionTest {
                 {
                   "type":"CALLOUT",
                   "content":{
-                    "title":{"text":"공식 인증 가게","isHtml":false,"fontColor":"#101010"},
-                    "subTitle":{"text":"안심하고 방문하세요","isHtml":false,"fontColor":"#666666"},
-                    "footerLeftButton":{"text":{"text":"자세히","isHtml":false,"fontColor":"#101010"},"link":{"type":"WEB","link":"https://example.com"},"style":{"backgroundColor":"#FFFFFF"}}
+                    "image":{"url":"verified-icon","style":{"width":21,"height":21}},
+                    "text":{"text":"공식 인증 가게","isHtml":false,"fontColor":"#FFFFFF"},
+                    "style":{"backgroundColor":"#232323"}
                   }
                 },
                 {
@@ -63,9 +63,9 @@ class StoreDetailScreenMapperHeaderActionTest {
         val edit = sections[4] as StoreDetailSectionModel.Edit
         val cta = sections[5] as StoreDetailSectionModel.Cta
 
-        assertEquals("공식 인증 가게", callout.content.title.text)
-        assertEquals("안심하고 방문하세요", callout.content.subTitle?.text)
-        assertEquals("https://example.com", callout.content.footerLeftButton?.link?.link)
+        assertEquals("공식 인증 가게", callout.content.text.text)
+        assertEquals("verified-icon", callout.content.image.url)
+        assertEquals("#232323", callout.content.style.backgroundColor)
         assertEquals("붕어빵 가게", preview.header.title?.text)
         assertEquals("100186", preview.additionalInfos.storeId)
         assertEquals("USER_STORE", preview.additionalInfos.storeType)

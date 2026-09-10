@@ -19,13 +19,15 @@ internal fun HomeListCardModel.BasicCard.toFallbackStorePreviewScreen(
     val storeId = storePreviewStoreIdOrNull() ?: return null
     val storeType = storePreviewStoreTypeOrNull() ?: USER_STORE
     val storeName = header.title?.text.orEmpty()
-    val actionParams = mapOf(
+    val actionParams = mutableMapOf(
         "STORE_ID" to storeId.toStoreIdClickLogValue(),
         "STORE_TYPE" to SDClickLogValue.StringValue(storeType),
         "STORE_NAME" to SDClickLogValue.StringValue(storeName),
-        "LATITUDE" to SDClickLogValue.DoubleValue(marker.location.latitude),
-        "LONGITUDE" to SDClickLogValue.DoubleValue(marker.location.longitude),
     )
+    marker?.location?.let { location ->
+        actionParams["LATITUDE"] = SDClickLogValue.DoubleValue(location.latitude)
+        actionParams["LONGITUDE"] = SDClickLogValue.DoubleValue(location.longitude)
+    }
 
     return StoreScreenModel(
         sections = listOf(

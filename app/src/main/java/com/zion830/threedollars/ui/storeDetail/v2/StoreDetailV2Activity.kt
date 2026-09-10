@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.storeDetail.v2
 
 import android.content.ClipboardManager
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -206,6 +207,11 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     private fun handlePlatformAction(action: StoreDetailV2PlatformAction) {
         when (action) {
+            is StoreDetailV2PlatformAction.CopyAccount -> {
+                (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                    .setPrimaryClip(ClipData.newPlainText(null, action.text))
+                showToast(getString(CommonR.string.account_number_copied))
+            }
             is StoreDetailV2PlatformAction.OpenLink -> openLink(action.link)
             is StoreDetailV2PlatformAction.Share -> share(action.customAction)
             is StoreDetailV2PlatformAction.Navigation -> showDirections(action.customAction)
@@ -265,11 +271,9 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
 
     private fun startCertification(screen: StoreDetailScreenModel) {
         val preview = screen.sections.filterIsInstance<StoreDetailSectionModel.Preview>().firstOrNull()
-        val map = screen.sections.filterIsInstance<StoreDetailSectionModel.Map>().firstOrNull()
-        val location = map?.location
+        val location = screen.resolveStoreDetailLocation()
         if (location == null) {
             showToast(getString(CommonR.string.exist_location_error))
-            finishWithResult()
             return
         }
         childLauncher.launch(
@@ -322,37 +326,38 @@ class StoreDetailV2Activity : BaseComposeActivity<StoreDetailV2ViewModel>() {
     }
 
     private fun enlargeMap(customAction: SDCustomActionModel) {
-        val map = currentScreen()?.sections?.filterIsInstance<StoreDetailSectionModel.Map>()?.firstOrNull()
+        val location = currentScreen().resolveStoreDetailLocation(customAction)
+            ?: return showToast(getString(CommonR.string.exist_location_error))
         val params = customAction.extraParams
         startActivity(
             FullScreenMapActivity.getIntent(
                 this,
-                params.doubleValue("LATITUDE") ?: map?.location?.latitude,
-                params.doubleValue("LONGITUDE") ?: map?.location?.longitude,
+                location.latitude,
+                location.longitude,
                 params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStoreName(),
             )
         )
     }
 
     private fun showDirections(customAction: SDCustomActionModel) {
-        val map = currentScreen()?.sections?.filterIsInstance<StoreDetailSectionModel.Map>()?.firstOrNull()
+        val location = currentScreen().resolveStoreDetailLocation(customAction)
+            ?: return showToast(getString(CommonR.string.exist_location_error))
         val params = customAction.extraParams
         DirectionBottomDialog.getInstance(
-            params.doubleValue("LATITUDE") ?: map?.location?.latitude,
-            params.doubleValue("LONGITUDE") ?: map?.location?.longitude,
+            location.latitude,
+            location.longitude,
             params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStoreName(),
         ).show(supportFragmentManager, DirectionBottomDialog::class.java.name)
     }
 
     private fun share(customAction: SDCustomActionModel) {
-        val map = currentScreen()?.sections?.filterIsInstance<StoreDetailSectionModel.Map>()?.firstOrNull()
+        val location = currentScreen().resolveStoreDetailLocation(customAction)
+            ?: return showToast(getString(CommonR.string.exist_location_error))
         val params = customAction.extraParams
-        val latitude = params.doubleValue("LATITUDE") ?: map?.location?.latitude ?: return
-        val longitude = params.doubleValue("LONGITUDE") ?: map?.location?.longitude ?: return
         val name = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStoreName()
         val type = params.stringValue("STORE_TYPE") ?: storeType ?: USER_STORE
         shareWithKakao(
-            shareFormat = ShareFormat(getString(CommonR.string.kakao_map_format), name, LatLng(latitude, longitude)),
+            shareFormat = ShareFormat(getString(CommonR.string.kakao_map_format), name, LatLng(location.latitude, location.longitude)),
             title = if (type == BOSS_STORE) getString(CommonR.string.share_kakao_food_truck_title, name) else getString(CommonR.string.share_kakao_road_food_title, name),
             description = if (type == BOSS_STORE) getString(CommonR.string.share_kakao_food_truck, name) else getString(CommonR.string.share_kakao_road_food, name),
             imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",

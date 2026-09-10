@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
@@ -47,13 +48,16 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.domain.home.data.store.ContentModel
 import com.threedollar.domain.home.data.store.MarkerModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
-import com.zion830.threedollars.ui.home.ui.markerChipForSelection
+import com.zion830.threedollars.ui.home.ui.HomeMapPadding
+import com.zion830.threedollars.ui.home.ui.homeListMarkerRenderItems
+import com.zion830.threedollars.ui.home.ui.HomePendingMarkerSelection
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
 import com.zion830.threedollars.utils.NaverMapUtils.calculateDistance
@@ -85,6 +89,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val markers = arrayListOf<Marker>()
+    private var pendingHomeMarkerDrawableRes: Int? = null
+    private var pendingHomeMarkerSelectedDrawableRes: Int? = null
+    private var pendingHomeMarkerCards: List<HomeListCardModel.BasicCard> = emptyList()
+    private var pendingHomeMarkerSelectedCardId: String? = null
+    private var pendingHomeMarkerClick: ((HomeListCardModel.BasicCard) -> Unit)? = null
 
     var listener: OnMapTouchListener? = null
 
@@ -141,6 +150,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     override fun onMapReady(map: NaverMap) {
         this.naverMap = map
         initMapUiSetting(map)
+        renderPendingHomeListMarkers()
     }
 
     private fun initMapUiSetting(map: NaverMap) {
@@ -157,8 +167,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         map.addOnLocationChangeListener {
             map.locationOverlay.bearing = 0f
         }
-        map.addOnCameraChangeListener { _, _ ->
-            if (isInitialCameraPlaced) {
+        map.addOnCameraChangeListener { reason, _ ->
+            if (isInitialCameraPlaced || reason == CameraUpdate.REASON_GESTURE) {
                 mapPosition.value = map.cameraPosition.target
             }
             map.contentBounds.let {
@@ -210,6 +220,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     }
 
     fun clearMarker() {
+        pendingHomeMarkerDrawableRes = null
+        pendingHomeMarkerSelectedDrawableRes = null
+        pendingHomeMarkerCards = emptyList()
+        pendingHomeMarkerSelectedCardId = null
+        pendingHomeMarkerClick = null
         markers.forEach {
             it.map = null
         }
@@ -306,20 +321,41 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     fun addHomeListMarkers(
         @DrawableRes drawableRes: Int,
         list: List<HomeListCardModel.BasicCard>,
+        @DrawableRes selectedDrawableRes: Int = drawableRes,
+        selectedCardId: String? = null,
         onClick: (marker: HomeListCardModel.BasicCard) -> Unit = {},
     ) {
         if (naverMap == null) {
+            pendingHomeMarkerDrawableRes = drawableRes
+            pendingHomeMarkerSelectedDrawableRes = selectedDrawableRes
+            pendingHomeMarkerCards = list
+            pendingHomeMarkerSelectedCardId = HomePendingMarkerSelection().also {
+                it.update(list, selectedCardId)
+            }.selectedCardId
+            pendingHomeMarkerClick = onClick
             return
         }
+
+        pendingHomeMarkerDrawableRes = null
+        pendingHomeMarkerSelectedDrawableRes = null
+        pendingHomeMarkerCards = emptyList()
+        pendingHomeMarkerSelectedCardId = null
+        pendingHomeMarkerClick = null
 
         markers.forEach { it.map = null }
         markers.clear()
 
-        val newMarkers = list.map { item ->
+        val newMarkers = list.homeListMarkerRenderItems(selectedCardId).map { renderItem ->
+            val item = renderItem.card
+            val markerModel = requireNotNull(item.marker)
             Marker().apply {
-                this.position = LatLng(item.marker.location.latitude, item.marker.location.longitude)
+                this.position = LatLng(markerModel.location.latitude, markerModel.location.longitude)
                 this.tag = item.cardId
-                applyHomeListMarkerIcon(marker = this, chip = item.marker.unfocused, drawableRes = drawableRes)
+                applyHomeListMarkerIcon(
+                    marker = this,
+                    chip = renderItem.chip,
+                    drawableRes = if (renderItem.isSelected) selectedDrawableRes else drawableRes,
+                )
                 this.map = naverMap
                 setOnClickListener {
                     onClick(item)
@@ -330,17 +366,41 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.addAll(newMarkers)
     }
 
-    fun updateHomeListMarkerIcon(
+    fun updateHomeListMarkerSelection(
         @DrawableRes drawableRes: Int,
-        position: Int,
-        card: HomeListCardModel.BasicCard?,
-        isSelected: Boolean,
+        @DrawableRes selectedDrawableRes: Int,
+        cards: List<HomeListCardModel.BasicCard>,
+        selectedCardId: String?,
     ) {
-        if (markers.size <= position) return
-        val marker = markers[position]
-        val chip = card?.markerChipForSelection(isSelected)
-        applyHomeListMarkerIcon(marker = marker, chip = chip, drawableRes = drawableRes)
-        marker.map = naverMap
+        val pendingSelection = HomePendingMarkerSelection(pendingHomeMarkerSelectedCardId).also {
+            it.update(cards, selectedCardId)
+        }
+        pendingHomeMarkerSelectedCardId = pendingSelection.selectedCardId
+        if (naverMap == null) return
+        cards.homeListMarkerRenderItems(pendingSelection.selectedCardId).forEach { renderItem ->
+            val marker = markers.firstOrNull { it.tag == renderItem.card.cardId } ?: return@forEach
+            applyHomeListMarkerIcon(
+                marker = marker,
+                chip = renderItem.chip,
+                drawableRes = if (renderItem.isSelected) selectedDrawableRes else drawableRes,
+            )
+            marker.map = naverMap
+        }
+    }
+
+    private fun renderPendingHomeListMarkers() {
+        val drawableRes = pendingHomeMarkerDrawableRes ?: return
+        val selectedDrawableRes = pendingHomeMarkerSelectedDrawableRes ?: drawableRes
+        val cards = pendingHomeMarkerCards
+        val selectedCardId = pendingHomeMarkerSelectedCardId
+        val onClick = pendingHomeMarkerClick ?: {}
+        addHomeListMarkers(
+            drawableRes = drawableRes,
+            list = cards,
+            selectedDrawableRes = selectedDrawableRes,
+            selectedCardId = selectedCardId,
+            onClick = onClick,
+        )
     }
 
     private fun applyHomeListMarkerIcon(
@@ -437,6 +497,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     @SuppressLint("MissingPermission")
     fun moveToCurrentLocation(
         showAnim: Boolean = false,
+        moveCameraOnLoad: Boolean = true,
         onLocationLoaded: (LatLng?) -> Unit = {},
     ) {
         try {
@@ -445,10 +506,12 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     currentPosition.value = position
                     naverMap?.locationOverlay?.isVisible = true
                     naverMap?.locationOverlay?.position = position
-                    if (showAnim) {
-                        moveCameraWithAnim(position)
-                    } else {
-                        moveCamera(position)
+                    if (moveCameraOnLoad) {
+                        if (showAnim) {
+                            moveCameraWithAnim(position)
+                        } else {
+                            moveCamera(position)
+                        }
                     }
                     onMyLocationLoaded(position)
                 }
@@ -456,7 +519,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             }
         } catch (e: Exception) {
             Log.e(this::class.java.name, e.message ?: "")
-            moveCamera(NaverMapUtils.DEFAULT_LOCATION)
+            if (moveCameraOnLoad) moveCamera(NaverMapUtils.DEFAULT_LOCATION)
             onLocationLoaded(null)
         }
     }
@@ -554,6 +617,24 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         isInitialCameraPlaced = true
         val cameraUpdate = CameraUpdate.scrollTo(position)
         naverMap?.moveCamera(cameraUpdate)
+    }
+
+    fun moveCamera(position: LatLng, zoom: Double) {
+        val map = naverMap ?: return
+        isInitialCameraPlaced = true
+        map.moveCamera(CameraUpdate.scrollAndZoomTo(position, zoom))
+    }
+
+    internal fun fitHomeListBounds(bounds: SDLocationBoundsModel, padding: HomeMapPadding) {
+        val map = naverMap ?: return
+        isInitialCameraPlaced = true
+        val sdkBounds = LatLngBounds(
+            LatLng(bounds.southWest.latitude, bounds.southWest.longitude),
+            LatLng(bounds.northEast.latitude, bounds.northEast.longitude),
+        )
+        map.moveCamera(
+            CameraUpdate.fitBounds(sdkBounds, padding.left, padding.top, padding.right, padding.bottom)
+        )
     }
 
     fun moveCameraWithAnim(position: LatLng) {

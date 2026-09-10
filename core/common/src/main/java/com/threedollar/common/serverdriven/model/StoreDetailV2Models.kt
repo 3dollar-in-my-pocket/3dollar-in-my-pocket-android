@@ -19,7 +19,7 @@ sealed interface StoreDetailSectionModel {
     ) : StoreDetailSectionModel
     data class Callout(
         override val type: String,
-        val content: StoreDetailContentModel,
+        val content: StoreDetailCalloutContentModel,
     ) : StoreDetailSectionModel
     data class Coupon(
         override val type: String,
@@ -33,6 +33,7 @@ sealed interface StoreDetailSectionModel {
     data class Edit(
         override val type: String,
         val actionBars: List<StoreActionBarModel>,
+        val map: StoreDetailMapModel? = null,
     ) : StoreDetailSectionModel
     data class Image(
         override val type: String,
@@ -58,6 +59,10 @@ sealed interface StoreDetailSectionModel {
         val location: SDLocationModel,
         val footerLeft: StoreActionBarModel?,
         val footerRight: StoreActionBarModel,
+    ) : StoreDetailSectionModel
+    data class Margin(
+        override val type: String,
+        val height: Int,
     ) : StoreDetailSectionModel
     data class Post(
         override val type: String,
@@ -105,6 +110,18 @@ data class StoreDetailContentModel(
     val title: SDTextModel,
     val subTitle: SDTextModel? = null,
     val footerLeftButton: SDButtonModel? = null,
+)
+
+data class StoreDetailCalloutContentModel(
+    val image: SDImageModel,
+    val text: SDTextModel,
+    val style: SDSurfaceStyleModel,
+)
+
+data class StoreDetailMapModel(
+    val location: SDLocationModel,
+    val footerLeft: StoreActionBarModel?,
+    val footerRight: StoreActionBarModel,
 )
 
 data class StoreDetailBodyModel(

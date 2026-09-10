@@ -27,6 +27,7 @@ import com.threedollar.common.serverdriven.model.StoreDetailAdMobCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailAccountCopyCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailAppearanceItemModel
 import com.threedollar.common.serverdriven.model.StoreDetailContentModel
+import com.threedollar.common.serverdriven.model.StoreDetailCalloutContentModel
 import com.threedollar.common.serverdriven.model.StoreDetailCouponCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailDetailCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailDetailRowModel
@@ -37,6 +38,7 @@ import com.threedollar.common.serverdriven.model.StoreDetailInformationRowModel
 import com.threedollar.common.serverdriven.model.StoreDetailMenuCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailMenuGroupModel
 import com.threedollar.common.serverdriven.model.StoreDetailMenuListCardModel
+import com.threedollar.common.serverdriven.model.StoreDetailMapModel
 import com.threedollar.common.serverdriven.model.StoreDetailHistoryModel
 import com.threedollar.common.serverdriven.model.StoreDetailImageCardModel
 import com.threedollar.common.serverdriven.model.StoreDetailPostCardModel
@@ -74,6 +76,8 @@ import com.threedollar.network.data.screen.StoreDetailAdMobCardResponse
 import com.threedollar.network.data.screen.StoreDetailAdMobSectionResponse
 import com.threedollar.network.data.screen.StoreDetailContentResponse
 import com.threedollar.network.data.screen.StoreDetailContentSectionResponse
+import com.threedollar.network.data.screen.StoreDetailCalloutContentResponse
+import com.threedollar.network.data.screen.StoreDetailCalloutSectionResponse
 import com.threedollar.network.data.screen.StoreDetailCouponCardResponse
 import com.threedollar.network.data.screen.StoreDetailCouponSectionResponse
 import com.threedollar.network.data.screen.StoreDetailAppearanceDaySectionResponse
@@ -90,6 +94,7 @@ import com.threedollar.network.data.screen.StoreDetailInformationCardResponse
 import com.threedollar.network.data.screen.StoreDetailInlineOptionRowResponse
 import com.threedollar.network.data.screen.StoreDetailLinkRowResponse
 import com.threedollar.network.data.screen.StoreDetailMapSectionResponse
+import com.threedollar.network.data.screen.StoreDetailMarginSectionResponse
 import com.threedollar.network.data.screen.StoreDetailMenuCardResponse
 import com.threedollar.network.data.screen.StoreDetailPostCardResponse
 import com.threedollar.network.data.screen.StoreDetailPostSectionResponse
@@ -132,9 +137,9 @@ private fun JsonObject.asStoreDetailSectionModelOrNull(): StoreDetailSectionMode
             val items = response.items?.mapNotNull(StoreDetailAppearanceItemResponse::asModelOrNull) ?: return@let null
             StoreDetailSectionModel.AppearanceDay(type = type, header = header, items = items)
         }
-        "CALLOUT" -> decodeOrNull<StoreDetailContentSectionResponse>()
+        "CALLOUT" -> decodeOrNull<StoreDetailCalloutSectionResponse>()
             ?.content
-            ?.asModelOrNull()
+            ?.asCalloutModelOrNull()
             ?.let { StoreDetailSectionModel.Callout(type, it) }
         "COUPON" -> decodeOrNull<StoreDetailCouponSectionResponse>()?.let { response ->
             val cards = response.cards?.mapNotNull(StoreDetailCouponCardResponse::asModelOrNull) ?: return@let null
@@ -148,10 +153,14 @@ private fun JsonObject.asStoreDetailSectionModelOrNull(): StoreDetailSectionMode
             ?.content
             ?.asModelOrNull()
             ?.let { StoreDetailSectionModel.Cta(type, it) }
-        "EDIT" -> decodeOrNull<StoreDetailEditSectionResponse>()
-            ?.actionBars
-            ?.mapNotNull(StoreActionBarResponse::asModelOrNull)
-            ?.let { StoreDetailSectionModel.Edit(type, it) }
+        "EDIT" -> decodeOrNull<StoreDetailEditSectionResponse>()?.let { response ->
+            val actionBars = response.actionBars?.mapNotNull(StoreActionBarResponse::asModelOrNull) ?: return@let null
+            StoreDetailSectionModel.Edit(
+                type = type,
+                actionBars = actionBars,
+                map = response.map?.asMapModelOrNull(),
+            )
+        }
         "IMAGE" -> decodeOrNull<StoreDetailImageSectionResponse>()?.let { response ->
             val header = response.header?.asModelOrNull() ?: return@let null
             val cards = response.cards?.mapNotNull(StoreDetailImageCardResponse::asModelOrNull) ?: return@let null
@@ -197,15 +206,16 @@ private fun JsonObject.asStoreDetailSectionModelOrNull(): StoreDetailSectionMode
                 },
             )
         }
-        "MAP" -> decodeOrNull<StoreDetailMapSectionResponse>()?.let { response ->
-            val location = response.location?.asModelOrNull() ?: return@let null
-            val footerRight = response.footerRight?.asModelOrNull() ?: return@let null
+        "MAP" -> decodeOrNull<StoreDetailMapSectionResponse>()?.asMapModelOrNull()?.let { map ->
             StoreDetailSectionModel.Map(
                 type = type,
-                location = location,
-                footerLeft = response.footerLeft?.asModelOrNull(),
-                footerRight = footerRight,
+                location = map.location,
+                footerLeft = map.footerLeft,
+                footerRight = map.footerRight,
             )
+        }
+        "MARGIN" -> decodeOrNull<StoreDetailMarginSectionResponse>()?.height?.let { height ->
+            StoreDetailSectionModel.Margin(type = type, height = height.coerceAtLeast(0))
         }
         "POST" -> decodeOrNull<StoreDetailPostSectionResponse>()?.let { response ->
             val header = response.header?.asModelOrNull() ?: return@let null
@@ -303,6 +313,27 @@ private fun StoreDetailContentResponse.asModelOrNull(): StoreDetailContentModel?
         title = titleModel,
         subTitle = subTitle?.asModel(),
         footerLeftButton = footerLeftButton?.asModel(),
+    )
+}
+
+private fun StoreDetailCalloutContentResponse.asCalloutModelOrNull(): StoreDetailCalloutContentModel? {
+    val imageModel = image?.asModelOrNull() ?: return null
+    val textModel = text?.asModel() ?: return null
+    val styleModel = style?.asModel() ?: return null
+    return StoreDetailCalloutContentModel(
+        image = imageModel,
+        text = textModel,
+        style = styleModel,
+    )
+}
+
+private fun StoreDetailMapSectionResponse.asMapModelOrNull(): StoreDetailMapModel? {
+    val locationModel = location?.asModelOrNull() ?: return null
+    val footerRightModel = footerRight?.asModelOrNull() ?: return null
+    return StoreDetailMapModel(
+        location = locationModel,
+        footerLeft = footerLeft?.asModelOrNull(),
+        footerRight = footerRightModel,
     )
 }
 

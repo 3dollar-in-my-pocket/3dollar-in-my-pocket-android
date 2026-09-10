@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.home.ui
 
+import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.zion830.threedollars.ui.home.data.resolvedStoreReferenceOrNull
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -9,6 +11,18 @@ internal data class HomeStorePreviewRoute(
     val storeType: String?,
 ) {
     companion object {
+        fun fromCard(
+            card: HomeListCardModel.BasicCard?,
+            fallbackStoreId: Long? = null,
+            fallbackStoreType: String? = null,
+        ): HomeStorePreviewRoute? {
+            card?.resolvedStoreReferenceOrNull()?.let { reference ->
+                return HomeStorePreviewRoute(reference.storeId, reference.storeType)
+            }
+            val storeId = fallbackStoreId ?: return null
+            return HomeStorePreviewRoute(storeId, fallbackStoreType)
+        }
+
         fun fromLink(
             link: String?,
             fallbackStoreId: Long? = null,

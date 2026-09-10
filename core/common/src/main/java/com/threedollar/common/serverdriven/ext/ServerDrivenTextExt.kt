@@ -40,33 +40,54 @@ fun SDTextModel.styledSegments(): List<SDStyledTextSegment> {
     if (!isHtml && !HTML_TAG_REGEX.containsMatchIn(text)) return listOf(fallback)
 
     val segments = mutableListOf<SDStyledTextSegment>()
+    val parents = mutableListOf<Pair<String, SDStyledTextSegment>>()
+    var current = fallback
     var cursor = 0
-    HTML_SPAN_REGEX.findAll(text).forEach { match ->
-        text.substring(cursor, match.range.first)
-            .toServerDrivenPlainText()
-            .takeIf(String::isNotEmpty)
-            ?.let { plain -> segments += fallback.copy(text = plain) }
 
-        val styles = match.groupValues[1]
-            .let(STYLE_ATTRIBUTE_REGEX::find)
-            ?.groupValues
-            ?.getOrNull(1)
-            .toCssProperties()
-        val content = match.groupValues[2].toServerDrivenPlainText()
-        if (content.isNotEmpty()) {
-            segments += SDStyledTextSegment(
-                text = content,
-                fontSizePx = styles["font-size"]?.removeSuffix("px")?.trim()?.toDoubleOrNull()?.toInt(),
-                fontWeight = styles["font-weight"]?.trim()?.toIntOrNull() ?: fallback.fontWeight,
-                fontColor = styles["color"]?.trim() ?: fallback.fontColor,
+    fun append(raw: String) {
+        val content = raw.decodeHtmlEntities()
+        if (content.isEmpty()) return
+        val segment = current.copy(text = content)
+        val previous = segments.lastOrNull()
+        if (previous != null && previous.copy(text = content) == segment) {
+            segments[segments.lastIndex] = previous.copy(text = previous.text + content)
+        } else {
+            segments += segment
+        }
+    }
+
+    HTML_TAG_REGEX.findAll(text).forEach { token ->
+        append(text.substring(cursor, token.range.first))
+        cursor = token.range.last + 1
+        val tag = HTML_ELEMENT_REGEX.matchEntire(token.value) ?: return@forEach
+        val name = tag.groupValues[2].lowercase()
+        val closing = tag.groupValues[1].isNotEmpty()
+        if (closing) {
+            val parentIndex = parents.indexOfLast { it.first == name }
+            if (parentIndex >= 0) {
+                current = parents[parentIndex].second
+                while (parents.size > parentIndex) parents.removeAt(parents.lastIndex)
+            }
+        } else if (name == "br") {
+            append("\n")
+        } else if (!token.value.endsWith("/>") && name !in HTML_VOID_ELEMENTS) {
+            parents += name to current
+            val styles = STYLE_ATTRIBUTE_REGEX.find(tag.groupValues[3])?.groupValues?.getOrNull(1).toCssProperties()
+            current = current.copy(
+                fontSizePx = styles["font-size"]?.removeSuffix("px")?.trim()?.toDoubleOrNull()
+                    ?.takeIf { it.isFinite() && it >= 0 }?.toInt() ?: current.fontSizePx,
+                fontWeight = styles["font-weight"]?.let { weight ->
+                    when (weight.lowercase()) {
+                        "bold" -> 700
+                        "normal" -> 400
+                        else -> weight.toIntOrNull()
+                    }
+                } ?: if (name == "b" || name == "strong") 700 else current.fontWeight,
+                fontColor = styles["color"] ?: current.fontColor,
             )
         }
-        cursor = match.range.last + 1
     }
-    text.substring(cursor)
-        .toServerDrivenPlainText()
-        .takeIf(String::isNotEmpty)
-        ?.let { plain -> segments += fallback.copy(text = plain) }
+    append(text.substring(cursor))
     return segments.ifEmpty { listOf(fallback) }
 }
 
@@ -88,28 +109,29 @@ private fun String.stripHtmlTags(): String {
         .replace(HTML_TAG_REGEX, "")
 }
 
-private fun String.decodeHtmlEntities(): String {
-    return replace("&nbsp;", " ")
-        .replace("&amp;", "&")
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&quot;", "\"")
-        .replace("&#39;", "'")
-        .replace(HTML_DECIMAL_ENTITY_REGEX) { match ->
-            match.groupValues[1].toIntOrNull()?.toCodePointString() ?: match.value
+private fun String.decodeHtmlEntities(): String = HTML_ENTITY_REGEX.replace(this) { match ->
+    when (val entity = match.groupValues[1]) {
+        "nbsp" -> " "
+        "amp" -> "&"
+        "lt" -> "<"
+        "gt" -> ">"
+        "quot" -> "\""
+        "apos", "#39" -> "'"
+        else -> {
+            val codePoint = when {
+                entity.startsWith("#x", ignoreCase = true) -> entity.substring(2).toIntOrNull(16)
+                entity.startsWith("#") -> entity.substring(1).toIntOrNull()
+                else -> null
+            }
+            codePoint?.takeIf(Character::isValidCodePoint)
+                ?.let { String(Character.toChars(it)) } ?: match.value
         }
-        .replace(HTML_HEX_ENTITY_REGEX) { match ->
-            match.groupValues[1].toIntOrNull(16)?.toCodePointString() ?: match.value
-        }
-}
-
-private fun Int.toCodePointString(): String {
-    return runCatching { String(Character.toChars(this)) }.getOrDefault("")
+    }
 }
 
 private val HTML_TAG_REGEX = Regex("<[^>]+>")
-private val HTML_SPAN_REGEX = Regex("(?is)<span\\b([^>]*)>(.*?)</span>")
+private val HTML_ELEMENT_REGEX = Regex("(?is)<\\s*(/?)\\s*([a-z][a-z0-9]*)\\b([^>]*)>")
+private val HTML_VOID_ELEMENTS = setOf("area", "base", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr")
 private val STYLE_ATTRIBUTE_REGEX = Regex("(?is)\\bstyle\\s*=\\s*[\"']([^\"']*)[\"']")
 private val HTML_LINE_BREAK_REGEX = Regex("(?i)<br\\s*/?>")
-private val HTML_DECIMAL_ENTITY_REGEX = Regex("&#(\\d+);")
-private val HTML_HEX_ENTITY_REGEX = Regex("&#x([0-9a-fA-F]+);")
+private val HTML_ENTITY_REGEX = Regex("&(#x[0-9a-fA-F]+|#X[0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);")

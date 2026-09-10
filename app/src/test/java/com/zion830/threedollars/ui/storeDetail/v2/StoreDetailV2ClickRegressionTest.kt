@@ -47,7 +47,7 @@ class StoreDetailV2ClickRegressionTest {
     }
 
     @Test
-    fun `unresolved tab delegates once and lets the normal action path log`() {
+    fun `missing local section does not delegate to an external screen`() {
         val action = tab("/stores/120024#reviews").copy(
             clickLog = SDClickLogModel(screenName = "store_detail", objectType = "bar", objectId = "tab"),
         )
@@ -59,7 +59,22 @@ class StoreDetailV2ClickRegressionTest {
             onClickLog = { error("The normal action path owns this log") },
         )
 
-        assertEquals(listOf(action), actions)
+        assertEquals(emptyList<StoreActionBarModel>(), actions)
+    }
+
+    @Test
+    fun `deployed post tab scrolls to the post section`() {
+        val post = StoreDetailSectionModel.Post("POST", SDHeaderModel(SDTextModel("소식", false)), emptyList())
+        val sections = infoSections() + post
+        val scrolled = mutableListOf<Int>()
+        val delegated = mutableListOf<StoreActionBarModel>()
+        handleStoreDetailTabClick(tab("/stores/120024#post"), sections,
+            onScrollToSection = { scrolled += it },
+            onAction = { delegated += it },
+            onClickLog = {},
+        )
+        assertEquals(listOf(1), scrolled)
+        assertEquals(emptyList<StoreActionBarModel>(), delegated)
     }
 
     @Test

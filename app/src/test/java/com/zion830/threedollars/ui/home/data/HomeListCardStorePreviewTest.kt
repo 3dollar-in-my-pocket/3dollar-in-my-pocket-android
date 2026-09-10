@@ -4,6 +4,7 @@ import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListMarkerModel
+import com.threedollar.common.serverdriven.model.HomeListStoreReferenceModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDLinkModel
@@ -12,6 +13,7 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class HomeListCardStorePreviewTest {
@@ -38,6 +40,39 @@ class HomeListCardStorePreviewTest {
 
         assertEquals(100186L, card.storePreviewStoreIdOrNull())
         assertEquals("USER_STORE", card.storePreviewStoreTypeOrNull())
+    }
+
+    @Test
+    fun `store refs resolve id and type as one pair before conflicting links`() {
+        val card = card(
+            cardId = "S:100186",
+            cardLink = "/store?storeId=1&storeType=USER_STORE",
+            markerLink = "/store?storeId=2&storeType=USER_STORE",
+        ).copy(
+            refs = listOf(
+                HomeListStoreReferenceModel(type = "UNKNOWN", storeId = "broken", storeType = "FUTURE"),
+                HomeListStoreReferenceModel(type = "STORE", storeId = "525183", storeType = "BOSS_STORE"),
+            ),
+        )
+
+        assertEquals(525183L, card.storePreviewStoreIdOrNull())
+        assertEquals("BOSS_STORE", card.storePreviewStoreTypeOrNull())
+    }
+
+    @Test
+    fun `invalid store ref falls through to next valid store ref`() {
+        val card = card(
+            cardId = "S:100186",
+            cardLink = null,
+            markerLink = null,
+        ).copy(
+            refs = listOf(
+                HomeListStoreReferenceModel(type = "STORE", storeId = "bad", storeType = "USER_STORE"),
+                HomeListStoreReferenceModel(type = "STORE", storeId = "7", storeType = "BOSS_STORE"),
+            ),
+        )
+
+        assertEquals(HomeStoreReference(storeId = 7L, storeType = "BOSS_STORE"), card.resolvedStoreReferenceOrNull())
     }
 
     @Test
@@ -80,6 +115,24 @@ class HomeListCardStorePreviewTest {
     }
 
     @Test
+    fun `fallback store preview omits both coordinate params when marker is missing`() {
+        val card = card(
+            cardId = "S:100186",
+            cardLink = "/store?storeType=USER_STORE&storeId=100186",
+            markerLink = null,
+            hasMarker = false,
+        )
+
+        val preview = card.toFallbackStorePreviewScreen()
+            ?.sections
+            ?.single() as StoreSectionModel.Preview
+        val params = requireNotNull(preview.actionBars[2].button.customAction).extraParams
+
+        assertFalse(params.containsKey("LATITUDE"))
+        assertFalse(params.containsKey("LONGITUDE"))
+    }
+
+    @Test
     fun `store preview screen applies local favorite state override`() {
         val card = card(
             cardId = "S:100186",
@@ -98,18 +151,23 @@ class HomeListCardStorePreviewTest {
         cardId: String,
         cardLink: String?,
         markerLink: String?,
+        hasMarker: Boolean = true,
     ): HomeListCardModel.BasicCard {
         return HomeListCardModel.BasicCard(
             type = "BASIC_CARD",
             cardId = cardId,
             header = HomeListCardHeaderModel(title = SDTextModel("가게", isHtml = false)),
             metadata = HomeListCardMetadataModel(),
-            marker = HomeListMarkerModel(
-                focused = chip(""),
-                unfocused = chip(""),
-                location = SDLocationModel(latitude = 37.1, longitude = 127.2),
-                link = markerLink?.let { SDLinkModel(type = "APP_SCHEME", link = it) },
-            ),
+            marker = if (hasMarker) {
+                HomeListMarkerModel(
+                    focused = chip(""),
+                    unfocused = chip(""),
+                    location = SDLocationModel(latitude = 37.1, longitude = 127.2),
+                    link = markerLink?.let { SDLinkModel(type = "APP_SCHEME", link = it) },
+                )
+            } else {
+                null
+            },
             link = cardLink?.let { SDLinkModel(type = "APP_SCHEME", link = it) },
         )
     }

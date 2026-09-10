@@ -18,6 +18,16 @@ data class StoreDetailContentSectionResponse(
     @SerializedName("content") val content: StoreDetailContentResponse? = null,
 )
 
+data class StoreDetailCalloutContentResponse(
+    @SerializedName("image") val image: SDImageResponse? = null,
+    @SerializedName("text") val text: SDTextResponse? = null,
+    @SerializedName("style") val style: SDSurfaceStyleResponse? = null,
+)
+
+data class StoreDetailCalloutSectionResponse(
+    @SerializedName("content") val content: StoreDetailCalloutContentResponse? = null,
+)
+
 data class StoreDetailPreviewSectionResponse(
     @SerializedName("header") val header: HomeListCardHeaderResponse? = null,
     @SerializedName("metadata") val metadata: HomeListCardMetadataResponse? = null,
@@ -41,6 +51,11 @@ data class StoreDetailMapSectionResponse(
 
 data class StoreDetailEditSectionResponse(
     @SerializedName("actionBars") val actionBars: List<StoreActionBarResponse>? = null,
+    @SerializedName("map") val map: StoreDetailMapSectionResponse? = null,
+)
+
+data class StoreDetailMarginSectionResponse(
+    @SerializedName("height") val height: Int? = null,
 )
 
 data class StoreDetailHeaderResponse(
