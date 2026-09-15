@@ -43,6 +43,7 @@ import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
 import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.Constants
@@ -92,6 +93,8 @@ import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+
+private const val FOCUS_BOUNDS_PADDING_DP = 24f
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -427,6 +430,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
+                    viewModel.focusBounds.collect { bounds ->
+                        moveMapToFocusBounds(bounds)
+                    }
+                }
+                launch {
                     searchViewModel.searchResultLocation.collect {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
@@ -440,6 +448,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
             }
         }
+    }
+
+    private fun moveMapToFocusBounds(bounds: SDLocationBoundsModel) {
+        val basePaddingPx = SizeUtils.dpToPx(FOCUS_BOUNDS_PADDING_DP)
+        naverMapFragment.moveCameraToBounds(
+            southWest = LatLng(bounds.southWest.latitude, bounds.southWest.longitude),
+            northEast = LatLng(bounds.northEast.latitude, bounds.northEast.longitude),
+            paddingPx = intArrayOf(
+                basePaddingPx,
+                binding.filterComposeView.bottom + basePaddingPx,
+                basePaddingPx,
+                SizeUtils.dpToPx(HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP) + basePaddingPx,
+            ),
+        )
     }
 
     private fun handleFilterDeepLink(link: SDLinkModel) {

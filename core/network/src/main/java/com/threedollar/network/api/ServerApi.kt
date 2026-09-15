@@ -214,7 +214,9 @@ interface ServerApi {
     ): Response<BaseResponse<UserStoreResponse>>
 
     @GET("/api/v1/screen/home")
-    suspend fun getHomeFilterScreen(): Response<BaseResponse<HomeFilterScreenResponse>>
+    suspend fun getHomeFilterScreen(
+        @Query("preset") preset: String? = null,
+    ): Response<BaseResponse<HomeFilterScreenResponse>>
 
     @GET("/api/v1/screen/home/section/list")
     suspend fun getHomeListSection(

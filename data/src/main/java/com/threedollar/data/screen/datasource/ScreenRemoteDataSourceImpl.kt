@@ -53,7 +53,7 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.getStoreContributorHistories(storeId, cursor)))
     }
 
-    override fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenResponse>> = flow {
-        emit(apiResult(serverApi.getHomeFilterScreen()))
+    override fun getHomeFilterScreen(preset: String?): Flow<BaseResponse<HomeFilterScreenResponse>> = flow {
+        emit(apiResult(serverApi.getHomeFilterScreen(preset = preset)))
     }
 }

@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -49,6 +50,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     override val viewModel: UserInfoViewModel by viewModels()
     private val myPageViewModel: MyPageViewModel by viewModels()
     private val popupViewModel: PopupViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
 
     private lateinit var navHostFragment: NavHostFragment
@@ -213,6 +215,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         } else if (intent.getStringExtra(DynamicLinkActivity.HOME).isNotNullOrEmpty()) {
             binding.navView.post {
                 binding.navView.selectedItemId = R.id.navigation_home
+            }
+            intent.getStringExtra(DynamicLinkActivity.HOME_PRESET)?.let { preset ->
+                homeViewModel.applyPreset(preset)
             }
         } else if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW)) {
             binding.navView.post {
