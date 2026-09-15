@@ -422,6 +422,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
+                    viewModel.initialMapZoomLevel.collect { zoomLevel ->
+                        zoomLevel?.let { naverMapFragment.applyInitialZoomLevel(it) }
+                    }
+                }
+                launch {
                     searchViewModel.searchResultLocation.collect {
                         naverMapFragment.moveCamera(it)
                         binding.tvAddress.text =
