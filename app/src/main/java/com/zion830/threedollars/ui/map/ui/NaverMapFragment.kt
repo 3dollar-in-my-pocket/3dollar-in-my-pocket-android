@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
@@ -98,6 +99,15 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
      * 실제 위치가 정해지기 전까지는 [mapPosition]을 갱신하지 않는다.
      */
     private var isInitialCameraPlaced = false
+
+    /**
+     * 서버가 내려준 최초 지도 줌 레벨.
+     *
+     * 첫 카메라 배치보다 응답이 먼저 도착하면 그 배치에 함께 적용하고, 늦게 도착하면 줌만 따로 맞춘다.
+     * 어느 쪽이든 최초 1회만 적용하고, 이후 사용자가 조작한 줌은 건드리지 않는다.
+     */
+    private var initialZoomLevel: Double? = null
+    private var isInitialZoomLevelApplied = false
 
     var onAdMarkerClicked: ((Int) -> Unit)? = null
 
@@ -546,14 +556,30 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         isShowOverlay = isVisible
     }
 
+    /**
+     * 서버가 내려준 최초 지도 줌 레벨을 적용한다.
+     *
+     * 아직 첫 카메라 배치 전이면 값만 보관했다가 그 배치에 함께 적용하고,
+     * 이미 배치된 뒤라면 줌만 애니메이션으로 맞춘다.
+     */
+    fun applyInitialZoomLevel(zoomLevel: Double) {
+        if (isInitialZoomLevelApplied) return
+
+        initialZoomLevel = zoomLevel
+        val map = naverMap
+        if (isInitialCameraPlaced && map != null) {
+            isInitialZoomLevelApplied = true
+            map.moveCamera(CameraUpdate.zoomTo(zoomLevel).animate(CameraAnimation.Easing))
+        }
+    }
+
     fun moveCamera(position: LatLng) {
         if (naverMap == null) {
             return
         }
 
         isInitialCameraPlaced = true
-        val cameraUpdate = CameraUpdate.scrollTo(position)
-        naverMap?.moveCamera(cameraUpdate)
+        naverMap?.moveCamera(cameraUpdateForMove(position))
     }
 
     fun moveCameraWithAnim(position: LatLng) {
@@ -562,8 +588,34 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
 
         isInitialCameraPlaced = true
-        val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
+        naverMap?.moveCamera(cameraUpdateForMove(position).animate(CameraAnimation.Easing))
+    }
+
+    fun moveCameraToBounds(
+        southWest: LatLng,
+        northEast: LatLng,
+        paddingPx: IntArray,
+    ) {
+        if (naverMap == null || paddingPx.size != 4) {
+            return
+        }
+
+        isInitialCameraPlaced = true
+        val bounds = LatLngBounds(southWest, northEast)
+        val cameraUpdate = CameraUpdate
+            .fitBounds(bounds, paddingPx[0], paddingPx[1], paddingPx[2], paddingPx[3])
+            .animate(CameraAnimation.Easing)
         naverMap?.moveCamera(cameraUpdate)
+    }
+
+    private fun cameraUpdateForMove(position: LatLng): CameraUpdate {
+        val zoomLevel = initialZoomLevel
+        if (isInitialZoomLevelApplied || zoomLevel == null) {
+            return CameraUpdate.scrollTo(position)
+        }
+
+        isInitialZoomLevelApplied = true
+        return CameraUpdate.scrollAndZoomTo(position, zoomLevel)
     }
 
     open fun onMyLocationLoaded(position: LatLng) {

@@ -3,6 +3,7 @@ package com.threedollar.data.screen
 import com.google.gson.JsonElement
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
+import com.threedollar.common.serverdriven.model.HomeFilterConfiguration
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
@@ -24,6 +25,7 @@ import com.threedollar.network.data.screen.HomeFilterBorderResponse
 import com.threedollar.network.data.screen.HomeFilterButtonResponse
 import com.threedollar.network.data.screen.HomeFilterChipResponse
 import com.threedollar.network.data.screen.HomeFilterClickLogResponse
+import com.threedollar.network.data.screen.HomeFilterConfigurationResponse
 import com.threedollar.network.data.screen.HomeFilterCurrentCategoryResponse
 import com.threedollar.network.data.screen.HomeFilterImageResponse
 import com.threedollar.network.data.screen.HomeFilterImageStyleResponse
@@ -37,7 +39,12 @@ import com.threedollar.network.data.screen.HomeFilterViewLogResponse
 
 fun HomeFilterScreenResponse.asModel(): HomeFilterScreenModel = HomeFilterScreenModel(
     sections = sections.orEmpty().map { it.asModel() },
+    configuration = configuration?.asModel(),
     viewLog = viewLog?.asModelOrNull(),
+)
+
+private fun HomeFilterConfigurationResponse.asModel(): HomeFilterConfiguration = HomeFilterConfiguration(
+    initialMapZoomLevel = initialMapZoomLevel,
 )
 
 private fun HomeFilterSectionResponse.asModel(): HomeScreenSection {

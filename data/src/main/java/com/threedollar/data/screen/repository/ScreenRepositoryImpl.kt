@@ -73,8 +73,8 @@ class ScreenRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun getHomeFilterScreen(): Flow<BaseResponse<HomeFilterScreenModel>> =
-        screenRemoteDataSource.getHomeFilterScreen().map {
+    override fun getHomeFilterScreen(preset: String?): Flow<BaseResponse<HomeFilterScreenModel>> =
+        screenRemoteDataSource.getHomeFilterScreen(preset = preset).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel() ?: HomeFilterScreenModel(),

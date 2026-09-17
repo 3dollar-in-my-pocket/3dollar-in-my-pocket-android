@@ -9,6 +9,15 @@ data class HomeListSectionResponse(
     val cards: List<HomeListCardResponse>? = emptyList(),
     @SerializedName("cursor")
     val cursor: SDCursorResponse? = null,
+    @SerializedName("focusBounds")
+    val focusBounds: SDLocationBoundsResponse? = null,
+)
+
+data class SDLocationBoundsResponse(
+    @SerializedName("southWest")
+    val southWest: SDLocationResponse? = null,
+    @SerializedName("northEast")
+    val northEast: SDLocationResponse? = null,
 )
 
 data class HomeListCardResponse(

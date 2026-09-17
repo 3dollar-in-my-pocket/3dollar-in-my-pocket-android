@@ -24,6 +24,7 @@ import com.threedollar.common.serverdriven.model.SDClickLogModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
+import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
@@ -82,8 +83,15 @@ class HomeViewModel @Inject constructor(
     private val _filterCells = MutableStateFlow<List<HomeFilterCellType>>(emptyList())
     val filterCells: StateFlow<List<HomeFilterCellType>> = _filterCells.asStateFlow()
 
+    /** 서버가 내려준 홈 지도 최초 줌 레벨. 응답이 없거나 설정값이 없으면 null이다. */
+    private val _initialMapZoomLevel = MutableStateFlow<Double?>(null)
+    val initialMapZoomLevel: StateFlow<Double?> = _initialMapZoomLevel.asStateFlow()
+
     private val _filterDeepLink = MutableSharedFlow<SDLinkModel>(extraBufferCapacity = 1)
     val filterDeepLink: SharedFlow<SDLinkModel> = _filterDeepLink.asSharedFlow()
+
+    private val _focusBounds = MutableSharedFlow<SDLocationBoundsModel>(extraBufferCapacity = 1)
+    val focusBounds: SharedFlow<SDLocationBoundsModel> = _focusBounds.asSharedFlow()
 
     private val _homeListSection = MutableStateFlow(HomeListSectionModel())
     val homeListSection: StateFlow<HomeListSectionModel> = _homeListSection.asStateFlow()
@@ -103,6 +111,10 @@ class HomeViewModel @Inject constructor(
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
 
     private var homeListNextCursor: String? = null
+
+    private var preset: String? = null
+
+    private var hasRequestedHomeList = false
     private var isHomeListLoading = false
 
     private var shouldResetScroll = false
@@ -201,6 +213,7 @@ class HomeViewModel @Inject constructor(
     ) {
         viewModelScope.launch(coroutineExceptionHandler) {
             isHomeListLoading = true
+            hasRequestedHomeList = true
             val previousSelectedCardId = _selectedHomeListCardId.value
             val previousSelectedStoreId = _selectedStorePreviewStoreId.value
             val params = HomeAroundStoreRequestParamsBuilder.build(
@@ -231,6 +244,7 @@ class HomeViewModel @Inject constructor(
                     _homeListSection.value = section.copy(cards = nextCards)
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
+                        section.focusBounds?.let { _focusBounds.tryEmit(it) }
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
                         val selectedCardId = if (preserveSelectedStore) {
                             cards.selectedCardIdAfterRefresh(
@@ -488,19 +502,31 @@ class HomeViewModel @Inject constructor(
 
     // ----- SDU filter -----
 
-    private fun fetchHomeFilterScreen() {
+    fun applyPreset(preset: String) {
+        this.preset = preset
+        fetchHomeFilterScreen(shouldRefreshCards = true)
+    }
+
+    private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false) {
+        val requestedPreset = preset
         viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getHomeFilterScreen().collect { response ->
+            screenRepository.getHomeFilterScreen(preset = requestedPreset).collect { response ->
+                if (requestedPreset != preset) return@collect
                 if (response.ok && response.data != null) {
-                    val sections = response.data!!.sections
+                    val screen = response.data!!
                     _uiState.update {
                         it.copy(
-                            filterSections = sections,
+                            filterSections = screen.sections,
                             hasLoadedFilterScreen = true,
                         )
                     }
-                    initializeRadioSelectionDefaults()
+                    _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
+                    applyServerSelectionDefaults()
                     updateFilterCells()
+
+                    if (shouldRefreshCards && hasRequestedHomeList) {
+                        fetchAroundStores()
+                    }
                 } else {
                     _filterCells.value = makeFallbackFilterCells(uiState.value.selectedCategory)
                 }
@@ -542,10 +568,10 @@ class HomeViewModel @Inject constructor(
         return serverBars.ifEmpty { fallbackBars() }
     }
 
-    private fun initializeRadioSelectionDefaults() {
-        val newSelection = uiState.value.radioSelection.toMutableMap()
+    private fun applyServerSelectionDefaults() {
+        val newSelection = mutableMapOf<String, Int>()
         for (bar in allBars()) {
-            if (bar is HomeFilterBar.RadioBar && newSelection[bar.paramKey] == null) {
+            if (bar is HomeFilterBar.RadioBar) {
                 newSelection[bar.paramKey] = 0
             }
         }

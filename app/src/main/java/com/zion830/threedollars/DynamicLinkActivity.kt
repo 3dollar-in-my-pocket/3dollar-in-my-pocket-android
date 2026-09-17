@@ -34,6 +34,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
         const val BROWSER = "browser"
+        const val HOME_PRESET = "homePreset"
 
         private const val LINK = "link"
         private const val SCHEME_DOLLARS = "dollars"
@@ -45,6 +46,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val POLL_ID = "pollId"
         private const val ID = "id"
         private const val URL = "url"
+        private const val PRESET = "preset"
 
         fun launch(context: Context, link: String) {
             Intent(context, DynamicLinkActivity::class.java).apply {
@@ -167,6 +169,7 @@ class DynamicLinkActivity : AppCompatActivity() {
             HOME -> {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(HOME, HOME)
+                    deeplink.getQueryParameter(PRESET)?.let { putExtra(HOME_PRESET, it) }
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
             }
