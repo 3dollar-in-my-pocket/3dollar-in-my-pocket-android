@@ -139,4 +139,34 @@ class HomeSheetStateCalculatorTest {
             HomeSheetStateCalculator.restoreAfterPreview(HomeSheetValue.Collapsed),
         )
     }
+
+    @Test
+    fun `full list progress is 0 when collapsed and 1 when fully expanded`() {
+        val anchors = HomeSheetAnchors(fullListOffset = 188f, collapsedOffset = 588f)
+
+        assertEquals(0f, HomeSheetStateCalculator.fullListProgress(588f, anchors), 0f)
+        assertEquals(1f, HomeSheetStateCalculator.fullListProgress(188f, anchors), 0f)
+    }
+
+    @Test
+    fun `full list progress grows as the sheet moves up`() {
+        val anchors = HomeSheetAnchors(fullListOffset = 188f, collapsedOffset = 588f)
+
+        assertEquals(0.5f, HomeSheetStateCalculator.fullListProgress(388f, anchors), 0.0001f)
+    }
+
+    @Test
+    fun `full list progress is clamped outside the anchor range`() {
+        val anchors = HomeSheetAnchors(fullListOffset = 188f, collapsedOffset = 588f)
+
+        assertEquals(0f, HomeSheetStateCalculator.fullListProgress(1000f, anchors), 0f)
+        assertEquals(1f, HomeSheetStateCalculator.fullListProgress(0f, anchors), 0f)
+    }
+
+    @Test
+    fun `full list progress is 0 when there is no room to expand`() {
+        val anchors = HomeSheetAnchors(fullListOffset = 588f, collapsedOffset = 588f)
+
+        assertEquals(0f, HomeSheetStateCalculator.fullListProgress(588f, anchors), 0f)
+    }
 }
