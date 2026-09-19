@@ -53,6 +53,16 @@ internal object HomeSheetStateCalculator {
         }
     }
 
+    fun fullListProgress(
+        currentOffset: Float,
+        anchors: HomeSheetAnchors,
+    ): Float {
+        val range = anchors.collapsedOffset - anchors.fullListOffset
+        if (range <= 0f) return 0f
+
+        return ((anchors.collapsedOffset - currentOffset) / range).coerceIn(0f, 1f)
+    }
+
     fun visibleHeight(
         containerHeightPx: Int,
         currentOffset: Float,

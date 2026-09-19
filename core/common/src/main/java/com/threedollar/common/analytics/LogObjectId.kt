@@ -54,7 +54,8 @@ enum class LogObjectId(val value: String) {
     RECOMMEND_STORE("recommendStore"),
     REVIEW("review"),
     RANDOM("random"),
-    RECOMMEND("recommend");
+    RECOMMEND("recommend"),
+    MAP_VIEW("map_view");
 
     override fun toString(): String = value
 }
