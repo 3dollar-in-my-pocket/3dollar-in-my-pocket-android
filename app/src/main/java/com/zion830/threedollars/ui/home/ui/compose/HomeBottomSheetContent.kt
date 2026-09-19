@@ -44,8 +44,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -87,6 +89,7 @@ import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray80
+import base.compose.Gray90
 import base.compose.AppTheme
 import base.compose.Pink
 import base.compose.Pink400
@@ -94,6 +97,7 @@ import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
+import com.threedollar.common.serverdriven.PreviewImageLayout
 import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
@@ -137,7 +141,14 @@ private val StorePreviewActionRowHeight = 36.dp
 private val StorePreviewHeaderActionGap = 16.dp
 private val StorePreviewHeaderTextActionGap = 4.dp
 private val StorePreviewRootGap = 12.dp
-private val StorePreviewImageHeight = 120.dp
+private val PreviewImageDefaultSize = 120.dp
+private val PreviewImageSpacing = 6.dp
+private val MapViewButtonHeight = 40.dp
+private val MapViewButtonBottomInset = 20.dp
+private val MapViewButtonHorizontalPadding = 12.dp
+private val MapViewButtonIconSize = 16.dp
+private val MapViewButtonIconTextGap = 4.dp
+private const val MapViewButtonInteractiveProgress = 0.5f
 private val StorePreviewIconButtonSize = 32.dp
 private val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
@@ -171,6 +182,7 @@ fun HomeBottomSheetContent(
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
     onVisibleHeightChange: (Int) -> Unit = {},
+    onMapViewClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -382,6 +394,11 @@ fun HomeBottomSheetContent(
             currentOffset = sheetOffsetPx,
         ).roundToInt()
         val sheetHeight = with(density) { sheetVisibleHeightPx.toDp() }
+        val mapViewButtonProgress = if (storeScreen == null) {
+            HomeSheetStateCalculator.fullListProgress(currentOffset = sheetOffsetPx, anchors = anchors)
+        } else {
+            0f
+        }
 
         LaunchedEffect(isFullListSettled) {
             onFullListBackgroundVisibleChange(isFullListSettled)
@@ -391,7 +408,7 @@ fun HomeBottomSheetContent(
             onVisibleHeightChange(sheetVisibleHeightPx)
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(sheetHeight)
@@ -399,33 +416,93 @@ fun HomeBottomSheetContent(
                 .clip(RoundedCornerShape(topStart = topCornerRadius, topEnd = topCornerRadius))
                 .background(ColorWhite),
         ) {
-            if (storeScreen == null && !isFullListSettled) {
-                HomeBottomSheetHandle(
-                    onHandleDrag = ::snapSheetBy,
-                    onHandleDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
-                )
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (storeScreen == null && !isFullListSettled) {
+                    HomeBottomSheetHandle(
+                        onHandleDrag = ::snapSheetBy,
+                        onHandleDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
+                    )
+                }
+                if (storeScreen != null) {
+                    StorePreviewContent(
+                        storeScreen = storeScreen,
+                        onClosePreview = onClosePreview,
+                        onActionClick = onActionClick,
+                        onFavoriteClick = onFavoriteClick,
+                        onPreviewClick = onStorePreviewClick,
+                        onAddPhotoClick = onAddPhotoClick,
+                        modifier = Modifier.weight(1f),
+                    )
+                } else {
+                    HomeListContent(
+                        homeListSection = homeListSection,
+                        listState = listState,
+                        onCardClick = onCardClick,
+                        onLoadNextPage = onLoadNextPage,
+                        modifier = Modifier
+                            .weight(1f)
+                            .nestedScroll(listNestedScrollConnection),
+                    )
+                }
             }
-            if (storeScreen != null) {
-                StorePreviewContent(
-                    storeScreen = storeScreen,
-                    onClosePreview = onClosePreview,
-                    onActionClick = onActionClick,
-                    onFavoriteClick = onFavoriteClick,
-                    onPreviewClick = onStorePreviewClick,
-                    onAddPhotoClick = onAddPhotoClick,
-                    modifier = Modifier.weight(1f),
-                )
-            } else {
-                HomeListContent(
-                    homeListSection = homeListSection,
-                    listState = listState,
-                    onCardClick = onCardClick,
-                    onLoadNextPage = onLoadNextPage,
+            if (mapViewButtonProgress > 0f) {
+                MapViewButton(
+                    onClick = {
+                        onMapViewClick()
+                        animateSheetTo(HomeSheetValue.Collapsed)
+                    },
+                    enabled = mapViewButtonProgress >= MapViewButtonInteractiveProgress,
                     modifier = Modifier
-                        .weight(1f)
-                        .nestedScroll(listNestedScrollConnection),
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = MapViewButtonBottomInset)
+                        .alpha(mapViewButtonProgress),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun MapViewButton(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(MapViewButtonHeight / 2)
+    Row(
+        modifier = modifier
+            .height(MapViewButtonHeight)
+            .shadow(elevation = 2.dp, shape = shape)
+            .clip(shape)
+            .background(Gray90)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = MapViewButtonHorizontalPadding),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(MapViewButtonIconTextGap),
+    ) {
+        Icon(
+            painter = painterResource(DesignSystemR.drawable.ic_map),
+            contentDescription = null,
+            tint = ColorWhite,
+            modifier = Modifier.size(MapViewButtonIconSize),
+        )
+        Text(
+            text = stringResource(CommonR.string.map_view),
+            color = ColorWhite,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = dpToSp(12),
+            maxLines = 1,
+        )
+    }
+}
+
+@Preview(name = "Map view button")
+@Composable
+private fun MapViewButtonPreview() {
+    AppTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            MapViewButton(onClick = {})
         }
     }
 }
@@ -1149,32 +1226,49 @@ private fun HomeImages(
 ) {
     if (images.isEmpty()) return
     val cornerRadius = if (listMode) 8.dp else 10.dp
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
-            ServerImage(
-                image = image,
-                modifier = Modifier
-                    .size(StorePreviewImageHeight)
-                    .clip(RoundedCornerShape(cornerRadius)),
-                contentScale = ContentScale.Crop,
-            )
-        }
-        if (onAddPhotoClick != null) {
-            item(key = "store-preview-add-photo") {
-                AddPhotoTile(onClick = onAddPhotoClick)
+    val rowHeight = PreviewImageLayout.rowHeight(images, PreviewImageDefaultSize.value).dp
+
+    BoxWithConstraints {
+        val availableWidth = maxWidth.value
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(PreviewImageSpacing)) {
+            itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
+                ServerImage(
+                    image = image,
+                    modifier = Modifier
+                        .size(
+                            width = PreviewImageLayout.itemWidth(
+                                style = image.style,
+                                count = images.size,
+                                availableWidth = availableWidth,
+                                spacing = PreviewImageSpacing.value,
+                                defaultWidth = PreviewImageDefaultSize.value,
+                            ).dp,
+                            height = PreviewImageLayout.itemHeight(
+                                style = image.style,
+                                defaultHeight = PreviewImageDefaultSize.value,
+                            ).dp,
+                        )
+                        .clip(RoundedCornerShape(cornerRadius)),
+                    contentScale = ContentScale.Crop,
+                )
+            }
+            if (onAddPhotoClick != null) {
+                item(key = "store-preview-add-photo") {
+                    AddPhotoTile(tileSize = rowHeight, onClick = onAddPhotoClick)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AddPhotoTile(onClick: () -> Unit) {
+private fun AddPhotoTile(tileSize: Dp = PreviewImageDefaultSize, onClick: () -> Unit) {
     val strokeWidth = 1.dp
     val dashWidth = 6.dp
     val dashGap = 4.dp
     Box(
         modifier = Modifier
-            .size(StorePreviewImageHeight)
+            .size(tileSize)
             .clip(RoundedCornerShape(10.dp))
             .background(Gray0)
             .drawBehind {
@@ -1412,9 +1506,10 @@ private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): D
     } else {
         0.dp
     }
+    val imageRowHeight = PreviewImageLayout.rowHeight(images, PreviewImageDefaultSize.value).dp
     val mediaHeight = when {
-        images.isNotEmpty() && bodies.isNotEmpty() -> StorePreviewImageHeight + StorePreviewMediaGap + StorePreviewReviewEstimatedMaxHeight
-        images.isNotEmpty() -> StorePreviewImageHeight
+        images.isNotEmpty() && bodies.isNotEmpty() -> imageRowHeight + StorePreviewMediaGap + StorePreviewReviewEstimatedMaxHeight
+        images.isNotEmpty() -> imageRowHeight
         bodies.isNotEmpty() -> StorePreviewReviewEstimatedMaxHeight
         else -> 0.dp
     }
