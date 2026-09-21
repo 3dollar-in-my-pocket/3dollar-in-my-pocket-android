@@ -100,6 +100,8 @@
     
     <!-- Home Feature -->
     <string name="title_home">홈</string>
+    <string name="title_write">가게 제보</string>
+    <string name="title_community">커뮤니티</string>
     <string name="title_add_store">가게 제보</string>
     <string name="search_by_address">위치 검색</string>
     <string name="search_by_address_hint">구, 동, 건물명, 역 등으로 검색</string>

@@ -3,7 +3,6 @@ package com.zion830.threedollars
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -162,7 +161,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 if (destination.id == R.id.navigation_mypage) {
                     ContextCompat.getColor(this, DesignSystemR.color.gray90)
                 } else {
-                    Color.TRANSPARENT
+                    ContextCompat.getColor(this, DesignSystemR.color.gray20)
                 }
             )
             binding.navView.isVisible = destination.id != R.id.navigation_popup
