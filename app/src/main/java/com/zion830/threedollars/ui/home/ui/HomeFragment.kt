@@ -314,6 +314,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
                     },
                     onVisibleHeightChange = ::updateLocationButtonBottomMargin,
+                    onMapViewClick = viewModel::sendClickMapViewLog,
                 )
             }
         }

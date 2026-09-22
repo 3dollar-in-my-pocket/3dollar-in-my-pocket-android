@@ -55,6 +55,7 @@ enum class LogObjectId(val value: String) {
     REVIEW("review"),
     RANDOM("random"),
     RECOMMEND("recommend"),
+    MAP_VIEW("map_view"),
     HOME("home"),
     WRITE("write"),
     COMMUNITY("community"),

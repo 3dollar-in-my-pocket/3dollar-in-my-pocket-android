@@ -734,6 +734,16 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    fun sendClickMapViewLog() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.MAP_VIEW
+            )
+        )
+    }
+
     fun sendClickCurrentLocationLog() {
         LogManager.sendEvent(
             ClickEvent(
