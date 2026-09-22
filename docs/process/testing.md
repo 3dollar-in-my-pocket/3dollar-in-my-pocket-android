@@ -62,6 +62,7 @@ CI 커버리지 표    스크린샷·영상 증거    작성자 체크
 
 - Activity/Fragment/Composable 자체는 테스트하지 않는다. 화면 로직은 ViewModel·State·순수 함수로 내려서 테스트한다.
 - `androidTest`(instrumented)는 CI에서 돌리지 않는다. 기기가 필요한 검증은 **2번 계층(자동화 TC)** 이 대신한다.
+- **새 모듈에 테스트를 추가할 땐 그 모듈의 `build.gradle.kts` 에 테스트 의존성이 있는지 먼저 확인한다.** kapt(Hilt)를 쓰는 모듈에 JUnit 없이 `@Test` 파일만 있으면 `kaptDebugUnitTestKotlin` 이 `NonExistentClass` 로 실패해 **전체 `testDebugUnitTest` 가 깨진다.** 의존성 추가는 승인 대상이므로(`AGENTS.md`) 먼저 묻는다.
 
 ### 네이밍
 
