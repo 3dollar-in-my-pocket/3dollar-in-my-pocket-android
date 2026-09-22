@@ -1,0 +1,7 @@
+# 동결된 의존 방향 위반. 한 줄에 "From -> To".
+# 새 항목을 추가할 때는 사유를 주석으로 함께 남기고, PR 본문 "설명이 필요한 결정"에 적는다.
+# 이 목록은 줄어들기만 해야 한다.
+
+# core:network 가 SDUI 렌더링 때문에 legacy :common 을 의존한다.
+# docs/context/module-dependencies-current.md "현재 구조 해석" 참고. 해소는 별도 마이그레이션 티켓.
+:core:network -> :common
