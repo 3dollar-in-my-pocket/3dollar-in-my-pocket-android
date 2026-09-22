@@ -15,6 +15,7 @@
 - 모듈 목록은 `settings.gradle.kts`를 원천으로 확인한다.
 - 현재 주요 모듈: `:app`, `:common`, `:core:network`, `:core:common`, `:core:ui`, `:core:designsystem`, `:core:abtest`, `:domain`, `:data`.
 - 아키텍처/리소스 세부 규칙은 `DEPENDENCY_MAP.md`와 `MIGRATION_RULES.md`를 참고한다.
+- AI 개발 프로세스(테크스펙 → 테스트 → 증거 → PR)는 `docs/process/`에 있다.
 
 ## Current Toolchain
 
@@ -28,7 +29,8 @@
 - 전체 빌드: `./gradlew build`
 - Debug APK: `./gradlew assembleDebug`
 - Release APK: `./gradlew assembleRelease`
-- 단위 테스트: `./gradlew test`
+- 단위 테스트: `./gradlew testDebugUnitTest` (CI 기준. `./gradlew test`는 전체 variant)
+- 모듈 의존 방향 검사: `scripts/check-module-deps.sh`
 - 기기/에뮬레이터 테스트: `./gradlew connectedAndroidTest`
 - 의존성 확인: `./gradlew dependencies`
 - 필요한 범위의 최소 Gradle task를 우선 사용하고, full clean build는 필요한 경우에만 실행한다.
@@ -41,6 +43,15 @@
 - 기존 사용자 변경사항을 되돌리지 않는다.
 - 대규모 리팩터링, 의존성 추가/업그레이드, 포맷 전용 변경은 명시적 승인 없이 하지 않는다.
 - 완료 전 변경 범위에 맞는 최소 검증을 실행하고, 실행하지 못한 검증은 보고한다.
+
+## AI Development Process
+
+- 전체 흐름과 PR 위험도(경량/풀코스) 기준: `docs/process/pr-process.md` (iOS 레포와 같은 형태)
+- 의도 문서(테크스펙): `docs/process/tech-spec-process.md` — 지라 `테크스펙` 필드가 단일 진실 소스, iOS/AOS 공유
+- 테스트 세 계층과 `` `TH{티켓}_TC{n}_…` `` 네이밍: `docs/process/testing.md`
+- 자동화·수동 체크리스트: `docs/process/e2e-and-manual-tests.md`
+- 검증 장치 변경 라벨: `docs/process/verification-change.md`
+- PR 생성은 `/3dollars:pr-body`, 본문 형식은 `.github/PULL_REQUEST_TEMPLATE.md`
 
 ## Project Skills
 

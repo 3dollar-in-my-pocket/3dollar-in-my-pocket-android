@@ -28,7 +28,9 @@
 - 전체 빌드: `./gradlew build`
 - Debug APK: `./gradlew assembleDebug`
 - Release APK: `./gradlew assembleRelease`
-- 단위 테스트: `./gradlew test`
+- 단위 테스트: `./gradlew testDebugUnitTest` (CI 기준. `./gradlew test`는 전체 variant)
+- 모듈 의존 방향 검사: `scripts/check-module-deps.sh`
+- 테스트 결과 요약(PR 코멘트 형식): `scripts/test-summary.sh`
 - 기기/에뮬레이터 테스트: `./gradlew connectedAndroidTest`
 - 의존성 확인: `./gradlew dependencies`
 - 문서화된 검증 하네스: `docs/harness/README.md`
@@ -44,6 +46,16 @@
 - 변경 유형별 검증: `docs/context/verification-matrix.md`
 - Jira/feature 작업 문서: `docs/features/`
 - 에이전트 작업 흐름과 skill 인덱스: `docs/agents/`
+- AI 개발 프로세스(테크스펙 → 테스트 → 증거 → PR): `docs/process/`
+
+## AI Development Process
+
+- 전체 흐름과 PR 위험도(경량/풀코스) 기준은 `docs/process/pr-process.md` 한 장에 있다. iOS 레포와 같은 형태를 쓴다.
+- 의도 문서(테크스펙)는 `docs/process/tech-spec-process.md`. 지라 `테크스펙` 필드가 단일 진실 소스이고 iOS/AOS가 스펙을 공유한다.
+- 테스트는 diff가 아니라 테크스펙 TC에서 도출한다. 세 계층(유닛/자동화/수동)과 네이밍은 `docs/process/testing.md`.
+- 유닛으로 못 덮는 TC의 자동화·수동 분류와 화면 변경 공통 체크는 `docs/process/e2e-and-manual-tests.md`.
+- 검증 장치(CI·스크립트·규칙 문서)를 바꾸는 PR은 `docs/process/verification-change.md`의 라벨 규칙을 따른다.
+- PR은 `/3dollars:pr-body`로 만들고, 본문 형식은 `.github/PULL_REQUEST_TEMPLATE.md`를 따른다.
 
 ## Agent Workflow
 
