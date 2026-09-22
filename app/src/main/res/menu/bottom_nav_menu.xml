@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/selector_home"
         android:title="@string/title_home" />
-    
+
     <item
         android:id="@+id/navigation_write"
-        android:title="제보하기"
-        android:icon="@drawable/selector_write" />
-    
+        android:icon="@drawable/selector_write"
+        android:title="@string/title_add_store" />
+
     <item
         android:id="@+id/navigation_vote"
         android:icon="@drawable/selector_vote"
-        android:title="투표하기" />
-    
+        android:title="@string/title_community" />
+
     <item
         android:id="@+id/navigation_mypage"
         android:icon="@drawable/selector_mypage"
