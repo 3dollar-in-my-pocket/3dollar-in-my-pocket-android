@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.ui.element
+package com.zion830.threedollars.core.ui.sdui.element
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.threedollar.network.sdui.model.element.SDImageModel
+import com.threedollar.common.sdui.model.element.SDImageModel
 
 @Composable
 fun SDImage(

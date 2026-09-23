@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.ui.element
+package com.zion830.threedollars.core.ui.sdui.element
 
 import android.text.TextUtils
 import android.util.TypedValue
@@ -23,7 +23,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.toColorInt
 import androidx.core.text.HtmlCompat
 import com.threedollar.common.compose.utils.toColor
-import com.threedollar.network.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDTextModel
 
 @Composable
 fun SDText(

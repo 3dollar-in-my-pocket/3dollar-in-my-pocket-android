@@ -27,8 +27,8 @@ import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.store.repository.StoreRepository
-import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
-import com.threedollar.network.sdui.model.section.SDSectionType
+import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
+import com.threedollar.common.sdui.model.section.SDSectionType
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItem
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemState

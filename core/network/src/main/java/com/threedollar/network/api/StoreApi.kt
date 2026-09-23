@@ -3,7 +3,7 @@ package com.threedollar.network.api
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
 import com.threedollar.network.request.StoreDisplayItemsRequest
-import com.threedollar.network.sdui.model.screen.SDScreenModel
+import com.threedollar.common.sdui.model.screen.SDScreenModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Body

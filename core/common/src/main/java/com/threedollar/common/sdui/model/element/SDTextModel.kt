@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.model.element
+package com.threedollar.common.sdui.model.element
 
 data class SDTextModel(
     val text: String?,

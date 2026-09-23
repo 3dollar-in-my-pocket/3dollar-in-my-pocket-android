@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -75,16 +74,6 @@ dependencies {
     testImplementation(libs.bundles.testing)
 
     implementation(libs.bundles.retrofit)
-
-    /**
-     * for SDUI
-     * TODO : 모듈 분리
-     */
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose)
-    implementation(libs.bundles.coil.compose)
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:ui"))
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

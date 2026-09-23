@@ -1,12 +1,12 @@
-package com.threedollar.network.sdui.ui.component
+package com.zion830.threedollars.core.ui.sdui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.threedollar.network.sdui.model.component.SDHeaderModel
-import com.threedollar.network.sdui.model.element.SDTextModel
-import com.threedollar.network.sdui.ui.element.SDText
+import com.threedollar.common.sdui.model.component.SDHeaderModel
+import com.threedollar.common.sdui.model.element.SDTextModel
+import com.zion830.threedollars.core.ui.sdui.element.SDText
 
 @Composable
 fun SDHeader(
