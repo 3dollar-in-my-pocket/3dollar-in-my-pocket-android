@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 모듈 의존 방향 검사.
-# 규칙: 모듈은 자기보다 낮은 계층만 의존한다 (app → data → domain → common → core:*).
+# 규칙 1 (랭크): 모듈은 자기보다 낮은 계층만 의존한다 (app → data → domain → common → core:*).
+# 규칙 2 (금지쌍): 랭크로는 표현할 수 없는 간선을 명시적으로 막는다. is_forbidden 참고.
 # 기존 위반은 scripts/module-deps-baseline.txt 에 동결하고, 새 위반만 실패로 처리한다.
 # 문서: docs/process/pr-process.md, docs/context/module-dependencies-current.md
 set -uo pipefail
@@ -22,6 +23,20 @@ rank_of() {
     :core:abtest) echo 10 ;;
     :core:designsystem) echo 10 ;;
     *) echo -1 ;;
+  esac
+}
+
+# 랭크상 하위 계층이어도 막는 간선. 사유를 출력한다.
+# 선형 랭크로는 ":data 는 :core:network 를 써도 되지만 :domain 은 안 된다" 같은 규칙을 표현할 수 없다.
+is_forbidden() {
+  case "$1 -> $2" in
+    ":domain -> :core:network")
+      echo "domain 은 네트워크 DTO·Retrofit 타입을 모른다. 필요한 모델은 :domain 이나 :core:common 에 둔다" ;;
+    ":domain -> :core:ui"|":domain -> :core:designsystem"|\
+    ":data -> :core:ui"|":data -> :core:designsystem"|\
+    ":core:network -> :core:ui"|":core:network -> :core:designsystem")
+      echo "UI 계층(:core:ui, :core:designsystem)은 UI 를 그리는 모듈만 의존한다. 렌더링 코드는 :core:ui 로 옮긴다" ;;
+    *) return 1 ;;
   esac
 }
 
@@ -54,6 +69,15 @@ while IFS= read -r gradle_file; do
     to_rank="$(rank_of "$dep")"
     if [ "$to_rank" -lt 0 ]; then
       echo "::warning::$gradle_file — 알 수 없는 모듈 '$dep' (scripts/check-module-deps.sh 의 rank_of 에 추가하세요)"
+      continue
+    fi
+    if reason="$(is_forbidden "$module" "$dep")"; then
+      if is_baselined "$module" "$dep"; then
+        baselined=$((baselined + 1))
+        continue
+      fi
+      echo "::error file=$gradle_file::금지된 의존: $module -> $dep — $reason"
+      violations=$((violations + 1))
       continue
     fi
     if [ "$to_rank" -lt "$from_rank" ]; then
