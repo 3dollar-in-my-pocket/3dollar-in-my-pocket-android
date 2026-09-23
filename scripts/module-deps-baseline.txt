@@ -4,10 +4,20 @@
 #
 # 현재 동결 항목: 0건.
 #
-# 참고 — 랭크 규칙상 통과하지만 아키텍처 부채로 남아 있는 의존 (TH-1355에서 정리 예정):
-#   :domain -> :core:network            LoginRepository.kt / StoreRepository.kt 2개 파일이
-#                                       SignUser·LoginRequest·SignUpRequest·PushInformationRequest·SDScreenModel
-#                                       DTO를 domain 인터페이스에 노출한다
-#   :core:network -> :core:ui           sdui/ui/** 4개 파일이 noRippleClickable 사용
-#   :core:network -> :core:designsystem sdui/ui/** 4개 파일이 base.compose.{Gray50,Gray10,Gray0,dpToSp} 사용
-# 셋 다 "서버 주도 UI 렌더링 코드가 :core:network 안에 있다"는 한 가지 원인에서 나온다.
+# 참고 — 랭크 규칙상 통과하지만 아키텍처 부채로 남아 있는 의존 (TH-1355).
+# 원인이 두 가지이고 서로 독립이다.
+#
+# [원인 1] 서버 주도 UI(SDUI) 렌더러가 :core:network 안에 있다
+#   :core:network -> :core:ui            sdui/ui/** 가 noRippleClickable, VerticalSpacer 사용
+#   :core:network -> :core:designsystem  sdui/ui/** 가 base.compose.{Gray50,Gray10,Gray0,dpToSp} 사용
+#   :domain -> :core:network             StoreRepository.getScreenStore 가 SDScreenModel 반환
+#   sdui/model(11) + sdui/core(3) 은 UI import 0 이라 sdui/ui(7) 만 떼면 컷이 깨끗하다.
+#   단 모델을 렌더러와 같은 모듈로 옮기면 :domain 이 UI 모듈을 의존하게 되어 악화된다.
+#   홈 화면용 서버드리븐(:core:common/serverdriven/model + :core:ui/serverdriven)이
+#   이미 올바른 배치이므로 그쪽에 맞춘다.
+#
+# [원인 2] LoginRepository 의 레거시 누수 (SDUI 와 무관)
+#   :domain -> :core:network             LoginRequest·SignUpRequest·SignUser·PushInformationRequest
+#                                        4개 DTO 와 retrofit2.Response 가 domain 인터페이스에 노출.
+#   같은 인터페이스의 나머지 4개 메서드는 이미 도메인 모델만 쓴다. 매핑만 하면 되는 기계적 정리이며
+#   고치면 :domain 의 retrofit 의존도 함께 제거된다.

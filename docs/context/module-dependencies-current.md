@@ -69,7 +69,11 @@
 - `:data`와 `:domain`은 feature별 하위 패키지로 `home`, `screen`, `my`, `community`, `login`, `store` 등을 나눈다.
 - `:domain`은 현재 순수 Kotlin domain이 아니다. Android library이고 `:core:network`, AndroidX, Retrofit, Hilt에 의존한다.
 - `:core:network`는 네트워크 인프라 외에 **서버 주도 UI(SDUI) 렌더링 Compose 코드**(`sdui/ui/**`, 7개 파일)를 함께 갖고 있다. 이 때문에 네트워크 모듈이 UI 레이어를 역으로 의존한다 — `:core:ui`(`noRippleClickable`)와 `:core:designsystem`(`base.compose.{Gray50,Gray10,Gray0,dpToSp}`)을 각각 `sdui/ui/**` 4개 파일이 쓴다. 분리는 TH-1355.
-- `:domain`의 `LoginRepository.kt`·`StoreRepository.kt` 2개 파일이 `:core:network`의 DTO(`SignUser`, `LoginRequest`, `SignUpRequest`, `PushInformationRequest`, `SDScreenModel`)를 인터페이스 시그니처에 노출한다. 같은 뿌리의 부채이며 TH-1355에서 함께 다룬다.
+- `:domain`이 `:core:network`를 의존하는 이유는 2개 파일뿐이고, 원인이 서로 다르다.
+  - `StoreRepository.getScreenStore`가 `SDScreenModel`을 반환한다 — 위 SDUI 배치 문제와 같은 뿌리.
+  - `LoginRepository`가 `LoginRequest`·`SignUpRequest`·`SignUser`·`PushInformationRequest` DTO와 **`retrofit2.Response`**를 인터페이스에 노출한다 — SDUI와 무관한 레거시 누수. 같은 인터페이스의 나머지 메서드는 이미 도메인 모델만 쓴다. 이 때문에 `:domain`이 Retrofit에도 직접 의존한다.
+  - 나머지 Repository 6개(`HomeRepository` 등)는 전부 `domain.*.data.*Model`만 쓴다.
+- **서버드리븐 시스템이 두 벌 있다.** 홈 화면용은 모델이 `:core:common/serverdriven/model`, 렌더러가 `:core:ui/serverdriven`로 **올바르게 배치**되어 있고, 가게 상세용만 `:core:network/sdui`에 모델·렌더러가 함께 들어있다. `SDScreenModel`·`SDSectionModel`·`SDHeaderModel`·`SDChipModel`·`SDImageModel`·`SDTextModel`은 **양쪽에 같은 이름으로 각각 존재**한다. TH-1355에서 통합 여부를 함께 판단한다.
 - `:common`은 legacy shared module로 남아 있으며, 신규 공통 코드는 우선 `:core:*` 계층을 확인한다.
 
 ## 작업 시 주의
