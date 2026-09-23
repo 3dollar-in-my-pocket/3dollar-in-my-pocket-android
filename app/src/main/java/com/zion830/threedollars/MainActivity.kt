@@ -3,7 +3,6 @@ package com.zion830.threedollars
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -21,7 +20,11 @@ import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ScreenName
+import com.threedollar.common.analytics.sendClick
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.getCurrentDate
 import com.threedollar.common.ext.isNotNullOrEmpty
@@ -55,6 +58,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    /** 딥링크로 탭을 옮기는 동안에는 사용자 탭이 아니므로 클릭 로그를 보내지 않는다. */
+    private var isTabChangingByDeepLink = false
 
     override fun initView() {
         setDarkSystemBars()
@@ -115,6 +121,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     private fun initNavView() {
         binding.navView.setOnItemSelectedListener {
+            sendTabClickLog(it.itemId)
             when (it.itemId) {
                 R.id.navigation_home -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
@@ -142,7 +149,34 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             }
             true
         }
+        // 이미 선택된 탭을 다시 눌렀을 때는 setOnItemSelectedListener 가 호출되지 않으므로 따로 받는다.
+        binding.navView.setOnItemReselectedListener { sendTabClickLog(it.itemId) }
         navigateToMedalPageWithDeepLink(intent)
+    }
+
+    private fun sendTabClickLog(itemId: Int) {
+        if (isTabChangingByDeepLink) return
+        val objectId = when (itemId) {
+            R.id.navigation_home -> LogObjectId.HOME
+            R.id.navigation_write -> LogObjectId.WRITE
+            R.id.navigation_vote -> LogObjectId.COMMUNITY
+            R.id.navigation_mypage -> LogObjectId.MY_PAGE
+            else -> return
+        }
+        LogManager.sendClick(
+            screen = ScreenName.MAIN_TAB_BAR,
+            objectType = LogObjectType.TAB,
+            objectId = objectId
+        )
+    }
+
+    private fun selectTabWithoutClickLog(itemId: Int) {
+        isTabChangingByDeepLink = true
+        try {
+            binding.navView.selectedItemId = itemId
+        } finally {
+            isTabChangingByDeepLink = false
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -162,7 +196,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 if (destination.id == R.id.navigation_mypage) {
                     ContextCompat.getColor(this, DesignSystemR.color.gray90)
                 } else {
-                    Color.TRANSPARENT
+                    ContextCompat.getColor(this, DesignSystemR.color.gray20)
                 }
             )
             binding.navView.isVisible = destination.id != R.id.navigation_popup
@@ -206,22 +240,22 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         if (intent.getStringExtra(DynamicLinkActivity.MEDAL).isNotNullOrEmpty()) {
             binding.navView.post {
                 myPageViewModel.isMoveMedalPage = true
-                binding.navView.selectedItemId = R.id.navigation_mypage
+                selectTabWithoutClickLog(R.id.navigation_mypage)
             }
         } else if (intent.getStringExtra(DynamicLinkActivity.COMMUNITY).isNotNullOrEmpty()) {
             binding.navView.post {
-                binding.navView.selectedItemId = R.id.navigation_vote
+                selectTabWithoutClickLog(R.id.navigation_vote)
             }
         } else if (intent.getStringExtra(DynamicLinkActivity.HOME).isNotNullOrEmpty()) {
             binding.navView.post {
-                binding.navView.selectedItemId = R.id.navigation_home
+                selectTabWithoutClickLog(R.id.navigation_home)
             }
             intent.getStringExtra(DynamicLinkActivity.HOME_PRESET)?.let { preset ->
                 homeViewModel.applyPreset(preset)
             }
         } else if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW)) {
             binding.navView.post {
-                binding.navView.selectedItemId = R.id.navigation_home
+                selectTabWithoutClickLog(R.id.navigation_home)
             }
         } else if (intent.getStringExtra(DynamicLinkActivity.BROWSER).isNotNullOrEmpty()) {
             val url = intent.getStringExtra(DynamicLinkActivity.BROWSER).orEmpty()

@@ -9,6 +9,7 @@ enum class ScreenName(val value: String) {
     HOME_LIST("home_list"),
     CATEGORY_FILTER("category_filter"),
     MAIN_AD_BANNER("main_ad_banner"),
+    MAIN_TAB_BAR("main_tab_bar"),
     SEARCH_ADDRESS("search_address"),
     EDIT_STORE("edit_store"),
     STORE_CONTRIBUTORS("store_contributors"),

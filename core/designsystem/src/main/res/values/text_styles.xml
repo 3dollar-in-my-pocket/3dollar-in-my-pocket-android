@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!--- font styles -->
     <style name="apple_gothic_regular" parent="TextAppearance.AppCompat">
         <item name="fontFamily">@font/apple_gothic_regular</item>
@@ -89,6 +89,13 @@
 
     <style name="pretendard_medium.size_12dp">
         <item name="android:textSize">12dp</item>
+    </style>
+
+    <!--- 하단 GNB 탭 라벨: Pretendard Medium 12 / 행간 18 / 자간 -1% -->
+    <style name="pretendard_medium.size_12dp.bottom_nav">
+        <item name="android:lineHeight" tools:targetApi="p">18dp</item>
+        <item name="lineHeight">18dp</item>
+        <item name="android:letterSpacing">-0.01</item>
     </style>
 
     <style name="pretendard_medium.size_14dp">

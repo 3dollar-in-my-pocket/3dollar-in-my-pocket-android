@@ -83,19 +83,54 @@ jobs:
 
       - name: Prepare release notes
         run: |
-          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-version:refname | head -n 1 || true)
+          # verification-assets 처럼 v 로 시작하는 비버전 태그가 섞이지 않도록 vX.Y.Z / v.X.Y.Z 만 고른다.
+          # 두 표기가 섞여 있어 refname 정렬로는 최신을 못 찾으므로 접두사를 떼어낸 값으로 정렬한다.
+          PREVIOUS_TAG=$(git tag --list \
+            | grep -E '^v\.?[0-9]+\.[0-9]+\.[0-9]+$' \
+            | awk '{key=$0; sub(/^v\.?/,"",key); print key"\t"$0}' \
+            | sort -V -r \
+            | head -n 1 \
+            | cut -f2 || true)
+          echo "previous tag: ${PREVIOUS_TAG:-(none)}"
           mkdir -p distribution/whatsnew
 
           COMMITS=""
           if [ -n "$PREVIOUS_TAG" ]; then
-            COMMITS=$(git log --pretty=format:"- %s" "${PREVIOUS_TAG}..HEAD" || true)
+            COMMITS=$(git log --no-merges --pretty=format:"- %s" "${PREVIOUS_TAG}..HEAD" || true)
           fi
 
           if [ -z "$COMMITS" ]; then
             COMMITS="- ${{ steps.version.outputs.tag_name }} 릴리즈"
           fi
 
-          printf '%s\n' "$COMMITS" > distribution/whatsnew/whatsnew-ko-KR
+          # Play 의 what's new 는 언어당 500자 제한이고, 파일 끝 개행까지 길이에 포함된다.
+          # 바이트가 아니라 유니코드 문자 수 기준이라 한글이 섞여도 python 으로 세야 정확하다.
+          python3 - "$COMMITS" > distribution/whatsnew/whatsnew-ko-KR <<'PY'
+          import sys
+
+          LIMIT = 500
+          ELLIPSIS = "..."
+          # 출력 마지막 개행 1자도 Play 가 세므로 본문은 LIMIT - 1 까지만 허용한다.
+          MAX_TEXT = LIMIT - 1
+          text = sys.argv[1].strip()
+
+          if len(text) > MAX_TEXT:
+              budget = MAX_TEXT - len(ELLIPSIS) - 1
+              kept, total = [], 0
+              for line in text.split("\n"):
+                  if total + len(line) > budget:
+                      break
+                  kept.append(line)
+                  total += len(line) + 1
+              text = "\n".join(kept + [ELLIPSIS]) if kept else text[:MAX_TEXT - len(ELLIPSIS)] + ELLIPSIS
+
+          assert len(text) + 1 <= LIMIT, "release notes still exceed %d chars" % LIMIT
+          sys.stdout.write(text + "\n")
+          PY
+
+          NOTES_LEN=$(python3 -c "import sys; print(len(open(sys.argv[1], encoding='utf-8').read()))" distribution/whatsnew/whatsnew-ko-KR)
+          echo "release notes (${NOTES_LEN} chars, Play limit 500):"
+          cat distribution/whatsnew/whatsnew-ko-KR
 
       - name: Upload to Google Play production (draft)
         uses: r0adkll/upload-google-play@v1
