@@ -1,7 +1,13 @@
 # 동결된 의존 방향 위반. 한 줄에 "From -> To".
 # 새 항목을 추가할 때는 사유를 주석으로 함께 남기고, PR 본문 "설명이 필요한 결정"에 적는다.
 # 이 목록은 줄어들기만 해야 한다.
-
-# core:network 가 SDUI 렌더링 때문에 legacy :common 을 의존한다.
-# docs/context/module-dependencies-current.md "현재 구조 해석" 참고. 해소는 별도 마이그레이션 티켓.
-:core:network -> :common
+#
+# 현재 동결 항목: 0건.
+#
+# 참고 — 랭크 규칙상 통과하지만 아키텍처 부채로 남아 있는 의존 (TH-1355에서 정리 예정):
+#   :domain -> :core:network            LoginRepository.kt / StoreRepository.kt 2개 파일이
+#                                       SignUser·LoginRequest·SignUpRequest·PushInformationRequest·SDScreenModel
+#                                       DTO를 domain 인터페이스에 노출한다
+#   :core:network -> :core:ui           sdui/ui/** 4개 파일이 noRippleClickable 사용
+#   :core:network -> :core:designsystem sdui/ui/** 4개 파일이 base.compose.{Gray50,Gray10,Gray0,dpToSp} 사용
+# 셋 다 "서버 주도 UI 렌더링 코드가 :core:network 안에 있다"는 한 가지 원인에서 나온다.
