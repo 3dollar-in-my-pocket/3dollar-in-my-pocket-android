@@ -12,7 +12,6 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.login.data.AccessCheckModel
 import com.threedollar.domain.login.repository.LoginRepository
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.AppStatusRepository
 import com.zion830.threedollars.datasource.model.AppUpdateDialog
@@ -108,9 +107,9 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun putPushInformation(informationRequest: PushInformationRequest) {
+    fun putPushInformation(pushToken: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            loginRepository.putPushInformation(informationRequest)
+            loginRepository.registerPushToken(pushToken)
         }
     }
 
