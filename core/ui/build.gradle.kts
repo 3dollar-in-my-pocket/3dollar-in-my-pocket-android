@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
 
     implementation(libs.bundles.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.bundles.coil.compose)
     implementation(libs.lottie.compose)
 
