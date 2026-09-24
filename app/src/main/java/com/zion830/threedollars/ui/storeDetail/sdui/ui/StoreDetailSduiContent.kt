@@ -36,6 +36,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import base.compose.ColorWhite
 import base.compose.Gray100
 import base.compose.Gray20
+import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.element.SDActionBarModel
@@ -263,22 +266,23 @@ private fun StoreDetailNavigationBar(
         Row(horizontalArrangement = Arrangement.spacedBy(StoreDetailSduiDefaults.TrailingIconSpacing)) {
             NavigationIcon(
                 iconRes = if (isFavorite) DesignSystemR.drawable.ic_store_preview_bookmark_solid else DesignSystemR.drawable.ic_store_preview_bookmark_line,
+                tint = if (isFavorite) Pink else Gray100,
                 onClick = onFavoriteClick
             )
-            NavigationIcon(iconRes = DesignSystemR.drawable.ic_store_preview_close, onClick = onClose)
+            NavigationIcon(iconRes = DesignSystemR.drawable.ic_store_preview_close, tint = Gray100, onClick = onClose)
         }
     }
 }
 
 @Composable
-private fun NavigationIcon(iconRes: Int, onClick: () -> Unit) {
+private fun NavigationIcon(iconRes: Int, tint: Color, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(StoreDetailSduiDefaults.TrailingIconSize)
             .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Image(painter = painterResource(iconRes), contentDescription = null)
+        Image(painter = painterResource(iconRes), contentDescription = null, colorFilter = ColorFilter.tint(tint))
     }
 }
 

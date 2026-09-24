@@ -12,6 +12,7 @@ import com.threedollar.domain.store.repository.StoreRepository
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailActionResolver
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailActionResolver.Resolution
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailErrorMessage
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiLogger
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -79,7 +80,7 @@ class StoreDetailSduiViewModel @Inject constructor(
         super.onException(exception, tag)
         if (tag is LoadTag && tag.version != loadVersion) return
         stateStore.update { it.copy(isLoading = false, isUploading = false) }
-        sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(exception.message))
+        sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(StoreDetailErrorMessage.from(exception)))
     }
 
     private fun load(intent: StoreDetailSduiUiIntent.Load) {
@@ -129,7 +130,7 @@ class StoreDetailSduiViewModel @Inject constructor(
                     if (throwable is StoreNotExistsException) {
                         sendEffect(StoreDetailSduiUiEffect.Close(message = throwable.message, asAlert = true))
                     } else {
-                        sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(throwable.message))
+                        sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(StoreDetailErrorMessage.from(throwable)))
                     }
                 }
         }
@@ -290,7 +291,7 @@ class StoreDetailSduiViewModel @Inject constructor(
             successMessage?.let { sendEffect(StoreDetailSduiUiEffect.ShowToast(messageRes = it)) }
             fetch(keepContent = true)
         }
-        onFailure { sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(it.message)) }
+        onFailure { sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(StoreDetailErrorMessage.from(it))) }
     }
 
     private fun sendEffect(effect: StoreDetailSduiUiEffect) {

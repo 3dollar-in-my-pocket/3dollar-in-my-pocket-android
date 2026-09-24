@@ -514,6 +514,7 @@ fun HomeBottomSheetContent(
                                     onFavoriteClick = onFavoriteClick,
                                     onPreviewClick = {},
                                     onAddPhotoClick = onAddPhotoClick,
+                                    showHeaderButtons = false,
                                 )
                             }
                         }
@@ -823,6 +824,7 @@ private fun StorePreviewContent(
     onPreviewClick: () -> Unit,
     onAddPhotoClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    showHeaderButtons: Boolean = true,
 ) {
     val preview = storeScreen.previewSectionOrNull()
     if (preview == null) {
@@ -854,6 +856,7 @@ private fun StorePreviewContent(
                 onActionClick = onActionClick,
                 onFavoriteClick = onFavoriteClick,
                 onPreviewClick = onPreviewClick,
+                showHeaderButtons = showHeaderButtons,
             )
         }
         if (preview.images.isNotEmpty() || preview.bodies.isNotEmpty()) {
@@ -878,6 +881,7 @@ private fun StorePreviewHeaderSection(
     onActionClick: (StoreActionBarModel) -> Unit,
     onFavoriteClick: (Boolean) -> Unit,
     onPreviewClick: () -> Unit,
+    showHeaderButtons: Boolean = true,
 ) {
     val rowActions = preview.rowActionBars()
     Column(
@@ -898,7 +902,7 @@ private fun StorePreviewHeaderSection(
                 StorePreviewTitle(title = title, badge = preview.header.badge)
                 MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
+            if (showHeaderButtons) Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
                 if (preview.additionalInfos.isStoreType()) {
                     StorePreviewIconButton(
                         iconRes = if (preview.additionalInfos.isSubscriber) {
