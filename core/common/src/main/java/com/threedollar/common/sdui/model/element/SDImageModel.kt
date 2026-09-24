@@ -6,6 +6,7 @@ data class SDImageModel(
 ) {
     data class Style(
         val width: Float,
-        val height: Float
+        val height: Float,
+        val dimmed: Boolean? = null
     )
 }
