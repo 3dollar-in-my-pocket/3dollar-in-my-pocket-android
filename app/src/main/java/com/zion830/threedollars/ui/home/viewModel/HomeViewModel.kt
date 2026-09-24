@@ -102,6 +102,11 @@ class HomeViewModel @Inject constructor(
     private val _selectedStorePreviewStoreId = MutableStateFlow<Long?>(null)
     val selectedStorePreviewStoreId: StateFlow<Long?> = _selectedStorePreviewStoreId.asStateFlow()
 
+    private val _isStoreDetailExpanded = MutableStateFlow(false)
+
+    /** 미리보기 시트가 full 로 올라가 가게 상세(v2)를 보여주는 중인지. */
+    val isStoreDetailExpanded: StateFlow<Boolean> = _isStoreDetailExpanded.asStateFlow()
+
     private val _storePreviewToast = MutableSharedFlow<String>()
     val storePreviewToast: SharedFlow<String> = _storePreviewToast.asSharedFlow()
 
@@ -301,6 +306,9 @@ class HomeViewModel @Inject constructor(
         if (storeId == null) {
             return
         }
+        if (_selectedStorePreviewStoreId.value != storeId) {
+            _isStoreDetailExpanded.value = false
+        }
         _selectedStorePreviewStoreId.value = storeId
         val card = fallbackCard ?: _homeListSection.value.cards
             .filterIsInstance<HomeListCardModel.BasicCard>()
@@ -322,6 +330,13 @@ class HomeViewModel @Inject constructor(
     fun closeStorePreview() {
         _selectedStoreScreen.value = null
         _selectedStorePreviewStoreId.value = null
+        _selectedHomeListCardId.value = null
+        _isStoreDetailExpanded.value = false
+    }
+
+    fun setStoreDetailExpanded(isExpanded: Boolean) {
+        if (isExpanded && _selectedStoreScreen.value == null) return
+        _isStoreDetailExpanded.value = isExpanded
     }
 
     fun refreshSelectedStorePreview() {

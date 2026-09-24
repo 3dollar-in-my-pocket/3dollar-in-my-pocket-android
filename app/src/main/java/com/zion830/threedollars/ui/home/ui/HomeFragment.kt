@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
@@ -68,14 +69,19 @@ import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
+import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigator
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiRoute
+import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.ShareFormat
@@ -89,6 +95,8 @@ import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -103,6 +111,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
+    private val storeDetailViewModel: StoreDetailSduiViewModel by viewModels()
+
+    private val storeDetailResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnStoreChanged)
+        refreshHomeAfterStoreUpdate()
+    }
+
+    private val storeDetailNavigator by lazy(LazyThreadSafetyMode.NONE) {
+        StoreDetailSduiNavigator(
+            activity = requireActivity(),
+            fragmentContainerId = R.id.layout_container,
+            dispatch = storeDetailViewModel::dispatch,
+            launchForResult = storeDetailResultLauncher::launch,
+            onClose = {
+                viewModel.closeStorePreview()
+                refreshHomeAfterStoreUpdate()
+            },
+        )
+    }
+
     private lateinit var adapter: AroundStoreMapViewRecyclerAdapter
 
     private lateinit var naverMapFragment: NearStoreNaverMapFragment
@@ -116,7 +146,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
-            viewModel.closeStorePreview()
+            if (viewModel.isStoreDetailExpanded.value) {
+                viewModel.setStoreDetailExpanded(false)
+            } else {
+                viewModel.closeStorePreview()
+            }
         }
     }
 
@@ -147,6 +181,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initView() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, homeBackPressedCallback)
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            EditStoreFragment.STORE_EDITED_RESULT_KEY,
+            viewLifecycleOwner,
+        ) { _, _ ->
+            storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnStoreChanged)
+            refreshHomeAfterStoreUpdate()
+        }
         initMap()
         initAdapter()
         initFilterComposeView()
@@ -159,7 +200,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
         arguments?.getInt(AddStoreDetailFragment.NAVIGATE_STORE_ID, 0)?.takeIf { it != 0 }?.let { storeId ->
             arguments?.remove(AddStoreDetailFragment.NAVIGATE_STORE_ID)
-            startActivity(StoreDetailActivity.getIntent(requireContext(), storeId = storeId))
+            startActivity(StoreDetailSduiActivity.getIntent(requireContext(), storeId = storeId.toString()))
         }
         consumeStorePreviewDeepLink()
     }
@@ -203,15 +244,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         adapter = AroundStoreMapViewRecyclerAdapter(object : OnItemClickListener<ContentModel> {
             override fun onClick(item: ContentModel) {
                 viewModel.sendClickStore(item.storeModel)
-                if (item.storeModel.storeType == BOSS_STORE) {
-                    val intent =
-                        BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                } else {
-                    val intent =
-                        StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-                    startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-                }
+                val intent = StoreDetailSduiActivity.getIntent(requireContext(), item.storeModel.storeId)
+                startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
 
             }
         }, object : OnItemClickListener<AdvertisementModelV2> {
@@ -299,6 +333,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             AppTheme {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
+                val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
@@ -307,7 +342,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
                     onFavoriteClick = ::toggleStorePreviewFavorite,
-                    onStorePreviewClick = ::moveStorePreviewDetail,
+                    onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
@@ -315,6 +350,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     },
                     onVisibleHeightChange = ::updateLocationButtonBottomMargin,
                     onMapViewClick = viewModel::sendClickMapViewLog,
+                    storeDetailExpanded = isStoreDetailExpanded,
+                    onStoreDetailExpandedChange = viewModel::setStoreDetailExpanded,
+                    storeDetailContent = { placeholderHeader ->
+                        StoreDetailSduiRoute(
+                            viewModel = storeDetailViewModel,
+                            navigator = storeDetailNavigator,
+                            onBack = { viewModel.setStoreDetailExpanded(false) },
+                            onClose = viewModel::closeStorePreview,
+                            placeholderHeader = placeholderHeader,
+                        )
+                    },
                 )
             }
         }
@@ -411,6 +457,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
+                    }
+                }
+                launch {
+                    viewModel.selectedStorePreviewStoreId.filterNotNull().collect { storeId ->
+                        val location = viewModel.uiState.value.userLocation
+                        storeDetailViewModel.dispatch(
+                            StoreDetailSduiUiIntent.Load(
+                                storeId = storeId.toString(),
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                            )
+                        )
+                    }
+                }
+                launch {
+                    viewModel.isStoreDetailExpanded.filter { it }.collect {
+                        storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnDisplayed)
                     }
                 }
                 launch {
@@ -533,16 +596,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             fallbackStoreId = customAction.extraParams.longValue("STORE_ID"),
             fallbackStoreType = customAction.extraParams.stringValue("STORE_TYPE"),
         ) ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossReviewWriteActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailActivity.getIntent(
-                context = requireContext(),
-                storeId = route.storeId.toInt(),
-                openReviewWrite = true,
+        storeDetailNavigator.navigate(
+            StoreDetailDestination.WriteReview(
+                storeId = route.storeId.toString(),
+                isBossStore = route.storeType == BOSS_STORE,
             )
-        }
-        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+        )
     }
 
     private fun moveStorePreviewPhotoAdd() {
@@ -564,23 +623,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             fallbackStoreId = card.storePreviewStoreIdOrNull(),
             fallbackStoreType = card.storePreviewStoreTypeOrNull(),
         ) ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
-        }
+        val intent = StoreDetailSduiActivity.getIntent(requireContext(), route.storeId.toString())
         startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
-    private fun moveStorePreviewDetail() {
-        val route = currentStorePreviewRoute() ?: return
-        val intent = if (route.storeType == BOSS_STORE) {
-            BossStoreDetailActivity.getIntent(requireContext(), route.storeId.toString())
-        } else {
-            StoreDetailActivity.getIntent(requireContext(), storeId = route.storeId.toInt())
-        }
-        startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
-    }
 
     private fun shareStorePreview(customAction: SDCustomActionModel) {
         val params = customAction.extraParams

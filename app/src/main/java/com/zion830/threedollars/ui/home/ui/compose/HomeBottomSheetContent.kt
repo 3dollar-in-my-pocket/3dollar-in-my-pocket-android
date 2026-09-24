@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
 import android.util.Log
+import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -183,6 +184,9 @@ fun HomeBottomSheetContent(
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
     onVisibleHeightChange: (Int) -> Unit = {},
     onMapViewClick: () -> Unit = {},
+    storeDetailExpanded: Boolean = false,
+    onStoreDetailExpandedChange: (Boolean) -> Unit = {},
+    storeDetailContent: (@Composable (placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -276,6 +280,33 @@ fun HomeBottomSheetContent(
             }
         }
 
+        fun animateStorePreviewTo(expanded: Boolean) {
+            stopSheetAnimation()
+            val targetOffset = if (expanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+            val initialOffset = sheetOffsetPx
+            animationJob = coroutineScope.launch {
+                animate(
+                    initialValue = initialOffset,
+                    targetValue = targetOffset,
+                    animationSpec = tween(durationMillis = StoreDetailSheetSpec.SNAP_DURATION_MS, easing = EaseIn),
+                ) { animatedOffset, _ ->
+                    sheetOffsetPx = animatedOffset
+                }
+                sheetOffsetPx = targetOffset
+                onStoreDetailExpandedChange(expanded)
+            }
+        }
+
+        fun settleStorePreview(velocityY: Float) {
+            animateStorePreviewTo(
+                expanded = StoreDetailSheetSpec.shouldExpand(
+                    currentOffset = sheetOffsetPx,
+                    tipOffset = storePreviewOffsetPx,
+                    velocityY = velocityY,
+                )
+            )
+        }
+
         fun animateSheetTo(value: HomeSheetValue) {
             if (storeScreen == null) {
                 lastListSettledValue = value
@@ -299,7 +330,7 @@ fun HomeBottomSheetContent(
         LaunchedEffect(anchors) {
             sheetOffsetPx = if (isSheetInitialized) {
                 if (storeScreen != null) {
-                    storePreviewOffsetPx
+                    if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
                 } else {
                     val restoredValue = HomeSheetStateCalculator.restoreAfterPreview(lastListSettledValue)
                     settledValue = restoredValue
@@ -314,6 +345,7 @@ fun HomeBottomSheetContent(
         LaunchedEffect(storeScreen, anchors, storePreviewOffsetPx) {
             if (!isSheetInitialized) return@LaunchedEffect
             if (storeScreen != null) {
+                if (storeDetailExpanded) return@LaunchedEffect
                 animateSheetToOffset(
                     targetOffset = storePreviewOffsetPx,
                     settled = HomeSheetValue.Collapsed,
@@ -323,8 +355,52 @@ fun HomeBottomSheetContent(
             }
         }
 
+        LaunchedEffect(storeDetailExpanded) {
+            if (!isSheetInitialized || storeScreen == null) return@LaunchedEffect
+            val targetOffset = if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+            if (abs(sheetOffsetPx - targetOffset) > 1f) animateStorePreviewTo(storeDetailExpanded)
+        }
+
         DisposableEffect(Unit) {
             onDispose { animationJob?.cancel() }
+        }
+
+        val storePreviewNestedScrollConnection = remember(storePreviewOffsetPx, storeDetailExpanded) {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    val dragY = available.y
+                    val canMoveUp = dragY < 0f && sheetOffsetPx > StoreDetailSheetSpec.FULL_OFFSET
+                    if (!canMoveUp || source != NestedScrollSource.UserInput) return Offset.Zero
+                    return moveStorePreviewSheet(dragY)
+                }
+
+                override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                    val dragY = available.y
+                    val canMoveDown = dragY > 0f && sheetOffsetPx < storePreviewOffsetPx
+                    if (!canMoveDown || source != NestedScrollSource.UserInput) return Offset.Zero
+                    return moveStorePreviewSheet(dragY)
+                }
+
+                override suspend fun onPreFling(available: Velocity): Velocity = settleIfMoved(available.y)
+
+                override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity =
+                    settleIfMoved(available.y)
+
+                private fun moveStorePreviewSheet(dragY: Float): Offset {
+                    stopSheetAnimation()
+                    val previousOffset = sheetOffsetPx
+                    sheetOffsetPx = (sheetOffsetPx + dragY).coerceIn(StoreDetailSheetSpec.FULL_OFFSET, storePreviewOffsetPx)
+                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                }
+
+                private fun settleIfMoved(velocityY: Float): Velocity {
+                    val isBetween = sheetOffsetPx > StoreDetailSheetSpec.FULL_OFFSET + 1f &&
+                        sheetOffsetPx < storePreviewOffsetPx - 1f
+                    if (!isBetween) return Velocity.Zero
+                    settleStorePreview(velocityY)
+                    return Velocity(x = 0f, y = velocityY)
+                }
+            }
         }
 
         val listNestedScrollConnection = remember(anchors, storeScreen) {
@@ -388,7 +464,8 @@ fun HomeBottomSheetContent(
         val isFullListSettled = storeScreen == null &&
             settledValue == HomeSheetValue.FullList &&
             abs(sheetOffsetPx - anchors.fullListOffset) <= 1f
-        val topCornerRadius = if (isFullListSettled) 0.dp else 16.dp
+        val isStoreDetailFull = storeScreen != null && sheetOffsetPx <= StoreDetailSheetSpec.FULL_OFFSET + 1f
+        val topCornerRadius = if (isFullListSettled || isStoreDetailFull) 0.dp else 16.dp
         val sheetVisibleHeightPx = HomeSheetStateCalculator.visibleHeight(
             containerHeightPx = containerHeightPx,
             currentOffset = sheetOffsetPx,
@@ -423,7 +500,26 @@ fun HomeBottomSheetContent(
                         onHandleDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
                     )
                 }
-                if (storeScreen != null) {
+                if (storeScreen != null && storeDetailExpanded && storeDetailContent != null) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .nestedScroll(storePreviewNestedScrollConnection)
+                    ) {
+                        storeDetailContent {
+                            Box(modifier = Modifier.height(with(density) { storePreviewHeightPx.toDp() })) {
+                                StorePreviewContent(
+                                    storeScreen = storeScreen,
+                                    onClosePreview = onClosePreview,
+                                    onActionClick = onActionClick,
+                                    onFavoriteClick = onFavoriteClick,
+                                    onPreviewClick = {},
+                                    onAddPhotoClick = onAddPhotoClick,
+                                )
+                            }
+                        }
+                    }
+                } else if (storeScreen != null) {
                     StorePreviewContent(
                         storeScreen = storeScreen,
                         onClosePreview = onClosePreview,
@@ -431,7 +527,9 @@ fun HomeBottomSheetContent(
                         onFavoriteClick = onFavoriteClick,
                         onPreviewClick = onStorePreviewClick,
                         onAddPhotoClick = onAddPhotoClick,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .nestedScroll(storePreviewNestedScrollConnection),
                     )
                 } else {
                     HomeListContent(
