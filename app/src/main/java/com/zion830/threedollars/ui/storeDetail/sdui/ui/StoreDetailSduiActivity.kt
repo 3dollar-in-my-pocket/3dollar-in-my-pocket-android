@@ -85,7 +85,7 @@ class StoreDetailSduiActivity : AppCompatActivity() {
             }
         }
 
-        if (savedInstanceState == null) loadWithLocation()
+        loadWithLocation(fragment = if (savedInstanceState == null) intent.getStringExtra(EXTRA_FRAGMENT) else null)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -108,8 +108,7 @@ class StoreDetailSduiActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun loadWithLocation() {
-        val fragment = intent.getStringExtra(EXTRA_FRAGMENT)
+    private fun loadWithLocation(fragment: String?) {
         if (!hasLocationPermission()) {
             viewModel.dispatch(StoreDetailSduiUiIntent.Load(storeId, latitude = null, longitude = null, fragment = fragment))
             return

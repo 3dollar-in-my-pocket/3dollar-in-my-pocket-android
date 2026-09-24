@@ -85,11 +85,11 @@ class StoreDetailSduiViewModel @Inject constructor(
     private fun load(intent: StoreDetailSduiUiIntent.Load) {
         latitude = intent.latitude
         longitude = intent.longitude
-        pendingFragment = intent.fragment
         if (intent.storeId == stateStore.value.storeId && stateStore.value.hasContent) {
             intent.fragment?.let(::scrollToFragment)
             return
         }
+        pendingFragment = intent.fragment
         isDisplayed = false
         sentImpressionKeys.clear()
         stateStore.value = StoreDetailSduiUiState(storeId = intent.storeId)

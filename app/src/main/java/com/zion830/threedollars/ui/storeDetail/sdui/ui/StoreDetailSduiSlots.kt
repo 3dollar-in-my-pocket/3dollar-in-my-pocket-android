@@ -57,6 +57,9 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
                 .camera(CameraPosition(position, STORE_MAP_ZOOM))
         ).apply { onCreate(Bundle()) }
     }
+    val marker = remember {
+        Marker().apply { icon = OverlayImage.fromResource(DesignSystemR.drawable.ic_mappin_focused_on) }
+    }
     DisposableEffect(lifecycle, mapView) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -83,11 +86,8 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
         update = { view ->
             view.getMapAsync { map ->
                 map.cameraPosition = CameraPosition(position, STORE_MAP_ZOOM)
-                Marker().apply {
-                    this.position = position
-                    icon = OverlayImage.fromResource(DesignSystemR.drawable.ic_mappin_focused_on)
-                    this.map = map
-                }
+                marker.position = position
+                if (marker.map != map) marker.map = map
             }
         }
     )

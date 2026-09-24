@@ -41,9 +41,13 @@ import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.sdui.model.element.SDActionEvent
+import com.threedollar.common.sdui.model.element.SDButtonModel
+import com.threedollar.common.sdui.model.element.SDChipModel
+import com.threedollar.common.sdui.model.element.SDCustomActionModel
 import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.section.SDStoreInfoV2SectionModel
 import com.threedollar.common.sdui.model.section.SDStoreInfoV2SectionModel.DetailRowType
+import com.threedollar.common.sdui.text.SDHtmlText
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.component.SDSectionDefaults
@@ -293,7 +297,7 @@ private fun AccountCard(
         card.copyButton?.let { copyButton ->
             Spacer(modifier = Modifier.width(SDStoreInfoV2SectionDefaults.ContentSpacing))
             SDButton(
-                model = copyButton,
+                model = copyButton.withAccountNumber(card.account),
                 onAction = onAction,
                 shape = SDStoreInfoV2SectionDefaults.CopyButtonShape,
                 contentPadding = SDStoreInfoV2SectionDefaults.CopyButtonPadding,
@@ -378,4 +382,18 @@ private fun MenuEmptyView() {
             fontFamily = PretendardFontFamily
         )
     }
+}
+
+/**
+ * 복사 버튼 이벤트에는 복사할 계좌 문구가 없으므로 화면에 보이는 계좌 텍스트를 담아 올린다.
+ */
+private fun SDButtonModel.withAccountNumber(account: SDChipModel?): SDButtonModel {
+    val action = customAction ?: return this
+    if (!action.param(SDCustomActionModel.ACCOUNT_NUMBER).isNullOrBlank()) return this
+    val accountNumber = listOfNotNull(account?.text, account?.additionalText)
+        .joinToString(" ") { SDHtmlText.plainText(it.text) }
+        .trim()
+        .takeIf { it.isNotEmpty() } ?: return this
+    val params = action.extraParams.orEmpty() + (SDCustomActionModel.ACCOUNT_NUMBER to accountNumber)
+    return copy(customAction = action.copy(extraParams = params))
 }

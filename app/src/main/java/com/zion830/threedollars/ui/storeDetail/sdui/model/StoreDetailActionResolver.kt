@@ -49,7 +49,6 @@ object StoreDetailActionResolver {
     private const val REVIEW_LIST_PATH = "reviewList"
     private const val VISIT_PATH = "visit"
     private const val STORE_ID_QUERY = "storeId"
-    private val ACCOUNT_KEYS = listOf("ACCOUNT_NUMBER", "ACCOUNT", "ACCOUNT_HOLDER")
 
     fun resolve(event: SDActionEvent, context: Context): Resolution {
         event.customAction?.let { action ->
@@ -195,6 +194,5 @@ object StoreDetailActionResolver {
     }
 
     private fun SDCustomActionModel.accountText(): String? =
-        ACCOUNT_KEYS.firstNotNullOfOrNull { param(it) }
-            ?: extraParams?.values?.firstOrNull { it is String && it.isNotBlank() } as? String
+        param(SDCustomActionModel.ACCOUNT_NUMBER)?.takeIf { it.isNotBlank() }
 }

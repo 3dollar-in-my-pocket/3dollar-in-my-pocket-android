@@ -63,5 +63,8 @@ data class SDCustomActionModel(
         const val STICKER_ID = "STICKER_ID"
         const val COUPON_ID = "COUPON_ID"
         const val COUPON_ISSUED_KEY = "COUPON_ISSUED_KEY"
+
+        /** 계좌 복사 버튼에 클라이언트가 채워 넣는 복사할 계좌 문구. 서버가 주면 서버 값을 쓴다. */
+        const val ACCOUNT_NUMBER = "ACCOUNT_NUMBER"
     }
 }

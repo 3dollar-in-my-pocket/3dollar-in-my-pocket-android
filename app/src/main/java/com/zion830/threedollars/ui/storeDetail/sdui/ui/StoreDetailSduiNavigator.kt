@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
@@ -35,9 +34,6 @@ import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import com.threedollar.common.R as CommonR
 
 /**
@@ -164,7 +160,7 @@ class StoreDetailSduiNavigator(
             .zoomIndicator(false)
             .startMultiImage { uris ->
                 activity.lifecycleScope.launch {
-                    val images = withContext(Dispatchers.IO) { uris.toImageParts() }
+                    val images = withContext(Dispatchers.IO) { FileUtils.toImageParts(uris) }
                     if (images == null) {
                         showToast(CommonR.string.error_file_size)
                     } else {
@@ -228,11 +224,6 @@ class StoreDetailSduiNavigator(
             .show()
     }
 
-    private fun List<Uri>.toImageParts(): List<MultipartBody.Part>? = map { uri ->
-        if (!FileUtils.isAvailable(uri)) return null
-        val file = FileUtils.uriToFile(uri) ?: return null
-        MultipartBody.Part.createFormData(IMAGE_PART_NAME, file.name, file.asRequestBody(IMAGE_MEDIA_TYPE.toMediaType()))
-    }
 
     private fun Context.startActivitySafely(intent: Intent) {
         try {
@@ -244,7 +235,5 @@ class StoreDetailSduiNavigator(
 
     private companion object {
         const val TEL_SCHEME = "tel:"
-        const val IMAGE_PART_NAME = "images"
-        const val IMAGE_MEDIA_TYPE = "image/*"
     }
 }

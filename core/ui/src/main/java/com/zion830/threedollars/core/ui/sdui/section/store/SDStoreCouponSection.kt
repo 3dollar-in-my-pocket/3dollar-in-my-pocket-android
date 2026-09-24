@@ -40,6 +40,7 @@ import base.compose.dpToSp
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.element.SDChipModel
 import com.threedollar.common.sdui.model.section.SDStoreCouponSectionModel
+import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.component.SDHeader
 import com.zion830.threedollars.core.ui.sdui.component.SDSectionDefaults
 import com.zion830.threedollars.core.ui.sdui.element.SDButton
@@ -107,7 +108,14 @@ private fun CouponCard(
                 .fillMaxWidth()
                 .heightIn(min = SDStoreCouponSectionDefaults.CardMinHeight)
                 .height(IntrinsicSize.Min)
-                .sdSurface(style = card.style, shape = CouponTicketShape, defaultBackground = Pink100),
+                .sdSurface(style = card.style, shape = CouponTicketShape, defaultBackground = Pink100)
+                .then(
+                    if (card.trailingButton == null && card.clickLog != null) {
+                        Modifier.noRippleClickable { onAction(SDActionEvent(clickLog = card.clickLog)) }
+                    } else {
+                        Modifier
+                    }
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CouponTexts(card = card, modifier = Modifier.weight(1f))

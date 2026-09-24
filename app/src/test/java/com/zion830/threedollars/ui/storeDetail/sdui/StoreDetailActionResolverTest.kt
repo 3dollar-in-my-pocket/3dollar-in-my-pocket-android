@@ -240,4 +240,23 @@ class StoreDetailActionResolverTest {
         // Then
         assertEquals(Resolution.Ignore, resolution)
     }
+
+    @Test
+    fun `계좌복사는_계좌문구가_있을때만_복사하고_다른_파라미터는_복사하지_않는다`() {
+        // Given
+        val withAccount = customEvent(
+            SDCustomActionType.STORE_INFO_V2_SECTION_COPY_ACCOUNT_HOLDER,
+            SDCustomActionModel.STORE_ID to STORE_ID,
+            SDCustomActionModel.ACCOUNT_NUMBER to "카카오뱅크 3333-01-1234567",
+        )
+        val withoutAccount = customEvent(SDCustomActionType.STORE_INFO_V2_SECTION_COPY_ACCOUNT_HOLDER, SDCustomActionModel.STORE_ID to STORE_ID)
+
+        // When
+        val copy = resolve(withAccount)
+        val ignored = resolve(withoutAccount)
+
+        // Then
+        assertEquals(Resolution.Navigate(StoreDetailDestination.CopyText("카카오뱅크 3333-01-1234567")), copy)
+        assertEquals(Resolution.Ignore, ignored)
+    }
 }

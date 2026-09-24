@@ -26,9 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
@@ -138,21 +136,11 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         }
     }
 
-    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part>? {
-        val imageList = ArrayList<MultipartBody.Part>()
-        data.forEach {
-            if (!FileUtils.isAvailable(it)) {
-                binding.root.showSnack(CommonR.string.error_file_size)
-                return null
-            }
-
-            FileUtils.uriToFile(it)?.run {
-                val requestFile = asRequestBody("image/*".toMediaType())
-                imageList.add(MultipartBody.Part.createFormData("images", name, requestFile))
-            }
+    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part>? =
+        FileUtils.toImageParts(data) ?: run {
+            binding.root.showSnack(CommonR.string.error_file_size)
+            null
         }
-        return imageList.toList()
-    }
 
 
     companion object {
