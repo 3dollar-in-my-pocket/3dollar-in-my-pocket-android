@@ -5,10 +5,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,9 +21,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.MapView
@@ -99,11 +105,18 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
 
 /**
  * 가게 상세 배너 광고. 광고 WebView 가 로드되며 포커스를 가져가면 목록이 광고 쪽으로 튀므로
- * 하위 뷰 포커스를 막고, 로드 전후 높이가 바뀌지 않도록 광고 크기로 고정한다.
+ * 하위 뷰 포커스를 막고, 로드 전후 높이가 바뀌지 않도록 광고 크기로 고정한다. 로드에 실패하면 자리를 접는다.
  */
 @Composable
 private fun StoreDetailBanner(modifier: Modifier) {
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    var isFailed by remember { mutableStateOf(false) }
+    if (isFailed) return
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
         AndroidView(
             modifier = Modifier.size(width = AdSize.MEDIUM_RECTANGLE.width.dp, height = AdSize.MEDIUM_RECTANGLE.height.dp),
             factory = { context ->
@@ -113,6 +126,11 @@ private fun StoreDetailBanner(modifier: Modifier) {
                         AdView(context).apply {
                             setAdSize(AdSize.MEDIUM_RECTANGLE)
                             adUnitId = context.getString(CommonR.string.admob_store_detail_banner)
+                            adListener = object : AdListener() {
+                                override fun onAdFailedToLoad(error: LoadAdError) {
+                                    isFailed = true
+                                }
+                            }
                             loadAd(AdRequest.Builder().build())
                         }
                     )
