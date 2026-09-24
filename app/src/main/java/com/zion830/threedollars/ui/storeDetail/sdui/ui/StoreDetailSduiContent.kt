@@ -79,6 +79,9 @@ object StoreDetailSduiDefaults {
     val TrailingIconSize = 28.dp
     val TrailingIconSpacing = 12.dp
     const val BOTTOM_BAR_ANIMATION_MS = 300
+
+    /** 활동 유도 모달이 하단 칩 바를 가리지 않도록 띄우는 높이. */
+    val DisplayItemBottomInset = 68.dp
 }
 
 /**

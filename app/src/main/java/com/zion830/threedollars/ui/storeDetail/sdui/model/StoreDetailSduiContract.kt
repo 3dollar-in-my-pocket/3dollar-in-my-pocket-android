@@ -8,6 +8,7 @@ import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
 import com.threedollar.domain.home.data.store.ReasonModel
 import com.threedollar.domain.home.request.ReportReviewModelRequest
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItem
 import okhttp3.MultipartBody
 
 @Immutable
@@ -61,6 +62,14 @@ sealed interface StoreDetailSduiUiIntent {
 
     /** 정보 수정·보스 리뷰 작성처럼 다른 화면에서 가게 정보를 바꾸고 돌아왔다. */
     data object OnStoreChanged : StoreDetailSduiUiIntent
+
+    data class OnDisplayItemDisplayed(val item: StoreDetailDisplayItem) : StoreDetailSduiUiIntent
+
+    data class OnVisitInducementClick(val isOpened: Boolean) : StoreDetailSduiUiIntent
+
+    data class OnDisappearanceReasonClick(val reason: ReasonModel) : StoreDetailSduiUiIntent
+
+    data object OnDisappearanceReportClick : StoreDetailSduiUiIntent
 }
 
 @Immutable
