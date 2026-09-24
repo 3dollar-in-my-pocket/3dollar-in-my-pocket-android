@@ -91,7 +91,7 @@ class StoreDetailSduiViewModel @Inject constructor(
             return
         }
         pendingFragment = intent.fragment
-        isDisplayed = false
+        if (stateStore.value.storeId.isNotBlank()) isDisplayed = false
         sentImpressionKeys.clear()
         stateStore.value = StoreDetailSduiUiState(storeId = intent.storeId)
         fetch(keepContent = false)
