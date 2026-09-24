@@ -394,9 +394,8 @@ fun HomeBottomSheetContent(
                 }
 
                 private fun settleIfMoved(velocityY: Float): Velocity {
-                    val isBetween = sheetOffsetPx > StoreDetailSheetSpec.FULL_OFFSET + 1f &&
-                        sheetOffsetPx < storePreviewOffsetPx - 1f
-                    if (!isBetween) return Velocity.Zero
+                    val settledOffset = if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+                    if (abs(sheetOffsetPx - settledOffset) <= 1f) return Velocity.Zero
                     settleStorePreview(velocityY)
                     return Velocity(x = 0f, y = velocityY)
                 }

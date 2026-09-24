@@ -32,7 +32,7 @@ fun SDHeader(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f, fill = false),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             model.title?.let {
@@ -43,15 +43,13 @@ fun SDHeader(
             }
         }
         model.trailingAction?.let { action ->
-            Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
-                SDButton(
-                    model = action,
-                    onAction = onAction,
-                    fontSize = dpToSp(12),
-                    fontWeight = FontWeight.W700,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-            }
+            SDButton(
+                model = action,
+                onAction = onAction,
+                fontSize = dpToSp(12),
+                fontWeight = FontWeight.W700,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
         }
     }
 }

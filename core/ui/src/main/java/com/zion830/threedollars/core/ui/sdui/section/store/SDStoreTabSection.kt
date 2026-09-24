@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import base.compose.ColorWhite
@@ -71,7 +74,16 @@ fun SDStoreTabSection(
                     modifier = Modifier
                         .height(SDStoreTabSectionDefaults.Height - 1.dp)
                         .noRippleClickable { tab.toActionEvent()?.let { onTabClick(index, it) } }
-                        .padding(horizontal = 12.dp),
+                        .padding(horizontal = 12.dp)
+                        .drawBehind {
+                            if (!selected) return@drawBehind
+                            val indicatorHeight = SDStoreTabSectionDefaults.IndicatorHeight.toPx()
+                            drawRect(
+                                color = Gray100,
+                                topLeft = Offset(0f, size.height - indicatorHeight),
+                                size = Size(size.width, indicatorHeight)
+                            )
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     SDText(
@@ -81,15 +93,6 @@ fun SDStoreTabSection(
                         fontWeight = if (selected) FontWeight.W700 else FontWeight.W500,
                         maxLines = 1
                     )
-                    if (selected) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth()
-                                .height(SDStoreTabSectionDefaults.IndicatorHeight)
-                                .background(Gray100)
-                        )
-                    }
                 }
             }
         }

@@ -1,14 +1,18 @@
 package com.zion830.threedollars.ui.storeDetail.sdui.ui
 
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -93,18 +97,28 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
     )
 }
 
+/**
+ * 가게 상세 배너 광고. 광고 WebView 가 로드되며 포커스를 가져가면 목록이 광고 쪽으로 튀므로
+ * 하위 뷰 포커스를 막고, 로드 전후 높이가 바뀌지 않도록 광고 크기로 고정한다.
+ */
 @Composable
 private fun StoreDetailBanner(modifier: Modifier) {
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         AndroidView(
+            modifier = Modifier.size(width = AdSize.MEDIUM_RECTANGLE.width.dp, height = AdSize.MEDIUM_RECTANGLE.height.dp),
             factory = { context ->
-                AdView(context).apply {
-                    setAdSize(AdSize.MEDIUM_RECTANGLE)
-                    adUnitId = context.getString(CommonR.string.admob_store_detail_banner)
-                    loadAd(AdRequest.Builder().build())
+                FrameLayout(context).apply {
+                    descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+                    addView(
+                        AdView(context).apply {
+                            setAdSize(AdSize.MEDIUM_RECTANGLE)
+                            adUnitId = context.getString(CommonR.string.admob_store_detail_banner)
+                            loadAd(AdRequest.Builder().build())
+                        }
+                    )
                 }
             },
-            onRelease = { it.destroy() }
+            onRelease = { container -> (container.getChildAt(0) as? AdView)?.destroy() }
         )
     }
 }
