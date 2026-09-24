@@ -76,6 +76,10 @@
             android:name=".ui.storeDetail.contributor.ui.StoreContributorActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.sdui.ui.StoreDetailSduiActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
             android:screenOrientation="portrait" />
         <activity

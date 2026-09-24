@@ -29,7 +29,8 @@ interface OnReviewEditCallback {
 class AddReviewDialog(
     private val content: ReviewContentModel?,
     private val storeId: Int?,
-    private val onEditCallback: OnReviewEditCallback? = null
+    private val onEditCallback: OnReviewEditCallback? = null,
+    private val onSubmit: ((contents: String, rating: Int) -> Unit)? = null
 ) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
     override val screenName: ScreenName = ScreenName.REVIEW_BOTTOM_SHEET
@@ -68,6 +69,11 @@ class AddReviewDialog(
                 showToast(CommonR.string.over_rating_1)
                 return@onSingleClick
             }
+            onSubmit?.let { submit ->
+                submit(binding.etContent.text.toString(), binding.rating.rating.toInt())
+                dismiss()
+                return@onSingleClick
+            }
             viewModel.sendClickWriteReviewSubmit(binding.rating.rating.toInt())
             if (content == null) {
                 viewModel.postStoreReview(
@@ -97,5 +103,11 @@ class AddReviewDialog(
     companion object {
         fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null, onEditCallback: OnReviewEditCallback? = null) = 
             AddReviewDialog(content, storeId, onEditCallback)
+
+        /**
+         * 새 리뷰 작성 결과를 호출부가 처리한다(가게 상세 v2). 레거시 [StoreDetailViewModel]을 쓰지 않는다.
+         */
+        fun newInstance(onSubmit: (contents: String, rating: Int) -> Unit) =
+            AddReviewDialog(content = null, storeId = null, onSubmit = onSubmit)
     }
 }

@@ -20,7 +20,8 @@ import zion830.com.common.base.onSingleClick
 
 class ReportReviewDialog(
     private val content: ReviewContentModel?,
-    private val storeId: Int?
+    private val storeId: Int?,
+    private val reviewId: Long? = null
 ) : BaseBottomSheetDialogFragment<DialogReportReviewBinding>() {
 
     override val screenName: ScreenName = ScreenName.EMPTY
@@ -122,12 +123,14 @@ class ReportReviewDialog(
         }
 
         binding.finishButton.onSingleClick {
-            onReportClick?.invoke(storeId ?: -1, content?.review?.reviewId ?: -1L, reportReviewModelRequest)
+            onReportClick?.invoke(storeId ?: -1, content?.review?.reviewId ?: reviewId ?: -1L, reportReviewModelRequest)
             dismiss()
         }
     }
 
     companion object {
         fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null) = ReportReviewDialog(content, storeId)
+
+        fun getInstance(storeId: Int, reviewId: Long) = ReportReviewDialog(content = null, storeId = storeId, reviewId = reviewId)
     }
 }
