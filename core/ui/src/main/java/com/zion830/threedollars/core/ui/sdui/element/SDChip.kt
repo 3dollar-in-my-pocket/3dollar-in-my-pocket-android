@@ -5,65 +5,40 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.element.SDChipModel
-import com.threedollar.common.sdui.model.element.SDImageModel
-import com.threedollar.common.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDImageAlignment
 
+private const val DEFAULT_CONTENT_SPACING = 2f
+
+/**
+ * 이미지 + 텍스트 + 보조 텍스트 한 줄. 이미지 위치(`imageAlignment`)와 간격(`contentSpacing`)은 서버 값을 따른다.
+ * 배경이 필요한 곳은 호출부가 [modifier]로 입힌다.
+ */
 @Composable
 fun SDChip(
     model: SDChipModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = dpToSp(12),
+    lineHeight: TextUnit = dpToSp(18),
+    maxLines: Int = 1
 ) {
+    val spacing = (model.contentSpacing ?: DEFAULT_CONTENT_SPACING).dp
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(spacing),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        model.image?.let {
-            SDImage(it)
-        }
+        val image = @Composable { model.image?.let { SDImage(it) } }
+        if (model.imageAlignment != SDImageAlignment.END) image()
         model.text?.let {
-            SDText(
-                model = it,
-                fontSize = dpToSp(12),
-                lineHeight = dpToSp(18)
-            )
+            SDText(model = it, fontSize = fontSize, lineHeight = lineHeight, maxLines = maxLines)
         }
+        model.additionalText?.let {
+            SDText(model = it, fontSize = fontSize, lineHeight = lineHeight, maxLines = maxLines)
+        }
+        if (model.imageAlignment == SDImageAlignment.END) image()
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSDChipTextOnly() {
-    SDChip(
-        model = SDChipModel(
-            image = null,
-            text = SDTextModel(
-                text = "칩 텍스트",
-                isHtml = false,
-                fontColor = "#000000"
-            )
-        )
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSDChipWithImage() {
-    SDChip(
-        model = SDChipModel(
-            image = SDImageModel(
-                url = null,
-                style = SDImageModel.Style(width = 16f, height = 16f)
-            ),
-            text = SDTextModel(
-                text = "이미지 칩",
-                isHtml = false,
-                fontColor = "#333333"
-            )
-        )
-    )
 }
