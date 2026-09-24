@@ -16,7 +16,10 @@ import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +38,8 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val REVIEW_LIST = "reviewList"
         const val BROWSER = "browser"
         const val HOME_PRESET = "homePreset"
+        const val STORE_CONTRIBUTORS = "store-contributors"
+        const val STORE_IMAGES = "images"
 
         private const val LINK = "link"
         private const val SCHEME_DOLLARS = "dollars"
@@ -104,6 +109,12 @@ class DynamicLinkActivity : AppCompatActivity() {
     }
 
     private fun handleDeepLinkNavigation(deeplink: Uri) {
+        StoreSectionFragment.parseLink(deeplink.toString())?.let { link ->
+            startActivity(StoreDetailSduiActivity.getIntent(this, link.storeId, link.fragment))
+            finish()
+            return
+        }
+
         when (deeplink.lastPathSegment ?: deeplink.host ?: "") {
             BOOKMARK -> {
                 val id = deeplink.getQueryParameter(FOLDER_ID).toStringDefault()
@@ -120,22 +131,29 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             STORE -> {
-                val id = deeplink.getQueryParameter(STORE_ID).toStringDefault()
-                val type = deeplink.getQueryParameter(STORE_TYPE).toStringDefault()
-                if (type == BOSS_STORE) {
-                    startActivity(
-                        BossStoreDetailActivity.getIntent(
-                            this,
-                            deepLinkStoreId = id
-                        )
-                    )
+                val id = deeplink.getQueryParameter(STORE_ID)
+                if (id.isNullOrBlank()) {
+                    startActivity(MainActivity.getIntent(this))
                 } else {
-                    startActivity(
-                        StoreDetailActivity.getIntent(
-                            this,
-                            deepLinkStoreId = id
-                        )
-                    )
+                    startActivity(StoreDetailSduiActivity.getIntent(this, id))
+                }
+            }
+
+            STORE_CONTRIBUTORS -> {
+                val id = deeplink.getQueryParameter(STORE_ID)
+                if (id.isNullOrBlank()) {
+                    startActivity(MainActivity.getIntent(this))
+                } else {
+                    startActivity(StoreContributorActivity.getIntent(this, id))
+                }
+            }
+
+            STORE_IMAGES -> {
+                if (deeplink.isStorePath()) {
+                    val id = deeplink.getQueryParameter(STORE_ID)?.toIntOrNull()
+                    startActivity(MoreImageActivity.getIntent(this, id))
+                } else {
+                    startActivity(MainActivity.getIntent(this))
                 }
             }
 
@@ -185,11 +203,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                     stackBuilder.addNextIntent(MainActivity.getIntent(this))
 
                     // 상점 상세 Activity 추가
-                    val storeDetailIntent = when (storeType) {
-                        BOSS_STORE -> BossStoreDetailActivity.getIntent(this, storeId = storeId)
-                        else -> StoreDetailActivity.getIntent(this, storeId = storeId.toIntOrNull())
-                    }
-                    stackBuilder.addNextIntent(storeDetailIntent)
+                    stackBuilder.addNextIntent(StoreDetailSduiActivity.getIntent(this, storeId))
 
                     // 리뷰 Activity 추가
                     val reviewIntent = when (storeType) {
@@ -218,4 +232,6 @@ class DynamicLinkActivity : AppCompatActivity() {
         }
         finish()
     }
+
+    private fun Uri.isStorePath(): Boolean = host == STORE || pathSegments.contains(STORE)
 }

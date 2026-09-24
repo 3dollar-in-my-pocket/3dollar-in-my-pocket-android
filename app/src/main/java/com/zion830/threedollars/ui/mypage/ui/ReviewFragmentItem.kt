@@ -19,13 +19,11 @@ import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.network.data.user.MyReviewResponseData
 import com.zion830.threedollars.databinding.FragmentReviewItemBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyReviewRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyReviewViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,19 +38,9 @@ class ReviewFragmentItem : Fragment() {
         adapter = MyReviewRecyclerAdapter(object : OnItemClickListener<MyReviewResponseData> {
             override fun onClick(item: MyReviewResponseData) {
                 sendClickReview(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
-                if (item.store.storeType == BOSS_STORE) {
-                    val intent = BossStoreDetailActivity.getIntent(
-                        requireContext(),
-                        item.store.storeId.toString()
-                    )
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                } else {
-                    val intent = StoreDetailActivity.getIntent(
-                        requireContext(),
-                        item.store.storeId?.toIntOrNull()
-                    )
-                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-                }
+                val storeId = item.store.storeId?.takeIf { it.isNotBlank() } ?: return
+                val intent = StoreDetailSduiActivity.getIntent(requireContext(), storeId)
+                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })
     }
