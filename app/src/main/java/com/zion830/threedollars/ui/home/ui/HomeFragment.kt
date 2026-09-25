@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
-import androidx.core.content.IntentCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -40,27 +39,18 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
-import com.threedollar.common.serverdriven.ext.displayText
-import com.threedollar.common.serverdriven.ext.toServerDrivenPlainText
 import com.threedollar.common.serverdriven.model.HomeListCardModel
-import com.threedollar.common.serverdriven.model.SDClickLogValue
-import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
-import com.threedollar.common.serverdriven.model.StoreActionBarModel
-import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.threedollar.common.utils.Constants
-import com.threedollar.common.utils.Constants.BOSS_STORE
 import com.threedollar.common.utils.Constants.USER_STORE
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.data.store.UserStoreModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
-import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
@@ -73,10 +63,7 @@ import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationCategoryArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
 import com.zion830.threedollars.ui.write.ui.AddStoreDetailFragment
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -88,12 +75,10 @@ import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.ShareFormat
 import com.zion830.threedollars.utils.SizeUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.isLocationAvailable
-import com.zion830.threedollars.utils.shareWithKakao
 import com.zion830.threedollars.utils.showToast
 import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
@@ -270,8 +255,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }) { item ->
             viewModel.sendClickVisitButtonLog()
-            val intent = StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), true)
-            startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
+            startActivity(StoreCertificationActivity.getIntent(requireContext(), item.storeModel.storeId.toInt()))
         }
         binding.aroundStoreRecyclerView.adapter = adapter
     }
@@ -858,20 +842,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
-            if (resultCode == android.app.Activity.RESULT_OK) {
-                data?.favoriteStateOrNull()?.let(viewModel::updateSelectedStorePreviewFavorite)
-                data?.takeIf { it.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) }?.let { result ->
-                    val userStore = IntentCompat.getSerializableExtra(result, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                    userStore?.let {
-                        viewModel.updateStoreItem(it)
-                        naverMapFragment.updateMarkerPosition(
-                            it.storeId.toString(),
-                            it.location.latitude,
-                            it.location.longitude
-                        )
-                    }
-                }
-            }
             refreshHomeAfterStoreUpdate()
         }
     }
@@ -906,46 +876,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         super.onDestroy()
         locationPermissionDialog?.dismiss()
         locationPermissionDialog = null
-    }
-}
-
-private fun String.queryValue(key: String): String? = Uri.parse(this).getQueryParameter(key)
-
-private fun Intent.favoriteStateOrNull(): Boolean? {
-    return if (hasExtra(StoreDetailActivity.EXTRA_IS_FAVORITE)) {
-        getBooleanExtra(StoreDetailActivity.EXTRA_IS_FAVORITE, false)
-    } else {
-        null
-    }
-}
-
-private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
-    return when (val value = this[key]) {
-        is SDClickLogValue.StringValue -> value.value
-        is SDClickLogValue.IntValue -> value.value.toString()
-        is SDClickLogValue.LongValue -> value.value.toString()
-        is SDClickLogValue.DoubleValue -> value.value.toString()
-        is SDClickLogValue.BoolValue -> value.value.toString()
-        SDClickLogValue.Null, null -> null
-    }
-}
-
-private fun Map<String, SDClickLogValue>.longValue(key: String): Long? {
-    return when (val value = this[key]) {
-        is SDClickLogValue.StringValue -> value.value.toLongOrNull()
-        is SDClickLogValue.IntValue -> value.value.toLong()
-        is SDClickLogValue.LongValue -> value.value
-        is SDClickLogValue.DoubleValue -> value.value.toLong()
-        is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
-    }
-}
-
-private fun Map<String, SDClickLogValue>.doubleValue(key: String): Double? {
-    return when (val value = this[key]) {
-        is SDClickLogValue.StringValue -> value.value.toDoubleOrNull()
-        is SDClickLogValue.IntValue -> value.value.toDouble()
-        is SDClickLogValue.LongValue -> value.value.toDouble()
-        is SDClickLogValue.DoubleValue -> value.value
-        is SDClickLogValue.BoolValue, SDClickLogValue.Null, null -> null
     }
 }
