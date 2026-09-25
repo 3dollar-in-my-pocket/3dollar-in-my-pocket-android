@@ -37,9 +37,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import com.threedollar.common.R as CommonR
 
 /**
@@ -62,18 +59,9 @@ class StoreDetailSduiViewModel @Inject constructor(
 
     /**
      * 홈 미리보기 시트(tip)가 그리는 PREVIEW. 상세와 같은 렌더러로 그려 tip → full 전환 때 위쪽이 그대로 이어진다.
-     * 제보자 줄은 `/preview` 에 없고 상세(v2)에만 있어서, 상세가 오면 붙여 full 로 올릴 때 줄이 끼어들지 않게 한다.
+     * 제보자 줄은 가이드상 full 에만 있어 `/preview` 응답 그대로 쓴다.
      */
-    val preview: StateFlow<SDStorePreviewSectionModel?> = combine(previewStore, stateStore) { preview, state ->
-        preview?.withContributorFrom(state.sections.filterIsInstance<SDStorePreviewSectionModel>().firstOrNull())
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
-
-    private fun SDStorePreviewSectionModel.withContributorFrom(detail: SDStorePreviewSectionModel?): SDStorePreviewSectionModel =
-        if (contributorActionBar == null && detail?.contributorActionBar != null) {
-            copy(contributorActionBar = detail.contributorActionBar)
-        } else {
-            this
-        }
+    val preview: StateFlow<SDStorePreviewSectionModel?> = previewStore.asStateFlow()
 
     private var latitude: Double? = null
     private var longitude: Double? = null
