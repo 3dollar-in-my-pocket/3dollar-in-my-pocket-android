@@ -67,9 +67,6 @@
             android:name=".ui.login.ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.storeDetail.user.ui.StoreCertificationActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -82,32 +79,6 @@
         <activity
             android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="action"
-                    android:scheme="kakaomap" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="action"
-                    android:scheme="nmap" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".ui.map.ui.FullScreenMapActivity"
             android:exported="true"

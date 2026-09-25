@@ -20,7 +20,7 @@ import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorAc
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -166,8 +166,9 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             VISIT -> {
-                val id = deeplink.getQueryParameter(STORE_ID)?.toIntOrNull()
-                startActivity(StoreDetailActivity.getIntent(this, storeId = id, startCertification = true))
+                deeplink.getQueryParameter(STORE_ID)?.toIntOrNull()?.let { id ->
+                    startActivity(StoreCertificationActivity.getIntent(this, id))
+                }
             }
 
             POLL -> {
