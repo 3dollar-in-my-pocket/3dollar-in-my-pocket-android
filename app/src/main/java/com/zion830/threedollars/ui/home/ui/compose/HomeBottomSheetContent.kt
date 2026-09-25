@@ -28,8 +28,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,6 +62,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
@@ -118,6 +121,7 @@ import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
+import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiDefaults
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -134,6 +138,7 @@ private val MetadataSeparatorColor = Color(0xFFB7B7B7)
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
 private val StorePreviewReviewButtonBackground = Color(0xFFFFECEE)
 private val StorePreviewHorizontalPadding = 20.dp
+private val HomeListCardHorizontalPadding = 20.dp
 private val StorePreviewVerticalPadding = 16.dp
 private val StorePreviewBaseVerticalPadding = StorePreviewVerticalPadding + StorePreviewVerticalPadding
 private val StorePreviewTitleLineHeight = 28.dp
@@ -151,8 +156,8 @@ private val MapViewButtonHorizontalPadding = 12.dp
 private val MapViewButtonIconSize = 16.dp
 private val MapViewButtonIconTextGap = 4.dp
 private const val MapViewButtonInteractiveProgress = 0.5f
-private val StorePreviewIconButtonSize = 32.dp
-private val StorePreviewIconButtonGap = 4.dp
+internal val StorePreviewIconButtonSize = 32.dp
+internal val StorePreviewIconButtonGap = 4.dp
 private val StorePreviewActionIconSize = 14.dp
 private val StorePreviewActionTrailingIconSize = 10.dp
 private val StorePreviewTitleBadgeGap = 4.dp
@@ -190,6 +195,7 @@ fun HomeBottomSheetContent(
     onStoreDetailExpandedChange: (Boolean) -> Unit = {},
     storeDetailContent: (@Composable (placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
     storeDetailNavigationBar: (@Composable (Modifier) -> Unit)? = null,
+    sduiStorePreview: (@Composable (showHeaderButtons: Boolean) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -231,7 +237,11 @@ fun HomeBottomSheetContent(
                 ).lineCount.coerceIn(1, StorePreviewTitleMaxLines)
             }
         }
-        val storePreviewHeightPx = with(density) {
+        var sduiPreviewHeightPx by remember { mutableStateOf<Int?>(null) }
+        LaunchedEffect(sduiStorePreview == null) {
+            if (sduiStorePreview == null) sduiPreviewHeightPx = null
+        }
+        val storePreviewHeightPx = sduiPreviewHeightPx?.takeIf { sduiStorePreview != null } ?: with(density) {
             (storePreviewSection?.previewSheetHeight(storePreviewTitleLineCount) ?: collapsedPeekHeight).toPx().roundToInt()
         }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
@@ -524,7 +534,9 @@ fun HomeBottomSheetContent(
                             .nestedScroll(storePreviewNestedScrollConnection)
                     ) {
                         storeDetailContent {
-                            Box(modifier = Modifier.height(with(density) { storePreviewHeightPx.toDp() })) {
+                            if (sduiStorePreview != null) {
+                                sduiStorePreview(false)
+                            } else Box(modifier = Modifier.height(with(density) { storePreviewHeightPx.toDp() })) {
                                 StorePreviewContent(
                                     storeScreen = storeScreen,
                                     onClosePreview = onClosePreview,
@@ -536,6 +548,18 @@ fun HomeBottomSheetContent(
                                     showHeaderButtons = false,
                                 )
                             }
+                        }
+                    }
+                } else if (storeScreen != null && sduiStorePreview != null) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .nestedScroll(storePreviewNestedScrollConnection)
+                            .verticalScroll(rememberScrollState())
+                            .noRippleClickable(onClick = onStorePreviewClick),
+                    ) {
+                        Box(modifier = Modifier.onSizeChanged { sduiPreviewHeightPx = it.height }) {
+                            sduiStorePreview(true)
                         }
                     }
                 } else if (storeScreen != null) {
@@ -768,19 +792,24 @@ private fun HomeListBasicCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            HomeHeader(
-                header = card.header,
-                titleSize = 16,
-                titleWeight = FontWeight.Bold,
-                titleColor = card.header.title?.fontColor.textColorOnWhite(fallback = Gray100),
-                badgeDefaultSize = 14.dp,
-            )
-            MetadataRows(metadata = card.metadata)
-            HomeImages(images = card.images, listMode = true)
-            BodiesRow(bodies = card.bodies)
+            Column(
+                modifier = Modifier.padding(horizontal = HomeListCardHorizontalPadding),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                HomeHeader(
+                    header = card.header,
+                    titleSize = 16,
+                    titleWeight = FontWeight.Bold,
+                    titleColor = card.header.title?.fontColor.textColorOnWhite(fallback = Gray100),
+                    badgeDefaultSize = 14.dp,
+                )
+                MetadataRows(metadata = card.metadata)
+            }
+            HomeImages(images = card.images, listMode = true, horizontalPadding = HomeListCardHorizontalPadding)
+            BodiesRow(bodies = card.bodies, horizontalPadding = HomeListCardHorizontalPadding)
         }
         Box(
             modifier = Modifier
@@ -1054,7 +1083,7 @@ private fun TitleWithBadge(
 }
 
 @Composable
-private fun StorePreviewIconButton(
+internal fun StorePreviewIconButton(
     iconRes: Int,
     tint: Color,
     onClick: () -> Unit,
@@ -1255,20 +1284,26 @@ private fun MetadataRows(
     verticalGap: Dp = 4.dp,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(verticalGap)) {
-        MetadataRow(chips = metadata.primary, defaultTextColor = Gray60)
+        MetadataRow(chips = metadata.primary, defaultTextColor = Gray60, shrinkChipIndex = 0)
         MetadataRow(
             chips = metadata.secondary,
             defaultTextColor = Gray60,
             firstChipColor = Gray80,
+            shrinkChipIndex = metadata.secondary.lastIndex,
         )
     }
 }
 
+/**
+ * @param shrinkChipIndex 줄이 넘칠 때 말줄임되는 칩. 카테고리 줄은 첫 칩(카테고리 목록), 영업 상태 줄은 끝 칩이
+ * 줄어야 "영업 중"·"영업 종료" 가 "…" 로 가려지지 않는다.
+ */
 @Composable
 private fun MetadataRow(
     chips: List<SDChipModel>,
     defaultTextColor: Color,
     firstChipColor: Color? = null,
+    shrinkChipIndex: Int = 0,
 ) {
     if (chips.isEmpty()) return
     Row(
@@ -1293,7 +1328,7 @@ private fun MetadataRow(
                     chip.text.fontColor.toColor(fallback = defaultTextColor)
                 },
                 fontWeight = chip.text.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
-                modifier = if (index == 0 && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
+                modifier = if (index == shrinkChipIndex && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
         }
     }
@@ -1398,7 +1433,7 @@ private fun HomeImages(
 }
 
 @Composable
-private fun AddPhotoTile(tileSize: Dp = PreviewImageDefaultSize, onClick: () -> Unit) {
+internal fun AddPhotoTile(tileSize: Dp = PreviewImageDefaultSize, onClick: () -> Unit) {
     val strokeWidth = 1.dp
     val dashWidth = 6.dp
     val dashGap = 4.dp

@@ -25,12 +25,16 @@ data class StoreDetailSduiUiState(
 
 @Immutable
 sealed interface StoreDetailSduiUiIntent {
-    /** 새 가게를 조회한다. 같은 가게면 무시한다. [fragment]가 있으면 로드 후 그 섹션으로 스크롤한다. */
+    /**
+     * 새 가게를 조회한다. 같은 가게면 무시한다. [fragment]가 있으면 로드 후 그 섹션으로 스크롤한다.
+     * [withPreview] 면 홈 미리보기 시트용 PREVIEW(`/preview`)도 함께 받아 [StoreDetailSduiViewModel.preview] 에 둔다.
+     */
     data class Load(
         val storeId: String,
         val latitude: Double?,
         val longitude: Double?,
         val fragment: String? = null,
+        val withPreview: Boolean = false,
     ) : StoreDetailSduiUiIntent
 
     /** 스크롤 위치를 유지한 채 다시 조회한다. */
