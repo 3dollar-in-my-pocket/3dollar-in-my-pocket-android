@@ -341,7 +341,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
-                    onCardClick = ::moveHomeListCardDetail,
+                    onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onClosePreview = viewModel::closeStorePreview,
                     onActionClick = ::handleStorePreviewAction,
@@ -636,6 +636,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun canAddPhotoToStorePreview(): Boolean {
         return currentStorePreviewRoute()?.storeType == USER_STORE
+    }
+
+    /**
+     * 홈 리스트 카드 탭: 지도를 그 가게로 옮기고 마커를 선택한 뒤 미리보기 시트를 띄운다(iOS 동일).
+     * 가게 id 를 알 수 없는 카드만 링크로 바로 상세를 연다.
+     */
+    private fun selectHomeListCard(card: HomeListCardModel.BasicCard) {
+        if (card.storePreviewStoreIdOrNull() == null) {
+            moveHomeListCardDetail(card)
+            return
+        }
+        viewModel.selectHomeListCard(card)
+        naverMapFragment.moveCameraWithAnim(LatLng(card.marker.location.latitude, card.marker.location.longitude))
     }
 
     private fun moveHomeListCardDetail(card: HomeListCardModel.BasicCard) {
