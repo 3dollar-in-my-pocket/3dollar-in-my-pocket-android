@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -47,5 +48,38 @@ class StoreDetailSheetSpecTest {
         // Then
         assertFalse(expand)
         assertFalse(flingDown)
+    }
+
+    // TH-1226 TC2
+    @Test
+    fun `TH1226_TC2_full이_네비높이만큼_내려와_있어도_tip과_full의_중간을_기준으로_스냅한다`() {
+        // Given
+        val fullOffset = 168f
+        val midpoint = (tipOffset + fullOffset) / 2f
+
+        // When
+        val justAbove = StoreDetailSheetSpec.shouldExpand(midpoint - 1f, tipOffset, velocityY = 0f, fullOffset = fullOffset)
+        val justBelow = StoreDetailSheetSpec.shouldExpand(midpoint + 1f, tipOffset, velocityY = 0f, fullOffset = fullOffset)
+
+        // Then
+        assertTrue(justAbove)
+        assertFalse(justBelow)
+    }
+
+    // TH-1226 TC2, TC4
+    @Test
+    fun `TH1226_TC2_시트가_올라온_만큼_상단네비가_진해지고_tip에서는_보이지_않는다`() {
+        // Given
+        val fullOffset = 168f
+
+        // When
+        val atTip = StoreDetailSheetSpec.expandProgress(currentOffset = tipOffset, tipOffset = tipOffset, fullOffset = fullOffset)
+        val halfway = StoreDetailSheetSpec.expandProgress(currentOffset = 784f, tipOffset = tipOffset, fullOffset = fullOffset)
+        val atFull = StoreDetailSheetSpec.expandProgress(currentOffset = fullOffset, tipOffset = tipOffset, fullOffset = fullOffset)
+
+        // Then
+        assertEquals(0f, atTip, 0.001f)
+        assertEquals(0.5f, halfway, 0.001f)
+        assertEquals(1f, atFull, 0.001f)
     }
 }

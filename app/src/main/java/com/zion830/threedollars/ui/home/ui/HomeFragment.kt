@@ -11,8 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
@@ -80,6 +82,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiInten
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigator
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigationBarRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
@@ -334,6 +337,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
+                val storeDetailListState = remember(isStoreDetailExpanded) { LazyListState() }
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
@@ -344,6 +348,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
+                    onPreviewImageClick = { imageUrls, index ->
+                        if (imageUrls.isNotEmpty()) {
+                            storeDetailNavigator.navigate(
+                                StoreDetailDestination.ShowImages(imageUrls, index.coerceIn(0, imageUrls.lastIndex))
+                            )
+                        }
+                    },
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -358,7 +369,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             navigator = storeDetailNavigator,
                             onBack = { viewModel.setStoreDetailExpanded(false) },
                             onClose = viewModel::closeStorePreview,
+                            listState = storeDetailListState,
+                            inSheet = true,
                             placeholderHeader = placeholderHeader,
+                        )
+                    },
+                    storeDetailNavigationBar = { navigationModifier ->
+                        StoreDetailSduiNavigationBarRoute(
+                            viewModel = storeDetailViewModel,
+                            listState = storeDetailListState,
+                            onBack = { viewModel.setStoreDetailExpanded(false) },
+                            onClose = viewModel::closeStorePreview,
+                            modifier = navigationModifier,
                         )
                     },
                 )

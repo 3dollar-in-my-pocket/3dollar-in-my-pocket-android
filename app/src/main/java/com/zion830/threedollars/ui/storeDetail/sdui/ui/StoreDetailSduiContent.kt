@@ -87,6 +87,8 @@ object StoreDetailSduiDefaults {
  * @param onBack `chevron_left` 탭. 시트에서는 tip 으로 접고, 전체 화면에서는 뒤로 간다.
  * @param onClose `x` 탭. 시트에서는 시트를 닫고, 전체 화면에서는 화면을 닫는다.
  * @param placeholderHeader 응답 전 스켈레톤 위에 보여줄 헤더(홈 미리보기 데이터로 만든다).
+ * @param inSheet 홈 시트 안이면 true. 상단 네비는 시트 밖 고정 위치에서 홈이 fade 로 그리고([StoreDetailNavigationBar]),
+ * 하단 칩 바는 GNB 위에 놓이므로 시스템 내비게이션 바 여백을 더하지 않는다.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -102,10 +104,11 @@ fun StoreDetailSduiContent(
     modifier: Modifier = Modifier,
     slots: SDStoreSectionSlots = SDStoreSectionSlots(),
     placeholderHeader: (@Composable () -> Unit)? = null,
+    inSheet: Boolean = false,
 ) {
     val density = LocalDensity.current
     val sections = state.sections
-    val previewIndex = remember(sections) { sections.indexOfFirst { it is SDStorePreviewSectionModel }.takeIf { it >= 0 } }
+    val previewIndex = remember(sections) { sections.previewIndex() }
     val preview = previewIndex?.let { sections[it] as? SDStorePreviewSectionModel }
     val tabTargets = remember(sections) { sections.tabTargets() }
     val tabHeightPx = with(density) { SDStoreTabSectionDefaults.Height.toPx() }
@@ -114,15 +117,6 @@ fun StoreDetailSduiContent(
     var actionBarBottom by remember { mutableStateOf<Float?>(null) }
     var bottomBarHeightPx by remember { mutableFloatStateOf(0f) }
 
-    val titleAlpha by remember(previewIndex) {
-        derivedStateOf {
-            StoreDetailScrollSpec.titleAlpha(
-                firstVisibleIndex = listState.firstVisibleItemIndex,
-                firstVisibleOffsetDp = with(density) { listState.firstVisibleItemScrollOffset.toDp().value },
-                previewIndex = previewIndex,
-            )
-        }
-    }
     val selectedTab by remember(tabTargets) {
         derivedStateOf {
             val anchor = listState.layoutInfo.visibleItemsInfo
@@ -148,14 +142,15 @@ fun StoreDetailSduiContent(
             .fillMaxSize()
             .background(ColorWhite)
     ) {
-        StoreDetailNavigationBar(
-            title = state.storeName,
-            titleAlpha = titleAlpha,
-            isFavorite = state.isFavorite,
-            onBack = onBack,
-            onFavoriteClick = onFavoriteClick,
-            onClose = onClose,
-        )
+        if (!inSheet) {
+            StoreDetailNavigationBar(
+                state = state,
+                listState = listState,
+                onBack = onBack,
+                onFavoriteClick = onFavoriteClick,
+                onClose = onClose,
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -205,6 +200,7 @@ fun StoreDetailSduiContent(
                 StoreDetailBottomChipBar(
                     actionBars = preview?.actionBars.orEmpty(),
                     onAction = onAction,
+                    applyNavigationBarInset = !inSheet,
                     modifier = Modifier.onSizeChanged { bottomBarHeightPx = it.height.toFloat() }
                 )
             }
@@ -226,17 +222,34 @@ private fun SectionImpressionEffect(
     LaunchedEffect(key) { onImpression(key, log) }
 }
 
+/**
+ * 상세 상단 네비(`<`, 가게명, 저장, 닫기). 가게명은 PREVIEW 섹션이 스크롤로 가려질수록 진해진다.
+ * 전체 화면은 [StoreDetailSduiContent] 가, 홈 시트는 시트 밖 고정 위치에서 홈이 직접 그린다.
+ */
 @Composable
-private fun StoreDetailNavigationBar(
-    title: String,
-    titleAlpha: Float,
-    isFavorite: Boolean,
+fun StoreDetailNavigationBar(
+    state: StoreDetailSduiUiState,
+    listState: LazyListState,
     onBack: () -> Unit,
     onFavoriteClick: () -> Unit,
     onClose: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+    val previewIndex = remember(state.sections) { state.sections.previewIndex() }
+    val titleAlpha by remember(previewIndex) {
+        derivedStateOf {
+            StoreDetailScrollSpec.titleAlpha(
+                firstVisibleIndex = listState.firstVisibleItemIndex,
+                firstVisibleOffsetDp = with(density) { listState.firstVisibleItemScrollOffset.toDp().value },
+                previewIndex = previewIndex,
+            )
+        }
+    }
+    val title = state.storeName
+    val isFavorite = state.isFavorite
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(StoreDetailSduiDefaults.NavigationHeight)
             .background(ColorWhite)
@@ -293,13 +306,14 @@ private fun NavigationIcon(iconRes: Int, tint: Color, onClick: () -> Unit) {
 private fun StoreDetailBottomChipBar(
     actionBars: List<SDActionBarModel>,
     onAction: (SDActionEvent) -> Unit,
+    applyNavigationBarInset: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(ColorWhite)
-            .navigationBarsPadding()
+            .then(if (applyNavigationBarInset) Modifier.navigationBarsPadding() else Modifier)
     ) {
         Box(
             modifier = Modifier
@@ -323,6 +337,9 @@ suspend fun LazyListState.scrollToSection(index: Int, sections: List<SDSectionMo
     val offset = if (tabIndex in 0 until index) -tabHeightPx else 0
     scrollToItem(index = index, scrollOffset = offset)
 }
+
+private fun List<SDSectionModel>.previewIndex(): Int? =
+    indexOfFirst { it is SDStorePreviewSectionModel }.takeIf { it >= 0 }
 
 private fun List<SDSectionModel>.tabTargets(): List<Int?> {
     val tabSection = filterIsInstance<SDStoreTabSectionModel>().firstOrNull() ?: return emptyList()
