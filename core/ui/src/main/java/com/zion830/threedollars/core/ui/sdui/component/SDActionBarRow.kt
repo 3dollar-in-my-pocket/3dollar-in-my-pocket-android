@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import base.compose.dpToSp
 import com.threedollar.common.sdui.model.element.SDActionBarModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.zion830.threedollars.core.ui.sdui.element.SDButton
@@ -19,7 +20,8 @@ import com.zion830.threedollars.core.ui.sdui.element.SDButtonDefaults
 
 object SDActionBarRowDefaults {
     val ChipHeight = 36.dp
-    val ChipPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+    val ChipPadding = PaddingValues(horizontal = 14.dp)
+    const val CHIP_LINE_HEIGHT = 20
     val Spacing = 4.dp
 }
 
@@ -50,6 +52,7 @@ fun SDActionBarRow(
                 fallbackLog = bar.clickLog,
                 shape = SDButtonDefaults.PillShape,
                 contentPadding = SDActionBarRowDefaults.ChipPadding,
+                lineHeight = dpToSp(SDActionBarRowDefaults.CHIP_LINE_HEIGHT),
                 modifier = Modifier.height(SDActionBarRowDefaults.ChipHeight)
             )
         }
