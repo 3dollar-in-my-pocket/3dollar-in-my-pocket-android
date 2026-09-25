@@ -136,18 +136,7 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 private val MetadataSeparatorColor = Color(0xFFB7B7B7)
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
-private val StorePreviewReviewButtonBackground = Color(0xFFFFECEE)
-private val StorePreviewHorizontalPadding = 20.dp
 private val HomeListCardHorizontalPadding = 20.dp
-private val StorePreviewVerticalPadding = 16.dp
-private val StorePreviewBaseVerticalPadding = StorePreviewVerticalPadding + StorePreviewVerticalPadding
-private val StorePreviewTitleLineHeight = 28.dp
-private val StorePreviewTitleMetadataGap = 4.dp
-private val StorePreviewMetadataLineHeight = 20.dp
-private val StorePreviewActionRowHeight = 36.dp
-private val StorePreviewHeaderActionGap = 16.dp
-private val StorePreviewHeaderTextActionGap = 4.dp
-private val StorePreviewRootGap = 12.dp
 private val PreviewImageDefaultSize = 120.dp
 private val PreviewImageSpacing = 6.dp
 private val MapViewButtonHeight = 40.dp
@@ -158,21 +147,15 @@ private val MapViewButtonIconTextGap = 4.dp
 private const val MapViewButtonInteractiveProgress = 0.5f
 internal val StorePreviewIconButtonSize = 32.dp
 internal val StorePreviewIconButtonGap = 4.dp
-private val StorePreviewActionIconSize = 14.dp
-private val StorePreviewActionTrailingIconSize = 10.dp
-private val StorePreviewTitleBadgeGap = 4.dp
 private const val TitleBreakOpportunity = "\u200B"
-private const val StorePreviewTitleMaxLines = 2
 private const val StorePreviewReviewMaxLines = 2
 private const val StorePreviewReviewLineHeight = 18
 private const val StorePreviewReviewVerticalPaddingValue = 11
-private const val StorePreviewVisitActionWeight = 1.2f
-private const val StorePreviewDefaultActionWeight = 1f
 private val StorePreviewReviewVerticalPadding = StorePreviewReviewVerticalPaddingValue.dp
-private val StorePreviewReviewEstimatedMaxHeight =
-    (StorePreviewReviewLineHeight * StorePreviewReviewMaxLines + StorePreviewReviewVerticalPaddingValue * 2).dp
-private val StorePreviewMediaGap = 8.dp
 private const val HOME_LIST_ADMOB_TAG = "HomeListAdMob"
+
+/** 미리보기 응답 전 시트 높이. 한 번 그린 뒤에는 마지막으로 잰 높이를 유지한다 (iOS `StorePreviewLayout.defaultVisibleHeight`). */
+private val StorePreviewDefaultHeight = 400.dp
 
 @Composable
 fun HomeBottomSheetContent(
@@ -180,12 +163,7 @@ fun HomeBottomSheetContent(
     storeScreen: StoreScreenModel?,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
-    onClosePreview: () -> Unit,
-    onActionClick: (StoreActionBarModel) -> Unit,
-    onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
-    onAddPhotoClick: (() -> Unit)? = null,
-    onPreviewImageClick: (imageUrls: List<String>, index: Int) -> Unit = { _, _ -> },
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -195,7 +173,7 @@ fun HomeBottomSheetContent(
     onStoreDetailExpandedChange: (Boolean) -> Unit = {},
     storeDetailContent: (@Composable (placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
     storeDetailNavigationBar: (@Composable (Modifier) -> Unit)? = null,
-    sduiStorePreview: (@Composable (showHeaderButtons: Boolean) -> Unit)? = null,
+    storePreview: (@Composable (showHeaderButtons: Boolean) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -209,41 +187,9 @@ fun HomeBottomSheetContent(
         } else {
             0f
         }
-        val storePreviewSection = storeScreen?.previewSectionOrNull()
-        val storePreviewTitle = storeScreen?.resolvedPreviewTitle()
-        val storePreviewTitleText = storePreviewTitle
-            .displayText()
-            .withTitleBreakOpportunities()
-        val storePreviewTitleStyle = TextStyle(
-            fontFamily = PretendardFontFamily,
-            fontWeight = storePreviewTitle?.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
-            fontSize = dpToSp(20),
-            lineHeight = dpToSp(28),
-            lineBreak = LineBreak.Heading,
-        )
-        val storePreviewTitleLineCount = remember(storePreviewSection, maxWidth, storePreviewTitleStyle, density) {
-            if (storePreviewSection == null) {
-                1
-            } else {
-                val titleMaxWidthPx = with(density) {
-                    storePreviewSection.previewTitleMaxWidth(maxWidth).toPx().roundToInt()
-                }
-                textMeasurer.measure(
-                    text = AnnotatedString(storePreviewTitleText),
-                    style = storePreviewTitleStyle,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = StorePreviewTitleMaxLines,
-                    constraints = Constraints(maxWidth = titleMaxWidthPx.coerceAtLeast(1)),
-                ).lineCount.coerceIn(1, StorePreviewTitleMaxLines)
-            }
-        }
-        var sduiPreviewHeightPx by remember { mutableStateOf<Int?>(null) }
-        LaunchedEffect(sduiStorePreview == null) {
-            if (sduiStorePreview == null) sduiPreviewHeightPx = null
-        }
-        val storePreviewHeightPx = sduiPreviewHeightPx?.takeIf { sduiStorePreview != null } ?: with(density) {
-            (storePreviewSection?.previewSheetHeight(storePreviewTitleLineCount) ?: collapsedPeekHeight).toPx().roundToInt()
-        }
+        var measuredStorePreviewHeightPx by remember { mutableStateOf<Int?>(null) }
+        val storePreviewHeightPx = measuredStorePreviewHeightPx
+            ?: with(density) { StorePreviewDefaultHeight.toPx().roundToInt() }
         val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
             HomeSheetStateCalculator.anchors(
                 containerHeightPx = containerHeightPx,
@@ -534,23 +480,10 @@ fun HomeBottomSheetContent(
                             .nestedScroll(storePreviewNestedScrollConnection)
                     ) {
                         storeDetailContent {
-                            if (sduiStorePreview != null) {
-                                sduiStorePreview(false)
-                            } else Box(modifier = Modifier.height(with(density) { storePreviewHeightPx.toDp() })) {
-                                StorePreviewContent(
-                                    storeScreen = storeScreen,
-                                    onClosePreview = onClosePreview,
-                                    onActionClick = onActionClick,
-                                    onFavoriteClick = onFavoriteClick,
-                                    onPreviewClick = {},
-                                    onAddPhotoClick = onAddPhotoClick,
-                                    onImageClick = onPreviewImageClick,
-                                    showHeaderButtons = false,
-                                )
-                            }
+                            storePreview?.invoke(false)
                         }
                     }
-                } else if (storeScreen != null && sduiStorePreview != null) {
+                } else if (storeScreen != null) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -558,23 +491,12 @@ fun HomeBottomSheetContent(
                             .verticalScroll(rememberScrollState())
                             .noRippleClickable(onClick = onStorePreviewClick),
                     ) {
-                        Box(modifier = Modifier.onSizeChanged { sduiPreviewHeightPx = it.height }) {
-                            sduiStorePreview(true)
+                        if (storePreview != null) {
+                            Box(modifier = Modifier.onSizeChanged { measuredStorePreviewHeightPx = it.height }) {
+                                storePreview(true)
+                            }
                         }
                     }
-                } else if (storeScreen != null) {
-                    StorePreviewContent(
-                        storeScreen = storeScreen,
-                        onClosePreview = onClosePreview,
-                        onActionClick = onActionClick,
-                        onFavoriteClick = onFavoriteClick,
-                        onPreviewClick = onStorePreviewClick,
-                        onAddPhotoClick = onAddPhotoClick,
-                        onImageClick = onPreviewImageClick,
-                        modifier = Modifier
-                            .weight(1f)
-                            .nestedScroll(storePreviewNestedScrollConnection),
-                    )
                 } else {
                     HomeListContent(
                         homeListSection = homeListSection,
@@ -868,167 +790,6 @@ private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
 }
 
 @Composable
-private fun StorePreviewContent(
-    storeScreen: StoreScreenModel,
-    onClosePreview: () -> Unit,
-    onActionClick: (StoreActionBarModel) -> Unit,
-    onFavoriteClick: (Boolean) -> Unit,
-    onPreviewClick: () -> Unit,
-    onAddPhotoClick: (() -> Unit)?,
-    onImageClick: (imageUrls: List<String>, index: Int) -> Unit,
-    modifier: Modifier = Modifier,
-    showHeaderButtons: Boolean = true,
-) {
-    val preview = storeScreen.previewSectionOrNull()
-    if (preview == null) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = "",
-                color = Gray70,
-                fontFamily = PretendardFontFamily,
-                fontSize = dpToSp(14),
-            )
-        }
-        return
-    }
-
-    val previewTitle = storeScreen.resolvedPreviewTitle()
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = StorePreviewVerticalPadding),
-        verticalArrangement = Arrangement.spacedBy(StorePreviewRootGap),
-    ) {
-        item {
-            StorePreviewHeaderSection(
-                preview = preview,
-                title = previewTitle,
-                onClosePreview = onClosePreview,
-                onActionClick = onActionClick,
-                onFavoriteClick = onFavoriteClick,
-                onPreviewClick = onPreviewClick,
-                showHeaderButtons = showHeaderButtons,
-                modifier = Modifier.padding(horizontal = StorePreviewHorizontalPadding),
-            )
-        }
-        if (preview.images.isNotEmpty() || preview.bodies.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier.clickable(onClick = onPreviewClick),
-                    verticalArrangement = Arrangement.spacedBy(StorePreviewMediaGap),
-                ) {
-                    HomeImages(
-                        images = preview.images,
-                        listMode = false,
-                        onAddPhotoClick = onAddPhotoClick,
-                        onImageClick = { index -> onImageClick(preview.images.map { it.url }, index) },
-                        horizontalPadding = StorePreviewHorizontalPadding,
-                    )
-                    BodiesRow(bodies = preview.bodies, horizontalPadding = StorePreviewHorizontalPadding)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun StorePreviewHeaderSection(
-    preview: StoreSectionModel.Preview,
-    title: SDTextModel?,
-    onClosePreview: () -> Unit,
-    onActionClick: (StoreActionBarModel) -> Unit,
-    onFavoriteClick: (Boolean) -> Unit,
-    onPreviewClick: () -> Unit,
-    showHeaderButtons: Boolean = true,
-    modifier: Modifier = Modifier,
-) {
-    val rowActions = preview.rowActionBars()
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(StorePreviewHeaderActionGap),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(StorePreviewHeaderTextActionGap),
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable(onClick = onPreviewClick),
-                verticalArrangement = Arrangement.spacedBy(StorePreviewTitleMetadataGap),
-            ) {
-                StorePreviewTitle(title = title, badge = preview.header.badge)
-                MetadataRows(metadata = preview.metadata, verticalGap = 0.dp)
-            }
-            if (showHeaderButtons) Row(horizontalArrangement = Arrangement.spacedBy(StorePreviewIconButtonGap)) {
-                if (preview.additionalInfos.isStoreType()) {
-                    StorePreviewIconButton(
-                        iconRes = if (preview.additionalInfos.isSubscriber) {
-                            DesignSystemR.drawable.ic_store_preview_bookmark_solid
-                        } else {
-                            DesignSystemR.drawable.ic_store_preview_bookmark_line
-                        },
-                        tint = if (preview.additionalInfos.isSubscriber) Pink else Gray100,
-                        onClick = { onFavoriteClick(preview.additionalInfos.isSubscriber) },
-                    )
-                }
-                StorePreviewIconButton(
-                    iconRes = DesignSystemR.drawable.ic_store_preview_close,
-                    tint = Gray100,
-                    onClick = onClosePreview,
-                )
-            }
-        }
-        if (rowActions.isNotEmpty()) {
-            StorePreviewActionBarRow(
-                actionBars = rowActions,
-                onActionClick = onActionClick,
-            )
-        }
-    }
-}
-
-@Preview(name = "Store preview long title", widthDp = 360)
-@Composable
-private fun StorePreviewLongTitlePreview() {
-    AppTheme {
-        val preview = previewStorePreviewWithLongTitle()
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ColorWhite)
-                .padding(horizontal = StorePreviewHorizontalPadding, vertical = StorePreviewVerticalPadding),
-        ) {
-            StorePreviewHeaderSection(
-                preview = preview,
-                title = preview.resolvedTitle(),
-                onClosePreview = {},
-                onActionClick = {},
-                onFavoriteClick = {},
-                onPreviewClick = {},
-            )
-        }
-    }
-}
-
-@Composable
-private fun StorePreviewTitle(
-    title: SDTextModel?,
-    badge: SDImageModel?,
-) {
-    TitleWithBadge(
-        title = title,
-        badge = badge,
-        titleSize = 20,
-        titleWeight = FontWeight.SemiBold,
-        titleColor = title?.fontColor.textColorOnWhite(fallback = Gray100),
-        maxLines = StorePreviewTitleMaxLines,
-        badgeDefaultSize = 16.dp,
-        lineBreak = LineBreak.Heading,
-    )
-}
-
-@Composable
 private fun TitleWithBadge(
     title: SDTextModel?,
     badge: SDImageModel?,
@@ -1103,159 +864,6 @@ internal fun StorePreviewIconButton(
             modifier = Modifier.size(20.dp),
         )
     }
-}
-
-@Composable
-private fun StorePreviewActionBarRow(
-    actionBars: List<StoreActionBarModel>,
-    onActionClick: (StoreActionBarModel) -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        actionBars.forEach { actionBar ->
-            StorePreviewActionButton(
-                actionBar = actionBar,
-                modifier = Modifier.weight(actionBar.previewActionWeight()),
-                onClick = { onActionClick(actionBar) },
-            )
-        }
-    }
-}
-
-@Preview(name = "Store preview actions compact", widthDp = 360)
-@Composable
-private fun StorePreviewActionBarRowCompactPreview() {
-    AppTheme {
-        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-            StorePreviewActionBarRow(
-                actionBars = previewStoreActionBars(),
-                onActionClick = {},
-            )
-        }
-    }
-}
-
-@Composable
-private fun StorePreviewActionButton(
-    actionBar: StoreActionBarModel,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    val button = actionBar.button
-    val isVisit = actionBar.isVisitAction()
-    val isReview = actionBar.isReviewAction()
-    val isNeutral = actionBar.isShareAction() || actionBar.isNavigationAction()
-    val shape = RoundedCornerShape(18.dp)
-    val background = when {
-        isNeutral -> ColorWhite
-        else -> button.style?.backgroundColor.toColor(
-            fallback = when {
-                isVisit -> Pink
-                isReview -> StorePreviewReviewButtonBackground
-                else -> ColorWhite
-            },
-        )
-    }
-    val textColor = button.text.fontColor.toColor(
-        fallback = when {
-            isVisit -> ColorWhite
-            isReview -> Pink400
-            else -> Gray70
-        },
-    )
-    val border = button.style?.border
-    val borderModifier = when {
-        border != null -> Modifier.border(
-            BorderStroke((border.width ?: 1.0).dp, border.color.toColor(fallback = Gray20)),
-            shape,
-        )
-        !isVisit && !isReview -> Modifier.border(BorderStroke(1.dp, Gray20), shape)
-        else -> Modifier
-    }
-    val horizontalPadding = when {
-        isVisit -> PaddingValues(start = 8.dp, end = 6.dp)
-        isReview -> PaddingValues(horizontal = 8.dp)
-        else -> PaddingValues(horizontal = 6.dp)
-    }
-
-    Row(
-        modifier = modifier
-            .height(StorePreviewActionRowHeight)
-            .fillMaxWidth()
-            .clip(shape)
-            .background(background)
-            .then(borderModifier)
-            .clickable(onClick = onClick)
-            .padding(horizontalPadding),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterHorizontally),
-    ) {
-        if (button.imageAlignment != "END") {
-            StorePreviewActionImage(actionBar = actionBar, tint = textColor)
-        }
-        Text(
-            text = button.text.displayText(),
-            color = textColor,
-            fontFamily = PretendardFontFamily,
-            fontWeight = if (isVisit || isReview) FontWeight.SemiBold else FontWeight.Normal,
-            fontSize = dpToSp(13),
-            lineHeight = dpToSp(19),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (button.imageAlignment == "END" || isVisit) {
-            StorePreviewActionImage(actionBar = actionBar, tint = textColor, trailing = true)
-        }
-    }
-}
-
-@Composable
-private fun StorePreviewActionImage(
-    actionBar: StoreActionBarModel,
-    tint: Color,
-    trailing: Boolean = false,
-) {
-    val localIconRes = when {
-        actionBar.isShareAction() && !trailing -> DesignSystemR.drawable.ic_store_preview_share
-        actionBar.isNavigationAction() && !trailing -> DesignSystemR.drawable.ic_store_preview_location
-        else -> null
-    }
-    if (localIconRes != null) {
-        Icon(
-            painter = painterResource(id = localIconRes),
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(StorePreviewActionIconSize),
-        )
-        return
-    }
-
-    val image = actionBar.button.image
-    if (image != null) {
-        ServerImage(
-            image = image,
-            modifier = Modifier.size(
-                width = (image.style?.width ?: if (trailing) 10.0 else 14.0).dp,
-                height = (image.style?.height ?: if (trailing) 10.0 else 14.0).dp,
-            ),
-            contentScale = ContentScale.Fit,
-            drawPlaceholderBackground = false,
-        )
-        return
-    }
-    val iconRes = when {
-        actionBar.isVisitAction() && trailing -> DesignSystemR.drawable.ic_arrow_right
-        else -> null
-    } ?: return
-    Icon(
-        painter = painterResource(id = iconRes),
-        contentDescription = null,
-        tint = tint,
-        modifier = Modifier.size(if (trailing) StorePreviewActionTrailingIconSize else StorePreviewActionIconSize),
-    )
 }
 
 @Composable
@@ -1604,52 +1212,6 @@ private fun StoreActionButton(
     }
 }
 
-private fun StoreScreenModel.previewSectionOrNull(): StoreSectionModel.Preview? {
-    return sections.filterIsInstance<StoreSectionModel.Preview>().firstOrNull()
-}
-
-private fun StoreScreenModel.resolvedPreviewTitle(): SDTextModel? {
-    val preview = previewSectionOrNull() ?: return null
-    return preview.resolvedTitle(
-        fallbackStoreName = viewLog?.extraParameters?.stringValue("STORE_NAME"),
-    )
-}
-
-private fun StoreSectionModel.Preview.resolvedTitle(fallbackStoreName: String? = null): SDTextModel? {
-    val storeName = listOfNotNull(actionStoreNameOrNull(), fallbackStoreName)
-        .firstNotNullOfOrNull { value ->
-            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
-        } ?: return header.title
-    val headerTitleText = header.title.displayText()
-    if (headerTitleText.isNotBlank() &&
-        !headerTitleText.isCollapsedTitleCandidate() &&
-        headerTitleText.length >= storeName.length
-    ) {
-        return header.title
-    }
-
-    return header.title?.copy(text = storeName, isHtml = false) ?: SDTextModel(
-        text = storeName,
-        isHtml = false,
-    )
-}
-
-private fun StoreSectionModel.Preview.actionStoreNameOrNull(): String? {
-    return (actionBars + topActionBars).firstNotNullOfOrNull { actionBar ->
-        listOfNotNull(
-            actionBar.button.customAction?.extraParams?.stringValue("STORE_NAME"),
-            actionBar.clickLog?.extraParameters?.stringValue("STORE_NAME"),
-        ).firstNotNullOfOrNull { value ->
-            value.toServerDrivenPlainText().takeIf { it.isNotBlank() }
-        }
-    }
-}
-
-private fun String.isCollapsedTitleCandidate(): Boolean {
-    val title = trimEnd()
-    return title.endsWith("...") || title.endsWith("…")
-}
-
 private fun String.withTitleBreakOpportunities(): String {
     if (length <= 1) return this
 
@@ -1669,182 +1231,6 @@ private fun String.withTitleBreakOpportunities(): String {
             index = nextIndex
         }
     }
-}
-
-private fun StoreSectionModel.Preview.previewSheetHeight(titleLineCount: Int): Dp {
-    val titleMetadataHeight = StorePreviewTitleLineHeight * titleLineCount.coerceIn(1, StorePreviewTitleMaxLines).toFloat() +
-        StorePreviewTitleMetadataGap +
-        metadata.previewHeight()
-    val headerHeight = titleMetadataHeight + if (rowActionBars().isNotEmpty()) {
-        StorePreviewHeaderActionGap + StorePreviewActionRowHeight
-    } else {
-        0.dp
-    }
-    val imageRowHeight = PreviewImageLayout.rowHeight(images, PreviewImageDefaultSize.value).dp
-    val mediaHeight = when {
-        images.isNotEmpty() && bodies.isNotEmpty() -> imageRowHeight + StorePreviewMediaGap + StorePreviewReviewEstimatedMaxHeight
-        images.isNotEmpty() -> imageRowHeight
-        bodies.isNotEmpty() -> StorePreviewReviewEstimatedMaxHeight
-        else -> 0.dp
-    }
-    val mediaBlockHeight = if (mediaHeight > 0.dp) StorePreviewRootGap + mediaHeight else 0.dp
-    return StorePreviewBaseVerticalPadding + headerHeight + mediaBlockHeight
-}
-
-private fun StoreSectionModel.Preview.previewTitleMaxWidth(sheetWidth: Dp): Dp {
-    val actionButtonCount = if (additionalInfos.isStoreType()) 2 else 1
-    val actionButtonWidth = StorePreviewIconButtonSize * actionButtonCount.toFloat() +
-        StorePreviewIconButtonGap * (actionButtonCount - 1).toFloat()
-    val badgeWidth = header.badge?.let { image ->
-        (image.style?.width ?: 16.0).dp + StorePreviewTitleBadgeGap
-    } ?: 0.dp
-    val availableWidth = sheetWidth -
-        StorePreviewHorizontalPadding -
-        StorePreviewHorizontalPadding -
-        StorePreviewHeaderTextActionGap -
-        actionButtonWidth -
-        badgeWidth
-    return availableWidth.coerceAtLeast(1.dp)
-}
-
-private fun HomeListCardMetadataModel.previewHeight(): Dp {
-    val rowCount = listOf(primary, secondary).count { it.isNotEmpty() }
-    return StorePreviewMetadataLineHeight * rowCount.toFloat()
-}
-
-private fun StoreSectionModel.Preview.rowActionBars(): List<StoreActionBarModel> {
-    return actionBars.filterNot { it.isFavoriteToggleAction() || it.isCloseAction() }
-}
-
-private fun StoreSectionAdditionalInfosModel.isStoreType(): Boolean {
-    return type.equals("STORE", ignoreCase = true)
-}
-
-private fun StoreActionBarModel.isFavoriteToggleAction(): Boolean {
-    return isFavoriteAction() || isUnfavoriteAction()
-}
-
-private fun StoreActionBarModel.isFavoriteAction(): Boolean {
-    val actionType = button.customAction?.actionType.orEmpty()
-    val label = button.text.displayText()
-    return actionType.equals("STORE_PREVIEW_SECTION_FAVORITE", ignoreCase = true) ||
-        type.contains("FAVORITE", ignoreCase = true) ||
-        label.contains("저장") ||
-        label.contains("즐겨찾기")
-}
-
-private fun StoreActionBarModel.isUnfavoriteAction(): Boolean {
-    val actionType = button.customAction?.actionType.orEmpty()
-    return actionType.equals("STORE_PREVIEW_SECTION_UNFAVORITE", ignoreCase = true) ||
-        type.contains("UNFAVORITE", ignoreCase = true) ||
-        type.contains("UN_FAVORITE", ignoreCase = true)
-}
-
-private fun StoreActionBarModel.isCloseAction(): Boolean {
-    val actionType = button.customAction?.actionType.orEmpty()
-    return actionType.equals("STORE_PREVIEW_SECTION_CLOSE", ignoreCase = true) ||
-        type.contains("CLOSE", ignoreCase = true) ||
-        button.text.displayText().contains("닫기")
-}
-
-private fun StoreActionBarModel.isVisitAction(): Boolean {
-    return button.link?.link?.contains("/visit") == true ||
-        button.text.displayText().contains("방문")
-}
-
-private fun StoreActionBarModel.previewActionWeight(): Float {
-    return if (isVisitAction()) StorePreviewVisitActionWeight else StorePreviewDefaultActionWeight
-}
-
-private fun StoreActionBarModel.isReviewAction(): Boolean {
-    return button.text.displayText().contains("리뷰")
-}
-
-private fun StoreActionBarModel.isShareAction(): Boolean {
-    return button.customAction?.actionType.equals("STORE_PREVIEW_SECTION_SHARE", ignoreCase = true) ||
-        button.text.displayText().contains("공유")
-}
-
-private fun StoreActionBarModel.isNavigationAction(): Boolean {
-    return button.customAction?.actionType.equals("STORE_PREVIEW_SECTION_NAVIGATION", ignoreCase = true) ||
-        button.text.displayText().contains("길안내")
-}
-
-private fun Map<String, SDClickLogValue>.stringValue(key: String): String? {
-    return when (val value = this[key]) {
-        is SDClickLogValue.StringValue -> value.value
-        is SDClickLogValue.IntValue -> value.value.toString()
-        is SDClickLogValue.LongValue -> value.value.toString()
-        is SDClickLogValue.DoubleValue -> value.value.toString()
-        is SDClickLogValue.BoolValue -> value.value.toString()
-        SDClickLogValue.Null, null -> null
-    }
-}
-
-private fun previewStoreActionBars(storeName: String = "가게명"): List<StoreActionBarModel> {
-    val actionParams = mapOf("STORE_NAME" to SDClickLogValue.StringValue(storeName))
-    return listOf(
-        StoreActionBarModel(
-            type = "VISIT",
-            button = SDButtonModel(
-                text = SDTextModel(text = "방문 인증", isHtml = false),
-                imageAlignment = "END",
-                link = SDLinkModel(type = "APP", link = "/visit"),
-            ),
-        ),
-        StoreActionBarModel(
-            type = "REVIEW",
-            button = SDButtonModel(
-                text = SDTextModel(text = "리뷰 작성", isHtml = false),
-            ),
-        ),
-        StoreActionBarModel(
-            type = "SHARE",
-            button = SDButtonModel(
-                text = SDTextModel(text = "공유", isHtml = false),
-                customAction = SDCustomActionModel(
-                    actionType = "STORE_PREVIEW_SECTION_SHARE",
-                    extraParams = actionParams,
-                ),
-            ),
-        ),
-        StoreActionBarModel(
-            type = "NAVIGATION",
-            button = SDButtonModel(
-                text = SDTextModel(text = "길안내", isHtml = false),
-                customAction = SDCustomActionModel(
-                    actionType = "STORE_PREVIEW_SECTION_NAVIGATION",
-                    extraParams = actionParams,
-                ),
-            ),
-        ),
-    )
-}
-
-private fun previewStorePreviewWithLongTitle(): StoreSectionModel.Preview {
-    val storeName = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ"
-    return StoreSectionModel.Preview(
-        type = "PREVIEW",
-        header = HomeListCardHeaderModel(
-            title = SDTextModel(
-                text = "ㅂㅈㅂㅈㄷㅂㅈㅁㅁㄴㅋㅌ...",
-                isHtml = false,
-                fontColor = "#0F0F0F",
-            ),
-        ),
-        metadata = HomeListCardMetadataModel(
-            primary = listOf(
-                SDChipModel(text = SDTextModel(text = "떡볶이, 계란빵, 땅콩빵", isHtml = false)),
-                SDChipModel(text = SDTextModel(text = "5.0 (1)", isHtml = false)),
-            ),
-            secondary = listOf(
-                SDChipModel(text = SDTextModel(text = "0m", isHtml = false)),
-                SDChipModel(text = SDTextModel(text = "최근 방문 0명", isHtml = false)),
-            ),
-        ),
-        additionalInfos = StoreSectionAdditionalInfosModel(type = "STORE", isSubscriber = true),
-        actionBars = previewStoreActionBars(storeName = storeName),
-    )
 }
 
 private fun previewHomeListBasicCardWithLongTitle(): HomeListCardModel.BasicCard {

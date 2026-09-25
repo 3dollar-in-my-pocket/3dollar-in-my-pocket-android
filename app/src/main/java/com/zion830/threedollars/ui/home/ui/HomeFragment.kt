@@ -343,19 +343,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 val storeDetailListState = remember(isStoreDetailExpanded) { LazyListState() }
                 val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
-                val sduiPreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
+                val storePreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
                     onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
-                    onClosePreview = viewModel::closeStorePreview,
-                    onActionClick = ::handleStorePreviewAction,
-                    onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
-                    onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
-                    onPreviewImageClick = ::showStorePreviewImages,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -375,7 +370,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             placeholderHeader = placeholderHeader,
                         )
                     },
-                    sduiStorePreview = sduiPreview?.let { preview ->
+                    storePreview = storePreview?.let { preview ->
                         { showHeaderButtons ->
                             val isFavorite = storeDetailViewModel.state.collectAsStateWithLifecycle().value.isFavorite
                             StorePreviewSduiContent(
@@ -588,61 +583,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewModel.fetchStoreScreen(storeId)
     }
 
-    private fun handleStorePreviewAction(actionBar: StoreActionBarModel) {
-        viewModel.sendStorePreviewActionLog(actionBar)
-        val button = actionBar.button
-        val link = button.link
-        if (link != null) {
-            handleStorePreviewLink(link)
-            return
-        }
-        button.customAction?.let(::handleStorePreviewCustomAction)
-    }
-
-    private fun handleStorePreviewLink(link: SDLinkModel) {
-        val url = link.link
-        if (url.isBlank()) return
-        if (link.type == "APP_SCHEME" && url.startsWith("/visit")) {
-            val storeId = url.queryValue("storeId")?.toIntOrNull() ?: return
-            moveStorePreviewVisit(storeId)
-            return
-        }
-        handleFilterDeepLink(link)
-    }
-
-    private fun handleStorePreviewCustomAction(customAction: SDCustomActionModel) {
-        when (customAction.actionType) {
-            "STORE_PREVIEW_SECTION_SHARE" -> shareStorePreview(customAction)
-            "STORE_PREVIEW_SECTION_NAVIGATION" -> showStorePreviewDirection(customAction)
-            "STORE_PREVIEW_SECTION_REVIEW_WRITE" -> moveStorePreviewReviewWrite(customAction)
-            "STORE_PREVIEW_SECTION_CLOSE" -> viewModel.closeStorePreview()
-        }
-    }
-
-    private fun toggleStorePreviewFavorite(isSubscriber: Boolean) {
-        val storeId = viewModel.selectedStorePreviewStoreId.value
-            ?: currentStorePreviewRoute()?.storeId
-            ?: return
-        if (isSubscriber) {
-            viewModel.deleteFavoriteFromStorePreview(storeId)
-        } else {
-            viewModel.putFavoriteFromStorePreview(storeId)
-        }
-    }
-
-    private fun moveStorePreviewReviewWrite(customAction: SDCustomActionModel) {
-        val route = currentStorePreviewRoute(
-            fallbackStoreId = customAction.extraParams.longValue("STORE_ID"),
-            fallbackStoreType = customAction.extraParams.stringValue("STORE_TYPE"),
-        ) ?: return
-        storeDetailNavigator.navigate(
-            StoreDetailDestination.WriteReview(
-                storeId = route.storeId.toString(),
-                isBossStore = route.storeType == BOSS_STORE,
-            )
-        )
-    }
-
     private fun moveStorePreviewPhotoAdd() {
         val route = currentStorePreviewRoute() ?: return
         startActivityForResult(
@@ -684,99 +624,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
     }
 
-
-    private fun shareStorePreview(customAction: SDCustomActionModel) {
-        val params = customAction.extraParams
-        val route = currentStorePreviewRoute(
-            fallbackStoreId = params.longValue("STORE_ID"),
-            fallbackStoreType = params.stringValue("STORE_TYPE"),
-        )
-        val storeId = route?.storeId?.toString()
-        val storeType = route?.storeType ?: USER_STORE
-        val storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle()
-        val currentCard = currentHomeListCard()
-        val latitude = params.doubleValue("LATITUDE") ?: currentCard?.marker?.location?.latitude
-        val longitude = params.doubleValue("LONGITUDE") ?: currentCard?.marker?.location?.longitude
-        if (storeId.isNullOrBlank() || latitude == null || longitude == null) {
-            showToast(getString(CommonR.string.exist_location_error))
-            return
-        }
-        val location = LatLng(latitude, longitude)
-        val kakaoType = if (storeType == BOSS_STORE) {
-            getString(CommonR.string.scheme_host_kakao_link_food_truck_type)
-        } else {
-            getString(CommonR.string.scheme_host_kakao_link_road_food_type)
-        }
-        requireContext().shareWithKakao(
-            shareFormat = ShareFormat(
-                url = getString(CommonR.string.kakao_map_format),
-                storeName = storeName,
-                location = location,
-            ),
-            title = if (storeType == BOSS_STORE) {
-                getString(CommonR.string.share_kakao_food_truck_title, storeName)
-            } else {
-                getString(CommonR.string.share_kakao_road_food_title, storeName)
-            },
-            description = if (storeType == BOSS_STORE) {
-                getString(CommonR.string.share_kakao_food_truck, storeName)
-            } else {
-                getString(CommonR.string.share_kakao_road_food, storeName)
-            },
-            imageUrl = "https://storage.threedollars.co.kr/share/share-with-kakao.png",
-            storeId = storeId,
-            type = kakaoType,
-        )
-    }
-
-    private fun moveStorePreviewVisit(storeId: Int) {
-        val args = currentStoreCertificationArgs(storeId) ?: run {
-            showToast(getString(CommonR.string.exist_location_error))
-            return
-        }
-        startActivityForResult(
-            StoreCertificationActivity.getIntent(requireContext(), args),
-            Constants.SHOW_STORE_BY_CATEGORY,
-        )
-    }
-
-    private fun showStorePreviewDirection(customAction: SDCustomActionModel) {
-        val params = customAction.extraParams
-        DirectionBottomDialog.getInstance(
-            latitude = params.doubleValue("LATITUDE"),
-            longitude = params.doubleValue("LONGITUDE"),
-            storeName = params.stringValue("STORE_NAME")?.toServerDrivenPlainText() ?: currentStorePreviewTitle(),
-        ).show(parentFragmentManager, "")
-    }
-
-    private fun currentStorePreviewTitle(): String {
-        return viewModel.selectedStoreScreen.value
-            ?.sections
-            ?.filterIsInstance<StoreSectionModel.Preview>()
-            ?.firstOrNull()
-            ?.header
-            ?.title
-            .displayText()
-            .orEmpty()
-    }
-
-    private fun currentStoreCertificationArgs(storeId: Int): StoreCertificationArgs? {
-        val card = currentHomeListCard()
-        val markerLocation = card?.marker?.location ?: return null
-        return StoreCertificationArgs(
-            storeId = storeId,
-            storeName = currentStorePreviewTitle().ifBlank { card.header.title.displayText() },
-            latitude = markerLocation.latitude,
-            longitude = markerLocation.longitude,
-            categories = card.metadata.primary.mapNotNull { chip ->
-                val name = chip.text.displayText().takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                StoreCertificationCategoryArgs(
-                    name = name,
-                    imageUrl = chip.image?.url.orEmpty(),
-                )
-            },
-        )
-    }
 
     private fun currentHomeListCards(): List<HomeListCardModel.BasicCard> {
         return viewModel.homeListSection.value.cards.filterIsInstance<HomeListCardModel.BasicCard>()
