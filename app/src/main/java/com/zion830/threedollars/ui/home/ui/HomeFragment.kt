@@ -67,6 +67,7 @@ import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapte
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
+import com.zion830.threedollars.ui.home.ui.compose.StorePreviewSduiContent
 import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
@@ -106,6 +107,9 @@ import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 private const val FOCUS_BOUNDS_PADDING_DP = 24f
+
+/** 주소 바와 같은 좌우 여백. 필터 줄은 화면 끝까지 스크롤되고 첫·끝 칩만 이만큼 들어간다. */
+private const val HOME_FILTER_HORIZONTAL_PADDING_DP = 20
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -315,7 +319,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val cells = viewModel.filterCells.collectAsStateWithLifecycle().value
                 HomeFilterChipsRow(
                     cells = cells,
-                    contentPadding = PaddingValues(horizontal = 0.dp),
+                    contentPadding = PaddingValues(horizontal = HOME_FILTER_HORIZONTAL_PADDING_DP.dp),
                     onCategoryClick = {
                         viewModel.sendClickCategoryFilter()
                         showSelectCategoryDialog()
@@ -338,6 +342,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 val storeDetailListState = remember(isStoreDetailExpanded) { LazyListState() }
+                val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
+                val sduiPreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
+                    ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
                     storeScreen = storeScreen,
@@ -348,13 +355,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onFavoriteClick = ::toggleStorePreviewFavorite,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
-                    onPreviewImageClick = { imageUrls, index ->
-                        if (imageUrls.isNotEmpty()) {
-                            storeDetailNavigator.navigate(
-                                StoreDetailDestination.ShowImages(imageUrls, index.coerceIn(0, imageUrls.lastIndex))
-                            )
-                        }
-                    },
+                    onPreviewImageClick = ::showStorePreviewImages,
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
@@ -373,6 +374,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             inSheet = true,
                             placeholderHeader = placeholderHeader,
                         )
+                    },
+                    sduiStorePreview = sduiPreview?.let { preview ->
+                        { showHeaderButtons ->
+                            val isFavorite = storeDetailViewModel.state.collectAsStateWithLifecycle().value.isFavorite
+                            StorePreviewSduiContent(
+                                preview = preview,
+                                isFavorite = isFavorite,
+                                onFavoriteClick = { storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnFavoriteClick) },
+                                onClose = viewModel::closeStorePreview,
+                                onAction = { storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnAction(it)) },
+                                onImageClick = ::showStorePreviewImages,
+                                onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
+                                showHeaderButtons = showHeaderButtons,
+                            )
+                        }
                     },
                     storeDetailNavigationBar = { navigationModifier ->
                         StoreDetailSduiNavigationBarRoute(
@@ -489,6 +505,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 storeId = storeId.toString(),
                                 latitude = location.latitude,
                                 longitude = location.longitude,
+                                withPreview = true,
                             )
                         )
                     }
@@ -636,6 +653,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun canAddPhotoToStorePreview(): Boolean {
         return currentStorePreviewRoute()?.storeType == USER_STORE
+    }
+
+    private fun showStorePreviewImages(imageUrls: List<String>, index: Int) {
+        if (imageUrls.isEmpty()) return
+        storeDetailNavigator.navigate(StoreDetailDestination.ShowImages(imageUrls, index.coerceIn(0, imageUrls.lastIndex)))
     }
 
     /**

@@ -45,6 +45,14 @@ interface StoreApi {
         @Header("X-Device-Longitude") lng: Double?,
     ): Response<BaseResponse<SDStoreScreenModel>>
 
+    /** 홈 미리보기 시트용. PREVIEW 섹션 하나만 오고, 상세(v2)와 가게명·메타·사진이 같고 리뷰 본문만 더 있다. */
+    @GET("/api/v1/screen/store/{storeId}/preview")
+    suspend fun getStorePreviewScreen(
+        @Path("storeId") storeId: String,
+        @Header("X-Device-Latitude") lat: Double?,
+        @Header("X-Device-Longitude") lng: Double?,
+    ): Response<BaseResponse<SDStoreScreenModel>>
+
     @POST("/api/v1/store/{storeId}/coupon/{couponId}/issue")
     suspend fun issueStoreCoupon(
         @Path("storeId") storeId: String,

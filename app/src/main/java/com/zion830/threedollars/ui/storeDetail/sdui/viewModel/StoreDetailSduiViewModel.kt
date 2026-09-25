@@ -37,6 +37,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import com.threedollar.common.R as CommonR
 
 /**
@@ -54,6 +57,23 @@ class StoreDetailSduiViewModel @Inject constructor(
 
     private val _effect = Channel<StoreDetailSduiUiEffect>(capacity = 64, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val effect: Flow<StoreDetailSduiUiEffect> = _effect.receiveAsFlow()
+
+    private val previewStore = MutableStateFlow<SDStorePreviewSectionModel?>(null)
+
+    /**
+     * 홈 미리보기 시트(tip)가 그리는 PREVIEW. 상세와 같은 렌더러로 그려 tip → full 전환 때 위쪽이 그대로 이어진다.
+     * 제보자 줄은 `/preview` 에 없고 상세(v2)에만 있어서, 상세가 오면 붙여 full 로 올릴 때 줄이 끼어들지 않게 한다.
+     */
+    val preview: StateFlow<SDStorePreviewSectionModel?> = combine(previewStore, stateStore) { preview, state ->
+        preview?.withContributorFrom(state.sections.filterIsInstance<SDStorePreviewSectionModel>().firstOrNull())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private fun SDStorePreviewSectionModel.withContributorFrom(detail: SDStorePreviewSectionModel?): SDStorePreviewSectionModel =
+        if (contributorActionBar == null && detail?.contributorActionBar != null) {
+            copy(contributorActionBar = detail.contributorActionBar)
+        } else {
+            this
+        }
 
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -125,13 +145,44 @@ class StoreDetailSduiViewModel @Inject constructor(
         longitude = intent.longitude
         if (intent.storeId == stateStore.value.storeId && stateStore.value.hasContent) {
             intent.fragment?.let(::scrollToFragment)
+            if (intent.withPreview && previewStore.value == null) fetchPreview(intent.storeId)
             return
         }
         pendingFragment = intent.fragment
         if (stateStore.value.storeId.isNotBlank()) isDisplayed = false
         sentImpressionKeys.clear()
         stateStore.value = StoreDetailSduiUiState(storeId = intent.storeId)
+        previewStore.value = null
         fetch(keepContent = false)
+        if (intent.withPreview) fetchPreview(intent.storeId)
+    }
+
+    /**
+     * 미리보기는 실패해도 알리지 않는다. 홈이 목록 카드로 만든 임시 미리보기를 그대로 둔다.
+     * 상세보다 먼저 오면 저장 여부·가게명을 미리 채워 tip 의 저장 버튼이 맞게 보이도록 한다.
+     */
+    private fun fetchPreview(storeId: String) {
+        launch {
+            val preview = storeRepository.getStorePreviewScreen(storeId = storeId, lat = latitude, lng = longitude)
+                .getOrNull()
+                ?.sections.orEmpty()
+                .filterIsInstance<SDStorePreviewSectionModel>()
+                .firstOrNull()
+                ?: return@launch
+            if (stateStore.value.storeId != storeId) return@launch
+            previewStore.value = preview
+            stateStore.update {
+                if (it.hasContent) {
+                    it
+                } else {
+                    it.copy(
+                        isFavorite = preview.additionalInfos?.isSubscriber ?: it.isFavorite,
+                        storeType = preview.additionalInfos?.storeType ?: it.storeType,
+                        storeName = SDHtmlText.plainText(preview.header?.title?.text).ifBlank { it.storeName },
+                    )
+                }
+            }
+        }
     }
 
     private fun fetch(keepContent: Boolean) {

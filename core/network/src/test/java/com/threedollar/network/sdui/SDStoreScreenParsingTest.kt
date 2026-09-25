@@ -51,6 +51,23 @@ class SDStoreScreenParsingTest {
         assertEquals("store_detail", screen.viewLog?.screenName)
     }
 
+    // TH-1226 TC1
+    @Test
+    fun `TH1226_TC1_미리보기응답이면_PREVIEW_하나를_상세와_같은_메타와_사진크기_리뷰본문으로_파싱한다`() {
+        // Given
+        val fileName = "StorePreviewBossStore.json"
+
+        // When
+        val screen = load(fileName)
+
+        // Then
+        val preview = screen.sections.orEmpty().single() as SDStorePreviewSectionModel
+        assertEquals("영업 종료", preview.metadata?.secondary?.first()?.text?.text?.replace(Regex("<[^>]+>"), ""))
+        assertEquals(158f, preview.images?.first()?.style?.height)
+        assertTrue(preview.bodies.orEmpty().isNotEmpty())
+        assertEquals("store_bottom_sheet", screen.viewLog?.screenName)
+    }
+
     // TH-1226 TC16
     @Test
     fun `TH1226_TC16_모르는섹션타입이_있으면_그섹션만_Unknown으로_떨어지고_나머지는_파싱된다`() {

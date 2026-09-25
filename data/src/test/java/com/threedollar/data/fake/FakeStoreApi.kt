@@ -47,6 +47,14 @@ class FakeStoreApi : StoreApi {
         lng: Double?,
     ): Response<BaseResponse<SDStoreScreenModel>> = storeScreenV2Response
 
+    var storePreviewResponse: Response<BaseResponse<SDStoreScreenModel>> = storeScreenV2Response
+
+    override suspend fun getStorePreviewScreen(
+        storeId: String,
+        lat: Double?,
+        lng: Double?,
+    ): Response<BaseResponse<SDStoreScreenModel>> = storePreviewResponse
+
     override suspend fun issueStoreCoupon(storeId: String, couponId: String): Response<BaseResponse<Any>> =
         Response.success(BaseResponse(ok = true, data = Any()))
 

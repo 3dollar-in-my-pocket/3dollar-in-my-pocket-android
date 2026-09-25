@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreInfoV2Section
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreMarginSection
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStorePostSection
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStorePreviewSection
+import com.zion830.threedollars.core.ui.sdui.section.store.SDStorePreviewSectionSlots
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreReviewSection
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSection
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSectionSlots
@@ -185,6 +187,28 @@ private fun SDStorePreviewSectionPreview() {
 private fun SDStorePreviewSectionUserStorePreview() {
     AppTheme {
         SDStorePreviewSection(model = SDPreviewFixtures.userStorePreview, onAction = {})
+    }
+}
+
+@Preview(name = "PREVIEW - 홈 미리보기 시트(tip)", group = SECTION, showBackground = true, widthDp = 360)
+@Composable
+private fun SDStorePreviewSectionTipPreview() {
+    AppTheme {
+        SDStorePreviewSection(
+            model = SDPreviewFixtures.userStorePreview,
+            onAction = {},
+            slots = SDStorePreviewSectionSlots(
+                headerTrailing = {
+                    Box(
+                        modifier = Modifier
+                            .size(width = 68.dp, height = 32.dp)
+                            .background(Gray30)
+                    )
+                },
+                headerTrailingWidth = 72.dp,
+                bodiesAsCarousel = true,
+            ),
+        )
     }
 }
 
