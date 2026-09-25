@@ -34,6 +34,12 @@ interface StoreRepository {
         lng: Double?,
     ): Result<SDStoreScreenModel>
 
+    suspend fun getStorePreviewScreen(
+        storeId: String,
+        lat: Double?,
+        lng: Double?,
+    ): Result<SDStoreScreenModel>
+
     suspend fun issueStoreCoupon(storeId: String, couponId: String): Result<Unit>
 
     suspend fun useIssuedCoupon(issuedKey: String): Result<Unit>

@@ -64,6 +64,14 @@ class StoreRepositoryImpl @Inject constructor(
         throw throwable.toStoreNotExistsOrSelf()
     }
 
+    override suspend fun getStorePreviewScreen(
+        storeId: String,
+        lat: Double?,
+        lng: Double?,
+    ): Result<SDStoreScreenModel> = runApi {
+        storeApi.getStorePreviewScreen(storeId = storeId, lat = lat, lng = lng)
+    }
+
     override suspend fun issueStoreCoupon(storeId: String, couponId: String): Result<Unit> = runApi {
         storeApi.issueStoreCoupon(storeId = storeId, couponId = couponId)
     }.map { }
