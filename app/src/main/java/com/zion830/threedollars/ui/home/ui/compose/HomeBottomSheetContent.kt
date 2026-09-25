@@ -119,6 +119,7 @@ import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosModel
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiDefaults
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -179,6 +180,7 @@ fun HomeBottomSheetContent(
     onFavoriteClick: (Boolean) -> Unit = { _ -> },
     onStorePreviewClick: () -> Unit = {},
     onAddPhotoClick: (() -> Unit)? = null,
+    onPreviewImageClick: (imageUrls: List<String>, index: Int) -> Unit = { _, _ -> },
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
     onFullListBackgroundVisibleChange: (Boolean) -> Unit = {},
@@ -187,6 +189,7 @@ fun HomeBottomSheetContent(
     storeDetailExpanded: Boolean = false,
     onStoreDetailExpandedChange: (Boolean) -> Unit = {},
     storeDetailContent: (@Composable (placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
+    storeDetailNavigationBar: (@Composable (Modifier) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -195,6 +198,11 @@ fun HomeBottomSheetContent(
         val containerHeightPx = with(density) { maxHeight.toPx().roundToInt() }
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
+        val storeDetailFullOffsetPx = if (storeDetailNavigationBar != null) {
+            with(density) { StoreDetailSduiDefaults.NavigationHeight.toPx() }
+        } else {
+            0f
+        }
         val storePreviewSection = storeScreen?.previewSectionOrNull()
         val storePreviewTitle = storeScreen?.resolvedPreviewTitle()
         val storePreviewTitleText = storePreviewTitle
@@ -282,7 +290,7 @@ fun HomeBottomSheetContent(
 
         fun animateStorePreviewTo(expanded: Boolean) {
             stopSheetAnimation()
-            val targetOffset = if (expanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+            val targetOffset = if (expanded) storeDetailFullOffsetPx else storePreviewOffsetPx
             val initialOffset = sheetOffsetPx
             animationJob = coroutineScope.launch {
                 animate(
@@ -303,6 +311,7 @@ fun HomeBottomSheetContent(
                     currentOffset = sheetOffsetPx,
                     tipOffset = storePreviewOffsetPx,
                     velocityY = velocityY,
+                    fullOffset = storeDetailFullOffsetPx,
                 )
             )
         }
@@ -330,7 +339,7 @@ fun HomeBottomSheetContent(
         LaunchedEffect(anchors) {
             sheetOffsetPx = if (isSheetInitialized) {
                 if (storeScreen != null) {
-                    if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+                    if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
                 } else {
                     val restoredValue = HomeSheetStateCalculator.restoreAfterPreview(lastListSettledValue)
                     settledValue = restoredValue
@@ -357,7 +366,7 @@ fun HomeBottomSheetContent(
 
         LaunchedEffect(storeDetailExpanded) {
             if (!isSheetInitialized || storeScreen == null) return@LaunchedEffect
-            val targetOffset = if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+            val targetOffset = if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
             if (abs(sheetOffsetPx - targetOffset) > 1f) animateStorePreviewTo(storeDetailExpanded)
         }
 
@@ -365,11 +374,11 @@ fun HomeBottomSheetContent(
             onDispose { animationJob?.cancel() }
         }
 
-        val storePreviewNestedScrollConnection = remember(storePreviewOffsetPx, storeDetailExpanded) {
+        val storePreviewNestedScrollConnection = remember(storePreviewOffsetPx, storeDetailFullOffsetPx, storeDetailExpanded) {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     val dragY = available.y
-                    val canMoveUp = dragY < 0f && sheetOffsetPx > StoreDetailSheetSpec.FULL_OFFSET
+                    val canMoveUp = dragY < 0f && sheetOffsetPx > storeDetailFullOffsetPx
                     if (!canMoveUp || source != NestedScrollSource.UserInput) return Offset.Zero
                     return moveStorePreviewSheet(dragY)
                 }
@@ -389,12 +398,12 @@ fun HomeBottomSheetContent(
                 private fun moveStorePreviewSheet(dragY: Float): Offset {
                     stopSheetAnimation()
                     val previousOffset = sheetOffsetPx
-                    sheetOffsetPx = (sheetOffsetPx + dragY).coerceIn(StoreDetailSheetSpec.FULL_OFFSET, storePreviewOffsetPx)
+                    sheetOffsetPx = (sheetOffsetPx + dragY).coerceIn(storeDetailFullOffsetPx, storePreviewOffsetPx)
                     return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
                 }
 
                 private fun settleIfMoved(velocityY: Float): Velocity {
-                    val settledOffset = if (storeDetailExpanded) StoreDetailSheetSpec.FULL_OFFSET else storePreviewOffsetPx
+                    val settledOffset = if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
                     if (abs(sheetOffsetPx - settledOffset) <= 1f) return Velocity.Zero
                     settleStorePreview(velocityY)
                     return Velocity(x = 0f, y = velocityY)
@@ -463,7 +472,16 @@ fun HomeBottomSheetContent(
         val isFullListSettled = storeScreen == null &&
             settledValue == HomeSheetValue.FullList &&
             abs(sheetOffsetPx - anchors.fullListOffset) <= 1f
-        val isStoreDetailFull = storeScreen != null && sheetOffsetPx <= StoreDetailSheetSpec.FULL_OFFSET + 1f
+        val isStoreDetailFull = storeScreen != null && sheetOffsetPx <= storeDetailFullOffsetPx + 1f
+        val storeDetailNavigationAlpha = if (storeScreen != null) {
+            StoreDetailSheetSpec.expandProgress(
+                currentOffset = sheetOffsetPx,
+                tipOffset = storePreviewOffsetPx,
+                fullOffset = storeDetailFullOffsetPx,
+            )
+        } else {
+            0f
+        }
         val topCornerRadius = if (isFullListSettled || isStoreDetailFull) 0.dp else 16.dp
         val sheetVisibleHeightPx = HomeSheetStateCalculator.visibleHeight(
             containerHeightPx = containerHeightPx,
@@ -514,6 +532,7 @@ fun HomeBottomSheetContent(
                                     onFavoriteClick = onFavoriteClick,
                                     onPreviewClick = {},
                                     onAddPhotoClick = onAddPhotoClick,
+                                    onImageClick = onPreviewImageClick,
                                     showHeaderButtons = false,
                                 )
                             }
@@ -527,6 +546,7 @@ fun HomeBottomSheetContent(
                         onFavoriteClick = onFavoriteClick,
                         onPreviewClick = onStorePreviewClick,
                         onAddPhotoClick = onAddPhotoClick,
+                        onImageClick = onPreviewImageClick,
                         modifier = Modifier
                             .weight(1f)
                             .nestedScroll(storePreviewNestedScrollConnection),
@@ -556,6 +576,9 @@ fun HomeBottomSheetContent(
                         .alpha(mapViewButtonProgress),
                 )
             }
+        }
+        if (storeDetailNavigationBar != null && storeDetailNavigationAlpha > 0f) {
+            storeDetailNavigationBar(Modifier.alpha(storeDetailNavigationAlpha))
         }
     }
 }
@@ -823,6 +846,7 @@ private fun StorePreviewContent(
     onFavoriteClick: (Boolean) -> Unit,
     onPreviewClick: () -> Unit,
     onAddPhotoClick: (() -> Unit)?,
+    onImageClick: (imageUrls: List<String>, index: Int) -> Unit,
     modifier: Modifier = Modifier,
     showHeaderButtons: Boolean = true,
 ) {
@@ -842,10 +866,7 @@ private fun StorePreviewContent(
     val previewTitle = storeScreen.resolvedPreviewTitle()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            horizontal = StorePreviewHorizontalPadding,
-            vertical = StorePreviewVerticalPadding,
-        ),
+        contentPadding = PaddingValues(vertical = StorePreviewVerticalPadding),
         verticalArrangement = Arrangement.spacedBy(StorePreviewRootGap),
     ) {
         item {
@@ -857,6 +878,7 @@ private fun StorePreviewContent(
                 onFavoriteClick = onFavoriteClick,
                 onPreviewClick = onPreviewClick,
                 showHeaderButtons = showHeaderButtons,
+                modifier = Modifier.padding(horizontal = StorePreviewHorizontalPadding),
             )
         }
         if (preview.images.isNotEmpty() || preview.bodies.isNotEmpty()) {
@@ -865,8 +887,14 @@ private fun StorePreviewContent(
                     modifier = Modifier.clickable(onClick = onPreviewClick),
                     verticalArrangement = Arrangement.spacedBy(StorePreviewMediaGap),
                 ) {
-                    HomeImages(images = preview.images, listMode = false, onAddPhotoClick = onAddPhotoClick)
-                    BodiesRow(bodies = preview.bodies)
+                    HomeImages(
+                        images = preview.images,
+                        listMode = false,
+                        onAddPhotoClick = onAddPhotoClick,
+                        onImageClick = { index -> onImageClick(preview.images.map { it.url }, index) },
+                        horizontalPadding = StorePreviewHorizontalPadding,
+                    )
+                    BodiesRow(bodies = preview.bodies, horizontalPadding = StorePreviewHorizontalPadding)
                 }
             }
         }
@@ -882,10 +910,11 @@ private fun StorePreviewHeaderSection(
     onFavoriteClick: (Boolean) -> Unit,
     onPreviewClick: () -> Unit,
     showHeaderButtons: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
     val rowActions = preview.rowActionBars()
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(StorePreviewHeaderActionGap),
     ) {
         Row(
@@ -1324,15 +1353,20 @@ private fun HomeImages(
     images: List<SDImageModel>,
     listMode: Boolean,
     onAddPhotoClick: (() -> Unit)? = null,
+    onImageClick: ((index: Int) -> Unit)? = null,
+    horizontalPadding: Dp = 0.dp,
 ) {
     if (images.isEmpty()) return
     val cornerRadius = if (listMode) 8.dp else 10.dp
     val rowHeight = PreviewImageLayout.rowHeight(images, PreviewImageDefaultSize.value).dp
 
     BoxWithConstraints {
-        val availableWidth = maxWidth.value
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(PreviewImageSpacing)) {
-            itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { _, image ->
+        val availableWidth = (maxWidth - horizontalPadding * 2).value
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = horizontalPadding),
+            horizontalArrangement = Arrangement.spacedBy(PreviewImageSpacing),
+        ) {
+            itemsIndexed(images, key = { index, image -> "${image.url}-$index" }) { index, image ->
                 ServerImage(
                     image = image,
                     modifier = Modifier
@@ -1349,7 +1383,8 @@ private fun HomeImages(
                                 defaultHeight = PreviewImageDefaultSize.value,
                             ).dp,
                         )
-                        .clip(RoundedCornerShape(cornerRadius)),
+                        .clip(RoundedCornerShape(cornerRadius))
+                        .then(if (onImageClick != null) Modifier.clickable { onImageClick(index) } else Modifier),
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -1425,9 +1460,12 @@ private fun AddPhotoTilePreview() {
 }
 
 @Composable
-private fun BodiesRow(bodies: List<SDTextModel>) {
+private fun BodiesRow(bodies: List<SDTextModel>, horizontalPadding: Dp = 0.dp) {
     if (bodies.isEmpty()) return
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = horizontalPadding),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         itemsIndexed(bodies, key = { index, body -> "${body.text}-$index" }) { _, body ->
             Box(
                 modifier = Modifier

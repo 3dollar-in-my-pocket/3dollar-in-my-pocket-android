@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.sdui.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -25,6 +26,9 @@ import kotlinx.coroutines.launch
 
 /**
  * [StoreDetailSduiViewModel] 과 [StoreDetailSduiContent] 를 잇는다. 효과 중 스크롤은 여기서, 나머지는 [navigator] 가 처리한다.
+ *
+ * @param listState 홈 시트처럼 네비를 [StoreDetailSduiNavigationBarRoute] 로 따로 그리면 같은 상태를 넘겨야 가게명 fade 가 맞는다.
+ * @param inSheet [StoreDetailSduiContent] 참고.
  */
 @Composable
 fun StoreDetailSduiRoute(
@@ -33,10 +37,11 @@ fun StoreDetailSduiRoute(
     onBack: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
+    inSheet: Boolean = false,
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val tabHeightPx = with(LocalDensity.current) { SDStoreTabSectionDefaults.Height.roundToPx() }
     val slots = remember { storeDetailSduiSlots() }
@@ -66,6 +71,7 @@ fun StoreDetailSduiRoute(
             onImpression = { key, log -> viewModel.dispatch(StoreDetailSduiUiIntent.OnImpression(key, log)) },
             slots = slots,
             placeholderHeader = placeholderHeader,
+            inSheet = inSheet,
         )
         val displayItemState by viewModel.displayItemState.collectAsStateWithLifecycle()
         StoreDetailDisplayItemOverlay(
@@ -82,4 +88,26 @@ fun StoreDetailSduiRoute(
             CircularProgressIndicator(color = Pink, modifier = Modifier.align(Alignment.Center))
         }
     }
+}
+
+/**
+ * 홈 시트용 상단 네비. 시트 밖 고정 위치에 그려 시트가 올라오는 동안 fade 로 나타나게 한다.
+ */
+@Composable
+fun StoreDetailSduiNavigationBarRoute(
+    viewModel: StoreDetailSduiViewModel,
+    listState: LazyListState,
+    onBack: () -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    StoreDetailNavigationBar(
+        state = state,
+        listState = listState,
+        onBack = onBack,
+        onFavoriteClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnFavoriteClick) },
+        onClose = onClose,
+        modifier = modifier,
+    )
 }
