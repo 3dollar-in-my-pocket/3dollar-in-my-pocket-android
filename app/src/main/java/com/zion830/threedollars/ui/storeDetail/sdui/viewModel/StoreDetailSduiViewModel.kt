@@ -72,6 +72,7 @@ class StoreDetailSduiViewModel @Inject constructor(
     private var viewLog: SDLogModel? = null
     private val sentImpressionKeys = mutableSetOf<String>()
     private var displayItemRequestedStoreId: String? = null
+    private var showsDisplayItems = false
 
     private val displayItemController = StoreDisplayItemController(
         scope = viewModelScope,
@@ -131,6 +132,7 @@ class StoreDetailSduiViewModel @Inject constructor(
     private fun load(intent: StoreDetailSduiUiIntent.Load) {
         latitude = intent.latitude
         longitude = intent.longitude
+        showsDisplayItems = intent.showsDisplayItems
         if (!intent.startsNewSession && intent.storeId == stateStore.value.storeId && stateStore.value.hasContent) {
             intent.fragment?.let(::scrollToFragment)
             if (intent.withPreview && previewStore.value == null) fetchPreview(intent.storeId)
@@ -229,7 +231,7 @@ class StoreDetailSduiViewModel @Inject constructor(
         val storeId = stateStore.value.storeId
         val latitude = latitude
         val longitude = longitude
-        val shouldRequest = isDisplayed && StoreDisplayItemRequestPolicy.shouldRequest(
+        val shouldRequest = showsDisplayItems && isDisplayed && StoreDisplayItemRequestPolicy.shouldRequest(
             storeId = storeId,
             requestedStoreId = displayItemRequestedStoreId,
             hasContent = stateStore.value.hasContent,

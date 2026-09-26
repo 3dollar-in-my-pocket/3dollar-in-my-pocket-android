@@ -31,6 +31,8 @@ sealed interface StoreDetailSduiUiIntent {
      * [withPreview] 면 홈 미리보기 시트용 PREVIEW(`/preview`)도 함께 받아 [StoreDetailSduiViewModel.preview] 에 둔다.
      * [startsNewSession] 이면 같은 가게여도 처음부터 다시 조회한다. 홈에서 마커를 새로 탭할 때마다 새 상세로 보고
      * 활동 유도 모달 조회수·요청도 다시 센다 (iOS 가 마커 탭마다 미리보기를 새로 만드는 것과 동일).
+     * [showsDisplayItems] 가 true 일 때만 활동 유도 모달을 조회한다. iOS 처럼 홈 미리보기 시트에서 상세로 올렸을 때만 켜고,
+     * 찜 목록·마이페이지·딥링크로 여는 전체 화면 상세에서는 조회하지 않는다.
      */
     data class Load(
         val storeId: String,
@@ -39,6 +41,7 @@ sealed interface StoreDetailSduiUiIntent {
         val fragment: String? = null,
         val withPreview: Boolean = false,
         val startsNewSession: Boolean = false,
+        val showsDisplayItems: Boolean = false,
     ) : StoreDetailSduiUiIntent
 
     /** 스크롤 위치를 유지한 채 다시 조회한다. */

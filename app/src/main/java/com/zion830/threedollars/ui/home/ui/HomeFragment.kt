@@ -498,6 +498,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 longitude = location.longitude,
                                 withPreview = true,
                                 startsNewSession = isNewSelection,
+                                showsDisplayItems = true,
                             )
                         )
                     }
