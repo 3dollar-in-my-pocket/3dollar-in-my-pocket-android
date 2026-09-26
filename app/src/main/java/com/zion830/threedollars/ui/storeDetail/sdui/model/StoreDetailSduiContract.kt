@@ -120,5 +120,6 @@ sealed interface StoreDetailDestination {
     data class ConfirmUseCoupon(val issuedKey: String) : StoreDetailDestination
     /** 방문 인증 화면이 가게 정보를 직접 조회한다 (iOS `VisitViewModel` 과 동일). */
     data class Visit(val storeId: String) : StoreDetailDestination
-    data class ReviewList(val storeId: String, val isBossStore: Boolean) : StoreDetailDestination
+    /** 제보·사장님 가게 모두 같은 리뷰 목록을 연다 (iOS 상세도 `isBossStore: false` 로 연다). */
+    data class ReviewList(val storeId: String) : StoreDetailDestination
 }

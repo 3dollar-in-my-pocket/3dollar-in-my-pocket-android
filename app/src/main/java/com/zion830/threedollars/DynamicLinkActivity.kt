@@ -15,7 +15,6 @@ import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
@@ -46,9 +45,6 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val FOLDER_ID = "folderId"
         private const val FAVORITE_ID = "favoriteId"
         private const val STORE_ID = "storeId"
-        private const val STORE_TYPE = "storeType"
-        private const val BOSS_STORE = "BOSS_STORE"
-        private const val USER_STORE = "USER_STORE"
         private const val POLL_ID = "pollId"
         private const val ID = "id"
         private const val URL = "url"
@@ -196,7 +192,6 @@ class DynamicLinkActivity : AppCompatActivity() {
 
             REVIEW_LIST -> {
                 val storeId = deeplink.getQueryParameter(STORE_ID)
-                val storeType = deeplink.getQueryParameter(STORE_TYPE) ?: USER_STORE
 
                 if (storeId != null) {
                     val stackBuilder = TaskStackBuilder.create(this)
@@ -208,11 +203,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                     stackBuilder.addNextIntent(StoreDetailSduiActivity.getIntent(this, storeId))
 
                     // 리뷰 Activity 추가
-                    val reviewIntent = when (storeType) {
-                        BOSS_STORE -> BossReviewDetailActivity.getIntent(this, storeId = storeId)
-                        else -> StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0)
-                    }
-                    stackBuilder.addNextIntent(reviewIntent)
+                    stackBuilder.addNextIntent(StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0))
 
                     // 백스택 시작
                     stackBuilder.startActivities()
