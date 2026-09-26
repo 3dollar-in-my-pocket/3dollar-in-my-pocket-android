@@ -48,6 +48,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val STORE_ID = "storeId"
         private const val STORE_TYPE = "storeType"
         private const val BOSS_STORE = "BOSS_STORE"
+        private const val USER_STORE = "USER_STORE"
         private const val POLL_ID = "pollId"
         private const val ID = "id"
         private const val URL = "url"
@@ -195,9 +196,9 @@ class DynamicLinkActivity : AppCompatActivity() {
 
             REVIEW_LIST -> {
                 val storeId = deeplink.getQueryParameter(STORE_ID)
-                val storeType = deeplink.getQueryParameter(STORE_TYPE)
+                val storeType = deeplink.getQueryParameter(STORE_TYPE) ?: USER_STORE
 
-                if (storeId != null && storeType != null) {
+                if (storeId != null) {
                     val stackBuilder = TaskStackBuilder.create(this)
 
                     // MainActivity 추가 (홈 백스택)

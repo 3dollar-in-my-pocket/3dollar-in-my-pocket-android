@@ -103,7 +103,11 @@ sealed interface StoreDetailDestination {
     data class CopyAddress(val address: String) : StoreDetailDestination
     data class CopyText(val text: String) : StoreDetailDestination
     data class MapEnlarge(val latitude: Double, val longitude: Double, val storeName: String) : StoreDetailDestination
-    data class WriteReview(val storeId: String, val isBossStore: Boolean) : StoreDetailDestination
+    /** 가게 사진 전체 목록 뷰어. 본인이 올린 사진은 삭제할 수 있다. */
+    data class StorePhotos(val storeId: String, val startIndex: Int) : StoreDetailDestination
+
+    /** 제보·사장님 가게 모두 같은 별점+글 작성 시트를 쓴다 (iOS `ReviewBottomSheet` 와 동일). */
+    data class WriteReview(val storeId: String) : StoreDetailDestination
     data class AddImage(val storeId: String) : StoreDetailDestination
     data class ShowImages(val imageUrls: List<String>, val startIndex: Int) : StoreDetailDestination
     data class EditStore(val storeId: String) : StoreDetailDestination
@@ -111,7 +115,7 @@ sealed interface StoreDetailDestination {
     data class ReportReview(val storeId: String, val reviewId: Long, val reasons: List<ReasonModel>) : StoreDetailDestination
     data class ConfirmDeleteReview(val reviewId: String) : StoreDetailDestination
     data class ConfirmUseCoupon(val issuedKey: String) : StoreDetailDestination
-    data class Visit(val storeId: String, val storeName: String, val latitude: Double, val longitude: Double) :
-        StoreDetailDestination
+    /** 방문 인증 화면이 가게 정보를 직접 조회한다 (iOS `VisitViewModel` 과 동일). */
+    data class Visit(val storeId: String) : StoreDetailDestination
     data class ReviewList(val storeId: String, val isBossStore: Boolean) : StoreDetailDestination
 }

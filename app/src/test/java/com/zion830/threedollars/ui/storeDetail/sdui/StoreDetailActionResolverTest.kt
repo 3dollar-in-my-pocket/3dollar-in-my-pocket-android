@@ -77,9 +77,9 @@ class StoreDetailActionResolverTest {
         assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(otherStore.link!!)), fromOtherStore)
     }
 
-    // TH-1226 TC13
+    // TH-1226 TC13, TH-1372
     @Test
-    fun `TH1226_TC13_리뷰작성은_가게타입에맞는_작성화면으로_간다`() {
+    fun `TH1372_리뷰작성은_가게타입과_상관없이_같은_작성화면으로_간다`() {
         // Given
         val event = customEvent(SDCustomActionType.STORE_REVIEW_SECTION_REVIEW_WRITE, SDCustomActionModel.STORE_ID to STORE_ID)
 
@@ -88,8 +88,8 @@ class StoreDetailActionResolverTest {
         val bossStore = resolve(event, context.copy(isBossStore = true))
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, isBossStore = false)), userStore)
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, isBossStore = true)), bossStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), userStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), bossStore)
     }
 
     // TH-1226 TC14
@@ -135,7 +135,7 @@ class StoreDetailActionResolverTest {
     }
 
     @Test
-    fun `사진확대는_가게사진_전체목록에서_탭한사진_위치로_연다`() {
+    fun `TH1383_가게사진_탭은_삭제가능한_가게사진_뷰어를_탭한사진_위치로_연다`() {
         // Given
         val event = customEvent(
             SDCustomActionType.STORE_IMAGE_SECTION_IMAGE_ENLARGE,
@@ -147,11 +147,7 @@ class StoreDetailActionResolverTest {
         val resolution = resolve(event)
 
         // Then
-        val expected = StoreDetailDestination.ShowImages(
-            imageUrls = listOf("https://image/a.png", "https://image/b.png", "https://image/c.png"),
-            startIndex = 1,
-        )
-        assertEquals(Resolution.Navigate(expected), resolution)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.StorePhotos(STORE_ID, startIndex = 1)), resolution)
     }
 
     @Test
@@ -203,7 +199,7 @@ class StoreDetailActionResolverTest {
     }
 
     @Test
-    fun `같은가게의_방문인증링크는_EDIT섹션_위치로_방문인증을_연다`() {
+    fun `TH1375_방문인증링크는_가게id로_방문인증을_연다`() {
         // Given
         val event = SDActionEvent(link = appLink("/visit?storeId=$STORE_ID"))
 
@@ -211,7 +207,7 @@ class StoreDetailActionResolverTest {
         val resolution = resolve(event)
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.Visit(STORE_ID, "호떡집", 37.4979, 127.0276)), resolution)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.Visit(STORE_ID)), resolution)
     }
 
     @Test

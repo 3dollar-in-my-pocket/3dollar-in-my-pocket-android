@@ -2,6 +2,7 @@ package com.threedollar.domain.store.repository
 
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 
@@ -33,6 +34,13 @@ interface StoreRepository {
         lat: Double?,
         lng: Double?,
     ): Result<SDStoreScreenModel>
+
+    /** 방문 인증 화면용 가게명·위치·카테고리. 제보·사장님 가게 모두 조회된다. */
+    suspend fun getStore(
+        storeId: String,
+        lat: Double?,
+        lng: Double?,
+    ): Result<UserStoreModel>
 
     suspend fun getStorePreviewScreen(
         storeId: String,

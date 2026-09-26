@@ -2,6 +2,7 @@ package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
+import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.request.StoreDisplayItemsRequest
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
@@ -44,6 +45,14 @@ interface StoreApi {
         @Header("X-Device-Latitude") lat: Double?,
         @Header("X-Device-Longitude") lng: Double?,
     ): Response<BaseResponse<SDStoreScreenModel>>
+
+    /** 제보·사장님 가게 공통 가게 정보. 방문 인증 화면이 쓴다 (iOS `fetchStore` 와 동일). */
+    @GET("/api/v5/store/{storeId}")
+    suspend fun getStore(
+        @Path("storeId") storeId: String,
+        @Header("X-Device-Latitude") lat: Double?,
+        @Header("X-Device-Longitude") lng: Double?,
+    ): Response<BaseResponse<StoreV5Response>>
 
     /** 홈 미리보기 시트용. PREVIEW 섹션 하나만 오고, 상세(v2)와 가게명·메타·사진이 같고 리뷰 본문만 더 있다. */
     @GET("/api/v1/screen/store/{storeId}/preview")

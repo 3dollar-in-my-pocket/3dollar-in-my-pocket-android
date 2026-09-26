@@ -1,18 +1,41 @@
 package com.threedollar.data.store
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.threedollar.common.base.BaseResponse
 import com.threedollar.data.fake.FakeStoreApi
 import com.threedollar.data.store.repository.StoreRepositoryImpl
 import com.threedollar.domain.store.model.StoreNotExistsException
+import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.result.ApiException
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import retrofit2.Response
 
 class StoreRepositoryImplTest {
 
     private val storeApi = FakeStoreApi()
     private val repository = StoreRepositoryImpl(storeApi)
+
+    // TH-1375
+    @Test
+    fun `TH1375_사장님가게도_v5_가게정보로_방문인증에_필요한_이름_위치_카테고리를_채운다`() = runBlocking {
+        // Given
+        val json = requireNotNull(javaClass.classLoader?.getResource("store/StoreV5BossStore.json")).readText()
+        val type = object : TypeToken<BaseResponse<StoreV5Response>>() {}.type
+        storeApi.storeResponse = Response.success(Gson().fromJson<BaseResponse<StoreV5Response>>(json, type))
+
+        // When
+        val store = repository.getStore(storeId = "120009", lat = null, lng = null).getOrThrow()
+
+        // Then
+        assertEquals(120009, store.storeId)
+        assertEquals("뽀미네 두쫀쿠 붕어빵", store.name)
+        assertEquals(37.36954969792162, store.location.latitude, 0.0)
+        assertTrue(store.categories.first().imageUrl.isNotBlank())
+    }
 
     // TH-1226 TC15
     @Test

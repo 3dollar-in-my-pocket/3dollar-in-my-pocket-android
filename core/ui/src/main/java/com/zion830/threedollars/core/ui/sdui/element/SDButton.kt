@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,8 @@ fun SDButton(
     fontSize: TextUnit = dpToSp(14),
     fontWeight: FontWeight = FontWeight.SemiBold,
     lineHeight: TextUnit = TextUnit.Unspecified,
+    maxLines: Int = 1,
+    textAlign: TextAlign? = null,
     fallbackLog: SDLogModel? = null,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
 ) {
@@ -73,7 +76,8 @@ fun SDButton(
                 fontSize = fontSize,
                 fontWeight = fontWeight,
                 lineHeight = lineHeight,
-                maxLines = 1,
+                maxLines = maxLines,
+                textAlign = textAlign,
                 style = LocalTextStyle.current.copy(lineHeightStyle = SDButtonDefaults.CenteredLineHeightStyle)
             )
         }
