@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.model.element
+package com.threedollar.common.sdui.model.element
 
 data class SDImageModel(
     val url: String?,

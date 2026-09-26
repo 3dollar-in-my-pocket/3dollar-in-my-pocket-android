@@ -39,11 +39,16 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 
 ## 모듈 경계 검사가 잡는 것 / 못 잡는 것
 
-`scripts/check-module-deps.sh`는 **선형 계층 랭크**(`:app` 50 → `:data` 40 → `:domain` 30 → `:common` 20 → `:core:network` 15 → `:core:ui` 12 → `:core:common` 11 → `:core:abtest`·`:core:designsystem` 10)로 "자기보다 낮은 계층만 의존한다"를 검사한다.
+`scripts/check-module-deps.sh`는 두 규칙으로 검사한다.
 
-- **잡는 것**: 상위로 거슬러 올라가는 의존. `:core:* → :app/:data/:domain/:common`, `:domain → :data`, `:core:ui → :core:network` 등
-- **못 잡는 것**: 랭크상 합법이지만 아키텍처 의도에는 어긋나는 쌍. 현재 `:domain → :core:network`, `:core:network → :core:ui`, `:core:network → :core:designsystem` 3건이 여기 해당한다. 원인은 **두 가지이고 서로 독립**이다 — ① SDUI 렌더러가 `:core:network` 안에 있다 ② `LoginRepository`가 인증 DTO와 `retrofit2.Response`를 domain 인터페이스에 노출한다. 목록과 사유는 `scripts/module-deps-baseline.txt` 주석에, 해소는 **TH-1355**에 있다
-- 선형 랭크로는 "`:data`는 `:core:network`를 써도 되지만 `:domain`은 안 된다"를 표현할 수 없다. 명시적 금지쌍 규칙 도입도 TH-1355에서 함께 검토한다
+1. **랭크** — `:app` 50 → `:data` 40 → `:domain` 30 → `:common` 20 → `:core:network` 15 → `:core:ui` 12 → `:core:common` 11 → `:core:abtest`·`:core:designsystem` 10. 자기보다 낮은 계층만 의존한다. 상위로 거슬러 오르는 의존(`:core:* → :app/:data/:domain`, `:domain → :data`, `:core:ui → :core:network` 등)을 잡는다.
+2. **금지쌍** — 선형 랭크로는 "`:data`는 `:core:network`를 써도 되지만 `:domain`은 안 된다"를 표현할 수 없어서 명시적으로 막는다.
+   - `:domain → :core:network`
+   - `:domain`·`:data`·`:core:network` → `:core:ui`·`:core:designsystem`
+
+두 규칙 모두 예외는 `scripts/module-deps-baseline.txt`에 사유와 함께 동결한다. 현재 동결 0건.
+
+**아직 못 잡는 것**: 모듈 경계 안쪽의 누수. 예를 들어 `:domain`이 Retrofit 라이브러리에 직접 의존하는 것(`HomeRepository`의 `okhttp3.MultipartBody`)은 프로젝트 모듈 간선이 아니라 이 스크립트 범위 밖이다.
 
 ## 예외
 
@@ -61,7 +66,7 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 | 항목 | iOS | AOS |
 |---|---|---|
 | 스타일 린트 | SwiftLint + 베이스라인 | **없음** — ktlint/detekt 도입은 의존성 추가라 별도 승인 필요(후속 과제) |
-| SDUI 렌더링 위치 | `Modules/Core/SDU` (분리 완료) | `:core:network` 안 `sdui/ui/**` (분리 예정 — TH-1355) |
+| SDUI 배치 | `Modules/Core/SDU` | 모델 `:core:common`, 렌더러 `:core:ui`, Gson 디시리얼라이저 `:core:network` (TH-1355) |
 | 모듈 경계 검사 | `scripts/check-module-deps.sh` (Tuist `Project.swift`) | `scripts/check-module-deps.sh` (`build.gradle.kts`의 `project(":…")`) |
 | 유닛 테스트 | `xcodebuild test` / XCTest | `./gradlew testDebugUnitTest` / JUnit4 |
 | 자동화 TC 실행체 | iOS 시뮬레이터 | Android 에뮬레이터 |

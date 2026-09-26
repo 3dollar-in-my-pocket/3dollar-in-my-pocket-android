@@ -1,19 +1,22 @@
 package com.threedollar.data.login.repository
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.base.ResultWrapper
+import com.threedollar.common.base.map
+import com.threedollar.common.base.toResultWrapper
 import com.threedollar.data.login.datasource.LoginDataSource
 import com.threedollar.data.login.datasource.LoginRemoteDataSource
 import com.threedollar.data.login.mapper.FeedbackTypeMapper
+import com.threedollar.data.login.mapper.SignUserMapper
 import com.threedollar.domain.login.data.AccessCheckModel
 import com.threedollar.domain.login.model.FeedbackTypeModel
+import com.threedollar.domain.login.model.SignUserModel
 import com.threedollar.domain.login.repository.LoginRepository
 import com.threedollar.network.data.auth.LoginRequest
 import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignUser
 import com.threedollar.network.request.PushInformationRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import retrofit2.Response
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -44,23 +47,20 @@ class LoginRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun signUp(signUpRequest: SignUpRequest): Response<BaseResponse<SignUser>> {
-        return loginDataSource.signUp(signUpRequest)
-    }
+    override suspend fun signUp(name: String, socialType: String, token: String): ResultWrapper<SignUserModel?> =
+        loginDataSource.signUp(SignUpRequest(name = name, socialType = socialType, token = token))
+            .toResultWrapper()
+            .map { it?.let(SignUserMapper::toDomainModel) }
 
-    override suspend fun login(loginRequest: LoginRequest): Response<BaseResponse<SignUser>> {
-        return loginDataSource.login(loginRequest)
-    }
+    override suspend fun login(socialType: String, token: String): ResultWrapper<SignUserModel?> =
+        loginDataSource.login(LoginRequest(socialType = socialType, token = token))
+            .toResultWrapper()
+            .map { it?.let(SignUserMapper::toDomainModel) }
 
-    override suspend fun logout(): Response<BaseResponse<String>> {
-        return loginDataSource.logout()
-    }
+    override suspend fun logout(): ResultWrapper<String?> = loginDataSource.logout().toResultWrapper()
 
-    override suspend fun signOut(): Response<BaseResponse<String>> {
-        return loginDataSource.signOut()
-    }
+    override suspend fun signOut(): ResultWrapper<String?> = loginDataSource.signOut().toResultWrapper()
 
-    override suspend fun putPushInformation(informationRequest: PushInformationRequest): Response<BaseResponse<String>> {
-        return loginDataSource.putPushInformation(informationRequest)
-    }
+    override suspend fun registerPushToken(pushToken: String): ResultWrapper<String?> =
+        loginDataSource.putPushInformation(PushInformationRequest(pushToken = pushToken)).toResultWrapper()
 }

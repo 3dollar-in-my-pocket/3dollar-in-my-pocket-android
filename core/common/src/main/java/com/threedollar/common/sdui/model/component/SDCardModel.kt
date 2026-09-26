@@ -1,9 +1,9 @@
-package com.threedollar.network.sdui.model.component
+package com.threedollar.common.sdui.model.component
 
-import com.threedollar.network.sdui.model.element.SDChipModel
-import com.threedollar.network.sdui.model.element.SDImageModel
-import com.threedollar.network.sdui.model.element.SDLink
-import com.threedollar.network.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDChipModel
+import com.threedollar.common.sdui.model.element.SDImageModel
+import com.threedollar.common.sdui.model.element.SDLink
+import com.threedollar.common.sdui.model.element.SDTextModel
 
 enum class SDCardType {
     IMAGE_PREVIEW_CARD

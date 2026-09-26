@@ -62,7 +62,7 @@ import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.threedollar.domain.home.data.store.UserStoreMoreResponse
 import com.threedollar.domain.home.data.store.VisitsModel
-import com.threedollar.network.sdui.model.element.SDLinkType
+import com.threedollar.common.sdui.model.element.SDLinkType
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.ActivityStoreInfoBinding

@@ -4,9 +4,9 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
-import com.threedollar.network.sdui.model.component.SDCardModel
-import com.threedollar.network.sdui.model.component.SDCardType
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDCardModel
+import com.threedollar.common.sdui.model.component.SDCardType
 import java.lang.reflect.Type
 
 class SDCardDeserializer : JsonDeserializer<SDCardModel> {

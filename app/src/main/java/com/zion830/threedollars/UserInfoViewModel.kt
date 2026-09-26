@@ -92,8 +92,7 @@ class UserInfoViewModel @Inject constructor(
     fun deleteUser(onSuccess: () -> Unit) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = loginRepository.signOut()
-            val result = safeApiCall(response)
+            val result = loginRepository.signOut()
             withContext(Dispatchers.Main) {
                 hideLoading()
                 if (result is com.threedollar.common.base.ResultWrapper.Success) {
@@ -107,8 +106,7 @@ class UserInfoViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch(coroutineExceptionHandler) {
-            val response = loginRepository.logout()
-            val result = safeApiCall(response)
+            val result = loginRepository.logout()
             _logoutResult.postValue(result is com.threedollar.common.base.ResultWrapper.Success)
         }
     }

@@ -1,12 +1,12 @@
 package com.threedollar.data.store.repository
 
+import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.data.store.asModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 import com.threedollar.domain.store.repository.StoreRepository
 import com.threedollar.network.api.StoreApi
 import com.threedollar.network.request.StoreDisplayItemsRequest
-import com.threedollar.network.sdui.model.screen.SDScreenModel
 import com.threedollar.network.util.runApi
 import javax.inject.Inject
 

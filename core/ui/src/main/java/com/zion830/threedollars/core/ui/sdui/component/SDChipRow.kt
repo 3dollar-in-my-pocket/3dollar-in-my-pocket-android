@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.ui.component
+package com.zion830.threedollars.core.ui.sdui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import base.compose.Gray50
-import com.threedollar.network.sdui.model.element.SDChipModel
-import com.threedollar.network.sdui.model.element.SDTextModel
-import com.threedollar.network.sdui.ui.element.SDChip
+import com.threedollar.common.sdui.model.element.SDChipModel
+import com.threedollar.common.sdui.model.element.SDTextModel
+import com.zion830.threedollars.core.ui.sdui.element.SDChip
 
 @Composable
 fun SDChipRow(

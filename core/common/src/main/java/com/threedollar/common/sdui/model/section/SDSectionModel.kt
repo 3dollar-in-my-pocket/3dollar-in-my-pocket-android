@@ -1,7 +1,7 @@
-package com.threedollar.network.sdui.model.section
+package com.threedollar.common.sdui.model.section
 
-import com.threedollar.network.sdui.model.component.SDCardModel
-import com.threedollar.network.sdui.model.component.SDHeaderModel
+import com.threedollar.common.sdui.model.component.SDCardModel
+import com.threedollar.common.sdui.model.component.SDHeaderModel
 
 enum class SDSectionType {
     RELATED_STORES

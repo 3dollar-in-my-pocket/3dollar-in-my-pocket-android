@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.ui.section
+package com.zion830.threedollars.core.ui.sdui.section
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
-import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
-import com.threedollar.network.sdui.ui.component.SDHeader
-import com.threedollar.network.sdui.ui.component.card.SDImagePreviewCard
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
+import com.zion830.threedollars.core.ui.sdui.component.SDHeader
+import com.zion830.threedollars.core.ui.sdui.component.card.SDImagePreviewCard
 
 @Composable
 fun SDRelatedStoresSection(

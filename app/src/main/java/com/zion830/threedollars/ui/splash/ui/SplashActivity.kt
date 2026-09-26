@@ -22,7 +22,6 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.MainActivity
@@ -115,7 +114,7 @@ class SplashActivity :
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful) {
-                viewModel.putPushInformation(PushInformationRequest(pushToken = it.result))
+                viewModel.putPushInformation(pushToken = it.result)
             }
         }
     }

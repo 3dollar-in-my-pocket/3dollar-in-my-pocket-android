@@ -1,8 +1,8 @@
 package com.threedollar.domain.store.repository
 
+import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
-import com.threedollar.network.sdui.model.screen.SDScreenModel
 
 interface StoreRepository {
     suspend fun getScreenStore(

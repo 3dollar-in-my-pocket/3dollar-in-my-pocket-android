@@ -4,9 +4,9 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
-import com.threedollar.network.sdui.model.section.SDSectionModel
-import com.threedollar.network.sdui.model.section.SDSectionType
+import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
+import com.threedollar.common.sdui.model.section.SDSectionModel
+import com.threedollar.common.sdui.model.section.SDSectionType
 import java.lang.reflect.Type
 
 class SDSectionDeserializer : JsonDeserializer<SDSectionModel> {

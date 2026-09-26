@@ -1,4 +1,4 @@
-package com.threedollar.network.sdui.ui.component.card
+package com.zion830.threedollars.core.ui.sdui.component.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,14 +20,14 @@ import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.dpToSp
 import com.threedollar.common.compose.utils.toColor
-import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
-import com.threedollar.network.sdui.model.element.SDImageModel
-import com.threedollar.network.sdui.model.element.SDTextModel
-import com.threedollar.network.sdui.ui.component.SDChipRow
-import com.threedollar.network.sdui.ui.element.SDImage
-import com.threedollar.network.sdui.ui.element.SDText
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.element.SDImageModel
+import com.threedollar.common.sdui.model.element.SDTextModel
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.core.ui.sdui.component.SDChipRow
+import com.zion830.threedollars.core.ui.sdui.element.SDImage
+import com.zion830.threedollars.core.ui.sdui.element.SDText
 
 object SDImagePreviewCardDefaults {
     val DefaultSize = 128.dp

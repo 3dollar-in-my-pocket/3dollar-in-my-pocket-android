@@ -13,10 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import base.compose.Gray0
-import com.threedollar.network.sdui.model.component.ImagePreviewCardModel
-import com.threedollar.network.sdui.model.section.SDRelatedStoresSectionModel
-import com.threedollar.network.sdui.ui.section.SDRelatedStoresSection
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
+import com.zion830.threedollars.core.ui.sdui.section.SDRelatedStoresSection
 
 @Composable
 fun StoreDetailRelatedStoresSection(
