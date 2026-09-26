@@ -444,9 +444,15 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         markers.addAll(newMarkers)
     }
 
+    /**
+     * 현재 위치를 받아 카메라를 옮긴다.
+     *
+     * @param zoomLevel 이동하면서 함께 적용할 줌 레벨. null 이면 현재 줌을 유지한다.
+     */
     @SuppressLint("MissingPermission")
     fun moveToCurrentLocation(
         showAnim: Boolean = false,
+        zoomLevel: Double? = null,
         onLocationLoaded: (LatLng?) -> Unit = {},
     ) {
         try {
@@ -456,9 +462,9 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                     naverMap?.locationOverlay?.isVisible = true
                     naverMap?.locationOverlay?.position = position
                     if (showAnim) {
-                        moveCameraWithAnim(position)
+                        moveCameraWithAnim(position, zoomLevel)
                     } else {
-                        moveCamera(position)
+                        moveCamera(position, zoomLevel)
                     }
                     onMyLocationLoaded(position)
                 }
@@ -573,22 +579,22 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         }
     }
 
-    fun moveCamera(position: LatLng) {
+    fun moveCamera(position: LatLng, zoomLevel: Double? = null) {
         if (naverMap == null) {
             return
         }
 
         isInitialCameraPlaced = true
-        naverMap?.moveCamera(cameraUpdateForMove(position))
+        naverMap?.moveCamera(cameraUpdateForMove(position, zoomLevel))
     }
 
-    fun moveCameraWithAnim(position: LatLng) {
+    fun moveCameraWithAnim(position: LatLng, zoomLevel: Double? = null) {
         if (naverMap == null) {
             return
         }
 
         isInitialCameraPlaced = true
-        naverMap?.moveCamera(cameraUpdateForMove(position).animate(CameraAnimation.Easing))
+        naverMap?.moveCamera(cameraUpdateForMove(position, zoomLevel).animate(CameraAnimation.Easing))
     }
 
     fun moveCameraToBounds(
@@ -608,7 +614,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         naverMap?.moveCamera(cameraUpdate)
     }
 
-    private fun cameraUpdateForMove(position: LatLng): CameraUpdate {
+    private fun cameraUpdateForMove(position: LatLng, requestedZoomLevel: Double? = null): CameraUpdate {
+        if (requestedZoomLevel != null) {
+            isInitialZoomLevelApplied = true
+            return CameraUpdate.scrollAndZoomTo(position, requestedZoomLevel)
+        }
         val zoomLevel = initialZoomLevel
         if (isInitialZoomLevelApplied || zoomLevel == null) {
             return CameraUpdate.scrollTo(position)
