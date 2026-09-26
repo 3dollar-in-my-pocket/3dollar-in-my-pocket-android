@@ -72,7 +72,6 @@ dependencies {
     implementation(project(":core:abtest"))
 
     implementation(libs.bundles.androidx.ui)
-    implementation(project(":common"))
     testImplementation(libs.bundles.testing)
 
     implementation(libs.bundles.retrofit)

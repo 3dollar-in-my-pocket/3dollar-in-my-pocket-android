@@ -33,7 +33,7 @@ Shared layers
 ## 현재와 목표의 차이
 
 - `:domain`은 현재 Android library이며 `:core:network`, Retrofit, AndroidX, Hilt에 의존한다.
-- `:core:network`는 SDUI 렌더링 지원 때문에 `:common`, `:core:ui`, `:core:designsystem`에도 의존한다.
+- `:core:network`는 SDUI **렌더링 코드**(`sdui/ui/**`)를 품고 있어 `:core:ui`, `:core:designsystem`에도 의존한다. 렌더링을 별도 모듈로 빼는 작업은 TH-1355 (iOS의 `Modules/Core/SDU` 대응).
 - `common.gradle`은 여러 모듈에 공통 Android 설정과 외부 라이브러리를 주입한다.
 - feature가 독립 Gradle module로 쪼개진 구조가 아니라, `app`, `data`, `domain` 내부 package로 나뉜 구조다.
 

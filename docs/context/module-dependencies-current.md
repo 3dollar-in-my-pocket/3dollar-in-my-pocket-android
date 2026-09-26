@@ -2,6 +2,8 @@
 
 이 문서는 실제 `settings.gradle.kts`와 각 `build.gradle.kts` 기준의 현재 상태를 기록한다. 목표 아키텍처나 마이그레이션 방향은 `docs/context/migration-rules.md`에 둔다.
 
+의존 방향은 `scripts/check-module-deps.sh`가 CI(`lint.yml`)에서 강제한다. 아래 그래프를 바꾸면 그 스크립트의 랭크 표도 함께 확인한다.
+
 ## 모듈 목록
 
 원천: `settings.gradle.kts`
@@ -44,7 +46,6 @@
 :core:network
   -> :core:common
   -> :core:abtest
-  -> :common
   -> :core:designsystem
   -> :core:ui
 
@@ -67,7 +68,12 @@
 - `:app`은 화면, Activity, Fragment, ViewModel, navigation, legacy datasource가 모여 있는 실질 presentation 모듈이다.
 - `:data`와 `:domain`은 feature별 하위 패키지로 `home`, `screen`, `my`, `community`, `login`, `store` 등을 나눈다.
 - `:domain`은 현재 순수 Kotlin domain이 아니다. Android library이고 `:core:network`, AndroidX, Retrofit, Hilt에 의존한다.
-- `:core:network`는 네트워크 인프라 외에 SDUI DTO와 일부 Compose/공통 UI 의존성을 가진다.
+- `:core:network`는 네트워크 인프라 외에 **서버 주도 UI(SDUI) 렌더링 Compose 코드**(`sdui/ui/**`, 7개 파일)를 함께 갖고 있다. 이 때문에 네트워크 모듈이 UI 레이어를 역으로 의존한다 — `:core:ui`(`noRippleClickable`)와 `:core:designsystem`(`base.compose.{Gray50,Gray10,Gray0,dpToSp}`)을 각각 `sdui/ui/**` 4개 파일이 쓴다. 분리는 TH-1355.
+- `:domain`이 `:core:network`를 의존하는 이유는 2개 파일뿐이고, 원인이 서로 다르다.
+  - `StoreRepository.getScreenStore`가 `SDScreenModel`을 반환한다 — 위 SDUI 배치 문제와 같은 뿌리.
+  - `LoginRepository`가 `LoginRequest`·`SignUpRequest`·`SignUser`·`PushInformationRequest` DTO와 **`retrofit2.Response`**를 인터페이스에 노출한다 — SDUI와 무관한 레거시 누수. 같은 인터페이스의 나머지 메서드는 이미 도메인 모델만 쓴다. 이 때문에 `:domain`이 Retrofit에도 직접 의존한다.
+  - 나머지 Repository 6개(`HomeRepository` 등)는 전부 `domain.*.data.*Model`만 쓴다.
+- **서버드리븐 시스템이 두 벌 있다.** 홈 화면용은 모델이 `:core:common/serverdriven/model`, 렌더러가 `:core:ui/serverdriven`로 **올바르게 배치**되어 있고, 가게 상세용만 `:core:network/sdui`에 모델·렌더러가 함께 들어있다. `SDScreenModel`·`SDSectionModel`·`SDHeaderModel`·`SDChipModel`·`SDImageModel`·`SDTextModel`은 **양쪽에 같은 이름으로 각각 존재**한다. TH-1355에서 통합 여부를 함께 판단한다.
 - `:common`은 legacy shared module로 남아 있으며, 신규 공통 코드는 우선 `:core:*` 계층을 확인한다.
 
 ## 작업 시 주의
@@ -75,3 +81,4 @@
 - 문서나 계획에서 `home/domain`, `my/data` 같은 feature module 이름이 나오면 현재 실제 모듈이 아니라 목표 또는 과거 설계로 간주한다.
 - 모듈 추가, 의존성 방향 변경, `common.gradle` 분리 작업은 사용자 승인 없이 진행하지 않는다.
 - 의존성 변경이 발생하면 이 문서와 `docs/context/architecture-current.md`를 함께 갱신한다.
+- 새 의존을 넣기 전에 `scripts/check-module-deps.sh`를 돌린다. 실패하면 **먼저 방향을 뒤집는 설계를 검토하고**, 베이스라인 추가는 마지막 수단이다 (`scripts/module-deps-baseline.txt`는 줄어들기만 해야 한다).
