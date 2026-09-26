@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +50,7 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2Empty
 import com.threedollar.domain.home.data.store.ContentModel
 import com.zion830.threedollars.DynamicLinkActivity
+import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
@@ -60,6 +62,8 @@ import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
 import com.zion830.threedollars.ui.home.ui.compose.StorePreviewSduiContent
 import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
+import com.zion830.threedollars.ui.home.ui.compose.HomeMapControlColumn
+import com.zion830.threedollars.ui.home.ui.compose.HomeWriteButton
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.home.viewModel.SearchAddressViewModel
 import com.zion830.threedollars.ui.map.ui.NearStoreNaverMapFragment
@@ -187,6 +191,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         initMap()
         initAdapter()
         initFilterComposeView()
+        initMapControlComposeViews()
         initHomeBottomSheetBehavior()
         initHomeBottomSheetComposeView()
         initViewModel()
@@ -269,10 +274,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             cameraMoved = {
                 binding.tvRetrySearch.isVisible = true
             },
-            onLocationButtonClicked = {
-                viewModel.sendClickCurrentLocationLog()
-                checkLocationPermissionForButton()
-            }
         )
         naverMapFragment.onAdMarkerClicked = { advertisementId ->
             viewModel.sendClickAdvertisementMarkerLog(advertisementId)
@@ -320,6 +321,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun initMapControlComposeViews() {
+        updateMapControlBottomMargin(
+            SizeUtils.dpToPx(HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP)
+        )
+        binding.mapControlComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        binding.mapControlComposeView.setContent {
+            AppTheme {
+                val items = viewModel.mapControlItems.collectAsStateWithLifecycle().value
+                HomeMapControlColumn(
+                    items = items,
+                    onClick = viewModel::clickMapControl,
+                )
+            }
+        }
+        binding.writeButtonComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        binding.writeButtonComposeView.setContent {
+            AppTheme {
+                HomeWriteButton(onClick = ::moveToWriteStore)
+            }
+        }
+    }
+
+    /** 홈 [+ 가게 제보]: 하단 탭의 가게 제보와 같은 화면으로 이동한다. 탭바 클릭 로그 대신 홈 버튼 로그를 남긴다. */
+    private fun moveToWriteStore() {
+        viewModel.sendClickWriteButtonLog()
+        (activity as? MainActivity)?.selectWriteTab()
+    }
+
     private fun initHomeBottomSheetComposeView() {
         binding.homeBottomSheetComposeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
@@ -351,7 +384,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onFullListBackgroundVisibleChange = { isVisible ->
                         binding.homeFullListTopBackgroundView.isVisible = isVisible
                     },
-                    onVisibleHeightChange = ::updateLocationButtonBottomMargin,
+                    onVisibleHeightChange = ::updateMapControlBottomMargin,
                     onMapViewClick = viewModel::sendClickMapViewLog,
                     storeDetailExpanded = isStoreDetailExpanded,
                     onStoreDetailExpandedChange = viewModel::setStoreDetailExpanded,
@@ -415,9 +448,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ?: SizeUtils.dpToPx(188f)
     }
 
-    private fun updateLocationButtonBottomMargin(sheetVisibleHeightPx: Int) {
-        val bottomMarginPx = sheetVisibleHeightPx + SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP)
-        naverMapFragment.updateLocationButtonBottomMargin(bottomMarginPx)
+    private fun updateMapControlBottomMargin(sheetVisibleHeightPx: Int) {
+        val bottomMarginPx = sheetVisibleHeightPx +
+            SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP - HomeSheetLayout.MAP_CONTROL_SHADOW_INSET_DP)
+        val params = binding.mapControlComposeView.layoutParams as ViewGroup.MarginLayoutParams
+        if (params.bottomMargin == bottomMarginPx) return
+        binding.mapControlComposeView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            bottomMargin = bottomMarginPx
+        }
     }
 
     private fun initButton() {
@@ -488,6 +526,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
+                        binding.mapControlComposeView.isVisible = screen == null
+                        binding.writeButtonComposeView.isVisible = screen == null
+                    }
+                }
+                launch {
+                    viewModel.moveToCurrentLocation.collect { zoomLevel ->
+                        checkLocationPermissionForButton(zoomLevel)
                     }
                 }
                 launch {
@@ -744,11 +789,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
     
-    private fun checkLocationPermissionForButton() {
+    private fun checkLocationPermissionForButton(zoomLevel: Double?) {
         if (isLocationAvailable()) {
             naverMapFragment.enableLocationTracking()
             val mapCenter = naverMapFragment.getMapCenterLatLng()
-            naverMapFragment.moveToCurrentLocation(true) { currentLocation ->
+            naverMapFragment.moveToCurrentLocation(showAnim = true, zoomLevel = zoomLevel) { currentLocation ->
                 val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
                 if (distance > 100f) {
                     binding.tvRetrySearch.isVisible = true

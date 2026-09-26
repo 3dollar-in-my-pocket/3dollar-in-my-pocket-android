@@ -7,6 +7,10 @@ import com.threedollar.common.serverdriven.model.HomeFilterConfiguration
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeFilterRadioOption
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
+import com.threedollar.common.serverdriven.model.HomeMapControl
+import com.threedollar.common.serverdriven.model.HomeMapControlButton
+import com.threedollar.common.serverdriven.model.HomeMapControlFilterOption
+import com.threedollar.common.serverdriven.model.HomeMapControlType
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.HomeScreenSectionType
 import com.threedollar.common.serverdriven.model.SDBorderModel
@@ -14,6 +18,7 @@ import com.threedollar.common.serverdriven.model.SDButtonModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDClickLogModel
 import com.threedollar.common.serverdriven.model.SDClickLogValue
+import com.threedollar.common.serverdriven.model.SDCustomActionModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
@@ -36,6 +41,10 @@ import com.threedollar.network.data.screen.HomeFilterSectionResponse
 import com.threedollar.network.data.screen.HomeFilterSurfaceStyleResponse
 import com.threedollar.network.data.screen.HomeFilterTextResponse
 import com.threedollar.network.data.screen.HomeFilterViewLogResponse
+import com.threedollar.network.data.screen.HomeMapControlButtonResponse
+import com.threedollar.network.data.screen.HomeMapControlFilterOptionResponse
+import com.threedollar.network.data.screen.HomeMapControlResponse
+import com.threedollar.network.data.screen.SDCustomActionResponse
 
 fun HomeFilterScreenResponse.asModel(): HomeFilterScreenModel = HomeFilterScreenModel(
     sections = sections.orEmpty().map { it.asModel() },
@@ -55,8 +64,66 @@ private fun HomeFilterSectionResponse.asModel(): HomeScreenSection {
             bars = bars.orEmpty().mapNotNull { it.asModelOrNull() },
         )
 
+        HomeScreenSectionType.HOME_MAP_CONTROL -> HomeScreenSection.HomeMapControlSectionModel(
+            type = sectionType,
+            controls = controls.orEmpty().mapNotNull { it.asModelOrNull() },
+        )
+
         HomeScreenSectionType.UNKNOWN -> HomeScreenSection.Unknown(type = sectionType)
     }
+}
+
+private fun HomeMapControlResponse.asModelOrNull(): HomeMapControl? {
+    val controlType = HomeMapControlType.fromRaw(type)
+    return when (controlType) {
+        HomeMapControlType.FILTER -> {
+            val key = paramKey?.takeIf { it.isNotBlank() } ?: return null
+            val filterOptions = options.orEmpty().mapNotNull { it.asModelOrNull() }
+            if (filterOptions.isEmpty()) return null
+            HomeMapControl.Filter(
+                type = controlType,
+                paramKey = key,
+                options = filterOptions,
+            )
+        }
+
+        HomeMapControlType.ACTION -> {
+            val buttonModel = button?.asModelOrNull() ?: return null
+            HomeMapControl.Action(
+                type = controlType,
+                button = buttonModel,
+            )
+        }
+
+        HomeMapControlType.UNKNOWN -> null
+    }
+}
+
+private fun HomeMapControlFilterOptionResponse.asModelOrNull(): HomeMapControlFilterOption? {
+    val value = paramValue ?: return null
+    val buttonModel = button?.asModelOrNull() ?: return null
+    return HomeMapControlFilterOption(
+        paramValue = value,
+        button = buttonModel,
+    )
+}
+
+private fun HomeMapControlButtonResponse.asModelOrNull(): HomeMapControlButton? {
+    val imageModel = image?.takeIf { !it.url.isNullOrBlank() }?.asModel() ?: return null
+    return HomeMapControlButton(
+        image = imageModel,
+        style = style?.asModel(),
+        customAction = customAction?.asModelOrNull(),
+        clickLog = clickLog?.asModel(),
+    )
+}
+
+private fun SDCustomActionResponse.asModelOrNull(): SDCustomActionModel? {
+    val normalizedActionType = actionType?.takeIf { it.isNotBlank() } ?: return null
+    return SDCustomActionModel(
+        actionType = normalizedActionType,
+        extraParams = extraParams.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
 }
 
 private fun HomeFilterBarResponse.asModelOrNull(): HomeFilterBar? {
@@ -137,6 +204,7 @@ private fun HomeFilterImageResponse.asModel(): SDImageModel = SDImageModel(
 private fun HomeFilterImageStyleResponse.asModel(): SDImageStyleModel = SDImageStyleModel(
     width = width,
     height = height,
+    dimmed = dimmed ?: false,
 )
 
 private fun HomeFilterLinkResponse.asModel(): SDLinkModel = SDLinkModel(
