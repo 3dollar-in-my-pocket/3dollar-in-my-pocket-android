@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -65,6 +67,7 @@ object SDStoreCouponSectionDefaults {
     val DividerVerticalPadding = 12.dp
     val DividerWidth = 1.dp
     val TrailingEndPadding = 25.dp
+    val TrailingMinSize = 30.dp
     val DividerColor = Color(0xFFBC4BD6)
 }
 
@@ -135,7 +138,11 @@ private fun CouponCard(
                         end = SDStoreCouponSectionDefaults.TrailingEndPadding
                     ),
                     fontSize = dpToSp(12),
-                    modifier = Modifier.fillMaxHeight()
+                    maxLines = Int.MAX_VALUE,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .widthIn(min = SDStoreCouponSectionDefaults.TrailingMinSize)
                 )
             } ?: Box(modifier = Modifier.width(SDStoreCouponSectionDefaults.TrailingEndPadding))
         }

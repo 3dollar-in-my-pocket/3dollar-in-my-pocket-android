@@ -494,6 +494,15 @@ internal object SDPreviewFixtures {
                 ),
                 style = style("#FDF1FD"),
                 clickLog = null
+            ),
+            SDStoreCouponSectionModel.Card(
+                cardId = "C:881960829125365762",
+                badge = null,
+                title = html(16, 700, "#A1A1A1", "두쫀쿠 붕어빵 1개 증정 (사용 완료, 긴 제목 줄바꿈 확인)"),
+                subTitle = html(14, 400, "#A1A1A1", "26.08.31 ~ 26.09.30"),
+                trailingButton = button(text = html(12, 700, "#A1A1A1", "사용 완료")),
+                style = style("#F4F4F4"),
+                clickLog = null
             )
         ),
         style = style(WHITE)
