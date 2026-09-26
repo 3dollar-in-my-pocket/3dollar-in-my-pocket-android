@@ -22,12 +22,11 @@ import com.zion830.threedollars.core.ui.sdui.component.card.SDImagePreviewCard
 @Composable
 fun SDRelatedStoresSection(
     model: SDRelatedStoresSectionModel,
-    onCardPressed: (ImagePreviewCardModel) -> Unit
+    onCardPressed: (ImagePreviewCardModel) -> Unit,
+    modifier: Modifier = Modifier.fillMaxWidth().wrapContentHeight(),
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {

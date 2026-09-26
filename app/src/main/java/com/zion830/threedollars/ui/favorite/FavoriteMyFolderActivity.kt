@@ -14,13 +14,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.listener.OnItemClickListener
-import com.threedollar.common.utils.Constants
 import com.zion830.threedollars.databinding.ActivityFavoriteMyFolderBinding
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.dialog.AllDeleteFavoriteDialog
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,11 +33,7 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
         FavoriteMyFolderRecyclerAdapter(object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
                 viewModel.sendClickStore(item.storeId, item.storeType)
-                if (item.storeType == Constants.BOSS_STORE) {
-                    activityResultLauncher.launch(BossStoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
-                } else {
-                    activityResultLauncher.launch(StoreDetailActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId.toInt()))
-                }
+                activityResultLauncher.launch(StoreDetailSduiActivity.getIntent(this@FavoriteMyFolderActivity, item.storeId))
             }
         }, object : OnItemClickListener<MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel> {
             override fun onClick(item: MyFavoriteFolderResponse.MyFavoriteFolderFavoriteModel) {
@@ -68,11 +62,9 @@ class FavoriteMyFolderActivity : BaseActivity<ActivityFavoriteMyFolderBinding, F
 
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                viewModel.getMyFavoriteFolder()
-                adapter.refresh()
-            }
+        ) {
+            viewModel.getMyFavoriteFolder()
+            adapter.refresh()
         }
 
         viewModel.getMyFavoriteFolder()

@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.threedollar.common.sdui.model.element.SDActionBarModel
+import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
+import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
@@ -31,6 +34,11 @@ import com.threedollar.common.serverdriven.model.StoreSectionAdditionalInfosMode
 import com.threedollar.common.serverdriven.model.StoreSectionModel
 import com.zion830.threedollars.R
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
+import com.zion830.threedollars.ui.home.ui.compose.StorePreviewSduiContent
+import com.threedollar.common.sdui.model.element.SDButtonModel as SDUIButton
+import com.threedollar.common.sdui.model.element.SDChipModel as SDUIChip
+import com.threedollar.common.sdui.model.element.SDImageModel as SDUIImage
+import com.threedollar.common.sdui.model.element.SDTextModel as SDUIText
 
 class HomeStorePreviewDesignActivity : ComponentActivity() {
 
@@ -39,6 +47,7 @@ class HomeStorePreviewDesignActivity : ComponentActivity() {
         hideSystemBars()
 
         val storeScreen = designStoreScreen()
+        val storePreview = designStorePreview()
 
         setContent {
             Box(
@@ -51,9 +60,19 @@ class HomeStorePreviewDesignActivity : ComponentActivity() {
                     storeScreen = storeScreen,
                     onCardClick = {},
                     onLoadNextPage = {},
-                    onClosePreview = {},
-                    onActionClick = {},
                     fullListTopPx = 0,
+                    storePreview = { showHeaderButtons ->
+                        StorePreviewSduiContent(
+                            preview = storePreview,
+                            isFavorite = false,
+                            onFavoriteClick = {},
+                            onClose = {},
+                            onAction = {},
+                            onImageClick = { _, _ -> },
+                            onAddPhotoClick = {},
+                            showHeaderButtons = showHeaderButtons,
+                        )
+                    },
                 )
             }
         }
@@ -205,6 +224,51 @@ private fun Context.designStoreScreen(): StoreScreenModel {
                 bodies = listOf(review, review),
             ),
         ),
+    )
+}
+
+/** 미리보기 시트는 미리보기 API(SDUI PREVIEW) 로 그리므로 같은 디자인 값을 SDUI 모델로도 만든다. */
+private fun Context.designStorePreview(): SDStorePreviewSectionModel {
+    val star = SDUIImage(url = drawableUri(R.drawable.design_store_preview_star), style = SDUIImage.Style(width = 16f, height = 16f))
+    val image1 = SDUIImage(url = drawableUri(R.drawable.design_store_preview_image_1), style = SDUIImage.Style(width = 158f, height = 158f))
+    val image2 = SDUIImage(url = drawableUri(R.drawable.design_store_preview_image_2), style = SDUIImage.Style(width = 158f, height = 158f))
+    fun text(value: String, color: String) = SDUIText(text = value, isHtml = false, fontColor = color)
+    fun chip(value: String, color: String, image: SDUIImage? = null) = SDUIChip(image = image, text = text(value, color))
+    fun actionBar(label: String, color: String, background: String, border: String? = null) = SDActionBarModel(
+        button = SDUIButton(
+            text = text(label, color),
+            style = SDSurfaceStyleModel(
+                backgroundColor = background,
+                border = border?.let { SDSurfaceStyleModel.Border(color = it, width = 1f) },
+            ),
+        ),
+    )
+    val review = SDStorePreviewSectionModel.Body(
+        text = text("안녕하세요! 소중한 시간을 내어 저희 붕어빵에 대한 따뜻한 리뷰를 남겨주셔서 정말 감사드립니다. 고객님의 칭찬 ", "#5A5A5A"),
+        style = SDSurfaceStyleModel(backgroundColor = "#F4F4F4"),
+    )
+    return SDStorePreviewSectionModel(
+        sectionId = "PREVIEW",
+        header = SDStorePreviewSectionModel.Header(
+            title = text("강남역 0번 출구 앞 붕어빵", "#0F0F0F"),
+            badge = SDUIImage(url = drawableUri(R.drawable.design_store_preview_badge), style = SDUIImage.Style(width = 16f, height = 16f)),
+        ),
+        metadata = SDStorePreviewSectionModel.Metadata(
+            primary = listOf(chip("붕어빵", "#5A5A5A"), chip("4.6 (8)", "#787878", image = star)),
+            secondary = listOf(chip("영업 중", "#2E2E2E"), chip("1km +", "#787878"), chip("최근 방문 5명", "#787878")),
+            separator = null,
+        ),
+        contributorActionBar = null,
+        actionBars = listOf(
+            actionBar("방문 인증", "#FFFFFF", "#FF858F"),
+            actionBar("리뷰 작성", "#F9737E", "#FFECEE"),
+            actionBar("공유", "#5A5A5A", "#FFFFFF", border = "#E2E2E2"),
+            actionBar("길안내", "#5A5A5A", "#FFFFFF", border = "#E2E2E2"),
+        ),
+        images = listOf(image1, image2, image2),
+        bodies = listOf(review, review),
+        additionalInfos = SDStorePreviewSectionModel.AdditionalInfos(type = "STORE", isSubscriber = false, storeId = null, storeType = "USER_STORE"),
+        style = null,
     )
 }
 

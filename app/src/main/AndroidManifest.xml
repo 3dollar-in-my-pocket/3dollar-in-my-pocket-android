@@ -67,43 +67,15 @@
             android:name=".ui.login.ui.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.storeDetail.user.ui.StoreDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.storeDetail.user.ui.StoreCertificationActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.storeDetail.contributor.ui.StoreContributorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
+            android:name=".ui.storeDetail.sdui.ui.StoreDetailSduiActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossStoreDetailActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="action"
-                    android:scheme="kakaomap" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="action"
-                    android:scheme="nmap" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".ui.map.ui.FullScreenMapActivity"
             android:exported="true"
@@ -130,9 +102,6 @@
                     android:scheme="nmap" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewWriteActivity"
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.favorite.FavoriteMyFolderActivity"
@@ -213,10 +182,6 @@
         <activity android:name="com.zion830.threedollars.ui.community.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
         <activity android:name="com.zion830.threedollars.ui.my.page.team.MyPageTeamActivity" />
-
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
-            android:exported="false" />
         <activity android:name="com.zion830.threedollars.ui.webview.WebActivity" />
 
         <meta-data

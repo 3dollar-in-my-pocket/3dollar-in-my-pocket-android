@@ -29,7 +29,7 @@ import com.zion830.threedollars.databinding.FragmentMyStoreBinding
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.zion830.threedollars.ui.mypage.adapter.MyStoreRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyStoreViewModel
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -60,7 +60,8 @@ class MyStoreFragment :
         adapter = MyStoreRecyclerAdapter(object : OnItemClickListener<MyReportedStore> {
             override fun onClick(item: MyReportedStore) {
                 sendClickStore(item.storeId.toString(), Constants.USER_STORE)
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.storeId)
+                val storeId = item.storeId ?: return
+                val intent = StoreDetailSduiActivity.getIntent(requireContext(), storeId.toString())
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })

@@ -14,15 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.dpToSp
 import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
-import com.threedollar.common.sdui.model.element.SDImageModel
-import com.threedollar.common.sdui.model.element.SDTextModel
 import com.zion830.threedollars.core.ui.component.compose.components.VerticalSpacer
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.component.SDChipRow
@@ -84,31 +81,5 @@ internal fun SDImagePreviewCard(
         model.contextLabel?.let {
             SDChipRow(it)
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSDCard() {
-    SDImagePreviewCard(
-        model = ImagePreviewCardModel(
-            cardId = "preview_card_1",
-            image = SDImageModel(
-                url = "https://via.placeholder.com/200x120",
-                style = SDImageModel.Style(width = 200f, height = 120f)
-            ),
-            title = SDTextModel(
-                text = "카드 타이틀",
-                isHtml = false,
-                fontColor = "#000000"
-            ),
-            metricLabel = null,
-            contextLabel = null,
-            link = null,
-            style = null,
-            refs = null
-        )
-    ) {
-
     }
 }

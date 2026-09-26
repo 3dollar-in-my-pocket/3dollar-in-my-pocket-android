@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
 import com.threedollar.common.sdui.model.component.SDCardModel
 import com.threedollar.common.sdui.model.component.SDCardType
+import com.threedollar.common.sdui.model.component.SDUnknownCardModel
 import java.lang.reflect.Type
 
 class SDCardDeserializer : JsonDeserializer<SDCardModel> {
@@ -16,17 +17,16 @@ class SDCardDeserializer : JsonDeserializer<SDCardModel> {
         typeOfT: Type,
         context: JsonDeserializationContext
     ): SDCardModel {
-        val jsonObject = json.asJsonObject
+        val jsonObject = json.takeIf { it.isJsonObject }?.asJsonObject
+            ?: throw JsonParseException("Card must be an object")
+        val rawType = jsonObject["type"]?.takeIf { it.isJsonPrimitive }?.asString
+        val cardId = jsonObject["cardId"]?.takeIf { it.isJsonPrimitive }?.asString.orEmpty()
 
-        val type = jsonObject["type"]
-            ?.asString
-            ?.let { SDCardType.valueOf(it) }
-            ?: throw JsonParseException("Card type is missing")
-
-        return when (type) {
-            SDCardType.IMAGE_PREVIEW_CARD -> {
+        return when (SDCardType.entries.firstOrNull { it.name == rawType }) {
+            SDCardType.IMAGE_PREVIEW_CARD -> runCatching<SDCardModel> {
                 context.deserialize(jsonObject, ImagePreviewCardModel::class.java)
-            }
+            }.getOrElse { SDUnknownCardModel(cardId) }
+            SDCardType.UNKNOWN, null -> SDUnknownCardModel(cardId)
         }
     }
 }

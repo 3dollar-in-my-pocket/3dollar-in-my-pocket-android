@@ -10,33 +10,42 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import base.compose.Gray50
+import base.compose.dpToSp
 import com.threedollar.common.sdui.model.element.SDChipModel
-import com.threedollar.common.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDImageModel
 import com.zion830.threedollars.core.ui.sdui.element.SDChip
+import com.zion830.threedollars.core.ui.sdui.element.SDImage
 
 @Composable
 fun SDChipRow(
     chips: List<SDChipModel>,
+    modifier: Modifier = Modifier.wrapContentSize(),
     space: Dp = 4.dp,
+    fontSize: TextUnit = dpToSp(12),
     divider: @Composable (() -> Unit) = { SDChipRowDefaultDivider() }
 ) {
     Row(
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(space)
     ) {
-        chips.forEachIndexed { index, it ->
-            SDChip(it)
-
-            if (index < chips.lastIndex) {
-                divider()
-            }
+        chips.forEachIndexed { index, chip ->
+            SDChip(model = chip, fontSize = fontSize)
+            if (index < chips.lastIndex) divider()
         }
     }
+}
+
+/**
+ * 서버가 구분자 이미지를 주면 그 이미지를, 없으면 기본 세로선을 쓴다.
+ */
+@Composable
+fun SDChipRowSeparator(separator: SDImageModel?) {
+    if (separator != null) SDImage(separator) else SDChipRowDefaultDivider()
 }
 
 @Composable
@@ -46,38 +55,5 @@ internal fun SDChipRowDefaultDivider() {
             .height(8.dp)
             .width(1.dp)
             .background(Gray50)
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSDChipRow() {
-    SDChipRow(
-        chips = listOf(
-            SDChipModel(
-                image = null,
-                text = SDTextModel(
-                    text = "칩 1",
-                    isHtml = false,
-                    fontColor = "#000000"
-                )
-            ),
-            SDChipModel(
-                image = null,
-                text = SDTextModel(
-                    text = "칩 2",
-                    isHtml = false,
-                    fontColor = "#000000"
-                )
-            ),
-            SDChipModel(
-                image = null,
-                text = SDTextModel(
-                    text = "칩 3",
-                    isHtml = false,
-                    fontColor = "#000000"
-                )
-            )
-        )
     )
 }

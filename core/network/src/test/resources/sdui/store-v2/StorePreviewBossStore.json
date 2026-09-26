@@ -1,0 +1,293 @@
+{
+  "sections": [
+    {
+      "type": "PREVIEW",
+      "sectionId": "PREVIEW",
+      "header": {
+        "title": {
+          "text": "<span style=\"font-size:20px; font-weight:700; color:#0F0F0F\">하경짱</span>",
+          "isHtml": true,
+          "fontColor": "#0F0F0F"
+        }
+      },
+      "metadata": {
+        "primary": [
+          {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#787878\">도시락, 어묵, 붕어빵</span>",
+              "isHtml": true,
+              "fontColor": "#787878"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "image": {
+              "url": "https://storage.threedollars.co.kr/app/star_solid_bold.png",
+              "style": {
+                "width": 16.0,
+                "height": 16.0,
+                "dimmed": false
+              }
+            },
+            "imageAlignment": "START",
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#5A5A5A\">5.0 (1)</span>",
+              "isHtml": true,
+              "fontColor": "#5A5A5A"
+            },
+            "contentSpacing": 2.0,
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          }
+        ],
+        "secondary": [
+          {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:600; color:#2E2E2E\">영업 종료</span>",
+              "isHtml": true,
+              "fontColor": "#2E2E2E"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#787878\">4m</span>",
+              "isHtml": true,
+              "fontColor": "#787878"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#787878\">최근 방문 0명</span>",
+              "isHtml": true,
+              "fontColor": "#787878"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#787878\">사장님 직영점</span>",
+              "isHtml": true,
+              "fontColor": "#787878"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          }
+        ],
+        "separator": {
+          "url": "https://storage.threedollars.co.kr/app/rectangle_465.png",
+          "style": {
+            "width": 2.0,
+            "height": 2.0,
+            "dimmed": false
+          }
+        }
+      },
+      "actionBars": [
+        {
+          "type": "ACTION_BAR",
+          "button": {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:600; color:#FFFFFF\">방문 인증</span>",
+              "isHtml": true,
+              "fontColor": "#FFFFFF"
+            },
+            "image": {
+              "url": "https://storage.threedollars.co.kr/app/chevron_right_4x.png",
+              "style": {
+                "width": 12.0,
+                "height": 12.0,
+                "dimmed": false
+              }
+            },
+            "imageAlignment": "END",
+            "link": {
+              "type": "APP_SCHEME",
+              "link": "/visit?storeId=120145"
+            },
+            "style": {
+              "backgroundColor": "#FF858F"
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_bottom_sheet",
+            "objectType": "button",
+            "objectId": "visit",
+            "extraParameters": {
+              "store_id": "120145"
+            }
+          }
+        },
+        {
+          "type": "ACTION_BAR",
+          "button": {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:600; color:#F9737E\">리뷰 작성</span>",
+              "isHtml": true,
+              "fontColor": "#F9737E"
+            },
+            "customAction": {
+              "actionType": "STORE_PREVIEW_SECTION_REVIEW_WRITE",
+              "extraParams": {
+                "STORE_ID": "120145"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFECEE",
+              "border": {
+                "color": "#FFECEE",
+                "width": 1.0
+              }
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_bottom_sheet",
+            "objectType": "button",
+            "objectId": "review",
+            "extraParameters": {
+              "store_id": "120145"
+            }
+          }
+        },
+        {
+          "type": "ACTION_BAR",
+          "button": {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#5A5A5A\">공유</span>",
+              "isHtml": true,
+              "fontColor": "#5A5A5A"
+            },
+            "image": {
+              "url": "https://storage.threedollars.co.kr/app/share_4x.png",
+              "style": {
+                "width": 16.0,
+                "height": 16.0,
+                "dimmed": false
+              }
+            },
+            "imageAlignment": "START",
+            "customAction": {
+              "actionType": "STORE_PREVIEW_SECTION_SHARE",
+              "extraParams": {
+                "STORE_ID": "120145",
+                "STORE_TYPE": "BOSS_STORE",
+                "URL": "https://app.dev.threedollars.co.kr/store?storeType=BOSS_STORE&storeId=120145"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "border": {
+                "color": "#E2E2E2",
+                "width": 1.0
+              }
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_bottom_sheet",
+            "objectType": "button",
+            "objectId": "share",
+            "extraParameters": {
+              "store_id": "120145"
+            }
+          }
+        },
+        {
+          "type": "ACTION_BAR",
+          "button": {
+            "text": {
+              "text": "<span style=\"font-size:14px; font-weight:400; color:#5A5A5A\">길안내</span>",
+              "isHtml": true,
+              "fontColor": "#5A5A5A"
+            },
+            "image": {
+              "url": "https://storage.threedollars.co.kr/app/location_line_4x.png",
+              "style": {
+                "width": 16.0,
+                "height": 16.0,
+                "dimmed": false
+              }
+            },
+            "imageAlignment": "START",
+            "customAction": {
+              "actionType": "STORE_PREVIEW_SECTION_NAVIGATION",
+              "extraParams": {
+                "LATITUDE": 37.497941,
+                "LONGITUDE": 127.027616,
+                "STORE_NAME": "하경짱"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "border": {
+                "color": "#E2E2E2",
+                "width": 1.0
+              }
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_bottom_sheet",
+            "objectType": "button",
+            "objectId": "navigation",
+            "extraParameters": {
+              "store_id": "120145"
+            }
+          }
+        }
+      ],
+      "images": [
+        {
+          "url": "https://storage.dev.threedollars.co.kr/boss/store-certification/v1/v1-5300304e-e412-469c-bd50-4c07d52a8d91.png",
+          "style": {
+            "width": 158.0,
+            "height": 158.0,
+            "dimmed": false
+          }
+        }
+      ],
+      "bodies": [
+        {
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#5A5A5A\">Gg</span>",
+            "isHtml": true,
+            "fontColor": "#5A5A5A"
+          },
+          "style": {
+            "backgroundColor": "#F4F4F4"
+          }
+        }
+      ],
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "additionalInfos": {
+        "type": "STORE",
+        "isSubscriber": false,
+        "storeId": "120145",
+        "storeType": "BOSS_STORE"
+      }
+    }
+  ],
+  "viewLog": {
+    "eventType": "PAGE_VIEW",
+    "screenName": "store_bottom_sheet",
+    "extraParameters": {
+      "store_id": "120145",
+      "store_type": "BOSS_STORE"
+    }
+  }
+}

@@ -28,8 +28,7 @@ import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.isLocationServiceEnabled
 import com.zion830.threedollars.utils.isLocationAvailable
@@ -193,22 +192,14 @@ class SplashActivity :
     private fun tryLogin() {
         val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
         when {
-            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) -> {
-                startActivity(
-                    BossStoreDetailActivity.getIntent(
-                        this@SplashActivity,
-                        deepLinkStoreId = intent.getStringExtra(STORE_ID),
-                    ),
-                )
-            }
-
-            deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
-                startActivity(
-                    StoreDetailActivity.getIntent(
-                        this@SplashActivity,
-                        deepLinkStoreId = intent.getStringExtra(STORE_ID),
-                    ),
-                )
+            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) ||
+                deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
+                val storeId = intent.getStringExtra(STORE_ID)
+                if (storeId.isNullOrBlank()) {
+                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                } else {
+                    startActivity(StoreDetailSduiActivity.getIntent(this@SplashActivity, storeId))
+                }
             }
 
             deepLink.contains("dollars") -> {
