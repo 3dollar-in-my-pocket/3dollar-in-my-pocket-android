@@ -29,6 +29,8 @@ sealed interface StoreDetailSduiUiIntent {
     /**
      * 새 가게를 조회한다. 같은 가게면 무시한다. [fragment]가 있으면 로드 후 그 섹션으로 스크롤한다.
      * [withPreview] 면 홈 미리보기 시트용 PREVIEW(`/preview`)도 함께 받아 [StoreDetailSduiViewModel.preview] 에 둔다.
+     * [startsNewSession] 이면 같은 가게여도 처음부터 다시 조회한다. 홈에서 마커를 새로 탭할 때마다 새 상세로 보고
+     * 활동 유도 모달 조회수·요청도 다시 센다 (iOS 가 마커 탭마다 미리보기를 새로 만드는 것과 동일).
      */
     data class Load(
         val storeId: String,
@@ -36,6 +38,7 @@ sealed interface StoreDetailSduiUiIntent {
         val longitude: Double?,
         val fragment: String? = null,
         val withPreview: Boolean = false,
+        val startsNewSession: Boolean = false,
     ) : StoreDetailSduiUiIntent
 
     /** 스크롤 위치를 유지한 채 다시 조회한다. */
