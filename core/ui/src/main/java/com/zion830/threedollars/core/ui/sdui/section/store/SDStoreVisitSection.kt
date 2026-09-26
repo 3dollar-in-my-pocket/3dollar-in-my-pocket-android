@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -52,8 +53,8 @@ object SDStoreVisitSectionDefaults {
     val HistoryPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
     val HistoryItemSpacing = 4.dp
     val MoreTextStartPadding = 12.dp
-    val EmptyBannerHeight = 112.dp
-    val EmptyBannerPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp)
+    val EmptyBannerMinHeight = 112.dp
+    val EmptyBannerPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp)
     val EmptyBannerTextSpacing = 4.dp
 }
 
@@ -142,7 +143,7 @@ private fun VisitEmptyBanner(modifier: Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(SDStoreVisitSectionDefaults.EmptyBannerHeight)
+            .heightIn(min = SDStoreVisitSectionDefaults.EmptyBannerMinHeight)
             .background(Gray100, SDStoreVisitSectionDefaults.HistoryShape)
             .padding(SDStoreVisitSectionDefaults.EmptyBannerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
