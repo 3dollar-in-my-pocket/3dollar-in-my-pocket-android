@@ -25,7 +25,6 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationArgs
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.showToast
@@ -98,17 +97,7 @@ class StoreDetailSduiNavigator(
             ) { dispatch(StoreDetailSduiUiIntent.OnCouponUseConfirmed(destination.issuedKey)) }
 
             is StoreDetailDestination.Visit -> destination.storeId.toIntOrNull()?.let { storeId ->
-                launchForResult(
-                    StoreCertificationActivity.getIntent(
-                        activity,
-                        StoreCertificationArgs(
-                            storeId = storeId,
-                            storeName = destination.storeName,
-                            latitude = destination.latitude,
-                            longitude = destination.longitude,
-                        )
-                    )
-                )
+                launchForResult(StoreCertificationActivity.getIntent(activity, storeId))
             }
 
             is StoreDetailDestination.ReviewList -> activity.startActivity(

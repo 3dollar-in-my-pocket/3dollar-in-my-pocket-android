@@ -5,6 +5,7 @@ import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.network.api.StoreApi
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
+import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreDisplayItemsRequest
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,6 +49,11 @@ class FakeStoreApi : StoreApi {
     ): Response<BaseResponse<SDStoreScreenModel>> = storeScreenV2Response
 
     var storePreviewResponse: Response<BaseResponse<SDStoreScreenModel>> = storeScreenV2Response
+
+    var storeResponse: Response<BaseResponse<StoreV5Response>> = Response.success(BaseResponse(ok = true, data = StoreV5Response()))
+
+    override suspend fun getStore(storeId: String, lat: Double?, lng: Double?): Response<BaseResponse<StoreV5Response>> =
+        storeResponse
 
     override suspend fun getStorePreviewScreen(
         storeId: String,

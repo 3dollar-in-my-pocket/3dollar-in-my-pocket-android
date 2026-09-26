@@ -3,6 +3,8 @@ package com.threedollar.data.store.repository
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.data.store.asModel
+import com.threedollar.data.store.asUserStoreModel
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 import com.threedollar.domain.store.model.StoreNotExistsException
@@ -63,6 +65,14 @@ class StoreRepositoryImpl @Inject constructor(
     }.recoverCatching { throwable ->
         throw throwable.toStoreNotExistsOrSelf()
     }
+
+    override suspend fun getStore(
+        storeId: String,
+        lat: Double?,
+        lng: Double?,
+    ): Result<UserStoreModel> = runApi {
+        storeApi.getStore(storeId = storeId, lat = lat, lng = lng)
+    }.map { it.asUserStoreModel() }
 
     override suspend fun getStorePreviewScreen(
         storeId: String,

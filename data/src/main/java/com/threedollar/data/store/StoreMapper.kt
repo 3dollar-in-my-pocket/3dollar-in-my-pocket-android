@@ -1,5 +1,8 @@
 package com.threedollar.data.store
 
+import com.threedollar.data.home.asModel
+import com.threedollar.domain.home.data.store.LocationModel
+import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.store.model.SessionViewCountRangeModel
 import com.threedollar.domain.store.model.StoreDisplayItemModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
@@ -12,6 +15,7 @@ import com.threedollar.network.data.store.StoreDisplayItemResponse
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
 import com.threedollar.network.data.store.StoreDisplayTriggerConditionsResponse
 import com.threedollar.network.data.store.StoreDisplayTriggerResponse
+import com.threedollar.network.data.store.StoreV5Response
 
 fun StoreDisplayItemsResponse.asModel() = StoreDisplayItemsModel(
     contents = contents?.map { it.asModel() } ?: listOf(),
@@ -38,4 +42,11 @@ private fun StoreDisplayTriggerConditionsResponse.asModel() = StoreDisplayTrigge
 private fun SessionViewCountRangeResponse.asModel() = SessionViewCountRangeModel(
     min = min,
     max = max,
+)
+
+fun StoreV5Response.asUserStoreModel() = UserStoreModel(
+    storeId = storeId?.toIntOrNull() ?: 0,
+    name = name.orEmpty(),
+    location = location?.asModel() ?: LocationModel(),
+    categories = categories?.map { it.asModel() }.orEmpty(),
 )

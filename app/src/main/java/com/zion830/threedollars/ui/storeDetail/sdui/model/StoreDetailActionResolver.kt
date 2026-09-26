@@ -137,17 +137,13 @@ object StoreDetailActionResolver {
             }
         }
 
-        val isCurrentStore = queryParameter(raw, STORE_ID_QUERY) == context.storeId
+        val linkStoreId = queryParameter(raw, STORE_ID_QUERY)
         when (lastPathSegment(raw)) {
-            REVIEW_LIST_PATH -> if (isCurrentStore) {
+            REVIEW_LIST_PATH -> if (linkStoreId == context.storeId) {
                 return navigate(StoreDetailDestination.ReviewList(context.storeId, context.isBossStore))
             }
 
-            VISIT_PATH -> if (isCurrentStore) {
-                context.mapLocation()?.let { (latitude, longitude) ->
-                    return navigate(StoreDetailDestination.Visit(context.storeId, context.storeName, latitude, longitude))
-                }
-            }
+            VISIT_PATH -> linkStoreId?.let { return navigate(StoreDetailDestination.Visit(it)) }
         }
         return navigate(StoreDetailDestination.OpenLink(link))
     }

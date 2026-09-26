@@ -103,7 +103,7 @@ sealed interface StoreDetailDestination {
     data class ReportReview(val storeId: String, val reviewId: Long, val reasons: List<ReasonModel>) : StoreDetailDestination
     data class ConfirmDeleteReview(val reviewId: String) : StoreDetailDestination
     data class ConfirmUseCoupon(val issuedKey: String) : StoreDetailDestination
-    data class Visit(val storeId: String, val storeName: String, val latitude: Double, val longitude: Double) :
-        StoreDetailDestination
+    /** 방문 인증 화면이 가게 정보를 직접 조회한다 (iOS `VisitViewModel` 과 동일). */
+    data class Visit(val storeId: String) : StoreDetailDestination
     data class ReviewList(val storeId: String, val isBossStore: Boolean) : StoreDetailDestination
 }

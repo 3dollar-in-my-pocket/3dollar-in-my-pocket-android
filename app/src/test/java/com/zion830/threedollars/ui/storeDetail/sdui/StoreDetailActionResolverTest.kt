@@ -203,7 +203,7 @@ class StoreDetailActionResolverTest {
     }
 
     @Test
-    fun `같은가게의_방문인증링크는_EDIT섹션_위치로_방문인증을_연다`() {
+    fun `TH1375_방문인증링크는_가게id로_방문인증을_연다`() {
         // Given
         val event = SDActionEvent(link = appLink("/visit?storeId=$STORE_ID"))
 
@@ -211,7 +211,7 @@ class StoreDetailActionResolverTest {
         val resolution = resolve(event)
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.Visit(STORE_ID, "호떡집", 37.4979, 127.0276)), resolution)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.Visit(STORE_ID)), resolution)
     }
 
     @Test
