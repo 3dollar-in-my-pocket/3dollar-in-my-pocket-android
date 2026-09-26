@@ -40,6 +40,7 @@ fun StoreDetailSduiRoute(
     listState: LazyListState = rememberLazyListState(),
     inSheet: Boolean = false,
     collectEffects: Boolean = true,
+    isDisplayed: Boolean = true,
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -67,6 +68,7 @@ fun StoreDetailSduiRoute(
             slots = slots,
             placeholderHeader = placeholderHeader,
             inSheet = inSheet,
+            isDisplayed = isDisplayed,
         )
         if (state.isUploading) {
             CircularProgressIndicator(color = Pink, modifier = Modifier.align(Alignment.Center))

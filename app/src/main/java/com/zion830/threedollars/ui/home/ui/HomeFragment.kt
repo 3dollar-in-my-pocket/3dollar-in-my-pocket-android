@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -326,13 +327,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
-                val storeDetailListState = remember(isStoreDetailExpanded) { LazyListState() }
+                val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
+                val storeDetailListState = remember(selectedStoreId) { LazyListState() }
+                LaunchedEffect(isStoreDetailExpanded) {
+                    if (!isStoreDetailExpanded) storeDetailListState.scrollToItem(0)
+                }
                 StoreDetailSduiEffects(
                     viewModel = storeDetailViewModel,
                     navigator = storeDetailNavigator,
                     listState = storeDetailListState,
                 )
-                val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
                 val storePreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
                 HomeBottomSheetContent(
@@ -349,7 +353,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onMapViewClick = viewModel::sendClickMapViewLog,
                     storeDetailExpanded = isStoreDetailExpanded,
                     onStoreDetailExpandedChange = viewModel::setStoreDetailExpanded,
-                    storeDetailContent = { placeholderHeader ->
+                    storeDetailContent = { isDisplayed, placeholderHeader ->
                         StoreDetailSduiRoute(
                             viewModel = storeDetailViewModel,
                             navigator = storeDetailNavigator,
@@ -358,6 +362,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             listState = storeDetailListState,
                             inSheet = true,
                             collectEffects = false,
+                            isDisplayed = isDisplayed,
                             placeholderHeader = placeholderHeader,
                         )
                     },

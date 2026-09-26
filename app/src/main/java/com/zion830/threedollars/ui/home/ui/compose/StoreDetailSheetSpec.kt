@@ -15,6 +15,11 @@ object StoreDetailSheetSpec {
      */
     const val MOMENTUM_PROJECTION_SECONDS = 0.499f
 
+    /**
+     * 끌어올리는 중 이만큼 올라가면 미리보기를 미리 그려 둔 상세로 바꾼다 (iOS `storeDetailExpandStartProgress`).
+     */
+    const val DETAIL_SWAP_PROGRESS = 0.02f
+
     /** 스냅 스프링 응답 시간(초). FloatingPanel `springResponseTime` 기본값. */
     private const val SPRING_RESPONSE_SECONDS = 0.4f
 
