@@ -70,6 +70,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiInten
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigator
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiEffects
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigationBarRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
@@ -326,6 +327,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 val storeDetailListState = remember(isStoreDetailExpanded) { LazyListState() }
+                StoreDetailSduiEffects(
+                    viewModel = storeDetailViewModel,
+                    navigator = storeDetailNavigator,
+                    listState = storeDetailListState,
+                )
                 val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
                 val storePreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
@@ -351,6 +357,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             onClose = viewModel::closeStorePreview,
                             listState = storeDetailListState,
                             inSheet = true,
+                            collectEffects = false,
                             placeholderHeader = placeholderHeader,
                         )
                     },

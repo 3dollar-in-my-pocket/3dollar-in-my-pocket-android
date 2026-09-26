@@ -27,6 +27,8 @@ import kotlinx.coroutines.launch
  *
  * @param listState 홈 시트처럼 네비를 [StoreDetailSduiNavigationBarRoute] 로 따로 그리면 같은 상태를 넘겨야 가게명 fade 가 맞는다.
  * @param inSheet [StoreDetailSduiContent] 참고.
+ * @param collectEffects 홈 시트는 미리보기(tip)에서도 액션을 처리해야 해서 [StoreDetailSduiEffects] 를 시트 밖에서 항상 수집한다.
+ * 이때 여기서 또 수집하면 효과를 나눠 받으므로 false 로 둔다.
  */
 @Composable
 fun StoreDetailSduiRoute(
@@ -37,19 +39,14 @@ fun StoreDetailSduiRoute(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     inSheet: Boolean = false,
+    collectEffects: Boolean = true,
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    val tabHeightPx = with(LocalDensity.current) { SDStoreTabSectionDefaults.Height.roundToPx() }
     val slots = remember { storeDetailSduiSlots() }
 
-    FlowWithLifecycleEffect(viewModel.effect) { effect ->
-        if (effect is StoreDetailSduiUiEffect.ScrollToSection) {
-            scope.launch { listState.scrollToSection(effect.index, viewModel.state.value.sections, tabHeightPx) }
-        } else {
-            navigator.handleEffect(effect)
-        }
+    if (collectEffects) {
+        StoreDetailSduiEffects(viewModel = viewModel, navigator = navigator, listState = listState)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -97,4 +94,24 @@ fun StoreDetailSduiNavigationBarRoute(
         onClose = onClose,
         modifier = modifier,
     )
+}
+
+/**
+ * 상세 ViewModel 의 효과(이동·다이얼로그·토스트·섹션 스크롤)를 처리한다. 효과는 한 곳에서만 수집해야 한다.
+ */
+@Composable
+fun StoreDetailSduiEffects(
+    viewModel: StoreDetailSduiViewModel,
+    navigator: StoreDetailSduiNavigator,
+    listState: LazyListState,
+) {
+    val scope = rememberCoroutineScope()
+    val tabHeightPx = with(LocalDensity.current) { SDStoreTabSectionDefaults.Height.roundToPx() }
+    FlowWithLifecycleEffect(viewModel.effect) { effect ->
+        if (effect is StoreDetailSduiUiEffect.ScrollToSection) {
+            scope.launch { listState.scrollToSection(effect.index, viewModel.state.value.sections, tabHeightPx) }
+        } else {
+            navigator.handleEffect(effect)
+        }
+    }
 }
