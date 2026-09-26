@@ -22,17 +22,21 @@ class StoreDetailSheetSpecTest {
         assertTrue(expand)
     }
 
-    // TH-1226 TC2
+    // TH-1226 TC2, TH-1374
     @Test
-    fun `TH1226_TC2_조금만_끌어올려도_위로_빠르게_튕기면_full로_간다`() {
+    fun `TH1374_조금만_끌어올려도_위로_튕겨_예측위치가_중간을_넘으면_full로_간다`() {
         // Given
         val releasedOffset = 1300f
+        val weakFling = -400f
+        val strongFling = -1500f
 
         // When
-        val expand = StoreDetailSheetSpec.shouldExpand(currentOffset = releasedOffset, tipOffset = tipOffset, velocityY = -2000f)
+        val weak = StoreDetailSheetSpec.shouldExpand(currentOffset = releasedOffset, tipOffset = tipOffset, velocityY = weakFling)
+        val strong = StoreDetailSheetSpec.shouldExpand(currentOffset = releasedOffset, tipOffset = tipOffset, velocityY = strongFling)
 
         // Then
-        assertTrue(expand)
+        assertFalse(weak)
+        assertTrue(strong)
     }
 
     // TH-1226 TC4

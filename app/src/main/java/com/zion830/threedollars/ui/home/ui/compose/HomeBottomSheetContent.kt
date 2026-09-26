@@ -1,8 +1,9 @@
 package com.zion830.threedollars.ui.home.ui.compose
 
 import android.util.Log
-import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -235,7 +236,7 @@ fun HomeBottomSheetContent(
             }
         }
 
-        fun animateStorePreviewTo(expanded: Boolean) {
+        fun animateStorePreviewTo(expanded: Boolean, initialVelocity: Float = 0f) {
             stopSheetAnimation()
             val targetOffset = if (expanded) storeDetailFullOffsetPx else storePreviewOffsetPx
             val initialOffset = sheetOffsetPx
@@ -243,7 +244,11 @@ fun HomeBottomSheetContent(
                 animate(
                     initialValue = initialOffset,
                     targetValue = targetOffset,
-                    animationSpec = tween(durationMillis = StoreDetailSheetSpec.SNAP_DURATION_MS, easing = EaseIn),
+                    initialVelocity = initialVelocity,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = StoreDetailSheetSpec.SPRING_STIFFNESS,
+                    ),
                 ) { animatedOffset, _ ->
                     sheetOffsetPx = animatedOffset
                 }
@@ -259,7 +264,8 @@ fun HomeBottomSheetContent(
                     tipOffset = storePreviewOffsetPx,
                     velocityY = velocityY,
                     fullOffset = storeDetailFullOffsetPx,
-                )
+                ),
+                initialVelocity = velocityY,
             )
         }
 
@@ -350,6 +356,7 @@ fun HomeBottomSheetContent(
                 }
 
                 private fun settleIfMoved(velocityY: Float): Velocity {
+                    if (animationJob?.isActive == true) return Velocity(x = 0f, y = velocityY)
                     val settledOffset = if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
                     if (abs(sheetOffsetPx - settledOffset) <= 1f) return Velocity.Zero
                     settleStorePreview(velocityY)
