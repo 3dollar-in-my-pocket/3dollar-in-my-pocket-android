@@ -87,7 +87,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -106,6 +105,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
     private val storeDetailViewModel: StoreDetailSduiViewModel by viewModels()
+
+    /** 다른 화면에서 돌아와 수집이 다시 시작될 때와, 미리보기를 닫았다가 같은 가게를 다시 여는 것을 구분한다. */
+    private var openedPreviewStoreId: Long? = null
 
     private val storeDetailResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -489,7 +491,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
-                    viewModel.selectedStorePreviewStoreId.filterNotNull().collect { storeId ->
+                    viewModel.selectedStorePreviewStoreId.collect { storeId ->
+                        val isNewSelection = storeId != openedPreviewStoreId
+                        openedPreviewStoreId = storeId
+                        if (storeId == null) return@collect
                         val location = viewModel.uiState.value.userLocation
                         storeDetailViewModel.dispatch(
                             StoreDetailSduiUiIntent.Load(
@@ -497,6 +502,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 latitude = location.latitude,
                                 longitude = location.longitude,
                                 withPreview = true,
+                                startsNewSession = isNewSelection,
+                                showsDisplayItems = true,
                             )
                         )
                     }

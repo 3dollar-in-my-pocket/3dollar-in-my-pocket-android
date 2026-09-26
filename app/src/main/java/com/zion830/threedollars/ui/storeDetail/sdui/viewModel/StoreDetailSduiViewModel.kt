@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.storeDetail.sdui.viewModel
 
+import androidx.lifecycle.viewModelScope
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.UdfViewModel
 import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDSectionType
@@ -9,6 +11,8 @@ import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.store.model.StoreNotExistsException
 import com.threedollar.domain.store.repository.StoreRepository
+import com.zion830.threedollars.ui.storeDetail.displayitem.StoreDisplayItemController
+import com.zion830.threedollars.ui.storeDetail.displayitem.StoreDisplayItemRequestPolicy
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailActionResolver
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailActionResolver.Resolution
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
@@ -18,6 +22,8 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffec
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiState
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -28,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
 import com.threedollar.common.R as CommonR
@@ -64,6 +71,33 @@ class StoreDetailSduiViewModel @Inject constructor(
     private var sentPageViewVersion = -1
     private var viewLog: SDLogModel? = null
     private val sentImpressionKeys = mutableSetOf<String>()
+    private var displayItemRequestedStoreId: String? = null
+    private var showsDisplayItems = false
+
+    private val displayItemController = StoreDisplayItemController(
+        scope = viewModelScope,
+        storeRepository = storeRepository,
+        homeRepository = homeRepository,
+        screenName = ScreenName.STORE_DETAIL,
+    )
+
+    /** 활동 유도 모달(방문 인증 유도·없어진 가게 문의). */
+    val displayItemState: StateFlow<StoreDetailDisplayItemState> = displayItemController.state
+
+    init {
+        viewModelScope.launch {
+            displayItemController.effect.collect { effect ->
+                when (effect) {
+                    StoreDetailDisplayItemEffect.RefreshStoreDetail -> fetch(keepContent = true)
+                    is StoreDetailDisplayItemEffect.ShowToast ->
+                        sendEffect(StoreDetailSduiUiEffect.ShowToast(message = effect.message))
+                }
+            }
+        }
+        viewModelScope.launch {
+            displayItemController.serverError.collect { sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(it)) }
+        }
+    }
 
     override fun dispatch(intent: StoreDetailSduiUiIntent) {
         when (intent) {
@@ -81,6 +115,10 @@ class StoreDetailSduiViewModel @Inject constructor(
             is StoreDetailSduiUiIntent.OnReviewSubmit -> postReview(intent)
             is StoreDetailSduiUiIntent.OnImagesSelected -> uploadImages(intent.images)
             StoreDetailSduiUiIntent.OnStoreChanged -> fetch(keepContent = true)
+            is StoreDetailSduiUiIntent.OnDisplayItemDisplayed -> displayItemController.onDisplayed(intent.item)
+            is StoreDetailSduiUiIntent.OnVisitInducementClick -> displayItemController.onVisitClick(intent.isOpened)
+            is StoreDetailSduiUiIntent.OnDisappearanceReasonClick -> displayItemController.onReasonClick(intent.reason)
+            StoreDetailSduiUiIntent.OnDisappearanceReportClick -> displayItemController.onReportClick()
         }
     }
 
@@ -94,13 +132,15 @@ class StoreDetailSduiViewModel @Inject constructor(
     private fun load(intent: StoreDetailSduiUiIntent.Load) {
         latitude = intent.latitude
         longitude = intent.longitude
-        if (intent.storeId == stateStore.value.storeId && stateStore.value.hasContent) {
+        showsDisplayItems = intent.showsDisplayItems
+        if (!intent.startsNewSession && intent.storeId == stateStore.value.storeId && stateStore.value.hasContent) {
             intent.fragment?.let(::scrollToFragment)
             if (intent.withPreview && previewStore.value == null) fetchPreview(intent.storeId)
             return
         }
         pendingFragment = intent.fragment
         if (stateStore.value.storeId.isNotBlank()) isDisplayed = false
+        if (intent.startsNewSession) displayItemRequestedStoreId = null
         sentImpressionKeys.clear()
         stateStore.value = StoreDetailSduiUiState(storeId = intent.storeId)
         previewStore.value = null
@@ -181,9 +221,26 @@ class StoreDetailSduiViewModel @Inject constructor(
     }
 
     private fun sendPageViewIfNeeded() {
+        requestDisplayItemsIfNeeded()
         if (!isDisplayed || !stateStore.value.hasContent || sentPageViewVersion == loadVersion) return
         sentPageViewVersion = loadVersion
         logger.pageView(viewLog)
+    }
+
+    private fun requestDisplayItemsIfNeeded() {
+        val storeId = stateStore.value.storeId
+        val latitude = latitude
+        val longitude = longitude
+        val shouldRequest = showsDisplayItems && isDisplayed && StoreDisplayItemRequestPolicy.shouldRequest(
+            storeId = storeId,
+            requestedStoreId = displayItemRequestedStoreId,
+            hasContent = stateStore.value.hasContent,
+            hasLocation = latitude != null && longitude != null,
+        )
+        if (!shouldRequest || latitude == null || longitude == null) return
+        val numericStoreId = storeId.toIntOrNull() ?: return
+        displayItemRequestedStoreId = storeId
+        displayItemController.load(numericStoreId, latitude, longitude)
     }
 
     private fun onImpression(key: String, log: SDLogModel?) {

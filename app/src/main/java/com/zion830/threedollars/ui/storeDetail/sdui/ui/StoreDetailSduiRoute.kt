@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.storeDetail.sdui.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,6 +21,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
+import com.zion830.threedollars.ui.storeDetail.user.ui.compose.StoreDetailDisplayItemOverlay
 import kotlinx.coroutines.launch
 
 /**
@@ -69,6 +71,17 @@ fun StoreDetailSduiRoute(
             placeholderHeader = placeholderHeader,
             inSheet = inSheet,
             isDisplayed = isDisplayed,
+        )
+        val displayItemState by viewModel.displayItemState.collectAsStateWithLifecycle()
+        StoreDetailDisplayItemOverlay(
+            state = displayItemState,
+            onDisplayed = { viewModel.dispatch(StoreDetailSduiUiIntent.OnDisplayItemDisplayed(it)) },
+            onVisitClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnVisitInducementClick(it)) },
+            onReasonClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnDisappearanceReasonClick(it)) },
+            onReportClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnDisappearanceReportClick) },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = StoreDetailSduiDefaults.DisplayItemBottomInset),
         )
         if (state.isUploading) {
             CircularProgressIndicator(color = Pink, modifier = Modifier.align(Alignment.Center))
