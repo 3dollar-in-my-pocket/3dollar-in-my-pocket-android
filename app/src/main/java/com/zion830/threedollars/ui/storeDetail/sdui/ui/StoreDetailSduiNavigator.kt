@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
@@ -30,7 +31,6 @@ import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.showToast
-import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,6 +42,7 @@ import com.threedollar.common.R as CommonR
  *
  * @param fragmentContainerId 정보 수정 화면을 올릴 컨테이너
  * @param launchForResult 결과를 받아야 하는 화면(보스 리뷰 작성·방문 인증)을 띄운다. 돌아오면 호스트가 상세를 갱신한다.
+ * @param launchImagePicker 시스템 사진 선택 도구를 띄운다. 선택 결과는 호스트가 [onImagesPicked] 로 넘긴다.
  * @param onClose 상세를 닫는다(시트는 닫기, 전체 화면은 finish).
  */
 class StoreDetailSduiNavigator(
@@ -49,6 +50,7 @@ class StoreDetailSduiNavigator(
     private val fragmentContainerId: Int,
     private val dispatch: (StoreDetailSduiUiIntent) -> Unit,
     private val launchForResult: (Intent) -> Unit,
+    private val launchImagePicker: () -> Unit,
     private val onClose: () -> Unit,
 ) {
 
@@ -157,18 +159,20 @@ class StoreDetailSduiNavigator(
     }
 
     private fun pickImages() {
-        TedImagePicker.with(activity)
-            .zoomIndicator(false)
-            .startMultiImage { uris ->
-                activity.lifecycleScope.launch {
-                    val images = withContext(Dispatchers.IO) { FileUtils.toImageParts(uris) }
-                    if (images == null) {
-                        showToast(CommonR.string.error_file_size)
-                    } else {
-                        dispatch(StoreDetailSduiUiIntent.OnImagesSelected(images))
-                    }
-                }
+        launchImagePicker()
+    }
+
+    /** 사진 선택 도구에서 고른 사진을 업로드용으로 변환해 상세에 전달한다. */
+    fun onImagesPicked(uris: List<Uri>) {
+        if (uris.isEmpty()) return
+        activity.lifecycleScope.launch {
+            val images = withContext(Dispatchers.IO) { FileUtils.toImageParts(uris) }
+            if (images == null) {
+                showToast(CommonR.string.error_file_size)
+            } else {
+                dispatch(StoreDetailSduiUiIntent.OnImagesSelected(images))
             }
+        }
     }
 
     private fun editStore(storeId: String) {

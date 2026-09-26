@@ -7,6 +7,8 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -116,12 +118,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         refreshHomeAfterStoreUpdate()
     }
 
+    private val storeDetailImagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest> = registerForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia()
+    ) { uris ->
+        storeDetailNavigator.onImagesPicked(uris)
+    }
+
     private val storeDetailNavigator by lazy(LazyThreadSafetyMode.NONE) {
         StoreDetailSduiNavigator(
             activity = requireActivity(),
             fragmentContainerId = R.id.layout_container,
             dispatch = storeDetailViewModel::dispatch,
             launchForResult = storeDetailResultLauncher::launch,
+            launchImagePicker = {
+                storeDetailImagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
             onClose = {
                 viewModel.closeStorePreview()
                 refreshHomeAfterStoreUpdate()

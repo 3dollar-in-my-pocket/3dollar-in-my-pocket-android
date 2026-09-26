@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -27,10 +29,8 @@ import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract.EditScreen
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreViewModel
 import com.zion830.threedollars.utils.FileUtils
-import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import gun0912.tedimagepicker.builder.TedImagePicker
 import java.util.UUID
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,6 +40,10 @@ class EditStoreFragment : Fragment() {
 
     private val editStoreViewModel: EditStoreViewModel by viewModels()
     private var progressDialog: AlertDialog? = null
+
+    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        addPendingPhotos(uris)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -165,31 +169,16 @@ class EditStoreFragment : Fragment() {
     }
 
     private fun launchPhotoPicker() {
-        TedImagePicker.with(requireContext())
-            .zoomIndicator(false)
-            .errorListener { throwable ->
-                if (throwable.message?.startsWith("permission") == true) {
-                    AlertDialog.Builder(requireContext())
-                        .setPositiveButton(CommonR.string.request_permission_ok) { _, _ ->
-                            requireContext().goToPermissionSetting()
-                        }
-                        .setNegativeButton(android.R.string.cancel, null)
-                        .setTitle(getString(CommonR.string.request_permission))
-                        .setMessage(getString(CommonR.string.request_permission_msg))
-                        .create()
-                        .show()
-                } else {
-                    showToast(getString(CommonR.string.boss_review_image_selection_error))
-                }
-            }
-            .startMultiImage { uriData ->
-                val pendingPhotos = buildPendingPhotos(uriData.filterNotNull()) ?: return@startMultiImage
-                if (pendingPhotos.isNotEmpty()) {
-                    editStoreViewModel.processIntent(
-                        EditStoreContract.Intent.AddPendingPhotos(pendingPhotos)
-                    )
-                }
-            }
+        photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private fun addPendingPhotos(uris: List<Uri>) {
+        val pendingPhotos = buildPendingPhotos(uris) ?: return
+        if (pendingPhotos.isNotEmpty()) {
+            editStoreViewModel.processIntent(
+                EditStoreContract.Intent.AddPendingPhotos(pendingPhotos)
+            )
+        }
     }
 
     private fun buildPendingPhotos(uris: List<Uri>): List<EditStoreContract.PendingPhoto>? {
