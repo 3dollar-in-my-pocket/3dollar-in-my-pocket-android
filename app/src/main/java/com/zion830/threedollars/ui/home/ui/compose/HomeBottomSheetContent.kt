@@ -57,6 +57,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -163,7 +164,7 @@ fun HomeBottomSheetContent(
     onMapViewClick: () -> Unit = {},
     storeDetailExpanded: Boolean = false,
     onStoreDetailExpandedChange: (Boolean) -> Unit = {},
-    storeDetailContent: (@Composable (placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
+    storeDetailContent: (@Composable (isDisplayed: Boolean, placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
     storeDetailNavigationBar: (@Composable (Modifier) -> Unit)? = null,
     storePreview: (@Composable (showHeaderButtons: Boolean) -> Unit)? = null,
     modifier: Modifier = Modifier,
@@ -209,6 +210,7 @@ fun HomeBottomSheetContent(
         var lastListSettledValue by remember { mutableStateOf(HomeSheetValue.Collapsed) }
         var isSheetInitialized by remember { mutableStateOf(false) }
         var animationJob by remember { mutableStateOf<Job?>(null) }
+        var isShowingStoreDetail by remember { mutableStateOf(storeDetailExpanded) }
 
         fun stopSheetAnimation() {
             animationJob?.cancel()
@@ -240,6 +242,7 @@ fun HomeBottomSheetContent(
             stopSheetAnimation()
             val targetOffset = if (expanded) storeDetailFullOffsetPx else storePreviewOffsetPx
             val initialOffset = sheetOffsetPx
+            isShowingStoreDetail = expanded
             animationJob = coroutineScope.launch {
                 animate(
                     initialValue = initialOffset,
@@ -308,6 +311,7 @@ fun HomeBottomSheetContent(
             if (!isSheetInitialized) return@LaunchedEffect
             if (storeScreen != null) {
                 if (storeDetailExpanded) return@LaunchedEffect
+                isShowingStoreDetail = false
                 animateSheetToOffset(
                     targetOffset = storePreviewOffsetPx,
                     settled = HomeSheetValue.Collapsed,
@@ -319,6 +323,7 @@ fun HomeBottomSheetContent(
 
         LaunchedEffect(storeDetailExpanded) {
             if (!isSheetInitialized || storeScreen == null) return@LaunchedEffect
+            if (storeDetailExpanded) isShowingStoreDetail = true
             val targetOffset = if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
             if (abs(sheetOffsetPx - targetOffset) > 1f) animateStorePreviewTo(storeDetailExpanded)
         }
@@ -352,6 +357,8 @@ fun HomeBottomSheetContent(
                     stopSheetAnimation()
                     val previousOffset = sheetOffsetPx
                     sheetOffsetPx = (sheetOffsetPx + dragY).coerceIn(storeDetailFullOffsetPx, storePreviewOffsetPx)
+                    val progress = StoreDetailSheetSpec.expandProgress(sheetOffsetPx, storePreviewOffsetPx, storeDetailFullOffsetPx)
+                    if (dragY < 0f && progress > StoreDetailSheetSpec.DETAIL_SWAP_PROGRESS) isShowingStoreDetail = true
                     return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
                 }
 
@@ -441,7 +448,15 @@ fun HomeBottomSheetContent(
             containerHeightPx = containerHeightPx,
             currentOffset = sheetOffsetPx,
         ).roundToInt()
-        val sheetHeight = with(density) { sheetVisibleHeightPx.toDp() }
+        // 가게 상세는 시트가 tip 에 있을 때도 full 높이로 미리 그려 두어야 올릴 때 바로 보인다.
+        val sheetHeight = with(density) {
+            if (storeScreen != null && storeDetailContent != null) {
+                (containerHeightPx - storeDetailFullOffsetPx).toDp()
+            } else {
+                sheetVisibleHeightPx.toDp()
+            }
+        }
+        val showsStoreDetail = storeScreen != null && storeDetailContent != null && isShowingStoreDetail
         val mapViewButtonProgress = if (storeScreen == null) {
             HomeSheetStateCalculator.fullListProgress(currentOffset = sheetOffsetPx, anchors = anchors)
         } else {
@@ -471,27 +486,30 @@ fun HomeBottomSheetContent(
                         onHandleDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
                     )
                 }
-                if (storeScreen != null && storeDetailExpanded && storeDetailContent != null) {
+                if (storeScreen != null) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .nestedScroll(storePreviewNestedScrollConnection)
                     ) {
-                        storeDetailContent {
+                        storeDetailContent?.invoke(showsStoreDetail) {
                             storePreview?.invoke(false)
                         }
-                    }
-                } else if (storeScreen != null) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .nestedScroll(storePreviewNestedScrollConnection)
-                            .verticalScroll(rememberScrollState())
-                            .noRippleClickable(onClick = onStorePreviewClick),
-                    ) {
-                        if (storePreview != null) {
-                            Box(modifier = Modifier.onSizeChanged { measuredStorePreviewHeightPx = it.height }) {
-                                storePreview(true)
+                        // 올리는 도중 상세로 바뀌어도 드래그를 받던 미리보기는 그대로 두어야 손을 뗐을 때 스냅이 이어진다.
+                        if (!storeDetailExpanded || !isShowingStoreDetail) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .graphicsLayer { alpha = if (showsStoreDetail) 0f else 1f }
+                                    .background(ColorWhite)
+                                    .verticalScroll(rememberScrollState())
+                                    .noRippleClickable(onClick = onStorePreviewClick),
+                            ) {
+                                if (storePreview != null) {
+                                    Box(modifier = Modifier.onSizeChanged { measuredStorePreviewHeightPx = it.height }) {
+                                        storePreview(true)
+                                    }
+                                }
                             }
                         }
                     }

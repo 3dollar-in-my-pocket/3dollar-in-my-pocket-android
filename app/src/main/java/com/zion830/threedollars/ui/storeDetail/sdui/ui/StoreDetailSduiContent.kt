@@ -92,6 +92,7 @@ object StoreDetailSduiDefaults {
  * @param placeholderHeader 응답 전 스켈레톤 위에 보여줄 헤더(홈 미리보기 데이터로 만든다).
  * @param inSheet 홈 시트 안이면 true. 상단 네비는 시트 밖 고정 위치에서 홈이 fade 로 그리고([StoreDetailNavigationBar]),
  * 하단 칩 바는 GNB 위에 놓이므로 시스템 내비게이션 바 여백을 더하지 않는다.
+ * @param isDisplayed 홈 시트는 tip 상태에서도 상세를 미리 그려 둔다. 실제로 보일 때만 섹션 노출 로그를 보낸다.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -108,6 +109,7 @@ fun StoreDetailSduiContent(
     slots: SDStoreSectionSlots = SDStoreSectionSlots(),
     placeholderHeader: (@Composable () -> Unit)? = null,
     inSheet: Boolean = false,
+    isDisplayed: Boolean = true,
 ) {
     val density = LocalDensity.current
     val sections = state.sections
@@ -175,7 +177,7 @@ fun StoreDetailSduiContent(
                             }
                         } else {
                             item(key = key, contentType = section.type) {
-                                SectionImpressionEffect(key = key, section = section, onImpression = onImpression)
+                                SectionImpressionEffect(key = key, section = section, isDisplayed = isDisplayed, onImpression = onImpression)
                                 SDStoreSection(
                                     section = section,
                                     onAction = onAction,
@@ -215,6 +217,7 @@ fun StoreDetailSduiContent(
 private fun SectionImpressionEffect(
     key: String,
     section: SDSectionModel,
+    isDisplayed: Boolean,
     onImpression: (String, SDLogModel?) -> Unit,
 ) {
     val log = when (section) {
@@ -222,7 +225,7 @@ private fun SectionImpressionEffect(
         is SDStoreAdmobSectionModel -> section.cards?.firstOrNull()?.impressionLog
         else -> null
     } ?: return
-    LaunchedEffect(key) { onImpression(key, log) }
+    LaunchedEffect(key, isDisplayed) { if (isDisplayed) onImpression(key, log) }
 }
 
 /**
