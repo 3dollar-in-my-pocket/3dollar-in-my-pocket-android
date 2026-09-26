@@ -21,7 +21,6 @@ import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewWriteActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -76,7 +75,7 @@ class StoreDetailSduiNavigator(
                 FullScreenMapActivity.getIntent(activity, destination.latitude, destination.longitude, destination.storeName)
             )
 
-            is StoreDetailDestination.WriteReview -> writeReview(destination)
+            is StoreDetailDestination.WriteReview -> writeReview()
             is StoreDetailDestination.AddImage -> pickImages()
             is StoreDetailDestination.ShowImages -> ReviewPhotoDialog
                 .getInstance(destination.imageUrls.map { ImageModel(imageUrl = it, width = 0, height = 0, ratio = 0) }, destination.startIndex)
@@ -145,11 +144,7 @@ class StoreDetailSduiNavigator(
         showToast(messageRes)
     }
 
-    private fun writeReview(destination: StoreDetailDestination.WriteReview) {
-        if (destination.isBossStore) {
-            launchForResult(BossReviewWriteActivity.getIntent(activity, destination.storeId))
-            return
-        }
+    private fun writeReview() {
         AddReviewDialog.newInstance { contents, rating ->
             dispatch(StoreDetailSduiUiIntent.OnReviewSubmit(contents, rating))
         }.show(activity.supportFragmentManager, AddReviewDialog::class.java.name)

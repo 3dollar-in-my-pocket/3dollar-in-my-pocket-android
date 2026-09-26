@@ -77,9 +77,9 @@ class StoreDetailActionResolverTest {
         assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(otherStore.link!!)), fromOtherStore)
     }
 
-    // TH-1226 TC13
+    // TH-1226 TC13, TH-1372
     @Test
-    fun `TH1226_TC13_리뷰작성은_가게타입에맞는_작성화면으로_간다`() {
+    fun `TH1372_리뷰작성은_가게타입과_상관없이_같은_작성화면으로_간다`() {
         // Given
         val event = customEvent(SDCustomActionType.STORE_REVIEW_SECTION_REVIEW_WRITE, SDCustomActionModel.STORE_ID to STORE_ID)
 
@@ -88,8 +88,8 @@ class StoreDetailActionResolverTest {
         val bossStore = resolve(event, context.copy(isBossStore = true))
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, isBossStore = false)), userStore)
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, isBossStore = true)), bossStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), userStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), bossStore)
     }
 
     // TH-1226 TC14

@@ -94,7 +94,8 @@ sealed interface StoreDetailDestination {
     data class CopyAddress(val address: String) : StoreDetailDestination
     data class CopyText(val text: String) : StoreDetailDestination
     data class MapEnlarge(val latitude: Double, val longitude: Double, val storeName: String) : StoreDetailDestination
-    data class WriteReview(val storeId: String, val isBossStore: Boolean) : StoreDetailDestination
+    /** 제보·사장님 가게 모두 같은 별점+글 작성 시트를 쓴다 (iOS `ReviewBottomSheet` 와 동일). */
+    data class WriteReview(val storeId: String) : StoreDetailDestination
     data class AddImage(val storeId: String) : StoreDetailDestination
     data class ShowImages(val imageUrls: List<String>, val startIndex: Int) : StoreDetailDestination
     data class EditStore(val storeId: String) : StoreDetailDestination

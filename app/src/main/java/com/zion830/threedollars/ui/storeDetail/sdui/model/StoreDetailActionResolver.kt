@@ -76,7 +76,7 @@ object StoreDetailActionResolver {
 
             SDCustomActionType.STORE_PREVIEW_SECTION_REVIEW_WRITE,
             SDCustomActionType.STORE_REVIEW_SECTION_REVIEW_WRITE ->
-                navigate(StoreDetailDestination.WriteReview(storeId, context.isBossStore))
+                navigate(StoreDetailDestination.WriteReview(storeId))
 
             SDCustomActionType.STORE_EDIT_SECTION_UPDATE -> navigate(StoreDetailDestination.EditStore(storeId))
             SDCustomActionType.STORE_EDIT_SECTION_REPORT -> navigate(StoreDetailDestination.ReportStore(storeId))
