@@ -18,6 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,6 +46,7 @@ import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.serverdriven.model.HomeMapControlButton
 import com.zion830.threedollars.ui.home.data.HomeMapControlItem
+import com.zion830.threedollars.ui.home.data.HomeMapControlResolver
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -66,6 +71,7 @@ fun HomeMapControlColumn(
             when (item) {
                 is HomeMapControlItem.ServerDriven -> ServerDrivenControlButton(
                     button = item.button,
+                    showsCurrentLocationIconOnError = HomeMapControlResolver.isMoveToCurrentLocation(item.button.customAction),
                     onClick = { onClick(item) },
                 )
 
@@ -80,27 +86,34 @@ fun HomeMapControlColumn(
 @Composable
 private fun ServerDrivenControlButton(
     button: HomeMapControlButton,
+    showsCurrentLocationIconOnError: Boolean,
     onClick: () -> Unit,
 ) {
     val border = button.style?.border
+    var isImageFailed by remember(button.image.url) { mutableStateOf(false) }
     ControlCircle(
         backgroundColor = button.style?.backgroundColor.toColor(fallback = ColorWhite),
         borderColor = border?.color.toColor(fallback = Gray20),
         borderWidth = (border?.width ?: 1.0).dp,
         onClick = onClick,
     ) {
-        val imageStyle = button.image.style
-        AsyncImage(
-            model = button.image.url,
-            contentDescription = button.clickLog?.objectId,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(
-                    width = (imageStyle?.width ?: 28.0).dp,
-                    height = (imageStyle?.height ?: 28.0).dp,
-                )
-                .alpha(if (imageStyle?.dimmed == true) DIMMED_ALPHA else 1f),
-        )
+        if (isImageFailed && showsCurrentLocationIconOnError) {
+            CurrentLocationIcon()
+        } else {
+            val imageStyle = button.image.style
+            AsyncImage(
+                model = button.image.url,
+                contentDescription = button.clickLog?.objectId,
+                contentScale = ContentScale.Fit,
+                onError = { isImageFailed = true },
+                modifier = Modifier
+                    .size(
+                        width = (imageStyle?.width ?: 28.0).dp,
+                        height = (imageStyle?.height ?: 28.0).dp,
+                    )
+                    .alpha(if (imageStyle?.dimmed == true) DIMMED_ALPHA else 1f),
+            )
+        }
     }
 }
 
@@ -112,13 +125,19 @@ private fun FallbackCurrentLocationButton(onClick: () -> Unit) {
         borderWidth = 1.dp,
         onClick = onClick,
     ) {
-        Icon(
-            painter = painterResource(DesignSystemR.drawable.ic_search),
-            contentDescription = null,
-            tint = ColorBlack,
-            modifier = Modifier.size(24.dp),
-        )
+        CurrentLocationIcon()
     }
+}
+
+/** 서버 컨트롤이 없거나 현재 위치 버튼 이미지를 못 받았을 때 쓰는 로컬 아이콘. */
+@Composable
+private fun CurrentLocationIcon() {
+    Icon(
+        painter = painterResource(DesignSystemR.drawable.ic_search),
+        contentDescription = null,
+        tint = ColorBlack,
+        modifier = Modifier.size(24.dp),
+    )
 }
 
 @Composable
