@@ -140,7 +140,7 @@ object StoreDetailActionResolver {
         val linkStoreId = queryParameter(raw, STORE_ID_QUERY)
         when (lastPathSegment(raw)) {
             REVIEW_LIST_PATH -> if (linkStoreId == context.storeId) {
-                return navigate(StoreDetailDestination.ReviewList(context.storeId, context.isBossStore))
+                return navigate(StoreDetailDestination.ReviewList(context.storeId))
             }
 
             VISIT_PATH -> linkStoreId?.let { return navigate(StoreDetailDestination.Visit(it)) }

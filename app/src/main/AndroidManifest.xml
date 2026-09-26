@@ -77,9 +77,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.map.ui.FullScreenMapActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -105,9 +102,6 @@
                     android:scheme="nmap" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossReviewWriteActivity"
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.favorite.FavoriteMyFolderActivity"
@@ -188,10 +182,6 @@
         <activity android:name="com.zion830.threedollars.ui.community.poll.PollDetailActivity" />
         <activity android:name=".ui.storeDetail.user.ui.StoreReviewDetailActivity" />
         <activity android:name="com.zion830.threedollars.ui.my.page.team.MyPageTeamActivity" />
-
-        <activity
-            android:name=".ui.storeDetail.boss.ui.BossFeedBackDetailActivity"
-            android:exported="false" />
         <activity android:name="com.zion830.threedollars.ui.webview.WebActivity" />
 
         <meta-data

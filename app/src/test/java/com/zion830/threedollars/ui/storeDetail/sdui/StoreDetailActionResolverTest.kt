@@ -73,7 +73,7 @@ class StoreDetailActionResolverTest {
         val fromOtherStore = resolve(otherStore)
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.ReviewList(STORE_ID, isBossStore = false)), sameStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.ReviewList(STORE_ID)), sameStore)
         assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(otherStore.link!!)), fromOtherStore)
     }
 

@@ -22,7 +22,6 @@ import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -106,11 +105,7 @@ class StoreDetailSduiNavigator(
             }
 
             is StoreDetailDestination.ReviewList -> activity.startActivity(
-                if (destination.isBossStore) {
-                    BossReviewDetailActivity.getIntent(activity, storeId = destination.storeId)
-                } else {
-                    StoreReviewDetailActivity.getInstance(activity, destination.storeId.toIntOrNull() ?: 0)
-                }
+                StoreReviewDetailActivity.getInstance(activity, destination.storeId.toIntOrNull() ?: 0)
             )
         }
     }
