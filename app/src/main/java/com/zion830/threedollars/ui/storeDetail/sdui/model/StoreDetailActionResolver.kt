@@ -103,7 +103,7 @@ object StoreDetailActionResolver {
                 action.param(POST_ID)?.let { Resolution.LikePost(storeId, it, stickerId = null) }
 
             SDCustomActionType.STORE_IMAGE_SECTION_ADD_IMAGE -> navigate(StoreDetailDestination.AddImage(storeId))
-            SDCustomActionType.STORE_IMAGE_SECTION_IMAGE_ENLARGE -> context.imageViewer(action)?.let(::navigate)
+            SDCustomActionType.STORE_IMAGE_SECTION_IMAGE_ENLARGE -> navigate(context.storePhotos(storeId, action))
 
             SDCustomActionType.STORE_REVIEW_SECTION_REPORT ->
                 action.param(REVIEW_ID)?.toLongOrNull()?.let { Resolution.ReportReview(storeId, it) }
@@ -171,22 +171,21 @@ object StoreDetailActionResolver {
         return latitude to longitude
     }
 
-    private fun Context.imageViewer(action: SDCustomActionModel): StoreDetailDestination.ShowImages? {
+    /**
+     * 가게 사진 섹션 카드 탭은 가게 사진 전체 목록 뷰어(삭제 가능)를 탭한 사진 위치로 연다 (iOS `PhotoDetailViewController` 와 동일).
+     * 섹션 카드는 사진 목록 첫 부분과 같은 순서라 카드 위치를 시작 위치로 쓴다.
+     */
+    private fun Context.storePhotos(storeId: String, action: SDCustomActionModel): StoreDetailDestination.StorePhotos {
         val cards = sections.filterIsInstance<SDStoreImageSectionModel>()
             .flatMap { it.cards.orEmpty() }
             .filter { it.image?.url != null }
-        val imageUrls = cards.mapNotNull { it.image?.url }
         val targetId = action.param(IMAGE_ID)
         val targetUrl = action.param(IMAGE_URL)
-        if (imageUrls.isEmpty()) {
-            return targetUrl?.let { StoreDetailDestination.ShowImages(listOf(it), 0) }
-        }
         val index = cards.indexOfFirst { card ->
-            val cardAction = card.customAction
-            (targetId != null && cardAction?.param(IMAGE_ID) == targetId) ||
+            (targetId != null && card.customAction?.param(IMAGE_ID) == targetId) ||
                 (targetUrl != null && card.image?.url == targetUrl)
         }.coerceAtLeast(0)
-        return StoreDetailDestination.ShowImages(imageUrls, index.coerceAtMost(imageUrls.lastIndex))
+        return StoreDetailDestination.StorePhotos(storeId, index)
     }
 
     private fun SDCustomActionModel.accountText(): String? =

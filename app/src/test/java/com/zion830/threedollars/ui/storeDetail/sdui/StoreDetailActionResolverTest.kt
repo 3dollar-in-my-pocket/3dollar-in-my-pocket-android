@@ -135,7 +135,7 @@ class StoreDetailActionResolverTest {
     }
 
     @Test
-    fun `사진확대는_가게사진_전체목록에서_탭한사진_위치로_연다`() {
+    fun `TH1383_가게사진_탭은_삭제가능한_가게사진_뷰어를_탭한사진_위치로_연다`() {
         // Given
         val event = customEvent(
             SDCustomActionType.STORE_IMAGE_SECTION_IMAGE_ENLARGE,
@@ -147,11 +147,7 @@ class StoreDetailActionResolverTest {
         val resolution = resolve(event)
 
         // Then
-        val expected = StoreDetailDestination.ShowImages(
-            imageUrls = listOf("https://image/a.png", "https://image/b.png", "https://image/c.png"),
-            startIndex = 1,
-        )
-        assertEquals(Resolution.Navigate(expected), resolution)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.StorePhotos(STORE_ID, startIndex = 1)), resolution)
     }
 
     @Test

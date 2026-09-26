@@ -94,6 +94,9 @@ sealed interface StoreDetailDestination {
     data class CopyAddress(val address: String) : StoreDetailDestination
     data class CopyText(val text: String) : StoreDetailDestination
     data class MapEnlarge(val latitude: Double, val longitude: Double, val storeName: String) : StoreDetailDestination
+    /** 가게 사진 전체 목록 뷰어. 본인이 올린 사진은 삭제할 수 있다. */
+    data class StorePhotos(val storeId: String, val startIndex: Int) : StoreDetailDestination
+
     /** 제보·사장님 가게 모두 같은 별점+글 작성 시트를 쓴다 (iOS `ReviewBottomSheet` 와 동일). */
     data class WriteReview(val storeId: String) : StoreDetailDestination
     data class AddImage(val storeId: String) : StoreDetailDestination

@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.sdui.model.element.SDLinkType
@@ -18,6 +19,7 @@ import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
+import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
 import com.zion830.threedollars.ui.storeDetail.boss.ui.BossReviewDetailActivity
@@ -26,6 +28,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffec
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreReviewDetailActivity
+import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.FileUtils
 import com.zion830.threedollars.utils.showToast
 import gun0912.tedimagepicker.builder.TedImagePicker
@@ -80,6 +83,8 @@ class StoreDetailSduiNavigator(
                 .getInstance(destination.imageUrls.map { ImageModel(imageUrl = it, width = 0, height = 0, ratio = 0) }, destination.startIndex)
                 .show(activity.supportFragmentManager, ReviewPhotoDialog::class.java.name)
 
+            is StoreDetailDestination.StorePhotos -> showStorePhotos(destination)
+
             is StoreDetailDestination.EditStore -> editStore(destination.storeId)
             is StoreDetailDestination.ReportStore -> DeleteStoreDialog.getInstance()
                 .apply { setOnSubmitListener { dispatch(StoreDetailSduiUiIntent.OnStoreReportSubmit(it.key)) } }
@@ -131,6 +136,23 @@ class StoreDetailSduiNavigator(
         val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
         clipboard.setPrimaryClip(ClipData.newPlainText(text, text))
         showToast(messageRes)
+    }
+
+    private var isObservingPhotoDeletion = false
+
+    private fun showStorePhotos(destination: StoreDetailDestination.StorePhotos) {
+        val storeId = destination.storeId.toIntOrNull() ?: return
+        if (!isObservingPhotoDeletion) {
+            isObservingPhotoDeletion = true
+            val photoViewModel = ViewModelProvider(activity)[StoreDetailViewModel::class.java]
+            activity.lifecycleScope.launch {
+                photoViewModel.photoDeleted.collect { isDeleted ->
+                    if (isDeleted) dispatch(StoreDetailSduiUiIntent.OnStoreChanged)
+                }
+            }
+        }
+        StorePhotoDialog.getInstance(destination.startIndex, storeId)
+            .show(activity.supportFragmentManager, StorePhotoDialog::class.java.name)
     }
 
     private fun writeReview() {
