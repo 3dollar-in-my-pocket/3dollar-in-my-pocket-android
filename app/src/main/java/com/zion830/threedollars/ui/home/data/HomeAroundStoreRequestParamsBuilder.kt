@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.home.data
 
 import com.threedollar.common.serverdriven.model.HomeFilterBar
+import com.threedollar.common.serverdriven.model.HomeMapControl
 
 data class HomeAroundStoreRequestParams(
     val distanceM: Double,
@@ -18,6 +19,7 @@ object HomeAroundStoreRequestParamsBuilder {
     fun build(
         state: HomeUIState,
         bars: List<HomeFilterBar>,
+        mapControls: List<HomeMapControl> = emptyList(),
     ): HomeAroundStoreRequestParams = HomeAroundStoreRequestParams(
         distanceM = state.currentDistanceM,
         categoryIds = state.selectedCategory?.id?.let { arrayOf(it) },
@@ -29,6 +31,7 @@ object HomeAroundStoreRequestParamsBuilder {
         dynamicParams = HomeFilterQueryParamsBuilder.build(
             state = state,
             bars = bars,
+            mapControls = mapControls,
         ),
     )
 }
