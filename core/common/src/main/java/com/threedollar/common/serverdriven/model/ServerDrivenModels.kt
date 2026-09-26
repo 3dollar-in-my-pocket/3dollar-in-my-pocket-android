@@ -88,6 +88,7 @@ data class SDImageModel(
 data class SDImageStyleModel(
     val width: Double? = null,
     val height: Double? = null,
+    val dimmed: Boolean = false,
 )
 
 data class SDButtonModel(
