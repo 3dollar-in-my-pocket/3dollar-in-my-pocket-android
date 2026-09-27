@@ -91,6 +91,7 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(26.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (category != null) {
@@ -106,9 +107,9 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
                 maxLines = 1,
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = feedTimeText(updatedAt),
+            modifier = Modifier.padding(start = 12.dp),
             color = ColorB7B7B7,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.Medium,
