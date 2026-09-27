@@ -5,6 +5,7 @@ import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.network.api.StoreApi
 import com.threedollar.network.data.store.ContentsWithCursorWithTotalCountResponse
+import com.threedollar.network.data.store.IssuedCouponResponse
 import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
 import com.threedollar.network.data.store.StoreV5Response
@@ -65,6 +66,19 @@ class FakeStoreApi : StoreApi {
 
     override suspend fun issueStoreCoupon(storeId: String, couponId: String): Response<BaseResponse<Any>> =
         Response.success(BaseResponse(ok = true, data = Any()))
+
+    var issuedCouponsResponse: Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<IssuedCouponResponse>>> =
+        Response.success(BaseResponse(ok = true, data = ContentsWithCursorWithTotalCountResponse()))
+    val issuedCouponStatuses = mutableListOf<List<String>>()
+
+    override suspend fun getMyIssuedCoupons(
+        statuses: List<String>,
+        cursor: String?,
+        size: Int,
+    ): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<IssuedCouponResponse>>> {
+        issuedCouponStatuses += statuses
+        return issuedCouponsResponse
+    }
 
     override suspend fun useIssuedCoupon(issuedKey: String): Response<BaseResponse<String>> = ok()
 

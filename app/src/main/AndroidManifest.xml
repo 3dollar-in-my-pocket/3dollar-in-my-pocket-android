@@ -87,6 +87,9 @@
             android:name=".ui.feed.ui.FeedListActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.coupon.ui.MyCouponsActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.sdui.ui.StoreDetailSduiActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

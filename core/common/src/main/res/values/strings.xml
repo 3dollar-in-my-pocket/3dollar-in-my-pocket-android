@@ -636,6 +636,24 @@
     <string name="feed_time_hours">%d시간 전</string>
     <string name="feed_time_days">%d일 전</string>
     <string name="feed_time_date_format" translatable="false">yyyy년MM월dd일</string>
+    <string name="my_coupon_section_title">쿠폰</string>
+    <string name="my_coupon_section_bottom_title">아 맞다! 쿠폰 안쓰고 지나갈 뻔</string>
+    <string name="my_coupon_section_count_more">%d+개</string>
+    <string name="my_coupon_section_empty_title">발급받은 쿠폰이 없어요</string>
+    <string name="my_coupon_section_empty_message">쿠폰을 발급받을 수 있는 사장님 직영점을 찾아보세요</string>
+    <string name="my_coupons_title">내 쿠폰함</string>
+    <string name="my_coupons_tab_available">사용 가능 쿠폰</string>
+    <string name="my_coupons_tab_past">지난 쿠폰</string>
+    <string name="my_coupons_empty">아직 쿠폰이 없어요</string>
+    <string name="my_coupons_status_used">사용완료</string>
+    <string name="my_coupons_status_expired">기간만료</string>
+    <string name="my_coupons_days_left">%d일 남음</string>
+    <string name="my_coupons_today">오늘</string>
+    <string name="my_coupons_period">%1$s ~ %2$s</string>
+    <string name="coupon_use_sheet_title">사장님께 보여주면\n쿠폰 혜택을 받을 수 있어요!</string>
+    <string name="coupon_use_sheet_title_emphasis">쿠폰 혜택을</string>
+    <string name="coupon_use_sheet_description">쿠폰 사용 시 사용하기 버튼을 눌러주세요.</string>
+    <string name="coupon_use_confirm_message">이 쿠폰은 단 한 번 사용 가능해요!\n정말 사용하시겠어요?</string>
     <string name="store_detail_error_default">일시적인 문제가 발생했어요.\n잠시 후 다시 시도해주세요.</string>
     <string name="store_post_list_title">%s 가게 소식</string>
     <string name="store_post_just_now">방금</string>

@@ -13,6 +13,7 @@ import com.threedollar.common.ext.isNotNullOrEmpty
 import com.threedollar.common.ext.orEmpty
 import com.threedollar.common.ext.toStringDefault
 import com.zion830.threedollars.ui.community.poll.PollDetailActivity
+import com.zion830.threedollars.ui.coupon.ui.MyCouponsActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
@@ -38,6 +39,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
         const val POST_LIST = "postList"
+        const val MY_COUPONS = "myCoupons"
         const val BROWSER = "browser"
         const val HOME_PRESET = "homePreset"
         const val STORE_CONTRIBUTORS = "store-contributors"
@@ -213,6 +215,8 @@ class DynamicLinkActivity : AppCompatActivity() {
                     startStoreListStack(storeId, StorePostListActivity.getIntent(this, storeId))
                 }
             }
+
+            MY_COUPONS -> startActivity(MyCouponsActivity.getIntent(this))
 
             BROWSER -> {
                 val url = deeplink.getQueryParameter(URL).toStringDefault()
