@@ -52,10 +52,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.AppTheme
+import base.compose.ColorB7B7B7
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray40
 import base.compose.Gray60
 import base.compose.Gray95
 import base.compose.PretendardFontFamily
@@ -332,7 +332,7 @@ private fun StorePostHeader(
             )
             Text(
                 text = storePostTimeText(post.updatedAt),
-                color = Gray40,
+                color = ColorB7B7B7,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = dpToSp(12),
