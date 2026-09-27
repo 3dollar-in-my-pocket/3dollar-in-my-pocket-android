@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.feed.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import com.threedollar.common.base.UdfViewModel
+import com.threedollar.common.coroutines.CoroutineTagElement
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.community.repository.CommunityRepository
 import com.threedollar.domain.feed.repository.FeedRepository
@@ -56,7 +57,7 @@ class FeedListViewModel @Inject constructor(
 
     override fun onException(exception: Throwable, tag: Any?) {
         super.onException(exception, tag)
-        if (tag == AD_TAG) return
+        if ((tag as? CoroutineTagElement)?.tag == AD_TAG) return
         stateStore.update { it.copy(isLoading = false, isRefreshing = false) }
         _effect.trySend(FeedListUiEffect.ShowErrorAlert((exception as? ApiException)?.message))
     }
