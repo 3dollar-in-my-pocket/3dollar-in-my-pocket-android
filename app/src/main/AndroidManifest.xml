@@ -81,6 +81,9 @@
             android:name=".ui.storeDetail.contributor.ui.StoreContributorActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.storeDetail.post.ui.StorePostListActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storeDetail.sdui.ui.StoreDetailSduiActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

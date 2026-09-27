@@ -17,6 +17,8 @@ import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
+import com.zion830.threedollars.ui.storeDetail.post.model.StorePostListDeepLink
+import com.zion830.threedollars.ui.storeDetail.post.ui.StorePostListActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.MoreImageActivity
 import com.zion830.threedollars.ui.storeDetail.user.ui.StoreCertificationActivity
@@ -35,6 +37,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val POLL = "pollDetail"
         const val COMMUNITY = "community"
         const val REVIEW_LIST = "reviewList"
+        const val POST_LIST = "postList"
         const val BROWSER = "browser"
         const val HOME_PRESET = "homePreset"
         const val STORE_CONTRIBUTORS = "store-contributors"
@@ -211,6 +214,19 @@ class DynamicLinkActivity : AppCompatActivity() {
                     return
                 }
             }
+            POST_LIST -> {
+                val storeId = StorePostListDeepLink.validStoreId(deeplink.getQueryParameter(STORE_ID))
+                if (storeId == null) {
+                    startActivity(MainActivity.getIntent(this))
+                } else {
+                    TaskStackBuilder.create(this)
+                        .addNextIntent(MainActivity.getIntent(this))
+                        .addNextIntent(StoreDetailSduiActivity.getIntent(this, storeId))
+                        .addNextIntent(StorePostListActivity.getIntent(this, storeId))
+                        .startActivities()
+                }
+            }
+
             BROWSER -> {
                 val url = deeplink.getQueryParameter(URL).toStringDefault()
                 startActivity(MainActivity.getIntent(this).apply {
