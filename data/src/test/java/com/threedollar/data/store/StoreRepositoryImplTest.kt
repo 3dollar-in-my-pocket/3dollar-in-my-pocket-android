@@ -5,7 +5,10 @@ import com.google.gson.reflect.TypeToken
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.data.fake.FakeStoreApi
 import com.threedollar.data.store.repository.StoreRepositoryImpl
+import com.threedollar.domain.store.model.IssuedCouponStatus
 import com.threedollar.domain.store.model.StoreNotExistsException
+import com.threedollar.network.data.store.ContentsWithCursorWithTotalCountResponse
+import com.threedollar.network.data.store.IssuedCouponResponse
 import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.result.ApiException
 import kotlinx.coroutines.runBlocking
@@ -85,5 +88,52 @@ class StoreRepositoryImplTest {
         // Then
         assertTrue(storeApi.putReviewStickerRequests.single().stickers.isEmpty())
         assertEquals("LIKE", storeApi.putPostStickerRequests.single().stickers.single().stickerId)
+    }
+
+    // TH-717 TC6
+    @Test
+    fun `TH717_TC6_탭별_상태를_statuses_쿼리로_보내고_지난쿠폰은_가게정보와_함께_옮긴다`() = runBlocking {
+        // Given
+        storeApi.issuedCouponsResponse = issuedCouponsResponse("store/MyIssuedCouponsUsed.json")
+
+        // When
+        repository.getMyIssuedCoupons(listOf(IssuedCouponStatus.ISSUED), cursor = null, size = 20)
+        val page = repository.getMyIssuedCoupons(
+            listOf(IssuedCouponStatus.USED, IssuedCouponStatus.EXPIRED),
+            cursor = null,
+            size = 20,
+        ).getOrThrow()
+
+        // Then
+        assertEquals(listOf(listOf("ISSUED"), listOf("USED", "EXPIRED")), storeApi.issuedCouponStatuses)
+        val coupon = page.coupons.single()
+        assertEquals("891123447434936320", coupon.issuedKey)
+        assertEquals("테스트용 쿠폰", coupon.name)
+        assertEquals(IssuedCouponStatus.USED, coupon.status)
+        assertEquals("12804906", coupon.storeId)
+        assertEquals("현식 테스트", coupon.storeName)
+        assertEquals("2026-10-14T23:59:59", coupon.endDateTime)
+        assertEquals(false, page.hasMore)
+    }
+
+    // TH-717 TC3
+    @Test
+    fun `TH717_TC3_hasMore가_true면_다음커서를_넘기고_알수없는_상태는_지난쿠폰으로_발급정보가_없으면_제외한다`() = runBlocking {
+        // Given
+        storeApi.issuedCouponsResponse = issuedCouponsResponse("store/MyIssuedCouponsVariants.json")
+
+        // When
+        val page = repository.getMyIssuedCoupons(listOf(IssuedCouponStatus.ISSUED), cursor = null, size = 20).getOrThrow()
+
+        // Then
+        assertEquals(true, page.hasMore)
+        assertEquals("MjA=", page.nextCursor)
+        assertEquals(listOf(IssuedCouponStatus.ISSUED, IssuedCouponStatus.EXPIRED), page.coupons.map { it.status })
+    }
+
+    private fun issuedCouponsResponse(path: String): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<IssuedCouponResponse>>> {
+        val json = requireNotNull(javaClass.classLoader?.getResource(path)).readText()
+        val type = object : TypeToken<ContentsWithCursorWithTotalCountResponse<IssuedCouponResponse>>() {}.type
+        return Response.success(BaseResponse(ok = true, data = Gson().fromJson(json, type)))
     }
 }

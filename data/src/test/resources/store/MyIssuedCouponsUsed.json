@@ -1,0 +1,104 @@
+{
+  "contents": [
+    {
+      "couponId": "887323569179947008",
+      "name": "테스트용 쿠폰",
+      "validityPeriod": {
+        "startDateTime": "2026-09-14T00:00:00",
+        "endDateTime": "2026-10-14T23:59:59"
+      },
+      "status": "STOPPED",
+      "issued": {
+        "issuedKey": "891123447434936320",
+        "status": "USED",
+        "issuedDateTime": "2026-09-25T09:46:26"
+      },
+      "store": {
+        "storeType": "BOSS_STORE",
+        "storeId": "12804906",
+        "isOwner": false,
+        "account": {
+          "accountId": "6a5f75c004996654f1de6152",
+          "accountType": "BOSS_ACCOUNT"
+        },
+        "storeName": "현식 테스트",
+        "rating": 5.0,
+        "address": {
+          "fullAddress": "경기도 수원시 영통구 이의동 171"
+        },
+        "location": {
+          "latitude": 37.288292233272905,
+          "longitude": 127.05597936049332
+        },
+        "categories": [
+          {
+            "category": "DUBAI_CHEWY_COOKIE",
+            "categoryId": "DUBAI_CHEWY_COOKIE",
+            "name": "두쫀쿠",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/v1-duzzonku.png",
+            "disableImageUrl": "https://storage.threedollars.co.kr/app/marker/icon_menu_24pt%3Ddubai.png",
+            "description": "두바이 쫀득 쿠키~",
+            "classification": {
+              "type": "TREND_SNACKS",
+              "description": "✨트렌드 간식",
+              "priority": 1
+            },
+            "isNew": false
+          },
+          {
+            "category": "BUTTER_RICE_CAKE",
+            "categoryId": "BUTTER_RICE_CAKE",
+            "name": "버터떡",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/icon_menu_24pt%3Dbutter.png",
+            "disableImageUrl": "https://storage.threedollars.co.kr/menu/icon_menu_24pt%3Dbutter.png",
+            "description": "상하이 버터떡~",
+            "classification": {
+              "type": "TREND_SNACKS",
+              "description": "✨트렌드 간식",
+              "priority": 1
+            },
+            "isNew": false
+          },
+          {
+            "category": "BUNGEOPPANG",
+            "categoryId": "BUNGEOPPANG",
+            "name": "붕어빵",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/v1_bungeoppang.png?version=1",
+            "disableImageUrl": "https://storage.threedollars.co.kr/menu/v4/disable_bungeoppang_3x.png?version=1",
+            "description": "붕어빵 만나기 30초 전",
+            "classification": {
+              "type": "TREND_SNACKS",
+              "description": "✨트렌드 간식",
+              "priority": 1
+            },
+            "isNew": false
+          }
+        ],
+        "representativeImages": [
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-0e503434-9728-48ca-b4be-661ee9d46e10.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-6829c1d9-1ef6-49cd-b520-ce7353601d30.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-7467113c-0878-4313-8dbd-9289f6f08cc3.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-99f1f39e-8523-4336-adc9-46a494e8e954.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store-certification/v1/v1-bcd924cb-e2d2-4312-88a9-660039b739a7.png"
+          }
+        ],
+        "isDeleted": false,
+        "activitiesStatus": "RECENT_ACTIVITY",
+        "createdAt": "2026-07-21T22:36:32",
+        "updatedAt": "2026-09-15T22:38:21"
+      }
+    }
+  ],
+  "cursor": {
+    "hasMore": false
+  }
+}
