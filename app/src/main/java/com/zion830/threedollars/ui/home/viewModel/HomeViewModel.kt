@@ -17,6 +17,7 @@ import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
+import com.threedollar.common.serverdriven.model.HomeMapControl
 import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDChipModel
@@ -43,6 +44,8 @@ import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
 import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
+import com.zion830.threedollars.ui.home.data.HomeMapControlItem
+import com.zion830.threedollars.ui.home.data.HomeMapControlResolver
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
@@ -86,6 +89,18 @@ class HomeViewModel @Inject constructor(
     /** 서버가 내려준 홈 지도 최초 줌 레벨. 응답이 없거나 설정값이 없으면 null이다. */
     private val _initialMapZoomLevel = MutableStateFlow<Double?>(null)
     val initialMapZoomLevel: StateFlow<Double?> = _initialMapZoomLevel.asStateFlow()
+
+    private val _mapControlItems = MutableStateFlow<List<HomeMapControlItem>>(
+        listOf(HomeMapControlItem.FallbackCurrentLocation)
+    )
+
+    /** 지도 좌측 하단 컨트롤. 서버 `HOME_MAP_CONTROL` 섹션이 없으면 현재 위치 버튼 하나만 둔다. */
+    val mapControlItems: StateFlow<List<HomeMapControlItem>> = _mapControlItems.asStateFlow()
+
+    private val _moveToCurrentLocation = MutableSharedFlow<Double?>(extraBufferCapacity = 1)
+
+    /** 현재 위치로 이동하라는 요청. 값은 적용할 줌 레벨이고 null 이면 줌을 유지한다. */
+    val moveToCurrentLocation: SharedFlow<Double?> = _moveToCurrentLocation.asSharedFlow()
 
     private val _filterDeepLink = MutableSharedFlow<SDLinkModel>(extraBufferCapacity = 1)
     val filterDeepLink: SharedFlow<SDLinkModel> = _filterDeepLink.asSharedFlow()
@@ -224,6 +239,7 @@ class HomeViewModel @Inject constructor(
             val params = HomeAroundStoreRequestParamsBuilder.build(
                 state = state,
                 bars = allBars(),
+                mapControls = mapControls(),
             )
 
             screenRepository.getHomeListSection(
@@ -533,11 +549,13 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                             filterSections = screen.sections,
                             hasLoadedFilterScreen = true,
+                            mapControlFilterValues = emptyMap(),
                         )
                     }
                     _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
                     applyServerSelectionDefaults()
                     updateFilterCells()
+                    updateMapControlItems()
 
                     if (shouldRefreshCards && hasRequestedHomeList) {
                         fetchAroundStores()
@@ -564,6 +582,47 @@ class HomeViewModel @Inject constructor(
             ?: sendLegacyFallbackFilterLog(paramKey = paramKey, paramValue = option.paramValue)
         fetchAroundStores()
         updateFilterCells()
+    }
+
+    fun clickMapControl(item: HomeMapControlItem) {
+        when (item) {
+            HomeMapControlItem.FallbackCurrentLocation -> {
+                sendClickCurrentLocationLog()
+                _moveToCurrentLocation.tryEmit(null)
+            }
+
+            is HomeMapControlItem.ServerDriven -> {
+                item.button.clickLog?.let(::sendClickEvent)
+                when (val control = item.control) {
+                    is HomeMapControl.Action -> {
+                        val action = control.button.customAction
+                        if (HomeMapControlResolver.isMoveToCurrentLocation(action)) {
+                            _moveToCurrentLocation.tryEmit(HomeMapControlResolver.zoomLevel(action))
+                        }
+                    }
+
+                    is HomeMapControl.Filter -> toggleMapControlFilter(control)
+                }
+            }
+        }
+    }
+
+    private fun toggleMapControlFilter(filter: HomeMapControl.Filter) {
+        _uiState.update {
+            it.copy(mapControlFilterValues = HomeMapControlResolver.toggle(filter, it.mapControlFilterValues))
+        }
+        updateMapControlItems()
+        if (hasRequestedHomeList) fetchAroundStores()
+    }
+
+    private fun mapControls(): List<HomeMapControl> =
+        HomeMapControlResolver.controls(uiState.value.filterSections)
+
+    private fun updateMapControlItems() {
+        _mapControlItems.value = HomeMapControlResolver.items(
+            controls = mapControls(),
+            filterValues = uiState.value.mapControlFilterValues,
+        )
     }
 
     fun handleActionLink(link: SDLinkModel) {
@@ -759,12 +818,22 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun sendClickCurrentLocationLog() {
+    private fun sendClickCurrentLocationLog() {
         LogManager.sendEvent(
             ClickEvent(
                 screen = screenName,
                 objectType = LogObjectType.BUTTON,
                 objectId = LogObjectId.CURRENT_LOCATION
+            )
+        )
+    }
+
+    fun sendClickWriteButtonLog() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.WRITE
             )
         )
     }

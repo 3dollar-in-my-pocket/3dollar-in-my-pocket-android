@@ -5,6 +5,7 @@ import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.store.model.IssuedCouponPageModel
 import com.threedollar.domain.store.model.IssuedCouponStatus
+import com.threedollar.domain.store.model.NewsPostPageModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 
@@ -53,6 +54,9 @@ interface StoreRepository {
     suspend fun issueStoreCoupon(storeId: String, couponId: String): Result<Unit>
 
     suspend fun useIssuedCoupon(issuedKey: String): Result<Unit>
+
+    /** 사장님 가게 소식 목록. [cursor]가 null 이면 첫 페이지. */
+    suspend fun getStoreNewsPosts(storeId: String, cursor: String?, size: Int): Result<NewsPostPageModel>
 
     /** 내가 발급받은 쿠폰 중 [statuses] 상태만 최신순으로. [cursor]가 null 이면 첫 페이지. */
     suspend fun getMyIssuedCoupons(

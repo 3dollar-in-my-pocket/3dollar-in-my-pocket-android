@@ -1,0 +1,211 @@
+{
+  "contents": [
+    {
+      "feedId": "6ab8bb79dd25a23c2db26a24",
+      "category": {
+        "categoryId": "NEW_POST",
+        "name": {
+          "text": "📢 새로운 가게 소식이 올라왔어요!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#BC70FF"
+        }
+      },
+      "header": {
+        "type": "GENERAL",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#왁뿌 소금빵 #소금빵 #문어빵",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "뽀미네 두쫀쿠 붕어빵",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "502개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "4.6",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "94m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "CONTENT_WITH_IMAGES",
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#1A1A1A\">개행<br>개행<br>개행<br>개ㅎ행</span>",
+          "isHtml": true,
+          "fontColor": "#1A1A1A"
+        },
+        "images": [
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/store-post/v2/v1-a9e80d16-e058-4f14-8434-b783d9c21a98.jpeg",
+            "width": 124,
+            "height": 124,
+            "ratio": 0.4864864864864865
+          }
+        ],
+        "style": {
+          "backgroundColor": "#FAFAFA"
+        },
+        "additionalInfos": {}
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/postList?storeId=120009"
+      },
+      "createdAt": "2026-09-27T15:45:13",
+      "updatedAt": "2026-09-27T15:45:13"
+    },
+    {
+      "feedId": "6aac6abbc156b9f5a12069cc",
+      "category": {
+        "categoryId": "NEW_POST",
+        "name": {
+          "text": "📢 새로운 가게 소식이 올라왔어요!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#BC70FF"
+        }
+      },
+      "header": {
+        "type": "GENERAL",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/v1_bungeoppang.png?version=1",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#붕어빵 #버터떡",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "테스트",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "1개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "5.0",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "56m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "CONTENT_WITH_IMAGES",
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#1A1A1A\">소식 더보기</span>",
+          "isHtml": true,
+          "fontColor": "#1A1A1A"
+        },
+        "images": [
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/store-post/v2/v1-98b5988c-3b31-482d-9af2-073052c47fb0.png",
+            "width": 124,
+            "height": 124,
+            "ratio": 0.910188679245283
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/store-post/v2/v1-8512126b-9a65-4eb5-b966-1fe5cbfbea44.png",
+            "width": 124,
+            "height": 124,
+            "ratio": 1.1674733785091964
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/store-post/v2/v1-fc07b57d-e65d-4c20-813a-ba529b6fcd33.png",
+            "width": 124,
+            "height": 124,
+            "ratio": 0.6414893617021277
+          }
+        ],
+        "style": {
+          "backgroundColor": "#FAFAFA"
+        },
+        "additionalInfos": {}
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/postList?storeId=12804899"
+      },
+      "createdAt": "2026-09-18T07:33:31",
+      "updatedAt": "2026-09-18T07:33:31"
+    }
+  ],
+  "cursor": {
+    "hasMore": false
+  }
+}

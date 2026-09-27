@@ -2,12 +2,14 @@ package com.threedollar.data.store.repository
 
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
+import com.threedollar.data.home.asModel
 import com.threedollar.data.store.asIssuedCouponPageModel
 import com.threedollar.data.store.asModel
 import com.threedollar.data.store.asUserStoreModel
 import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.store.model.IssuedCouponPageModel
 import com.threedollar.domain.store.model.IssuedCouponStatus
+import com.threedollar.domain.store.model.NewsPostPageModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 import com.threedollar.domain.store.model.StoreNotExistsException
@@ -92,6 +94,19 @@ class StoreRepositoryImpl @Inject constructor(
     override suspend fun useIssuedCoupon(issuedKey: String): Result<Unit> = runApi {
         storeApi.useIssuedCoupon(issuedKey = issuedKey)
     }.map { }
+
+    override suspend fun getStoreNewsPosts(
+        storeId: String,
+        cursor: String?,
+        size: Int,
+    ): Result<NewsPostPageModel> = runApi {
+        storeApi.getStoreNewsPosts(storeId = storeId, cursor = cursor, size = size)
+    }.map { response ->
+        NewsPostPageModel(
+            posts = response.contents.map { it.asModel() },
+            cursor = response.cursor.asModel(),
+        )
+    }
 
     override suspend fun getMyIssuedCoupons(
         statuses: List<IssuedCouponStatus>,

@@ -1,0 +1,107 @@
+{
+  "contents": [
+    {
+      "postId": "18741328",
+      "body": "개행 새행 개행 갸향 개행 개행 새행 개행 갸향 개행\n테스트\n테스트개행 새행 개행 갸향 개행\n테스트",
+      "sections": [
+        {
+          "sectionType": "VIDEO",
+          "url": "https://storage.dev.threedollars.co.kr/store-post/v2/v1-2a15e807-895d-4e57-bce4-a592f6238287.png",
+          "ratio": 0.7584905660377359
+        }
+      ],
+      "isOwner": false,
+      "store": {
+        "storeType": "BOSS_STORE",
+        "storeId": "120009",
+        "isOwner": false,
+        "account": {
+          "accountId": "6749c182427e705f73b20171",
+          "accountType": "BOSS_ACCOUNT"
+        },
+        "storeName": "뽀미네 두쫀쿠 붕어빵",
+        "rating": 4.6,
+        "address": {
+          "fullAddress": "경기도 군포시 산본동 1065-4"
+        },
+        "location": {
+          "latitude": 37.36954969792162,
+          "longitude": 126.9314217684027
+        },
+        "categories": [
+          {
+            "category": "WAKBBU_SALT_BREAD",
+            "categoryId": "WAKBBU_SALT_BREAD",
+            "name": "왁뿌 소금빵",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+            "disableImageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+            "description": "왁뿌 소금빵",
+            "classification": {
+              "type": "TREND_SNACKS",
+              "description": "✨트렌드 간식",
+              "priority": 1
+            },
+            "isNew": true
+          },
+          {
+            "category": "SALT_BREAD",
+            "categoryId": "SALT_BREAD",
+            "name": "소금빵",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/v1-saltbread.png",
+            "disableImageUrl": "https://storage.threedollars.co.kr/menu/icon_menu_24pt%3Dsaltbread.png",
+            "description": "소금빵",
+            "classification": {
+              "type": "SNACKS",
+              "description": "간식",
+              "priority": 2
+            },
+            "isNew": false
+          },
+          {
+            "category": "TAKOYAKI",
+            "categoryId": "TAKOYAKI",
+            "name": "문어빵",
+            "imageUrl": "https://storage.threedollars.co.kr/menu/v1_takoyaki.png?version=1",
+            "disableImageUrl": "https://storage.threedollars.co.kr/menu/v4/disable_takoyaki_3x.png?version=1",
+            "description": "문어빵 다 내꺼야",
+            "classification": {
+              "type": "SNACKS",
+              "description": "간식",
+              "priority": 2
+            },
+            "isNew": false
+          }
+        ],
+        "representativeImages": [
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-bd8f9756-c3a2-4333-be66-f6cfc39054bb.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-d5c3cb0c-a7d3-4d4a-8d25-3d1853f2bb48.jpeg"
+          },
+          {
+            "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store-certification/v1/v1-4217b84f-00ee-407f-979d-28c2f1a803c7.jpeg"
+          }
+        ],
+        "isDeleted": false,
+        "activitiesStatus": "RECENT_ACTIVITY",
+        "createdAt": "2024-11-29T22:28:48",
+        "updatedAt": "2026-09-18T12:27:48"
+      },
+      "stickers": [
+        {
+          "stickerId": "LIKE",
+          "emoji": "",
+          "count": 3,
+          "reactedByMe": false
+        }
+      ],
+      "createdAt": "2026-07-24T20:51:31",
+      "updatedAt": "2026-07-24T20:55:31"
+    }
+  ],
+  "cursor": {
+    "nextCursor": null,
+    "hasMore": false
+  }
+}

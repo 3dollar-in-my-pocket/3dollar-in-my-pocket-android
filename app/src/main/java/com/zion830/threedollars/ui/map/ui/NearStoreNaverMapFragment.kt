@@ -1,7 +1,7 @@
 package com.zion830.threedollars.ui.map.ui
 
 import android.content.Intent
-import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate.REASON_GESTURE
@@ -9,10 +9,8 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 import com.threedollar.common.utils.Constants
-import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.utils.NaverMapUtils
-import com.zion830.threedollars.utils.SizeUtils
 import com.zion830.threedollars.utils.isLocationAvailable
 import dagger.hilt.android.AndroidEntryPoint
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -20,12 +18,10 @@ import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 @AndroidEntryPoint
 class NearStoreNaverMapFragment(
     private val cameraMoved: () -> Unit = {},
-    private val onLocationButtonClicked: () -> Unit = {}
 ) : NaverMapFragment() {
     val viewModel: HomeViewModel by activityViewModels()
 
     private var isFirstLoad = true
-    private var locationButtonBottomMarginPx = SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_BOTTOM_MARGIN_DP)
 
     override fun onMapReady(map: NaverMap) {
         setIsShowOverlay(isLocationAvailable())
@@ -35,11 +31,8 @@ class NearStoreNaverMapFragment(
             map.locationTrackingMode = LocationTrackingMode.None
         }
 
-        applyLocationButtonBottomMargin()
-
-        binding.btnFindLocation.setOnClickListener {
-            onLocationButtonClicked()
-        }
+        // 홈의 현재 위치 버튼은 HomeFragment 의 지도 컨트롤(HOME_MAP_CONTROL)이 그린다.
+        binding.btnFindLocation.isVisible = false
 
         map.addOnCameraChangeListener { reason, _ ->
             if (reason == REASON_GESTURE) {
@@ -55,21 +48,6 @@ class NearStoreNaverMapFragment(
             }
             isFirstLoad = false
         }
-    }
-
-    fun updateLocationButtonBottomMargin(bottomMarginPx: Int) {
-        locationButtonBottomMarginPx = bottomMarginPx
-        if (view != null) {
-            applyLocationButtonBottomMargin()
-        }
-    }
-
-    private fun applyLocationButtonBottomMargin() {
-        val params = binding.btnFindLocation.layoutParams as MarginLayoutParams
-        if (params.bottomMargin == locationButtonBottomMarginPx) return
-
-        params.bottomMargin = locationButtonBottomMarginPx
-        binding.btnFindLocation.layoutParams = params
     }
 
     fun enableLocationTracking() {

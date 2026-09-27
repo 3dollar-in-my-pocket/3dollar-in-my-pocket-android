@@ -48,6 +48,7 @@ object StoreDetailActionResolver {
     const val DEFAULT_STICKER_ID = "LIKE"
     private const val REVIEW_LIST_PATH = "reviewList"
     private const val VISIT_PATH = "visit"
+    private const val POST_LIST_PATH = "postList"
     private const val STORE_ID_QUERY = "storeId"
 
     fun resolve(event: SDActionEvent, context: Context): Resolution {
@@ -141,6 +142,10 @@ object StoreDetailActionResolver {
         when (lastPathSegment(raw)) {
             REVIEW_LIST_PATH -> if (linkStoreId == context.storeId) {
                 return navigate(StoreDetailDestination.ReviewList(context.storeId))
+            }
+
+            POST_LIST_PATH -> if (linkStoreId == context.storeId) {
+                return navigate(StoreDetailDestination.PostList(context.storeId))
             }
 
             VISIT_PATH -> linkStoreId?.let { return navigate(StoreDetailDestination.Visit(it)) }

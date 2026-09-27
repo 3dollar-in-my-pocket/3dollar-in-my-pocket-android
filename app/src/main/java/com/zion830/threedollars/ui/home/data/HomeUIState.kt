@@ -13,6 +13,8 @@ data class HomeUIState(
     val filterSections: List<HomeScreenSection> = emptyList(),
     val radioSelection: Map<String, Int> = emptyMap(),
     val hasLoadedFilterScreen: Boolean = false,
+    /** 지도 컨트롤 필터(`focusFavoriteStores` 등)의 현재 값. 탭한 적 없는 필터는 없다(= false). */
+    val mapControlFilterValues: Map<String, Boolean> = emptyMap(),
 ) {
     companion object {
         val DEFAULT_LOCATION = LatLng(37.56, 126.97) // 서울

@@ -2,6 +2,7 @@ package com.threedollar.common.serverdriven.model
 
 enum class HomeScreenSectionType {
     HOME_FILTER,
+    HOME_MAP_CONTROL,
     UNKNOWN;
 
     companion object {
@@ -18,6 +19,17 @@ enum class HomeFilterBarType {
 
     companion object {
         fun fromRaw(raw: String?): HomeFilterBarType =
+            entries.firstOrNull { it.name.equals(raw, ignoreCase = true) } ?: UNKNOWN
+    }
+}
+
+enum class HomeMapControlType {
+    FILTER,
+    ACTION,
+    UNKNOWN;
+
+    companion object {
+        fun fromRaw(raw: String?): HomeMapControlType =
             entries.firstOrNull { it.name.equals(raw, ignoreCase = true) } ?: UNKNOWN
     }
 }
@@ -56,10 +68,49 @@ sealed interface HomeScreenSection {
         val bars: List<HomeFilterBar> = emptyList(),
     ) : HomeScreenSection
 
+    /** 홈 지도 좌측 하단 컨트롤 묶음. [controls] 순서가 위에서 아래로 그리는 순서다. */
+    data class HomeMapControlSectionModel(
+        override val type: HomeScreenSectionType,
+        val controls: List<HomeMapControl> = emptyList(),
+    ) : HomeScreenSection
+
     data class Unknown(
         override val type: HomeScreenSectionType,
     ) : HomeScreenSection
 }
+
+sealed interface HomeMapControl {
+    val type: HomeMapControlType
+
+    /**
+     * 상태에 따라 버튼이 바뀌는 토글 필터. 현재 값은 [paramKey] 로 주변 가게 조회에 함께 보낸다.
+     *
+     * 서버는 [HomeMapControlFilterOption.paramValue] 를 "탭하면 적용될 값"으로 내려준다.
+     */
+    data class Filter(
+        override val type: HomeMapControlType,
+        val paramKey: String,
+        val options: List<HomeMapControlFilterOption> = emptyList(),
+    ) : HomeMapControl
+
+    /** 탭하면 [HomeMapControlButton.customAction] 을 수행하는 버튼. */
+    data class Action(
+        override val type: HomeMapControlType,
+        val button: HomeMapControlButton,
+    ) : HomeMapControl
+}
+
+data class HomeMapControlFilterOption(
+    val paramValue: Boolean,
+    val button: HomeMapControlButton,
+)
+
+data class HomeMapControlButton(
+    val image: SDImageModel,
+    val style: SDSurfaceStyleModel? = null,
+    val customAction: SDCustomActionModel? = null,
+    val clickLog: SDClickLogModel? = null,
+)
 
 sealed interface HomeFilterBar {
     val type: HomeFilterBarType
