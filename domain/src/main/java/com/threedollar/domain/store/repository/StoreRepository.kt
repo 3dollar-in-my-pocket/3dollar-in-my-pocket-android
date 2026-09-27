@@ -3,6 +3,7 @@ package com.threedollar.domain.store.repository
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.threedollar.domain.store.model.NewsPostPageModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 
@@ -51,6 +52,9 @@ interface StoreRepository {
     suspend fun issueStoreCoupon(storeId: String, couponId: String): Result<Unit>
 
     suspend fun useIssuedCoupon(issuedKey: String): Result<Unit>
+
+    /** 사장님 가게 소식 목록. [cursor]가 null 이면 첫 페이지. */
+    suspend fun getStoreNewsPosts(storeId: String, cursor: String?, size: Int): Result<NewsPostPageModel>
 
     /** [stickerId]가 null 이면 스티커(좋아요)를 취소한다. */
     suspend fun putStorePostSticker(storeId: String, postId: String, stickerId: String?): Result<Unit>

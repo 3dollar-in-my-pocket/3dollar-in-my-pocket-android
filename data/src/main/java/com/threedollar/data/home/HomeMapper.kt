@@ -392,7 +392,9 @@ fun NewsPost.asModel(): NewsPostModel = NewsPostModel(
     isOwner = isOwner,
     stickers = stickers.map { it.asModel() },
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    storeName = store?.storeName.orEmpty(),
+    storeCategoryImageUrl = store?.categories?.firstOrNull()?.imageUrl,
 )
 
 fun Section.asModel(): SectionModel = SectionModel(

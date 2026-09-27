@@ -4,6 +4,8 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.network.api.StoreApi
+import com.threedollar.network.data.store.ContentsWithCursorWithTotalCountResponse
+import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
 import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.request.StickerRequest
@@ -65,6 +67,15 @@ class FakeStoreApi : StoreApi {
         Response.success(BaseResponse(ok = true, data = Any()))
 
     override suspend fun useIssuedCoupon(issuedKey: String): Response<BaseResponse<String>> = ok()
+
+    var newsPostsResponse: Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<NewsPost>>> =
+        Response.success(BaseResponse(ok = true, data = ContentsWithCursorWithTotalCountResponse()))
+
+    override suspend fun getStoreNewsPosts(
+        storeId: String,
+        cursor: String?,
+        size: Int,
+    ): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<NewsPost>>> = newsPostsResponse
 
     override suspend fun putStorePostStickers(
         storeId: String,

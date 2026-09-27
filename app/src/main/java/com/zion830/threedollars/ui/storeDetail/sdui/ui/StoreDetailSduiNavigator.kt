@@ -20,6 +20,7 @@ import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.dialog.ReviewPhotoDialog
+import com.zion830.threedollars.ui.storeDetail.post.ui.StorePostListActivity
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
@@ -108,6 +109,10 @@ class StoreDetailSduiNavigator(
 
             is StoreDetailDestination.ReviewList -> activity.startActivity(
                 StoreReviewDetailActivity.getInstance(activity, destination.storeId.toIntOrNull() ?: 0)
+            )
+
+            is StoreDetailDestination.PostList -> activity.startActivity(
+                StorePostListActivity.getIntent(activity, destination.storeId)
             )
         }
     }

@@ -27,6 +27,37 @@ data class HomeFilterSectionResponse(
     val type: String? = null,
     @SerializedName("bars")
     val bars: List<HomeFilterBarResponse>? = emptyList(),
+    @SerializedName("controls")
+    val controls: List<HomeMapControlResponse>? = emptyList(),
+)
+
+data class HomeMapControlResponse(
+    @SerializedName("type")
+    val type: String? = null,
+    @SerializedName("paramKey")
+    val paramKey: String? = null,
+    @SerializedName("options")
+    val options: List<HomeMapControlFilterOptionResponse>? = emptyList(),
+    @SerializedName("button")
+    val button: HomeMapControlButtonResponse? = null,
+)
+
+data class HomeMapControlFilterOptionResponse(
+    @SerializedName("paramValue")
+    val paramValue: Boolean? = null,
+    @SerializedName("button")
+    val button: HomeMapControlButtonResponse? = null,
+)
+
+data class HomeMapControlButtonResponse(
+    @SerializedName("image")
+    val image: HomeFilterImageResponse? = null,
+    @SerializedName("style")
+    val style: HomeFilterSurfaceStyleResponse? = null,
+    @SerializedName("customAction")
+    val customAction: SDCustomActionResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: HomeFilterClickLogResponse? = null,
 )
 
 data class HomeFilterBarResponse(
@@ -123,6 +154,8 @@ data class HomeFilterImageStyleResponse(
     val width: Double? = null,
     @SerializedName("height")
     val height: Double? = null,
+    @SerializedName("dimmed")
+    val dimmed: Boolean? = null,
 )
 
 data class HomeFilterLinkResponse(
