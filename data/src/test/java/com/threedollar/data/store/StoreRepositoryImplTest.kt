@@ -5,7 +5,10 @@ import com.google.gson.reflect.TypeToken
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.data.fake.FakeStoreApi
 import com.threedollar.data.store.repository.StoreRepositoryImpl
+import com.threedollar.domain.home.data.store.SectionTypeModel
 import com.threedollar.domain.store.model.StoreNotExistsException
+import com.threedollar.network.data.store.ContentsWithCursorWithTotalCountResponse
+import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.result.ApiException
 import kotlinx.coroutines.runBlocking
@@ -85,5 +88,50 @@ class StoreRepositoryImplTest {
         // Then
         assertTrue(storeApi.putReviewStickerRequests.single().stickers.isEmpty())
         assertEquals("LIKE", storeApi.putPostStickerRequests.single().stickers.single().stickerId)
+    }
+
+    // TH-197 TC4
+    @Test
+    fun `TH197_TC4_소식목록_응답의_커서와_가게정보를_페이지모델로_옮긴다`() = runBlocking {
+        // Given
+        storeApi.newsPostsResponse = newsPostsResponse("store/StoreNewsPosts.json")
+
+        // When
+        val page = repository.getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow()
+
+        // Then
+        assertEquals(3, page.posts.size)
+        assertTrue(page.cursor.hasMore)
+        assertEquals("Ng==", page.cursor.nextCursor)
+        val first = page.posts.first()
+        assertEquals("뽀미네 두쫀쿠 붕어빵", first.storeName)
+        assertEquals("https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png", first.storeCategoryImageUrl)
+        assertEquals("LIKE", first.stickers.single().stickerId)
+    }
+
+    // TH-197 TC5
+    @Test
+    fun `TH197_TC5_이미지섹션의_비율을_유지하고_알수없는_섹션타입은_UNKNOWN으로_떨어진다`() = runBlocking {
+        // Given
+        storeApi.newsPostsResponse = newsPostsResponse("store/StoreNewsPosts.json")
+        val unknownApi = FakeStoreApi().apply { newsPostsResponse = newsPostsResponse("store/StoreNewsPostsUnknownSection.json") }
+
+        // When
+        val posts = repository.getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow().posts
+        val unknownPage = StoreRepositoryImpl(unknownApi).getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow()
+
+        // Then
+        val multiImagePost = posts.first { it.postId == "176" }
+        assertEquals(3, multiImagePost.sections.size)
+        assertTrue(multiImagePost.sections.all { it.sectionType == SectionTypeModel.IMAGE && it.ratio > 0f })
+        assertTrue(posts.first { it.postId == "173" }.sections.isEmpty())
+        assertEquals(SectionTypeModel.UNKNOWN, unknownPage.posts.single().sections.single().sectionType)
+        assertEquals(false, unknownPage.cursor.hasMore)
+    }
+
+    private fun newsPostsResponse(path: String): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<NewsPost>>> {
+        val json = requireNotNull(javaClass.classLoader?.getResource(path)).readText()
+        val type = object : TypeToken<ContentsWithCursorWithTotalCountResponse<NewsPost>>() {}.type
+        return Response.success(BaseResponse(ok = true, data = Gson().fromJson(json, type)))
     }
 }
