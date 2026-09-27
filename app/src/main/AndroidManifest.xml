@@ -7,6 +7,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- 사진은 시스템 사진 선택 도구로만 고른다. 라이브러리가 넣는 광범위한 미디어 권한은 Play 정책상 제거한다. -->
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_VIDEO"
+        tools:node="remove" />
+
     <queries>
         <package android:name="com.kakao.talk" />
     </queries>

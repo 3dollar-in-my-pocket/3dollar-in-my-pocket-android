@@ -9,6 +9,8 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -48,12 +50,19 @@ class StoreDetailSduiActivity : AppCompatActivity() {
         viewModel.dispatch(StoreDetailSduiUiIntent.OnStoreChanged)
     }
 
+    private val imagePickerLauncher: ActivityResultLauncher<PickVisualMediaRequest> = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        navigator.onImagesPicked(uris)
+    }
+
     private val navigator by lazy(LazyThreadSafetyMode.NONE) {
         StoreDetailSduiNavigator(
             activity = this,
             fragmentContainerId = R.id.storeDetailSduiFragmentContainer,
             dispatch = viewModel::dispatch,
             launchForResult = resultLauncher::launch,
+            launchImagePicker = {
+                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
             onClose = ::finish,
         )
     }

@@ -142,3 +142,5 @@ jobs:
           status: draft
           releaseName: ${{ steps.version.outputs.tag_name }}
           whatsNewDirectory: distribution/whatsnew
+          # 심사 거절 등으로 Play 가 자동 심사 제출을 막는 상태에서도 Edit 커밋이 되도록 한다. 심사 제출은 콘솔에서 한다.
+          changesNotSentForReview: true
