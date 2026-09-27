@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +53,7 @@ import com.threedollar.domain.feed.model.FeedModel
 import com.threedollar.domain.feed.model.FeedRatingModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.element.SDText
+import com.zion830.threedollars.ui.feed.model.FeedBadgeText
 import com.zion830.threedollars.ui.feed.model.FeedTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -95,17 +98,7 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (category != null) {
-            SDText(
-                model = category.name,
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .clip(CircleShape)
-                    .background(category.style?.backgroundColor.toColor(fallback = Gray10))
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                fontSize = dpToSp(12),
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-            )
+            FeedCategoryBadge(category = category, modifier = Modifier.weight(1f, fill = false))
         }
         Text(
             text = feedTimeText(updatedAt),
@@ -114,6 +107,31 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = dpToSp(12),
+            maxLines = 1,
+        )
+    }
+}
+
+/** 이모지는 문구와 떼어 따로 그려야 기기 이모지 폰트와 상관없이 글자가 배지 가운데에 온다 ([FeedBadgeText]). */
+@Composable
+private fun FeedCategoryBadge(category: FeedCategoryModel, modifier: Modifier = Modifier) {
+    val parts = remember(category.name) { FeedBadgeText.split(category.name) }
+    Row(
+        modifier = modifier
+            .fillMaxHeight()
+            .clip(CircleShape)
+            .background(category.style?.backgroundColor.toColor(fallback = Gray10))
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        parts.leadingEmoji?.let { emoji ->
+            Text(text = emoji, fontSize = dpToSp(12), maxLines = 1)
+            Spacer(modifier = Modifier.width(4.dp))
+        }
+        SDText(
+            model = parts.text,
+            fontSize = dpToSp(12),
+            fontWeight = FontWeight.Bold,
             maxLines = 1,
         )
     }
