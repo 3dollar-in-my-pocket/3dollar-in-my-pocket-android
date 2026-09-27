@@ -3,6 +3,8 @@ package com.threedollar.domain.store.repository
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.threedollar.domain.store.model.IssuedCouponPageModel
+import com.threedollar.domain.store.model.IssuedCouponStatus
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
 
@@ -51,6 +53,13 @@ interface StoreRepository {
     suspend fun issueStoreCoupon(storeId: String, couponId: String): Result<Unit>
 
     suspend fun useIssuedCoupon(issuedKey: String): Result<Unit>
+
+    /** 내가 발급받은 쿠폰 중 [statuses] 상태만 최신순으로. [cursor]가 null 이면 첫 페이지. */
+    suspend fun getMyIssuedCoupons(
+        statuses: List<IssuedCouponStatus>,
+        cursor: String?,
+        size: Int,
+    ): Result<IssuedCouponPageModel>
 
     /** [stickerId]가 null 이면 스티커(좋아요)를 취소한다. */
     suspend fun putStorePostSticker(storeId: String, postId: String, stickerId: String?): Result<Unit>
