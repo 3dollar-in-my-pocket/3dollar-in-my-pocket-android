@@ -6,6 +6,10 @@ import com.threedollar.domain.my.model.UserInfoModel
 import com.threedollar.domain.my.model.FavoriteStoresModel
 import com.threedollar.domain.my.model.VisitHistoryModel
 import com.threedollar.domain.my.model.UserPollsModel
+import com.threedollar.domain.store.model.IssuedCouponModel
+import com.threedollar.domain.store.model.IssuedCouponPageModel
+import com.threedollar.domain.store.model.IssuedCouponStatus
+import com.threedollar.domain.store.repository.StoreRepository
 import com.zion830.threedollars.ui.my.page.data.MyPageShop
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
@@ -26,7 +30,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor(private val myRepository: MyRepository) : BaseViewModel() {
+class MyPageViewModel @Inject constructor(
+    private val myRepository: MyRepository,
+    private val storeRepository: StoreRepository,
+) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.MY_PAGE
 
@@ -45,6 +52,10 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     private val _userPollList = MutableStateFlow(UserPollsModel())
     val userPollList: StateFlow<UserPollsModel> = _userPollList.asStateFlow()
 
+    /** 마이페이지 쿠폰 섹션. 아직 조회 전이면 null. */
+    private val _myCoupons = MutableStateFlow<IssuedCouponPageModel?>(null)
+    val myCoupons: StateFlow<IssuedCouponPageModel?> = _myCoupons.asStateFlow()
+
     /**
      * Events
      */
@@ -59,6 +70,9 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
 
     private val _storeClick = MutableSharedFlow<MyPageShop>()
     val storeClick: SharedFlow<MyPageShop> = _storeClick
+
+    private val _couponClick = MutableSharedFlow<Unit>()
+    val couponClick: SharedFlow<Unit> = _couponClick
 
     var isMoveMedalPage = false
 
@@ -121,6 +135,31 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
     fun isNameUpdated() = getUserInfo()
 
     // GA Events - MyPage
+    fun getMyCoupons() = viewModelScope.launch(coroutineExceptionHandler) {
+        storeRepository.getMyIssuedCoupons(
+            statuses = listOf(IssuedCouponStatus.ISSUED),
+            cursor = null,
+            size = MY_PAGE_COUPON_SIZE,
+        ).onSuccess { page -> _myCoupons.update { page } }
+    }
+
+    fun clickCouponSection() = viewModelScope.launch {
+        _couponClick.emit(Unit)
+    }
+
+    /** 쿠폰 카드는 기존 카드 클릭 이벤트(`my_page`/`card`/`store`)로 보낸다 (iOS 와 동일). */
+    fun clickCoupon(coupon: IssuedCouponModel) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.CARD,
+                objectId = LogObjectId.STORE,
+                additionalParams = mapOf(ParameterName.STORE_ID to coupon.storeId),
+            )
+        )
+        clickCouponSection()
+    }
+
     fun sendClickVisitedStore(storeId: String, storeType: String) {
         LogManager.sendEvent(
             ClickEvent(
@@ -169,3 +208,5 @@ class MyPageViewModel @Inject constructor(private val myRepository: MyRepository
         )
     }
 }
+
+private const val MY_PAGE_COUPON_SIZE = 20

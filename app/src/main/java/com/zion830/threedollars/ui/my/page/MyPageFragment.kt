@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.zion830.threedollars.ui.coupon.ui.MyCouponsActivity
 import com.zion830.threedollars.ui.my.page.screen.MyPageScreen
 import com.zion830.threedollars.ui.my.page.team.MyPageTeamActivity
 import com.threedollar.common.analytics.ScreenName
@@ -40,6 +41,7 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
         viewModel.getUserInfo()
         viewModel.getMyVisitsStore()
         viewModel.getUserPollList()
+        viewModel.getMyCoupons()
         if (viewModel.isMoveMedalPage) {
             viewModel.addFragments(MyFragments.MyMedal)
             viewModel.isMoveMedalPage = false
@@ -89,6 +91,13 @@ class MyPageFragment : BaseComposeFragment<MyPageViewModel>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoriteClick.collect {
                     activityStarter.startFavoriteActivity(requireActivity())
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.couponClick.collect {
+                    startActivity(MyCouponsActivity.getIntent(requireContext()))
                 }
             }
         }

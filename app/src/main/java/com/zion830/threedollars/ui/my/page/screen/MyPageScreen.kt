@@ -87,6 +87,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
     val myFavoriteStores by viewModel.myFavoriteStores.collectAsStateWithLifecycle()
     val myVisitsStore by viewModel.myVisitsStore.collectAsStateWithLifecycle()
     val userPollList by viewModel.userPollList.collectAsStateWithLifecycle()
+    val myCoupons by viewModel.myCoupons.collectAsStateWithLifecycle()
 
     val myPageUserInformation by remember(userInfo) {
         derivedStateOf {
@@ -220,6 +221,14 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
                 }
             }
             Spacer(modifier = Modifier.height(44.dp))
+            myCoupons?.let { coupons ->
+                MyPageCouponSection(
+                    page = coupons,
+                    onHeaderClick = viewModel::clickCouponSection,
+                    onCouponClick = viewModel::clickCoupon,
+                )
+                Spacer(modifier = Modifier.height(44.dp))
+            }
             MyPageTeamMoveScreen {
                 viewModel.clickTeam()
             }
@@ -371,13 +380,12 @@ fun MyPageSectionTitle(myPageSectionTitle: MyPageSectionTitleData) {
                 fontWeight = FontWeight(400),
                 color = Color.White,
             )
-            if (myPageSectionTitle.count != null && myPageSectionTitle.count > 0) {
+            val countText = myPageSectionTitle.countText
+                ?: myPageSectionTitle.count?.takeIf { it > 0 }?.let { stringResource(id = CommonR.string.str_mypage_count, it) }
+            if (countText != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = stringResource(
-                            id = CommonR.string.str_mypage_count,
-                            myPageSectionTitle.count
-                        ),
+                        text = countText,
                         fontSize = dpToSp(dp = 14),
                         fontFamily = PretendardFontFamily,
                         fontWeight = FontWeight(600),
