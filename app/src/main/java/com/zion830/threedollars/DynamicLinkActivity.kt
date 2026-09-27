@@ -44,6 +44,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val STORE_IMAGES = "images"
 
         private const val LINK = "link"
+        private const val EXTRA_IN_APP = "extra_in_app"
         private const val SCHEME_DOLLARS = "dollars"
         private const val FOLDER_ID = "folderId"
         private const val FAVORITE_ID = "favoriteId"
@@ -53,9 +54,11 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val URL = "url"
         private const val PRESET = "preset"
 
+        /** 앱 안의 화면에서 링크를 열 때 쓴다. 목록 딥링크가 현재 화면 위에 쌓이도록 [EXTRA_IN_APP] 을 붙인다. */
         fun launch(context: Context, link: String) {
             Intent(context, DynamicLinkActivity::class.java).apply {
                 putExtra(LINK, link)
+                putExtra(EXTRA_IN_APP, true)
             }.let {
                 context.startActivity(it)
             }
@@ -197,19 +200,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                 val storeId = deeplink.getQueryParameter(STORE_ID)
 
                 if (storeId != null) {
-                    val stackBuilder = TaskStackBuilder.create(this)
-
-                    // MainActivity 추가 (홈 백스택)
-                    stackBuilder.addNextIntent(MainActivity.getIntent(this))
-
-                    // 상점 상세 Activity 추가
-                    stackBuilder.addNextIntent(StoreDetailSduiActivity.getIntent(this, storeId))
-
-                    // 리뷰 Activity 추가
-                    stackBuilder.addNextIntent(StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0))
-
-                    // 백스택 시작
-                    stackBuilder.startActivities()
+                    startStoreListStack(storeId, StoreReviewDetailActivity.getInstance(this, storeId.toIntOrNull() ?: 0))
                     finish()
                     return
                 }
@@ -219,11 +210,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                 if (storeId == null) {
                     startActivity(MainActivity.getIntent(this))
                 } else {
-                    TaskStackBuilder.create(this)
-                        .addNextIntent(MainActivity.getIntent(this))
-                        .addNextIntent(StoreDetailSduiActivity.getIntent(this, storeId))
-                        .addNextIntent(StorePostListActivity.getIntent(this, storeId))
-                        .startActivities()
+                    startStoreListStack(storeId, StorePostListActivity.getIntent(this, storeId))
                 }
             }
 
@@ -240,6 +227,23 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
         }
         finish()
+    }
+
+    /**
+     * 가게 상세 위에 목록([listIntent])을 연다. 앱 안(피드·가게 상세 등)에서 열었으면 지금 화면 위에 쌓아
+     * 뒤로가기로 원래 화면에 돌아오게 하고, 푸시·외부 링크로 열었으면 홈부터 백스택을 새로 만든다.
+     */
+    private fun startStoreListStack(storeId: String, listIntent: Intent) {
+        val storeDetailIntent = StoreDetailSduiActivity.getIntent(this, storeId)
+        if (intent.getBooleanExtra(EXTRA_IN_APP, false)) {
+            startActivities(arrayOf(storeDetailIntent, listIntent))
+            return
+        }
+        TaskStackBuilder.create(this)
+            .addNextIntent(MainActivity.getIntent(this))
+            .addNextIntent(storeDetailIntent)
+            .addNextIntent(listIntent)
+            .startActivities()
     }
 
     private fun Uri.isStorePath(): Boolean = host == STORE || pathSegments.contains(STORE)
