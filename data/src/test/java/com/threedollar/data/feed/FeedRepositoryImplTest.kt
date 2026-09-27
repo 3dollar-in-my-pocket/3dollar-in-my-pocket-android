@@ -87,10 +87,25 @@ class FeedRepositoryImplTest {
         // Then
         val images = requireNotNull(feeds.first { it.feedId == "images-1" }.body)
         assertEquals(FeedBodyType.CONTENT_WITH_IMAGES, images.type)
-        assertEquals(listOf(1.5f, 0.5f), images.images.map { it.ratio })
+        assertEquals(listOf(1.5f), images.images.map { it.ratio })
         val titleImages = requireNotNull(feeds.first { it.feedId == "title-images" }.body)
         assertEquals(FeedBodyType.CONTENT_WITH_TITLE_AND_IMAGES, titleImages.type)
         assertEquals(1, titleImages.images.size)
+    }
+
+    // TH-646 TC5
+    @Test
+    fun `TH646_TC5_이미지칸은_서버가_정한_표시크기로_그리고_원본비율_ratio는_쓰지않는다`() {
+        // Given
+        val path = "feed/LocalNewsFeedsWithImages.json"
+
+        // When
+        val feeds = load(path).feeds
+
+        // Then
+        assertTrue(feeds.all { it.body?.type == FeedBodyType.CONTENT_WITH_IMAGES })
+        assertEquals(listOf(1, 3), feeds.map { it.body?.images?.size })
+        assertTrue(feeds.flatMap { it.body?.images.orEmpty() }.all { it.ratio == 1f })
     }
 
     // TH-646 TC6

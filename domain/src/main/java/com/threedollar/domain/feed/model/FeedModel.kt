@@ -74,7 +74,7 @@ enum class FeedBodyType {
     }
 }
 
-/** [ratio]는 원본 가로/세로 비율. 크기 정보가 없으면 1(정사각형). */
+/** [ratio]는 서버가 정한 표시 크기의 가로/세로 비율(원본 이미지 비율이 아니다). */
 data class FeedImageModel(
     val imageUrl: String,
     val ratio: Float,

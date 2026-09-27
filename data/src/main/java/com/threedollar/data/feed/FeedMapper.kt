@@ -56,12 +56,16 @@ private fun FeedBodyResponse.asModel() = FeedBodyModel(
     rating = additionalInfos?.rating?.asModel(),
 )
 
+/**
+ * 이미지 칸 비율은 서버가 정한 표시 크기(`width`/`height`)로 정한다 (iOS 와 동일).
+ * `ratio` 는 원본 이미지 비율이라 칸 크기에 쓰지 않고, 크기 정보가 없으면 iOS 처럼 그리지 않는다.
+ */
 private fun FeedImageResponse.asModel(): FeedImageModel? {
     val url = imageUrl?.takeIf { it.isNotBlank() } ?: return null
     val w = width ?: 0
     val h = height ?: 0
-    val sizeRatio = if (w > 0 && h > 0) w.toFloat() / h else null
-    return FeedImageModel(imageUrl = url, ratio = ratio?.takeIf { it > 0f } ?: sizeRatio ?: 1f)
+    if (w <= 0 || h <= 0) return null
+    return FeedImageModel(imageUrl = url, ratio = w.toFloat() / h)
 }
 
 private fun FeedRatingResponse.asModel(): FeedRatingModel? {
