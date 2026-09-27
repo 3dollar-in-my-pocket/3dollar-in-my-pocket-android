@@ -77,6 +77,22 @@ class StoreDetailActionResolverTest {
         assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(otherStore.link!!)), fromOtherStore)
     }
 
+    // TH-197 TC2
+    @Test
+    fun `TH197_TC2_같은가게의_postList링크는_상세를_새로띄우지않고_소식목록만_연다`() {
+        // Given
+        val sameStore = SDActionEvent(link = appLink("/postList?storeId=$STORE_ID"))
+        val otherStore = SDActionEvent(link = appLink("/postList?storeId=999"))
+
+        // When
+        val fromSameStore = resolve(sameStore)
+        val fromOtherStore = resolve(otherStore)
+
+        // Then
+        assertEquals(Resolution.Navigate(StoreDetailDestination.PostList(STORE_ID)), fromSameStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(otherStore.link!!)), fromOtherStore)
+    }
+
     // TH-1226 TC13, TH-1372
     @Test
     fun `TH1372_리뷰작성은_가게타입과_상관없이_같은_작성화면으로_간다`() {

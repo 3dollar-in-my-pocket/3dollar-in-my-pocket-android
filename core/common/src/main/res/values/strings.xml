@@ -628,4 +628,6 @@
     <string name="store_detail_review_delete_confirm">리뷰를 삭제할까요?</string>
     <string name="store_detail_text_copied">복사했어요</string>
     <string name="store_detail_error_default">일시적인 문제가 발생했어요.\n잠시 후 다시 시도해주세요.</string>
+    <string name="store_post_list_title">%s 가게 소식</string>
+    <string name="store_post_just_now">방금</string>
 </resources>

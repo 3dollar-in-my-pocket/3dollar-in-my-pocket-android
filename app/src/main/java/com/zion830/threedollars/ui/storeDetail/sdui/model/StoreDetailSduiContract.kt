@@ -125,4 +125,6 @@ sealed interface StoreDetailDestination {
     data class Visit(val storeId: String) : StoreDetailDestination
     /** 제보·사장님 가게 모두 같은 리뷰 목록을 연다 (iOS 상세도 `isBossStore: false` 로 연다). */
     data class ReviewList(val storeId: String) : StoreDetailDestination
+    /** 사장님 가게 소식 목록. 같은 가게 상세 위에 올려 상세를 중복으로 띄우지 않는다. */
+    data class PostList(val storeId: String) : StoreDetailDestination
 }
