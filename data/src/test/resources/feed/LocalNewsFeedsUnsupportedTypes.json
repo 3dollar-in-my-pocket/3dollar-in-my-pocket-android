@@ -1,0 +1,406 @@
+{
+  "contents": [
+    {
+      "feedId": "images-1",
+      "category": {
+        "categoryId": "NEW_REVIEW",
+        "name": {
+          "text": "❤️ 새로운 리뷰가 올라왔어요!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#FF858F"
+        }
+      },
+      "header": {
+        "type": "GENERAL",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#왁뿌 소금빵 #소금빵 #문어빵",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "뽀미네 두쫀쿠 붕어빵",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "502개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "4.6",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "5m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "TITLE_CONTENT_IMAGES",
+        "title": {
+          "text": "<span style=\"font-size:12px; font-weight:700; color:#000000\">직접</span>",
+          "isHtml": true,
+          "fontColor": "#000000"
+        },
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#000000\">오오</span>",
+          "isHtml": true,
+          "fontColor": "#000000"
+        },
+        "style": {
+          "backgroundColor": "#FAFAFA"
+        },
+        "additionalInfos": {
+          "rating": {
+            "starRating": 5.0,
+            "maxRating": 5,
+            "style": {
+              "filledColor": "#FF858F",
+              "emptyColor": "#FFDADD"
+            }
+          }
+        },
+        "images": [
+          {
+            "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+            "width": 300,
+            "height": 200
+          },
+          {
+            "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+            "ratio": 0.5
+          }
+        ]
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/reviewList?storeType=BOSS_STORE&storeId=120009"
+      },
+      "createdAt": "2026-09-26T15:08:36",
+      "updatedAt": "2026-09-26T15:08:36"
+    },
+    {
+      "feedId": "unknown-body",
+      "category": {
+        "categoryId": "STORE_VISIT_COUNT_REACHED",
+        "name": {
+          "text": "🙌 지금 뜨는 가게!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#0047AB"
+        }
+      },
+      "header": {
+        "type": "GENERAL",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/v1_hodduck.png?version=1",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#호떡 #어묵 #계란빵",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "ㄹㄹ",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "2개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "5.0",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "67m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "BOSS_REPLY",
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">💬 지금 가장 핫한 이곳, 최근 </span><span style=\"font-size:14px; font-weight:600; color:#2E2E2E\">3명</span><span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">이 다녀갔어요!</span>",
+          "isHtml": true,
+          "fontColor": "#2E2E2E"
+        },
+        "style": {
+          "backgroundColor": "#F4F4F4"
+        },
+        "additionalInfos": {}
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeType=USER_STORE&storeId=120100"
+      },
+      "createdAt": "2026-09-19T03:38:23",
+      "updatedAt": "2026-09-19T03:38:23"
+    },
+    {
+      "feedId": "unknown-header",
+      "category": {
+        "categoryId": "STORE_VISIT_COUNT_REACHED",
+        "name": {
+          "text": "🙌 지금 뜨는 가게!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#0047AB"
+        }
+      },
+      "header": {
+        "type": "STORE_V2",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/v1_hodduck.png?version=1",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#호떡 #어묵 #계란빵",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "ㄹㄹ",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "2개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "5.0",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "67m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "CONTENT_ONLY",
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">💬 지금 가장 핫한 이곳, 최근 </span><span style=\"font-size:14px; font-weight:600; color:#2E2E2E\">3명</span><span style=\"font-size:14px; font-weight:400; color:#2E2E2E\">이 다녀갔어요!</span>",
+          "isHtml": true,
+          "fontColor": "#2E2E2E"
+        },
+        "style": {
+          "backgroundColor": "#F4F4F4"
+        },
+        "additionalInfos": {}
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeType=USER_STORE&storeId=120100"
+      },
+      "createdAt": "2026-09-19T03:38:23",
+      "updatedAt": "2026-09-19T03:38:23"
+    },
+    {
+      "feedId": "title-images",
+      "category": {
+        "categoryId": "NEW_REVIEW",
+        "name": {
+          "text": "❤️ 새로운 리뷰가 올라왔어요!",
+          "isHtml": false,
+          "fontColor": "#FFFFFF"
+        },
+        "style": {
+          "backgroundColor": "#FF858F"
+        }
+      },
+      "header": {
+        "type": "GENERAL",
+        "image": {
+          "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+          "width": 60,
+          "height": 60
+        },
+        "top": {
+          "text": "#왁뿌 소금빵 #소금빵 #문어빵",
+          "isHtml": false,
+          "fontColor": "#B7B7B7"
+        },
+        "content": {
+          "text": "뽀미네 두쫀쿠 붕어빵",
+          "isHtml": false,
+          "fontColor": "#0F0F0F"
+        },
+        "metadata": [
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/review.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "502개",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/star_solid.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "4.6",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          },
+          {
+            "icon": {
+              "imageUrl": "https://storage.threedollars.co.kr/app/location_soild.png",
+              "width": 12,
+              "height": 12
+            },
+            "content": {
+              "text": "5m",
+              "isHtml": false,
+              "fontColor": "#B7B7B7"
+            }
+          }
+        ]
+      },
+      "body": {
+        "type": "CONTENT_WITH_TITLE_AND_IMAGES",
+        "title": {
+          "text": "<span style=\"font-size:12px; font-weight:700; color:#000000\">직접</span>",
+          "isHtml": true,
+          "fontColor": "#000000"
+        },
+        "content": {
+          "text": "<span style=\"font-size:14px; font-weight:400; color:#000000\">오오</span>",
+          "isHtml": true,
+          "fontColor": "#000000"
+        },
+        "style": {
+          "backgroundColor": "#FAFAFA"
+        },
+        "additionalInfos": {
+          "rating": {
+            "starRating": 5.0,
+            "maxRating": 5,
+            "style": {
+              "filledColor": "#FF858F",
+              "emptyColor": "#FFDADD"
+            }
+          }
+        },
+        "images": [
+          {
+            "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+            "width": 300,
+            "height": 200
+          }
+        ]
+      },
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/reviewList?storeType=BOSS_STORE&storeId=120009"
+      },
+      "createdAt": "2026-09-26T15:08:36",
+      "updatedAt": "2026-09-26T15:08:36"
+    }
+  ],
+  "cursor": {
+    "hasMore": false,
+    "nextCursor": "MzA="
+  }
+}
